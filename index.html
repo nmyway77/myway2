@@ -97,37 +97,39 @@
     .search-btn:hover {
       background: #232356;
     }
-    .screen-nav {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 28px auto 0 auto;
-      flex-wrap: wrap;
-      padding: 0 10px;
-    }
-    .screen-btn {
-      background: #3C3C8C;
-      color: #fff;
-      border: none;
-      border-radius: 16px;
-      padding: 10px 26px;
-      font-size: 1.09rem;
-      font-weight: 500;
-      margin: 3px 0;
-      cursor: pointer;
-      box-shadow: 0 2px 7px rgba(60,60,140,0.07);
-      transition: background 0.19s, box-shadow 0.18s;
-    }
-    .screen-btn.active,
-    .screen-btn:hover {
-      background: #232356;
-      box-shadow: 0 2px 14px rgba(60,60,140,0.17);
-    }
+.screen-nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 28px auto 0 auto;
+  flex-wrap: wrap;
+  padding: 0 10px;
+}
+.screen-btn {
+  background: none;
+  color: #232356;  /* 네이비 */
+  border: none;
+  border-radius: 0;
+  padding: 0 7px;
+  font-size: 0.9rem;  /* 절반 크기 */
+  font-weight: bold;
+  margin: 3px 0;
+  cursor: pointer;
+  box-shadow: none;
+  transition: color 0.18s;
+}
+.screen-btn.active,
+.screen-btn:hover {
+  color: #223;
+  background: none;
+  box-shadow: none;
+  text-decoration: underline;
+}
     /* 풀화면 컨텐츠 */
     .screen-content {
       width: 100vw;
       min-height: 220px;
-      background: #f6f7fa;
+      background: #fff;
       border-radius: 0;
       box-shadow: none;
       margin: 22px 0 44px 0;
@@ -179,12 +181,13 @@
     }
     /* 화면별 편집 구분선 스타일 */
     .screen-section-label {
-      margin: 16px 0 8px 0;
-      padding: 8px 0 4px 0;
-      font-size: 1.09rem;
-      color: #5072c2;
-      font-weight: bold;
-      border-bottom: 2px solid #a6b9e5;
+ margin: 6px 0 2px 0;
+  padding: 0;
+  font-size: 0.55rem;
+  color: #444;
+  font-weight: normal;
+  border: none;
+  background: none;
     }
   </style>
 </head>
