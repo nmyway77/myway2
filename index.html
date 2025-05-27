@@ -434,72 +434,14 @@
       <p></p>
     </div>
     <!-- ========== 화면 2 ========== -->
-<div class="img-grid" id="gallery2"></div>
-<script>
-const items2 = [
-  { url: "https://www.youtube.com/playlist?list=PLU12uITxBEPGpEPrYAxJvNDP6Ugx2jmUx", img: "https://64.media.tumblr.com/2e4c845ac1a46598a83b6872a85d986f/tumblr_inline_qr62newSap1r45nlo_500.jpg" },
-  { url: "https://www.wavve.com/live/index.html", img: "https://64.media.tumblr.com/2189d70a9d043e35abd0da0795368db1/tumblr_inline_qr9rdcj5Gw1r45nlo_500.jpg" },
-  { url: "https://www.afreecatv.com/", img: "https://64.media.tumblr.com/50e085a5c21801bcbf82f2a329b8d427/tumblr_inline_qr5ags5Pq51r45nlo_500.jpg" },
-  { url: "https://sportshub.stream/baseball-live-streamz/", img: "https://64.media.tumblr.com/7ab26e8bf532d3f67eddf68af156b0bd/tumblr_inline_riw5cynx2c1y2l0i6_500.jpg" },
-  { url: "https://tv.kakao.com/live", img: "https://64.media.tumblr.com/ad34a8a06c7f2a6d49d0eca6ab75307a/tumblr_inline_qr5al8LGBG1r45nlo_500.jpg" },
-  { url: "https://tv.naver.com/l/livehome", img: "https://64.media.tumblr.com/32bab5d7c4db1f90a078262949bc66aa/tumblr_inline_qr5achQfT31r45nlo_500.jpg" },
-
-  { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList", img: "https://64.media.tumblr.com/3dfd628e3dd3732521f9f5cc4b673e23/tumblr_inline_qr495jheQy1r45nlo_500.jpg" },
-  { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList", img: "https://64.media.tumblr.com/b265cd8ad8795c0a4a0038e0155a5484/tumblr_inline_qr495pqaQM1r45nlo_500.jpg" },
-  { url: "https://play.sbs.co.kr/onair/pc/index.html?id=S01", img: "https://64.media.tumblr.com/b87dd445764b87d10675c626c3b24bfd/tumblr_inline_qr630dge1t1r45nlo_500.jpg" },
-  { url: "http://onair.imbc.com/", img: "https://64.media.tumblr.com/2828d1450c7b5d1781014819689d19c4/tumblr_inline_njsdfy3B4r1r45nlo.jpg" },
-  { url: "https://www.twitch.tv/", img: "https://64.media.tumblr.com/76994463eff7f663a451d48c3051a644/tumblr_inline_rj7sajI3371r45nlo_500.jpg" },
-  { url: "http://www.ichannela.com/com/cmm/onair.do", img: "https://64.media.tumblr.com/492e6b1ccdda41793234756a36808296/tumblr_inline_qr6s8va9vE1r45nlo_500.jpg" },
-
-  { url: "http://broadcast.tvchosun.com/onair/on.cstv", img: "https://64.media.tumblr.com/3c9da0d2f7a6731574fbd704e82f6c28/tumblr_inline_qr6iisiuEn1r45nlo_500.jpg" },
-  { url: "https://www.mbn.co.kr/vod/onair", img: "https://64.media.tumblr.com/2c30a5b9490fe98b1c628a2f8427433d/tumblr_inline_qr6o97Jr7e1r45nlo_500.jpg" },
-  { url: "https://www.ytn.co.kr/_hd/hd_live.html", img: "https://64.media.tumblr.com/a834d5c65162ebdc2b1cbc9a8daf6d57/tumblr_inline_qr63ooBx2g1r45nlo_500.jpg" },
-  { url: "https://www.yonhapnewstv.co.kr/live", img: "https://64.media.tumblr.com/e716c47503f2fb1f0b5f7642d0ebda14/tumblr_inline_qr6irxGBMz1r45nlo_500.jpg" },
-  { url: "https://tbs.seoul.kr/tv/index.do", img: "https://64.media.tumblr.com/960dc403fc341dc8c481f99f89c997dc/tumblr_inline_qr6n7l27YR1r45nlo_500.jpg" },
-  { url: "https://www.arirang.com/", img: "https://64.media.tumblr.com/34b7502c6c4511f8667416c9199bda6c/tumblr_inline_qsm7z6gViT1r45nlo_500.jpg" },
-
-  { url: "https://www.youtube.com/channel/UCgJ5pT6S2NuTVP-6-AlLZew", img: "https://64.media.tumblr.com/821cb56a7f323d7586b4523f120303f4/tumblr_inline_qscj5ceap61r45nlo_500.jpg" },
-  { url: "http://mbnmoney.mbn.co.kr/tv/onair", img: "https://64.media.tumblr.com/f6d709d23fe41d9b9704bb129599163b/tumblr_inline_qr6ijt9Seg1r45nlo_500.jpg" },
-  { url: "http://www.paxetv.com/tv/onair.html", img: "https://64.media.tumblr.com/2a4c7ad8a2a13ebe50e879b087a06086/tumblr_inline_qr6ilo7Gak1r45nlo_500.jpg" },
-  { url: "http://www.nbntv.kr/", img: "https://64.media.tumblr.com/8b6f07710aed68d213cf378db5ce3926/tumblr_inline_qr6ikep1ew1r45nlo_500.jpg" },
-  { url: "https://www.sentv.co.kr/onair", img: "https://64.media.tumblr.com/67b034cbf7ec194304c18d7c97073294/tumblr_inline_qr6ikvEqkt1r45nlo_500.jpg" },
-  { url: "http://tv.edaily.co.kr/Live/HighVod", img: "https://64.media.tumblr.com/ae7c15c902a18eb141690041d6536466/tumblr_inline_qr6ilfxF4U1r45nlo_500.jpg" },
-
-  { url: "http://onair.imbc.com/NVOD?chid=2", img: "https://64.media.tumblr.com/9d53f56d6539a9cf22a8604ed6c65bc3/tumblr_inline_qsbgrn73ik1r45nlo_500.jpg" },
-  { url: "https://www.ktv.go.kr/", img: "https://64.media.tumblr.com/fefcb606bc873044408cb8a53ceafaa6/tumblr_inline_qr9u14rn8t1r45nlo_500.jpg" },
-  { url: "https://www.youtube.com/@cnnnews18", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy0krPiH2mqGqJV6V8hd3f5JuTmZDXKgtaDw&usqp=CAU" },
-  { url: "https://www.ebs.co.kr/html/onair_tv1.html", img: "https://64.media.tumblr.com/14607637b822110201623bb644a00aa2/tumblr_inline_qr6s0x0D8s1r45nlo_500.jpg" },
-  { url: "https://edition.cnn.com/audio/", img: "https://64.media.tumblr.com/0e9a23cbf4444f928d6410257d529a11/tumblr_inline_qr5axcqv2n1r45nlo_500.jpg" },
-
-  { url: "http://mini.imbc.com/index_v3.html?src=http://www.imbc.com/broad/radio/minimbc/index.html&ref=https://search.naver.com/search.naver?query=MBC+RADIO+LIVE&where=nexearch", img: "https://64.media.tumblr.com/582c27819a7a42a0fd123e753ed6bd96/tumblr_inline_qr6j3hC7fy1r45nlo_500.jpg" },
-  { url: "http://world.kbs.co.kr/service/index.htm?lang=e", img: "https://64.media.tumblr.com/f77d9f670bf201f3a3972b7d8e112cf0/tumblr_inline_qr6j3qb2QP1r45nlo_500.jpg" },
-  { url: "https://tbs.seoul.kr/eFm/index.do", img: "https://64.media.tumblr.com/90f972927507d964550c9ebece71f4d5/tumblr_inline_qr6j437KNd1r45nlo_500.jpg" },
-  { url: "https://www.bbc.co.uk/sounds/play/live:bbc_radio_fourfm", img: "https://64.media.tumblr.com/8788ac53a1c1918641c2487c12ef7fb1/tumblr_inline_qr6j8rYRUX1r45nlo_500.jpg" },
-  { url: "https://www.radio-korea.com/afn-humphreys", img: "https://64.media.tumblr.com/0f03adaabe03311d592682a0c96ae8e8/tumblr_inline_qr6j4s09jj1r45nlo_500.jpg" },
-
-  { url: "https://www.youtube.com/channel/UCeY0bbntWzzVIaj2z3QigXg?&ab_channel=%EB%89%B4%EC%8A%A4TVCHOSUN", img: "https://64.media.tumblr.com/7bbb21b518e1776257878e088a53458b/tumblr_inline_qr7t7zkbJm1r45nlo_500.jpg" },
-  { url: "https://www3.nhk.or.jp/nhkworld/en/live/", img: "https://64.media.tumblr.com/773f91205d092d3a3087075a0ed89dce/tumblr_inline_qr6n7tNTcQ1r45nlo_500.jpg" },
-  { url: "https://www.cbsnews.com/live/", img: "https://64.media.tumblr.com/09d43038e6eff78146e7f941ac8f1e8b/tumblr_inline_rjgp2r49Og1r45nlo_500.jpg" },
-  { url: "https://www.youtube.com/@ABCNews", img: "https://64.media.tumblr.com/b5d857fcffdebca494db8476f887b8d4/tumblr_inline_qr6o2pnFey1r45nlo_500.jpg" },
-  { url: "https://www.youtube.com/@SkyNews", img: "https://64.media.tumblr.com/63c50a237c6b0143bbb3fe0ca9d44150/tumblr_inline_qr6o2xuuuZ1r45nlo_500.jpg" },
-  { url: "https://www.youtube.com/@business", img: "https://64.media.tumblr.com/fc7db03f5803a0622c66b5231b535be0/tumblr_inline_qrdf5jgn9p1r45nlo_500.jpg" }
-  // ...계속 추가
-];
-const shadowSrc2 = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
-const grid2 = document.getElementById("gallery2");
-if (grid2) {
-  grid2.innerHTML = items2.map(item => `
-    <div class="img-cell">
-      <a href="${item.url}" target="_blank" class="img-frame">
-        <img src="${item.img}" alt="">
-      </a>
-      <img class="shadow-line" src="${shadowSrc2}" alt="">
+    <div id="screen-block-2" class="screen-block">
+      <div class="screen-section-label">// ========== 화면 2 ========== //</div>
+      <h2>여기에 화면 2의 HTML 코드를 넣으세요</h2>
+      <ul>
+        <li>리스트 예시 1</li>
+        <li>리스트 예시 2</li>
+      </ul>
     </div>
-  `).join('');
-}
-</script>
-
-
     <!-- ========== 화면 3 ========== -->
     <div id="screen-block-3" class="screen-block">
       <div class="screen-section-label">// ========== 화면 3 ========== //</div>
