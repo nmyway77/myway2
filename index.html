@@ -162,150 +162,40 @@
 
     <!-- ========== 화면 2~7 예시 ========== -->
     <div id="screen-block-2" class="screen-block">
-      <h2>여기에 화면 2의 HTML 코드를 넣으세요</h2>
+      <h2></h2>
 
 
 
 
 
      
- <style>
-    #controls {
-      position: fixed;
-      top: 20px;
-      right: 10px;
-      display: flex;
-      gap: 8px;
-      z-index: 100;
-    }
-    #controls button {
-      padding: 6px 10px;
-      background: #3C3C8C;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-      cursor: pointer;
-    }
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {margin:0; padding:0; background:#fff; font-family:'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif;}
+    #controls { position: fixed; top: 20px; right: 10px; display: flex; gap: 8px; z-index: 100;}
+    #controls button { padding: 6px 10px; background: #3C3C8C; color: #fff; border: none; border-radius: 4px; font-size: 14px; cursor: pointer;}
     #controls button:nth-child(2) { background: #007bff; }
     #controls button:nth-child(3) { background: #ffc107; color: #000; }
-
-    #modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 200;
-    }
-    #modal {
-      background: #fff;
-      padding: 20px;
-      border-radius: 6px;
-      width: 320px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
+    #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 200;}
+    #modal { background: #fff; padding: 20px; border-radius: 6px; width: 320px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);}
     #modal h3 { margin-bottom: 10px; font-size: 18px; }
-    #modal input {
-      width: 100%;
-      margin-bottom: 10px;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-    .auto-thumb-btn {
-      background: #eee;
-      color: #333;
-      border: 1px solid #aaa;
-      border-radius: 4px;
-      padding: 6px 10px;
-      font-size: 13px;
-      margin-bottom: 10px;
-      margin-right: 5px;
-      cursor: pointer;
-      display: inline-block;
-    }
+    #modal input { width: 100%; margin-bottom: 10px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;}
+    .auto-thumb-btn { background: #eee; color: #333; border: 1px solid #aaa; border-radius: 4px; padding: 6px 10px; font-size: 13px; margin-bottom: 10px; margin-right: 5px; cursor: pointer; display: inline-block;}
     .actions { text-align: right; }
-    .actions button {
-      padding: 8px 12px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-left: 8px;
-      font-size: 14px;
-    }
+    .actions button { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px; font-size: 14px;}
     .save-btn { background: #28a745; color: #fff; }
     .cancel-btn { background: #dc3545; color: #fff; }
-    #media-grid {
-      column-count: 5;
-      column-gap: 10px;
-      margin: 20px auto 20px;
-      width: 100%;
-      margin-top: 1200px;
-    }
-    .grid-item {
-      break-inside: avoid;
-      margin-bottom: 10px;
-      position: relative;
-    }
-    .grid-item img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .edit-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: rgba(0,0,0,0.6);
-      border: none;
-      color: #fff;
-      padding: 4px 6px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-    #html-editor, #html-preview {
-      border-color: white;
-    }
-    #html-edit-btn {
-      display: block;
-      margin: 0;
-      padding: 8px 12px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-      cursor: pointer;
-      position: relative;
-      top: 20px;
-    }
-    #html-editor {
-      display: none;
-      width: 100%;
-      height: 300px;
-      font-family: monospace;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      padding: 10px;
-      box-sizing: border-box;
-      background: #f0f8ff;
-      border-color: #007bff;
-    }
-    #html-preview {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      background: white;
-    }
-    .editor-space {
-      height: 800px;
-    }
+    #media-grid { column-count: 5; column-gap: 10px; margin: 20px auto 20px; width: 100%; margin-top: 60px;}
+    .grid-item { break-inside: avoid; margin-bottom: 10px; position: relative;}
+    .grid-item img { width: 100%; height: auto; display: block; border-radius: 8px; cursor: pointer;}
+    .edit-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); border: none; color: #fff; padding: 4px 6px; border-radius: 4px; cursor: pointer; font-size: 12px;}
+    #html-editor, #html-preview { border-color: white;}
+    #html-edit-btn { display: block; margin: 0; padding: 8px 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; position: relative; top: 20px;}
+    #html-editor { display: none; width: 100%; height: 300px; font-family: monospace; font-size: 14px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; background: #f0f8ff; border-color: #007bff;}
+    #html-preview { width: 100%; padding: 10px; border: 1px solid #ddd; background: white;}
+    .editor-space { height: 80px;}
   </style>
 
   <div id="controls">
@@ -334,24 +224,23 @@
   <script>
     // 썸네일 자동추출 함수
     function extractYouTubeId(url) {
-      // 유튜브의 다양한 URL 형식 지원
       const regex = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([a-zA-Z0-9_-]{11})/;
       const match = url.match(regex);
       return match ? match[1] : null;
     }
 
-    // 미디어 저장, 내보내기, 가져오기 + 그리드 렌더링
+    // 변수 선언
     const saveBtn = document.getElementById('save-media-btn'),
-          exportBtn = document.getElementById('export-btn'),
-          importBtn = document.getElementById('import-btn'),
-          importFile = document.getElementById('import-file'),
-          overlay = document.getElementById('modal-overlay'),
-          cancelBtn = document.querySelector('.cancel-btn'),
-          confirmBtn = document.querySelector('.save-btn'),
-          imgInput = document.getElementById('img-url'),
-          linkInput = document.getElementById('link-url'),
-          gridContainer = document.getElementById('media-grid'),
-          autoThumbBtn = document.getElementById('auto-thumb-btn');
+      exportBtn = document.getElementById('export-btn'),
+      importBtn = document.getElementById('import-btn'),
+      importFile = document.getElementById('import-file'),
+      overlay = document.getElementById('modal-overlay'),
+      cancelBtn = document.querySelector('.cancel-btn'),
+      confirmBtn = document.querySelector('.save-btn'),
+      imgInput = document.getElementById('img-url'),
+      linkInput = document.getElementById('link-url'),
+      gridContainer = document.getElementById('media-grid'),
+      autoThumbBtn = document.getElementById('auto-thumb-btn');
     let editingIndex = null;
 
     saveBtn.onclick = () => openModal();
@@ -372,7 +261,6 @@
     }
     cancelBtn.onclick = () => { overlay.style.display = 'none'; editingIndex = null; };
 
-    // 썸네일 자동찾기 버튼 동작
     autoThumbBtn.onclick = function() {
       const linkVal = linkInput.value.trim() || imgInput.value.trim();
       const youtubeId = extractYouTubeId(linkVal);
@@ -432,6 +320,8 @@
           if (data.htmlContent) {
             htmlPreview.innerHTML = data.htmlContent;
             htmlEditor.value = data.htmlContent;
+            // 추가: 가져오기(import) 한 html도 localStorage에 저장!
+            localStorage.setItem('mediaHtmlContent', data.htmlContent);
           }
           alert('데이터가 복원되었습니다.');
         } catch {
@@ -461,9 +351,7 @@
       });
     }
 
-    document.addEventListener('DOMContentLoaded', renderGrid);
-
-    // HTML 편집기 로직
+    // HTML 편집기 로직 (여기서 편집 마침 시 htmlPreview 내용을 localStorage에 저장!)
     const htmlEditBtn = document.getElementById('html-edit-btn');
     const htmlEditor = document.getElementById('html-editor');
     const htmlPreview = document.getElementById('html-preview');
@@ -481,9 +369,23 @@
         htmlEditor.style.display = 'none';
         htmlPreview.style.display = 'block';
         htmlEditBtn.textContent = '편집';
+        // 추가: 편집이 끝난 HTML도 localStorage에 저장!
+        localStorage.setItem('mediaHtmlContent', htmlPreview.innerHTML);
       }
     };
+
+    // 페이지 로드 시 localStorage에서 htmlContent를 불러오기!
+    document.addEventListener('DOMContentLoaded', () => {
+      renderGrid();
+      const savedHtml = localStorage.getItem('mediaHtmlContent');
+      if (savedHtml) {
+        htmlPreview.innerHTML = savedHtml;
+        htmlEditor.value = savedHtml;
+      }
+    });
   </script>
+
+
 
 
     </div>
