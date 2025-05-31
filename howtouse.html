@@ -1,0 +1,106 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>그림그리드 사용법 안내</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #f6f8fa; margin: 0; color: #222;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+    }
+    .main {
+      max-width: 430px; margin: 36px auto 0 auto;
+      background: #fff; border-radius: 18px; box-shadow: 0 6px 36px #00308a11;
+      padding: 28px 18px 32px 18px;
+    }
+    .title {
+      font-size: 1.8rem; color: #2563eb; font-weight: bold;
+      text-align: center; margin-bottom: 13px; letter-spacing: -1px;
+    }
+    .subtitle {
+      text-align: center; color: #3a4a6a; font-size: 1.07rem; margin-bottom: 22px;
+      opacity: .86;
+    }
+    .howto-list {
+      padding: 0 0 0 4px; margin: 0 0 24px 0;
+      list-style: none; counter-reset: num;
+    }
+    .howto-list li {
+      counter-increment: num;
+      margin-bottom: 18px; font-size: 1.07rem; line-height: 1.7; position: relative;
+      padding-left: 34px;
+    }
+    .howto-list li:before {
+      content: counter(num) ".";
+      position: absolute; left: 0; top: 1px;
+      background: #2563eb; color: #fff; font-weight: bold; font-size: 1.03em;
+      width: 25px; height: 25px; border-radius: 50%; display: flex;
+      align-items: center; justify-content: center; letter-spacing: -2px;
+      box-shadow: 0 1px 6px #2563eb16;
+    }
+    .tip {
+      background: #f3f6fc; border-left: 5px solid #2563eb;
+      border-radius: 9px; padding: 13px 16px; color: #274084;
+      margin-bottom: 8px; font-size: 0.98rem;
+    }
+    .preview-row {
+      display: flex; gap: 14px; justify-content: center; margin: 19px 0 0 0;
+    }
+    .img-preview {
+      background: #eaf3ff; border-radius: 9px; width: 66px; height: 66px;
+      display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 8px #2563eb11;
+      overflow: hidden;
+    }
+    .img-preview img { width: 56px; height: 56px; object-fit: cover; border-radius: 5px; }
+    .footer {
+      color: #8b9; font-size: 0.96em; text-align: center; margin-top: 24px;
+    }
+    @media (max-width:600px){
+      .main { padding: 19px 5vw 24px 5vw; }
+      .preview-row { gap: 7px; }
+      .img-preview { width: 44px; height: 44px; }
+      .img-preview img { width: 36px; height: 36px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="main">
+    <div class="title">그림그리드 사용법</div>
+    <div class="subtitle">이미지 주소와 링크만 등록해서<br>간단하게 갤러리를 관리하세요!</div>
+    <ul class="howto-list">
+      <li>
+        <b>[추가]</b> 버튼을 눌러 <span style="color:#2563eb;">이미지 주소</span>와<br>
+        <span style="color:#2563eb;">링크 주소</span>를 입력한 뒤 저장하세요.
+      </li>
+      <li>
+        등록된 이미지는 클릭하면 <span style="color:#2563eb;">해당 링크</span>로 이동합니다.
+      </li>
+      <li>
+        각 이미지 우측 상단의 <b>[수정]</b> 버튼을 눌러<br>
+        이미지를 교체하거나 링크를 바꿀 수 있습니다.
+      </li>
+      <li>
+        <b>[삭제]</b> 버튼으로 이미지를 삭제할 수 있습니다.
+      </li>
+      <li>
+        등록된 이미지는 자동으로<br>
+        <span style="color:#2563eb;">그리드 형태</span>로 보기 좋게 정렬됩니다.
+      </li>
+    </ul>
+    <div class="tip">
+      <b>TIP</b> : 이미지 주소는<br>
+      <span style="color:#2988f7;">인터넷상의 이미지 주소</span> 또는 <span style="color:#2988f7;">직접 업로드한 이미지 URL</span>을 사용할 수 있습니다.<br>
+      <span style="color:#255be8;">링크 주소는 꼭 http(s)://로 시작하는 주소를 넣어주세요.</span>
+    </div>
+    <div class="preview-row">
+      <div class="img-preview"><img src="https://cdn.pixabay.com/photo/2017/02/20/18/03/cat-2083492_1280.jpg" alt="미리보기"></div>
+      <div class="img-preview"><img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg" alt="미리보기"></div>
+      <div class="img-preview"><img src="https://cdn.pixabay.com/photo/2016/11/29/05/08/animal-1868911_1280.jpg" alt="미리보기"></div>
+    </div>
+    <div class="footer">
+      (폴더, 설명, 드래그 기능 없이<br>가장 간단하게 이미지를 관리할 수 있습니다.)
+    </div>
+  </div>
+</body>
+</html>
