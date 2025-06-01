@@ -3,7 +3,7 @@
 <head>
   <base target="_blank">
   <meta charset="UTF-8">
-  <title>MYWAY.KR</title>
+  <title>상단고정 검색엔진 + 네비 + 1~7 + 갤러리 + 그림그리드(편집)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {margin:0; padding:0; background:#fff; font-family:'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif;}
@@ -76,36 +76,53 @@
       pointer-events: none;
       user-select: none;
     }
-    /* 그림그리드(2번화면)용 디자인 */
-    #controls { position: fixed; top: 20px; right: 10px; display: none; gap: 8px; z-index: 1100;}
-    #controls button { padding: 6px 10px; background: #3C3C8C; color: #fff; border: none; border-radius: 4px; font-size: 14px; cursor: pointer;}
-    #controls button:nth-child(2) { background: #007bff; }
-    #controls button:nth-child(3) { background: #ffc107; color: #000; }
-    #controls button:nth-child(4) { background: #888; color: #fff; }
-    #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 2000;}
-    #modal { background: #fff; padding: 20px; border-radius: 6px; width: 320px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);}
-    #modal h3 { margin-bottom: 10px; font-size: 18px; }
-    #modal input { width: 100%; margin-bottom: 10px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;}
-    .auto-thumb-btn { background: #eee; color: #333; border: 1px solid #aaa; border-radius: 4px; padding: 6px 10px; font-size: 13px; margin-bottom: 10px; margin-right: 5px; cursor: pointer; display: inline-block;}
-    .actions { text-align: right; }
-    .actions button { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px; font-size: 14px;}
-    .save-btn { background: #28a745; color: #fff; }
-    .cancel-btn { background: #dc3545; color: #fff; }
-    #media-grid { column-count: 5; column-gap: 10px; margin: 20px auto 20px; width: 100%;}
-    .grid-item { break-inside: avoid; margin-bottom: 10px; position: relative;}
-    .grid-item img { width: 100%; height: auto; display: block; border-radius: 8px; cursor: pointer;}
-    .edit-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); border: none; color: #fff; padding: 4px 6px; border-radius: 4px; cursor: pointer; font-size: 12px;}
-    #html-editor, #html-preview { border-color: white;}
-    #html-edit-btn { display: block; margin: 0; padding: 8px 12px; background: #888; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; }
-    #html-editor { display: none; width: 100%; height: 200px; font-family: monospace; font-size: 14px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; background: #f0f8ff; border-color: #007bff; margin-bottom: 8px;}
-    #html-preview { width: 100%; padding: 10px; border: 1px solid #ddd; background: white;}
-    .editor-space { height: 16px;}
-    @media (max-width:900px){.img-grid{grid-template-columns:repeat(3,1fr);} .img-frame{width:110px;height:70px;} #gallery4 .img-frame{width:80px;height:120px;}}
-    @media (max-width:600px){.img-grid{grid-template-columns:repeat(2,1fr);} .img-frame{width:90px;height:56px;} #gallery4 .img-frame{width:56px;height:80px;} .shadow-line{height:6px;} #media-grid{column-count:2;}}
-    /* 화면2 그림그리드에만 버튼 보이게 */
-    #controls { display: none; }
-    .screen-block[data-controls="on"].active ~ #controls,
-    #controls.active { display: flex !important; }
+
+    
+/* 그림그리드(2번화면)용 디자인 */
+#controls { position: fixed; top: 20px; right: 10px; display: none; gap: 8px; z-index: 1100;}
+#controls button { padding: 6px 10px; background: #3C3C8C; color: #fff; border: none; border-radius: 4px; font-size: 14px; cursor: pointer;}
+#controls button:nth-child(2) { background: #007bff; }
+#controls button:nth-child(3) { background: #ffc107; color: #000; }
+#controls button:nth-child(4) { background: #888; color: #fff; }
+#modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 2000;}
+#modal { background: #fff; padding: 20px; border-radius: 6px; width: 320px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);}
+#modal h3 { margin-bottom: 10px; font-size: 18px; }
+#modal input { width: 100%; margin-bottom: 10px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;}
+.auto-thumb-btn { background: #eee; color: #333; border: 1px solid #aaa; border-radius: 4px; padding: 6px 10px; font-size: 13px; margin-bottom: 10px; margin-right: 5px; cursor: pointer; display: inline-block;}
+.actions { text-align: right; }
+.actions button { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px; font-size: 14px;}
+.save-btn { background: #28a745; color: #fff; }
+.cancel-btn { background: #dc3545; color: #fff; }
+#media-grid { column-count: 5; column-gap: 10px; margin: 20px auto 20px; width: 100%;}
+.grid-item { break-inside: avoid; margin-bottom: 10px; position: relative;}
+.grid-item img { width: 100%; height: auto; display: block; border-radius: 8px; cursor: pointer;}
+/* ★ 설명(메모) 디자인 추가 ★ */
+.grid-item .desc {
+  margin: 8px 0 0 0;
+  font-size: 0.98rem;
+  color: #334;
+  background: #f8fafc;
+  border-radius: 4px;
+  padding: 5px 9px 6px 9px;
+  text-align: left;
+  line-height: 1.6;
+  word-break: break-all;
+  box-shadow: 0 1px 6px #1231a007;
+}
+.edit-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); border: none; color: #fff; padding: 4px 6px; border-radius: 4px; cursor: pointer; font-size: 12px;}
+#html-editor, #html-preview { border-color: white;}
+#html-edit-btn { display: block; margin: 0; padding: 8px 12px; background: #888; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; }
+#html-editor { display: none; width: 100%; height: 200px; font-family: monospace; font-size: 14px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; background: #f0f8ff; border-color: #007bff; margin-bottom: 8px;}
+#html-preview { width: 100%; padding: 10px; border: 1px solid #ddd; background: white;}
+.editor-space { height: 16px;}
+@media (max-width:900px){.img-grid{grid-template-columns:repeat(3,1fr);} .img-frame{width:110px;height:70px;} #gallery4 .img-frame{width:80px;height:120px;}}
+@media (max-width:600px){.img-grid{grid-template-columns:repeat(2,1fr);} .img-frame{width:90px;height:56px;} #gallery4 .img-frame{width:56px;height:80px;} .shadow-line{height:6px;} #media-grid{column-count:2;}}
+/* 화면2 그림그리드에만 버튼 보이게 */
+#controls { display: none; }
+.screen-block[data-controls="on"].active ~ #controls,
+#controls.active { display: flex !important; }
+
+    
   </style>
 </head>
 <body>
@@ -186,21 +203,30 @@
     </div>
     <!-- 그림그리드: 화면 2 + HTML편집기 -->
     <div id="screen-block-2" class="screen-block" data-controls="on">
-      
-<h2 style="text-align: center;">나만의 디스플레이형 즐겨찾기 만들기</h2>
-<p style="text-align: center;">&nbsp;<a href="https://myway.kr/howtouse.html">이용방법 - 클릭&nbsp;</a> &nbsp; &nbsp; &nbsp;<span style="color: #339966;"><a style="color: #339966;" href="https://html5-editor.net/">웹에디터</a></span>&nbsp;</p>
-
-      
+      <h2 style="text-align:center;margin-top:20px;">그림그리드 미디어 관리 및 HTML편집</h2>
       <div id="media-grid"></div>
       <div class="editor-space"></div>
       <button id="html-edit-btn">편집</button>
       <textarea id="html-editor" placeholder="HTML 코드 편집"></textarea>
       <div id="html-preview"></div>
     </div>
+
+    
     <div id="screen-block-3" class="screen-block">
-      <h2>여기에 화면 3의 HTML 코드를 넣으세요</h2>
-      <img src="https://via.placeholder.com/240x120" alt="샘플이미지">
-    </div>
+  <div class="screen-section-label">갤러리 1</div>
+  <div class="img-grid" id="gallery11"></div>
+  <div class="screen-section-label">갤러리 2</div>
+  <div class="img-grid" id="gallery12"></div>
+  <div class="screen-section-label">갤러리 3</div>
+  <div class="img-grid" id="gallery13"></div>
+  <div class="screen-section-label">갤러리 4 (매거진)</div>
+  <div class="img-grid" id="gallery14"></div>
+</div>
+
+  
+
+
+    
     <div id="screen-block-4" class="screen-block">
       <h2>여기에 화면 4의 HTML 코드를 넣으세요</h2>
       <iframe width="340" height="192" src="https://www.youtube.com/embed/O5H5KQGuQAs" frameborder="0" allowfullscreen></iframe>
@@ -315,7 +341,7 @@
     }
     // -------------------- 갤러리 1~4
     var shadowSrc = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
-    var items1 = [   { url: "https://www.naver.com/", img: "https://64.media.tumblr.com/1bf9e5deea1a7c6908412854a41eef17/tumblr_inline_njsurfLN801r45nlo.jpg" },
+    var items1 = [  { url: "https://www.naver.com/", img: "https://64.media.tumblr.com/1bf9e5deea1a7c6908412854a41eef17/tumblr_inline_njsurfLN801r45nlo.jpg" },
   { url: "https://duckduckgo.com/", img: "https://64.media.tumblr.com/97d8ef070851c4eba1a490004157b396/tumblr_inline_qtmyixNWhk1r45nlo_500.jpg" },
   { url: "https://yandex.com/", img: "https://64.media.tumblr.com/f41ba3cab449283ec3dc15fc8827d42f/tumblr_inline_riw323wnoZ1y2l0i6_500.jpg" },
   { url: "https://www.google.com.au/webhp?hl=en&gl=au", img: "https://64.media.tumblr.com/142f0d5149882bc05ab0a71ac01e5da1/tumblr_inline_njsurwZm6N1r45nlo.jpg" },
@@ -407,7 +433,7 @@
   { url: "http://www.hhiun.or.kr/FreeBoard", img: "https://64.media.tumblr.com/c906e951b1863006771a0bf8fc93a652/tumblr_inline_qr0ft8zCEt1r45nlo_500.jpg" }, ];
 
    
-    var items2 = [  { url: "https://www.youtube.com/playlist?list=PLU12uITxBEPGpEPrYAxJvNDP6Ugx2jmUx", img: "https://64.media.tumblr.com/2e4c845ac1a46598a83b6872a85d986f/tumblr_inline_qr62newSap1r45nlo_500.jpg" },
+    var items2 = [ { url: "https://www.youtube.com/playlist?list=PLU12uITxBEPGpEPrYAxJvNDP6Ugx2jmUx", img: "https://64.media.tumblr.com/2e4c845ac1a46598a83b6872a85d986f/tumblr_inline_qr62newSap1r45nlo_500.jpg" },
   { url: "https://www.wavve.com/live/index.html", img: "https://64.media.tumblr.com/2189d70a9d043e35abd0da0795368db1/tumblr_inline_qr9rdcj5Gw1r45nlo_500.jpg" },
   { url: "https://www.afreecatv.com/", img: "https://64.media.tumblr.com/50e085a5c21801bcbf82f2a329b8d427/tumblr_inline_qr5ags5Pq51r45nlo_500.jpg" },
   { url: "https://sportshub.stream/baseball-live-streamz/", img: "https://64.media.tumblr.com/7ab26e8bf532d3f67eddf68af156b0bd/tumblr_inline_riw5cynx2c1y2l0i6_500.jpg" },
@@ -433,11 +459,10 @@
  { url: "https://www.coupangplay.com/catalog", img: "https://myway.kr/m4.jpg" },  
    { url: "https://www.wavve.com/", img: "https://myway.kr/m5.jpg" },               
 { url: "https://watch.plex.tv/", img: "https://64.media.tumblr.com/d690e1a1c1b213262aaf315955762673/tumblr_inline_qu7x3twdt51r45nlo_500.jpg" },
-{ url: "https://tv.garden/cn/Re5Rs60C2x03XD", img: "https://myway.kr/m3.jpg" },                  
-                 ];
+{ url: "https://tv.garden/cn/Re5Rs60C2x03XD", img: "https://myway.kr/m3.jpg" }];
 
    
-    var items3 = [  { url: "http://www.auction.co.kr/", img: "https://64.media.tumblr.com/e97d9391e0aeefcb82d1fb7bfe8748a5/tumblr_inline_njqty4XgTA1r45nlo.jpg" },
+    var items3 = [   { url: "http://www.auction.co.kr/", img: "https://64.media.tumblr.com/e97d9391e0aeefcb82d1fb7bfe8748a5/tumblr_inline_njqty4XgTA1r45nlo.jpg" },
   { url: "http://www.gmarket.co.kr/", img: "https://64.media.tumblr.com/4b13568a56efb8c2f9b51b8d3c5bface/tumblr_inline_njqu1l7g9v1r45nlo.jpg" },
   { url: "http://shopping.naver.com/", img: "https://64.media.tumblr.com/75aaf70369c882c5ca9800a0e8d7ee49/tumblr_inline_njqu3tdsp51r45nlo.jpg" },
   { url: "http://www.ticketmonster.co.kr/", img: "https://64.media.tumblr.com/7a861567f56b6167ac3cf236442c3e45/tumblr_inline_njqtvohy6M1r45nlo.jpg" },
@@ -477,8 +502,9 @@
   { url: "http://www.lottemart.com/", img: "https://64.media.tumblr.com/8461f4af99fe8dae76bee21cb02beb2a/tumblr_inline_njqrscKllr1r45nlo.jpg" },
   { url: "http://www.gsshop.com/", img: "https://64.media.tumblr.com/42c3514f44d11ec02646dcba386143c0/tumblr_inline_njqrwz5iHs1r45nlo.jpg" },
   { url: "http://www.hyundaihmall.com/Home.html", img: "https://64.media.tumblr.com/dce9ea401086940522aa92957530ee07/tumblr_inline_njqrzaf4Bf1r45nlo.jpg" },
-  { url: "https://ko.aliexpress.com/", img: "https://myway.kr/sh1.jpg" },                
- ];
+  { url: "https://ko.aliexpress.com/", img: "https://myway.kr/sh1.jpg" }, 
+                 
+                 ];
 
    
     var items4 = [   { url: "http://www.allurekorea.com/", img: "https://64.media.tumblr.com/5a097048470fe45a4b30c4e5f4e097a8/tumblr_inline_qqnwhh0G5P1r45nlo_500.jpg" },
@@ -509,7 +535,7 @@
 { url: "https://href.li/?https://magazine.hankyung.com/business", img: "https://64.media.tumblr.com/85cbdd45f34ad27036c426751bd8a70f/tumblr_inline_qqnwygnUJQ1r45nlo_500.jpg" },
 { url: "https://href.li/?https://news.mk.co.kr/v2/economy/", img: "https://64.media.tumblr.com/44fa3520241bc97db3f5c93c241999cb/tumblr_inline_qqnx53Cunr1r45nlo_500.jpg" },
 { url: "http://economychosun.com/", img: "http://economychosun.com/query/upload/460/1663310696_cover.jpg" },
-                  
+                 
                  ];
 
 
@@ -694,5 +720,71 @@
     // 화면2 진입시 항상 그림/HTML 유지
     window.showScreen = showScreen;
   </script>
+
+
+<script>
+
+
+// 화면3 갤러리용 데이터
+var items11 = [ { url: "https://naver.com", img: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" } ];
+  
+var items12 = [ { url: "https://daum.net", img: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" } ];
+  
+var items13 = [ { url: "https://youtube.com", img: "https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" } ];
+  
+var items14 = [ { url: "http://www.allurekorea.com/", img: "https://64.media.tumblr.com/5a097048470fe45a4b30c4e5f4e097a8/tumblr_inline_qqnwhh0G5P1r45nlo_500.jpg" },
+  { url: "https://woman.donga.com/", img: "https://64.media.tumblr.com/1aa90add760dfa7d745de3c2bd83ed57/tumblr_inline_qqnwi4R5op1r45nlo_500.jpg" },
+  { url: "https://woman.chosun.com/", img: "https://64.media.tumblr.com/abbfa122d7a891c5589a089bd22efe3c/tumblr_inline_qqnwhsRTHe1r45nlo_500.jpg" },
+  { url: "https://www.marieclairekorea.com/", img: "https://64.media.tumblr.com/c10d2bfa1a48856fc48f0f45ef70ce48/tumblr_inline_qqnwieFvDM1r45nlo_500.jpg" },
+  { url: "https://www.elle.co.kr/", img: "https://64.media.tumblr.com/4be85c7d3a25826a6655d17abc3a1ae7/tumblr_inline_qqnwh4OVJR1r45nlo_500.jpg" },
+  { url: "http://www.vogue.co.kr/", img: "https://64.media.tumblr.com/092423914d1c95aeef9c32d4cf0c8ab2/tumblr_inline_qqnwizjbF31r45nlo_500.jpg" },
+
+  { url: "https://m.thesingle.co.kr/SinglesMobile/mobileweb/index.do", img: "https://64.media.tumblr.com/bebebd9bc0a8e8ea2ec9237f957ee771/tumblr_inline_qqnwlkbuex1r45nlo_500.jpg" },
+  { url: "http://www.wkorea.com/", img: "https://64.media.tumblr.com/8f0ee741fe804e196637f83197b56bb3/tumblr_inline_qqnwqhSGWe1r45nlo_500.jpg" },
+  { url: "http://www.gqkorea.co.kr/", img: "https://64.media.tumblr.com/1d23d3c5c2f444d8811b086065463684/tumblr_inline_qqnwqvbNXR1r45nlo_500.jpg" },
+  { url: "https://www.maximkorea.net/", img: "https://64.media.tumblr.com/6e300ad67dbcaf812587e47153961cd7/tumblr_inline_qqnwrkQ0ko1r45nlo_500.jpg" },
+  { url: "https://www.smlounge.co.kr/arena", img: "https://64.media.tumblr.com/e483e9ea3a7340c69eaed1ab3be59000/tumblr_inline_qqnwsjhN1a1r45nlo_500.jpg" },
+  { url: "https://www.cosmopolitan.co.kr/", img: "https://64.media.tumblr.com/cd51a1d78fc0da8f5b52cc5a5167a5dc/tumblr_inline_qr2waqBr5u1r45nlo_500.jpg" },
+
+  { url: "https://www.smlounge.co.kr/woman", img: "https://www.smlounge.co.kr/upload/NPFILE/202104/450727.jpg" },
+  { url: "https://www.harpersbazaar.co.kr/", img: "https://image.aladin.co.kr/product/12660/32/cover500/k172532170_1.jpg" },
+  { url: "https://www.cosmopolitan.co.kr/", img: "https://64.media.tumblr.com/cd51a1d78fc0da8f5b52cc5a5167a5dc/tumblr_inline_qr2waqBr5u1r45nlo_500.jpg" }, 
+              
+              
+              
+              ];
+  
+var shadowSrc = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
+
+fillGallery("gallery11", items11);
+fillGallery("gallery12", items12);
+fillGallery("gallery13", items13);
+fillGallery("gallery14", items14);
+</script>
+
+  <style>
+    /* ... 기존 스타일 ... */
+    #gallery4 .img-frame,
+    #gallery14 .img-frame {
+  width: 120px;
+  height: 170px;
+  border-radius: 0;
+  box-shadow: 0 6px 20px 0 rgba(60,60,140,0.10);
+  display: flex;
+  align-items: flex-start;   /* 세로 상단 정렬 */
+  justify-content: center;   /* 가로 가운데 정렬 */
+    }
+    #gallery4 .img-frame img,
+    #gallery14 .img-frame img {
+      width: 95%;
+  height: 95%;
+  object-fit: contain;
+  margin: 0 auto 0 auto;     /* 상하 0, 좌우 auto = 가로 중앙정렬 */
+    }
+
+    
+  </style>
+
+  
 </body>
 </html>
