@@ -1,3 +1,4 @@
+ 
  <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -53,7 +54,11 @@
       </div>
     </div>
   </div>
+
+
   <script>
+const STORAGE_KEY = 'mediaList_' + (location.pathname.replace(/\W/g,'') || 'index');
+
     // 요소
     const saveBtn = document.getElementById('save-media-btn'),
       exportBtn = document.getElementById('export-btn'),
@@ -102,11 +107,11 @@
       if (!/^https?:\/\//i.test(lurl)) lurl = 'https://' + lurl;
       const desc = descInput.value.trim();
       const folder = folderInput.value.trim();
-      let list = JSON.parse(localStorage.getItem('mediaList') || '[]');
+      let list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       const data = { imgUrl: iurl, linkUrl: lurl, desc, folder };
       if (editingIndex !== null) list[editingIndex] = data;
       else list.push(data);
-      localStorage.setItem('mediaList', JSON.stringify(list));
+     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
       overlay.style.display = 'none';
       folderSelect.value = "";
       renderGrid();
