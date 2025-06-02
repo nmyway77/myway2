@@ -1,227 +1,878 @@
  
- <!DOCTYPE html>
-<html lang="ko">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>크롬호환 - 그림 그리드(최종본)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-  <style>
-    body {margin:0;padding:0;background:#fff;font-family:'Segoe UI','맑은 고딕',Arial,sans-serif;}
-    #controls {position:fixed;top:20px;right:10px;display:flex;gap:8px;z-index:100;}
-    #controls button {padding:6px 10px;background:#3C3C8C;color:#fff;border:none;border-radius:4px;font-size:14px;cursor:pointer;}
-    #controls button:nth-child(2) {background:#007bff;}
-    #controls button:nth-child(3) {background:#ffc107;color:#000;}
-    #folder-select {margin-left:10px;padding:5px 10px;font-size:14px;border-radius:4px;border:1px solid #ddd;}
-    #modal-overlay {position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:200;}
-    #modal {background:#fff;padding:20px;border-radius:6px;width:320px;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
-    #modal h3 {margin-bottom:10px;font-size:18px;}
-    #modal input {width:100%;margin-bottom:10px;padding:8px;border:1px solid #ccc;border-radius:4px;font-size:14px;}
-    .actions {text-align:right;}
-    .actions button {padding:8px 12px;border:none;border-radius:4px;cursor:pointer;margin-left:8px;font-size:14px;}
-    .save-btn {background:#28a745;color:#fff;}
-    .cancel-btn {background:#dc3545;color:#fff;}
-    #media-grid {column-count:5;column-gap:10px;margin:1200px auto 20px;width:100%;max-width:1400px;}
-    .grid-item {break-inside:avoid;margin-bottom:10px;position:relative;background:#fff;box-shadow:0 1px 6px #d0d0ff44;}
-    .grid-item img {width:100%;height:auto;display:block;border-radius:8px;cursor:pointer;}
-    .edit-btn {position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.6);border:none;color:#fff;padding:4px 6px;border-radius:4px;cursor:pointer;font-size:12px;}
-    .desc-label {position:absolute;left:0;right:0;bottom:13%;padding:2px 7px;color:#35334a;font-size:12px;text-align:center;background:rgba(255,255,255,0.82);border-radius:8px;margin:0 8px;pointer-events:none;font-weight:500;}
-    @media (max-width:1100px) {#media-grid{column-count:4;}}
-    @media (max-width:800px)  {#media-grid{column-count:3;}}
-    @media (max-width:600px)  {#media-grid{column-count:2;}}
-    @media (max-width:420px)  {#media-grid{column-count:1;}}
-  </style>
+<meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+
+ <!-- Open Graph meta tags for sharing a file -->
+    <meta property="og:title" content="Online Code Editor">
+    <meta property="og:description" content="free online text editor for code with syntax highlighting( Html, css, javascript, php ,java, python , c ,c++,...) ,themes">
+    <meta property="og:image" content="https://code.livegap.com/images/icons/icon-256x256.png"> 
+    <meta property="og:url" content="code.livegap.com/">
+    <meta property="og:type" content="website"> 
+
+
+
+ <link rel="manifest" href="app.json">
+	<title>Online Code Editor</title>
+
+	<link rel="stylesheet" href="themes/base/jquery.ui.all.css" type="text/css" title="ui-theme" />
+
+  	<link rel="stylesheet"  href="css/main.css" type="text/css"/>
+	<link rel="stylesheet"  href="css/menu.css" type="text/css"/>
+  
+	<style type="text/css">@font-face {font-family:Source Code Pro;font-style:normal;font-weight:400;src:url(/cf-fonts/s/source-code-pro/5.0.16/cyrillic/400/normal.woff2);unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;font-display:swap;}@font-face {font-family:Source Code Pro;font-style:normal;font-weight:400;src:url(/cf-fonts/s/source-code-pro/5.0.16/greek/400/normal.woff2);unicode-range:U+0370-03FF;font-display:swap;}@font-face {font-family:Source Code Pro;font-style:normal;font-weight:400;src:url(/cf-fonts/s/source-code-pro/5.0.16/latin/400/normal.woff2);unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;font-display:swap;}@font-face {font-family:Source Code Pro;font-style:normal;font-weight:400;src:url(/cf-fonts/s/source-code-pro/5.0.16/greek-ext/400/normal.woff2);unicode-range:U+1F00-1FFF;font-display:swap;}@font-face {font-family:Source Code Pro;font-style:normal;font-weight:400;src:url(/cf-fonts/s/source-code-pro/5.0.16/latin-ext/400/normal.woff2);unicode-range:U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20CF,U+2113,U+2C60-2C7F,U+A720-A7FF;font-display:swap;}@font-face {font-family:Source Code Pro;font-style:normal;font-weight:400;src:url(/cf-fonts/s/source-code-pro/5.0.16/cyrillic-ext/400/normal.woff2);unicode-range:U+0460-052F,U+1C80-1C88,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;font-display:swap;}@font-face {font-family:Source Code Pro;font-style:normal;font-weight:400;src:url(/cf-fonts/s/source-code-pro/5.0.16/vietnamese/400/normal.woff2);unicode-range:U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;font-display:swap;}</style>
+ <meta name="keywords" content="Online code,Free  Code editor,html,css,javascript,php,python " />
+<meta name="title" content="Online Code Editor" />
+  <meta name="description" content="free online text editor for code with syntax highlighting( Html, css, javascript, php ,java, python , c ,c++,...) ,themes" />
+
+
+<link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+<link rel="icon" href="/images/favicon.png" type="image/png">
+<link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+
+
+  <link rel="stylesheet" href="codemirror/lib/codemirror.css">
+<style>
+html{font-family:'Source Code Pro'}
+#app{width:100%}
+
+
+.CodeMirror {
+    font-family:'Source Code Pro'!important;
+}
+.CodeMirror.CodeMirror-wrap,.CodeMirror{left:0px;bottom:0px;right:0px;top:30px;position:absolute;height:auto;}
+#loading div{background-color:#3498db;padding:8px}
+</style>
 </head>
-<body>
-  <div id="controls">
-    <button id="save-media-btn">미디어 저장</button>
-    <button id="export-btn">내보내기</button>
-    <button id="import-btn">가져오기</button>
-    <input type="file" id="import-file" accept="application/json" style="display:none">
-    <select id="folder-select"><option value="">전체 폴더</option></select>
-  </div>
-  <div id="media-grid"></div>
-  <div id="modal-overlay">
-    <div id="modal">
-      <h3>미디어 저장</h3>
-      <input type="text" id="img-url" placeholder="사진 URL 입력" autofocus>
-      <input type="text" id="link-url" placeholder="연결 링크 입력">
-      <input type="text" id="media-desc" placeholder="설명글 (예: 여행중)">
-      <input type="text" id="media-folder" placeholder="폴더/디렉토리 (예: 여행)">
-      <div class="actions">
-        <button class="cancel-btn">취소</button>
-        <button class="save-btn">저장</button>
+<body style="margin:0px;padding:0px;overflow:hidden">
+
+
+  <code style="display: none;">
+    <h1>Free Online Code Editor</h1>
+    <p>
+      This editor runs entirely in your web browser — no installation required.
+    </p>
+    <ul>
+      <li><strong>Main Features:</strong></li>
+      <li>Syntax highlighting</li>
+      <li>Over 10 themes available</li>
+      <li>Open and save files locally — no uploads</li>
+      <li>Powered by the <strong>CodeMirror.js</strong> library</li>
+    </ul>
+  
+    <p>
+      <strong>Supported Languages:</strong> HTML, CSS, JavaScript, TypeScript, PHP, JSON, XML, Python, Java, C, C++, C#, Go, Ruby, Swift, Rust, SQL, Shell/Bash, Perl, Lua, Scala, Clojure, Haskell, Erlang, Objective-C, Scheme, Tcl, Visual Basic, and Markdown.
+    </p>
+  
+    <p>
+      Enjoy coding!
+    </p>
+    <p>
+      For comments or feedback, contact: <a href="/cdn-cgi/l/email-protection#f0939f9495b09c998695979180de939f9d"><span class="__cf_email__" data-cfemail="6c0f0308092c00051a090b0d1c420f0301">[email&#160;protected]</span></a>
+    </p>  </code>
+  
+
+<!--div id="app" style="position:absolute;background:white;z-index:5">
+  
+  <gmenubar :model="menubarData" >
+    <template #start>
+      <svg width="35" height="40" viewBox="0 0 35 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8">
+          <path
+              d="M25.87 18.05L23.16 17.45L25.27 20.46V29.78L32.49 23.76V13.53L29.18 14.73L25.87 18.04V18.05ZM25.27 35.49L29.18 31.58V27.67L25.27 30.98V35.49ZM20.16 17.14H20.03H20.17H20.16ZM30.1 5.19L34.89 4.81L33.08 12.33L24.1 15.67L30.08 5.2L30.1 5.19ZM5.72 14.74L2.41 13.54V23.77L9.63 29.79V20.47L11.74 17.46L9.03 18.06L5.72 14.75V14.74ZM9.63 30.98L5.72 27.67V31.58L9.63 35.49V30.98ZM4.8 5.2L10.78 15.67L1.81 12.33L0 4.81L4.79 5.19L4.8 5.2ZM24.37 21.05V34.59L22.56 37.29L20.46 39.4H14.44L12.34 37.29L10.53 34.59V21.05L12.42 18.23L17.45 26.8L22.48 18.23L24.37 21.05ZM22.85 0L22.57 0.69L17.45 13.08L12.33 0.69L12.05 0H22.85Z"
+              fill="var(--p-primary-color)"
+          />
+          <path
+              d="M30.69 4.21L24.37 4.81L22.57 0.69L22.86 0H26.48L30.69 4.21ZM23.75 5.67L22.66 3.08L18.05 14.24V17.14H19.7H20.03H20.16H20.2L24.1 15.7L30.11 5.19L23.75 5.67ZM4.21002 4.21L10.53 4.81L12.33 0.69L12.05 0H8.43002L4.22002 4.21H4.21002ZM21.9 17.4L20.6 18.2H14.3L13 17.4L12.4 18.2L12.42 18.23L17.45 26.8L22.48 18.23L22.5 18.2L21.9 17.4ZM4.79002 5.19L10.8 15.7L14.7 17.14H14.74H15.2H16.85V14.24L12.24 3.09L11.15 5.68L4.79002 5.2V5.19Z"
+              fill="var(--p-text-color)"
+          />
+      </svg>
+  </template>
+  <template #item="{ item, props, hasSubmenu, root }">
+      <a v-ripple class="flex items-center" v-bind="props.action">
+          <span>{{ item.label }}</span>
+          <Badge v-if="item.badge" :class="{ 'ml-auto': !root, 'ml-2': root }" :value="item.badge" />
+          <span v-if="item.shortcut" class="ml-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1">{{ item.shortcut }}</span>
+          <i v-if="hasSubmenu" :class="['pi pi-angle-down ml-auto', { 'pi-angle-down': root, 'pi-angle-right': !root }]"></i>
+      </a>
+  </template>
+  <template #end>
+      <div class="flex items-center gap-2">
+          <InputText placeholder="Search" type="text" class="w-32 sm:w-auto" />
+          <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" shape="circle" />
       </div>
-    </div>
+  </template>
+    </gmenubar>
+
+
+  xxxxxxxxxxxxxxxxxxxx
+</div-->
+
+<ul id="menu" ></ul>
+<div id="loading" style="position:fixed;top:0px;right:0px;"><div class='Core'>Loading...</div></div>
+<input id="openFile" type="file"  name="openFile"  style="display:none" >
+
+<textarea id="code" style="display:none">
+
+    <!DOCTYPE html>
+  <html>
+    <head>
+      <title> Code | Livegap </title>
+    </head>
+
+    <body>
+
+                      <!-- Free Online Code Editor -->
+      This editor runs entirely in your web browser — no installation required.
+      
+        🔧 Main Features:
+      
+            Syntax highlighting
+            Over 10 customizable themes
+            Open and save files locally — no uploads
+            Powered by the CodeMirror.js library
+      
+        🌐 Supported Languages:
+      
+            HTML, CSS, JavaScript, TypeScript, PHP, JSON, XML, Python, Java, C, C++, C#, Go, Ruby, Swift, Rust, SQL, Shell/Bash, Perl, Lua, Scala, Clojure, Haskell, Erlang, Objective-C, Scheme, Tcl, Visual Basic, and Markdown.
+      
+      
+        🚀 Enjoy coding!
+
+            For comments or feedback, contact us at: code@livegap.com
+      
+    </body>
+  </html> </textarea >
+
+<div class="share-container">
+  <button class="share-button" onclick="if (!window.__cfRLUnblockHandlers) return false; toggleShareOptions()" data-cf-modified-e9ef9ec665224f0919add946-="">
+    <span>Share</span><br/>
+    <span style="color:black;font-variant: all-small-caps;">your code</span>
+  </button>
+  <div class="share-options">
+    <a href="#" class="share-option" onclick="if (!window.__cfRLUnblockHandlers) return false; shareAsLink()" data-cf-modified-e9ef9ec665224f0919add946-="">Link</a>
+    <a href="#" class="share-option" onclick="if (!window.__cfRLUnblockHandlers) return false; shareToEmail()" data-cf-modified-e9ef9ec665224f0919add946-="">Email</a>
+    <a href="#" class="share-option" onclick="if (!window.__cfRLUnblockHandlers) return false; shareToTwitter()" data-cf-modified-e9ef9ec665224f0919add946-="">Twitter</a>
+    <a href="#" class="share-option" onclick="if (!window.__cfRLUnblockHandlers) return false; shareToReddit()" data-cf-modified-e9ef9ec665224f0919add946-="">Reddit</a>
+    <a href="#" class="share-option" onclick="if (!window.__cfRLUnblockHandlers) return false; shareToFacebook()" data-cf-modified-e9ef9ec665224f0919add946-="">Facebook</a>
+    <a href="#" class="share-option" onclick="if (!window.__cfRLUnblockHandlers) return false; shareToWhatsApp()" data-cf-modified-e9ef9ec665224f0919add946-="">WhatsApp</a>
+    <a href="#" class="share-option" onclick="if (!window.__cfRLUnblockHandlers) return false; shareToTelegram()" data-cf-modified-e9ef9ec665224f0919add946-="">Telegram</a>
+    <a href="#" class="share-option" onclick="if (!window.__cfRLUnblockHandlers) return false; shareToStackOverflow()" data-cf-modified-e9ef9ec665224f0919add946-="">Stack Overflow</a>
+    <a href="#" class="share-option" onclick="if (!window.__cfRLUnblockHandlers) return false;  shareToLinkedIn()" data-cf-modified-e9ef9ec665224f0919add946-="">LinkedIn</a> 
+    <a href="#" class="share-option" onclick="if (!window.__cfRLUnblockHandlers) return false;  shareToPinterest()" data-cf-modified-e9ef9ec665224f0919add946-="">Pinterest</a> 
+    <a href="#" class="share-option" onclick="if (!window.__cfRLUnblockHandlers) return false;  shareToTumblr()" data-cf-modified-e9ef9ec665224f0919add946-="">Tumblr</a>     
+   
   </div>
+</div>
+
+ <!--script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+ <script src="https://unpkg.com/primevue/umd/primevue.min.js"></script>
+ <script src="https://unpkg.com/@primeuix/themes/umd/aura.js"></script-->
+
+ <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="e9ef9ec665224f0919add946-text/javascript"></script>
+<script src="js/ui-uncomplete.js" type="e9ef9ec665224f0919add946-text/javascript"></script>
+<script src="js/menu.js" type="e9ef9ec665224f0919add946-text/javascript"></script>
+
+<script src="codemirror/lib/codemirror.min.js" type="e9ef9ec665224f0919add946-text/javascript"></script>
+<script src="codemirror/mode/xml/xml.js" type="e9ef9ec665224f0919add946-text/javascript"></script>
 
 
-  <script>
-const STORAGE_KEY = 'mediaList_' + (location.pathname.replace(/\W/g,'') || 'index');
+<!--script src="js/app.js"></script-->
 
-    // 요소
-    const saveBtn = document.getElementById('save-media-btn'),
-      exportBtn = document.getElementById('export-btn'),
-      importBtn = document.getElementById('import-btn'),
-      importFile = document.getElementById('import-file'),
-      overlay = document.getElementById('modal-overlay'),
-      cancelBtn = document.querySelector('.cancel-btn'),
-      confirmBtn = document.querySelector('.save-btn'),
-      imgInput = document.getElementById('img-url'),
-      linkInput = document.getElementById('link-url'),
-      descInput = document.getElementById('media-desc'),
-      folderInput = document.getElementById('media-folder'),
-      folderSelect = document.getElementById('folder-select'),
-      gridContainer = document.getElementById('media-grid');
-    let editingIndex = null;
 
-    // 모달 열기
-    saveBtn.onclick = () => openModal();
-    function openModal(item, idx) {
-      if (item) {
-        imgInput.value = item.imgUrl || "";
-        linkInput.value = item.linkUrl || "";
-        descInput.value = item.desc || '';
-        folderInput.value = item.folder || '';
-        confirmBtn.textContent = '수정';
-        editingIndex = idx;
-      } else {
-        imgInput.value = '';
-        linkInput.value = '';
-        descInput.value = '';
-        folderInput.value = '';
-        confirmBtn.textContent = '저장';
-        editingIndex = null;
-      }
-      overlay.style.display = 'flex';
-      imgInput.focus();
-    }
-    cancelBtn.onclick = () => { overlay.style.display = 'none'; editingIndex = null; };
 
-    // 저장
-    confirmBtn.onclick = () => {
-      const iurl = imgInput.value.trim();
-      if (!iurl) { alert('사진 URL을 입력해주세요.'); imgInput.focus(); return; }
-      let lurl = linkInput.value.trim();
-      if (!lurl) { alert('연결 링크를 입력해주세요.'); linkInput.focus(); return; }
-      if (!/^https?:\/\//i.test(lurl)) lurl = 'https://' + lurl;
-      const desc = descInput.value.trim();
-      const folder = folderInput.value.trim();
-      let list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      const data = { imgUrl: iurl, linkUrl: lurl, desc, folder };
-      if (editingIndex !== null) list[editingIndex] = data;
-      else list.push(data);
-     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-      overlay.style.display = 'none';
-      folderSelect.value = "";
-      renderGrid();
-      editingIndex = null;
-    };
+    <script type="e9ef9ec665224f0919add946-text/javascript">
+//if the url have ShareToken on the Url
 
-    exportBtn.onclick = () => {
-      const mediaList = JSON.parse(localStorage.getItem('mediaList') || '[]');
-      const data = { mediaList: mediaList };
-      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'mediaList.json';
-      a.click();
-      URL.revokeObjectURL(url);
-    };
+    const params = new URLSearchParams(window.location.search);
+    const urlShareToken = params.get("st");
 
-    importBtn.onclick = () => importFile.click();
-    importFile.onchange = e => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = evt => {
-        try {
-          const data = JSON.parse(evt.target.result);
-          if (Array.isArray(data.mediaList)) {
-            localStorage.setItem('mediaList', JSON.stringify(data.mediaList));
-            folderSelect.value = "";
-            renderGrid();
-            alert('데이터가 복원되었습니다.');
-          }
-        } catch {
-          alert('파일 읽기 중 오류가 발생했습니다.');
-        }
-      };
-      reader.readAsText(file);
-      importFile.value = null;
-    };
+    if (urlShareToken) {
 
-    function updateFolderSelect(folders) {
-      folderSelect.innerHTML = `<option value="">전체 폴더</option>`;
-      folders.forEach(f=>{
-        const opt = document.createElement('option');
-        opt.value = f; opt.innerText = f;
-        folderSelect.appendChild(opt);
-      });
-    }
+      history.pushState("", document.title, window.location.pathname);
+/* 
+      document.getElementById("code").value="loading code ...";
 
-    function renderGrid() {
-      let list = JSON.parse(localStorage.getItem('mediaList') || '[]');
-      const curFolder = folderSelect.value;
-      if (curFolder) list = list.filter(x=>x.folder===curFolder);
-      gridContainer.innerHTML = '';
-      list.slice(0, 500).forEach((item, idx) => {
-        const card = document.createElement('div');
-        card.className = 'grid-item';
-        card.style.position = 'relative';
-        const img = document.createElement('img');
-        img.src = item.imgUrl;
-        img.alt = '';
-        img.onerror = function() {
-          this.src = 'https://via.placeholder.com/300x180/ccc/fff?text=Image+Not+Found';
-        }
-        img.addEventListener('click', () => window.open(item.linkUrl, '_blank'));
-        if(item.desc) {
-          const desc = document.createElement('div');
-          desc.className = 'desc-label';
-          desc.textContent = item.desc; // <--- 숫자 부분 제거!
-          card.appendChild(desc);
-        }
-        const editBtn = document.createElement('button');
-        editBtn.className = 'edit-btn';
-        editBtn.textContent = '수정';
-        editBtn.addEventListener('click', e => { e.stopPropagation(); openModal(item, idx); });
-        card.append(img, editBtn);
-        gridContainer.append(card);
-      });
+      fetch(`php/getcode.php?shareToken=${urlShareToken}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data && data.files && data.files.length > 0) {
+            const file = data.files[0];
+            editor.setValue(file.content);
+           FileName=file.title;
+           //document.title=file.title;
+          mimeType=file.mime;
+          changeMode(mimeType);
 
-      // 드래그 정렬
-      Sortable.create(gridContainer, {
-        animation: 150,
-        onEnd: function (evt) {
-          let allList = JSON.parse(localStorage.getItem('mediaList') || '[]');
-          if(curFolder) {
-            const indices = [];
-            allList.forEach((x,i)=>{ if(x.folder===curFolder) indices.push(i); });
-            const [movedIdx] = indices.splice(evt.oldIndex,1);
-            indices.splice(evt.newIndex,0,movedIdx);
-            const reordered = indices.map(i=>allList[i]);
-            let cnt=0;
-            allList = allList.map(x=>
-              x.folder===curFolder ? reordered[cnt++] : x
-            );
           } else {
-            const [moved] = allList.splice(evt.oldIndex, 1);
-            allList.splice(evt.newIndex, 0, moved);
+            console.warn("No files found for this share token.");
           }
-          localStorage.setItem('mediaList', JSON.stringify(allList));
-          renderGrid();
-        }
-      });
+        })
+        .catch(err => console.error("Error loading shared code:", err));
 
-      // 폴더 옵션 업데이트
-      const folders = Array.from(new Set((JSON.parse(localStorage.getItem('mediaList') || '[]')).map(x=>x.folder).filter(Boolean)));
-      updateFolderSelect(folders);
+*/  
     }
 
-    folderSelect.onchange = renderGrid;
-    document.addEventListener('DOMContentLoaded', renderGrid);
-  </script>
-</body>
+//-------------
+
+
+let fileHandle = null;
+let Charset="utf-8";
+let mimeType="text/html";
+let FileName="Untitled.html";
+let shareToken=generateId();
+
+function generateId(randomLength = 6) {
+  const now = new Date();
+
+  const day = now.getDate().toString(36);             // base-36, no padding
+  const month = (now.getMonth() + 1).toString(36);     // base-36, no padding
+  const year = (now.getFullYear() % 100).toString(36).padStart(2, '0'); // still padded to 2 chars
+  const hour = now.getHours().toString(36);            // base-36, no padding
+
+  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let randomPart = '';
+  for (let i = 0; i < randomLength; i++) {
+    randomPart += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+
+  return `${day}${month}${year}${hour}${randomPart}`;
+}
+
+ const languageSettings = {
+  'text/html': { name: 'HTML', script: 'codemirror/mode/htmlmixed/htmlmixed.js', mode: 'text/html', ext: 'html' },
+  'text/css': { name: 'CSS', script: 'codemirror/mode/css/css.js', mode: 'css', ext: 'css' },
+  'text/javascript': { name: 'JavaScript', script: 'codemirror/mode/javascript/javascript.js', mode: 'javascript', ext: 'js' },
+  'text/x-java': { name: 'Java', script: 'codemirror/mode/clike/clike.js', mode: 'text/x-java', ext: 'java' },
+  'text/x-python': { name: 'Python', script: 'codemirror/mode/python/python.js', mode: 'python', ext: 'py' },
+  'text/x-c++src': { name: 'C++', script: 'codemirror/mode/clike/clike.js', mode: 'text/x-c++src', ext: 'cpp' },
+  'text/x-csrc': { name: 'C', script: 'codemirror/mode/clike/clike.js', mode: 'text/x-csrc', ext: 'c' },
+  'text/x-kotlin': { name: 'Kotlin', script: 'codemirror/mode/clike/clike.js', mode: 'text/x-kotlin', ext: 'kt' },
+  'application/json': { name: 'JSON', script: 'codemirror/mode/javascript/javascript.js', mode: 'application/json', ext: 'json' },
+  'application/xml': { name: 'XML', script: 'codemirror/mode/xml/xml.js', mode: 'application/xml', ext: 'xml' },
+  'application/javascript': { name: 'JavaScript', script: 'codemirror/mode/javascript/javascript.js', mode: 'javascript', ext: 'js' },
+  'text/typescript': { name: 'TypeScript', script: 'codemirror/mode/javascript/javascript.js', mode: 'text/typescript', ext: 'ts' },
+  'text/x-go': { name: 'Go', script: 'codemirror/mode/go/go.js', mode: 'go', ext: 'go' },
+  'text/x-ruby': { name: 'Ruby', script: 'codemirror/mode/ruby/ruby.js', mode: 'ruby', ext: 'rb' },
+  'text/x-swift': { name: 'Swift', script: 'codemirror/mode/swift/swift.js', mode: 'swift', ext: 'swift' },
+  'text/x-rustsrc': { name: 'Rust', script: 'codemirror/mode/rust/rust.js', mode: 'rust', ext: 'rs' },
+  'text/x-sql': { name: 'SQL', script: 'codemirror/mode/sql/sql.js', mode: 'sql', ext: 'sql' },
+  'text/x-sh': { name: 'Shell/Bash', script: 'codemirror/mode/shell/shell.js', mode: 'shell', ext: 'sh' },
+  'text/x-perl': { name: 'Perl', script: 'codemirror/mode/perl/perl.js', mode: 'perl', ext: 'pl' },
+  'text/x-lua': { name: 'Lua', script: 'codemirror/mode/lua/lua.js', mode: 'lua', ext: 'lua' },
+  'text/x-scala': { name: 'Scala', script: 'codemirror/mode/clike/clike.js', mode: 'text/x-scala', ext: 'scala' },
+  'text/x-clojure': { name: 'Clojure', script: 'codemirror/mode/clojure/clojure.js', mode: 'clojure', ext: 'clj' },
+  'text/x-haskell': { name: 'Haskell', script: 'codemirror/mode/haskell/haskell.js', mode: 'haskell', ext: 'hs' },
+  'text/x-erlang': { name: 'Erlang', script: 'codemirror/mode/erlang/erlang.js', mode: 'erlang', ext: 'erl' },
+  'text/x-csharp': { name: 'C#', script: 'codemirror/mode/clike/clike.js', mode: 'text/x-csharp', ext: 'cs' },
+  'text/x-objectivec': { name: 'Objective-C', script: 'codemirror/mode/clike/clike.js', mode: 'text/x-objectivec', ext: 'm' },
+  'text/x-scheme': { name: 'Scheme', script: 'codemirror/mode/scheme/scheme.js', mode: 'scheme', ext: 'scm' },
+  'text/x-tcl': { name: 'Tcl', script: 'codemirror/mode/tcl/tcl.js', mode: 'tcl', ext: 'tcl' },
+  'text/x-vb': { name: 'Visual Basic', script: 'codemirror/mode/vb/vb.js', mode: 'vb', ext: 'vb' },
+  'text/x-markdown': { name: 'Markdown', script: 'codemirror/mode/markdown/markdown.js', mode: 'markdown', ext: 'md' }
+};
+
+
+
+//Start--------------------------------
+
+if (window.location.hash.slice(1) === "new") {document.getElementById("code").value = " ";history.pushState("", document.title, window.location.pathname
++ window.location.search);}
+else if(localStorage.getItem("code") && !urlShareToken){
+  document.getElementById("code").value = localStorage.getItem("code");
+  document.title=localStorage.getItem("title");
+  FileName=localStorage.getItem("title");
+  mimeType= localStorage.getItem("mimeType");
+}
+
+
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+function changeMode(Mime,Menulink){
+
+  if(!Mime){Mime="HTML"}
+  console.log("Mime 1",Mime)
+// if Mime not know and used file Extension
+if(!languageSettings[Mime.toLowerCase()]){
+  for(key in languageSettings){
+    if(Mime==languageSettings[key].ext){Mime=key};
+    if(Mime==languageSettings[key].name){Mime=key};
+    if(Mime.split("/")[1] && Mime.split("/")[1].toLowerCase()==languageSettings[key].name.toLowerCase()){Mime=key};
+  }
+
+}
+
+if(languageSettings[Mime.toLowerCase()]){mimeType=Mime.toLowerCase()}
+
+console.log("Mime 2",Mime,languageSettings[Mime.toLowerCase()])
+
+
+
+// try to find The Menulink
+document.querySelectorAll("#menu a.Mode").forEach((Element)=>{if(Element.innerText.toLowerCase()==languageSettings[Mime.toLowerCase()].name.toLowerCase()){Menulink=Element}});
+
+console.log(Menulink);
+//-------------------------
+
+
+function setEditorLanguage(Mime, FileName) {
+
+const lang = Mime.toLowerCase();
+const settings = languageSettings[lang];
+
+if (!settings) return FileName; // No match, do nothing
+
+loadScript(settings.script).then(function() {
+  editor.setOption("mode", settings.mode);
+});
+
+if (FileName) {
+  FileName = FileName.split(".").slice(0, -1).join(".") + '.' + settings.ext;
+}
+
+return FileName;
+}
+
+FileName = setEditorLanguage(Mime, FileName);
+/*
+if(Mime=='text/javascript' || Mime=='js' )
+{
+loadScript("codemirror/mode/css/css.js")
+.then( function() {
+editor.setOption("mode", "text/css");
+});
+*/
+if(Mime=="text/x-php" || Mime=='php')
+{
+
+Promise.all([
+loadScript("codemirror/mode/javascript/javascript.js"),
+loadScript("codemirror/mode/htmlmixed/htmlmixed.js"),
+loadScript("codemirror/mode/css/css.js"),
+loadScript("codemirror/mode/clike/clike.js"),
+loadScript("codemirror/mode/php/php.js")
+])
+.then(() => {
+editor.setOption("mode", "application/x-httpd-php");
+FileName = FileName.split(".").slice(0, -1).join(".") + '.php';
+})
+
+}
+
+
+
+
+
+//$("#menu a.Mode span.ui-icon-check").removeClass("ui-icon-check").addClass("ui-icon-empty");
+//$(Menulink).children('span').addClass("ui-icon-check").removeClass("ui-icon-empty");
+
+if(Menulink){
+document.querySelectorAll("#menu a.Mode span.ui-icon-check").forEach(el => {
+el.classList.remove("ui-icon-check");
+el.classList.add("ui-icon-empty");
+});
+
+Menulink.querySelector("span").classList.add("ui-icon-check");
+Menulink.querySelector("span").classList.remove("ui-icon-empty");
+
+}
+//---------------------------------------------------------------------
+
+}
+
+
+
+
+function completeAfter(cm, pred) {
+        var cur = cm.getCursor();
+        if (!pred || pred()) setTimeout(function() {
+          if (!cm.state.completionActive)
+            CodeMirror.showHint(cm);
+        }, 100);
+        return CodeMirror.Pass;
+      }
+
+      function completeIfAfterLt(cm) {
+        return completeAfter(cm, function() {
+          var cur = cm.getCursor();
+          return cm.getRange(CodeMirror.Pos(cur.line, cur.ch - 1), cur) == "<";
+        });
+      }
+
+      function completeIfInTag(cm) {
+        return completeAfter(cm, function() {
+          var tok = cm.getTokenAt(cm.getCursor());
+          if (tok.type == "string" && (!/['"]/.test(tok.string.charAt(tok.string.length - 1)) || tok.string.length == 1)) return false;
+          var inner = CodeMirror.innerMode(cm.getMode(), tok.state).state;
+          return inner.tagName;
+        });
+      }
+
+
+
+var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+  mode: "application/xml",
+  styleActiveLine: true,
+  lineNumbers: true,
+  lineWrapping: true,
+  extraKeys:{
+"Ctrl-Space": "autocomplete",
+"'<'": completeAfter,
+"'/'": completeIfAfterLt,
+"' '": completeIfInTag,
+"'='": completeIfInTag,
+"'{'": completeAfter,
+"':'": completeAfter,
+"';'": completeAfter,
+"','": completeAfter,
+}
+});
+
+</script>
+
+<script src="js/filereader.js" type="e9ef9ec665224f0919add946-text/javascript"></script>
+<script src="js/filesaver.js" type="e9ef9ec665224f0919add946-text/javascript"></script>
+<script type="e9ef9ec665224f0919add946-text/javascript">
+ 
+
+
+
+// Open file-------------------------------------------------------/
+
+
+var FileReaderOptions = {
+  accept: false,
+  readAsMap: { },
+   readAsDefault: 'Text',
+  on: {
+    beforestart: function(e, file) {
+    },
+    loadstart: function(e, file) { /* Native ProgressEvent */ },
+    progress: function(e, file) { /* Native ProgressEvent */ },
+    load: function(e, file) {  
+      console.log("load");  
+  editor.setValue(e.target.result);
+
+FileName=FileReaderJS.output[0].files[0].name;
+fileExt = FileReaderJS.output[0].files[0].name.split('.').pop();
+var mimeType=FileReaderJS.output[0].files[0].type|| fileExt;
+document.title=FileName;
+shareToken=generateId();
+Menulink = document.querySelector("menu .Mode");
+console.log("open Mime Type",fileExt,mimeType)
+changeMode(mimeType)
+
+},
+    error: function(e, file) { /* Native ProgressEvent */ },
+    loadend: function(e, file) { /* Native ProgressEvent */ },
+    abort: function(e, file) { /* Native ProgressEvent */ },
+    skip: function(e, file) {
+      // Called when a file is skipped.  This happens when:
+      //  1) A file doesn't match the accept option
+      //  2) false is returned in the beforestart callback
+    },
+    groupstart: function(group) {
+      // Called when a 'group' (a single drop / copy / select that may
+      // contain multiple files) is receieved.
+      // You can ignore this event if you don't care about groups
+    },
+    groupend: function(group) {
+      // Called when a 'group' is finished.
+      // You can ignore this event if you don't care about groups
+    }
+  }
+};
+
+
+   // Check if the File System Access API is supported
+   if ('showOpenFilePicker' in window) {
+      console.log(" browser supports the File System Access API");
+    var openFileInput=document.getElementById('openFile');
+
+
+      openFileInput.addEventListener('click', async (event) => {
+      try {
+        event.preventDefault();
+        [fileHandle] = await window.showOpenFilePicker();
+        const file = await fileHandle.getFile();
+        const content = await file.text();
+        console.log("file",file);
+       editor.setValue( content);
+       
+
+FileName=file.name;
+fileExt = file.name.split('.').pop();
+mimeType=file.type || fileExt;
+shareToken=generateId();
+document.title=FileName;
+Menulink = document.querySelector("menu .Mode");
+changeMode(mimeType)
+
+      } catch (err) {
+        console.error('File open cancelled or failed:', err);
+      }
+    });
+
+
+
+    } else {
+      console.log(" browser does not supports the File System Access API");
+      FileReaderJS.setupInput(document.getElementById('openFile'),FileReaderOptions);
+      //console.log(FileReaderJS);
+    }
+
+
+//------------------------------- open file --------------------------------------------//
+//  Save File  --------------------------------------------------------------------------//
+function isPWA() {
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
+  return isStandalone;
+}
+
+function newFile(){
+
+
+	var url=window.location.href; 
+	var language="en";
+	if(url.indexOf('lan=')>-1){language=url.replace(/.*lan=(..).*/,"$1")}
+
+
+ if(isPWA()) {
+	  // Get screen dimensions
+	  var screenWidth = window.width;
+	  var screenHeight = window.height;
+    const randomWindowName = `window-${Math.random().toString(36).substr(2, 9)}`;
+	newWindow=window.open("https://code.livegap.com/#new", randomWindowName,`width=${screenWidth},height=${screenHeight},top=0,left=0`)
+	if (newWindow) {newWindow.focus()}
+}
+ else{ window.open('https://code.livegap.com/#new','_blank') }
+
+
+
+
+
+
+}
+function closeFile(){window.close()}
+
+
+
+async function saveFileAs() {
+  if (window.showSaveFilePicker) {
+
+    fileName=FileName;
+    try {
+      const options = {
+            suggestedName: fileName , // Default file name
+        };
+        // Create a new file inside the selected folder
+        const save_as_fileHandle = await window.showSaveFilePicker(options);
+        const selectedFileName = save_as_fileHandle.name;
+        // Create a writable stream for the file
+        const writable = await save_as_fileHandle.createWritable();
+
+        // Write content to the file (you can replace this with your own content)
+        const content = editor.getValue();
+        await writable.write(content);
+
+        // Close the writable stream to save the file
+        await writable.close();
+        fileHandle =save_as_fileHandle;
+        document.title=selectedFileName;
+        shareToken=generateId();
+        console.log('File saved successfully!');
+    } catch (err) {
+        console.error('Error saving file:', err);
+    }
+
+
+
+
+
+
+
+
+
+  } else {
+    // fallback: download using FileSaver.js
+    const blob = new Blob([editor.getValue()], {type: mimeType+";charset="+Charset});
+    saveAs(blob, FileName);
+  }
+}
+
+
+async function saveFile() {
+  if (window.showSaveFilePicker) {
+
+    if(!fileHandle){saveFileAs(FileName);return false}
+    const writable = await fileHandle.createWritable();
+    await writable.write(editor.getValue());
+    await writable.close();
+  } else {
+    // fallback: download using FileSaver.js
+    const blob = new Blob([editor.getValue()], {type: mimeType+";charset="+Charset});
+    saveAs(blob, FileName);
+  }
+}
+
+
+//------------------------------Save File---------------------------------------------//
+function lineNumbers()
+{
+if(editor.getOption("lineNumbers")==true){
+  editor.setOption("lineNumbers",false);
+  document.querySelector("#menu a.LineNumbers span").classList.replace("ui-icon-check", "ui-icon-empty");
+
+}
+else{
+  editor.setOption("lineNumbers",true);
+  document.querySelector("#menu a.LineNumbers span").classList.add("ui-icon-check");
+  document.querySelector("#menu a.LineNumbers span").classList.remove("ui-icon-empty");
+  }
+}
+
+function lineWrapping()
+{
+
+if(editor.getOption("lineWrapping")==true){
+  editor.setOption("lineWrapping",false);
+  document.querySelector("#menu a.LineWrapping span").classList.remove("ui-icon-check");
+  document.querySelector("#menu a.LineWrapping span").classList.add("ui-icon-empty");
+}
+  else{
+    editor.setOption("lineWrapping",true);
+    document.querySelector("#menu a.LineWrapping span").classList.add("ui-icon-check");
+    document.querySelector("#menu a.LineWrapping span").classList.remove("ui-icon-empty");
+  }
+}
+
+function loading(FileName,FileId,Action)
+{
+if(Action=="Start"){
+  var newText = "<div class='" + FileId + "'>Loading " + FileName + "</div>";
+  document.getElementById("loading").innerHTML = newText + document.getElementById("loading").innerHTML;
+}
+if(Action=="Stop"){document.querySelector("#loading ." + FileId)?.remove();}
+
+}
+
+
+function Addon(PluginName,Menulink)
+{
+if(PluginName=='Emmet')
+{
+loading('Emmet','Emmet','Start');
+loadScript("codemirror/addon/emmet.min.js")
+  .then(function() {
+    editor.setOption("profile", "html");
+    loading('Emmet', 'Emmet', 'Stop');
+  })
+
+}
+
+//$(Menulink).children('span').addClass("ui-icon-check").removeClass("ui-icon-empty");
+const span = Menulink.querySelector("span");
+span.classList.add("ui-icon-check");
+span.classList.remove("ui-icon-empty");
+
+}
+
+//add new themes
+function changeTheme(ThemeName,Menulink)
+{
+    var head  = document.getElementsByTagName('head')[0];
+    var link  = document.createElement('link');
+    link.rel  = 'stylesheet';
+    link.type = 'text/css';
+    link.href = 'codemirror/theme/'+ThemeName+'.css';
+    link.media = 'all';
+    head.appendChild(link);
+
+//$("#menu a.Theme span.ui-icon-check").removeClass("ui-icon-check").addClass("ui-icon-empty");
+// Remove "ui-icon-check" and add "ui-icon-empty" to the current checked theme
+const currentCheckedIcon = document.querySelector("#menu a.Theme span.ui-icon-check");
+if (currentCheckedIcon) {
+  currentCheckedIcon.classList.remove("ui-icon-check");
+  currentCheckedIcon.classList.add("ui-icon-empty");
+}
+
+
+
+//$(Menulink).children('span').addClass("ui-icon-check").removeClass("ui-icon-empty");
+// Add "ui-icon-check" and remove "ui-icon-empty" to the selected menu link
+
+// try to find The Menulink
+
+document.querySelectorAll("#menu a.Theme").forEach((Element)=>{if(Element.innerText.toLowerCase()==ThemeName.toLowerCase()){Menulink=Element}});
+
+//-------------------------
+
+
+const menuLink = Menulink;
+if (menuLink) {
+  const span = menuLink.querySelector('span');
+  if (span) {
+    span.classList.add("ui-icon-check");
+    span.classList.remove("ui-icon-empty");
+  }
+}
+
+editor.setOption("theme",ThemeName);
+if (typeof(Storage) !== "undefined") {localStorage.setItem("theme", ThemeName);}
+
+
+
+
+}
+
+loading("Loading... ","Core","Stop")
+
+
+
+
+
+
+// Load foldAll.js
+loadScript("codemirror/addon/fold/foldAll.js")
+.then(  function() {
+  editor.setOption("foldGutter", true);
+  editor.setOption("gutters", ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]);
+});
+
+// Load edit.js
+loadScript("codemirror/addon/edit/edit.js")
+.then( function() {
+  editor.setOption("matchBrackets", true);
+  editor.setOption("autoCloseBrackets", true);
+  editor.setOption("matchTags", { bothTags: true });
+  editor.setOption("autoCloseTags", true);
+});
+
+// Load hint.js
+loadScript("codemirror/addon/hint/hint.js")
+.then( function() {
+  changeMode(mimeType);
+});
+
+
+</script>
+
+
+<!-- Start of StatCounter Code for Default Guide -->
+<script type="e9ef9ec665224f0919add946-text/javascript">
+var sc_project=10141354; 
+var sc_invisible=1; 
+var sc_security="ed67a16e"; 
+</script>
+<script type="e9ef9ec665224f0919add946-text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/10141354/0/ed67a16e/1/"
+alt="Web Analytics"
+referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
+<!-- End of Statcounter Code -->
+<script type="e9ef9ec665224f0919add946-text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-41138874-3', 'auto');
+  ga('send', 'pageview');
+
+
+
+
+
+  _theme=localStorage.getItem("theme");
+  if(_theme){changeTheme(_theme)}
+
+  //Shortcut Keyboard
+  window.addEventListener('keydown', function (e) {
+  const isMac = navigator.platform.toUpperCase().includes('MAC');
+  const CtrlShortcut = (isMac && e.metaKey) || (!isMac && e.ctrlKey);
+
+  if (CtrlShortcut && e.shiftKey && e.key.toLowerCase() === 's') {
+    e.preventDefault();
+    console.log("Save As");
+    saveFileAs();
+  } else if (CtrlShortcut && e.key.toLowerCase() === 's') {
+    e.preventDefault();
+    console.log("Save File");
+    saveFile();
+  } else if (CtrlShortcut && e.key.toLowerCase() === 'd') {
+    e.preventDefault();
+    console.log("New File");
+    newFile();
+  } else if (CtrlShortcut &&  e.key.toLowerCase() === 'o') {
+    e.preventDefault();
+    console.log("Open File");
+    openFileInput.click();
+  }
+});
+
+window.addEventListener('beforeunload', function () {
+
+  localStorage.setItem('code',editor.getValue());
+  localStorage.setItem('title',document.title);
+  localStorage.setItem('mimeType',mimeType);
+  
+});
+
+
+
+if ('launchQueue' in window && 'files' in LaunchParams.prototype) {
+  launchQueue.setConsumer(async (launchParams) => {
+    if (!launchParams.files.length) return;
+
+    for (const handle of launchParams.files) {
+      const file = await handle.getFile();
+      const text = await file.text();
+
+fileHandle =handle;
+FileName=file.name;
+mimeType=file.type;
+editor.setValue( text);
+changeMode(mimeType);
+
+
+    }
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+setTimeout(()=>{
+  changeMode(mimeType);
+    
+  _theme=localStorage.getItem("theme");
+  if(_theme){changeTheme(_theme)}
+
+},1000);
+
+</script>
+<script src="js/share.js" type="e9ef9ec665224f0919add946-text/javascript"></script>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="e9ef9ec665224f0919add946-|49" defer></script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"949710ab3921fcd7","serverTiming":{"name":{"cfExtPri":true,"cfEdge":true,"cfOrigin":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"version":"2025.5.0","token":"dc88cd8c8faa453095610476bb687143"}' crossorigin="anonymous"></script>
+</body >
 </html>
