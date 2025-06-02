@@ -1,4 +1,3 @@
- 
  <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -21,7 +20,7 @@
     .actions button {padding:8px 12px;border:none;border-radius:4px;cursor:pointer;margin-left:8px;font-size:14px;}
     .save-btn {background:#28a745;color:#fff;}
     .cancel-btn {background:#dc3545;color:#fff;}
-    #media-grid {column-count:5;column-gap:10px;margin:1200px auto 20px;width:100%;max-width:1400px;}
+    #media-grid {column-count:5;column-gap:10px;margin:60px auto 20px;width:100%;max-width:1400px;}
     .grid-item {break-inside:avoid;margin-bottom:10px;position:relative;background:#fff;box-shadow:0 1px 6px #d0d0ff44;}
     .grid-item img {width:100%;height:auto;display:block;border-radius:8px;cursor:pointer;}
     .edit-btn {position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.6);border:none;color:#fff;padding:4px 6px;border-radius:4px;cursor:pointer;font-size:12px;}
@@ -55,7 +54,8 @@
     </div>
   </div>
   <script>
-const STORAGE_KEY = 'mediaList_' + (location.pathname.replace(/\W/g,'') || 'index');
+    // 🔴 완전 독립적인 키만 사용 (다른 페이지와 충돌X)
+    const STORAGE_KEY = 'mediaList_gridonly';
 
     // 요소
     const saveBtn = document.getElementById('save-media-btn'),
@@ -109,7 +109,7 @@ const STORAGE_KEY = 'mediaList_' + (location.pathname.replace(/\W/g,'') || 'inde
       const data = { imgUrl: iurl, linkUrl: lurl, desc, folder };
       if (editingIndex !== null) list[editingIndex] = data;
       else list.push(data);
-     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
       overlay.style.display = 'none';
       folderSelect.value = "";
       renderGrid();
@@ -117,7 +117,7 @@ const STORAGE_KEY = 'mediaList_' + (location.pathname.replace(/\W/g,'') || 'inde
     };
 
     exportBtn.onclick = () => {
-      const mediaList = JSON.parse(localStorage.getItem('mediaList') || '[]');
+      const mediaList = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       const data = { mediaList: mediaList };
       const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -137,7 +137,7 @@ const STORAGE_KEY = 'mediaList_' + (location.pathname.replace(/\W/g,'') || 'inde
         try {
           const data = JSON.parse(evt.target.result);
           if (Array.isArray(data.mediaList)) {
-            localStorage.setItem('mediaList', JSON.stringify(data.mediaList));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data.mediaList));
             folderSelect.value = "";
             renderGrid();
             alert('데이터가 복원되었습니다.');
@@ -160,7 +160,7 @@ const STORAGE_KEY = 'mediaList_' + (location.pathname.replace(/\W/g,'') || 'inde
     }
 
     function renderGrid() {
-      let list = JSON.parse(localStorage.getItem('mediaList') || '[]');
+      let list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       const curFolder = folderSelect.value;
       if (curFolder) list = list.filter(x=>x.folder===curFolder);
       gridContainer.innerHTML = '';
@@ -178,7 +178,7 @@ const STORAGE_KEY = 'mediaList_' + (location.pathname.replace(/\W/g,'') || 'inde
         if(item.desc) {
           const desc = document.createElement('div');
           desc.className = 'desc-label';
-          desc.textContent = item.desc; // <--- 숫자 부분 제거!
+          desc.textContent = item.desc;
           card.appendChild(desc);
         }
         const editBtn = document.createElement('button');
@@ -193,7 +193,7 @@ const STORAGE_KEY = 'mediaList_' + (location.pathname.replace(/\W/g,'') || 'inde
       Sortable.create(gridContainer, {
         animation: 150,
         onEnd: function (evt) {
-          let allList = JSON.parse(localStorage.getItem('mediaList') || '[]');
+          let allList = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
           if(curFolder) {
             const indices = [];
             allList.forEach((x,i)=>{ if(x.folder===curFolder) indices.push(i); });
@@ -208,13 +208,13 @@ const STORAGE_KEY = 'mediaList_' + (location.pathname.replace(/\W/g,'') || 'inde
             const [moved] = allList.splice(evt.oldIndex, 1);
             allList.splice(evt.newIndex, 0, moved);
           }
-          localStorage.setItem('mediaList', JSON.stringify(allList));
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(allList));
           renderGrid();
         }
       });
 
       // 폴더 옵션 업데이트
-      const folders = Array.from(new Set((JSON.parse(localStorage.getItem('mediaList') || '[]')).map(x=>x.folder).filter(Boolean)));
+      const folders = Array.from(new Set((JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')).map(x=>x.folder).filter(Boolean)));
       updateFolderSelect(folders);
     }
 
