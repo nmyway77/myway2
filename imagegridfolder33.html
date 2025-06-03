@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>링크용 그림 그리드 + CKEditor5 (토글 오류 완벽 해결)</title>
+  <title>링크용 그림 그리드 + CKEditor5 (토글 오류 완전해결)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
   <!-- CKEditor5 Classic CDN -->
@@ -135,7 +135,6 @@
       margin: 52px 2vw 0 2vw;
       background: #fff;
       border-radius: 6px;
-      /* 항상 DOM에 남아있고, display만 토글 */
     }
     #editor-editbox.hide {
       display: none !important;
@@ -227,87 +226,255 @@
     </div>
     <div id="editor-preview"></div>
   </div>
-<script>
-  // 그림그리드 저장키
-  const STORAGE_KEY = 'mediaList_gridonly';
-  const EDITOR_KEY = 'mediaEditor_html';
+  <script>
+    // ---- 그림그리드 + 미디어 버튼 ----
+    const STORAGE_KEY = 'mediaList_gridonly';
+    const EDITOR_KEY = 'mediaEditor_html';
 
-  // ... (그림그리드 스크립트 생략, 기존과 동일) ...
+    const saveBtn = document.getElementById('save-media-btn'),
+      exportBtn = document.getElementById('export-btn'),
+      importBtn = document.getElementById('import-btn'),
+      importFile = document.getElementById('import-file'),
+      overlay = document.getElementById('modal-overlay'),
+      cancelBtn = document.querySelector('.cancel-btn'),
+      confirmBtn = document.querySelector('.save-btn'),
+      imgInput = document.getElementById('img-url'),
+      linkInput = document.getElementById('link-url'),
+      descInput = document.getElementById('media-desc'),
+      folderInput = document.getElementById('media-folder'),
+      folderSelect = document.getElementById('folder-select'),
+      gridContainer = document.getElementById('media-grid');
+    let editingIndex = null;
 
-  // ---- CKEditor 5 (토글 + 버튼 우측상단) ----
-  let ckeditorInstance;
-  let lastSavedEditorHtml = "";
-  let isEditing = false;
-  const editToggleBtn = document.getElementById('edit-toggle-btn');
-  const saveEditorBtn = document.getElementById('save-editor-btn');
-  const clearEditorBtn = document.getElementById('clear-editor-btn');
-  const editorEditBox = document.getElementById('editor-editbox');
-  const editorPreview = document.getElementById('editor-preview');
-
-  function updateEditorView() {
-    if(isEditing) {
-      editorEditBox.classList.remove('hide');
-      saveEditorBtn.style.display = "inline-block";
-      clearEditorBtn.style.display = "inline-block";
-      editToggleBtn.style.display = "none";
-    } else {
-      editorEditBox.classList.add('hide');
-      saveEditorBtn.style.display = "none";
-      clearEditorBtn.style.display = "none";
-      editToggleBtn.style.display = "inline-block";
-    }
-  }
-
-  ClassicEditor
-    .create(document.querySelector('#editor'), {
-      toolbar: [
-        'heading', '|', 'bold', 'italic', 'underline', 'link', 'bulletedList', 'numberedList', 'blockQuote',
-        '|', 'insertTable', 'imageUpload', 'undo', 'redo', 'alignment', 'outdent', 'indent'
-      ],
-      table: {
-        contentToolbar: [
-          'tableColumn', 'tableRow', 'mergeTableCells'
-        ]
+    saveBtn.onclick = () => openModal();
+    function openModal(item, idx) {
+      if (item) {
+        imgInput.value = item.imgUrl || "";
+        linkInput.value = item.linkUrl || "";
+        descInput.value = item.desc || '';
+        folderInput.value = item.folder || '';
+        confirmBtn.textContent = '수정';
+        editingIndex = idx;
+      } else {
+        imgInput.value = '';
+        linkInput.value = '';
+        descInput.value = '';
+        folderInput.value = '';
+        confirmBtn.textContent = '저장';
+        editingIndex = null;
       }
-    })
-    .then(editor => {
-      ckeditorInstance = editor;
-      const html = localStorage.getItem(EDITOR_KEY) || "";
-      editor.setData(html);
-      lastSavedEditorHtml = html;
-      renderEditorPreview();
-      isEditing = false;
-      updateEditorView(); // 🔴 생성 직후 버튼 표시 강제
+      overlay.style.display = 'flex';
+      imgInput.focus();
+    }
+    cancelBtn.onclick = () => { overlay.style.display = 'none'; editingIndex = null; };
 
-      // 이벤트는 생성 직후 연결!
-      editToggleBtn.onclick = function() {
-        isEditing = true;
-        updateEditorView();
+    confirmBtn.onclick = () => {
+      const iurl = imgInput.value.trim();
+      if (!iurl) { alert('사진 URL을 입력해주세요.'); imgInput.focus(); return; }
+      let lurl = linkInput.value.trim();
+      if (!lurl) { alert('연결 링크를 입력해주세요.'); linkInput.focus(); return; }
+      if (!/^https?:\/\//i.test(lurl)) lurl = 'https://' + lurl;
+      const desc = descInput.value.trim();
+      const folder = folderInput.value.trim();
+      let list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      const data = { imgUrl: iurl, linkUrl: lurl, desc, folder };
+      if (editingIndex !== null) list[editingIndex] = data;
+      else list.push(data);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      overlay.style.display = 'none';
+      folderSelect.value = "";
+      renderGrid();
+      editingIndex = null;
+    };
+
+    function updateFolderSelect(folders) {
+      folderSelect.innerHTML = `<option value="">전체 폴더</option>`;
+      folders.forEach(f=>{
+        const opt = document.createElement('option');
+        opt.value = f; opt.innerText = f;
+        folderSelect.appendChild(opt);
+      });
+    }
+
+    function renderGrid() {
+      let list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      const curFolder = folderSelect.value;
+      if (curFolder) list = list.filter(x=>x.folder===curFolder);
+      gridContainer.innerHTML = '';
+      list.slice(0, 500).forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'grid-item';
+        card.style.position = 'relative';
+        const img = document.createElement('img');
+        img.src = item.imgUrl;
+        img.alt = '';
+        img.onerror = function() {
+          this.src = 'https://via.placeholder.com/300x180/ccc/fff?text=Image+Not+Found';
+        }
+        img.addEventListener('click', () => window.open(item.linkUrl, '_blank'));
+        if(item.desc) {
+          const desc = document.createElement('div');
+          desc.className = 'desc-label';
+          desc.textContent = item.desc;
+          card.appendChild(desc);
+        }
+        const editBtn = document.createElement('button');
+        editBtn.className = 'edit-btn';
+        editBtn.textContent = '수정';
+        editBtn.addEventListener('click', e => { e.stopPropagation(); openModal(item, idx); });
+        card.append(img, editBtn);
+        gridContainer.append(card);
+      });
+
+      // 드래그 정렬
+      Sortable.create(gridContainer, {
+        animation: 150,
+        onEnd: function (evt) {
+          let allList = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+          if(curFolder) {
+            const indices = [];
+            allList.forEach((x,i)=>{ if(x.folder===curFolder) indices.push(i); });
+            const [movedIdx] = indices.splice(evt.oldIndex,1);
+            indices.splice(evt.newIndex,0,movedIdx);
+            const reordered = indices.map(i=>allList[i]);
+            let cnt=0;
+            allList = allList.map(x=>
+              x.folder===curFolder ? reordered[cnt++] : x
+            );
+          } else {
+            const [moved] = allList.splice(evt.oldIndex, 1);
+            allList.splice(evt.newIndex, 0, moved);
+          }
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(allList));
+          renderGrid();
+        }
+      });
+
+      // 폴더 옵션 업데이트
+      const folders = Array.from(new Set((JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')).map(x=>x.folder).filter(Boolean)));
+      updateFolderSelect(folders);
+    }
+    folderSelect.onchange = renderGrid;
+    document.addEventListener('DOMContentLoaded', renderGrid);
+
+    // ---- 내보내기/가져오기 (그림+에디터 동시) ----
+    exportBtn.onclick = () => {
+      const mediaList = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      const editorHtml = localStorage.getItem(EDITOR_KEY) || "";
+      const data = { mediaList, editorHtml };
+      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'mediaEditor.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+
+    importBtn.onclick = () => importFile.click();
+    importFile.onchange = e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = evt => {
+        try {
+          const data = JSON.parse(evt.target.result);
+          if (Array.isArray(data.mediaList)) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data.mediaList));
+            localStorage.setItem(EDITOR_KEY, typeof data.editorHtml === "string" ? data.editorHtml : "");
+            folderSelect.value = "";
+            renderGrid();
+            setTimeout(function() {
+              if (ckeditorInstance) {
+                ckeditorInstance.setData(typeof data.editorHtml === "string" ? data.editorHtml : "");
+                lastSavedEditorHtml = typeof data.editorHtml === "string" ? data.editorHtml : "";
+                renderEditorPreview();
+                isEditing = false;
+                updateEditorView();
+              }
+            }, 300);
+            alert('데이터가 복원되었습니다.');
+          } else {
+            alert('파일 형식이 올바르지 않습니다.');
+          }
+        } catch {
+          alert('파일 읽기 중 오류가 발생했습니다.');
+        }
       };
-      saveEditorBtn.onclick = function() {
-        if (!ckeditorInstance) return;
-        const html = ckeditorInstance.getData();
-        localStorage.setItem(EDITOR_KEY, html);
+      reader.readAsText(file);
+      importFile.value = null;
+    };
+
+    // ---- CKEditor 5 (토글 + 버튼 우측상단) ----
+    let ckeditorInstance;
+    let lastSavedEditorHtml = "";
+    let isEditing = false;
+    const editToggleBtn = document.getElementById('edit-toggle-btn');
+    const saveEditorBtn = document.getElementById('save-editor-btn');
+    const clearEditorBtn = document.getElementById('clear-editor-btn');
+    const editorEditBox = document.getElementById('editor-editbox');
+    const editorPreview = document.getElementById('editor-preview');
+
+    function updateEditorView() {
+      if(isEditing) {
+        editorEditBox.classList.remove('hide');
+        saveEditorBtn.style.display = "inline-block";
+        clearEditorBtn.style.display = "inline-block";
+        editToggleBtn.style.display = "none";
+      } else {
+        editorEditBox.classList.add('hide');
+        saveEditorBtn.style.display = "none";
+        clearEditorBtn.style.display = "none";
+        editToggleBtn.style.display = "inline-block";
+      }
+    }
+
+    ClassicEditor
+      .create(document.querySelector('#editor'), {
+        toolbar: [
+          'heading', '|', 'bold', 'italic', 'underline', 'link', 'bulletedList', 'numberedList', 'blockQuote',
+          '|', 'insertTable', 'imageUpload', 'undo', 'redo', 'alignment', 'outdent', 'indent'
+        ],
+        table: {
+          contentToolbar: [
+            'tableColumn', 'tableRow', 'mergeTableCells'
+          ]
+        }
+      })
+      .then(editor => {
+        ckeditorInstance = editor;
+        const html = localStorage.getItem(EDITOR_KEY) || "";
+        editor.setData(html);
         lastSavedEditorHtml = html;
         renderEditorPreview();
         isEditing = false;
         updateEditorView();
-      };
-      clearEditorBtn.onclick = function() {
-        if (!ckeditorInstance) return;
-        ckeditorInstance.setData("");
-        localStorage.removeItem(EDITOR_KEY);
-        lastSavedEditorHtml = "";
-        renderEditorPreview();
-      };
-    });
 
-  function renderEditorPreview() {
-    editorPreview.innerHTML = lastSavedEditorHtml;
-  }
+        editToggleBtn.onclick = function() {
+          isEditing = true;
+          updateEditorView();
+        };
+        saveEditorBtn.onclick = function() {
+          if (!ckeditorInstance) return;
+          const html = ckeditorInstance.getData();
+          localStorage.setItem(EDITOR_KEY, html);
+          lastSavedEditorHtml = html;
+          renderEditorPreview();
+          isEditing = false;
+          updateEditorView();
+        };
+        clearEditorBtn.onclick = function() {
+          if (!ckeditorInstance) return;
+          ckeditorInstance.setData("");
+          localStorage.removeItem(EDITOR_KEY);
+          lastSavedEditorHtml = "";
+          renderEditorPreview();
+        };
+      });
 
-  // ... (내보내기/가져오기 등 나머지 코드는 동일) ...
-</script>
-
+    function renderEditorPreview() {
+      editorPreview.innerHTML = lastSavedEditorHtml;
+    }
+  </script>
 </body>
 </html>
