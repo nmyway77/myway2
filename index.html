@@ -676,67 +676,49 @@
 
 
       
-      
-   
+
 
   <style>
     html, body {
       margin: 0; padding: 0;
-      background: #fff;
+      background: #f4f6fb;
       font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
-      color: #263046;
-    }
-    .dashboard {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 80px 0 80px 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: #fff;
+      color: #233;
       min-height: 100vh;
     }
-    .widget-card {
-      background: #fff;
-      border-radius: 42px;
-      box-shadow: 0 18px 56px 0 rgba(49,64,112,0.12);
-      margin-bottom: 72px;
-      padding: 70px 54px 56px 54px;
-      width: 100%;
-      max-width: 1080px;
+    .main-wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 50px 0 50px 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      transition: box-shadow 0.18s;
+      gap: 64px;
     }
-    .widget-card:last-child { margin-bottom: 0; }
     .widget-title {
-      font-size: 2.7rem;
+      font-size: 2.8rem;
       font-weight: 900;
       color: #4a5bd8;
-      margin-bottom: 40px;
+      margin-bottom: 34px;
       letter-spacing: 2.5px;
-      text-shadow: 0 3px 16px #e3eafd;
       text-align: center;
+      text-shadow: 0 2px 14px #e4eafd;
     }
-    /* ---- 듀얼 시계 ---- */
+    /* 시계 */
     .clock-container {
       width: 100%;
       display: flex;
-      gap: 60px;
+      gap: 48px;
       justify-content: center;
       flex-wrap: wrap;
     }
     .clock-card {
       background: linear-gradient(110deg, #f4f7fa 80%, #eaf0fd 100%);
       border-radius: 34px;
-      box-shadow: 0 6px 34px rgba(96,115,186,0.14);
+      box-shadow: 0 8px 38px rgba(96,115,186,0.14);
       padding: 54px 32px 38px 32px;
-      min-width: 430px;
-      max-width: 500px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      min-width: 410px; max-width: 520px;
+      display: flex; flex-direction: column; align-items: center;
       margin-bottom: 10px;
     }
     .city-select {
@@ -769,67 +751,87 @@
       color: #6671a6;
       font-weight: 700;
     }
-    /* ---- 듀얼 온도/습도 ---- */
-    .meter-container {
+    /* 날씨 */
+    .weather-dashboard {
       width: 100%;
       display: flex;
-      gap: 60px;
+      gap: 42px;
       justify-content: center;
       flex-wrap: wrap;
     }
-    .meter-card {
-      background: linear-gradient(115deg, #f7fcff 60%, #eaf7fd 100%);
-      border-radius: 34px;
-      box-shadow: 0 6px 34px rgba(96,115,186,0.14);
-      padding: 54px 32px 38px 32px;
-      min-width: 430px;
-      max-width: 500px;
+    .weather-card {
+      background: #fff;
+      border-radius: 28px;
+      box-shadow: 0 8px 38px 0 rgba(90,110,185,0.13);
+      padding: 38px 32px 30px 32px;
+      width: 370px; max-width: 98vw;
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 18px;
+      transition: box-shadow 0.17s;
       position: relative;
     }
-    .meter-label {
-      font-size: 1.51rem;
-      color: #51a3c3;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .meter-value {
-      font-size: 3.1rem;
-      font-weight: 900;
-      color: #1b4a77;
-      margin: 0 0 11px 0;
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
-    .meter-icon {
-      font-size: 2.5rem;
-      vertical-align: middle;
-    }
-    .refresh-btn {
+    .weather-card .refresh-btn {
       position: absolute;
-      right: 32px; top: 32px;
-      background: #f4f5fc;
-      color: #6f8aea;
+      top: 24px;
+      right: 24px;
+      background: #e8ecf9;
       border: none;
       border-radius: 50%;
-      width: 56px; height: 56px;
-      font-size: 2rem;
+      width: 36px; height: 36px;
+      font-size: 1.4rem;
+      color: #4262d1;
       cursor: pointer;
-      box-shadow: 0 2px 14px rgba(81,109,196,0.09);
-      transition: background 0.15s;
+      box-shadow: 0 2px 10px #b8c8f840;
+      transition: background 0.13s;
     }
-    .refresh-btn:hover { background: #dae2fd; }
-    /* ---- 계산기 ---- */
+    .weather-card .refresh-btn:hover { background: #dbe6ff; }
+    .weather-icon {
+      font-size: 3.5rem;
+      margin-bottom: 7px;
+    }
+    .weather-main {
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #446add;
+    }
+    .weather-temp {
+      font-size: 2.3rem;
+      font-weight: 800;
+      color: #25398e;
+      margin-bottom: 5px;
+    }
+    .weather-humid {
+      font-size: 1.2rem;
+      color: #288aad;
+      margin-bottom: 2px;
+    }
+    .weather-status {
+      font-size: 1.13rem;
+      font-weight: 700;
+      margin-bottom: 7px;
+      color: #4c5e7a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    /* 계산기 */
+    .calc-card {
+      width: 100%; max-width: 640px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 28px;
+      box-shadow: 0 8px 38px rgba(49,64,112,0.12);
+      padding: 40px 28px 26px 28px;
+      display: flex; flex-direction: column; align-items: center;
+    }
     .calc-title {
-      font-size: 2.18rem;
+      font-size: 2.2rem;
       font-weight: 900;
       color: #5c67ef;
-      letter-spacing: 1.6px;
-      margin-bottom: 24px;
+      margin-bottom: 30px;
       text-shadow: 0 3px 12px #e3eafd;
     }
     .calc-screen {
@@ -841,12 +843,11 @@
       border-radius: 20px;
       text-align: right;
       padding: 28px 30px;
-      box-sizing: border-box;
-      margin-bottom: 28px;
       color: #2c3666;
       font-weight: 800;
-      box-shadow: 0 4px 20px rgba(90,108,180,0.09);
+      margin-bottom: 28px;
       letter-spacing: 1.7px;
+      box-shadow: 0 4px 20px rgba(90,108,180,0.09);
     }
     .calc-buttons {
       width: 100%;
@@ -873,7 +874,7 @@
       color: #fff;
       font-weight: 900;
     }
-    .calc-btn.op:active { background: linear-gradient(90deg,#637dee 0%,#b6cafd 100%); }
+    .calc-btn.op:active { background: linear-gradient(90deg,#637dee 0%,#b6cafd 100%);}
     .calc-btn.equal {
       background: linear-gradient(90deg, #6de0ca 0%, #32b896 100%);
       color: #fff;
@@ -897,29 +898,29 @@
     }
     .calc-btn.fn:active { background: linear-gradient(90deg,#79b6fa 0%,#a9e2fa 100%);}
     .calc-btn.small { font-size: 1.35rem; }
-    @media (max-width: 1000px) {
-      .dashboard { max-width: 100vw; }
-      .widget-card { max-width: 97vw; padding: 36px 4vw 30px 4vw; }
-      .clock-card, .meter-card { min-width: 95vw; max-width: 99vw; padding: 24px 2vw 16px 2vw;}
-      .calc-screen { font-size: 2rem; height: 62px; padding: 13px 2vw; }
-      .calc-btn { font-size: 1.18rem; padding: 12px 0;}
+    /* 모바일 반응형 */
+    @media (max-width: 1100px) {
+      .main-wrap { max-width: 99vw; }
+      .clock-card, .weather-card { min-width: 97vw; max-width: 99vw; }
+      .calc-card { max-width: 99vw; }
     }
     @media (max-width: 700px) {
       .widget-title, .calc-title { font-size: 1.15rem; }
-      .clock-container, .meter-container { gap: 15px;}
-      .clock-card, .meter-card { min-width: 96vw; max-width: 99vw; padding: 14px 1vw 9px 1vw;}
+      .clock-container, .weather-dashboard { gap: 15px;}
+      .clock-card, .weather-card { min-width: 99vw; max-width: 99vw; padding: 14px 1vw 9px 1vw;}
+      .weather-card { padding: 18px 1vw 9px 1vw;}
       .clock-time { font-size: 1.6rem; }
       .clock-date { font-size: 0.95rem; }
       .meter-value { font-size: 1.6rem; }
-      .calc-screen { font-size: 1.05rem; height: 40px; }
+      .calc-screen { font-size: 1.05rem; height: 40px; padding: 13px 2vw; }
       .calc-btn { font-size: 0.94rem; padding: 7px 0;}
     }
   </style>
-</head>
-<body>
-  <div class="dashboard">
-    <!-- 듀얼 월드 시계 -->
-    <div class="widget-card">
+
+
+  <div class="main-wrap">
+    <!-- 시계 -->
+    <div>
       <div class="widget-title">🌏 듀얼 월드 시계</div>
       <div class="clock-container">
         <div class="clock-card">
@@ -936,31 +937,42 @@
         </div>
       </div>
     </div>
-    <!-- 듀얼 온도/습도계 -->
-    <div class="widget-card">
-      <div class="widget-title">🌡️ 듀얼 온도/습도계</div>
-      <div class="meter-container">
-        <div class="meter-card" id="card1">
-          <select class="city-select" id="mcity1"></select>
-          <div class="meter-label">기온</div>
-          <div class="meter-value" id="temp1">--</div>
-          <div class="meter-label">습도</div>
-          <div class="meter-value" id="humid1">--</div>
+    <!-- 날씨 -->
+    <div>
+      <div class="widget-title">🌦️ 3개 도시 날씨</div>
+      <div class="weather-dashboard">
+        <div class="weather-card" id="wcard1">
           <button class="refresh-btn" onclick="fetchWeather(1)">⟳</button>
+          <select class="city-select" id="wcity1"></select>
+          <div class="weather-icon" id="wicon1">☁️</div>
+          <div class="weather-main" id="wmain1">--</div>
+          <div class="weather-temp" id="wtemp1">-- ℃</div>
+          <div class="weather-humid" id="whumid1">-- %</div>
+          <div class="weather-status" id="wstatus1"></div>
         </div>
-        <div class="meter-card" id="card2">
-          <select class="city-select" id="mcity2"></select>
-          <div class="meter-label">기온</div>
-          <div class="meter-value" id="temp2">--</div>
-          <div class="meter-label">습도</div>
-          <div class="meter-value" id="humid2">--</div>
+        <div class="weather-card" id="wcard2">
           <button class="refresh-btn" onclick="fetchWeather(2)">⟳</button>
+          <select class="city-select" id="wcity2"></select>
+          <div class="weather-icon" id="wicon2">☁️</div>
+          <div class="weather-main" id="wmain2">--</div>
+          <div class="weather-temp" id="wtemp2">-- ℃</div>
+          <div class="weather-humid" id="whumid2">-- %</div>
+          <div class="weather-status" id="wstatus2"></div>
+        </div>
+        <div class="weather-card" id="wcard3">
+          <button class="refresh-btn" onclick="fetchWeather(3)">⟳</button>
+          <select class="city-select" id="wcity3"></select>
+          <div class="weather-icon" id="wicon3">☁️</div>
+          <div class="weather-main" id="wmain3">--</div>
+          <div class="weather-temp" id="wtemp3">-- ℃</div>
+          <div class="weather-humid" id="whumid3">-- %</div>
+          <div class="weather-status" id="wstatus3"></div>
         </div>
       </div>
     </div>
     <!-- 계산기 -->
-    <div class="widget-card">
-      <div class="widget-title">📐 공학용 계산기</div>
+    <div class="calc-card">
+      <div class="calc-title">📐 공학용 계산기</div>
       <input type="text" class="calc-screen" id="screen" value="0" readonly>
       <div class="calc-buttons">
         <button class="calc-btn clear" onclick="clearScreen()">C</button>
@@ -996,32 +1008,31 @@
     </div>
   </div>
   <script>
-    // ------- 공통 도시 데이터 ---------
-    const cities = [
-      { name: "서울", country: "대한민국", zone: "Asia/Seoul", lat: 37.5665, lon: 126.9780 },
-      { name: "뉴욕", country: "미국", zone: "America/New_York", lat: 40.7128, lon: -74.0060 },
-      { name: "도쿄", country: "일본", zone: "Asia/Tokyo", lat: 35.6895, lon: 139.6917 },
-      { name: "런던", country: "영국", zone: "Europe/London", lat: 51.5074, lon: -0.1278 },
-      { name: "파리", country: "프랑스", zone: "Europe/Paris", lat: 48.8566, lon: 2.3522 },
-      { name: "베이징", country: "중국", zone: "Asia/Shanghai", lat: 39.9042, lon: 116.4074 },
-      { name: "로스앤젤레스", country: "미국", zone: "America/Los_Angeles", lat: 34.0522, lon: -118.2437 },
-      { name: "시드니", country: "호주", zone: "Australia/Sydney", lat: -33.8688, lon: 151.2093 },
-      { name: "홍콩", country: "중국", zone: "Asia/Hong_Kong", lat: 22.3193, lon: 114.1694 },
-      { name: "베를린", country: "독일", zone: "Europe/Berlin", lat: 52.5200, lon: 13.4050 },
-      { name: "방콕", country: "태국", zone: "Asia/Bangkok", lat: 13.7563, lon: 100.5018 },
-      { name: "두바이", country: "아랍에미리트", zone: "Asia/Dubai", lat: 25.2048, lon: 55.2708 },
-      { name: "싱가포르", country: "싱가포르", zone: "Asia/Singapore", lat: 1.3521, lon: 103.8198 },
-      { name: "모스크바", country: "러시아", zone: "Europe/Moscow", lat: 55.7558, lon: 37.6176 },
-      { name: "토론토", country: "캐나다", zone: "America/Toronto", lat: 43.6532, lon: -79.3832 },
-      { name: "상파울루", country: "브라질", zone: "America/Sao_Paulo", lat: -23.5505, lon: -46.6333 },
-      { name: "델리", country: "인도", zone: "Asia/Kolkata", lat: 28.6139, lon: 77.2090 },
-      { name: "이스탄불", country: "터키", zone: "Europe/Istanbul", lat: 41.0082, lon: 28.9784 }
+    // ===== 시계 =====
+    const clockCities = [
+      { name: "서울", country: "대한민국", zone: "Asia/Seoul" },
+      { name: "뉴욕", country: "미국", zone: "America/New_York" },
+      { name: "도쿄", country: "일본", zone: "Asia/Tokyo" },
+      { name: "런던", country: "영국", zone: "Europe/London" },
+      { name: "파리", country: "프랑스", zone: "Europe/Paris" },
+      { name: "베이징", country: "중국", zone: "Asia/Shanghai" },
+      { name: "로스앤젤레스", country: "미국", zone: "America/Los_Angeles" },
+      { name: "시드니", country: "호주", zone: "Australia/Sydney" },
+      { name: "홍콩", country: "중국", zone: "Asia/Hong_Kong" },
+      { name: "베를린", country: "독일", zone: "Europe/Berlin" },
+      { name: "방콕", country: "태국", zone: "Asia/Bangkok" },
+      { name: "두바이", country: "아랍에미리트", zone: "Asia/Dubai" },
+      { name: "싱가포르", country: "싱가포르", zone: "Asia/Singapore" },
+      { name: "모스크바", country: "러시아", zone: "Europe/Moscow" },
+      { name: "토론토", country: "캐나다", zone: "America/Toronto" },
+      { name: "상파울루", country: "브라질", zone: "America/Sao_Paulo" },
+      { name: "델리", country: "인도", zone: "Asia/Kolkata" },
+      { name: "이스탄불", country: "터키", zone: "Europe/Istanbul" }
     ];
-
-    // --------- 시계 select -----------
     function setupClockCitySelect(selectId, defaultIdx) {
       const select = document.getElementById(selectId);
-      cities.forEach((city, idx) => {
+      select.innerHTML = "";
+      clockCities.forEach((city, idx) => {
         const option = document.createElement("option");
         option.value = city.zone;
         option.textContent = `${city.name} (${city.country})`;
@@ -1031,11 +1042,10 @@
     }
     setupClockCitySelect("city1", 0); // 서울
     setupClockCitySelect("city2", 1); // 뉴욕
-
     function updateClock(idx) {
       const select = document.getElementById("city"+idx);
       const tz = select.value;
-      const cityData = cities.find(c => c.zone === tz);
+      const cityData = clockCities.find(c => c.zone === tz);
       const now = new Date();
       const time = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: tz });
       const date = now.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long', timeZone: tz });
@@ -1052,10 +1062,31 @@
     document.getElementById("city1").addEventListener("change", () => updateClock(1));
     document.getElementById("city2").addEventListener("change", () => updateClock(2));
 
-    // --------- 온도/습도 select -----------
-    function setupMeterCitySelect(selectId, defaultIdx) {
+    // ===== 날씨 =====
+    const weatherCities = [
+      { name: "서울", country: "대한민국", lat: 37.5665, lon: 126.9780 },
+      { name: "뉴욕", country: "미국", lat: 40.7128, lon: -74.0060 },
+      { name: "도쿄", country: "일본", lat: 35.6895, lon: 139.6917 },
+      { name: "런던", country: "영국", lat: 51.5074, lon: -0.1278 },
+      { name: "파리", country: "프랑스", lat: 48.8566, lon: 2.3522 },
+      { name: "베이징", country: "중국", lat: 39.9042, lon: 116.4074 },
+      { name: "로스앤젤레스", country: "미국", lat: 34.0522, lon: -118.2437 },
+      { name: "시드니", country: "호주", lat: -33.8688, lon: 151.2093 },
+      { name: "홍콩", country: "중국", lat: 22.3193, lon: 114.1694 },
+      { name: "베를린", country: "독일", lat: 52.5200, lon: 13.4050 },
+      { name: "방콕", country: "태국", lat: 13.7563, lon: 100.5018 },
+      { name: "두바이", country: "아랍에미리트", lat: 25.2048, lon: 55.2708 },
+      { name: "싱가포르", country: "싱가포르", lat: 1.3521, lon: 103.8198 },
+      { name: "모스크바", country: "러시아", lat: 55.7558, lon: 37.6176 },
+      { name: "토론토", country: "캐나다", lat: 43.6532, lon: -79.3832 },
+      { name: "상파울루", country: "브라질", lat: -23.5505, lon: -46.6333 },
+      { name: "델리", country: "인도", lat: 28.6139, lon: 77.2090 },
+      { name: "이스탄불", country: "터키", lat: 41.0082, lon: 28.9784 }
+    ];
+    function setupWeatherCitySelect(selectId, defaultIdx) {
       const select = document.getElementById(selectId);
-      cities.forEach((city, idx) => {
+      select.innerHTML = "";
+      weatherCities.forEach((city, idx) => {
         const option = document.createElement("option");
         option.value = idx;
         option.textContent = `${city.name} (${city.country})`;
@@ -1063,37 +1094,82 @@
       });
       select.selectedIndex = defaultIdx;
     }
-    setupMeterCitySelect("mcity1", 0); // 서울
-    setupMeterCitySelect("mcity2", 1); // 뉴욕
+    setupWeatherCitySelect("wcity1", 0);
+    setupWeatherCitySelect("wcity2", 1);
+    setupWeatherCitySelect("wcity3", 2);
 
     async function fetchWeather(idx) {
-      const select = document.getElementById("mcity"+idx);
-      const city = cities[select.value];
-      const tempDiv = document.getElementById("temp"+idx);
-      const humidDiv = document.getElementById("humid"+idx);
-      tempDiv.innerHTML = `<span class="meter-icon">🌡️</span> <span style="font-size:2.4rem;">로딩중...</span>`;
-      humidDiv.innerHTML = `<span class="meter-icon">💧</span> <span style="font-size:2.4rem;">로딩중...</span>`;
+      const select = document.getElementById("wcity"+idx);
+      const city = weatherCities[select.value];
+      const tempDiv = document.getElementById("wtemp"+idx);
+      const humidDiv = document.getElementById("whumid"+idx);
+      const iconDiv = document.getElementById("wicon"+idx);
+      const mainDiv = document.getElementById("wmain"+idx);
+      const statusDiv = document.getElementById("wstatus"+idx);
+
+      tempDiv.textContent = "로딩중...";
+      humidDiv.textContent = "";
+      mainDiv.textContent = "";
+      iconDiv.textContent = "⏳";
+      statusDiv.textContent = "";
+
       try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,relative_humidity_2m&timezone=auto`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,relative_humidity_2m,weather_code&timezone=auto`;
         const res = await fetch(url);
         const data = await res.json();
         if (data.current) {
-          tempDiv.innerHTML = `<span class="meter-icon">🌡️</span> ${data.current.temperature_2m} °C`;
-          humidDiv.innerHTML = `<span class="meter-icon">💧</span> ${data.current.relative_humidity_2m} %`;
+          const temp = data.current.temperature_2m;
+          const humid = data.current.relative_humidity_2m;
+          const code = data.current.weather_code;
+          const weatherTable = {
+            0:  {icon:"☀️", text:"맑음", status:"날씨가 아주 좋아요!"},
+            1:  {icon:"🌤️", text:"대체로 맑음", status:"좋은 날씨입니다."},
+            2:  {icon:"⛅", text:"부분적으로 흐림", status:"가끔 구름이 있어요."},
+            3:  {icon:"☁️", text:"흐림", status:"구름이 많아요."},
+            45: {icon:"🌫️", text:"안개", status:"안개가 낍니다."},
+            48: {icon:"🌫️", text:"서리/안개", status:"안개/서리"},
+            51: {icon:"🌦️", text:"약한 이슬비", status:"이슬비가 조금 내립니다."},
+            53: {icon:"🌦️", text:"이슬비", status:"이슬비가 내립니다."},
+            55: {icon:"🌦️", text:"강한 이슬비", status:"이슬비가 많이 내립니다."},
+            61: {icon:"🌧️", text:"약한 비", status:"비가 조금 내립니다."},
+            63: {icon:"🌧️", text:"비", status:"비가 내립니다."},
+            65: {icon:"🌧️", text:"강한 비", status:"비가 많이 내립니다."},
+            66: {icon:"🌨️", text:"진눈깨비", status:"진눈깨비가 내려요."},
+            67: {icon:"🌨️", text:"진눈깨비", status:"진눈깨비가 내려요."},
+            71: {icon:"🌨️", text:"약한 눈", status:"눈이 조금 내려요."},
+            73: {icon:"🌨️", text:"눈", status:"눈이 내려요."},
+            75: {icon:"❄️", text:"강한 눈", status:"눈이 많이 내려요."},
+            80: {icon:"🌦️", text:"소나기", status:"소나기가 내립니다."},
+            81: {icon:"🌦️", text:"소나기", status:"소나기가 내립니다."},
+            82: {icon:"🌦️", text:"강한 소나기", status:"소나기가 많이 내립니다."}
+          };
+          const weather = weatherTable[code] || {icon:"❔", text:"알 수 없음", status:"날씨 정보 없음"};
+          iconDiv.textContent = weather.icon;
+          mainDiv.textContent = weather.text;
+          tempDiv.textContent = `${temp} ℃`;
+          humidDiv.textContent = `습도: ${humid} %`;
+          statusDiv.innerHTML = `${weather.status}`;
         } else {
-          tempDiv.innerHTML = "정보 없음";
-          humidDiv.innerHTML = "정보 없음";
+          iconDiv.textContent = "❌";
+          mainDiv.textContent = "정보 없음";
+          tempDiv.textContent = "-- ℃";
+          humidDiv.textContent = "-- %";
+          statusDiv.textContent = "";
         }
       } catch (e) {
-        tempDiv.innerHTML = "오류";
-        humidDiv.innerHTML = "오류";
+        iconDiv.textContent = "❌";
+        mainDiv.textContent = "오류";
+        tempDiv.textContent = "-- ℃";
+        humidDiv.textContent = "-- %";
+        statusDiv.textContent = "";
       }
     }
-    document.getElementById("mcity1").addEventListener("change", () => fetchWeather(1));
-    document.getElementById("mcity2").addEventListener("change", () => fetchWeather(2));
-    fetchWeather(1); fetchWeather(2);
+    document.getElementById("wcity1").addEventListener("change", ()=>fetchWeather(1));
+    document.getElementById("wcity2").addEventListener("change", ()=>fetchWeather(2));
+    document.getElementById("wcity3").addEventListener("change", ()=>fetchWeather(3));
+    fetchWeather(1); fetchWeather(2); fetchWeather(3);
 
-    // ---------- 계산기 로직 ----------
+    // ===== 계산기 =====
     let screen = document.getElementById('screen');
     let expr = '';
     function insert(val) {
@@ -1143,7 +1219,6 @@
       }
     }
   </script>
-
 
 
 
