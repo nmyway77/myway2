@@ -1,0 +1,198 @@
+ 
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>썸네일 추출기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: #f6f7fb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+    }
+    .container {
+      background: #fff;
+      padding: 40px 60px 28px 60px;
+      border-radius: 22px;
+      box-shadow: 0 10px 38px 0 #2222aa22;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 600px;
+      max-width: 90vw;
+    }
+    .container h2 {
+      margin-bottom: 18px;
+      font-size: 1.6rem;
+      color: #273472;
+      letter-spacing: 1px;
+      font-weight: bold;
+    }
+    .url-input-group {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      justify-content: center;
+      margin-bottom: 30px;
+      max-width: 700px;
+    }
+    .url-input-group input {
+      font-size: 1.13rem;
+      padding: 11px 14px;
+      border: 1.7px solid #b2b7d2;
+      border-radius: 8px;
+      outline: none;
+      width: 480px;         /* 원하는 만큼 크게! */
+      background: #f8faff;
+      transition: border 0.15s;
+    }
+    .url-input-group input:focus {
+      border-color: #3b50e7;
+    }
+    .url-input-group button {
+      padding: 11px 22px;
+      background: #3b50e7;
+      color: #fff;
+      font-size: 1.08rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.18s;
+    }
+    .url-input-group button:hover {
+      background: #2838a9;
+    }
+    .thumbs-list {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .thumb-item {
+      background: #f8faff;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px #22337713;
+      overflow: hidden;
+      transition: box-shadow 0.18s;
+      cursor: pointer;
+      border: 3px solid transparent;
+    }
+    .thumb-item.selected {
+      border: 3px solid #3b50e7;
+      box-shadow: 0 2px 20px #3b50e755;
+    }
+    .thumb-item img {
+      width: 260px;
+      height: 146px;
+      object-fit: cover;
+      display: block;
+      border-radius: 12px;
+      background: #eee;
+      transition: transform 0.12s;
+    }
+    .thumb-item:hover img {
+      transform: scale(1.05);
+    }
+    .note {
+      color: #888;
+      font-size: 1rem;
+      margin-top: 28px;
+      text-align: center;
+      max-width: 800px;
+    }
+    @media (max-width: 900px) {
+      .container { min-width: unset; padding: 22px 2vw; }
+      .url-input-group { max-width: 97vw; }
+      .url-input-group input { width: 40vw; min-width: 120px; }
+      .thumb-item img { width: 32vw; height: 18vw; min-width: 120px; }
+    }
+    @media (max-width: 520px) {
+      .container { padding: 11px 2vw; }
+      .url-input-group { flex-direction: column; align-items: stretch; gap: 10px;}
+      .url-input-group input, .url-input-group button { width: 100%; }
+      .thumb-item img { width: 98vw; min-width: 0; height: auto;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>썸네일 추출기</h2>
+    <div class="url-input-group">
+      <input type="text" id="videoUrl" placeholder="동영상 URL 입력 (YouTube/Vimeo)">
+      <button onclick="getThumbnails()">추출</button>
+    </div>
+    <div class="thumbs-list" id="thumbsList"></div>
+    <div class="note">
+      동영상 썸네일은 주로 <b>YouTube, Vimeo</b> 등에서 지원됩니다.<br>
+      썸네일 이미지를 클릭하면 선택됩니다.
+    </div>
+  </div>
+  <script>
+    function getThumbnails() {
+      const url = document.getElementById('videoUrl').value.trim();
+      const thumbsList = document.getElementById('thumbsList');
+      thumbsList.innerHTML = '';
+      let thumbs = [];
+
+      // YouTube 썸네일 추출
+      const ytMatch = url.match(/(?:youtube\.com.*[?&]v=|youtu\.be\/)([\w\-]+)/);
+      if (ytMatch) {
+        const id = ytMatch[1];
+        thumbs = [
+          `https://img.youtube.com/vi/${id}/maxresdefault.jpg`,
+          `https://img.youtube.com/vi/${id}/sddefault.jpg`,
+          `https://img.youtube.com/vi/${id}/hqdefault.jpg`,
+          `https://img.youtube.com/vi/${id}/mqdefault.jpg`,
+          `https://img.youtube.com/vi/${id}/default.jpg`,
+        ];
+      }
+
+      // Vimeo 썸네일 추출 (oEmbed API)
+      const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+      if (vimeoMatch) {
+        const id = vimeoMatch[1];
+        fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${id}`)
+          .then(res => res.json())
+          .then(data => {
+            thumbs.push(data.thumbnail_url);
+            renderThumbs(thumbs);
+          })
+          .catch(() => {
+            thumbsList.innerHTML = '<div style="color:#c44;">Vimeo 썸네일을 가져올 수 없습니다.</div>';
+          });
+        return;
+      }
+
+      if (thumbs.length === 0) {
+        thumbsList.innerHTML = '<div style="color:#c44;">아직 이 사이트는 지원하지 않습니다.<br>주요 동영상 플랫폼(YouTube, Vimeo 등)만 지원됩니다.</div>';
+        return;
+      }
+
+      renderThumbs(thumbs);
+    }
+
+    function renderThumbs(thumbs) {
+      const thumbsList = document.getElementById('thumbsList');
+      thumbsList.innerHTML = '';
+      thumbs.forEach(url => {
+        const div = document.createElement('div');
+        div.className = 'thumb-item';
+        div.innerHTML = `<img src="${url}" alt="썸네일">`;
+        div.onclick = function() {
+          document.querySelectorAll('.thumb-item').forEach(e => e.classList.remove('selected'));
+          div.classList.add('selected');
+        };
+        thumbsList.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
