@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>3개 도시 날씨 위젯</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #f4f6fb;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      color: #233;
+      margin: 0; padding: 0;
+    }
+    .weather-dashboard {
+      max-width: 1080px;
+      margin: 36px auto;
+      display: flex;
+      gap: 36px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .weather-card {
+      background: #fff;
+      border-radius: 28px;
+      box-shadow: 0 8px 38px 0 rgba(90,110,185,0.13);
+      padding: 38px 32px 30px 32px;
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 18px;
+      transition: box-shadow 0.17s;
+      position: relative;
+    }
+    .weather-card .refresh-btn {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: #e8ecf9;
+      border: none;
+      border-radius: 50%;
+      width: 36px; height: 36px;
+      font-size: 1.4rem;
+      color: #4262d1;
+      cursor: pointer;
+      box-shadow: 0 2px 10px #b8c8f840;
+      transition: background 0.13s;
+    }
+    .weather-card .refresh-btn:hover { background: #dbe6ff; }
+    .city-select {
+      width: 92%;
+      margin-bottom: 22px;
+      font-size: 1.25rem;
+      border: none;
+      border-radius: 14px;
+      background: #f2f4fa;
+      padding: 12px 20px;
+      font-weight: bold;
+      color: #314080;
+      box-shadow: 0 2px 10px rgba(90,110,185,0.07);
+      text-align: center;
+    }
+    .weather-icon {
+      font-size: 3.5rem;
+      margin-bottom: 7px;
+    }
+    .weather-main {
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #446add;
+    }
+    .weather-temp {
+      font-size: 2.3rem;
+      font-weight: 800;
+      color: #25398e;
+      margin-bottom: 5px;
+    }
+    .weather-humid {
+      font-size: 1.2rem;
+      color: #288aad;
+      margin-bottom: 2px;
+    }
+    .weather-status {
+      font-size: 1.13rem;
+      font-weight: 700;
+      margin-bottom: 7px;
+      color: #4c5e7a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    @media (max-width: 1100px) {
+      .weather-dashboard { max-width: 99vw; gap: 20px;}
+      .weather-card { width: 96vw; max-width: 370px; }
+    }
+    @media (max-width: 700px) {
+      .weather-card { width: 98vw; max-width: 99vw; padding: 20px 2vw 14px 2vw;}
+      .city-select { font-size: 1rem;}
+    }
+  </style>
+</head>
+<body>
+  <div style="text-align:center;margin:38px 0 22px 0;font-size:2rem;color:#4a5bd8;font-weight:900;text-shadow:0 2px 12px #e4eafd;">🌈 3개 도시 날씨 안내 위젯</div>
+  <div class="weather-dashboard">
+    <div class="weather-card" id="card1">
+      <button class="refresh-btn" onclick="fetchWeather(1)">⟳</button>
+      <select class="city-select" id="city1"></select>
+      <div class="weather-icon" id="icon1">☁️</div>
+      <div class="weather-main" id="main1">--</div>
+      <div class="weather-temp" id="temp1">-- ℃</div>
+      <div class="weather-humid" id="humid1">-- %</div>
+      <div class="weather-status" id="status1"></div>
+    </div>
+    <div class="weather-card" id="card2">
+      <button class="refresh-btn" onclick="fetchWeather(2)">⟳</button>
+      <select class="city-select" id="city2"></select>
+      <div class="weather-icon" id="icon2">☁️</div>
+      <div class="weather-main" id="main2">--</div>
+      <div class="weather-temp" id="temp2">-- ℃</div>
+      <div class="weather-humid" id="humid2">-- %</div>
+      <div class="weather-status" id="status2"></div>
+    </div>
+    <div class="weather-card" id="card3">
+      <button class="refresh-btn" onclick="fetchWeather(3)">⟳</button>
+      <select class="city-select" id="city3"></select>
+      <div class="weather-icon" id="icon3">☁️</div>
+      <div class="weather-main" id="main3">--</div>
+      <div class="weather-temp" id="temp3">-- ℃</div>
+      <div class="weather-humid" id="humid3">-- %</div>
+      <div class="weather-status" id="status3"></div>
+    </div>
+  </div>
+  <script>
+    const cities = [
+      { name: "서울", country: "대한민국", lat: 37.5665, lon: 126.9780 },
+      { name: "뉴욕", country: "미국", lat: 40.7128, lon: -74.0060 },
+      { name: "도쿄", country: "일본", lat: 35.6895, lon: 139.6917 },
+      { name: "런던", country: "영국", lat: 51.5074, lon: -0.1278 },
+      { name: "파리", country: "프랑스", lat: 48.8566, lon: 2.3522 },
+      { name: "베이징", country: "중국", lat: 39.9042, lon: 116.4074 },
+      { name: "로스앤젤레스", country: "미국", lat: 34.0522, lon: -118.2437 },
+      { name: "시드니", country: "호주", lat: -33.8688, lon: 151.2093 },
+      { name: "홍콩", country: "중국", lat: 22.3193, lon: 114.1694 },
+      { name: "베를린", country: "독일", lat: 52.5200, lon: 13.4050 },
+      { name: "방콕", country: "태국", lat: 13.7563, lon: 100.5018 },
+      { name: "두바이", country: "아랍에미리트", lat: 25.2048, lon: 55.2708 },
+      { name: "싱가포르", country: "싱가포르", lat: 1.3521, lon: 103.8198 },
+      { name: "모스크바", country: "러시아", lat: 55.7558, lon: 37.6176 },
+      { name: "토론토", country: "캐나다", lat: 43.6532, lon: -79.3832 },
+      { name: "상파울루", country: "브라질", lat: -23.5505, lon: -46.6333 },
+      { name: "델리", country: "인도", lat: 28.6139, lon: 77.2090 },
+      { name: "이스탄불", country: "터키", lat: 41.0082, lon: 28.9784 }
+    ];
+    function setupCitySelect(selectId, defaultIdx) {
+      const select = document.getElementById(selectId);
+      select.innerHTML = "";
+      cities.forEach((city, idx) => {
+        const option = document.createElement("option");
+        option.value = idx;
+        option.textContent = `${city.name} (${city.country})`;
+        select.appendChild(option);
+      });
+      select.selectedIndex = defaultIdx;
+    }
+    setupCitySelect("city1", 0); // 서울
+    setupCitySelect("city2", 1); // 뉴욕
+    setupCitySelect("city3", 2); // 도쿄
+
+    async function fetchWeather(idx) {
+      const select = document.getElementById("city"+idx);
+      const city = cities[select.value];
+      const tempDiv = document.getElementById("temp"+idx);
+      const humidDiv = document.getElementById("humid"+idx);
+      const iconDiv = document.getElementById("icon"+idx);
+      const mainDiv = document.getElementById("main"+idx);
+      const statusDiv = document.getElementById("status"+idx);
+
+      tempDiv.textContent = "로딩중...";
+      humidDiv.textContent = "";
+      mainDiv.textContent = "";
+      iconDiv.textContent = "⏳";
+      statusDiv.textContent = "";
+
+      try {
+        // Open-Meteo API (날씨 코드 해석 필요)
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,relative_humidity_2m,weather_code&timezone=auto`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.current) {
+          const temp = data.current.temperature_2m;
+          const humid = data.current.relative_humidity_2m;
+          const code = data.current.weather_code;
+          // 날씨 코드 해석 (주요 코드만)
+          const weatherTable = {
+            0:  {icon:"☀️", text:"맑음", status:"날씨가 아주 좋아요!"},
+            1:  {icon:"🌤️", text:"대체로 맑음", status:"좋은 날씨입니다."},
+            2:  {icon:"⛅", text:"부분적으로 흐림", status:"가끔 구름이 있어요."},
+            3:  {icon:"☁️", text:"흐림", status:"구름이 많아요."},
+            45: {icon:"🌫️", text:"안개", status:"안개가 낍니다."},
+            48: {icon:"🌫️", text:"서리/안개", status:"안개/서리"},
+            51: {icon:"🌦️", text:"약한 이슬비", status:"이슬비가 조금 내립니다."},
+            53: {icon:"🌦️", text:"이슬비", status:"이슬비가 내립니다."},
+            55: {icon:"🌦️", text:"강한 이슬비", status:"이슬비가 많이 내립니다."},
+            61: {icon:"🌧️", text:"약한 비", status:"비가 조금 내립니다."},
+            63: {icon:"🌧️", text:"비", status:"비가 내립니다."},
+            65: {icon:"🌧️", text:"강한 비", status:"비가 많이 내립니다."},
+            66: {icon:"🌨️", text:"진눈깨비", status:"진눈깨비가 내려요."},
+            67: {icon:"🌨️", text:"진눈깨비", status:"진눈깨비가 내려요."},
+            71: {icon:"🌨️", text:"약한 눈", status:"눈이 조금 내려요."},
+            73: {icon:"🌨️", text:"눈", status:"눈이 내려요."},
+            75: {icon:"❄️", text:"강한 눈", status:"눈이 많이 내려요."},
+            80: {icon:"🌦️", text:"소나기", status:"소나기가 내립니다."},
+            81: {icon:"🌦️", text:"소나기", status:"소나기가 내립니다."},
+            82: {icon:"🌦️", text:"강한 소나기", status:"소나기가 많이 내립니다."}
+          };
+          const weather = weatherTable[code] || {icon:"❔", text:"알 수 없음", status:"날씨 정보 없음"};
+          iconDiv.textContent = weather.icon;
+          mainDiv.textContent = weather.text;
+          tempDiv.textContent = `${temp} ℃`;
+          humidDiv.textContent = `습도: ${humid} %`;
+          statusDiv.innerHTML = `${weather.status}`;
+        } else {
+          iconDiv.textContent = "❌";
+          mainDiv.textContent = "정보 없음";
+          tempDiv.textContent = "-- ℃";
+          humidDiv.textContent = "-- %";
+          statusDiv.textContent = "";
+        }
+      } catch (e) {
+        iconDiv.textContent = "❌";
+        mainDiv.textContent = "오류";
+        tempDiv.textContent = "-- ℃";
+        humidDiv.textContent = "-- %";
+        statusDiv.textContent = "";
+      }
+    }
+    // 셀렉트 변경 시 날씨 불러오기
+    document.getElementById("city1").addEventListener("change", ()=>fetchWeather(1));
+    document.getElementById("city2").addEventListener("change", ()=>fetchWeather(2));
+    document.getElementById("city3").addEventListener("change", ()=>fetchWeather(3));
+    // 초기 날씨 정보 표시
+    fetchWeather(1); fetchWeather(2); fetchWeather(3);
+  </script>
+</body>
+</html>
