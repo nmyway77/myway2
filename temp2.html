@@ -1,0 +1,549 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>화면5 - 시계 + 3개 도시 날씨 + 계산기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      margin: 0; padding: 0;
+      background: #f4f6fb;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      color: #233;
+      min-height: 100vh;
+    }
+    .main-wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 50px 0 50px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 64px;
+    }
+    .widget-title {
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: #4a5bd8;
+      margin-bottom: 34px;
+      letter-spacing: 2.5px;
+      text-align: center;
+      text-shadow: 0 2px 14px #e4eafd;
+    }
+    /* 시계 */
+    .clock-container {
+      width: 100%;
+      display: flex;
+      gap: 48px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .clock-card {
+      background: linear-gradient(110deg, #f4f7fa 80%, #eaf0fd 100%);
+      border-radius: 34px;
+      box-shadow: 0 8px 38px rgba(96,115,186,0.14);
+      padding: 54px 32px 38px 32px;
+      min-width: 410px; max-width: 520px;
+      display: flex; flex-direction: column; align-items: center;
+      margin-bottom: 10px;
+    }
+    .city-select {
+      margin-bottom: 22px;
+      font-size: 2rem;
+      border: none;
+      border-radius: 18px;
+      background: #eef2fa;
+      padding: 15px 38px;
+      font-weight: bold;
+      color: #3b4263;
+      box-shadow: 0 3px 13px rgba(96,115,186,0.09);
+    }
+    .clock-time {
+      font-size: 4.1rem;
+      font-weight: 900;
+      letter-spacing: 2.5px;
+      color: #30409a;
+      margin-bottom: 15px;
+    }
+    .clock-date {
+      font-size: 1.9rem;
+      color: #7b85ab;
+      letter-spacing: 1.3px;
+      margin-bottom: 13px;
+      text-align: center;
+    }
+    .clock-label {
+      font-size: 1.42rem;
+      color: #6671a6;
+      font-weight: 700;
+    }
+    /* 날씨 */
+    .weather-dashboard {
+      width: 100%;
+      display: flex;
+      gap: 42px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .weather-card {
+      background: #fff;
+      border-radius: 28px;
+      box-shadow: 0 8px 38px 0 rgba(90,110,185,0.13);
+      padding: 38px 32px 30px 32px;
+      width: 370px; max-width: 98vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 18px;
+      transition: box-shadow 0.17s;
+      position: relative;
+    }
+    .weather-card .refresh-btn {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: #e8ecf9;
+      border: none;
+      border-radius: 50%;
+      width: 36px; height: 36px;
+      font-size: 1.4rem;
+      color: #4262d1;
+      cursor: pointer;
+      box-shadow: 0 2px 10px #b8c8f840;
+      transition: background 0.13s;
+    }
+    .weather-card .refresh-btn:hover { background: #dbe6ff; }
+    .weather-icon {
+      font-size: 3.5rem;
+      margin-bottom: 7px;
+    }
+    .weather-main {
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #446add;
+    }
+    .weather-temp {
+      font-size: 2.3rem;
+      font-weight: 800;
+      color: #25398e;
+      margin-bottom: 5px;
+    }
+    .weather-humid {
+      font-size: 1.2rem;
+      color: #288aad;
+      margin-bottom: 2px;
+    }
+    .weather-status {
+      font-size: 1.13rem;
+      font-weight: 700;
+      margin-bottom: 7px;
+      color: #4c5e7a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    /* 계산기 */
+    .calc-card {
+      width: 100%; max-width: 640px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 28px;
+      box-shadow: 0 8px 38px rgba(49,64,112,0.12);
+      padding: 40px 28px 26px 28px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .calc-title {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #5c67ef;
+      margin-bottom: 30px;
+      text-shadow: 0 3px 12px #e3eafd;
+    }
+    .calc-screen {
+      width: 100%;
+      height: 110px;
+      font-size: 3.1rem;
+      border: none;
+      background: linear-gradient(90deg, #f2f5ff 0%, #f7f8fc 100%);
+      border-radius: 20px;
+      text-align: right;
+      padding: 28px 30px;
+      color: #2c3666;
+      font-weight: 800;
+      margin-bottom: 28px;
+      letter-spacing: 1.7px;
+      box-shadow: 0 4px 20px rgba(90,108,180,0.09);
+    }
+    .calc-buttons {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 19px;
+    }
+    .calc-btn {
+      font-size: 2rem;
+      padding: 27px 0;
+      border: none;
+      border-radius: 18px;
+      background: #f0f3fa;
+      color: #365178;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.17s, color 0.17s;
+      box-shadow: 0 2px 16px rgba(88,112,174,0.10);
+      outline: none;
+    }
+    .calc-btn:active { background: #dde4ff; color: #4359a5; }
+    .calc-btn.op {
+      background: linear-gradient(90deg,#b6cafd 0%,#637dee 100%);
+      color: #fff;
+      font-weight: 900;
+    }
+    .calc-btn.op:active { background: linear-gradient(90deg,#637dee 0%,#b6cafd 100%);}
+    .calc-btn.equal {
+      background: linear-gradient(90deg, #6de0ca 0%, #32b896 100%);
+      color: #fff;
+      grid-column: 4/6;
+      font-weight: 900;
+      font-size: 2.22rem;
+    }
+    .calc-btn.equal:active { background: linear-gradient(90deg, #32b896 0%, #6de0ca 100%);}
+    .calc-btn.clear {
+      background: linear-gradient(90deg,#f7b7b7 0%,#ff5858 100%);
+      color: #fff;
+      font-weight: 900;
+      font-size: 1.86rem;
+    }
+    .calc-btn.clear:active { background: linear-gradient(90deg,#ff5858 0%,#f7b7b7 100%);}
+    .calc-btn.fn {
+      background: linear-gradient(90deg,#a9e2fa 0%,#79b6fa 100%);
+      color: #225681;
+      font-weight: 900;
+      font-size: 1.85rem;
+    }
+    .calc-btn.fn:active { background: linear-gradient(90deg,#79b6fa 0%,#a9e2fa 100%);}
+    .calc-btn.small { font-size: 1.35rem; }
+    /* 모바일 반응형 */
+    @media (max-width: 1100px) {
+      .main-wrap { max-width: 99vw; }
+      .clock-card, .weather-card { min-width: 97vw; max-width: 99vw; }
+      .calc-card { max-width: 99vw; }
+    }
+    @media (max-width: 700px) {
+      .widget-title, .calc-title { font-size: 1.15rem; }
+      .clock-container, .weather-dashboard { gap: 15px;}
+      .clock-card, .weather-card { min-width: 99vw; max-width: 99vw; padding: 14px 1vw 9px 1vw;}
+      .weather-card { padding: 18px 1vw 9px 1vw;}
+      .clock-time { font-size: 1.6rem; }
+      .clock-date { font-size: 0.95rem; }
+      .meter-value { font-size: 1.6rem; }
+      .calc-screen { font-size: 1.05rem; height: 40px; padding: 13px 2vw; }
+      .calc-btn { font-size: 0.94rem; padding: 7px 0;}
+    }
+  </style>
+</head>
+<body>
+  <div class="main-wrap">
+    <!-- 시계 -->
+    <div>
+      <div class="widget-title">🌏 듀얼 월드 시계</div>
+      <div class="clock-container">
+        <div class="clock-card">
+          <select class="city-select" id="city1"></select>
+          <div class="clock-time" id="time1"></div>
+          <div class="clock-date" id="date1"></div>
+          <div class="clock-label" id="label1"></div>
+        </div>
+        <div class="clock-card">
+          <select class="city-select" id="city2"></select>
+          <div class="clock-time" id="time2"></div>
+          <div class="clock-date" id="date2"></div>
+          <div class="clock-label" id="label2"></div>
+        </div>
+      </div>
+    </div>
+    <!-- 날씨 -->
+    <div>
+      <div class="widget-title">🌦️ 3개 도시 날씨</div>
+      <div class="weather-dashboard">
+        <div class="weather-card" id="wcard1">
+          <button class="refresh-btn" onclick="fetchWeather(1)">⟳</button>
+          <select class="city-select" id="wcity1"></select>
+          <div class="weather-icon" id="wicon1">☁️</div>
+          <div class="weather-main" id="wmain1">--</div>
+          <div class="weather-temp" id="wtemp1">-- ℃</div>
+          <div class="weather-humid" id="whumid1">-- %</div>
+          <div class="weather-status" id="wstatus1"></div>
+        </div>
+        <div class="weather-card" id="wcard2">
+          <button class="refresh-btn" onclick="fetchWeather(2)">⟳</button>
+          <select class="city-select" id="wcity2"></select>
+          <div class="weather-icon" id="wicon2">☁️</div>
+          <div class="weather-main" id="wmain2">--</div>
+          <div class="weather-temp" id="wtemp2">-- ℃</div>
+          <div class="weather-humid" id="whumid2">-- %</div>
+          <div class="weather-status" id="wstatus2"></div>
+        </div>
+        <div class="weather-card" id="wcard3">
+          <button class="refresh-btn" onclick="fetchWeather(3)">⟳</button>
+          <select class="city-select" id="wcity3"></select>
+          <div class="weather-icon" id="wicon3">☁️</div>
+          <div class="weather-main" id="wmain3">--</div>
+          <div class="weather-temp" id="wtemp3">-- ℃</div>
+          <div class="weather-humid" id="whumid3">-- %</div>
+          <div class="weather-status" id="wstatus3"></div>
+        </div>
+      </div>
+    </div>
+    <!-- 계산기 -->
+    <div class="calc-card">
+      <div class="calc-title">📐 공학용 계산기</div>
+      <input type="text" class="calc-screen" id="screen" value="0" readonly>
+      <div class="calc-buttons">
+        <button class="calc-btn clear" onclick="clearScreen()">C</button>
+        <button class="calc-btn fn small" onclick="insert('Math.PI')">π</button>
+        <button class="calc-btn fn small" onclick="insert('Math.E')">e</button>
+        <button class="calc-btn fn small" onclick="insert('(')">(</button>
+        <button class="calc-btn fn small" onclick="insert(')')">)</button>
+        <button class="calc-btn fn" onclick="insert('Math.sin(')">sin</button>
+        <button class="calc-btn fn" onclick="insert('Math.cos(')">cos</button>
+        <button class="calc-btn fn" onclick="insert('Math.tan(')">tan</button>
+        <button class="calc-btn fn" onclick="insert('Math.log10(')">log</button>
+        <button class="calc-btn fn" onclick="insert('Math.log(')">ln</button>
+        <button class="calc-btn" onclick="insert('7')">7</button>
+        <button class="calc-btn" onclick="insert('8')">8</button>
+        <button class="calc-btn" onclick="insert('9')">9</button>
+        <button class="calc-btn op" onclick="insert('/')">÷</button>
+        <button class="calc-btn fn" onclick="insert('**')">^</button>
+        <button class="calc-btn" onclick="insert('4')">4</button>
+        <button class="calc-btn" onclick="insert('5')">5</button>
+        <button class="calc-btn" onclick="insert('6')">6</button>
+        <button class="calc-btn op" onclick="insert('*')">×</button>
+        <button class="calc-btn fn small" onclick="insert('Math.sqrt(')">√</button>
+        <button class="calc-btn" onclick="insert('1')">1</button>
+        <button class="calc-btn" onclick="insert('2')">2</button>
+        <button class="calc-btn" onclick="insert('3')">3</button>
+        <button class="calc-btn op" onclick="insert('-')">-</button>
+        <button class="calc-btn fn small" onclick="backspace()">←</button>
+        <button class="calc-btn" onclick="insert('0')">0</button>
+        <button class="calc-btn" onclick="insert('.')">.</button>
+        <button class="calc-btn op" onclick="insert('+')">+</button>
+        <button class="calc-btn equal" onclick="calculate()">=</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // ===== 시계 =====
+    const clockCities = [
+      { name: "서울", country: "대한민국", zone: "Asia/Seoul" },
+      { name: "뉴욕", country: "미국", zone: "America/New_York" },
+      { name: "도쿄", country: "일본", zone: "Asia/Tokyo" },
+      { name: "런던", country: "영국", zone: "Europe/London" },
+      { name: "파리", country: "프랑스", zone: "Europe/Paris" },
+      { name: "베이징", country: "중국", zone: "Asia/Shanghai" },
+      { name: "로스앤젤레스", country: "미국", zone: "America/Los_Angeles" },
+      { name: "시드니", country: "호주", zone: "Australia/Sydney" },
+      { name: "홍콩", country: "중국", zone: "Asia/Hong_Kong" },
+      { name: "베를린", country: "독일", zone: "Europe/Berlin" },
+      { name: "방콕", country: "태국", zone: "Asia/Bangkok" },
+      { name: "두바이", country: "아랍에미리트", zone: "Asia/Dubai" },
+      { name: "싱가포르", country: "싱가포르", zone: "Asia/Singapore" },
+      { name: "모스크바", country: "러시아", zone: "Europe/Moscow" },
+      { name: "토론토", country: "캐나다", zone: "America/Toronto" },
+      { name: "상파울루", country: "브라질", zone: "America/Sao_Paulo" },
+      { name: "델리", country: "인도", zone: "Asia/Kolkata" },
+      { name: "이스탄불", country: "터키", zone: "Europe/Istanbul" }
+    ];
+    function setupClockCitySelect(selectId, defaultIdx) {
+      const select = document.getElementById(selectId);
+      select.innerHTML = "";
+      clockCities.forEach((city, idx) => {
+        const option = document.createElement("option");
+        option.value = city.zone;
+        option.textContent = `${city.name} (${city.country})`;
+        select.appendChild(option);
+      });
+      select.selectedIndex = defaultIdx;
+    }
+    setupClockCitySelect("city1", 0); // 서울
+    setupClockCitySelect("city2", 1); // 뉴욕
+    function updateClock(idx) {
+      const select = document.getElementById("city"+idx);
+      const tz = select.value;
+      const cityData = clockCities.find(c => c.zone === tz);
+      const now = new Date();
+      const time = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: tz });
+      const date = now.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long', timeZone: tz });
+      document.getElementById("time"+idx).textContent = time;
+      document.getElementById("date"+idx).textContent = date;
+      document.getElementById("label"+idx).textContent = `${cityData.name} (${cityData.country})`;
+    }
+    function tick() {
+      updateClock(1);
+      updateClock(2);
+    }
+    setInterval(tick, 1000);
+    tick();
+    document.getElementById("city1").addEventListener("change", () => updateClock(1));
+    document.getElementById("city2").addEventListener("change", () => updateClock(2));
+
+    // ===== 날씨 =====
+    const weatherCities = [
+      { name: "서울", country: "대한민국", lat: 37.5665, lon: 126.9780 },
+      { name: "뉴욕", country: "미국", lat: 40.7128, lon: -74.0060 },
+      { name: "도쿄", country: "일본", lat: 35.6895, lon: 139.6917 },
+      { name: "런던", country: "영국", lat: 51.5074, lon: -0.1278 },
+      { name: "파리", country: "프랑스", lat: 48.8566, lon: 2.3522 },
+      { name: "베이징", country: "중국", lat: 39.9042, lon: 116.4074 },
+      { name: "로스앤젤레스", country: "미국", lat: 34.0522, lon: -118.2437 },
+      { name: "시드니", country: "호주", lat: -33.8688, lon: 151.2093 },
+      { name: "홍콩", country: "중국", lat: 22.3193, lon: 114.1694 },
+      { name: "베를린", country: "독일", lat: 52.5200, lon: 13.4050 },
+      { name: "방콕", country: "태국", lat: 13.7563, lon: 100.5018 },
+      { name: "두바이", country: "아랍에미리트", lat: 25.2048, lon: 55.2708 },
+      { name: "싱가포르", country: "싱가포르", lat: 1.3521, lon: 103.8198 },
+      { name: "모스크바", country: "러시아", lat: 55.7558, lon: 37.6176 },
+      { name: "토론토", country: "캐나다", lat: 43.6532, lon: -79.3832 },
+      { name: "상파울루", country: "브라질", lat: -23.5505, lon: -46.6333 },
+      { name: "델리", country: "인도", lat: 28.6139, lon: 77.2090 },
+      { name: "이스탄불", country: "터키", lat: 41.0082, lon: 28.9784 }
+    ];
+    function setupWeatherCitySelect(selectId, defaultIdx) {
+      const select = document.getElementById(selectId);
+      select.innerHTML = "";
+      weatherCities.forEach((city, idx) => {
+        const option = document.createElement("option");
+        option.value = idx;
+        option.textContent = `${city.name} (${city.country})`;
+        select.appendChild(option);
+      });
+      select.selectedIndex = defaultIdx;
+    }
+    setupWeatherCitySelect("wcity1", 0);
+    setupWeatherCitySelect("wcity2", 1);
+    setupWeatherCitySelect("wcity3", 2);
+
+    async function fetchWeather(idx) {
+      const select = document.getElementById("wcity"+idx);
+      const city = weatherCities[select.value];
+      const tempDiv = document.getElementById("wtemp"+idx);
+      const humidDiv = document.getElementById("whumid"+idx);
+      const iconDiv = document.getElementById("wicon"+idx);
+      const mainDiv = document.getElementById("wmain"+idx);
+      const statusDiv = document.getElementById("wstatus"+idx);
+
+      tempDiv.textContent = "로딩중...";
+      humidDiv.textContent = "";
+      mainDiv.textContent = "";
+      iconDiv.textContent = "⏳";
+      statusDiv.textContent = "";
+
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,relative_humidity_2m,weather_code&timezone=auto`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.current) {
+          const temp = data.current.temperature_2m;
+          const humid = data.current.relative_humidity_2m;
+          const code = data.current.weather_code;
+          const weatherTable = {
+            0:  {icon:"☀️", text:"맑음", status:"날씨가 아주 좋아요!"},
+            1:  {icon:"🌤️", text:"대체로 맑음", status:"좋은 날씨입니다."},
+            2:  {icon:"⛅", text:"부분적으로 흐림", status:"가끔 구름이 있어요."},
+            3:  {icon:"☁️", text:"흐림", status:"구름이 많아요."},
+            45: {icon:"🌫️", text:"안개", status:"안개가 낍니다."},
+            48: {icon:"🌫️", text:"서리/안개", status:"안개/서리"},
+            51: {icon:"🌦️", text:"약한 이슬비", status:"이슬비가 조금 내립니다."},
+            53: {icon:"🌦️", text:"이슬비", status:"이슬비가 내립니다."},
+            55: {icon:"🌦️", text:"강한 이슬비", status:"이슬비가 많이 내립니다."},
+            61: {icon:"🌧️", text:"약한 비", status:"비가 조금 내립니다."},
+            63: {icon:"🌧️", text:"비", status:"비가 내립니다."},
+            65: {icon:"🌧️", text:"강한 비", status:"비가 많이 내립니다."},
+            66: {icon:"🌨️", text:"진눈깨비", status:"진눈깨비가 내려요."},
+            67: {icon:"🌨️", text:"진눈깨비", status:"진눈깨비가 내려요."},
+            71: {icon:"🌨️", text:"약한 눈", status:"눈이 조금 내려요."},
+            73: {icon:"🌨️", text:"눈", status:"눈이 내려요."},
+            75: {icon:"❄️", text:"강한 눈", status:"눈이 많이 내려요."},
+            80: {icon:"🌦️", text:"소나기", status:"소나기가 내립니다."},
+            81: {icon:"🌦️", text:"소나기", status:"소나기가 내립니다."},
+            82: {icon:"🌦️", text:"강한 소나기", status:"소나기가 많이 내립니다."}
+          };
+          const weather = weatherTable[code] || {icon:"❔", text:"알 수 없음", status:"날씨 정보 없음"};
+          iconDiv.textContent = weather.icon;
+          mainDiv.textContent = weather.text;
+          tempDiv.textContent = `${temp} ℃`;
+          humidDiv.textContent = `습도: ${humid} %`;
+          statusDiv.innerHTML = `${weather.status}`;
+        } else {
+          iconDiv.textContent = "❌";
+          mainDiv.textContent = "정보 없음";
+          tempDiv.textContent = "-- ℃";
+          humidDiv.textContent = "-- %";
+          statusDiv.textContent = "";
+        }
+      } catch (e) {
+        iconDiv.textContent = "❌";
+        mainDiv.textContent = "오류";
+        tempDiv.textContent = "-- ℃";
+        humidDiv.textContent = "-- %";
+        statusDiv.textContent = "";
+      }
+    }
+    document.getElementById("wcity1").addEventListener("change", ()=>fetchWeather(1));
+    document.getElementById("wcity2").addEventListener("change", ()=>fetchWeather(2));
+    document.getElementById("wcity3").addEventListener("change", ()=>fetchWeather(3));
+    fetchWeather(1); fetchWeather(2); fetchWeather(3);
+
+    // ===== 계산기 =====
+    let screen = document.getElementById('screen');
+    let expr = '';
+    function insert(val) {
+      if (screen.value === "Error") expr = '';
+      expr += val;
+      screen.value = expr.replace(/Math\.(PI|E|sin|cos|tan|log|log10|sqrt)\(/g, function(match) {
+        switch(match) {
+          case "Math.PI": return "π";
+          case "Math.E": return "e";
+          case "Math.sin(": return "sin(";
+          case "Math.cos(": return "cos(";
+          case "Math.tan(": return "tan(";
+          case "Math.log(": return "ln(";
+          case "Math.log10(": return "log(";
+          case "Math.sqrt(": return "√(";
+          default: return match;
+        }
+      });
+    }
+    function clearScreen() {
+      expr = '';
+      screen.value = '0';
+    }
+    function calculate() {
+      try {
+        let calcExpr = expr.replace(/\^/g, '**');
+        calcExpr = calcExpr.replace(/Math\.(sin|cos|tan)\(([^)]+)\)/g, function(_, fn, arg) {
+          return `Math.${fn}((${arg})*Math.PI/180)`;
+        });
+        let result = eval(calcExpr);
+        if (typeof result === 'number' && isFinite(result)) {
+          screen.value = result;
+          expr = result.toString();
+        } else {
+          screen.value = 'Error';
+          expr = '';
+        }
+      } catch (e) {
+        screen.value = 'Error';
+        expr = '';
+      }
+    }
+    function backspace() {
+      if (expr.length > 0) {
+        expr = expr.slice(0, -1);
+        screen.value = expr || '0';
+      }
+    }
+  </script>
+</body>
+</html>
