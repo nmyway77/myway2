@@ -1,185 +1,44 @@
- <!DOCTYPE html>
-<html lang="ko">
+ <html lang="ko">
 <head>
+ <base target="_blank">
   <meta charset="UTF-8">
   <title>나만의 디스플레이형 즐겨찾기 만들기 그림그리드형</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-  <!-- CKEditor5 Classic CDN -->
+  <!-- 안정적인 CKEditor classic 빌드 -->
   <script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
   <style>
-    html, body {
-      height: 100%;
-      margin: 0; padding: 0;
-      background: #fff;
-      font-family: 'Segoe UI','맑은 고딕',Arial,sans-serif;
-    }
+    html, body { height: 100%; margin: 0; padding: 0; background: #fff; font-family: 'Segoe UI','맑은 고딕',Arial,sans-serif; }
     body { min-height: 100vh; box-sizing: border-box; }
-    #controls {
-      position: fixed;
-      top: 20px;
-      right: 10px;
-      display: flex;
-      gap: 8px;
-      z-index: 100;
-    }
-    #controls button {
-      padding: 6px 10px;
-      background: #3C3C8C;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-      cursor: pointer;
-    }
+    #controls { position: fixed; top: 20px; right: 10px; display: flex; gap: 8px; z-index: 100; }
+    #controls button { padding: 6px 10px; background: #3C3C8C; color: #fff; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; }
     #controls button:nth-child(2) {background: #007bff;}
     #controls button:nth-child(3) {background: #ffc107; color: #000;}
-    #folder-select {
-      margin-left: 10px;
-      padding: 5px 10px;
-      font-size: 14px;
-      border-radius: 4px;
-      border: 1px solid #ddd;
-    }
-    #media-grid {
-      column-count: 5;
-      column-gap: 10px;
-      margin: 60px auto 20px;
-      width: 98vw;
-      max-width: 1700px;
-    }
-    .grid-item {
-      break-inside: avoid;
-      margin-bottom: 10px;
-      position: relative;
-      background: #fff;
-      box-shadow: 0 1px 6px #d0d0ff44;
-    }
-    .grid-item img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .edit-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: rgba(0,0,0,0.6);
-      border: none;
-      color: #fff;
-      padding: 4px 6px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-    .desc-label {
-      position: absolute;
-      left: 0; right: 0; bottom: 13%;
-      padding: 2px 7px;
-      color: #35334a;
-      font-size: 12px;
-      text-align: center;
-      background: rgba(255,255,255,0.82);
-      border-radius: 8px;
-      margin: 0 8px;
-      pointer-events: none;
-      font-weight: 500;
-    }
-    #editor-area {
-      width: 100vw;
-      max-width: 100vw;
-      margin: 0 auto;
-      background: #f6f9fb;
-      border-radius: 0;
-      padding: 0 0 24px 0;
-      box-shadow: none;
-      min-height: calc(100vh - 420px);
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      position: relative;
-    }
-    #editor-area > h3 {
-      margin: 0;
-      padding: 24px 12px 0 18px;
-      font-size: 1.08rem;
-    }
-    /* 버튼 우측상단 고정 */
-    #editor-btns {
-      display: flex;
-      gap: 10px;
-      position: absolute;
-      top: 18px;
-      right: 30px;
-      z-index: 10;
-    }
-    #editor-btns button {
-      padding: 7px 18px;
-      background: #3C3C8C;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 15px;
-      cursor: pointer;
-    }
-    #editor-btns button#save-editor-btn,
-    #editor-btns button#clear-editor-btn {
-      background: #007bff;
-      color: #fff;
-      display: none;
-    }
+    #folder-select { margin-left: 10px; padding: 5px 10px; font-size: 14px; border-radius: 4px; border: 1px solid #ddd; }
+    .media-grid-wrap { width: 100vw; display: flex; justify-content: center; margin-top: 60px; margin-bottom: 20px; }
+    #media-grid { column-count: 5; column-gap: 10px; max-width: 1700px; width: 98vw; display: inline-block; vertical-align: top; }
+    .grid-item { break-inside: avoid; margin-bottom: 10px; position: relative; background: #fff; box-shadow: 0 1px 6px #d0d0ff44; text-align: center; }
+    .grid-item a { display: block; border-radius: 8px; overflow: hidden; }
+    .grid-item img { width: 100%; height: auto; display: block; border-radius: 8px; cursor: pointer; margin: 0 auto; box-shadow: none; }
+    .edit-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); border: none; color: #fff; padding: 4px 6px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 3; }
+    .desc-label { position: absolute; left: 0; right: 0; bottom: 13%; padding: 2px 7px; color: #35334a; font-size: 12px; text-align: center; background: rgba(255,255,255,0.82); border-radius: 8px; margin: 0 8px; pointer-events: none; font-weight: 500; z-index: 2; }
+    #editor-area { width: 100vw; max-width: 100vw; margin: 0 auto; background: #f6f9fb; border-radius: 0; padding: 0 0 24px 0; box-shadow: none; min-height: calc(100vh - 420px); display: flex; flex-direction: column; align-items: stretch; position: relative; }
+    #editor-area > h3 { margin: 0; padding: 24px 12px 0 18px; font-size: 1.08rem; }
+    #editor-btns { display: flex; gap: 10px; position: absolute; top: 18px; right: 30px; z-index: 10; }
+    #editor-btns button { padding: 7px 18px; background: #3C3C8C; color: #fff; border: none; border-radius: 4px; font-size: 15px; cursor: pointer; }
+    #editor-btns button#save-editor-btn, #editor-btns button#clear-editor-btn { background: #007bff; color: #fff; display: none; }
     #editor-btns button#clear-editor-btn {background: #aaa;}
-    #editor-editbox {
-      margin: 52px 2vw 0 2vw;
-      background: #fff;
-      border-radius: 6px;
-    }
-    #editor-editbox.hide {
-      display: none !important;
-    }
-    #editor {
-      min-height: 320px;
-      background: #fff;
-      border-radius: 6px;
-      width: 100%;
-      box-sizing: border-box;
-      padding: 0 0 2vw 0;
-    }
-    #editor-preview {
-      background: #fff;
-      border: 1px solid #ccd;
-      margin: 18px 2vw 0 2vw;
-      min-height: 60px;
-      padding: 14px 18px;
-      border-radius: 6px;
-      word-break: break-word;
-    }
+    #editor-editbox { margin: 52px 2vw 0 2vw; background: #fff; border-radius: 6px; }
+    #editor-editbox.hide { display: none !important; }
+    #editor { min-height: 320px; background: #fff; border-radius: 6px; width: 100%; box-sizing: border-box; padding: 0 0 2vw 0; }
+    #editor-preview { background: #fff; border: 1px solid #ccd; margin: 18px 2vw 0 2vw; min-height: 60px; padding: 14px 18px; border-radius: 6px; word-break: break-word; }
     @media (max-width: 1100px) {#media-grid { column-count: 4;}}
     @media (max-width: 800px)  {#media-grid { column-count: 3;}}
     @media (max-width: 600px)  {#media-grid { column-count: 2;}}
     @media (max-width: 420px)  {#media-grid { column-count: 1;}}
-    @media (max-width:700px) {
-      #editor-area { min-height: 310px; }
-      #editor { min-height: 180px; }
-      #editor-btns { right: 12px; top: 12px; }
-    }
-    #modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.6);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 200;
-    }
-    #modal {
-      background: #fff;
-      padding: 20px;
-      border-radius: 6px;
-      width: 90vw; max-width: 340px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
+    @media (max-width:700px) { #editor-area { min-height: 310px; } #editor { min-height: 180px; } #editor-btns { right: 12px; top: 12px; } }
+    #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 200; }
+    #modal { background: #fff; padding: 20px; border-radius: 6px; width: 90vw; max-width: 340px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
     #modal h3 {margin-bottom: 10px;font-size: 18px;}
     #modal input {width: 100%;margin-bottom: 10px;padding: 8px;border: 1px solid #ccc;border-radius: 4px;font-size: 14px;}
     .actions {text-align: right;}
@@ -189,7 +48,6 @@
   </style>
 </head>
 <body>
-  <!-- 상단 컨트롤 -->
   <div id="controls">
     <button id="save-media-btn">미디어 저장</button>
     <button id="export-btn">내보내기</button>
@@ -197,9 +55,9 @@
     <input type="file" id="import-file" accept="application/json" style="display:none">
     <select id="folder-select"><option value="">전체 폴더</option></select>
   </div>
-  <!-- 그림 그리드 -->
-  <div id="media-grid"></div>
-  <!-- 모달 -->
+  <div class="media-grid-wrap">
+    <div id="media-grid"></div>
+  </div>
   <div id="modal-overlay">
     <div id="modal">
       <h3>미디어 저장</h3>
@@ -213,24 +71,20 @@
       </div>
     </div>
   </div>
-  <!-- 하단 에디터 (토글형) -->
   <div id="editor-area">
-    <h3>하단 링크/텍스트/표 편집 (필요할 때만 '편집' 가능)</h3>
+    <h3>하단 링크/텍스트/표/이미지 편집 (중앙정렬 지원)</h3>
     <div id="editor-btns">
       <button id="edit-toggle-btn">편집</button>
       <button id="save-editor-btn">마침</button>
       <button id="clear-editor-btn">초기화</button>
     </div>
-    <div id="editor-editbox" class="hide">
-      <div id="editor"></div>
-    </div>
+    <div id="editor-editbox" class="hide"><div id="editor"></div></div>
     <div id="editor-preview"></div>
   </div>
   <script>
-    // ---- 그림그리드 + 미디어 버튼 ----
+    // 그림그리드 + 미디어 버튼
     const STORAGE_KEY = 'mediaList_gridonly';
     const EDITOR_KEY = 'mediaEditor_html';
-
     const saveBtn = document.getElementById('save-media-btn'),
       exportBtn = document.getElementById('export-btn'),
       importBtn = document.getElementById('import-btn'),
@@ -267,7 +121,6 @@
       imgInput.focus();
     }
     cancelBtn.onclick = () => { overlay.style.display = 'none'; editingIndex = null; };
-
     confirmBtn.onclick = () => {
       const iurl = imgInput.value.trim();
       if (!iurl) { alert('사진 URL을 입력해주세요.'); imgInput.focus(); return; }
@@ -286,7 +139,6 @@
       renderGrid();
       editingIndex = null;
     };
-
     function updateFolderSelect(folders) {
       folderSelect.innerHTML = `<option value="">전체 폴더</option>`;
       folders.forEach(f=>{
@@ -295,7 +147,6 @@
         folderSelect.appendChild(opt);
       });
     }
-
     function renderGrid() {
       let list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       const curFolder = folderSelect.value;
@@ -305,24 +156,35 @@
         const card = document.createElement('div');
         card.className = 'grid-item';
         card.style.position = 'relative';
+
+        // <a>로 감싸기 (링크)
+        const link = document.createElement('a');
+        link.href = item.linkUrl;
+        link.target = "_blank";
+        link.rel = "noopener";
+        // 이미지
         const img = document.createElement('img');
         img.src = item.imgUrl;
         img.alt = '';
         img.onerror = function() {
           this.src = 'https://via.placeholder.com/300x180/ccc/fff?text=Image+Not+Found';
-        }
-        img.addEventListener('click', () => window.open(item.linkUrl, '_blank'));
+        };
+        link.appendChild(img);
+
+        // 설명
         if(item.desc) {
           const desc = document.createElement('div');
           desc.className = 'desc-label';
           desc.textContent = item.desc;
           card.appendChild(desc);
         }
+        // 수정버튼
         const editBtn = document.createElement('button');
         editBtn.className = 'edit-btn';
         editBtn.textContent = '수정';
         editBtn.addEventListener('click', e => { e.stopPropagation(); openModal(item, idx); });
-        card.append(img, editBtn);
+
+        card.append(link, editBtn);
         gridContainer.append(card);
       });
 
@@ -349,7 +211,6 @@
           renderGrid();
         }
       });
-
       // 폴더 옵션 업데이트
       const folders = Array.from(new Set((JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')).map(x=>x.folder).filter(Boolean)));
       updateFolderSelect(folders);
@@ -357,55 +218,7 @@
     folderSelect.onchange = renderGrid;
     document.addEventListener('DOMContentLoaded', renderGrid);
 
-    // ---- 내보내기/가져오기 (그림+에디터 동시) ----
-    exportBtn.onclick = () => {
-      const mediaList = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      const editorHtml = localStorage.getItem(EDITOR_KEY) || "";
-      const data = { mediaList, editorHtml };
-      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'mediaEditor.json';
-      a.click();
-      URL.revokeObjectURL(url);
-    };
-
-    importBtn.onclick = () => importFile.click();
-    importFile.onchange = e => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = evt => {
-        try {
-          const data = JSON.parse(evt.target.result);
-          if (Array.isArray(data.mediaList)) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data.mediaList));
-            localStorage.setItem(EDITOR_KEY, typeof data.editorHtml === "string" ? data.editorHtml : "");
-            folderSelect.value = "";
-            renderGrid();
-            setTimeout(function() {
-              if (ckeditorInstance) {
-                ckeditorInstance.setData(typeof data.editorHtml === "string" ? data.editorHtml : "");
-                lastSavedEditorHtml = typeof data.editorHtml === "string" ? data.editorHtml : "";
-                renderEditorPreview();
-                isEditing = false;
-                updateEditorView();
-              }
-            }, 300);
-            alert('데이터가 복원되었습니다.');
-          } else {
-            alert('파일 형식이 올바르지 않습니다.');
-          }
-        } catch {
-          alert('파일 읽기 중 오류가 발생했습니다.');
-        }
-      };
-      reader.readAsText(file);
-      importFile.value = null;
-    };
-
-    // ---- CKEditor 5 (토글 + 버튼 우측상단) ----
+    // CKEditor 5 (classic 빌드, 중앙정렬 지원)
     let ckeditorInstance;
     let lastSavedEditorHtml = "";
     let isEditing = false;
@@ -414,7 +227,6 @@
     const clearEditorBtn = document.getElementById('clear-editor-btn');
     const editorEditBox = document.getElementById('editor-editbox');
     const editorPreview = document.getElementById('editor-preview');
-
     function updateEditorView() {
       if(isEditing) {
         editorEditBox.classList.remove('hide');
@@ -428,18 +240,16 @@
         editToggleBtn.style.display = "inline-block";
       }
     }
-
     ClassicEditor
       .create(document.querySelector('#editor'), {
         toolbar: [
-          'heading', '|', 'bold', 'italic', 'underline', 'link', 'bulletedList', 'numberedList', 'blockQuote',
-          '|', 'insertTable', 'imageUpload', 'undo', 'redo', 'alignment', 'outdent', 'indent'
+          'heading', '|', 'bold', 'italic', 'underline', 'link',
+          'bulletedList', 'numberedList', 'blockQuote',
+          '|', 'insertTable', 'imageUpload', 'undo', 'redo',
+          'alignment', 'outdent', 'indent'
         ],
-        table: {
-          contentToolbar: [
-            'tableColumn', 'tableRow', 'mergeTableCells'
-          ]
-        }
+        alignment: { options: [ 'left', 'center', 'right', 'justify' ] },
+        table: { contentToolbar: [ 'tableColumn', 'tableRow', 'mergeTableCells' ] }
       })
       .then(editor => {
         ckeditorInstance = editor;
@@ -475,6 +285,52 @@
     function renderEditorPreview() {
       editorPreview.innerHTML = lastSavedEditorHtml;
     }
+    // 내보내기/가져오기 (그림+에디터 동시)
+    exportBtn.onclick = () => {
+      const mediaList = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      const editorHtml = localStorage.getItem(EDITOR_KEY) || "";
+      const data = { mediaList, editorHtml };
+      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'mediaEditor.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+    importBtn.onclick = () => importFile.click();
+    importFile.onchange = e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = evt => {
+        try {
+          const data = JSON.parse(evt.target.result);
+          if (Array.isArray(data.mediaList)) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data.mediaList));
+            localStorage.setItem(EDITOR_KEY, typeof data.editorHtml === "string" ? data.editorHtml : "");
+            folderSelect.value = "";
+            renderGrid();
+            setTimeout(function() {
+              if (ckeditorInstance) {
+                ckeditorInstance.setData(typeof data.editorHtml === "string" ? data.editorHtml : "");
+                lastSavedEditorHtml = typeof data.editorHtml === "string" ? data.editorHtml : "";
+                renderEditorPreview();
+                isEditing = false;
+                updateEditorView();
+              }
+            }, 300);
+            alert('데이터가 복원되었습니다.');
+          } else {
+            alert('파일 형식이 올바르지 않습니다.');
+          }
+        } catch {
+          alert('파일 읽기 중 오류가 발생했습니다.');
+        }
+      };
+      reader.readAsText(file);
+      importFile.value = null;
+    };
   </script>
 </body>
 </html>
