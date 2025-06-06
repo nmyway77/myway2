@@ -1,0 +1,124 @@
+  <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>MYWAY 원조 갤러리1~4 (데이터 only)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { background: #f4f6fa; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
+    .dashboard { max-width: 1200px; margin: 0 auto; padding: 34px 0 60px 0;}
+    .gallery-label {
+      font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
+      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
+    }
+    .gallery-row { width:100%; max-width:1080px; margin:0 auto; }
+    .list-row {
+      float: left;
+      width: 150px;
+      height: 97px;
+      background: #fff;
+      margin: 0 18px 42px 0;
+      box-sizing: border-box;
+      position: relative;
+    }
+    .list-row:last-child { margin-right: 0; }
+    .imgframe {
+      width: 100%; height: 100%;
+      background: #fff;
+      position: relative;
+      box-sizing: border-box;
+      z-index: 0;
+      border-radius: 0;
+      box-shadow: 0 1.5px 6px 0 rgba(90,90,130,0.11);
+      overflow: hidden;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
+    .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
+    .img-item img {
+      display: block; width: 100%; height: 100%;
+      object-fit: contain;
+      background: #fff;
+      margin: 0;
+      border: none;
+      padding: 0;
+    }
+    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
+    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: auto; pointer-events: none; user-select: none; }
+    /* 갤러리4(매거진)는 세로형 */
+    .list-row.magazine { width: 120px; height: 170px; }
+    .img-wrap.magazine { height: 100%; }
+    .img-item.magazine { height: 100%; }
+    .clearfix::after { content: ""; display: table; clear: both; }
+    @media (max-width:900px) {
+      .list-row { width:45vw; height:28vw; min-width:100px; min-height:60px;}
+      .list-row.magazine { width:31vw; height:44vw; min-width:65px; min-height:85px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+
+    <!-- 갤러리 1 -->
+    <span class="gallery-label">갤러리 1</span>
+    <div class="gallery-row clearfix" id="gallery1"></div>
+
+    <!-- 갤러리 2 -->
+    <span class="gallery-label">갤러리 2</span>
+    <div class="gallery-row clearfix" id="gallery2"></div>
+
+    <!-- 갤러리 3 -->
+    <span class="gallery-label">갤러리 3</span>
+    <div class="gallery-row clearfix" id="gallery3"></div>
+
+    <!-- 갤러리 4(매거진) -->
+    <span class="gallery-label">갤러리 4 (매거진)</span>
+    <div class="gallery-row clearfix" id="gallery4"></div>
+  </div>
+  <script>
+    // 갤러리1~4 예시 데이터 (글자 없이 url, img만)
+    const gallery1Data = [
+      { url: "https://duckduckgo.com/", img: "https://64.media.tumblr.com/97d8ef070851c4eba1a490004157b396/tumblr_inline_qtmyixNWhk1r45nlo_500.jpg" }
+    ];
+    const gallery2Data = [
+      { url: "https://yandex.com/", img: "https://64.media.tumblr.com/f41ba3cab449283ec3dc15fc8827d42f/tumblr_inline_riw323wnoZ1y2l0i6_500.jpg" }
+    ];
+    const gallery3Data = [
+      { url: "https://www.google.com.au/webhp?hl=en&gl=au", img: "https://64.media.tumblr.com/142f0d5149882bc05ab0a71ac01e5da1/tumblr_inline_njsurwZm6N1r45nlo.jpg" }
+    ];
+    const gallery4Data = [
+      { url: "https://www.bing.com/", img: "https://64.media.tumblr.com/c70980baa79022ccbcc5a11c02f5b160/tumblr_inline_rl7s9sCOJe1r45nlo_500.jpg" }
+    ];
+    // 그림자 png (필요시 주소 교체)
+    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
+
+    // 갤러리 생성 함수
+    function renderGallery(data, targetId, isMagazine = false) {
+      const el = document.getElementById(targetId);
+      el.innerHTML = data.map(item => `
+        <div class="list-row${isMagazine ? ' magazine' : ''}">
+          <div class="imgframe">
+            <div class="img-wrap${isMagazine ? ' magazine' : ''}">
+              <div class="img-item${isMagazine ? ' magazine' : ''}">
+                <a href="${item.url}" target="_blank" rel="noopener">
+                  <img src="${item.img}">
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="shadow-line">
+            <img src="${shadowUrl}">
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      `).join('');
+    }
+    renderGallery(gallery1Data, 'gallery1', false);
+    renderGallery(gallery2Data, 'gallery2', false);
+    renderGallery(gallery3Data, 'gallery3', false);
+    renderGallery(gallery4Data, 'gallery4', true); // 갤4는 매거진
+  </script>
+</body>
+</html>
