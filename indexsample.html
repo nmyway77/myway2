@@ -1,6 +1,7 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
+ <base target="_blank">
   <meta charset="UTF-8">
   <title>MYWAY - 검색포털 & 갤러리</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -144,47 +145,50 @@
   <iframe id="screen-frame" scrolling="no"></iframe>
 
   <script>
-    // 검색엔진별 URL
-    const engines = {
-      naver: "https://search.naver.com/search.naver?query=",
-      google: "https://www.google.com/search?q=",
-      bing: "https://www.bing.com/search?q=",
-      youtube: "https://www.youtube.com/results?search_query="
-    };
+    // 검색엔진 배열 (key와 select value 매칭)
+    var snarkEngines = [
+      { key: "naver",  home: "https://www.naver.com/", search: "https://search.naver.com/search.naver?query=" },
+      { key: "google", home: "https://www.google.co.uk/webhp?hl=ko&gl=uk", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=" },
+      { key: "bing",   home: "https://www.bing.com/", search: "https://www.bing.com/search?q=" },
+      { key: "youtube",home: "https://www.youtube.com/", search: "https://www.youtube.com/results?search_query=" }
+    ];
 
-    // 검색 전송
+    // 검색 전송: 검색어 없으면 홈, 있으면 결과
     document.getElementById('searchForm').onsubmit = function(e) {
       e.preventDefault();
-      const engine = document.getElementById('engine').value;
+      const engineKey = document.getElementById('engine').value;
       const query = document.getElementById('query').value.trim();
-      if(query) {
-        window.open(engines[engine] + encodeURIComponent(query), "_blank");
+      const engineObj = snarkEngines.find(e => e.key === engineKey);
+      if (engineObj) {
+        let url = query ? (engineObj.search + encodeURIComponent(query)) : engineObj.home;
+        window.open(url, "_blank");
       }
     };
 
     // 화면 메뉴 클릭시
     function showScreen(e, url) {
       e.preventDefault();
-      // 링크 스타일 활성화
       document.querySelectorAll('.screen-links a').forEach(a => a.classList.remove('active'));
       e.target.classList.add('active');
-      // 아이프레임 보이기 + 주소 갱신
       var frame = document.getElementById('screen-frame');
       frame.style.display = 'block';
       frame.src = url;
       frame.setAttribute('scrolling', 'no');
       frame.style.overflow = 'hidden';
-      frame.style.minHeight = '1100px'; // 버튼 잘릴 때 더 늘리면 됨
+      frame.style.minHeight = '1100px';
       frame.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
- document.getElementById('screen-frame').onload = function() {
-    try {
-      this.style.height = this.contentWindow.document.body.scrollHeight + 'px';
-    } catch(e) {
-      this.style.height = this.style.minHeight || '1100px';
-    }
-  };
+    document.getElementById('screen-frame').onload = function() {
+      try {
+        this.style.height = this.contentWindow.document.body.scrollHeight + 'px';
+      } catch (e) {
+        this.style.height = this.style.minHeight || '1100px';
+      }
+    };
+  </script>
+</body>
+</html>
 
 
 
