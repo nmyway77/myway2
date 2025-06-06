@@ -100,11 +100,11 @@
       max-width: 1200px;
       margin: 22px auto 38px auto;
       border: none;
-      background:  transparent;
-      box-shadow: none; 
-      border-radius: 0;
+      background: #fff;
+      box-shadow: 0 2px 26px 0 rgba(40,40,90,0.07);
+      border-radius: 22px;
       overflow: hidden !important;
-      transition:none;
+      transition: box-shadow 0.15s;
     }
     @media (max-width: 700px) {
       .searchbar-form { min-width: 0; width: 98%; height: 36px; }
@@ -131,8 +131,8 @@
 
   <!-- 화면 전환용 링크 (버튼 느낌) -->
   <div class="screen-links">
-    <a href="#" onclick="showScreen(event, 'screen1.html')">화면 1</a>
-    <a href="#" onclick="showScreen(event, 'screen2.html')">화면 2</a>
+    <a href="#" onclick="showScreen(event, 'https://myway.kr/page1.html')">화면 1</a>
+    <a href="#" onclick="showScreen(event, 'https://myway.kr/page2.html')">화면 2</a>
     <a href="#" onclick="showScreen(event, 'https://myway.kr/grininout.html')">화면 3</a>
     <a href="#" onclick="showScreen(event, 'https://myway.kr/page4.html')">화면 4</a>
     <a href="#" onclick="showScreen(event, 'https://myway.kr/page5.html')">화면 5</a>
