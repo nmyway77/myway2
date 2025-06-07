@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -131,52 +131,61 @@
 
   <!-- 화면 전환용 링크 (버튼 느낌) -->
   <div class="screen-links">
-    <a href="#" onclick="showScreen(event, 'https://myway.kr/page1.html')">화면 1</a>
-    <a href="#" onclick="showScreen(event, 'https://myway.kr/page2.html')">화면 2</a>
-    <a href="#" onclick="showScreen(event, 'https://myway.kr/grininout.html')">화면 3</a>
-    <a href="#" onclick="showScreen(event, 'https://myway.kr/page4.html')">화면 4</a>
-    <a href="#" onclick="showScreen(event, 'https://myway.kr/page5.html')">화면 5</a>
-    <a href="#" onclick="showScreen(event, 'https://myway.kr/page6.html')">화면 6</a>
-    <a href="#" onclick="showScreen(event, 'https://myway.kr/page7.html')">화면 7</a>
+    <a href="#" onclick="showScreen(event, 'screen1.html')">화면 1</a>
+    <a href="#" onclick="showScreen(event, 'mainpage2.html')">화면 2</a>
+    <a href="#" onclick="showScreen(event, 'mainpage3.html')">화면 3</a>
+    <a href="#" onclick="showScreen(event, 'mainpage4.html')">화면 4</a>
+    <a href="#" onclick="showScreen(event, 'imagegridfolder33')">화면 5</a>
+    <a href="#" onclick="showScreen(event, 'screen52.html')">화면 6</a>
+    <a href="#" onclick="showScreen(event, 'page7.html')">화면 7</a>
   </div>
 
   <!-- 아이프레임: 외부 페이지를 이곳에 표시 -->
   <iframe id="screen-frame" scrolling="no"></iframe>
 
   <script>
-    // 검색엔진별 URL
-    const engines = {
-      naver: "https://search.naver.com/search.naver?query=",
-      google: "https://www.google.com/search?q=",
-      bing: "https://www.bing.com/search?q=",
-      youtube: "https://www.youtube.com/results?search_query="
-    };
+    // 검색엔진 배열 (key와 select value 매칭)
+    var snarkEngines = [
+      { key: "naver",  home: "https://www.naver.com/", search: "https://search.naver.com/search.naver?query=" },
+      { key: "google", home: "https://www.google.co.uk/webhp?hl=ko&gl=uk", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=" },
+      { key: "bing",   home: "https://www.bing.com/", search: "https://www.bing.com/search?q=" },
+      { key: "youtube",home: "https://www.youtube.com/", search: "https://www.youtube.com/results?search_query=" }
+    ];
 
-    // 검색 전송
+    // 검색 전송: 검색어 없으면 홈, 있으면 결과
     document.getElementById('searchForm').onsubmit = function(e) {
       e.preventDefault();
-      const engine = document.getElementById('engine').value;
+      const engineKey = document.getElementById('engine').value;
       const query = document.getElementById('query').value.trim();
-      if(query) {
-        window.open(engines[engine] + encodeURIComponent(query), "_blank");
+      const engineObj = snarkEngines.find(e => e.key === engineKey);
+      if (engineObj) {
+        let url = query ? (engineObj.search + encodeURIComponent(query)) : engineObj.home;
+        window.open(url, "_blank");
       }
     };
 
     // 화면 메뉴 클릭시
     function showScreen(e, url) {
       e.preventDefault();
-      // 링크 스타일 활성화
       document.querySelectorAll('.screen-links a').forEach(a => a.classList.remove('active'));
       e.target.classList.add('active');
-      // 아이프레임 보이기 + 주소 갱신
       var frame = document.getElementById('screen-frame');
       frame.style.display = 'block';
       frame.src = url;
       frame.setAttribute('scrolling', 'no');
       frame.style.overflow = 'hidden';
-      frame.style.minHeight = '1100px'; // 버튼 잘릴 때 더 늘리면 됨
+      frame.style.minHeight = '1100px';
       frame.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+
+    document.getElementById('screen-frame').onload = function() {
+      try {
+        this.style.height = this.contentWindow.document.body.scrollHeight + 'px';
+      } catch (e) {
+        this.style.height = this.style.minHeight || '1100px';
+      }
+    };
   </script>
 </body>
 </html>
+
