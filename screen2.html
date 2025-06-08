@@ -1,5 +1,4 @@
- <!DOCTYPE html>
-<html lang="ko">
+ <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <title>MYWAY 진짜 갤러리 (중앙배열/유동적/공백X)</title>
@@ -67,9 +66,9 @@
 </head>
 <body>
   <div class="dashboard">
-    <span class="gallery-label">갤러리 1</span>
+    <span class="gallery-label">Live TV</span>
     <div class="gallery-row" id="gallery1"></div>
-    <span class="gallery-label">갤러리 2</span>
+    <span class="gallery-label">BBS</span>
     <div class="gallery-row" id="gallery2"></div>
     <span class="gallery-label">갤러리 3</span>
     <div class="gallery-row" id="gallery3"></div>
@@ -79,46 +78,34 @@
   <script>
     // 갤러리1~4 예시 데이터 (글자 없이 url, img만)
     const gallery1Data = [
-  { url: "https://www.ilbe.com/", img: "https://64.media.tumblr.com/f87089b786663fd984959a2041d8f80f/tumblr_inline_njswv3kCgU1r45nlo.jpg" },
-                    { url: "https://bbs.ruliweb.com/best/humor/now?orderby=readcount&range=7d", img: "https://64.media.tumblr.com/97e872c64ceca83c106a6cc455b93ef2/tumblr_inline_qsb08g0QCE1r45nlo_500.jpg" },
-  { url: "http://bhu.co.kr/bbs/hot.php", img: "https://64.media.tumblr.com/c86c0f38083b1206cb1cbb47abfaf49a/tumblr_inline_qsb04sBh2s1r45nlo_500.jpg" },
-  { url: "https://www.bobaedream.co.kr/list?code=freeb", img: "https://64.media.tumblr.com/3b952bb6f94775e5a470edb39edd231b/tumblr_inline_njswwdRBX11r45nlo.jpg" },
-  { url: "https://pann.nate.com/", img: "https://64.media.tumblr.com/174c55dc3719ff93ebef07272096c436/tumblr_inline_njswvnJBgk1r45nlo.jpg" },
-  { url: "http://www.todayhumor.co.kr/board/hold/list.php", img: "https://64.media.tumblr.com/87064417fb46a809da0a00efeb31b6a5/tumblr_inline_njswvw5Tky1r45nlo.jpg" },
+     { url: "https://www.youtube.com/playlist?list=PLU12uITxBEPGpEPrYAxJvNDP6Ugx2jmUx", img: "https://64.media.tumblr.com/2e4c845ac1a46598a83b6872a85d986f/tumblr_inline_qr62newSap1r45nlo_500.jpg" },
+  { url: "https://www.wavve.com/live/index.html", img: "https://64.media.tumblr.com/2189d70a9d043e35abd0da0795368db1/tumblr_inline_qr9rdcj5Gw1r45nlo_500.jpg" },
+  { url: "https://www.afreecatv.com/", img: "https://64.media.tumblr.com/50e085a5c21801bcbf82f2a329b8d427/tumblr_inline_qr5ags5Pq51r45nlo_500.jpg" },
+  { url: "https://sportshub.stream/baseball-live-streamz/", img: "https://64.media.tumblr.com/7ab26e8bf532d3f67eddf68af156b0bd/tumblr_inline_riw5cynx2c1y2l0i6_500.jpg" },
+  { url: "https://tv.kakao.com/live", img: "https://64.media.tumblr.com/ad34a8a06c7f2a6d49d0eca6ab75307a/tumblr_inline_qr5al8LGBG1r45nlo_500.jpg" },
+  { url: "https://tv.naver.com/l/livehome", img: "https://64.media.tumblr.com/32bab5d7c4db1f90a078262949bc66aa/tumblr_inline_qr5achQfT31r45nlo_500.jpg" },
+   { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList", img: "https://64.media.tumblr.com/3dfd628e3dd3732521f9f5cc4b673e23/tumblr_inline_qr495jheQy1r45nlo_500.jpg" },
+  { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList", img: "https://64.media.tumblr.com/b265cd8ad8795c0a4a0038e0155a5484/tumblr_inline_qr495pqaQM1r45nlo_500.jpg" },
+  { url: "https://play.sbs.co.kr/onair/pc/index.html?id=S01", img: "https://64.media.tumblr.com/b87dd445764b87d10675c626c3b24bfd/tumblr_inline_qr630dge1t1r45nlo_500.jpg" },
+  { url: "http://onair.imbc.com/", img: "https://64.media.tumblr.com/2828d1450c7b5d1781014819689d19c4/tumblr_inline_njsdfy3B4r1r45nlo.jpg" },
+  { url: "https://www.twitch.tv/", img: "https://64.media.tumblr.com/76994463eff7f663a451d48c3051a644/tumblr_inline_rj7sajI3371r45nlo_500.jpg" },
+  { url: "http://www.ichannela.com/com/cmm/onair.do", img: "https://64.media.tumblr.com/492e6b1ccdda41793234756a36808296/tumblr_inline_qr6s8va9vE1r45nlo_500.jpg" },
 
-  { url: "http://rgo4.com/free", img: "https://64.media.tumblr.com/e11c7ac63a2faa9db4d09512a7145c18/tumblr_inline_qsb0bh6RfA1r45nlo_500.jpg" },
-  { url: "https://www.jol-jam.com/", img: "https://64.media.tumblr.com/4173bf4a7352e4607c56dd977d9f2c23/tumblr_inline_qsb0geGOlw1r45nlo_500.jpg" },
-  { url: "http://www.ppomppu.co.kr/zboard/zboard.php?id=f1020", img: "https://64.media.tumblr.com/3527c8022ca44fadb4c9c4c5b24a64c9/tumblr_inline_njsx16siD01r45nlo.jpg" },
-  { url: "https://www.missycoupons.com/zero/board.php#id=general", img: "https://64.media.tumblr.com/64fee60e130d1983dc5005ff59d4c79c/tumblr_inline_qsf3ar6uYs1r45nlo_500.jpg" },
-  { url: "https://www.dcinside.com/", img: "https://64.media.tumblr.com/d114c61309cc431a272627d31e329f58/tumblr_inline_njsuxe53wK1r45nlo.jpg" },
-  { url: "http://web.humoruniv.com/main.html", img: "https://64.media.tumblr.com/49dffdb2fc50fae80bdcf8be5691cfb3/tumblr_inline_qsaui8fN7A1r45nlo_500.jpg" },
+  { url: "http://broadcast.tvchosun.com/onair/on.cstv", img: "https://64.media.tumblr.com/3c9da0d2f7a6731574fbd704e82f6c28/tumblr_inline_qr6iisiuEn1r45nlo_500.jpg" },
+  { url: "https://www.mbn.co.kr/vod/onair", img: "https://64.media.tumblr.com/2c30a5b9490fe98b1c628a2f8427433d/tumblr_inline_qr6o97Jr7e1r45nlo_500.jpg" },
+  { url: "https://www.ytn.co.kr/_hd/hd_live.html", img: "https://64.media.tumblr.com/a834d5c65162ebdc2b1cbc9a8daf6d57/tumblr_inline_qr63ooBx2g1r45nlo_500.jpg" },
+  { url: "https://www.yonhapnewstv.co.kr/live", img: "https://64.media.tumblr.com/e716c47503f2fb1f0b5f7642d0ebda14/tumblr_inline_qr6irxGBMz1r45nlo_500.jpg" },
+  { url: "https://tbs.seoul.kr/tv/index.do", img: "https://64.media.tumblr.com/960dc403fc341dc8c481f99f89c997dc/tumblr_inline_qr6n7l27YR1r45nlo_500.jpg" },
+  { url: "https://www.arirang.com/", img: "https://64.media.tumblr.com/34b7502c6c4511f8667416c9199bda6c/tumblr_inline_qsm7z6gViT1r45nlo_500.jpg" },
 
-  { url: "https://www.inven.co.kr/board/webzine/2097?iskin=webzine", img: "https://64.media.tumblr.com/7eb9a362ebe6576621a0d5e3b62d4656/tumblr_inline_qtbr70QaXE1r45nlo_500.jpg" },
-  { url: "https://www.instiz.net/pt?srt=3#greentop", img: "https://64.media.tumblr.com/05bed7b2fe6c494aec02ca45508ce3e9/tumblr_inline_qtbt5cG5pm1r45nlo_500.jpg" },
-  { url: "https://theqoo.net/hot?filter_mode=normal", img: "https://64.media.tumblr.com/f50f1c0b0dc0b452b17043a5ebaa2d7e/tumblr_inline_qtl5dukCre1r45nlo_500.jpg" },
-  { url: "https://www.82cook.com/entiz/enti.php?bn=15", img: "https://64.media.tumblr.com/d50a440ff876f59e16976f9f59883186/tumblr_inline_qtniggYbtg1r45nlo_500.jpg" },
-  { url: "https://www.clien.net/service/recommend", img: "https://64.media.tumblr.com/29b8f22b9718f3507f1f7c5fd442d7d3/tumblr_inline_qtnhftb2Co1r45nlo_500.jpg" },
-  { url: "https://www.fmkorea.com/", img: "https://64.media.tumblr.com/237edabb856f09d9ad9afb78c1058dc7/tumblr_inline_qtnhg1ezWQ1r45nlo_500.jpg" },
 
-  { url: "http://mlbpark.donga.com/mp/b.php?p=1&m=list&b=mlbtown&query=&select=&user=", img: "https://64.media.tumblr.com/493f7dc96a0a38181e760e00c93ab7c8/tumblr_inline_qtnhqyK49h1r45nlo_500.jpg" },
-  { url: "http://www.slrclub.com/bbs/zboard.php?id=free", img: "https://64.media.tumblr.com/7db779fc7ab3e23c0e7987075b3105ab/tumblr_inline_qtnhvmcVnB1r45nlo_500.jpg" },
-  { url: "http://www.gasengi.com/main/board.php?bo_table=commu08", img: "https://64.media.tumblr.com/d11e20191f52fe18517d35f50677ccd9/tumblr_inline_qtnicngyk11r45nlo_500.jpg" },
-  { url: "http://www.etoland.co.kr/bbs/board.php?bo_table=hit", img: "https://64.media.tumblr.com/fa87803dc91d9f2d2eacfe7374ad9d86/tumblr_inline_qtni0iPGZ71r45nlo_500.jpg" },
-  { url: "https://www.ygosu.com/community/best_article/?type=daily", img: "https://64.media.tumblr.com/7da5d9057926a944c5535cb76fe21d89/tumblr_inline_qtni6rEBAI1r45nlo_500.jpg" },
-  { url: "https://www.dogdrip.net/?mid=dogdrip&sort_index=popular", img: "https://64.media.tumblr.com/da499d2597e69a002e784f430971e851/tumblr_inline_qtni9mI7cl1r45nlo_500.jpg" },
 
-  { url: "https://www1.president.go.kr/petitions", img: "https://64.media.tumblr.com/9ae15d2818e781a46af41e60963f1b02/tumblr_inline_qqzai352iv1r45nlo_500.jpg" },
-  { url: "https://www.theminjoo.kr/", img: "https://64.media.tumblr.com/0173aa6497006346f5b96ffe022e4a89/tumblr_inline_qr0eskDoFu1r45nlo_500.jpg" },
-  { url: "http://www.peoplepowerparty.kr/renewal/talk/talk.do", img: "https://64.media.tumblr.com/10e4d1cfe7dae6421fc369ff66fb49e3/tumblr_inline_qr0esrK1ZL1r45nlo_500.jpg" },
-  { url: "http://www.justice21.org/newhome/board/board.html?bbs_code=JS148", img: "https://64.media.tumblr.com/71dd16aaa9ea32e496d6fa4028aaee39/tumblr_inline_qr0esyvf8s1r45nlo_500.jpg" },
-  { url: "https://www.ilbe.com/list/politics", img: "https://64.media.tumblr.com/0fd06d1e84140b6195f09702c7d3e8b2/tumblr_inline_qsb5v5hBc91r45nlo_500.jpg" },
-  { url: "http://www.hhiun.or.kr/FreeBoard", img: "https://64.media.tumblr.com/c906e951b1863006771a0bf8fc93a652/tumblr_inline_qr0ft8zCEt1r45nlo_500.jpg" }, ];
     ];
     const gallery2Data = [
-      { url: "https://yandex.com/", img: "https://64.media.tumblr.com/f41ba3cab449283ec3dc15fc8827d42f/tumblr_inline_riw323wnoZ1y2l0i6_500.jpg" },
+      { url: "https://yandex.com/", img: "https://64.media.tumblr.com/f41ba3cab449283ec3dc15fc8827d42f/tumblr_inline_riw323wnoZ1y2l0i6_500.jpg" }
     ];
     const gallery3Data = [
-      { url: "https://www.google.com.au/webhp?hl=en&gl=au", img: "https://64.media.tumblr.com/142f0d5149882bc05ab0a71ac01e5da1/tumblr_inline_njsurwZm6N1r45nlo.jpg" },
+      { url: "https://www.google.com.au/webhp?hl=en&gl=au", img: "https://64.media.tumblr.com/142f0d5149882bc05ab0a71ac01e5da1/tumblr_inline_njsurwZm6N1r45nlo.jpg" }
     ];
     const gallery4Data = [
       { url: "https://www.bing.com/", img: "https://cdn.imweb.me/upload/S20220907061cc0ff95b51/a23c8e0b381fce9b9ee47ebaa7a2a979.jpg" },
