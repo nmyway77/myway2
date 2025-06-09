@@ -1,90 +1,83 @@
- <!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <title>MYWAY.KR: 멀티검색, 나만의 디스플레이, 즐겨찾기</title>
-  <meta property="og:title" content="MYWAY.KR: 멀티검색 & 나만의 디스플레이& 썸네일 추출기" />
-  <meta property="og:description" content="멀티검색, 나만의 디스플레이, 즐겨찾기,한국의 정보모음, Korea travel information, MYWAY.KR" />
-  <meta property="og:url" content="https://myway.kr" />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://myway.kr/mywaylogo.png" />
-  <meta name="description" content="멀티검색, 나만의 디스플레이,즐겨찾기, 한국의 정보모음,썸네일 추출기, Korea travel information, MYWAY.KR" />
-  <meta name="naver-site-verification" content="4e88b51e170829dfb01ce587eaf5575804dd5a2" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif; background: #fff; margin: 0; padding: 0; }
     .searchbar-wrap { display: flex; justify-content: center; align-items: center; margin-top: 18px; margin-bottom: 5px; }
-    .searchbar-form { display: flex; align-items: center; border: 2.7px solid #232356; border-radius: 38px; overflow: hidden; background: #fff; min-width: 320px; max-width: 490px; width: 100%; height: 56px; box-shadow: 0 2px 10px 0 rgba(60,60,140,0.03); }
-    .searchbar-form:focus-within { border: 2.7px solid #32307c; box-shadow: 0 2px 18px 0 rgba(50,48,124,0.09); }
-    .searchbar-select { background: transparent; border: none; padding: 0 13px; font-size: 1.01rem; color: #32307c; font-weight: bold; outline: none; cursor: pointer; min-width: 95px; }
-    .searchbar-input { flex: 1; border: none; padding: 0 13px; font-size: 1.02rem; background: #fff; color: #232356; outline: none; height: 100%; }
-    .searchbar-btn { background: #32307c; color: #fff; border: none; padding: 0 24px; min-width: 86px; height: 100%; font-size: 1.08rem; font-weight: bold; cursor: pointer; border-radius: 0 34px 34px 0; letter-spacing: 0.1px; transition: background 0.15s; }
+    .searchbar-form { display: flex; align-items: center; border: 2.7px solid #232356; border-radius: 38px; overflow: hidden; background: #fff; min-width: 320px; max-width: 490px; width: 100%; height: 56px; box-shadow: 0 2px 10px 0 rgba(60,60,140,0.03);}
+    .searchbar-form:focus-within { border: 2.7px solid #32307c; box-shadow: 0 2px 18px 0 rgba(50,48,124,0.09);}
+    .searchbar-select { background: transparent; border: none; padding: 0 13px; font-size: 1.01rem; color: #32307c; font-weight: bold; outline: none; cursor: pointer; min-width: 95px;}
+    .searchbar-input { flex: 1; border: none; padding: 0 13px; font-size: 1.02rem; background: #fff; color: #232356; outline: none; height: 100%;}
+    .searchbar-btn { background: #32307c; color: #fff; border: none; padding: 0 24px; min-width: 86px; height: 100%; font-size: 1.08rem; font-weight: bold; cursor: pointer; border-radius: 0 34px 34px 0; letter-spacing: 0.1px; transition: background 0.15s;}
     .searchbar-btn:hover { background: #22205c; }
-
     .screen-links { text-align: center; margin-top: 3px; margin-bottom: 0; }
-    .screen-links a { display: inline-block; margin: 0 3px; font-size: 0.92rem; color: #232356; font-weight: bold; text-decoration: none; cursor: pointer; transition: color 0.14s; padding: 3px 12px 4px 12px; border-radius: 14px; letter-spacing: 0.02em; line-height: 1.58; white-space: nowrap; }
-    .screen-links a:hover, .screen-links a.active { color: #fff; background: #32307c; text-decoration: none; }
-
-    #screen-frame { display: none; position: relative; width: 99vw; min-height: 1100px; max-width: 1530px; margin: 22px auto 38px auto; border: none; background: transparent; box-shadow: none; border-radius: 0; overflow: hidden !important; transition: none; }
-
-    /* 화면 6, 7을 위한 공간 */
+    .screen-links a { display: inline-block; margin: 0 3px; font-size: 0.92rem; color: #232356; font-weight: bold; text-decoration: none; cursor: pointer; transition: color 0.14s; padding: 3px 12px 4px 12px; border-radius: 14px; letter-spacing: 0.02em; line-height: 1.58; white-space: nowrap;}
+    .screen-links a:hover, .screen-links a.active { color: #fff; background: #32307c; text-decoration: none;}
+    #screen-frame { display: none; position: relative; width: 99vw; min-height: 1100px; max-width: 1530px; margin: 22px auto 38px auto; border: none; background: transparent; box-shadow: none; border-radius: 0; overflow: hidden !important; transition: none;}
     #screen6, #screen7 { display: none; width: 99vw; min-height: 900px; max-width: 1530px; margin: 22px auto 38px auto; background: #fafcff; border-radius: 0; box-shadow: 0 2px 10px 0 rgba(30,32,80,0.05); padding: 20px; }
-
-    /* Media Queries for Responsive Design */
     @media (max-width: 700px) {
       .searchbar-form { min-width: 0; width: 98%; height: 52px; }
       .searchbar-select, .searchbar-input, .searchbar-btn { font-size: 1.03rem; }
       .searchbar-input { padding: 0 8px; }
-      .screen-links { text-align: left; overflow-x: auto; white-space: nowrap; padding-left: 8px; -webkit-overflow-scrolling: touch; }
-      .screen-links a { margin: 0 2px; font-size: 0.93rem; padding: 3px 8px 3px 8px; border-radius: 11px; }
+      .screen-links { text-align: left; overflow-x: auto; white-space: nowrap; padding-left: 8px; -webkit-overflow-scrolling: touch;}
+      .screen-links a { margin: 0 2px; font-size: 0.93rem; padding: 3px 8px 3px 8px; border-radius: 11px;}
       #screen-frame, #screen6, #screen7 { min-height: 450px; width: 98vw; border-radius: 6px;}
-    }
-
-    /* 그리드 스타일 */
-    #media-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .grid-item img {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <!-- 검색엔진바 -->
   <div class="searchbar-wrap">
     <form class="searchbar-form" id="searchForm" target="_blank">
       <select class="searchbar-select" id="engine">
-        <option value="naver">네이버 ▼</option>
-        <option value="google">구글</option>
-        <option value="youtube">유튜브</option>
-        <option value="daum">다음</option>
-        <option value="duckduckgo">덕덕고</option>
-        <option value="msn">MSN</option>
-        <option value="yahoo">야후</option>
-        <option value="yandex">얀덱스</option>
-        <option value="windows">윈도우 소프트웨어</option>
-        <option value="naver-shopping">네이버 쇼핑</option>
-        <option value="joongonara">중고나라</option>
-        <option value="naver-cafe">네이버카페 중고</option>
-        <option value="daangn">당근마켓</option>
-        <option value="danawa">다나와</option>
-        <option value="coupang">쿠팡</option>
-        <option value="aliexpress">알리(한글,영어)</option>
-        <option value="amazon">아마존(한글,영어)</option>
-        <option value="ebay">이베이(한글,영어)</option>
+       <option value="naver">네이버 ▼</option>
+ <option value="google">구글</option>
+<option value="youtube">유튜브</option>
+<option value="daum">다음</option>
+<option value="duckduckgo">덕덕고</option>
+<option value="msn">MSN</option>
+<option value="yahoo">야후</option>
+<option value="yandex">얀덱스</option>
+<option value="windows">윈도우 소프트웨어</option>
+<option value="naver-shopping">네이버 쇼핑</option>
+<option value="joongonara">중고나라</option>
+<option value="naver-cafe">네이버카페 중고</option>
+<option value="daangn">당근마켓</option>
+<option value="danawa">다나와</option>
+<option value="coupang">쿠팡</option>
+<option value="aliexpress">알리(한글,영어)</option>
+<option value="amazon">아마존(한글,영어)</option>
+<option value="ebay">이베이(한글,영어)</option>
+<option value="kor2eng">한글이름→영어</option>
+<option value="postcode">우편번호검색</option>
+<option value="phone114">전화번호(114)</option>
+<option value="naver-hanja">네이버 한자검색</option>
+<option value="afreecatv">아프리카TV</option>
+<option value="tvcast">TVCAST</option>
+<option value="kakaotv">카카오TV</option>
+<option value="vimeo">Vimeo</option>
+<option value="ms-edgestore">MS-EDGE스토어</option>
+<option value="chrome-webstore">크롬웹스토어</option>
+<option value="naver-datacenter">네이버자료실</option>
+<option value="kyobo">교보문고</option>
+<option value="aladin">알라딘</option>
+<option value="yahoo-search">Yahoo</option>
+<option value="twitter">트위터</option>
+<option value="instagram">인스타그램</option>
+<option value="kakao">카카오</option>
+<option value="tumblr">텀블러</option>
+<option value="tiktok">틱톡</option>
+<option value="pinterest">핀터레스트</option>
+<option value="naver-music">네이버뮤직</option>
+<option value="melon">멜론</option>
+<option value="bugs">벅스</option>
       </select>
       <input class="searchbar-input" id="query" type="text" placeholder="검색어를 입력하세요" autocomplete="off" />
       <button class="searchbar-btn" type="submit">검색</button>
     </form>
   </div>
-
-  <!-- 화면 전환용 링크 -->
   <div class="screen-links">
     <a href="#" onclick="showScreen(event, 1)">화면 1</a>
     <a href="#" onclick="showScreen(event, 2)">화면 2</a>
@@ -94,15 +87,70 @@
     <a href="#" onclick="showScreen(event, 6)">화면 6</a>
     <a href="#" onclick="showScreen(event, 7)">화면 7</a>
   </div>
-
-  <!-- 아이프레임: 화면 1~5번에서 사용 -->
   <iframe id="screen-frame" scrolling="no"></iframe>
-
-  <!-- 6, 7번 화면을 위한 div -->
   <div id="screen6"></div>
   <div id="screen7"></div>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
   <script>
+    // 검색엔진 작동
+    document.getElementById('searchForm').onsubmit = function(e) {
+      e.preventDefault();
+      const engine = document.getElementById('engine').value;
+      const query = document.getElementById('query').value;
+      let url = '';
+      switch(engine) {
+case 'naver': url = `https://search.naver.com/search.naver?query=${encodeURIComponent(query)}`; break;
+case 'google': url = `https://www.google.co.uk/search?hl=ko&gl=uk&q=${encodeURIComponent(query)}`; break;
+case 'youtube': url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`; break;
+case 'daum': url = `https://search.daum.net/search?w=tot&t__nil_searchbox=suggest&sug=&q=${encodeURIComponent(query)}`; break;
+case 'duckduckgo': url = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`; break;
+case 'msn': url = `https://www.bing.com/search?q=${encodeURIComponent(query)}`; break;
+case 'yahoo': url = `https://search.yahoo.com/search?p=${encodeURIComponent(query)}`; break;
+case 'yandex': url = `https://yandex.ru/search/?lr=10635&text=${encodeURIComponent(query)}`; break;
+case 'windows': url = `https://kr.uptodown.com/windows/search/${encodeURIComponent(query)}`; break;
+case 'naver-shopping': url = `https://shopping.naver.com/search/all_search.nhn?where=all&frm=NVSCTAB&query=${encodeURIComponent(query)}`; break;
+case 'joongonara': url = `https://web.joongna.com/search/${encodeURIComponent(query)}`; break;
+case 'naver-cafe': url = `https://cafe.naver.com/ca-fe/home/search/c-articles?q=${encodeURIComponent(query)}`; break;
+case 'daangn': url = `https://www.daangn.com/search/${encodeURIComponent(query)}`; break;
+case 'danawa': url = `https://search.danawa.com/dsearch.php?k1=${encodeURIComponent(query)}`; break;
+case 'coupang': url = `https://www.coupang.com/np/search?q=${encodeURIComponent(query)}`; break;
+case 'aliexpress': url = `https://ko.aliexpress.com/w/wholesale-${encodeURIComponent(query)}`; break;
+case 'amazon': url = `https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=${encodeURIComponent(query)}`; break;
+case 'ebay': url = `https://www.ebay.com/sch/i.html?_from=R40&_trksid=p2050601.m570.l1313&_nkw=${encodeURIComponent(query)}`; break;
+case 'kor2eng': url = `https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38&idx=&act=&searchKeyword=${encodeURIComponent(query)}`; break;
+case 'postcode': url = `https://www.juso.go.kr/support/AddressMainSearch.do?searchKeyword=${encodeURIComponent(query)}`; break;
+case 'phone114': url = `https://www.114.co.kr/search/result/all?query=${encodeURIComponent(query)}`; break;
+case 'naver-hanja': url = `http://hanja.naver.com/search?query=${encodeURIComponent(query)}`; break;
+case 'afreecatv': url = `https://www.afreecatv.com/total_search.html?szKeyword=${encodeURIComponent(query)}`; break;
+case 'tvcast': url = `https://tv.naver.com/search?query=${encodeURIComponent(query)}`; break;
+case 'kakaotv': url = `https://tv.kakao.com/search?q=${encodeURIComponent(query)}`; break;
+case 'vimeo': url = `https://vimeo.com/search?q=${encodeURIComponent(query)}`; break;
+case 'ms-edgestore': url = `https://microsoftedge.microsoft.com/addons/search/${encodeURIComponent(query)}`; break;
+case 'chrome-webstore': url = `https://chrome.google.com/webstore/search/${encodeURIComponent(query)}`; break;
+case 'naver-datacenter': url = `https://software.naver.com/search.nhn?query=${encodeURIComponent(query)}`; break;
+case 'kyobo': url = `https://search.kyobobook.co.kr/web/search?vPstrKeyWord=${encodeURIComponent(query)}`; break;
+case 'aladin': url = `https://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=All&SearchWord=${encodeURIComponent(query)}`; break;
+case 'yahoo-search': url = `https://search.yahoo.com/search;_ylt=Ar5458YY5y_GWWeBR2VSqUubvZx4?p=${encodeURIComponent(query)}`; break;
+case 'twitter': url = `https://twitter.com/search?q=${encodeURIComponent(query)}`; break;
+case 'instagram': url = `https://www.instagram.com/explore/tags/${encodeURIComponent(query)}`; break;
+case 'kakao': url = `https://story.kakao.com/hashtag/${encodeURIComponent(query)}`; break;
+case 'tumblr': url = `https://www.tumblr.com/search/${encodeURIComponent(query)}`; break;
+case 'tiktok': url = `https://www.tiktok.com/search?q=${encodeURIComponent(query)}`; break;
+case 'pinterest': url = `https://pinterest.com/search/?q=${encodeURIComponent(query)}`; break;
+case 'naver-music': url = `https://music.naver.com/search/search.nhn?query=${encodeURIComponent(query)}`; break;
+case 'melon': url = `https://www.melon.com/search/total/index.htm?q=${encodeURIComponent(query)}`; break;
+case 'bugs': url = `https://music.bugs.co.kr/search/integrated?q=${encodeURIComponent(query)}`; break;
+        // 필요시 추가
+      }
+      window.open(url, '_blank');
+    };
+
+    // 화면 전환 함수
+    function hideAllScreens() {
+      document.getElementById('screen-frame').style.display = 'none';
+      document.getElementById('screen6').style.display = 'none';
+      document.getElementById('screen7').style.display = 'none';
+    }
     // 화면 파일명
     const screenUrls = [
       "screen1.html",    // 1
@@ -111,42 +159,11 @@
       "mainpage43.html", // 4
       "mainpage2.html"   // 5
     ];
-
-    // 검색엔진 작동을 위한 form 제출 기능
-    document.getElementById('searchForm').onsubmit = function(e) {
-      e.preventDefault(); // 기본 제출 방지
-      const engine = document.getElementById('engine').value;
-      const query = document.getElementById('query').value;
-      let url = '';
-      switch(engine) {
-        case 'naver':
-          url = `https://search.naver.com/search.naver?query=${encodeURIComponent(query)}`;
-          break;
-        case 'google':
-          url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-          break;
-        case 'youtube':
-          url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
-          break;
-        // 다른 엔진 추가 가능
-      }
-      window.open(url, '_blank'); // 새 탭에서 열기
-    }
-
-    // 화면 전환 함수
-    function hideAllScreens() {
-      document.getElementById('screen-frame').style.display = 'none';
-      document.getElementById('screen6').style.display = 'none';
-      document.getElementById('screen7').style.display = 'none';
-    }
-
-    // 화면 전환
     function showScreen(e, num) {
       e.preventDefault();
       document.querySelectorAll('.screen-links a').forEach(a => a.classList.remove('active'));
       e.target.classList.add('active');
       hideAllScreens();
-
       if (num >= 1 && num <= 5) {
         var frame = document.getElementById('screen-frame');
         frame.style.display = 'block';
@@ -157,26 +174,270 @@
       } else if (num === 6) {
         var div6 = document.getElementById('screen6');
         div6.style.display = 'block';
-        div6.innerHTML = `
-          <h2 style="text-align:center;">화면 6</h2>
-          <div id="media-grid">
-            <div class="grid-item"><img src="https://via.placeholder.com/300" alt="이미지"></div>
-            <div class="grid-item"><img src="https://via.placeholder.com/300" alt="이미지"></div>
-            <div class="grid-item"><img src="https://via.placeholder.com/300" alt="이미지"></div>
-            <div class="grid-item"><img src="https://via.placeholder.com/300" alt="이미지"></div>
-          </div>
-        `;
+        div6.innerHTML = `<!-- 그림그리드 코드가 이 위치에 들어감 -->`;
+        // ----------- ↓↓↓ 그림그리드 코드 별도 함수 호출 ↓↓↓ -----------
+        setTimeout(setupGridScreen6, 0);
       } else if (num === 7) {
         var div7 = document.getElementById('screen7');
         div7.style.display = 'block';
-        div7.innerHTML = `
-          <h2 style="text-align:center;">화면 7</h2>
-          <p style="text-align:center;">이 화면도 자유롭게 수정할 수 있습니다.</p>
-          <p style="text-align:center;">HTML, CSS, JS를 추가하여 다양한 기능을 구현할 수 있습니다.</p>
-        `;
+        div7.innerHTML = `<h2 style="text-align:center;">화면 7</h2><p style="text-align:center;">이 화면도 자유롭게 수정할 수 있습니다.</p>`;
       }
     }
 
+    // 화면6에 그림그리드 코드 넣는 함수
+    function setupGridScreen6() {
+      var div6 = document.getElementById('screen6');
+      div6.innerHTML = `
+<div id="controls">
+  <button id="save-media-btn">미디어 저장</button>
+  <button id="export-btn">내보내기</button>
+  <button id="import-btn">가져오기</button>
+  <input type="file" id="import-file" accept="application/json" style="display:none">
+  <select id="folder-select"><option value="">전체 폴더</option></select>
+</div>
+<h2 style="text-align: center; margin-top: 20px;">디스플레이형 즐겨찾기 만들기</h2>
+<p style="text-align: center;"><a href="https://myway.kr/howtouse.html">이용방법안내&nbsp;</a> &nbsp; &nbsp; <a href="https://html5-editor.net/">웹에디터&nbsp;</a></p>
+<div id="media-grid"></div>
+<div class="editor-space"></div>
+<button id="html-edit-btn">편집</button>
+<textarea id="html-editor" placeholder="HTML 코드 편집"></textarea>
+<div id="html-preview"></div>
+<div id="modal-overlay">
+  <div id="modal">
+    <h3>미디어 저장</h3>
+    <input type="text" id="img-url" placeholder="사진 URL 입력" autofocus>
+    <button type="button" class="auto-thumb-btn" id="auto-thumb-btn">썸네일 자동찾기</button>
+    <input type="text" id="link-url" placeholder="연결 링크 입력">
+    <input type="text" id="media-folder" placeholder="폴더/디렉토리 (예: 여행)">
+    <div class="actions">
+      <button class="cancel-btn">취소</button>
+      <button class="save-btn">저장</button>
+    </div>
+  </div>
+</div>
+<style>
+  #controls { position: fixed; top: 20px; right: 10px; display: flex; gap: 8px; z-index: 100;}
+  #controls button { padding: 6px 10px; background: #3C3C8C; color: #fff; border: none; border-radius: 4px; font-size: 14px; cursor: pointer;}
+  #controls button:nth-child(2) { background: #007bff; }
+  #controls button:nth-child(3) { background: #ffc107; color: #000; }
+  #folder-select { margin-left: 10px; padding: 5px 10px; font-size: 14px; border-radius: 4px; border: 1px solid #ddd; }
+  #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 200;}
+  #modal { background: #fff; padding: 20px; border-radius: 6px; width: 320px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);}
+  #modal h3 { margin-bottom: 10px; font-size: 18px; }
+  #modal input { width: 100%; margin-bottom: 10px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;}
+  .auto-thumb-btn { background: #eee; color: #333; border: 1px solid #aaa; border-radius: 4px; padding: 6px 10px; font-size: 13px; margin-bottom: 10px; margin-right: 5px; cursor: pointer; display: inline-block;}
+  .actions { text-align: right; }
+  .actions button { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px; font-size: 14px;}
+  .save-btn { background: #28a745; color: #fff; }
+  .cancel-btn { background: #dc3545; color: #fff; }
+  #media-grid { column-count: 5; column-gap: 10px; margin: 60px auto 20px; width: 100%; max-width: 1400px;}
+  .grid-item { break-inside: avoid; margin-bottom: 10px; position: relative; background: #fff; box-shadow: 0 1px 6px #d0d0ff44;}
+  .grid-item img { width: 100%; height: auto; display: block; border-radius: 8px; cursor: pointer;}
+  .edit-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); border: none; color: #fff; padding: 4px 6px; border-radius: 4px; cursor: pointer; font-size: 12px;}
+  #html-editor, #html-preview { border-color: white;}
+  #html-edit-btn { display: block; margin: 0; padding: 8px 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; position: relative; top: 20px;}
+  #html-editor { display: none; width: 100%; height: 300px; font-family: monospace; font-size: 14px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; background: #f0f8ff; border-color: #007bff;}
+  #html-preview { width: 100%; padding: 10px; border: 1px solid #ddd; background: white;}
+  .editor-space { height: 80px;}
+  @media (max-width:1100px) {#media-grid{column-count:4;}}
+  @media (max-width:800px)  {#media-grid{column-count:3;}}
+  @media (max-width:600px)  {#media-grid{column-count:2;}}
+  @media (max-width:420px)  {#media-grid{column-count:1;}}
+</style>
+      `;
+      // -- JS 그림그리드 본체 --
+      // 키만 완전히 유니크하게!
+      const STORAGE_KEY = 'mediaList_uniquegrid';
+      const HTML_KEY = 'mediaHtmlContent_uniquegrid';
+      function extractYouTubeId(url) {
+        const regex = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([a-zA-Z0-9_-]{11})/;
+        const match = url.match(regex);
+        return match ? match[1] : null;
+      }
+      const saveBtn = document.getElementById('save-media-btn'),
+        exportBtn = document.getElementById('export-btn'),
+        importBtn = document.getElementById('import-btn'),
+        importFile = document.getElementById('import-file'),
+        overlay = document.getElementById('modal-overlay'),
+        cancelBtn = document.querySelector('.cancel-btn'),
+        confirmBtn = document.querySelector('.save-btn'),
+        imgInput = document.getElementById('img-url'),
+        linkInput = document.getElementById('link-url'),
+        folderInput = document.getElementById('media-folder'),
+        folderSelect = document.getElementById('folder-select'),
+        gridContainer = document.getElementById('media-grid'),
+        autoThumbBtn = document.getElementById('auto-thumb-btn');
+      let editingIndex = null;
+      saveBtn.onclick = () => openModal();
+      function openModal(item, idx) {
+        if (item) {
+          imgInput.value = item.imgUrl;
+          linkInput.value = item.linkUrl;
+          folderInput.value = item.folder || '';
+          confirmBtn.textContent = '수정';
+          editingIndex = idx;
+        } else {
+          imgInput.value = '';
+          linkInput.value = '';
+          folderInput.value = '';
+          confirmBtn.textContent = '저장';
+          editingIndex = null;
+        }
+        overlay.style.display = 'flex';
+        imgInput.focus();
+      }
+      cancelBtn.onclick = () => { overlay.style.display = 'none'; editingIndex = null; };
+      autoThumbBtn.onclick = function() {
+        const linkVal = linkInput.value.trim() || imgInput.value.trim();
+        const youtubeId = extractYouTubeId(linkVal);
+        if (youtubeId) {
+          imgInput.value = `https://img.youtube.com/vi/${youtubeId}/0.jpg`;
+          alert('유튜브 썸네일이 자동으로 입력되었습니다!');
+        } else {
+          alert('유튜브 영상 링크를 입력해 주세요.');
+        }
+      };
+      confirmBtn.onclick = () => {
+        const iurl = imgInput.value.trim();
+        if (!iurl) { alert('사진 URL을 입력해주세요.'); imgInput.focus(); return; }
+        let lurl = linkInput.value.trim();
+        if (!lurl) { alert('연결 링크를 입력해주세요.'); linkInput.focus(); return; }
+        if (!/^https?:\/\//i.test(lurl)) lurl = 'https://' + lurl;
+        const folder = folderInput.value.trim();
+        let list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const data = { imgUrl: iurl, linkUrl: lurl, folder };
+        if (editingIndex !== null) list[editingIndex] = data;
+        else list.push(data);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        overlay.style.display = 'none';
+        folderSelect.value = "";
+        renderGrid();
+        editingIndex = null;
+      };
+      exportBtn.onclick = () => {
+        const mediaList = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const gridContent = gridContainer.innerHTML;
+        const htmlContent = htmlPreview.innerHTML;
+        const data = { mediaList, gridContent, htmlContent };
+        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'mediaList_and_html.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+      importBtn.onclick = () => importFile.click();
+      importFile.onchange = e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = evt => {
+          try {
+            const data = JSON.parse(evt.target.result);
+            if (Array.isArray(data.mediaList)) {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(data.mediaList));
+              folderSelect.value = "";
+              renderGrid();
+            }
+            if (data.htmlContent) {
+              htmlPreview.innerHTML = data.htmlContent;
+              htmlEditor.value = data.htmlContent;
+              localStorage.setItem(HTML_KEY, data.htmlContent);
+            }
+            alert('데이터가 복원되었습니다.');
+          } catch {
+            alert('파일 읽기 중 오류가 발생했습니다.');
+          }
+        };
+        reader.readAsText(file);
+        importFile.value = null;
+      };
+      function updateFolderSelect(folders) {
+        folderSelect.innerHTML = `<option value="">전체 폴더</option>`;
+        folders.forEach(f=>{
+          const opt = document.createElement('option');
+          opt.value = f; opt.innerText = f;
+          folderSelect.appendChild(opt);
+        });
+      }
+      function renderGrid() {
+        let list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const curFolder = folderSelect.value;
+        if (curFolder) list = list.filter(x=>x.folder===curFolder);
+        gridContainer.innerHTML = '';
+        list.slice(0, 500).forEach((item, idx) => {
+          const card = document.createElement('div');
+          card.className = 'grid-item';
+          card.style.position = 'relative';
+          const img = document.createElement('img');
+          img.src = item.imgUrl;
+          img.alt = '';
+          img.onerror = function() {
+            this.src = 'https://via.placeholder.com/300x180/ccc/fff?text=Image+Not+Found';
+          }
+          img.addEventListener('click', () => window.open(item.linkUrl, '_blank'));
+          const editBtn = document.createElement('button');
+          editBtn.className = 'edit-btn';
+          editBtn.textContent = '수정';
+          editBtn.addEventListener('click', e => { e.stopPropagation(); openModal(item, idx); });
+          card.append(img, editBtn);
+          gridContainer.append(card);
+        });
+        Sortable.create(gridContainer, {
+          animation: 150,
+          onEnd: function (evt) {
+            let allList = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const curFolder = folderSelect.value;
+            if(curFolder) {
+              const indices = [];
+              allList.forEach((x,i)=>{ if(x.folder===curFolder) indices.push(i); });
+              const [movedIdx] = indices.splice(evt.oldIndex,1);
+              indices.splice(evt.newIndex,0,movedIdx);
+              const reordered = indices.map(i=>allList[i]);
+              let cnt=0;
+              allList = allList.map(x=>
+                x.folder===curFolder ? reordered[cnt++] : x
+              );
+            } else {
+              const [moved] = allList.splice(evt.oldIndex, 1);
+              allList.splice(evt.newIndex, 0, moved);
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(allList));
+            renderGrid();
+          }
+        });
+        const folders = Array.from(new Set((JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')).map(x=>x.folder).filter(Boolean)));
+        updateFolderSelect(folders);
+      }
+      folderSelect.onchange = renderGrid;
+      const htmlEditBtn = document.getElementById('html-edit-btn');
+      const htmlEditor = document.getElementById('html-editor');
+      const htmlPreview = document.getElementById('html-preview');
+      let htmlEditing = false;
+      htmlEditBtn.onclick = () => {
+        htmlEditing = !htmlEditing;
+        if (htmlEditing) {
+          htmlEditor.style.display = 'block';
+          htmlPreview.style.display = 'none';
+          htmlEditBtn.textContent = '마침';
+          htmlEditor.value = htmlPreview.innerHTML;
+        } else {
+          htmlPreview.innerHTML = htmlEditor.value;
+          htmlEditor.style.display = 'none';
+          htmlPreview.style.display = 'block';
+          htmlEditBtn.textContent = '편집';
+          localStorage.setItem(HTML_KEY, htmlPreview.innerHTML);
+        }
+      };
+      // 페이지 로드 시 localStorage에서 htmlContent를 불러오기!
+      renderGrid();
+      const savedHtml = localStorage.getItem(HTML_KEY);
+      if (savedHtml) {
+        htmlPreview.innerHTML = savedHtml;
+        htmlEditor.value = savedHtml;
+      }
+    }
     // 아이프레임 높이 자동조정
     document.getElementById('screen-frame').onload = function() {
       try {
