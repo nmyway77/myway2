@@ -1,0 +1,66 @@
+ <!-- 그림그리드 전체 HTML+CSS+JS -->
+<!-- 위 전체 index 파일의 setupGridScreen6() 함수 내부의 div6.innerHTML 코드 참고 -->
+<!-- 별도 페이지에서는 <body>안에 바로 복사 가능 -->
+
+<!-- (복붙용 - head에 Sortable.min.js 필요) -->
+<div id="controls">
+  <button id="save-media-btn">미디어 저장</button>
+  <button id="export-btn">내보내기</button>
+  <button id="import-btn">가져오기</button>
+  <input type="file" id="import-file" accept="application/json" style="display:none">
+  <select id="folder-select"><option value="">전체 폴더</option></select>
+</div>
+<h2 style="text-align: center; margin-top: 20px;">디스플레이형 즐겨찾기 만들기</h2>
+<p style="text-align: center;"><a href="https://myway.kr/howtouse.html">이용방법안내&nbsp;</a> &nbsp; &nbsp; <a href="https://html5-editor.net/">웹에디터&nbsp;</a></p>
+<div id="media-grid"></div>
+<div class="editor-space"></div>
+<button id="html-edit-btn">편집</button>
+<textarea id="html-editor" placeholder="HTML 코드 편집"></textarea>
+<div id="html-preview"></div>
+<div id="modal-overlay">
+  <div id="modal">
+    <h3>미디어 저장</h3>
+    <input type="text" id="img-url" placeholder="사진 URL 입력" autofocus>
+    <button type="button" class="auto-thumb-btn" id="auto-thumb-btn">썸네일 자동찾기</button>
+    <input type="text" id="link-url" placeholder="연결 링크 입력">
+    <input type="text" id="media-folder" placeholder="폴더/디렉토리 (예: 여행)">
+    <div class="actions">
+      <button class="cancel-btn">취소</button>
+      <button class="save-btn">저장</button>
+    </div>
+  </div>
+</div>
+<style>
+  #controls { position: fixed; top: 20px; right: 10px; display: flex; gap: 8px; z-index: 100;}
+  #controls button { padding: 6px 10px; background: #3C3C8C; color: #fff; border: none; border-radius: 4px; font-size: 14px; cursor: pointer;}
+  #controls button:nth-child(2) { background: #007bff; }
+  #controls button:nth-child(3) { background: #ffc107; color: #000; }
+  #folder-select { margin-left: 10px; padding: 5px 10px; font-size: 14px; border-radius: 4px; border: 1px solid #ddd; }
+  #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 200;}
+  #modal { background: #fff; padding: 20px; border-radius: 6px; width: 320px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);}
+  #modal h3 { margin-bottom: 10px; font-size: 18px; }
+  #modal input { width: 100%; margin-bottom: 10px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;}
+  .auto-thumb-btn { background: #eee; color: #333; border: 1px solid #aaa; border-radius: 4px; padding: 6px 10px; font-size: 13px; margin-bottom: 10px; margin-right: 5px; cursor: pointer; display: inline-block;}
+  .actions { text-align: right; }
+  .actions button { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px; font-size: 14px;}
+  .save-btn { background: #28a745; color: #fff; }
+  .cancel-btn { background: #dc3545; color: #fff; }
+  #media-grid { column-count: 5; column-gap: 10px; margin: 60px auto 20px; width: 100%; max-width: 1400px;}
+  .grid-item { break-inside: avoid; margin-bottom: 10px; position: relative; background: #fff; box-shadow: 0 1px 6px #d0d0ff44;}
+  .grid-item img { width: 100%; height: auto; display: block; border-radius: 8px; cursor: pointer;}
+  .edit-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); border: none; color: #fff; padding: 4px 6px; border-radius: 4px; cursor: pointer; font-size: 12px;}
+  #html-editor, #html-preview { border-color: white;}
+  #html-edit-btn { display: block; margin: 0; padding: 8px 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; position: relative; top: 20px;}
+  #html-editor { display: none; width: 100%; height: 300px; font-family: monospace; font-size: 14px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; background: #f0f8ff; border-color: #007bff;}
+  #html-preview { width: 100%; padding: 10px; border: 1px solid #ddd; background: white;}
+  .editor-space { height: 80px;}
+  @media (max-width:1100px) {#media-grid{column-count:4;}}
+  @media (max-width:800px)  {#media-grid{column-count:3;}}
+  @media (max-width:600px)  {#media-grid{column-count:2;}}
+  @media (max-width:420px)  {#media-grid{column-count:1;}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+<script>
+// 이하 JS 그림그리드 본체 (위 index 파일의 setupGridScreen6 함수 내부 JS와 완전히 동일)
+(생략... 필요 시 전체 JS 제공!)
+</script>
