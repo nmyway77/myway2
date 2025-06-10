@@ -1,0 +1,207 @@
+<html lang="ko">
+<head>
+ 
+  <base target="_blank76">
+  <meta charset="UTF-8">
+  <title>MYWAY 진짜 갤러리 (중앙배열/유동적/공백X)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
+    .dashboard { max-width: 1200px; margin: 0 auto; padding: 34px 0 60px 0;}
+    .gallery-label {
+      font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
+      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
+    }
+    .gallery-row {
+      width: 100%; max-width: 1080px; margin: 0 auto;
+      text-align: center;
+    }
+    .list-row {
+      display: inline-block;
+      vertical-align: top;
+      width: 150px;
+      height: 97px;
+      background: #fff;
+      margin: 0 12px 36px 0;
+      box-sizing: border-box;
+      position: relative;
+      transition: width 0.2s, height 0.2s;
+    }
+    .list-row:last-child { margin-right: 0; }
+    .imgframe {
+      width: 100%; height: 100%;
+      background: #fff;
+      position: relative;
+      box-sizing: border-box;
+      z-index: 0;
+      border-radius: 0;
+      box-shadow: 0 6px 6px 0 rgba(90,90,130,0.11);
+      overflow: hidden;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
+    .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
+    .img-item img {
+      display: block; width: 100%; height: 100%;
+      object-fit: contain;
+      background: #fff;
+      margin: 0;
+      border: none;
+      padding: 0;
+    }
+    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
+    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
+    .list-row.magazine { width: 120px; height: 170px; }
+    .img-wrap.magazine { height: 100%; }
+    .img-item.magazine { height: 100%; }
+    @media (max-width: 1080px) {
+      .list-row { width: 23vw; height: 15vw; min-width: 110px; min-height: 60px; margin: 0 2vw 28px 0; }
+      .list-row.magazine { width: 16vw; height: 22vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
+    }
+    @media (max-width: 700px) {
+      .list-row { width: 44vw; height: 28vw; min-width: 90px; min-height: 60px; margin: 0 2vw 22px 0; }
+      .list-row.magazine { width: 31vw; height: 44vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <span class="gallery-label">Live TV</span>
+    <div class="gallery-row" id="gallery1"></div>
+    <span class="gallery-label">BBS</span>
+    <div class="gallery-row" id="gallery2"></div>
+    <span class="gallery-label">증권및코인</span>
+    <div class="gallery-row" id="gallery3"></div>
+    <span class="gallery-label">갤러리 4 (매거진)</span>
+    <div class="gallery-row" id="gallery4"></div>
+  </div>
+  <script>
+    // 갤러리1~4 예시 데이터 (글자 없이 url, img만)
+    const gallery1Data = [
+     { url: "https://www.youtube.com/playlist?list=PLU12uITxBEPGpEPrYAxJvNDP6Ugx2jmUx", img: "https://64.media.tumblr.com/2e4c845ac1a46598a83b6872a85d986f/tumblr_inline_qr62newSap1r45nlo_500.jpg" },
+  { url: "https://www.wavve.com/live/index.html", img: "https://64.media.tumblr.com/2189d70a9d043e35abd0da0795368db1/tumblr_inline_qr9rdcj5Gw1r45nlo_500.jpg" },
+  { url: "https://www.afreecatv.com/", img: "https://64.media.tumblr.com/50e085a5c21801bcbf82f2a329b8d427/tumblr_inline_qr5ags5Pq51r45nlo_500.jpg" },
+  { url: "https://sportshub.stream/baseball-live-streamz/", img: "https://64.media.tumblr.com/7ab26e8bf532d3f67eddf68af156b0bd/tumblr_inline_riw5cynx2c1y2l0i6_500.jpg" },
+  { url: "https://tv.kakao.com/live", img: "https://64.media.tumblr.com/ad34a8a06c7f2a6d49d0eca6ab75307a/tumblr_inline_qr5al8LGBG1r45nlo_500.jpg" },
+  { url: "https://tv.naver.com/l/livehome", img: "https://64.media.tumblr.com/32bab5d7c4db1f90a078262949bc66aa/tumblr_inline_qr5achQfT31r45nlo_500.jpg" },
+   { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList", img: "https://64.media.tumblr.com/3dfd628e3dd3732521f9f5cc4b673e23/tumblr_inline_qr495jheQy1r45nlo_500.jpg" },
+  { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList", img: "https://64.media.tumblr.com/b265cd8ad8795c0a4a0038e0155a5484/tumblr_inline_qr495pqaQM1r45nlo_500.jpg" },
+  { url: "https://play.sbs.co.kr/onair/pc/index.html?id=S01", img: "https://64.media.tumblr.com/b87dd445764b87d10675c626c3b24bfd/tumblr_inline_qr630dge1t1r45nlo_500.jpg" },
+  { url: "http://onair.imbc.com/", img: "https://64.media.tumblr.com/2828d1450c7b5d1781014819689d19c4/tumblr_inline_njsdfy3B4r1r45nlo.jpg" },
+  { url: "https://www.twitch.tv/", img: "https://64.media.tumblr.com/76994463eff7f663a451d48c3051a644/tumblr_inline_rj7sajI3371r45nlo_500.jpg" },
+  { url: "http://www.ichannela.com/com/cmm/onair.do", img: "https://64.media.tumblr.com/492e6b1ccdda41793234756a36808296/tumblr_inline_qr6s8va9vE1r45nlo_500.jpg" },
+
+  { url: "http://broadcast.tvchosun.com/onair/on.cstv", img: "https://64.media.tumblr.com/3c9da0d2f7a6731574fbd704e82f6c28/tumblr_inline_qr6iisiuEn1r45nlo_500.jpg" },
+  { url: "https://www.mbn.co.kr/vod/onair", img: "https://64.media.tumblr.com/2c30a5b9490fe98b1c628a2f8427433d/tumblr_inline_qr6o97Jr7e1r45nlo_500.jpg" },
+  { url: "https://www.ytn.co.kr/_hd/hd_live.html", img: "https://64.media.tumblr.com/a834d5c65162ebdc2b1cbc9a8daf6d57/tumblr_inline_qr63ooBx2g1r45nlo_500.jpg" },
+  { url: "https://www.yonhapnewstv.co.kr/live", img: "https://64.media.tumblr.com/e716c47503f2fb1f0b5f7642d0ebda14/tumblr_inline_qr6irxGBMz1r45nlo_500.jpg" },
+  { url: "https://tbs.seoul.kr/tv/index.do", img: "https://64.media.tumblr.com/960dc403fc341dc8c481f99f89c997dc/tumblr_inline_qr6n7l27YR1r45nlo_500.jpg" },
+  { url: "https://www.arirang.com/", img: "https://64.media.tumblr.com/34b7502c6c4511f8667416c9199bda6c/tumblr_inline_qsm7z6gViT1r45nlo_500.jpg" },
+
+
+
+    ];
+    const gallery2Data = [
+
+     { url: "https://www.ilbe.com/", img: "https://64.media.tumblr.com/f87089b786663fd984959a2041d8f80f/tumblr_inline_njswv3kCgU1r45nlo.jpg" },
+  
+                  { url: "https://bbs.ruliweb.com/best/humor/now?orderby=readcount&range=7d", img: "https://64.media.tumblr.com/97e872c64ceca83c106a6cc455b93ef2/tumblr_inline_qsb08g0QCE1r45nlo_500.jpg" },
+  { url: "http://bhu.co.kr/bbs/hot.php", img: "https://64.media.tumblr.com/c86c0f38083b1206cb1cbb47abfaf49a/tumblr_inline_qsb04sBh2s1r45nlo_500.jpg" },
+  { url: "https://www.bobaedream.co.kr/list?code=freeb", img: "https://64.media.tumblr.com/3b952bb6f94775e5a470edb39edd231b/tumblr_inline_njswwdRBX11r45nlo.jpg" },
+  { url: "https://pann.nate.com/", img: "https://64.media.tumblr.com/174c55dc3719ff93ebef07272096c436/tumblr_inline_njswvnJBgk1r45nlo.jpg" },
+  { url: "http://www.todayhumor.co.kr/board/hold/list.php", img: "https://64.media.tumblr.com/87064417fb46a809da0a00efeb31b6a5/tumblr_inline_njswvw5Tky1r45nlo.jpg" },
+
+  { url: "http://rgo4.com/free", img: "https://64.media.tumblr.com/e11c7ac63a2faa9db4d09512a7145c18/tumblr_inline_qsb0bh6RfA1r45nlo_500.jpg" },
+  { url: "https://www.jol-jam.com/", img: "https://64.media.tumblr.com/4173bf4a7352e4607c56dd977d9f2c23/tumblr_inline_qsb0geGOlw1r45nlo_500.jpg" },
+  { url: "http://www.ppomppu.co.kr/zboard/zboard.php?id=f1020", img: "https://64.media.tumblr.com/3527c8022ca44fadb4c9c4c5b24a64c9/tumblr_inline_njsx16siD01r45nlo.jpg" },
+  { url: "https://www.missycoupons.com/zero/board.php#id=general", img: "https://64.media.tumblr.com/64fee60e130d1983dc5005ff59d4c79c/tumblr_inline_qsf3ar6uYs1r45nlo_500.jpg" },
+  { url: "https://www.dcinside.com/", img: "https://64.media.tumblr.com/d114c61309cc431a272627d31e329f58/tumblr_inline_njsuxe53wK1r45nlo.jpg" },
+  { url: "http://web.humoruniv.com/main.html", img: "https://64.media.tumblr.com/49dffdb2fc50fae80bdcf8be5691cfb3/tumblr_inline_qsaui8fN7A1r45nlo_500.jpg" },
+
+  { url: "https://www.inven.co.kr/board/webzine/2097?iskin=webzine", img: "https://64.media.tumblr.com/7eb9a362ebe6576621a0d5e3b62d4656/tumblr_inline_qtbr70QaXE1r45nlo_500.jpg" },
+  { url: "https://www.instiz.net/pt?srt=3#greentop", img: "https://64.media.tumblr.com/05bed7b2fe6c494aec02ca45508ce3e9/tumblr_inline_qtbt5cG5pm1r45nlo_500.jpg" },
+  { url: "https://theqoo.net/hot?filter_mode=normal", img: "https://64.media.tumblr.com/f50f1c0b0dc0b452b17043a5ebaa2d7e/tumblr_inline_qtl5dukCre1r45nlo_500.jpg" },
+  { url: "https://www.82cook.com/entiz/enti.php?bn=15", img: "https://64.media.tumblr.com/d50a440ff876f59e16976f9f59883186/tumblr_inline_qtniggYbtg1r45nlo_500.jpg" },
+  { url: "https://www.clien.net/service/recommend", img: "https://64.media.tumblr.com/29b8f22b9718f3507f1f7c5fd442d7d3/tumblr_inline_qtnhftb2Co1r45nlo_500.jpg" },
+  { url: "https://www.fmkorea.com/", img: "https://64.media.tumblr.com/237edabb856f09d9ad9afb78c1058dc7/tumblr_inline_qtnhg1ezWQ1r45nlo_500.jpg" },
+
+
+    ];
+
+
+
+
+
+
+
+
+    const gallery3Data = [
+     { url: "https://upbit.com/exchange?code=CRIX.UPBIT.KRW-DOGE", img: "https://myway.kr/up.jpg" },
+     { url: "https://www.binance.com/en/markets/overview", img: "https://myway.kr/bi.jpg" },
+     { url: "https://coinone.co.kr/chart?site=coinonedoge", img: "https://myway.kr/co.jpg" },
+     { url: "https://www.coinreaders.com/index.html", img: "https://myway.kr/cr.jpg" },
+{ url: "https://www.blockmedia.co.kr/", img: "https://myway.kr/blm.jpg" },
+     { url: "https://coinness.com/article", img: "https://myway.kr/conn.jpg" },
+     { url: "https://coinstats.app/ko/fear-and-greed/", img: "https://myway.kr/cost.jpg" },
+{ url: "https://datalab.upbit.com/indicator", img: "https://myway.kr/pan.jpg" },
+     
+     { url: "https://alphasquare.co.kr/home/theme-factor?theme-id=240&code=033500", img: "https://myway.kr/alf.jpg" },
+  { url: "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_068dd&symbol=TVC%3AGOLD&interval=1M&hidesidetoolbar=0&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&hideideas=1&theme=White&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.livecharts.co.uk&utm_medium=widget&utm_campaign=chart&utm_term=TVC%3AGOLD#%7B%22page-uri%22%3A%22www.livecharts.co.uk%2FMarketCharts%2Fgold.php%22%7D", img: "https://64.media.tumblr.com/81274876d633a646b358627dd24a3e5d/tumblr_inline_rium6pn7i01y2l0i6_500.jpg" },
+{ url: "https://m.stock.naver.com/fchart/foreign/stock/TSLA.O", img: "https://64.media.tumblr.com/ace2553fcff6c3c653924b10018a9dc2/tumblr_inline_riweqcxcVZ1y2l0i6_500.jpg" },
+{ url: "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_b2490&symbol=OANDA%3ANAS100USD&interval=1&hidesidetoolbar=0&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&hideideas=1&theme=White&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.livecharts.co.uk&utm_medium=widget&utm_campaign=chart&utm_term=OANDA%3ANAS100USD#%7B%22page-uri%22%3A%22www.livecharts.co.uk%2FMarketCharts%2Fnasdaq100.php%22%7D", img: "https://64.media.tumblr.com/d5c0420560190d108b65bf9f9b428ef5/tumblr_inline_riupvwefz81y2l0i6_500.jpg" },
+   { url: "https://www.investing.com/indices/us-spx-500-futures-advanced-chart", img: "https://64.media.tumblr.com/5d8e1452b43e3b3cb22f0fc0f73d1e1f/tumblr_inline_riupw7OU6B1y2l0i6_500.jpg" },
+{ url: "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_c2e45&symbol=OANDA%3AUS30USD&interval=1&hidesidetoolbar=0&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&hideideas=1&theme=White&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.livecharts.co.uk&utm_medium=widget&utm_campaign=chart&utm_term=OANDA%3AUS30USD#%7B%22page-uri%22%3A%22www.livecharts.co.uk%2FMarketCharts%2Fdow.php%22%7D", img: "https://64.media.tumblr.com/1dbdc6454800bb191c40bc282481a6df/tumblr_inline_r3puf4CrJJ1r45nlo_500.jpg" },
+{ url: "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_059d1&symbol=ixic&interval=1&hidesidetoolbar=0&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&hideideas=1&theme=White&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.livecharts.co.uk&utm_medium=widget&utm_campaign=chart&utm_term=", img: "https://64.media.tumblr.com/b930b5f43f37415c26752251c6c6ff7c/tumblr_inline_r3puflKPMd1r45nlo_500.jpg" }, 
+{ url: "https://finance.naver.com/item/board.naver?code=035420", img: "https://64.media.tumblr.com/a502b7d4cf8b125a5c8789e924d6f9f0/tumblr_inline_riw39aXVwI1y2l0i6_500.jpg" },
+{ url: "https://byline.network/", img: "https://64.media.tumblr.com/235564466e8a7d0869f9e1181bb4bd1e/tumblr_inline_rj2oalmPVQ1r45nlo_500.jpg" },
+{ url: "https://kr.investing.com/news/stock-market-news", img: "https://64.media.tumblr.com/a1db3bfb8ceb63cc9cdbf484f4aafbfc/tumblr_inline_rj0905hIPr1y2l0i6_500.jpg" },
+{ url: "https://news.mt.co.kr/newsflash/newsflash.html", img: "https://64.media.tumblr.com/35d0b5361aa9ba06ac557215cb676f7c/tumblr_inline_rj09bem7oA1y2l0i6_500.jpg" },
+{ url: "https://www.hankyung.com/realtime", img: "https://64.media.tumblr.com/f7526cf5a67b290962b475c4f8e9daaf/tumblr_inline_rj09139tnz1y2l0i6_500.jpg" },
+{ url: "https://www.mk.co.kr/news/stock/", img: "https://64.media.tumblr.com/b55844c1738d573bfac1fd484c1e43a1/tumblr_inline_rj096qLdFl1y2l0i6_500.jpg" },
+{ url: "https://finance.daum.net/investment/dividends", img: "https://64.media.tumblr.com/7125f0cf064f11a4d2904fc885401241/tumblr_inline_riy0cuGyXj1y2l0i6_500.jpg" },
+{ url: "https://asp01.fnguide.com/SVO2/ASP/SVD_comp_calendar.asp?pGB=1&gicode=A047810&gcd=&gnm=&curdt=&ctp=&cID=50&MenuYn=Y&ReportGB=&NewMenuID=701&stkGb=701", img: "https://64.media.tumblr.com/3edde7281f4124dc800fbe968358da5d/tumblr_inline_riwg1vwhiK1y2l0i6_500.jpg" },
+{ url: "http://comp.fnguide.com/SVO2/ASP/SVD_Report_Trend.asp?pGB=1&gicode=A005930&cID=&MenuYn=Y&ReportGB=&NewMenuID=801&stkGb=701", img: "https://64.media.tumblr.com/220ada1969342fa796e7b8c46da6d6ff/tumblr_inline_rj2o75BIZq1r45nlo_500.jpg" },
+{ url: "https://markets.hankyung.com/consensus", img: "https://64.media.tumblr.com/4a26c8cf7069ebbe2429bad98eccc23e/tumblr_inline_rj2odjxW8v1r45nlo_500.jpg" },
+{ url: "https://finance.naver.com/research/company_list.naver", img: "https://64.media.tumblr.com/3d6efc5419cc7a38ba0af5d3cb5c52b2/tumblr_inline_rj2oy1cRzh1r45nlo_500.jpg" },
+{ url: "https://href.li/?http://mbnmoney.mbn.co.kr/tv/onair", img: "https://64.media.tumblr.com/f6d709d23fe41d9b9704bb129599163b/tumblr_inline_qr6ijt9Seg1r45nlo_500.jpg" },
+{ url: "https://www.youtube.com/results?search_query=%EC%A6%9D%EA%B6%8C%EB%B0%A9%EC%86%A1", img: "https://myway.kr/hk.jpg" },
+
+     
+    
+    ];
+    const gallery4Data = [
+      { url: "https://www.bing.com/", img: "https://cdn.imweb.me/upload/S20220907061cc0ff95b51/a23c8e0b381fce9b9ee47ebaa7a2a979.jpg" },
+      { url: "https://www.bing.com/", img: "https://cdn.imweb.me/upload/S20220907061cc0ff95b51/a23c8e0b381fce9b9ee47ebaa7a2a979.jpg" },
+      { url: "https://www.bing.com/", img: "https://cdn.imweb.me/upload/S20220907061cc0ff95b51/a23c8e0b381fce9b9ee47ebaa7a2a979.jpg" },
+      { url: "https://www.bing.com/", img: "https://cdn.imweb.me/upload/S20220907061cc0ff95b51/a23c8e0b381fce9b9ee47ebaa7a2a979.jpg" }
+    ];
+    // 그림자 png (필요시 주소 교체)
+    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
+    function renderGallery(data, targetId, isMagazine = false) {
+      const el = document.getElementById(targetId);
+      el.innerHTML = data.map(item => `
+        <div class="list-row${isMagazine ? ' magazine' : ''}">
+          <div class="imgframe">
+            <div class="img-wrap${isMagazine ? ' magazine' : ''}">
+              <div class="img-item${isMagazine ? ' magazine' : ''}">
+                <a href="${item.url}" target="_blank" rel="noopener">
+                  <img src="${item.img}">
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="shadow-line">
+            <img src="${shadowUrl}">
+          </div>
+        </div>
+      `).join('');
+    }
+    renderGallery(gallery1Data, 'gallery1', false);
+    renderGallery(gallery2Data, 'gallery2', false);
+    renderGallery(gallery3Data, 'gallery3', false);
+    renderGallery(gallery4Data, 'gallery4', true); // 갤4는 매거진
+  </script>
+</body>
+</html>
