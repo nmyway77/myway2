@@ -1,4 +1,4 @@
-<html lang="ko">
+ <html lang="ko"> 
 <head>
   <base target="_blank76">
   <meta charset="UTF-8">
@@ -18,10 +18,13 @@
     .list-row {
       display: inline-block;
       vertical-align: top;
+      width: 150px;
+      height: 97px;
+      background: #fff;
+      margin: 0 12px 36px 0;
       box-sizing: border-box;
       position: relative;
       transition: width 0.2s, height 0.2s;
-      background: #fff;
     }
     .list-row:last-child { margin-right: 0; }
     .imgframe {
@@ -49,36 +52,82 @@
     }
     .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
     .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
-    /* 매거진 공통 스타일 (갤4 + 갤1~3 전부 적용) */
-    .list-row.magazine {
-      width: 150px;
-      height: 213px;
-      margin: 0 12px 36px 0;
-    }
+    /* 매거진(갤3, 갤4) 전용 스타일 */
+    .list-row.magazine { width:150px; height:213px; }
     .img-wrap.magazine { height: 100%; }
     .img-item.magazine { height: 100%; }
     @media (max-width: 1080px) {
-      .list-row.magazine { width: 28vw; height: 40vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
+      .list-row { width: 23vw; height: 15vw; min-width: 110px; min-height: 60px; margin: 0 2vw 28px 0; }
+      .list-row.magazine { width: 16vw; height: 22vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
     }
     @media (max-width: 700px) {
-      .list-row.magazine { width: 44vw; height: 62vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
+      .list-row { width: 44vw; height: 28vw; min-width: 90px; min-height: 60px; margin: 0 2vw 22px 0; }
+      .list-row.magazine { width: 31vw; height: 44vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
     }
   </style>
 </head>
 <body>
   <div class="dashboard">
-    <span class="gallery-label">MAGAZINES</span>
+    <span class="gallery-label">증권및코인</span>
     <div class="gallery-row" id="gallery1"></div>
     <span class="gallery-label">USEFUL</span>
     <div class="gallery-row" id="gallery2"></div>
-    <span class="gallery-label">증권및코인</span>
+    <span class="gallery-label">MAGAZINES</span>
     <div class="gallery-row" id="gallery3"></div>
     <span class="gallery-label">갤러리 4 (매거진)</span>
     <div class="gallery-row" id="gallery4"></div>
   </div>
   <script>
-    // 갤러리1~4 예시 데이터
+    // 갤러리1~4 예시 데이터 (글자 없이 url, img만)
     const gallery1Data = [
+
+     { url: "https://upbit.com/exchange?code=CRIX.UPBIT.KRW-DOGE", img: "https://myway.kr/up.jpg" },
+     { url: "https://www.binance.com/en/markets/overview", img: "https://myway.kr/bi.jpg" },
+     { url: "https://coinone.co.kr/chart?site=coinonedoge", img: "https://myway.kr/co.jpg" },
+     { url: "https://www.coinreaders.com/index.html", img: "https://myway.kr/cr.jpg" },
+{ url: "https://www.blockmedia.co.kr/", img: "https://myway.kr/blm.jpg" },
+     { url: "https://coinness.com/article", img: "https://myway.kr/conn.jpg" },
+     { url: "https://coinstats.app/ko/fear-and-greed/", img: "https://myway.kr/cost.jpg" },
+{ url: "https://datalab.upbit.com/indicator", img: "https://myway.kr/pan.jpg" },
+     
+     { url: "https://alphasquare.co.kr/home/theme-factor?theme-id=240&code=033500", img: "https://myway.kr/alf.jpg" },
+  { url: "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_068dd&symbol=TVC%3AGOLD&interval=1M&hidesidetoolbar=0&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&hideideas=1&theme=White&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.livecharts.co.uk&utm_medium=widget&utm_campaign=chart&utm_term=TVC%3AGOLD#%7B%22page-uri%22%3A%22www.livecharts.co.uk%2FMarketCharts%2Fgold.php%22%7D", img: "https://64.media.tumblr.com/81274876d633a646b358627dd24a3e5d/tumblr_inline_rium6pn7i01y2l0i6_500.jpg" },
+{ url: "https://m.stock.naver.com/fchart/foreign/stock/TSLA.O", img: "https://64.media.tumblr.com/ace2553fcff6c3c653924b10018a9dc2/tumblr_inline_riweqcxcVZ1y2l0i6_500.jpg" },
+{ url: "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_b2490&symbol=OANDA%3ANAS100USD&interval=1&hidesidetoolbar=0&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&hideideas=1&theme=White&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.livecharts.co.uk&utm_medium=widget&utm_campaign=chart&utm_term=OANDA%3ANAS100USD#%7B%22page-uri%22%3A%22www.livecharts.co.uk%2FMarketCharts%2Fnasdaq100.php%22%7D", img: "https://64.media.tumblr.com/d5c0420560190d108b65bf9f9b428ef5/tumblr_inline_riupvwefz81y2l0i6_500.jpg" },
+   { url: "https://www.investing.com/indices/us-spx-500-futures-advanced-chart", img: "https://64.media.tumblr.com/5d8e1452b43e3b3cb22f0fc0f73d1e1f/tumblr_inline_riupw7OU6B1y2l0i6_500.jpg" },
+{ url: "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_c2e45&symbol=OANDA%3AUS30USD&interval=1&hidesidetoolbar=0&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&hideideas=1&theme=White&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.livecharts.co.uk&utm_medium=widget&utm_campaign=chart&utm_term=OANDA%3AUS30USD#%7B%22page-uri%22%3A%22www.livecharts.co.uk%2FMarketCharts%2Fdow.php%22%7D", img: "https://64.media.tumblr.com/1dbdc6454800bb191c40bc282481a6df/tumblr_inline_r3puf4CrJJ1r45nlo_500.jpg" },
+{ url: "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_059d1&symbol=ixic&interval=1&hidesidetoolbar=0&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&hideideas=1&theme=White&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.livecharts.co.uk&utm_medium=widget&utm_campaign=chart&utm_term=", img: "https://64.media.tumblr.com/b930b5f43f37415c26752251c6c6ff7c/tumblr_inline_r3puflKPMd1r45nlo_500.jpg" }, 
+{ url: "https://finance.naver.com/item/board.naver?code=035420", img: "https://64.media.tumblr.com/a502b7d4cf8b125a5c8789e924d6f9f0/tumblr_inline_riw39aXVwI1y2l0i6_500.jpg" },
+{ url: "https://byline.network/", img: "https://64.media.tumblr.com/235564466e8a7d0869f9e1181bb4bd1e/tumblr_inline_rj2oalmPVQ1r45nlo_500.jpg" },
+{ url: "https://kr.investing.com/news/stock-market-news", img: "https://64.media.tumblr.com/a1db3bfb8ceb63cc9cdbf484f4aafbfc/tumblr_inline_rj0905hIPr1y2l0i6_500.jpg" },
+{ url: "https://news.mt.co.kr/newsflash/newsflash.html", img: "https://64.media.tumblr.com/35d0b5361aa9ba06ac557215cb676f7c/tumblr_inline_rj09bem7oA1y2l0i6_500.jpg" },
+{ url: "https://www.hankyung.com/realtime", img: "https://64.media.tumblr.com/f7526cf5a67b290962b475c4f8e9daaf/tumblr_inline_rj09139tnz1y2l0i6_500.jpg" },
+{ url: "https://www.mk.co.kr/news/stock/", img: "https://64.media.tumblr.com/b55844c1738d573bfac1fd484c1e43a1/tumblr_inline_rj096qLdFl1y2l0i6_500.jpg" },
+{ url: "https://finance.daum.net/investment/dividends", img: "https://64.media.tumblr.com/7125f0cf064f11a4d2904fc885401241/tumblr_inline_riy0cuGyXj1y2l0i6_500.jpg" },
+{ url: "https://asp01.fnguide.com/SVO2/ASP/SVD_comp_calendar.asp?pGB=1&gicode=A047810&gcd=&gnm=&curdt=&ctp=&cID=50&MenuYn=Y&ReportGB=&NewMenuID=701&stkGb=701", img: "https://64.media.tumblr.com/3edde7281f4124dc800fbe968358da5d/tumblr_inline_riwg1vwhiK1y2l0i6_500.jpg" },
+{ url: "http://comp.fnguide.com/SVO2/ASP/SVD_Report_Trend.asp?pGB=1&gicode=A005930&cID=&MenuYn=Y&ReportGB=&NewMenuID=801&stkGb=701", img: "https://64.media.tumblr.com/220ada1969342fa796e7b8c46da6d6ff/tumblr_inline_rj2o75BIZq1r45nlo_500.jpg" },
+{ url: "https://markets.hankyung.com/consensus", img: "https://64.media.tumblr.com/4a26c8cf7069ebbe2429bad98eccc23e/tumblr_inline_rj2odjxW8v1r45nlo_500.jpg" },
+{ url: "https://finance.naver.com/research/company_list.naver", img: "https://64.media.tumblr.com/3d6efc5419cc7a38ba0af5d3cb5c52b2/tumblr_inline_rj2oy1cRzh1r45nlo_500.jpg" },
+{ url: "https://href.li/?http://mbnmoney.mbn.co.kr/tv/onair", img: "https://64.media.tumblr.com/f6d709d23fe41d9b9704bb129599163b/tumblr_inline_qr6ijt9Seg1r45nlo_500.jpg" },
+{ url: "https://www.youtube.com/results?search_query=%EC%A6%9D%EA%B6%8C%EB%B0%A9%EC%86%A1", img: "https://myway.kr/hk.jpg" },
+
+   
+ ];
+
+
+
+
+
+    const gallery2Data = [
+
+      { url: "https://program.download/category/download/windows/", img: "https://myway.kr/ps.jpg" },
+      { url: "https://koreapops.tumblr.com/", img: "https://myway.kr/kpop.jpg" },
+   
+ ];
+
+
+    const gallery3Data = [
+
    { url: "http://www.allurekorea.com/", img: "https://64.media.tumblr.com/5a097048470fe45a4b30c4e5f4e097a8/tumblr_inline_qqnwhh0G5P1r45nlo_500.jpg" },
   { url: "https://woman.donga.com/", img: "https://64.media.tumblr.com/1aa90add760dfa7d745de3c2bd83ed57/tumblr_inline_qqnwi4R5op1r45nlo_500.jpg" },
   { url: "https://woman.chosun.com/", img: "https://64.media.tumblr.com/abbfa122d7a891c5589a089bd22efe3c/tumblr_inline_qqnwhsRTHe1r45nlo_500.jpg" },
@@ -112,33 +161,23 @@
 { url: "https://happy.designhouse.co.kr/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoENt_APTVCCuvPcK4vu_a5KlPKi5zFsA49A&usqp=CAU" },
 { url: "https://www.bicyclelife.net/", img: "https://64.media.tumblr.com/0dce0b3a6abde5ba9a3138688dc19a84/tumblr_inline_njsz0g1s8A1r45nlo.jpg" },
 
+    ];
 
 
-
-      
-    ];
-    const gallery2Data = [
-      { url: "https://program.download/category/download/windows/", img: "https://myway.kr/ps.jpg" },
-      { url: "https://koreapops.tumblr.com/", img: "https://myway.kr/kpop.jpg" },
-    ];
-    const gallery3Data = [
-      { url: "http://www.auction.co.kr/", img: "https://64.media.tumblr.com/e97d9391e0aeefcb82d1fb7bfe8748a5/tumblr_inline_njqty4XgTA1r45nlo.jpg" },
-      { url: "http://www.gmarket.co.kr/", img: "https://64.media.tumblr.com/4b13568a56efb8c2f9b51b8d3c5bface/tumblr_inline_njqu1l7g9v1r45nlo.jpg" },
-      { url: "http://shopping.naver.com/", img: "https://64.media.tumblr.com/75aaf70369c882c5ca9800a0e8d7ee49/tumblr_inline_njqu3tdsp51r45nlo.jpg" },
-    ];
     const gallery4Data = [
       { url: "http://www.allurekorea.com/", img: "https://64.media.tumblr.com/5a097048470fe45a4b30c4e5f4e097a8/tumblr_inline_qqnwhh0G5P1r45nlo_500.jpg" },
     ];
-    // 그림자 png
+
+
+    // 그림자 png (필요시 주소 교체)
     const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
-    // 모든 갤러리를 매거진 타입으로!
-    function renderGallery(data, targetId) {
+    function renderGallery(data, targetId, isMagazine = false) {
       const el = document.getElementById(targetId);
       el.innerHTML = data.map(item => `
-        <div class="list-row magazine">
+        <div class="list-row${isMagazine ? ' magazine' : ''}">
           <div class="imgframe">
-            <div class="img-wrap magazine">
-              <div class="img-item magazine">
+            <div class="img-wrap${isMagazine ? ' magazine' : ''}">
+              <div class="img-item${isMagazine ? ' magazine' : ''}">
                 <a href="${item.url}" target="_blank" rel="noopener">
                   <img src="${item.img}">
                 </a>
@@ -151,10 +190,10 @@
         </div>
       `).join('');
     }
-    renderGallery(gallery1Data, 'gallery1');
-    renderGallery(gallery2Data, 'gallery2');
-    renderGallery(gallery3Data, 'gallery3');
-    renderGallery(gallery4Data, 'gallery4');
+    renderGallery(gallery1Data, 'gallery1', false);
+    renderGallery(gallery2Data, 'gallery2', false);
+    renderGallery(gallery3Data, 'gallery3', true); // ★ 갤3을 매거진스타일로!
+    renderGallery(gallery4Data, 'gallery4', true); // 갤4는 매거진
   </script>
 </body>
 </html>
