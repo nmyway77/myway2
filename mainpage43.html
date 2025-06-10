@@ -1,10 +1,8 @@
- <!DOCTYPE html>
 <html lang="ko">
 <head>
- 
   <base target="_blank76">
   <meta charset="UTF-8">
-  <title>MYWAY 진짜 갤러리 (모두 매거진/유동적/중앙배열)</title>
+  <title>MYWAY 진짜 갤러리 (중앙배열/유동적/공백X)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
@@ -14,19 +12,16 @@
       color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
     }
     .gallery-row {
-      width: 100%; max-width: 1200px; margin: 0 auto;
+      width: 100%; max-width: 1080px; margin: 0 auto;
       text-align: center;
     }
     .list-row {
       display: inline-block;
       vertical-align: top;
-      width: 120px;   /* magazine */
-      height: 170px;  /* magazine */
-      background: #fff;
-      margin: 0 12px 36px 0;
       box-sizing: border-box;
       position: relative;
       transition: width 0.2s, height 0.2s;
+      background: #fff;
     }
     .list-row:last-child { margin-right: 0; }
     .imgframe {
@@ -54,82 +49,68 @@
     }
     .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
     .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
-    /* 모두 매거진 스타일! */
+    /* 매거진 공통 스타일 (갤4 + 갤1~3 전부 적용) */
+    .list-row.magazine {
+      width: 150px;
+      height: 213px;
+      margin: 0 12px 36px 0;
+    }
+    .img-wrap.magazine { height: 100%; }
+    .img-item.magazine { height: 100%; }
     @media (max-width: 1080px) {
-      .list-row {
-        width: 16vw;
-        height: 22vw;
-        min-width: 80px;
-        min-height: 100px;
-        margin: 0 2vw 28px 0;
-      }
+      .list-row.magazine { width: 28vw; height: 40vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
     }
     @media (max-width: 700px) {
-      .list-row {
-        width: 31vw;
-        height: 44vw;
-        min-width: 65px;
-        min-height: 85px;
-        margin: 0 2vw 22px 0;
-      }
+      .list-row.magazine { width: 44vw; height: 62vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
     }
   </style>
 </head>
 <body>
   <div class="dashboard">
-    <span class="gallery-label">무료 웹툰</span>
+    <span class="gallery-label">P-SITES</span>
     <div class="gallery-row" id="gallery1"></div>
-    <span class="gallery-label">갤러리 2</span>
+    <span class="gallery-label">USEFUL</span>
     <div class="gallery-row" id="gallery2"></div>
-    <span class="gallery-label">갤러리 3</span>
+    <span class="gallery-label">증권및코인</span>
     <div class="gallery-row" id="gallery3"></div>
     <span class="gallery-label">갤러리 4 (매거진)</span>
     <div class="gallery-row" id="gallery4"></div>
   </div>
   <script>
-    // 갤러리1~4 예시 데이터 (글자 없이 url, img만)
+    // 갤러리1~4 예시 데이터
     const gallery1Data = [
 { url: "https://comic.naver.com/index", img: "https://myway.kr/NWT.jpg" },
      { url: "https://webtoon.kakao.com/", img: "https://myway.kr/kwr.jpg" },
      { url: "https://www.toomics.com/", img: "https://myway.kr/tmic.jpg" },
 { url: "https://www.bomtoon.com/bom/comic/free", img: "https://myway.kr/bomt.jpg" },
 
+
+
+
+      
     ];
     const gallery2Data = [
-
-
-
-     
+      { url: "https://program.download/category/download/windows/", img: "https://myway.kr/ps.jpg" },
+      { url: "https://koreapops.tumblr.com/", img: "https://myway.kr/kpop.jpg" },
     ];
-
-
-   
     const gallery3Data = [
-     
-
-
-    
-    
+      { url: "http://www.auction.co.kr/", img: "https://64.media.tumblr.com/e97d9391e0aeefcb82d1fb7bfe8748a5/tumblr_inline_njqty4XgTA1r45nlo.jpg" },
+      { url: "http://www.gmarket.co.kr/", img: "https://64.media.tumblr.com/4b13568a56efb8c2f9b51b8d3c5bface/tumblr_inline_njqu1l7g9v1r45nlo.jpg" },
+      { url: "http://shopping.naver.com/", img: "https://64.media.tumblr.com/75aaf70369c882c5ca9800a0e8d7ee49/tumblr_inline_njqu3tdsp51r45nlo.jpg" },
     ];
-
-   
     const gallery4Data = [
-
-     
-
+      { url: "http://www.allurekorea.com/", img: "https://64.media.tumblr.com/5a097048470fe45a4b30c4e5f4e097a8/tumblr_inline_qqnwhh0G5P1r45nlo_500.jpg" },
     ];
-
-   
-    // 그림자 png (필요시 주소 교체)
+    // 그림자 png
     const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
-    // 모두 magazine 스타일!
+    // 모든 갤러리를 매거진 타입으로!
     function renderGallery(data, targetId) {
       const el = document.getElementById(targetId);
       el.innerHTML = data.map(item => `
-        <div class="list-row">
+        <div class="list-row magazine">
           <div class="imgframe">
-            <div class="img-wrap">
-              <div class="img-item">
+            <div class="img-wrap magazine">
+              <div class="img-item magazine">
                 <a href="${item.url}" target="_blank" rel="noopener">
                   <img src="${item.img}">
                 </a>
