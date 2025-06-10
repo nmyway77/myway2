@@ -80,6 +80,7 @@
   <script>
     // 갤러리1~4 예시 데이터 (글자 없이 url, img만)
     const gallery1Data = [
+     
    { url: "https://chat.openai.com/chat", img: "https://64.media.tumblr.com/80f657278cf3dbe0376f834307a93770/tumblr_inline_rqk2r1je4U1r45nlo_500.jpg" },
 { url: "https://copilot.microsoft.com/chats/j7huYm5uEVaZQcMPQdPgr", img: "https://myway.kr/copl.jpg" },
 { url: "https://x.ai/", img: "https://myway.kr/grok.jpg" },
@@ -220,44 +221,83 @@
 
 
     const gallery3Data = [
-     { url: "https://upbit.com/exchange?code=CRIX.UPBIT.KRW-DOGE", img: "https://myway.kr/up.jpg" },
-     { url: "https://www.binance.com/en/markets/overview", img: "https://myway.kr/bi.jpg" },
-     { url: "https://coinone.co.kr/chart?site=coinonedoge", img: "https://myway.kr/co.jpg" },
-     { url: "https://www.coinreaders.com/index.html", img: "https://myway.kr/cr.jpg" },
-{ url: "https://www.blockmedia.co.kr/", img: "https://myway.kr/blm.jpg" },
-     { url: "https://coinness.com/article", img: "https://myway.kr/conn.jpg" },
-     { url: "https://coinstats.app/ko/fear-and-greed/", img: "https://myway.kr/cost.jpg" },
-{ url: "https://datalab.upbit.com/indicator", img: "https://myway.kr/pan.jpg" },
      
-     { url: "https://alphasquare.co.kr/home/theme-factor?theme-id=240&code=033500", img: "https://myway.kr/alf.jpg" },
-  { url: "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_068dd&symbol=TVC%3AGOLD&interval=1M&hidesidetoolbar=0&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&hideideas=1&theme=White&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.livecharts.co.uk&utm_medium=widget&utm_campaign=chart&utm_term=TVC%3AGOLD#%7B%22page-uri%22%3A%22www.livecharts.co.uk%2FMarketCharts%2Fgold.php%22%7D", img: "https://64.media.tumblr.com/81274876d633a646b358627dd24a3e5d/tumblr_inline_rium6pn7i01y2l0i6_500.jpg" },
-{ url: "https://m.stock.naver.com/fchart/foreign/stock/TSLA.O", img: "https://64.media.tumblr.com/ace2553fcff6c3c653924b10018a9dc2/tumblr_inline_riweqcxcVZ1y2l0i6_500.jpg" },
-{ url: "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_b2490&symbol=OANDA%3ANAS100USD&interval=1&hidesidetoolbar=0&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&hideideas=1&theme=White&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.livecharts.co.uk&utm_medium=widget&utm_campaign=chart&utm_term=OANDA%3ANAS100USD#%7B%22page-uri%22%3A%22www.livecharts.co.uk%2FMarketCharts%2Fnasdaq100.php%22%7D", img: "https://64.media.tumblr.com/d5c0420560190d108b65bf9f9b428ef5/tumblr_inline_riupvwefz81y2l0i6_500.jpg" },
-   { url: "https://www.investing.com/indices/us-spx-500-futures-advanced-chart", img: "https://64.media.tumblr.com/5d8e1452b43e3b3cb22f0fc0f73d1e1f/tumblr_inline_riupw7OU6B1y2l0i6_500.jpg" },
-{ url: "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_c2e45&symbol=OANDA%3AUS30USD&interval=1&hidesidetoolbar=0&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&hideideas=1&theme=White&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.livecharts.co.uk&utm_medium=widget&utm_campaign=chart&utm_term=OANDA%3AUS30USD#%7B%22page-uri%22%3A%22www.livecharts.co.uk%2FMarketCharts%2Fdow.php%22%7D", img: "https://64.media.tumblr.com/1dbdc6454800bb191c40bc282481a6df/tumblr_inline_r3puf4CrJJ1r45nlo_500.jpg" },
-{ url: "https://s.tradingview.com/widgetembed/?frameElementId=tradingview_059d1&symbol=ixic&interval=1&hidesidetoolbar=0&saveimage=0&toolbarbg=f1f3f6&studies=%5B%5D&hideideas=1&theme=White&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=www.livecharts.co.uk&utm_medium=widget&utm_campaign=chart&utm_term=", img: "https://64.media.tumblr.com/b930b5f43f37415c26752251c6c6ff7c/tumblr_inline_r3puflKPMd1r45nlo_500.jpg" }, 
-{ url: "https://finance.naver.com/item/board.naver?code=035420", img: "https://64.media.tumblr.com/a502b7d4cf8b125a5c8789e924d6f9f0/tumblr_inline_riw39aXVwI1y2l0i6_500.jpg" },
-{ url: "https://byline.network/", img: "https://64.media.tumblr.com/235564466e8a7d0869f9e1181bb4bd1e/tumblr_inline_rj2oalmPVQ1r45nlo_500.jpg" },
-{ url: "https://kr.investing.com/news/stock-market-news", img: "https://64.media.tumblr.com/a1db3bfb8ceb63cc9cdbf484f4aafbfc/tumblr_inline_rj0905hIPr1y2l0i6_500.jpg" },
-{ url: "https://news.mt.co.kr/newsflash/newsflash.html", img: "https://64.media.tumblr.com/35d0b5361aa9ba06ac557215cb676f7c/tumblr_inline_rj09bem7oA1y2l0i6_500.jpg" },
-{ url: "https://www.hankyung.com/realtime", img: "https://64.media.tumblr.com/f7526cf5a67b290962b475c4f8e9daaf/tumblr_inline_rj09139tnz1y2l0i6_500.jpg" },
-{ url: "https://www.mk.co.kr/news/stock/", img: "https://64.media.tumblr.com/b55844c1738d573bfac1fd484c1e43a1/tumblr_inline_rj096qLdFl1y2l0i6_500.jpg" },
-{ url: "https://finance.daum.net/investment/dividends", img: "https://64.media.tumblr.com/7125f0cf064f11a4d2904fc885401241/tumblr_inline_riy0cuGyXj1y2l0i6_500.jpg" },
-{ url: "https://asp01.fnguide.com/SVO2/ASP/SVD_comp_calendar.asp?pGB=1&gicode=A047810&gcd=&gnm=&curdt=&ctp=&cID=50&MenuYn=Y&ReportGB=&NewMenuID=701&stkGb=701", img: "https://64.media.tumblr.com/3edde7281f4124dc800fbe968358da5d/tumblr_inline_riwg1vwhiK1y2l0i6_500.jpg" },
-{ url: "http://comp.fnguide.com/SVO2/ASP/SVD_Report_Trend.asp?pGB=1&gicode=A005930&cID=&MenuYn=Y&ReportGB=&NewMenuID=801&stkGb=701", img: "https://64.media.tumblr.com/220ada1969342fa796e7b8c46da6d6ff/tumblr_inline_rj2o75BIZq1r45nlo_500.jpg" },
-{ url: "https://markets.hankyung.com/consensus", img: "https://64.media.tumblr.com/4a26c8cf7069ebbe2429bad98eccc23e/tumblr_inline_rj2odjxW8v1r45nlo_500.jpg" },
-{ url: "https://finance.naver.com/research/company_list.naver", img: "https://64.media.tumblr.com/3d6efc5419cc7a38ba0af5d3cb5c52b2/tumblr_inline_rj2oy1cRzh1r45nlo_500.jpg" },
-{ url: "https://href.li/?http://mbnmoney.mbn.co.kr/tv/onair", img: "https://64.media.tumblr.com/f6d709d23fe41d9b9704bb129599163b/tumblr_inline_qr6ijt9Seg1r45nlo_500.jpg" },
-{ url: "https://www.youtube.com/results?search_query=%EC%A6%9D%EA%B6%8C%EB%B0%A9%EC%86%A1", img: "https://myway.kr/hk.jpg" },
+  { url: "http://www.auction.co.kr/", img: "https://64.media.tumblr.com/e97d9391e0aeefcb82d1fb7bfe8748a5/tumblr_inline_njqty4XgTA1r45nlo.jpg" },
+  { url: "http://www.gmarket.co.kr/", img: "https://64.media.tumblr.com/4b13568a56efb8c2f9b51b8d3c5bface/tumblr_inline_njqu1l7g9v1r45nlo.jpg" },
+  { url: "http://shopping.naver.com/", img: "https://64.media.tumblr.com/75aaf70369c882c5ca9800a0e8d7ee49/tumblr_inline_njqu3tdsp51r45nlo.jpg" },
+  { url: "http://www.ticketmonster.co.kr/", img: "https://64.media.tumblr.com/7a861567f56b6167ac3cf236442c3e45/tumblr_inline_njqtvohy6M1r45nlo.jpg" },
+  { url: "http://www.coupang.com/", img: "https://64.media.tumblr.com/dba60d034faf5bea0da92a10c9b66b6c/tumblr_inline_njqtoiQ8kj1r45nlo.jpg" },
+  { url: "http://www.coocha.co.kr/", img: "https://64.media.tumblr.com/f96c720f75d92ac3aa1769752b8704d0/tumblr_inline_njqtqs9Vjv1r45nlo.jpg" },
+  // 2줄
+  { url: "http://www.cookey.co.kr/", img: "https://64.media.tumblr.com/3564018146261c3fd68a28f3863a1d81/tumblr_inline_njqu6yhiqB1r45nlo.jpg" },
+  { url: "http://cafe.naver.com/joonggonara/", img: "https://64.media.tumblr.com/f72a60b61ef5513f37c839fb2bd092f9/tumblr_inline_njqttdcF931r45nlo.jpg" },
+  { url: "http://www.danawa.com/", img: "https://64.media.tumblr.com/41d8eeb275e7ee47d654d3ed4e4935ff/tumblr_inline_njqu8uYAD21r45nlo.jpg" },
+  { url: "http://www.wemakeprice.com/", img: "https://64.media.tumblr.com/328c1f4d3935e7c939974d441ae1493f/tumblr_inline_njqbf4XvCH1r45nlo.jpg" },
+  { url: "https://www.kurly.com/", img: "https://64.media.tumblr.com/40a30221aa02aa592d6fbcf3c2f6bc62/tumblr_inline_qqzaz4jntV1r45nlo_500.jpg" },
+  // 3줄
+  { url: "http://127beauty.tumblr.com/", img: "https://64.media.tumblr.com/c4b5ac96eda4d7f83fc5afa1f0efeebe/tumblr_inline_njsi1pzLsg1r45nlo.jpg" },
+  { url: "http://koreajeans2.tumblr.com/", img: "https://64.media.tumblr.com/82801a6937ab26eaa3aa343b2f212449/tumblr_inline_njquq2tsKW1r45nlo.jpg" },
+  { url: "http://koreafood.tumblr.com/", img: "https://64.media.tumblr.com/cb9e30ce04136ec6018af6c8e31460a0/tumblr_inline_njsh8fHGqL1r45nlo.jpg" },
+  { url: "https://k-goods.tumblr.com/", img: "https://64.media.tumblr.com/88ffbb96981edae4ec59dcc1d08eb32d/tumblr_inline_qu1o24Dvak1r45nlo_500.jpg" },
+  { url: "http://car0070.tumblr.com/", img: "https://64.media.tumblr.com/5610baec5b266516d2e3374b97ae47d3/tumblr_inline_njva1djLKg1r45nlo.jpg" },
+  { url: "http://123travelshop.tumblr.com/", img: "https://64.media.tumblr.com/50cc3a58851dc52fecc39f0bf9a09c67/tumblr_inline_njsim8syyI1r45nlo.jpg" },
+  // 4줄
+  { url: "http://mall.epost.go.kr/", img: "https://64.media.tumblr.com/a8cd7aa68a6fc6330a707cadd75ac2b1/tumblr_inline_njqwdlwgnw1r45nlo.jpg" },
+  { url: "http://shinsegaemall.ssg.com/", img: "https://64.media.tumblr.com/662b02874f2a056cd9ea38a91179b541/tumblr_inline_njqwlvgGDq1r45nlo.jpg" },
+  { url: "http://www.akmall.com/", img: "https://64.media.tumblr.com/c069d6feea845f28c8dd8a376b61613c/tumblr_inline_njqwor4I6Q1r45nlo.jpg" },
+  { url: "http://www.lottemart.com/", img: "https://64.media.tumblr.com/8461f4af99fe8dae76bee21cb02beb2a/tumblr_inline_njqrscKllr1r45nlo.jpg" },
+  { url: "http://www.gsshop.com/", img: "https://64.media.tumblr.com/42c3514f44d11ec02646dcba386143c0/tumblr_inline_njqrwz5iHs1r45nlo.jpg" },
+  { url: "http://www.hyundaihmall.com/Home.html", img: "https://64.media.tumblr.com/dce9ea401086940522aa92957530ee07/tumblr_inline_njqrzaf4Bf1r45nlo.jpg" },
+  // 5줄
+  { url: "http://www.cjmall.com/", img: "https://64.media.tumblr.com/750e1f8d5a644de2a9f4491c8121af45/tumblr_inline_njqs1rBbgE1r45nlo.jpg" },
+  { url: "http://www.11st.co.kr/", img: "https://64.media.tumblr.com/f2b4251ec6e55fb8916ed9e65dfe8318/tumblr_inline_njqs824PoM1r45nlo.jpg" },
+  { url: "http://www.interpark.com/", img: "https://64.media.tumblr.com/1f6ee9dcd80cc667afa8320b8eaebecd/tumblr_inline_njqs9vJPLq1r45nlo.jpg" },
+  { url: "http://www.nsmall.com/", img: "https://64.media.tumblr.com/38fce037bf4793618957af2719a16d5c/tumblr_inline_njqscaWlDk1r45nlo.jpg" },
+  { url: "http://www.lotteimall.com/main/viewMain.lotte?dpml_no=6&tlog=18000_3", img: "https://64.media.tumblr.com/b09dd4fa1435985f62f06f7c5f55fc4c/tumblr_inline_njqseifbt91r45nlo.jpg" },
+  { url: "http://www.ebay.com/", img: "https://64.media.tumblr.com/c60485de432ae65dd3c090d98943d12f/tumblr_inline_njsv0dLVqm1r45nlo.jpg" },
+  // 6줄
+  { url: "http://www.homeplus.co.kr/", img: "https://64.media.tumblr.com/d39f881c701c0e2c2b9517f82cbf7155/tumblr_inline_njqsj0t0kl1r45nlo.jpg" },
+  { url: "http://emart.ssg.com/", img: "https://64.media.tumblr.com/02620229244bf887005f6218ebe1e974/tumblr_inline_njqtizbhJM1r45nlo.jpg" },
+  { url: "http://www.akmall.com/", img: "https://64.media.tumblr.com/c069d6feea845f28c8dd8a376b61613c/tumblr_inline_njqwor4I6Q1r45nlo.jpg" },
+  { url: "http://www.lottemart.com/", img: "https://64.media.tumblr.com/8461f4af99fe8dae76bee21cb02beb2a/tumblr_inline_njqrscKllr1r45nlo.jpg" },
+  { url: "http://www.gsshop.com/", img: "https://64.media.tumblr.com/42c3514f44d11ec02646dcba386143c0/tumblr_inline_njqrwz5iHs1r45nlo.jpg" },
+  { url: "http://www.hyundaihmall.com/Home.html", img: "https://64.media.tumblr.com/dce9ea401086940522aa92957530ee07/tumblr_inline_njqrzaf4Bf1r45nlo.jpg" }, 
 
      
     
     ];
     const gallery4Data = [
-      { url: "https://www.bing.com/", img: "https://cdn.imweb.me/upload/S20220907061cc0ff95b51/a23c8e0b381fce9b9ee47ebaa7a2a979.jpg" },
-      { url: "https://www.bing.com/", img: "https://cdn.imweb.me/upload/S20220907061cc0ff95b51/a23c8e0b381fce9b9ee47ebaa7a2a979.jpg" },
-      { url: "https://www.bing.com/", img: "https://cdn.imweb.me/upload/S20220907061cc0ff95b51/a23c8e0b381fce9b9ee47ebaa7a2a979.jpg" },
-      { url: "https://www.bing.com/", img: "https://cdn.imweb.me/upload/S20220907061cc0ff95b51/a23c8e0b381fce9b9ee47ebaa7a2a979.jpg" }
+
+     
+ { url: "http://www.allurekorea.com/", img: "https://64.media.tumblr.com/5a097048470fe45a4b30c4e5f4e097a8/tumblr_inline_qqnwhh0G5P1r45nlo_500.jpg" },
+  { url: "https://woman.donga.com/", img: "https://64.media.tumblr.com/1aa90add760dfa7d745de3c2bd83ed57/tumblr_inline_qqnwi4R5op1r45nlo_500.jpg" },
+  { url: "https://woman.chosun.com/", img: "https://64.media.tumblr.com/abbfa122d7a891c5589a089bd22efe3c/tumblr_inline_qqnwhsRTHe1r45nlo_500.jpg" },
+  { url: "https://www.marieclairekorea.com/", img: "https://64.media.tumblr.com/c10d2bfa1a48856fc48f0f45ef70ce48/tumblr_inline_qqnwieFvDM1r45nlo_500.jpg" },
+  { url: "https://www.elle.co.kr/", img: "https://64.media.tumblr.com/4be85c7d3a25826a6655d17abc3a1ae7/tumblr_inline_qqnwh4OVJR1r45nlo_500.jpg" },
+  { url: "http://www.vogue.co.kr/", img: "https://64.media.tumblr.com/092423914d1c95aeef9c32d4cf0c8ab2/tumblr_inline_qqnwizjbF31r45nlo_500.jpg" },
+
+  { url: "https://m.thesingle.co.kr/SinglesMobile/mobileweb/index.do", img: "https://64.media.tumblr.com/bebebd9bc0a8e8ea2ec9237f957ee771/tumblr_inline_qqnwlkbuex1r45nlo_500.jpg" },
+  { url: "http://www.wkorea.com/", img: "https://64.media.tumblr.com/8f0ee741fe804e196637f83197b56bb3/tumblr_inline_qqnwqhSGWe1r45nlo_500.jpg" },
+  { url: "http://www.gqkorea.co.kr/", img: "https://64.media.tumblr.com/1d23d3c5c2f444d8811b086065463684/tumblr_inline_qqnwqvbNXR1r45nlo_500.jpg" },
+  { url: "https://www.maximkorea.net/", img: "https://64.media.tumblr.com/6e300ad67dbcaf812587e47153961cd7/tumblr_inline_qqnwrkQ0ko1r45nlo_500.jpg" },
+  { url: "https://www.smlounge.co.kr/arena", img: "https://64.media.tumblr.com/e483e9ea3a7340c69eaed1ab3be59000/tumblr_inline_qqnwsjhN1a1r45nlo_500.jpg" },
+  { url: "https://www.cosmopolitan.co.kr/", img: "https://64.media.tumblr.com/cd51a1d78fc0da8f5b52cc5a5167a5dc/tumblr_inline_qr2waqBr5u1r45nlo_500.jpg" },
+
+  { url: "https://www.smlounge.co.kr/woman", img: "https://www.smlounge.co.kr/upload/NPFILE/202104/450727.jpg" },
+  { url: "https://www.harpersbazaar.co.kr/", img: "https://image.aladin.co.kr/product/12660/32/cover500/k172532170_1.jpg" },
+  { url: "https://www.cosmopolitan.co.kr/", img: "https://64.media.tumblr.com/cd51a1d78fc0da8f5b52cc5a5167a5dc/tumblr_inline_qr2waqBr5u1r45nlo_500.jpg" },
+    { url: "https://href.li/?https://shindonga.donga.com/", img: "https://64.media.tumblr.com/191c30ae2313ee8318830ace668dfa4b/tumblr_inline_qqnwx4txdm1r45nlo_500.jpg" },
+{ url: "https://monthly.chosun.com/", img: "https://monthly.chosun.com/images/cover_img/cover_202210_f.jpg" },
+{ url: "https://href.li/?http://economychosun.com/", img: "https://64.media.tumblr.com/088668f7111ad606b3473db3fd05e763/tumblr_inline_qqnwxuzNit1r45nlo_500.jpg" },             
+
+                  
+ { url: "https://href.li/?https://weekly.donga.com/", img: "https://64.media.tumblr.com/e54cc999a4b2ac412d287e57aa7426e4/tumblr_inline_qqnwxj1BGq1r45nlo_500.jpg" },
+{ url: "http://weekly.chosun.com/", img: "https://cdn.weekly.chosun.com/news/photo/hosu/662_20220819115858.jpg" },
+{ url: "https://href.li/?http://www.sisajournal.com/", img: "https://64.media.tumblr.com/27e23fd207fd6abebd62b524bd435874/tumblr_inline_qqnwyaMczh1r45nlo_500.jpg" },
+{ url: "https://href.li/?https://magazine.hankyung.com/business", img: "https://64.media.tumblr.com/85cbdd45f34ad27036c426751bd8a70f/tumblr_inline_qqnwygnUJQ1r45nlo_500.jpg" },
+{ url: "https://href.li/?https://news.mk.co.kr/v2/economy/", img: "https://64.media.tumblr.com/44fa3520241bc97db3f5c93c241999cb/tumblr_inline_qqnx53Cunr1r45nlo_500.jpg" },
+  
+     
     ];
     // 그림자 png (필요시 주소 교체)
     const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
