@@ -1,0 +1,490 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>폴더-부가폴더 이미지 갤러리</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap">
+  <style>
+    body {margin:0;font-family:'Montserrat','Apple SD Gothic Neo',sans-serif;background:linear-gradient(135deg,#19202e 0%,#284b63 100%);color:#fff;min-height:100vh;}
+    .container {display:flex;height:100vh;min-height:0;overflow:hidden;}
+    .sidebar {width:260px;min-width:150px;background:rgba(27,35,52,.93);padding:18px 10px 12px 10px;box-sizing:border-box;display:flex;flex-direction:column;border-top-right-radius:22px;border-bottom-right-radius:22px;box-shadow:4px 0 22px #0005;border-right:1.2px solid #37547555;z-index:2;overflow:hidden;}
+    .sidebar-buttons {display:flex;gap:7px;margin-bottom:10px;}
+    .sidebar-buttons button {flex:1 1 auto;padding:8px 0;border:none;border-radius:9px;font-size:13px;font-family:'Montserrat',sans-serif;font-weight:700;background:linear-gradient(90deg,#2b93fa 0%,#5cc6ff 100%);color:#fff;cursor:pointer;box-shadow:0 2px 6px #1b3b5c33;transition:background .22s,transform .13s;letter-spacing:-.5px;}
+    .sidebar-buttons button:hover {background:linear-gradient(90deg,#1f71c5 0%,#2b93fa 100%);transform:translateY(-2px) scale(1.04);}
+    .folder-list-area {flex:1 1 auto;min-height:0;overflow-y:auto;padding-right:2px;margin-right:2px;}
+    .folder-list::-webkit-scrollbar {width:8px;background:transparent;}
+    .folder-list::-webkit-scrollbar-thumb {background:rgba(70,175,255,.07);border-radius:6px;border:2px solid transparent;transition:background .18s;}
+    .folder-list:hover::-webkit-scrollbar-thumb {background:rgba(70,175,255,.18);}
+    .folder-list {scrollbar-width:thin;scrollbar-color:rgba(70,175,255,.09) transparent;}
+    .folder1-item {padding:9px 8px 9px 14px;background:rgba(40,55,90,.89);border-radius:13px;margin-bottom:8px;font-size:15px;font-weight:700;letter-spacing:.02em;display:flex;align-items:center;cursor:pointer;position:relative;border:1.2px solid transparent;transition:background .18s,border .14s,color .14s;}
+    .folder1-item.selected {background:linear-gradient(90deg,#328dea 15%,#6ee0f6 100%);color:#212e4a;border:1.2px solid #63c6ff;box-shadow:0 3px 16px #1588c822,0 1.5px 6px #63e0ff19;}
+    .folder1-title {flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .folder1-actions {display:flex;gap:4px;margin-left:6px;}
+    .folder1-action-btn {background:none;border:none;color:#77c2fd;cursor:pointer;font-size:15px;padding:2px 3px;border-radius:4px;outline:none;transition:background .14s,color .13s,transform .09s;display:flex;align-items:center;justify-content:center;}
+    .folder1-action-btn:hover {background:#183459;color:#ffd93b;transform:scale(1.08);}
+    .folder2-list {margin-left:14px;margin-bottom:14px;padding-left:5px;border-left:2.5px solid #3aa6f9bb;}
+    .folder2-item {background:rgba(54,80,124,.85);border-radius:9px;margin-bottom:5px;font-size:13px;font-weight:600;padding:7px 7px 7px 11px;display:flex;align-items:center;cursor:pointer;position:relative;border:1.1px solid transparent;transition:background .17s,border .14s;}
+    .folder2-item.selected {background:linear-gradient(90deg,#00e0ff 10%,#3273ea 100%);color:#15325a;border:1.1px solid #4bb3ff;box-shadow:0 2px 7px #00eaff22;}
+    .folder2-title {flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .folder2-actions {display:flex;gap:3px;margin-left:4px;}
+    .folder2-action-btn {background:none;border:none;color:#7dc9fd;cursor:pointer;font-size:13px;padding:1.5px 2px;border-radius:4px;outline:none;transition:background .12s,color .12s,transform .08s;display:flex;align-items:center;justify-content:center;}
+    .folder2-action-btn:hover {background:#183459;color:#ffd93b;transform:scale(1.09);}
+    .main {flex:1 1 auto;display:flex;flex-direction:column;align-items:center;background:linear-gradient(125deg,#1c2331 0%,#254058 100%);position:relative;min-width:0;min-height:0;overflow:hidden;}
+    .notice-box {position:relative;margin-top:36px;margin-bottom:15px;background:rgba(34,53,83,.93);color:#f5faff;padding:11px 18px 10px 18px;border-radius:12px;font-size:15px;font-weight:600;letter-spacing:.01em;box-shadow:0 3px 15px #1589e355,0 1.5px 6px #63e0ff21;border:1.2px solid #42bcff22;z-index:10;min-width:150px;max-width:70vw;text-align:center;user-select:text;word-break:keep-all;line-height:1.5;}
+    .image-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:19px;width:94%;margin:0 auto 30px auto;overflow-y:auto;min-height:90px;max-height:68vh;padding-bottom:20px;}
+    .image-card {background:rgba(30,49,72,.97);border-radius:14px;box-shadow:0 3px 16px #1589e311;display:flex;flex-direction:column;align-items:center;padding:10px 7px 13px 7px;position:relative;transition:box-shadow .15s,border .13s;border:1.2px solid #2b8fe9cc;user-select:none;}
+    .image-card.selected {border:1.7px solid #5ec6fd;box-shadow:0 7px 30px #1f9fff33;background:linear-gradient(120deg,#2b8fe9 20%,#0ccfcf 100%);}
+    .image-card.dragging {opacity:.33;background:#6ad8ff44;border:1.4px dashed #3ea0ff;z-index:10;}
+    .img-preview {width:100%;max-width:128px;height:90px;object-fit:contain;border-radius:9px;background:#112244;margin-bottom:7px;box-shadow:0 2px 11px #12335533;}
+    .img-link {font-size:13px;color:#38caff;margin-bottom:7px;text-align:center;text-decoration:underline dotted;word-break:break-all;line-height:1.3;cursor:pointer;transition:color .17s;}
+    .img-link:hover {color:#ffd93b;}
+    .img-actions {display:flex;gap:6px;position:absolute;top:6px;right:6px;z-index:1;}
+    .img-action-btn {background:none;border:none;color:#7dc9fd;cursor:pointer;font-size:16px;padding:1.5px 3px;border-radius:4px;transition:background .14s,color .13s,transform .09s;outline:none;display:flex;align-items:center;justify-content:center;}
+    .img-action-btn:hover {background:#183459;color:#ffd93b;transform:scale(1.11);}
+    .image-grid::-webkit-scrollbar {width:9px;background:transparent;}
+    .image-grid::-webkit-scrollbar-thumb {background:rgba(70,175,255,.09);border-radius:6px;border:2.5px solid transparent;}
+    .image-grid:hover::-webkit-scrollbar-thumb {background:rgba(70,175,255,.16);}
+    .image-grid::-webkit-scrollbar-track {background:transparent;}
+    .image-grid {scrollbar-width:thin;scrollbar-color:rgba(70,175,255,.09) transparent;}
+    .modal-bg {position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(25,33,56,.50);display:flex;align-items:center;justify-content:center;z-index:1000;animation:fadeIn .3s;}
+    @keyframes fadeIn {0%{opacity:0}100%{opacity:1}}
+    .modal {background:rgba(34,44,65,.98);padding:23px 21px;border-radius:13px;width:340px;box-shadow:0 2px 26px #19355099;display:flex;flex-direction:column;gap:12px;border:1.1px solid #335d8865;}
+    .modal input {width:100%;padding:9px;border-radius:7px;border:1.2px solid #26405d;background:rgba(25,38,60,.85);color:#f5faff;font-size:14px;margin-top:2px;margin-bottom:6px;font-family:'Montserrat',sans-serif;font-weight:500;outline:none;transition:border .17s,box-shadow .18s;}
+    .modal input:focus {border:1.3px solid #59d1ff;box-shadow:0 2px 12px #1d70d533;}
+    .modal label {font-size:13px;margin-bottom:2px;}
+    .modal-buttons {display:flex;gap:7px;margin-top:4px;}
+    .modal-buttons button {flex:1 1 auto;padding:9px 0;border-radius:6px;border:none;font-size:14px;font-family:'Montserrat',sans-serif;font-weight:700;background:linear-gradient(90deg,#38caff 10%,#41b2fd 100%);color:#fff;cursor:pointer;box-shadow:0 2px 6px #222c;transition:background .18s,transform .11s;}
+    .modal-buttons button:hover {background:linear-gradient(90deg,#0e8de7 10%,#38caff 100%);transform:scale(1.04);}
+    .modal-buttons button:last-child {background:#31476a;color:#fff;}
+    .modal-buttons button:last-child:hover {background:#2c3e5c;}
+    @media (max-width:900px){.container{flex-direction:column;min-width:0;}.sidebar{width:100%;min-width:0;border-radius:0 0 15px 15px;border-right:none;}.main{padding:8vw 0;}.image-grid{width:98vw;gap:12px;}.notice-box{margin-top:16px;font-size:13px;max-width:96vw;}}
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="sidebar">
+    <div class="sidebar-buttons">
+      <button onclick="openAddModal()">＋ 이미지추가</button>
+      <button onclick="exportList()">⤓ 내보내기</button>
+      <button onclick="importList()">⤒ 가져오기</button>
+    </div>
+    <div class="folder-list-area">
+      <div class="folder-list" id="folderList"></div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="notice-box">
+      📢 2단계 폴더(1차/2차)로 이미지 갤러리 관리!<br>
+      - "이미지 추가" 시 1차폴더 선택, 2차폴더는 선택 or 직접입력<br>
+      - 1차→2차폴더 클릭하면 오른쪽에 이미지카드/드래그/수정/삭제 가능
+    </div>
+    <div class="image-grid" id="imageGrid"></div>
+  </div>
+</div>
+<!-- Add/Edit Modal -->
+<div class="modal-bg" id="addModal" style="display:none">
+  <div class="modal">
+      <label>1차 폴더 선택</label>
+      <select id="modalFolder1Sel" style="padding:8px 8px;font-size:15px;border-radius:8px;margin-bottom:6px;"></select>
+      <label>2차 폴더 (선택 또는 새 폴더명 입력)</label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <select id="modalFolder2Sel" style="flex:1;padding:8px 8px;font-size:14px;border-radius:8px;">
+          <option value="">새 폴더 입력</option>
+        </select>
+        <input type="text" id="modalFolder2Input" placeholder="2차폴더명" maxlength="16" style="flex:2;">
+      </div>
+      <label>이미지 주소</label>
+      <input type="text" id="imgUrlInput" placeholder="https://..." maxlength="230">
+      <label>사이트 주소</label>
+      <input type="text" id="siteUrlInput" placeholder="https://..." maxlength="230">
+      <div class="modal-buttons">
+        <button onclick="submitImage()">마침</button>
+        <button onclick="closeAddModal()">취소</button>
+      </div>
+    </div>
+  </div>
+<input type="file" id="importInput" accept=".json" style="display:none">
+
+<script>
+const STORAGE_KEY = "folder2_img_gallery_v2";
+let folders = [];
+let selectedFolder1 = 0;
+let selectedFolder2 = 0;
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({folders, selectedFolder1, selectedFolder2}));
+}
+function loadData() {
+  let d = localStorage.getItem(STORAGE_KEY);
+  if (d) {
+    try {
+      let obj = JSON.parse(d);
+      folders = obj.folders;
+      selectedFolder1 = obj.selectedFolder1 || 0;
+      selectedFolder2 = obj.selectedFolder2 || 0;
+    } catch {}
+  }
+  if (!folders || !Array.isArray(folders) || folders.length === 0) {
+    folders = [
+      { name: "폴더1", subfolders: [ { name: "2차폴더A", images: [] } ] },
+      { name: "폴더2", subfolders: [ { name: "2차폴더B", images: [] } ] }
+    ];
+    selectedFolder1 = 0;
+    selectedFolder2 = 0;
+  }
+}
+
+function renderFolders() {
+  const listEl = document.getElementById("folderList");
+  listEl.innerHTML = "";
+  folders.forEach((f1, idx1) => {
+    const item = document.createElement("div");
+    item.className = "folder1-item" + (idx1 === selectedFolder1 ? " selected" : "");
+    item.onclick = function(e) {
+      if (e.target.classList.contains("folder1-action-btn")) return;
+      selectedFolder1 = idx1;
+      // 2차폴더가 하나도 없으면 생성
+      if (!folders[selectedFolder1].subfolders || folders[selectedFolder1].subfolders.length === 0) {
+        folders[selectedFolder1].subfolders = [{ name: "새2차폴더", images: [] }];
+      }
+      // 부가폴더 선택은 항상 첫 번째로 맞춤
+      selectedFolder2 = 0;
+      saveData();
+      renderFolders();
+      renderImageGrid();
+    };
+    const title = document.createElement("div");
+    title.className = "folder1-title";
+    title.textContent = f1.name;
+    item.appendChild(title);
+
+    const actions = document.createElement("div");
+    actions.className = "folder1-actions";
+    const editBtn = document.createElement("button");
+    editBtn.className = "folder1-action-btn";
+    editBtn.title = "수정";
+    editBtn.innerHTML = '<svg width="13" height="13" fill="none" stroke="#69c7ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.2l-.9-.9a1 1 0 0 0-1.4 0L3.6 7.1a2 2 0 0 0-.5 1l-.3 1.7a1 1 0 0 0 1.1 1.1l1.7-.3a2 2 0 0 0 1-.5l4.1-4.1a1 1 0 0 0 0-1.4z"/><path d="M8.8 1.1l1.5 1.5"/></svg>';
+    editBtn.onclick = function(ev) {
+      ev.stopPropagation();
+      let n = prompt("폴더1 이름 변경:", f1.name);
+      if (!n || n.trim() === "") return;
+      folders[idx1].name = n.trim().slice(0,16);
+      saveData(); renderFolders();
+    };
+    const delBtn = document.createElement("button");
+    delBtn.className = "folder1-action-btn";
+    delBtn.title = "삭제";
+    delBtn.innerHTML = '<svg width="13" height="13" fill="none" stroke="#e88a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="6" height="5" rx="1.1"/><path d="M6.5 6v2m-2.5-4h5M5.5 4V3.2a1 1 0 0 1 2 0V4"/></svg>';
+    delBtn.onclick = function(ev) {
+      ev.stopPropagation();
+      if (folders.length<=1) return alert("최소 1개 폴더 필요!");
+      if (!confirm("폴더1을 삭제할까요?")) return;
+      folders.splice(idx1,1);
+      if (selectedFolder1>=folders.length) selectedFolder1 = folders.length-1;
+      if (folders[selectedFolder1].subfolders.length === 0) {
+        folders[selectedFolder1].subfolders = [{ name: "새2차폴더", images: [] }];
+      }
+      selectedFolder2 = 0;
+      saveData(); renderFolders(); renderImageGrid();
+    };
+    actions.appendChild(editBtn); actions.appendChild(delBtn);
+    item.appendChild(actions);
+
+    // ======== 부가폴더(2차폴더) 목록 =======
+    if(idx1===selectedFolder1 && f1.subfolders.length>0){
+      const list2 = document.createElement("div");
+      list2.className = "folder2-list";
+      f1.subfolders.forEach((f2, idx2) => {
+        const sub = document.createElement("div");
+        sub.className = "folder2-item" + (idx2===selectedFolder2 ? " selected" : "");
+        sub.onclick = function(ev){
+          if (ev.target.closest('.folder2-action-btn')) return;
+          selectedFolder1 = idx1;
+          selectedFolder2 = idx2;
+          saveData();
+          renderFolders();
+          renderImageGrid();
+        };
+        const t2 = document.createElement("div");
+        t2.className = "folder2-title";
+        t2.textContent = f2.name;
+        sub.appendChild(t2);
+        const a2 = document.createElement("div");
+        a2.className = "folder2-actions";
+        const e2 = document.createElement("button");
+        e2.className = "folder2-action-btn";
+        e2.title = "수정";
+        e2.innerHTML = '<svg width="11" height="11" fill="none" stroke="#69c7ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.8 1.6l-.8-.8a.9.9 0 0 0-1.2 0L2.9 5.1a1.6 1.6 0 0 0-.4 .8l-.2 1.3a.9.9 0 0 0 1 .9l1.3-.2a1.6 1.6 0 0 0 .8-.4l4-4a.9.9 0 0 0 0-1.2z"/><path d="M7.7.6l1.2 1.2"/></svg>';
+        e2.onclick = function(ev){
+          ev.stopPropagation();
+          let n=prompt("2차 폴더명 수정:", f2.name);
+          if(!n||n.trim()==="")return;
+          f1.subfolders[idx2].name=n.trim().slice(0,16);
+          saveData(); renderFolders();
+        }
+        const d2 = document.createElement("button");
+        d2.className = "folder2-action-btn";
+        d2.title = "삭제";
+        d2.innerHTML = '<svg width="11" height="11" fill="none" stroke="#e88a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="6" height="3.5" rx="1"/><path d="M5.5 5.7v1.3m-2-3.5h5M4.7 4V3.2a.7.7 0 0 1 1.5 0V4"/></svg>';
+        d2.onclick = function(ev){
+          ev.stopPropagation();
+          if(f1.subfolders.length<=1)return alert("최소 1개 2차폴더 필요!");
+          if(!confirm("2차 폴더를 삭제할까요?"))return;
+          f1.subfolders.splice(idx2,1);
+          if(selectedFolder2>=f1.subfolders.length)selectedFolder2=f1.subfolders.length-1;
+          saveData(); renderFolders(); renderImageGrid();
+        }
+        a2.appendChild(e2); a2.appendChild(d2);
+        sub.appendChild(a2);
+        list2.appendChild(sub);
+      });
+      item.appendChild(list2);
+    }
+    listEl.appendChild(item);
+  });
+}
+
+function renderImageGrid() {
+  const grid = document.getElementById("imageGrid");
+  grid.innerHTML = "";
+  if (!folders[selectedFolder1]) {
+    selectedFolder1 = 0;
+    if (!folders[selectedFolder1]) return;
+  }
+  if (!folders[selectedFolder1].subfolders || folders[selectedFolder1].subfolders.length === 0) {
+    folders[selectedFolder1].subfolders = [{ name: "새2차폴더", images: [] }];
+    selectedFolder2 = 0;
+    saveData(); renderFolders();
+  }
+  if (!folders[selectedFolder1].subfolders[selectedFolder2]) selectedFolder2 = 0;
+  const arr = folders[selectedFolder1].subfolders[selectedFolder2].images;
+  arr.forEach((img, idx) => {
+    const card = document.createElement("div");
+    card.className = "image-card";
+    card.draggable = true;
+    card.ondragstart = (e) => {
+      e.dataTransfer.setData("text/plain", idx);
+      setTimeout(()=>{ card.classList.add('dragging'); },0);
+    };
+    card.ondragend = () => { card.classList.remove('dragging'); };
+    card.ondragover = (e) => { e.preventDefault(); };
+    card.ondrop = (e) => {
+      e.preventDefault();
+      const from = parseInt(e.dataTransfer.getData("text/plain"));
+      const to = idx;
+      if (from === to) return;
+      const moved = arr.splice(from,1)[0];
+      arr.splice(to,0,moved);
+      saveData();
+      renderImageGrid();
+    };
+    card.onclick = (e) => {
+      if (e.target.classList.contains("img-action-btn")) return;
+    };
+    const actions = document.createElement("div");
+    actions.className = "img-actions";
+    const editBtn = document.createElement("button");
+    editBtn.className = "img-action-btn";
+    editBtn.title = "수정";
+    editBtn.innerHTML = '<svg width="15" height="15" fill="none" stroke="#69c7ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2.9l-.9-.9a1 1 0 0 0-1.4 0L3.6 7.1a2 2 0 0 0-.5 1l-.3 1.7a1 1 0 0 0 1.1 1.1l1.7-.3a2 2 0 0 0 1-.5l5.1-5.1a1 1 0 0 0 0-1.4z"/><path d="M9.8 1.7l1.5 1.5"/></svg>';
+    editBtn.onclick = (ev) => { ev.stopPropagation(); openEditModal(idx); };
+    const delBtn = document.createElement("button");
+    delBtn.className = "img-action-btn";
+    delBtn.title = "삭제";
+    delBtn.innerHTML = '<svg width="15" height="15" fill="none" stroke="#e88a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="7" height="5" rx="1.2"/><path d="M7 7v2m-3-5h6M6 5V4.2a1 1 0 0 1 2 0V5"/></svg>';
+    delBtn.onclick = (ev) => {
+      ev.stopPropagation();
+      if (confirm("정말 삭제할까요?")) deleteImage(idx);
+    };
+    actions.appendChild(editBtn);
+    actions.appendChild(delBtn);
+    card.appendChild(actions);
+    const imgEl = document.createElement("img");
+    imgEl.className = "img-preview";
+    imgEl.src = img.imgUrl;
+    imgEl.onerror = ()=>{imgEl.src = "https://via.placeholder.com/120x90/25314b/ffffff?text=이미지+없음";}
+    card.appendChild(imgEl);
+    const link = document.createElement("a");
+    link.className = "img-link";
+    link.href = img.siteUrl;
+    link.target = "_blank";
+    link.textContent = img.siteUrl.length>28? img.siteUrl.slice(0,25)+"…" : img.siteUrl;
+    card.appendChild(link);
+    grid.appendChild(card);
+  });
+}
+
+// --- 이하 추가/수정/삭제/불러오기/내보내기 함수는 이전과 동일합니다 ---
+function openAddModal() {
+  document.getElementById("addModal").style.display = "flex";
+  const sel1 = document.getElementById("modalFolder1Sel");
+  sel1.innerHTML = "";
+  folders.forEach((f,i)=>{
+    const opt = document.createElement("option");
+    opt.value = i;
+    opt.textContent = f.name;
+    sel1.appendChild(opt);
+  });
+  sel1.value = selectedFolder1;
+  renderModalFolder2Sel(sel1.value, "");
+  document.getElementById("modalFolder2Input").value = "";
+  document.getElementById("imgUrlInput").value = "";
+  document.getElementById("siteUrlInput").value = "";
+  setTimeout(()=>{document.getElementById("modalFolder2Input").focus()},40);
+  sel1.onchange = ()=>{
+    renderModalFolder2Sel(sel1.value, "");
+    document.getElementById("modalFolder2Input").value = "";
+    document.getElementById("modalFolder2Input").focus();
+  }
+  document.getElementById("modalFolder2Sel").onchange = function(){
+    let val = this.value;
+    if(val){
+      document.getElementById("modalFolder2Input").value = val;
+    }else{
+      document.getElementById("modalFolder2Input").value = "";
+    }
+    document.getElementById("modalFolder2Input").focus();
+  }
+  window._editImgIdx = null;
+}
+function renderModalFolder2Sel(folder1Idx, selectedName){
+  const sel2 = document.getElementById("modalFolder2Sel");
+  sel2.innerHTML = "";
+  const opt0 = document.createElement("option");
+  opt0.value = "";
+  opt0.textContent = "새 폴더 입력";
+  sel2.appendChild(opt0);
+  if(folders[folder1Idx]){
+    folders[folder1Idx].subfolders.forEach(f2=>{
+      const opt = document.createElement("option");
+      opt.value = f2.name;
+      opt.textContent = f2.name;
+      sel2.appendChild(opt);
+    });
+    sel2.value = selectedName||"";
+  }
+}
+function closeAddModal() {
+  document.getElementById("addModal").style.display = "none";
+}
+function submitImage() {
+  const f1Idx = parseInt(document.getElementById("modalFolder1Sel").value);
+  let folder2Name = document.getElementById("modalFolder2Input").value.trim();
+  const imgUrl = document.getElementById("imgUrlInput").value.trim();
+  const siteUrl = document.getElementById("siteUrlInput").value.trim();
+  if (!folder2Name || !imgUrl || !siteUrl) {
+    alert("2차 폴더명, 이미지 주소, 사이트 주소 모두 입력!");
+    return;
+  }
+  let subfolders = folders[f1Idx].subfolders;
+  let idx2 = subfolders.findIndex(f2=>f2.name===folder2Name);
+  if(idx2===-1){
+    subfolders.push({name:folder2Name, images:[]});
+    idx2 = subfolders.length-1;
+  }
+  subfolders[idx2].images.push({imgUrl, siteUrl});
+  selectedFolder1 = f1Idx;
+  selectedFolder2 = idx2;
+  saveData();
+  renderFolders();
+  renderImageGrid();
+  closeAddModal();
+}
+function openEditModal(idx){
+  document.getElementById("addModal").style.display = "flex";
+  const sel1 = document.getElementById("modalFolder1Sel");
+  sel1.innerHTML = "";
+  folders.forEach((f,i)=>{
+    const opt = document.createElement("option");
+    opt.value = i;
+    opt.textContent = f.name;
+    sel1.appendChild(opt);
+  });
+  sel1.value = selectedFolder1;
+  renderModalFolder2Sel(selectedFolder1, folders[selectedFolder1].subfolders[selectedFolder2].name);
+  document.getElementById("modalFolder2Input").value = folders[selectedFolder1].subfolders[selectedFolder2].name;
+  let img = folders[selectedFolder1].subfolders[selectedFolder2].images[idx];
+  document.getElementById("imgUrlInput").value = img.imgUrl;
+  document.getElementById("siteUrlInput").value = img.siteUrl;
+  window._editImgIdx = idx;
+  sel1.onchange = ()=>{
+    renderModalFolder2Sel(sel1.value, "");
+    document.getElementById("modalFolder2Input").value = "";
+    document.getElementById("modalFolder2Input").focus();
+  }
+  document.getElementById("modalFolder2Sel").onchange = function(){
+    let val = this.value;
+    if(val){
+      document.getElementById("modalFolder2Input").value = val;
+    }else{
+      document.getElementById("modalFolder2Input").value = "";
+    }
+    document.getElementById("modalFolder2Input").focus();
+  }
+  document.querySelector('.modal-buttons button:first-child').onclick = function(){
+    submitEditImage();
+  }
+}
+function submitEditImage() {
+  const f1Idx = parseInt(document.getElementById("modalFolder1Sel").value);
+  let folder2Name = document.getElementById("modalFolder2Input").value.trim();
+  const imgUrl = document.getElementById("imgUrlInput").value.trim();
+  const siteUrl = document.getElementById("siteUrlInput").value.trim();
+  let idx = window._editImgIdx;
+  if (!folder2Name || !imgUrl || !siteUrl) {
+    alert("2차 폴더명, 이미지 주소, 사이트 주소 모두 입력!");
+    return;
+  }
+  let subfolders = folders[f1Idx].subfolders;
+  let idx2 = subfolders.findIndex(f2=>f2.name===folder2Name);
+  if(idx2===-1){
+    subfolders.push({name:folder2Name, images:[]});
+    idx2 = subfolders.length-1;
+  }
+  folders[selectedFolder1].subfolders[selectedFolder2].images.splice(idx,1);
+  subfolders[idx2].images.push({imgUrl, siteUrl});
+  selectedFolder1 = f1Idx;
+  selectedFolder2 = idx2;
+  saveData();
+  renderFolders();
+  renderImageGrid();
+  closeAddModal();
+  document.querySelector('.modal-buttons button:first-child').onclick = submitImage;
+}
+function deleteImage(idx){
+  folders[selectedFolder1].subfolders[selectedFolder2].images.splice(idx,1);
+  saveData(); renderImageGrid();
+}
+function exportList() {
+  const blob = new Blob([JSON.stringify({folders, selectedFolder1, selectedFolder2}, null, 2)], {type: "application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "2folder-img-gallery.json"; a.click();
+  URL.revokeObjectURL(url);
+}
+function importList() {
+  document.getElementById("importInput").click();
+}
+document.getElementById("importInput").addEventListener("change", function(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    try {
+      let obj = JSON.parse(evt.target.result);
+      if (!Array.isArray(obj.folders)) throw new Error("형식 오류");
+      folders = obj.folders;
+      selectedFolder1 = obj.selectedFolder1||0;
+      selectedFolder2 = obj.selectedFolder2||0;
+      saveData(); renderFolders(); renderImageGrid();
+    } catch(e) { alert("가져오기 실패: " + e.message);}
+  };
+  reader.readAsText(file);
+});
+
+// 최초 실행
+loadData();
+renderFolders();
+renderImageGrid();
+</script>
+</body>
+</html>
