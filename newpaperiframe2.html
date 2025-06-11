@@ -1,0 +1,133 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>미니멀 사이트 갤러리 뷰어</title>
+  <style>
+    body { margin:0; background:#202b38; font-family:'Montserrat','맑은 고딕',sans-serif; color:#fff;}
+    .main-view {
+      width:100vw; max-width:100%;
+      height:calc(100vh - 38px); /* 하단 바 높이에 맞춰 조금만 줄임 */
+      min-height:160px;
+      background:#151c22;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .main-view iframe {
+      width:100%; height:100%;
+      border:0; border-radius:14px;
+      box-shadow:0 6px 36px #0038; background:#1c2227;
+    }
+    .thumb-bar {
+      display:flex; flex-wrap:nowrap; overflow-x:auto;
+      padding:3px 1vw; background:#232b33;
+      scrollbar-width: thin; scrollbar-color: #28d4fc22 #232b33;
+      border-top:1px solid #1b222a;
+      min-height: 32px; height: 32px; max-height: 32px;
+      box-sizing: border-box;
+    }
+    .thumb-item {
+      flex:0 0 auto; margin:0 6px;
+      cursor:pointer;
+      transition:transform 0.12s, box-shadow 0.12s, border 0.13s;
+      border-radius:4px; background:#263344b0;
+      border:1.5px solid transparent;
+      padding:0;
+      min-width: 54px; max-width: 54px;
+      min-height: 24px; max-height: 24px;
+      height:24px; width:54px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .thumb-item.selected { border:1.5px solid #38caff; box-shadow:0 2.5px 6px #09c6;}
+    .thumb-img {
+      width:48px; height:22px;
+      object-fit:cover; border-radius:2.5px; background:#333;
+      display: block;
+    }
+    .thumb-bar::-webkit-scrollbar {
+      height: 6px; background: transparent;
+    }
+    .thumb-bar::-webkit-scrollbar-thumb {
+      background: linear-gradient(90deg, #26b1f344 25%, #40ffde11 90%);
+      border-radius: 3px;
+      border:1px solid transparent;
+      min-width:10px;
+      transition: background 0.14s;
+    }
+    .thumb-bar::-webkit-scrollbar-track { background: transparent; }
+    @media (max-width: 600px) {
+      .main-view { height:calc(100vh - 24px); min-height:90px;}
+      .thumb-bar { min-height:20px; height:20px; max-height:20px; }
+      .thumb-img, .thumb-item { width:36px; height:14px; min-width:36px; min-height:14px; max-width:36px; max-height:14px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="main-view" id="mainViewBox">
+    <iframe id="mainIframe" src="" allowfullscreen></iframe>
+  </div>
+  <div class="thumb-bar" id="thumbBar"></div>
+
+  <script>
+    // 원하는 사이트 목록/이미지 직접 수정
+    const siteList = [
+      {
+        name: "프레시안",
+        url: "https://www.pressian.com/",
+        thumb: "https://www.pressian.com/images/pressian_logo2023.png"
+      },
+      {
+        name: "유튜브 국회",
+        url: "https://www.youtube.com/embed/RMpUZU_1bPQ",
+        thumb: "https://img.youtube.com/vi/RMpUZU_1bPQ/mqdefault.jpg"
+      },
+      {
+        name: "네이버",
+        url: "https://www.naver.com/",
+        thumb: "https://upload.wikimedia.org/wikipedia/commons/2/2e/Naver_Logotype.png"
+      },
+      {
+        name: "구글뉴스",
+        url: "https://news.google.com/",
+        thumb: "https://upload.wikimedia.org/wikipedia/commons/0/0b/Google_News_icon.png"
+      },
+      {
+        name: "블로그 예시",
+        url: "https://blog.naver.com/",
+        thumb: "https://ssl.pstatic.net/static/blog/img3/ico_favicon_64x64.ico"
+      },
+      {
+        name: "한국일보",
+        url: "https://www.hankookilbo.com/",
+        thumb: "https://m.hankookilbo.com/img/favicon.ico"
+      }
+    ];
+
+    let currentIdx = 0;
+
+    function renderThumbBar() {
+      const thumbBar = document.getElementById('thumbBar');
+      thumbBar.innerHTML = '';
+      siteList.forEach((v,i)=>{
+        const div = document.createElement('div');
+        div.className = 'thumb-item' + (i===currentIdx ? ' selected':'');
+        div.onclick = () => { currentIdx = i; setMainSite(); renderThumbBar(); }
+        const img = document.createElement('img');
+        img.className = 'thumb-img';
+        img.src = v.thumb;
+        img.alt = v.name;
+        div.appendChild(img);
+        thumbBar.appendChild(div);
+      });
+    }
+
+    function setMainSite() {
+      const v = siteList[currentIdx];
+      const frame = document.getElementById('mainIframe');
+      frame.src = v.url;
+    }
+
+    renderThumbBar();
+    setMainSite();
+  </script>
+</body>
+</html>
