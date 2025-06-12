@@ -1,0 +1,158 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>심플 네비+풀사이트 뷰어</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      margin:0; padding:0;
+      width:100vw; height:100vh;
+      background:#fff;
+      font-family:'Montserrat','맑은 고딕',sans-serif;
+      overflow:hidden;
+    }
+    /* 상단 바: 화이트, 직각, 위로 올림 */
+    .nav-bar-wrap {
+      width:100vw; max-width:100vw;
+      display:flex; align-items:center;
+      position:relative; z-index:2;
+      height:48px;
+      background: #fff;
+      border-radius: 0;
+      margin-top:8px;
+      margin-bottom:0;
+      overflow:visible;
+      border:1px solid #e7e7e7;
+      border-left:0; border-right:0;
+    }
+    .nav-arrow {
+      width:30px; height:38px;
+      border:none; background:rgba(40,50,110,0.09);
+      color:#232356; font-size:1.35rem; border-radius:5px;
+      cursor:pointer; margin:0 2px;
+      display:flex; align-items:center; justify-content:center;
+      position:relative; z-index:3;
+      transition:background 0.12s;
+    }
+    .nav-arrow:hover { background:rgba(60,80,150,0.15);}
+    /* + 버튼만 */
+    .zoom-btns {
+      display: flex; gap:2px; margin-left:12px;
+      flex-shrink:0;
+    }
+    .zoom-btn {
+      width:24px; height:24px; border-radius:5px; border:1px solid #c0c0c0;
+      background:#fff; color:#232356; font-size:1.05rem; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      margin-right:6px; font-weight:400;
+      transition:background 0.14s;
+      box-shadow:none;
+    }
+    .zoom-btn:active { background:#f0f0f0; }
+    .nav-scroll-outer {
+      overflow:hidden; flex:1; display:flex; align-items:center; height:100%;
+      position:relative; margin:0 2px;
+    }
+    .nav-scroll {
+      display:flex; gap:4px; align-items:center; height:100%;
+      overflow-x:auto; scrollbar-width:none; scroll-behavior:smooth;
+    }
+    .nav-scroll::-webkit-scrollbar { display:none; }
+    .nav-link {
+      color:#1b2049;
+      background:none;
+      border:none;
+      font-size:0.96rem;
+      font-weight:400;
+      padding:3px 10px;
+      margin:0 0;
+      border-radius:13px;
+      cursor:pointer;
+      transition:background 0.14s;
+      white-space:nowrap;
+      letter-spacing:0.01em;
+    }
+    .nav-link.active, .nav-link:hover { background:#4251b7; color:#fff; }
+    @media (max-width: 700px) {
+      .nav-bar-wrap { height:38px;}
+      .nav-link { font-size:0.85rem; padding:2px 8px;}
+      .zoom-btn { width:20px; height:20px; font-size:0.97rem;}
+      .nav-arrow { width:25px; height:30px; font-size:1.15rem; }
+    }
+    .iframe-container {
+      position:absolute; top:56px; left:0;
+      width:100vw; height:calc(100vh - 56px);
+      background:none; z-index:1; border:none; margin:0; padding:0;
+    }
+    iframe {
+      width:100vw; height:100vh; min-height:100%;
+      border:none; outline:none; margin:0; padding:0; display:block; background:#fff;
+    }
+    @media (max-width:700px) {
+      .iframe-container { top:43px; height:calc(100vh - 43px);}
+    }
+  </style>
+</head>
+<body>
+  <div class="nav-bar-wrap">
+    <!-- + 버튼만 남김 -->
+    <div class="zoom-btns">
+      <button class="zoom-btn" id="zoom-in" title="풀화면으로 전환">+</button>
+    </div>
+    <button class="nav-arrow" id="nav-left" style="display:none;">&#8592;</button>
+    <div class="nav-scroll-outer">
+      <div class="nav-scroll" id="nav-scroll">
+        <!-- 원하는 만큼 버튼 추가 가능! -->
+        <button class="nav-link active" data-url="https://news.naver.com">News-H</button>
+        <button class="nav-link" data-url="https://www.naver.com">LINK-A</button>
+        <button class="nav-link" data-url="https://www.daum.net">LINK-B</button>
+        <button class="nav-link" data-url="https://www.google.com">LINK-C</button>
+        <button class="nav-link" data-url="https://www.bing.com">LINK-D</button>
+        <button class="nav-link" data-url="https://www.wikipedia.org">LINK-E</button>
+        <button class="nav-link" data-url="https://www.notion.so">Making</button>
+        <button class="nav-link" data-url="https://www.github.com">GitHub</button>
+        <button class="nav-link" data-url="https://www.stackoverflow.com">Stack</button>
+        <button class="nav-link" data-url="https://www.ycombinator.com">YCom</button>
+        <button class="nav-link" data-url="https://www.kakao.com">Kakao</button>
+        <button class="nav-link" data-url="https://www.dogdrip.net">Dogdrip</button>
+        <button class="nav-link" data-url="https://www.reddit.com">Reddit</button>
+        <button class="nav-link" data-url="https://www.nate.com">Nate</button>
+        <!-- 계속 추가 가능! -->
+      </div>
+    </div>
+    <button class="nav-arrow" id="nav-right">&#8594;</button>
+  </div>
+  <div class="iframe-container">
+    <iframe id="main-iframe" src="https://news.naver.com" allowfullscreen></iframe>
+  </div>
+  <script>
+    // + 버튼 : 풀페이지 전환
+    document.getElementById('zoom-in').onclick = function() {
+      if (window.top === window.self) return;
+      window.open(location.href, '_blank');
+    };
+    // 네비 클릭시 iframe src 변경 & active 클래스 처리
+    document.querySelectorAll('.nav-link').forEach(btn=>{
+      btn.addEventListener('click', function(){
+        document.querySelectorAll('.nav-link').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('main-iframe').src = btn.dataset.url;
+      });
+    });
+    // 네비바 가로 스크롤, 화살표 제어
+    const navScroll = document.getElementById('nav-scroll');
+    const leftArrow = document.getElementById('nav-left');
+    const rightArrow = document.getElementById('nav-right');
+    function updateNavArrows() {
+      leftArrow.style.display = navScroll.scrollLeft > 10 ? 'inline-flex' : 'none';
+      rightArrow.style.display = (navScroll.scrollLeft + navScroll.offsetWidth < navScroll.scrollWidth - 5) ? 'inline-flex' : 'none';
+    }
+    rightArrow.onclick = ()=>{ navScroll.scrollBy({left:100, behavior:'smooth'});}
+    leftArrow.onclick = ()=>{ navScroll.scrollBy({left:-100, behavior:'smooth'});}
+    navScroll.addEventListener('scroll', updateNavArrows);
+    window.addEventListener('resize', updateNavArrows);
+    setTimeout(updateNavArrows, 300);
+  </script>
+</body>
+</html>
