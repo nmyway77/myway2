@@ -1,0 +1,83 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>MYCAR.KR: 멀티검색, 나만의 디스플레이, 즐겨찾기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif; background: #fff; margin: 0; padding: 0;}
+    .searchbar-wrap { display: flex; justify-content: center; align-items: center; margin-top: 18px; margin-bottom: 5px;}
+    .searchbar-form { display: flex; align-items: center; border: 2.7px solid #232356; border-radius: 38px; overflow: hidden; background: #fff; min-width: 320px; max-width: 490px; width: 100%; height: 56px; box-shadow: 0 2px 10px 0 rgba(60,60,140,0.03);}
+    .searchbar-form:focus-within { border: 2.7px solid #32307c; box-shadow: 0 2px 18px 0 rgba(50,48,124,0.09);}
+    .searchbar-select { background: transparent; border: none; padding: 0 13px; font-size: 1.01rem; color: #32307c; font-weight: bold; outline: none; cursor: pointer; min-width: 95px;}
+    .searchbar-input { flex: 1; border: none; padding: 0 13px; font-size: 1.02rem; background: #fff; color: #232356; outline: none; height: 100%;}
+    .searchbar-btn { background: #32307c; color: #fff; border: none; padding: 0 24px; min-width: 86px; height: 100%; font-size: 1.08rem; font-weight: bold; cursor: pointer; border-radius: 0 34px 34px 0; letter-spacing: 0.1px; transition: background 0.15s;}
+    .searchbar-btn:hover { background: #22205c; }
+    .screen-links { text-align: center; margin-top: 3px; margin-bottom: 0; }
+    .screen-links a { display: inline-block; margin: 0 3px; font-size: 0.92rem; color: #232356; font-weight: bold; text-decoration: none; cursor: pointer; transition: color 0.14s; padding: 3px 12px 4px 12px; border-radius: 14px; letter-spacing: 0.02em; line-height: 1.58; white-space: nowrap; }
+    .screen-links a:hover, .screen-links a.active { color: #fff; background: #32307c; text-decoration: none;}
+    #main-frame { position: fixed; left: 0; top: 110px; width: 100vw; height: calc(100vh - 110px); border: none; margin: 0; background: #f5f7fa; z-index: 10; transition: none; border-radius: 0; display: block; }
+    @media (max-width: 700px) {
+      .searchbar-form { min-width: 0; width: 98%; height: 52px;}
+      .searchbar-select, .searchbar-input, .searchbar-btn { font-size: 1.03rem;}
+      .searchbar-input { padding: 0 8px; }
+      .screen-links { text-align: left; overflow-x: auto; white-space: nowrap; padding-left: 8px; -webkit-overflow-scrolling: touch;}
+      .screen-links a { margin: 0 2px; font-size: 0.93rem; padding: 3px 8px 3px 8px; border-radius: 11px;}
+      #main-frame { top: 100px; height: calc(100vh - 100px);}
+    }
+  </style>
+</head>
+<body>
+  <!-- 검색엔진바 -->
+  <div class="searchbar-wrap">
+    <form class="searchbar-form" id="searchFormParent" target="_blank">
+      <select class="searchbar-select" id="engineParent">
+        <option value="naver">네이버 ▼</option>
+        <option value="google">구글</option>
+        <option value="youtube">유튜브</option>
+        <option value="daum">다음</option>
+        <option value="duckduckgo">덕덕고</option>
+      </select>
+      <input class="searchbar-input" id="queryParent" type="text" placeholder="검색어를 입력하세요" autocomplete="off" />
+      <button class="searchbar-btn" type="submit">검색</button>
+    </form>
+  </div>
+  <div class="screen-links" id="parent-links">
+    <a href="#" onclick="showScreenParent(event, 'screen1.html')">화면 1</a>
+    <a href="#" onclick="showScreenParent(event, 'screen2.html')">화면 2</a>
+    <a href="#" onclick="showScreenParent(event, 'screen3.html')">화면 3</a>
+    <a href="#" onclick="showScreenParent(event, 'screen4.html')">화면 4</a>
+    <a href="#" onclick="showScreenParent(event, 'screen5.html')">화면 5</a>
+    <a href="#" onclick="showScreenParent(event, 'screen6.html')">화면 6</a>
+    <a href="#" onclick="showScreenParent(event, 'screen7.html')">화면 7</a>
+  </div>
+  <iframe id="main-frame" src="screen1.html" allowfullscreen></iframe>
+  <script>
+    // 검색엔진 배열 (부모용)
+    var snarkEnginesParent = [
+      { key: "naver",  home: "https://www.naver.com/", search: "https://search.naver.com/search.naver?query=" },
+      { key: "google", home: "https://www.google.com/", search: "https://www.google.com/search?q=" },
+      { key: "youtube", home: "https://www.youtube.com/", search: "https://www.youtube.com/results?search_query=" },
+      { key: "daum", home: "https://www.daum.net/", search: "https://search.daum.net/search?w=tot&q=" },
+      { key: "duckduckgo", home: "https://duckduckgo.com", search: "https://duckduckgo.com/?q=" }
+    ];
+    document.getElementById('searchFormParent').onsubmit = function(e) {
+      e.preventDefault();
+      const engineKey = document.getElementById('engineParent').value;
+      const query = document.getElementById('queryParent').value.trim();
+      const engineObj = snarkEnginesParent.find(e => e.key === engineKey);
+      if (engineObj) {
+        let url = query ? (engineObj.search + encodeURIComponent(query)) : engineObj.home;
+        window.open(url, "_blank");
+      }
+    };
+    function showScreenParent(e, url) {
+      e.preventDefault();
+      document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
+      e.target.classList.add('active');
+      var frame = document.getElementById('main-frame');
+      frame.src = url;
+    }
+  </script>
+</body>
+</html>
