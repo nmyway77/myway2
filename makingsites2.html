@@ -1,0 +1,237 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>네비+사이트 추가/삭제/드래그순서</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {margin:0; padding:0; width:100vw; height:100vh; background:#fff; font-family:'Montserrat','맑은 고딕',sans-serif; overflow:hidden;}
+    .nav-bar-wrap {width:100vw; max-width:100vw; display:flex; align-items:center; position:relative; z-index:2; height:48px; background: #fff; border-radius: 0; margin-top:8px; margin-bottom:0; overflow:visible; border:1px solid #e7e7e7; border-left:0; border-right:0;}
+    .nav-arrow {width:30px; height:38px; border:none; background:rgba(40,50,110,0.09); color:#232356; font-size:1.35rem; border-radius:5px; cursor:pointer; margin:0 2px; display:flex; align-items:center; justify-content:center; position:relative; z-index:3; transition:background 0.12s;}
+    .nav-arrow:hover { background:rgba(60,80,150,0.15);}
+    .zoom-btns {display: flex; gap:2px; margin-left:12px; flex-shrink:0;}
+    .zoom-btn {width:24px; height:24px; border-radius:5px; border:1px solid #c0c0c0; background:#fff; color:#232356; font-size:1.05rem; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-right:6px; font-weight:400; transition:background 0.14s; box-shadow:none;}
+    .zoom-btn:active { background:#f0f0f0; }
+    .nav-scroll-outer {overflow:hidden; flex:1; display:flex; align-items:center; height:100%; position:relative; margin:0 2px;}
+    .nav-scroll {display:flex; gap:4px; align-items:center; height:100%; overflow-x:auto; scrollbar-width:none; scroll-behavior:smooth;}
+    .nav-scroll::-webkit-scrollbar { display:none; }
+    .nav-link {color:#1b2049; background:none; border:none; font-size:0.96rem; font-weight:400; padding:3px 10px; margin:0 0; border-radius:13px; cursor:pointer; transition:background 0.14s; white-space:nowrap; letter-spacing:0.01em; position:relative; display:inline-flex; align-items:center;}
+    .nav-link.active, .nav-link:hover { background:#4251b7; color:#fff; }
+    .nav-link .del-btn { margin-left:5px; font-size:0.95em; color:#888; background:none; border:none; cursor:pointer; border-radius:3px; padding:0 4px; transition:background 0.13s;}
+    .nav-link .del-btn:hover { color:#c00; background:#eee;}
+    @media (max-width: 700px) {
+      .nav-bar-wrap { height:38px;}
+      .nav-link { font-size:0.85rem; padding:2px 8px;}
+      .zoom-btn { width:20px; height:20px; font-size:0.97rem;}
+      .nav-arrow { width:25px; height:30px; font-size:1.15rem; }
+    }
+    .iframe-container {position:absolute; top:56px; left:0; width:100vw; height:calc(100vh - 56px); background:none; z-index:1; border:none; margin:0; padding:0;}
+    iframe {width:100vw; height:100vh; min-height:100%; border:none; outline:none; margin:0; padding:0; display:block; background:#fff;}
+    @media (max-width:700px) {
+      .iframe-container { top:43px; height:calc(100vh - 43px);}
+    }
+    .nav-utils { display: flex; gap: 4px; margin-left: 8px;}
+    .nav-utils button { background: #f5f5f5; color: #444; border: 1px solid #c0c0c0; border-radius: 5px; padding: 2px 10px; font-size: 0.92rem; cursor: pointer;}
+    .nav-utils button:hover { background: #ecebff;}
+    .add-site-form { position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(30,32,80,0.14); display:flex; align-items:center; justify-content:center; z-index:9999;}
+    .add-site-popup { background:#fff; padding:22px 22px 12px 22px; border-radius:16px; box-shadow:0 6px 28px #0023; min-width:260px;}
+    .add-site-popup label { display:block; margin-bottom:6px; color:#232356; font-weight:500;}
+    .add-site-popup input { width:100%; padding:7px 8px; font-size:1rem; margin-bottom:10px; border:1.4px solid #bcc; border-radius:5px;}
+    .add-site-popup .btns { display:flex; gap:8px; justify-content: flex-end;}
+    .add-site-popup button { background:#4251b7; color:#fff; border:none; padding:7px 18px; border-radius:6px; cursor:pointer; font-weight:500;}
+    .add-site-popup button.cancel { background:#bbb; color:#fff;}
+    .nav-link[draggable="true"] { cursor:grab;}
+  </style>
+  <!-- SortableJS 라이브러리 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+</head>
+<body>
+  <div class="nav-bar-wrap">
+    <div class="zoom-btns">
+      <button class="zoom-btn" id="zoom-in" title="풀화면으로 전환">+</button>
+    </div>
+    <div class="nav-utils">
+      <button id="add-site-btn">사이트 추가</button>
+      <button id="export-btn">내보내기</button>
+      <button id="import-btn">가져오기</button>
+      <input type="file" id="import-file" accept="application/json" style="display:none;">
+    </div>
+    <button class="nav-arrow" id="nav-left" style="display:none;">&#8592;</button>
+    <div class="nav-scroll-outer">
+      <div class="nav-scroll" id="nav-scroll"></div>
+    </div>
+    <button class="nav-arrow" id="nav-right">&#8594;</button>
+  </div>
+  <div class="iframe-container">
+    <iframe id="main-iframe" src="" allowfullscreen></iframe>
+  </div>
+  <!-- 사이트 추가 팝업 -->
+  <div class="add-site-form" id="add-site-form" style="display:none;">
+    <div class="add-site-popup">
+      <label>이름</label>
+      <input type="text" id="site-name" placeholder="사이트 이름">
+      <label>URL</label>
+      <input type="text" id="site-url" placeholder="https://example.com">
+      <div class="btns">
+        <button id="add-site-confirm">추가</button>
+        <button class="cancel" id="add-site-cancel">취소</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // 기본 사이트 1개만
+    const defaultSites = [
+      { name: "연합신문", url: "https://www.yna.co.kr/" }
+    ];
+    let sites = JSON.parse(localStorage.getItem("mySites_v2") || "null") || defaultSites.slice();
+
+    // 렌더링 함수 (삭제, 드래그, 클릭 등 모두 반영)
+    function renderNavLinks(activeIdx = 0) {
+      const navScroll = document.getElementById('nav-scroll');
+      navScroll.innerHTML = "";
+      sites.forEach((site, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "nav-link" + (idx === activeIdx ? " active" : "");
+        btn.setAttribute("data-url", site.url);
+        btn.setAttribute("draggable", "true");
+        btn.textContent = site.name;
+        // 삭제 버튼
+        const delBtn = document.createElement('button');
+        delBtn.className = "del-btn";
+        delBtn.innerHTML = "×";
+        delBtn.title = "삭제";
+        delBtn.onclick = (e) => {
+          e.stopPropagation();
+          sites.splice(idx,1);
+          localStorage.setItem("mySites_v2", JSON.stringify(sites));
+          // 삭제 후 첫 번째(0)로 이동
+          renderNavLinks(0);
+        };
+        btn.appendChild(delBtn);
+        btn.onclick = function(e) {
+          document.querySelectorAll('.nav-link').forEach(b=>b.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById('main-iframe').src = site.url;
+        };
+        navScroll.appendChild(btn);
+      });
+      // 비었으면 iframe도 비움
+      if (sites.length === 0) {
+        document.getElementById('main-iframe').src = "";
+        return;
+      }
+      // 한 번도 클릭 안했으면 첫 번째
+      const actBtn = document.querySelector('.nav-link.active');
+      if (actBtn) {
+        document.getElementById('main-iframe').src = sites[Array.from(document.querySelectorAll('.nav-link')).indexOf(actBtn)].url;
+      } else if (sites[0]) {
+        document.querySelectorAll('.nav-link')[0]?.classList.add('active');
+        document.getElementById('main-iframe').src = sites[0].url;
+      }
+    }
+
+    // SortableJS로 드래그&드롭 순서 변경
+    let sortable = null;
+    function enableSortable() {
+      if (sortable) sortable.destroy();
+      sortable = new Sortable(document.getElementById('nav-scroll'), {
+        animation: 180,
+        draggable: ".nav-link",
+        onEnd: function(evt) {
+          if (evt.oldIndex === evt.newIndex) return;
+          const moved = sites.splice(evt.oldIndex, 1)[0];
+          sites.splice(evt.newIndex, 0, moved);
+          localStorage.setItem("mySites_v2", JSON.stringify(sites));
+          renderNavLinks(evt.newIndex);
+        }
+      });
+    }
+
+    // 사이트 추가
+    document.getElementById('add-site-btn').onclick = () => {
+      document.getElementById('add-site-form').style.display = "flex";
+      document.getElementById('site-name').value = "";
+      document.getElementById('site-url').value = "";
+    };
+    document.getElementById('add-site-cancel').onclick = () => {
+      document.getElementById('add-site-form').style.display = "none";
+    };
+    document.getElementById('add-site-confirm').onclick = () => {
+      const name = document.getElementById('site-name').value.trim();
+      const url = document.getElementById('site-url').value.trim();
+      if (name && url) {
+        sites.push({name, url});
+        localStorage.setItem("mySites_v2", JSON.stringify(sites));
+        renderNavLinks(sites.length-1);
+        setTimeout(enableSortable, 10);
+        document.getElementById('add-site-form').style.display = "none";
+      } else {
+        alert("이름과 URL을 모두 입력하세요.");
+      }
+    };
+
+    // 내보내기
+    document.getElementById('export-btn').onclick = () => {
+      const blob = new Blob([JSON.stringify(sites, null, 2)], {type: "application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "sites.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    };
+
+    // 가져오기
+    document.getElementById('import-btn').onclick = () => {
+      document.getElementById('import-file').click();
+    };
+    document.getElementById('import-file').onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        try {
+          const data = JSON.parse(ev.target.result);
+          if (Array.isArray(data) && data.every(d=>d.name && d.url)) {
+            sites = data;
+            localStorage.setItem("mySites_v2", JSON.stringify(sites));
+            renderNavLinks(0);
+            setTimeout(enableSortable, 10);
+          } else {
+            alert("잘못된 파일입니다.");
+          }
+        } catch {
+          alert("불러오기에 실패했습니다.");
+        }
+      };
+      reader.readAsText(file);
+    };
+
+    // + 버튼 : 풀페이지 전환
+    document.getElementById('zoom-in').onclick = function() {
+      if (window.top === window.self) return;
+      window.open(location.href, '_blank');
+    };
+
+    // 네비바 가로 스크롤, 화살표 제어
+    const navScroll = document.getElementById('nav-scroll');
+    const leftArrow = document.getElementById('nav-left');
+    const rightArrow = document.getElementById('nav-right');
+    function updateNavArrows() {
+      leftArrow.style.display = navScroll.scrollLeft > 10 ? 'inline-flex' : 'none';
+      rightArrow.style.display = (navScroll.scrollLeft + navScroll.offsetWidth < navScroll.scrollWidth - 5) ? 'inline-flex' : 'none';
+    }
+    rightArrow.onclick = ()=>{ navScroll.scrollBy({left:100, behavior:'smooth'});}
+    leftArrow.onclick = ()=>{ navScroll.scrollBy({left:-100, behavior:'smooth'});}
+    navScroll.addEventListener('scroll', updateNavArrows);
+    window.addEventListener('resize', updateNavArrows);
+    setTimeout(updateNavArrows, 300);
+
+    // 렌더 + 드래그 활성화
+    renderNavLinks(0);
+    setTimeout(enableSortable, 10);
+  </script>
+</body>
+</html>
