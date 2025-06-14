@@ -1,0 +1,85 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube 프레임 뷰어</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      height:100%; margin:0; padding:0; background: #232845;
+    }
+    .yt-container {
+      width:100vw; height:100vh; min-height:320px;
+      display:flex; justify-content:center; align-items:center;
+      background: linear-gradient(145deg, #232845 0%, #2e3143 100%);
+    }
+    .yt-frame-box {
+      width:92vw; max-width:860px;
+      aspect-ratio:16/9;
+      background:#000; border-radius:18px;
+      box-shadow:0 4px 40px 0 #2232ab55;
+      overflow:hidden;
+      display:flex; align-items:center; justify-content:center;
+    }
+    iframe {
+      width:100%; height:100%;
+      border:0; border-radius:18px;
+      background:#000;
+      display:block;
+    }
+    .yt-error {
+      color:#fff; background:#c7323a; padding:26px 24px 22px 24px; border-radius:14px;
+      font-size:1.13rem; box-shadow:0 2px 16px #bb223388;
+      margin: 0 auto; max-width:420px; text-align:center;
+      line-height: 1.65;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+    }
+    .yt-error code {
+      color:#fffde6;
+      word-break:break-all;
+      background:none;
+      font-size:0.96em;
+    }
+  </style>
+</head>
+<body>
+  <div class="yt-container">
+    <div class="yt-frame-box" id="framebox"></div>
+  </div>
+  <script>
+    // 아래 주석을 참고해서 주소창이나 iframe에 유튜브 주소를 넣으면 됩니다!
+    // 방법1: 영상ID만
+    //    youtube-frame.html?video=CJVBX7KI5nU
+    // 방법2: 전체 유튜브 주소
+    //    youtube-frame.html?video=https://www.youtube.com/watch?v=CJVBX7KI5nU
+    // iframe 예시:
+    //    <iframe src="youtube-frame.html?video=CJVBX7KI5nU" width="860" height="484" frameborder="0" allowfullscreen></iframe>
+    
+    // URL에서 ?video= 파라미터 추출 (유튜브 전체 주소나 ID 지원)
+    function getVideoId() {
+      const params = new URLSearchParams(window.location.search);
+      let v = params.get("video");
+      if (!v) return null;
+      // 주소라면 ID만 추출
+      const m = v.match(/(?:v=|youtu\.be\/|embed\/)?([A-Za-z0-9_-]{11})/);
+      return m ? m[1] : null;
+    }
+    const vid = getVideoId();
+    const box = document.getElementById("framebox");
+    if (vid) {
+      box.innerHTML = `<iframe src="https://www.youtube.com/embed/${vid}?rel=0&autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+    } else {
+      box.innerHTML = `<div class="yt-error">
+        <b>유튜브 영상이 지정되지 않았습니다.</b><br><br>
+        <span style="font-size:1em;color:#fff8;">아래와 같이 주소창 또는 iframe의 <b>src</b>에 유튜브 주소를 붙여주세요.</span>
+        <br><br>
+        <b>예시:</b><br>
+        <code>?video=https://www.youtube.com/watch?v=CJVBX7KI5nU</code>
+        <br><br>
+        또는<br><br>
+        <code>?video=CJVBX7KI5nU</code>
+      </div>`;
+    }
+  </script>
+</body>
+</html>
