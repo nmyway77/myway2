@@ -1,0 +1,327 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>폴더별 이미지 masonry 유동 그리드</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body { margin:0; padding:0; width:100vw; height:100vh; background:#fff; font-family:'Montserrat','맑은 고딕',sans-serif; overflow:hidden;}
+    .nav-bar-wrap { width:100vw; display:flex; align-items:center; position:relative; z-index:2; height:52px; background: #fff; border-radius: 0; margin-top:8px; margin-bottom:0; overflow:visible; border:1px solid #e7e7e7; border-left:0; border-right:0;}
+    .combo-wrap {display:flex; align-items:center; margin-left: 8px; margin-right: 3px;}
+    .section-select { border-radius:7px; font-size:1.03rem; padding:4px 18px 4px 10px; border:1.2px solid #bcc; background:#f7f7fd; color:#223276; font-weight:500; margin-right:7px;}
+    .zoom-btns {display: flex; gap:2px; margin-left:0px; flex-shrink:0;}
+    .zoom-btn {width:24px; height:24px; border-radius:5px; border:1px solid #c0c0c0; background:#fff; color:#232356; font-size:1.05rem; cursor:pointer; display:flex; align-items:center; justify-content:center; margin-right:6px; font-weight:400; transition:background 0.14s; box-shadow:none;}
+    .zoom-btn:active { background:#f0f0f0; }
+    .nav-utils { display: flex; gap: 4px; margin-left: 8px; align-items:center;}
+    .nav-utils button { background: #f5f5f5; color: #444; border: 1px solid #c0c0c0; border-radius: 5px; padding: 2px 10px; font-size: 0.92rem; cursor: pointer;}
+    .nav-utils button:hover { background: #ecebff;}
+    .dir-nav-outer {overflow-x:auto; flex:1; margin:0 8px 0 10px; height:44px; display:flex; align-items:center;}
+    .dir-nav-list {display:flex; gap:6px; align-items:center; height:100%;}
+    .dir-link {color:#4251b7; background:none; border:none; font-size:1.06rem; font-weight:500; padding:7px 18px; border-radius:16px; cursor:pointer; white-space:nowrap; transition:background 0.13s, color 0.13s;}
+    .dir-link.active, .dir-link:hover { background:#4251b7; color:#fff; }
+    .dir-link .del-dir { margin-left:4px; font-size:1em; color:#ccc; background:none; border:none; cursor:pointer; border-radius:5px;}
+    .dir-link .del-dir:hover { color:#e33; background:#faf0f0;}
+    .add-dir-btn {margin-right:6px; color:#4251b7; border:1.5px dashed #aab2dd; background:none; border-radius:12px; font-size:1.09rem; padding:6px 15px; cursor:pointer; transition:background 0.14s;}
+    .add-dir-btn:hover { background:#f6f6fa;}
+    @media (max-width: 700px) {
+      .nav-bar-wrap { height:41px; }
+      .dir-link { font-size:0.96rem; padding:5px 10px;}
+      .add-dir-btn { font-size:0.96rem; padding:5px 8px;}
+      .section-select { font-size:0.93rem; padding:3px 9px;}
+    }
+    /* masonry 스타일 핵심 */
+    .gallery-wrap { position:absolute; top:62px; left:0; width:100vw; height:calc(100vh - 62px); background:#fff; overflow-y:auto; padding:34px 0 38px 0;}
+    .gallery {
+      column-count: 5;
+      column-gap: 13px;
+      width:100%; max-width:1500px; margin:0 auto; min-height:400px;
+      transition:all 0.2s;
+    }
+    .grid-item {
+      break-inside: avoid;
+      margin-bottom: 13px;
+      position: relative;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+      padding: 0;
+    }
+    .grid-item a { display: block; text-decoration: none;}
+    .grid-item img {
+      width: 100%; height: auto; display: block;
+      border-radius: 8px 8px 0 0; cursor: pointer;
+      background: #fff; transition: transform 0.18s;
+    }
+    .grid-item img:hover {
+      transform: scale(1.04);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+    .delete-btn {
+      position: absolute;
+      top: 8px; right: 10px;
+      background: #fff; border: none; border-radius: 15px;
+      color: #e44; font-size: 1.2em;
+      cursor: pointer; padding: 1px 9px;
+      opacity: 0.77; transition: background 0.13s; z-index: 2;
+    }
+    .delete-btn:hover { background: #fee; color: #b11;}
+    @media (max-width:1200px) { .gallery { column-count: 3; } }
+    @media (max-width:700px)  { .gallery { column-count: 2; } }
+    @media (max-width:500px)  { .gallery { column-count: 1; } }
+    /* 모달 스타일 */
+    .modal-bg { position:fixed;top:0;left:0;width:100vw;height:100vh; background:rgba(22,30,45,0.45);z-index:200; display:flex;justify-content:center;align-items:center; }
+    .modal-box { background:#fff;border-radius:15px;padding:27px 27px 17px 27px; box-shadow:0 8px 38px 0 rgba(40,44,60,0.13);min-width:270px;max-width:97vw; color:#222;}
+    .modal-box label {display:block;font-size:1rem;margin:8px 0 3px 1px;}
+    .modal-box input, .modal-box select { width:100%;padding:8px 8px;margin-bottom:13px; border-radius:0.8em;border:1.2px solid #dde3f3; background:#f5f7fd;color:#333;font-size:1rem;}
+    .modal-box .modal-actions {text-align:right;margin-top:6px;}
+    .modal-box button { padding:7px 16px;border:none; border-radius:0.9em;font-size:1rem;font-weight:600; margin-left:6px;cursor:pointer;background:#4251b7;color:#fff;}
+    .modal-box button.cancel {background:#eee;color:#666;}
+    .modal-box button:active {opacity:0.87;}
+  </style>
+</head>
+<body>
+  <div class="nav-bar-wrap">
+    <div class="combo-wrap">
+      <select class="section-select" id="section-select">
+        <option value="">섹션 이동...</option>
+        <option value="news.html">뉴스</option>
+        <option value="bbs.html">BBS</option>
+        <option value="live.html">LIVE</option>
+        <option value="tv.html">TV</option>
+        <option value="shop.html">쇼핑</option>
+        <option value="magazine.html">잡지</option>
+      </select>
+    </div>
+    <div class="zoom-btns">
+      <button class="zoom-btn" id="zoom-in" title="풀화면으로 전환">+</button>
+    </div>
+    <div class="nav-utils">
+      <button id="add-dir-btn" class="add-dir-btn">+ 디렉토리</button>
+      <button id="add-img-btn">+ 사진/사이트 추가</button>
+      <button id="export-btn">내보내기</button>
+      <button id="import-btn">가져오기</button>
+      <input type="file" id="import-file" accept="application/json" style="display:none;">
+    </div>
+    <div class="dir-nav-outer">
+      <div class="dir-nav-list" id="dir-nav-list"></div>
+    </div>
+  </div>
+
+  <div class="gallery-wrap">
+    <div class="gallery" id="gallery"></div>
+  </div>
+
+  <!-- 디렉토리 추가/이름변경 모달 -->
+  <div class="modal-bg" id="dirModalBg" style="display:none">
+    <form class="modal-box" onsubmit="submitDirForm(event)">
+      <label>디렉토리 이름</label>
+      <input type="text" id="dirNameInput" required maxlength="20" autocomplete="off">
+      <div class="modal-actions">
+        <button type="submit" id="dirModalSaveBtn">저장</button>
+        <button type="button" class="cancel" onclick="closeDirModal()">취소</button>
+      </div>
+    </form>
+  </div>
+  <!-- 사진 추가 모달 -->
+  <div class="modal-bg" id="imgModalBg" style="display:none">
+    <form class="modal-box" onsubmit="submitImgForm(event)">
+      <label>디렉토리 선택</label>
+      <select id="imgDirSelect" required></select>
+      <label>사진 주소(URL)</label>
+      <input type="url" id="imgUrl" required placeholder="https://image...">
+      <label>사이트 주소(URL, 선택)</label>
+      <input type="url" id="siteUrl" placeholder="https://site...">
+      <div class="modal-actions">
+        <button type="submit">추가</button>
+        <button type="button" class="cancel" onclick="closeImgModal()">취소</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // ====== 데이터 구조 ======
+    let dirs = [{id:'all', name:'전체', images:[]}];
+    let activeDirId = 'all';
+    let dirEditId = null;
+
+    // ====== 디렉토리(폴더) ======
+    function renderDirs() {
+      const nav = document.getElementById('dir-nav-list');
+      nav.innerHTML = '';
+      dirs.forEach(f => {
+        const btn = document.createElement('button');
+        btn.className = 'dir-link' + (f.id===activeDirId ? ' active':'');
+        btn.textContent = f.name;
+        btn.onclick = () => selectDir(f.id);
+        if(f.id!=='all'){
+          const delBtn = document.createElement('button');
+          delBtn.className = 'del-dir';
+          delBtn.title = "삭제";
+          delBtn.innerHTML = "×";
+          delBtn.onclick = (e) => {e.stopPropagation(); deleteDir(f.id);};
+          btn.appendChild(delBtn);
+        }
+        nav.appendChild(btn);
+      });
+    }
+    function selectDir(id) {
+      activeDirId = id;
+      renderDirs(); renderGallery();
+    }
+    function openDirModal(editId) {
+      dirEditId = editId||null;
+      document.getElementById('dirModalBg').style.display = 'flex';
+      document.getElementById('dirNameInput').value = editId?dirs.find(f=>f.id===editId).name:'';
+      setTimeout(()=>document.getElementById('dirNameInput').focus(), 10);
+    }
+    function closeDirModal() {document.getElementById('dirModalBg').style.display='none';}
+    function submitDirForm(e){
+      e.preventDefault();
+      const name = document.getElementById('dirNameInput').value.trim();
+      if(!name) return;
+      if(dirEditId){ // rename
+        const f=dirs.find(f=>f.id===dirEditId);
+        if(f)f.name=name;
+      }else{ // add
+        const newId = 'd'+Date.now();
+        dirs.push({id:newId, name, images:[]});
+      }
+      closeDirModal(); renderDirs(); saveGallery();
+    }
+    function deleteDir(id){
+      if(!confirm('디렉토리와 포함된 사진이 모두 삭제됩니다.\n정말 삭제할까요?')) return;
+      dirs = dirs.filter(f=>f.id!==id);
+      if(activeDirId===id) activeDirId='all';
+      renderDirs(); renderGallery(); saveGallery();
+    }
+
+    // ====== 이미지(사진/사이트) Masonry 저장/출력 ======
+    function renderGallery() {
+      const grid = document.getElementById('gallery');
+      grid.innerHTML = '';
+      let images = [];
+      if(activeDirId==='all'){
+        dirs.forEach(f=>{if(f.id!=='all')images=images.concat(f.images.map(img=>({...img, dirId:f.id})));});
+      }else{
+        const dir=dirs.find(f=>f.id===activeDirId);
+        if(dir) images = dir.images.map(img=>({...img, dirId:dir.id}));
+      }
+      images.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'grid-item';
+        div.innerHTML = `
+          <a href="${item.site||'#'}" target="_blank" rel="noopener">
+            <img src="${item.url}" alt="" onerror="this.src='https://dummyimage.com/200x150/eee/999?text=NO+IMAGE';">
+          </a>
+          <button class="delete-btn" title="삭제" onclick="deleteImage('${item.dirId}',${item.idx!=undefined?item.idx:idx})">&times;</button>
+        `;
+        grid.appendChild(div);
+      });
+    }
+    function openAddImgModal() {
+      const select = document.getElementById('imgDirSelect');
+      select.innerHTML = '';
+      dirs.filter(f=>f.id!=='all').forEach(f=>{
+        const opt = document.createElement('option');
+        opt.value = f.id;
+        opt.textContent = f.name;
+        select.appendChild(opt);
+      });
+      document.getElementById('imgModalBg').style.display = 'flex';
+      document.getElementById('imgUrl').value = '';
+      document.getElementById('siteUrl').value = '';
+      setTimeout(()=>document.getElementById('imgUrl').focus(), 10);
+    }
+    function closeImgModal() {document.getElementById('imgModalBg').style.display='none';}
+    function submitImgForm(e){
+      e.preventDefault();
+      const dirId = document.getElementById('imgDirSelect').value;
+      const url = document.getElementById('imgUrl').value.trim();
+      const site = document.getElementById('siteUrl').value.trim();
+      const dir=dirs.find(f=>f.id===dirId);
+      if(dir) dir.images.unshift({url,site});
+      closeImgModal(); renderGallery(); saveGallery();
+    }
+    function deleteImage(dirId, idx){
+      const dir=dirs.find(f=>f.id===dirId);
+      if(!dir)return;
+      if(!confirm('이 사진을 삭제할까요?'))return;
+      dir.images.splice(idx,1);
+      renderGallery(); saveGallery();
+    }
+
+    // ====== 내보내기/가져오기/로컬저장 ======
+    document.getElementById('export-btn').onclick = function() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dirs, null, 2));
+      const dlAnchorElem = document.createElement('a');
+      dlAnchorElem.setAttribute("href",dataStr);
+      dlAnchorElem.setAttribute("download","gallery.json");
+      document.body.appendChild(dlAnchorElem);
+      dlAnchorElem.click();
+      document.body.removeChild(dlAnchorElem);
+    };
+    document.getElementById('import-btn').onclick = function() {
+      document.getElementById('import-file').click();
+    };
+    document.getElementById('import-file').addEventListener('change', function(e){
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        try {
+          const imported = JSON.parse(ev.target.result);
+          if(Array.isArray(imported) && imported[0] && imported[0].id==='all'){
+            dirs = imported;
+            activeDirId='all';
+            saveGallery();
+            renderDirs();
+            renderGallery();
+          } else alert("잘못된 파일 형식입니다.");
+        } catch(err) {alert("파일 읽기 오류");}
+      }
+      reader.readAsText(file);
+      e.target.value = "";
+    });
+
+    function saveGallery() {localStorage.setItem('dirsGallery',JSON.stringify(dirs));}
+    function loadGallery() {
+      const data = localStorage.getItem('dirsGallery');
+      if(data) dirs = JSON.parse(data);
+      if(!dirs[0]||dirs[0].id!=='all')dirs=[{id:'all',name:'전체',images:[]}];
+      renderDirs(); renderGallery();
+    }
+
+    // ESC, 모달 외부 클릭 닫기 지원
+    document.addEventListener('keydown',(e)=>{
+      if(e.key==="Escape") {
+        closeImgModal(); closeDirModal();
+      }
+    });
+    document.getElementById('dirModalBg').addEventListener('click',(e)=>{
+      if(e.target===e.currentTarget) closeDirModal();
+    });
+    document.getElementById('imgModalBg').addEventListener('click',(e)=>{
+      if(e.target===e.currentTarget) closeImgModal();
+    });
+
+    // 이벤트 연결
+    document.getElementById('add-dir-btn').onclick = ()=>openDirModal();
+    document.getElementById('add-img-btn').onclick = ()=>openAddImgModal();
+
+    // 섹션 이동 콤보박스 (상단)
+    document.getElementById('section-select').onchange = function() {
+      if (this.value) location.href = this.value;
+    };
+    // + 버튼 : 풀페이지 전환
+    document.getElementById('zoom-in').onclick = function() {
+      if (window.top === window.self) return;
+      window.open(location.href, '_blank');
+    };
+
+    // 시작시
+    loadGallery();
+  </script>
+</body>
+</html>
