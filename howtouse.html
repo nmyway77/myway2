@@ -1,125 +1,156 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <title>그림그리드 사용법 안내</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <style>
-    body {
-      background: #f6f8fa; margin: 0; color: #222;
-      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+    html, body {
+      background: #f6f8fa; margin: 0; padding: 0;
+      color: #222; font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
     .main {
-      max-width: 650px; margin: 36px auto 0 auto;
-      background: #fff; border-radius: 18px; box-shadow: 0 6px 36px #00308a11;
-      padding: 28px 18px 32px 18px;
+      max-width: 650px;
+      margin: 36px auto 0 auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 6px 36px #00308a11;
+      padding: 28px 24px 32px 24px;
+      box-sizing: border-box;
+      word-break: keep-all;
     }
     .title {
-      font-size: 1.8rem; color: #2563eb; font-weight: bold;
-      text-align: center; margin-bottom: 13px; letter-spacing: -1px;
+      font-size: 1.85rem;
+      color: #2563eb;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+      letter-spacing: -1px;
+      line-height: 1.2;
     }
+    .title .red { color: #ff0000; }
     .subtitle {
       text-align: center; color: #3a4a6a; font-size: 1.07rem; margin-bottom: 22px;
       opacity: .86;
     }
     .howto-list {
-      padding: 0 0 0 4px; margin: 0 0 24px 0;
+      padding: 0 0 0 4px; margin: 0 0 22px 0;
       list-style: none; counter-reset: num;
     }
     .howto-list li {
       counter-increment: num;
-      margin-bottom: 18px; font-size: 1.07rem; line-height: 1.7; position: relative;
+      margin-bottom: 18px;
+      font-size: 1.08rem;
+      line-height: 1.7;
+      position: relative;
       padding-left: 34px;
+      text-align: left;
     }
     .howto-list li:before {
       content: counter(num) ".";
-      position: absolute; left: 0; top: 1px;
-      background: #2563eb; color: #fff; font-weight: bold; font-size: 1.03em;
-      width: 25px; height: 25px; border-radius: 50%; display: flex;
-      align-items: center; justify-content: center; letter-spacing: -2px;
+      position: absolute; left: 0; top: 2px;
+      background: #2563eb;
+      color: #fff; font-weight: bold;
+      font-size: 1.03em;
+      width: 25px; height: 25px;
+      border-radius: 50%; display: flex;
+      align-items: center; justify-content: center;
+      letter-spacing: -2px;
       box-shadow: 0 1px 6px #2563eb16;
     }
+    .desc-p {
+      margin: 0 0 12px 0;
+      line-height: 1.7;
+      font-size: 1.05rem;
+      text-indent: 1.2em;
+      letter-spacing: -0.02em;
+    }
     .tip {
-      background: #f3f6fc; border-left: 5px solid #2563eb;
-      border-radius: 9px; padding: 13px 16px; color: #274084;
-      margin-bottom: 8px; font-size: 0.98rem;
+      background: #f3f6fc;
+      border-left: 5px solid #2563eb;
+      border-radius: 9px;
+      padding: 13px 16px;
+      color: #274084;
+      margin: 16px 0 18px 0;
+      font-size: 0.98rem;
+      line-height: 1.7;
     }
     .preview-row {
       display: flex; gap: 14px; justify-content: center; margin: 19px 0 0 0;
+      flex-wrap: wrap;
     }
     .img-preview {
-      background: #eaf3ff; border-radius: 9px; width: 66px; height: 66px;
-      display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 8px #2563eb11;
+      background: #eaf3ff;
+      border-radius: 9px;
+      width: 66px; height: 66px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 1px 8px #2563eb11;
       overflow: hidden;
+      margin-bottom: 6px;
     }
-    .img-preview img { width: 56px; height: 56px; object-fit: cover; border-radius: 5px; }
+    .img-preview img {
+      width: 56px; height: 56px; object-fit: cover; border-radius: 5px;
+    }
     .footer {
-      color: #8b9; font-size: 0.96em; text-align: center; margin-top: 24px;
+      color: #89a; font-size: 0.98em; text-align: center; margin-top: 26px;
+      line-height: 1.6;
     }
-    @media (max-width:650px){
-      .main { padding: 19px 5vw 24px 5vw; }
+    @media (max-width: 700px) {
+      .main { padding: 19px 4vw 22px 4vw; }
+      .title { font-size: 1.26rem; }
+      .howto-list li { font-size: 0.98rem; padding-left: 27px;}
+      .howto-list li:before { width: 20px; height: 20px; font-size: 0.97em;}
+      .tip { font-size: 0.95rem; padding: 10px 10px; }
+      .desc-p { font-size: 0.96rem;}
       .preview-row { gap: 7px; }
       .img-preview { width: 44px; height: 44px; }
       .img-preview img { width: 36px; height: 36px; }
+    }
+    @media (max-width: 430px) {
+      .main { padding: 8vw 2vw 15vw 2vw;}
+      .title { font-size: 1.08rem;}
+      .tip { font-size: 0.89rem;}
+      .footer { font-size: 0.91em;}
     }
   </style>
 </head>
 <body>
   <div class="main">
-
-
-   
-<div class="title" style="text-align: center;"><strong>나만의</strong> <span style="color: #ff0000;">디스플레이형</span> 즐겨찾기 만들기</div>
-<div class="title" style="text-align: center;">&nbsp;<strong>이용법</strong></div>
-<div class="subtitle" style="text-align: center;">&nbsp;</div>
-<ul class="howto-list">
-<li style="text-align: left;"><strong>[<span style="color: #ff0000;">Type]</span></strong>&nbsp;먼저 T<span style="color: #ff0000;">ype</span> 을 선택하세요<br /> <span style="color: #2563eb;">사이트 추가방식은&nbsp;</span>&nbsp;사이트를 추가하면 하단에 해당사이트가 오픈됩니다</li>
-</ul>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;모두 추가하신이후에는 내보내기버튼을 통해 이름을 적고 저장하세요</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 다음에 저장한걸 해당Type 형에서 - 가져오기를 하면</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 저장한 내용 그대로&nbsp; 재현됩니다</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 혹시 - 사이트추가를 해도 하단에 페이지가 나타나지 않는경우는</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 해당사이트가 이를 거부(LOCK)하기 때문이니&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;이사이트는 추가하지 마세요</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Live TV 에서도&nbsp; 국내 방송사들이 거의 이렇게 락을 걸어서</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 상단에 추가하지 못하고 있습니다</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;특히 국내 유튜브를 통한 뉴스사이트들 보면 답이 안나와요 ^^</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;미국(외국)은 그채널(라이브방송이 진행되는 주소)를 바꾸지 않습니다</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;그런데 국내는 그걸 수시로 바꿔요 ^^ 왜??? 이해가 ?????</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;그래서 올리지 않고 있습니다</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 그리고 PC 나 태블릿에서는 잘되도&nbsp; 핸드폰에서 잘안되는경우 역시</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;해당사이트가 그기능을 못하는것이니 이점 참고해주세요</p>
-<p>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(생각을 조금만 바꾸면 모두가 편할텐데 아직 안하고 있네요)</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 이럴경우는 그림추가 방식이나 텍스트형(추가예정) 을 이용해주세요</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
-<ul class="howto-list">
-<li><strong><span style="color: #ff0000;">그</span><span style="color: #ff0000;"><strong>림 추가</strong>방식은</span></strong>&nbsp; -먼저 디렉토리를 클릭한후</li>
-</ul>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;디렉토리 명을 적으세요</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;이후 사진추가 를 누르시면</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 디렉토리 선택&nbsp; 사진주소&nbsp; 이동할 페이지 주소를 넣을</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 입력창이 생깁니다</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 이때 디렉토리를 선택후 모두 입력한후&nbsp; 추가 버튼을 누르면</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;해당 사진이 하단에 저장됩니다.</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;그사진을 클릭하면 - 해당 사이트로 이동하는 방식입니다</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;사진들은 드래그를 통해 <strong>순서도바꿀수</strong> 있습니다</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 작업을 마치면 반듯이</p>
-<p>&nbsp;</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 내보기버튼을 이용해서 저장을 하고</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;이후 가져오기버튼을 눌러 해당파일을 선택해야</p>
-<p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 작업한 모습 그대로 재현되니 - 작업후 내보기 버튼 잊지마세요</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-
-
-
-
-
-   
+    <div class="title">
+      <strong>나만의</strong> <span class="red">디스플레이형</span> 즐겨찾기 만들기
+      <br><strong>이용법</strong>
+    </div>
+    <div class="subtitle">&nbsp;</div>
+    <ul class="howto-list">
+      <li>
+        <strong>[<span class="red">Type</span>]</strong>&nbsp;먼저 <span class="red">Type</span>을 선택하세요.<br>
+        <span style="color: #2563eb;">사이트 추가방식은</span> 사이트를 추가하면 하단에 해당사이트가 오픈됩니다.
+      </li>
     </ul>
+    <div class="desc-p">모두 추가하신 이후에는 내보내기 버튼을 통해 이름을 적고 저장하세요.  
+    다음에 저장한 걸 해당 Type 형에서 "가져오기" 하면 저장한 내용 그대로 재현됩니다.</div>
+    <div class="desc-p">사이트 추가를 해도 하단에 페이지가 나타나지 않는 경우, 해당 사이트가 이를 거부(LOCK)하기 때문이니 이 사이트는 추가하지 마세요.</div>
+    <div class="desc-p">Live TV에서 국내 방송사들이 거의 이렇게 락을 걸어서 상단에 추가하지 못하고 있습니다.</div>
+    <div class="desc-p">특히 국내 유튜브 뉴스사이트들은<br> 방송주소를 바꾸지 않는 미국(외국)과 달리 국내는 수시로 바꿉니다.  
+    그래서 올리지 않고 있습니다.</div>
+    <div class="desc-p">PC나 태블릿에서는 잘 돼도, 핸드폰에서 안 되는 경우 역시 해당 사이트가 그 기능을 못하는 것이니 참고해주세요.<br>
+    (생각을 조금만 바꾸면 모두가 편할 텐데 아직 안 하고 있네요)</div>
+    <div class="desc-p">이럴 경우는 <b>그림추가 방식</b>이나 <b>텍스트형(추가예정)</b>을 이용해주세요.</div>
+    <ul class="howto-list">
+      <li>
+        <strong><span class="red">그림 추가</span> 방식은</strong> - 먼저 디렉토리를 클릭한 후,
+        <br>디렉토리 명을 적으세요.<br>이후 사진추가를 누르면 디렉토리 선택, 사진주소, 이동할 페이지 주소를 넣을 입력창이 생깁니다.<br>
+        디렉토리를 선택 후 모두 입력한 후 추가 버튼을 누르면 해당 사진이 하단에 저장됩니다.<br>
+        그 사진을 클릭하면 해당 사이트로 이동하는 방식입니다.<br>
+        사진들은 드래그를 통해 <strong>순서도 바꿀 수 있습니다</strong>.
+      </li>
+    </ul>
+    <div class="desc-p">작업을 마치면 반드시 내보내기 버튼을 이용해서 저장하고,  
+      이후 가져오기 버튼을 눌러 해당 파일을 선택해야 작업한 모습 그대로 재현되니  
+      <b>작업 후 내보내기 버튼 잊지 마세요!</b>
+    </div>
     <div class="tip">
       <b>TIP</b> : 이미지 주소는<br>
       <span style="color:#2988f7;">인터넷상의 이미지 주소</span> 또는 <span style="color:#2988f7;">직접 업로드한 이미지 URL</span>을 사용할 수 있습니다.<br>
