@@ -60,9 +60,20 @@
     .searchbar-btn:hover { filter: brightness(0.95) saturate(1.13);}
     /* ----- /검색바 ----- */
 
+   
     /* ★ 네비바 항상 고정 + 가로 스크롤 항상 표시 */
     .screen-links {
       text-align: center; margin-top: 3px; margin-bottom: 30px;
+
+
+ display: flex;
+  justify-content: center;  /* 추가! 중앙정렬 */
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+
+     
 
       /* 고정 (PC/모바일 둘다) */
       position: sticky;
