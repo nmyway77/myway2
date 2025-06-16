@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>AI 엔진 바로가기 - MYWAY 초기화면</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      background: linear-gradient(135deg, #f7fafc 0%, #e3e3f3 100%);
+      display: flex;
+      flex-direction: column;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      justify-content: flex-start;
+      align-items: center;
+    }
+    .container {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 40%; /* 하단에서 2/5(40%) */
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 2;
+    }
+    .logo-row {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 32px;
+      width: 100%;
+    }
+    .logo-row.bottom {
+      gap: 44px;
+      margin-bottom: 0;
+    }
+    .ai-logo-wrap {
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 3px 24px 0 #b1c7e866;
+      border: 3px solid #e5e8f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: box-shadow 0.15s, border-color 0.15s;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .ai-logo-wrap:hover {
+      box-shadow: 0 8px 32px 0 #7e94ff99;
+      border-color: #94a2ff;
+      background: #f7faff;
+    }
+    .ai-logo-img {
+      width: 54px;
+      height: 54px;
+      object-fit: contain;
+      background: transparent;
+      border-radius: 50%;
+      transition: transform 0.12s;
+    }
+    .ai-logo-wrap:hover .ai-logo-img {
+      transform: scale(1.08) rotate(-3deg);
+    }
+    .ai-name {
+      margin-top: 8px;
+      font-size: 1.05rem;
+      color: #222c47;
+      text-align: center;
+      letter-spacing: 0.02em;
+      font-weight: 600;
+      user-select: none;
+    }
+    @media (max-width: 650px) {
+      .container { max-width: 99vw; }
+      .logo-row, .logo-row.bottom { gap: 18px; }
+      .ai-logo-wrap { width: 58px; height: 58px; }
+      .ai-logo-img { width: 38px; height: 38px; }
+      .ai-name { font-size: 0.96rem; }
+    }
+    /* 중앙 안내 메시지 */
+    .main-title {
+      position: absolute;
+      top: 17%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: #333862;
+      text-shadow: 0 2px 12px #ffffff99;
+      letter-spacing: 0.03em;
+      margin-bottom: 16px;
+      text-align: center;
+      z-index: 3;
+      pointer-events: none;
+      user-select: none;
+    }
+    .main-subtitle {
+      position: absolute;
+      top: 23%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.18rem;
+      color: #6a739c;
+      margin-bottom: 8px;
+      text-align: center;
+      z-index: 3;
+      pointer-events: none;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-title">AI 멀티포털 바로가기</div>
+  <div class="main-subtitle">원하는 AI 엔진을 터치하세요</div>
+  <div class="container">
+    <!-- 상단 5개 -->
+    <div class="logo-row">
+      <a class="ai-logo-wrap" href="https://chat.openai.com/" target="_blank">
+        <img src="/mnt/data/efbcb9fd-d4b5-46f6-80b3-e7e7878044f0.png" class="ai-logo-img" alt="ChatGPT">
+      </a>
+      <a class="ai-logo-wrap" href="https://grok.x.ai/" target="_blank">
+        <img src="/mnt/data/3ebd356b-cf8a-454f-8a1b-614f72c1ce6a.png" class="ai-logo-img" alt="Grok">
+      </a>
+      <a class="ai-logo-wrap" href="https://gemini.google.com/" target="_blank">
+        <img src="/mnt/data/684c7b7d-2201-42d9-9ac2-c39d7a6e517b.png" class="ai-logo-img" alt="Gemini">
+      </a>
+      <a class="ai-logo-wrap" href="https://www.perplexity.ai/" target="_blank">
+        <img src="/mnt/data/8d057cb1-a011-4e08-bbb9-850b2d7860ac.png" class="ai-logo-img" alt="Perplexity">
+      </a>
+      <a class="ai-logo-wrap" href="https://copilot.microsoft.com/" target="_blank">
+        <img src="/mnt/data/62cd0c85-ff0c-40fa-8b9d-cfe3f1235f7f.png" class="ai-logo-img" alt="Copilot">
+      </a>
+    </div>
+    <!-- 하단 3개 -->
+    <div class="logo-row bottom">
+      <a class="ai-logo-wrap" href="https://openai.com/sora" target="_blank">
+        <img src="/mnt/data/6fa58bd3-e356-4ebb-959c-d188d7764ce4.png" class="ai-logo-img" alt="Sora">
+      </a>
+      <a class="ai-logo-wrap" href="https://hailuoai.com/" target="_blank">
+        <img src="/mnt/data/e84fc9a1-2bcf-48b8-b54f-470722b98d5b.png" class="ai-logo-img" alt="HailuoAI">
+      </a>
+      <a class="ai-logo-wrap" href="https://www.klingai.com/" target="_blank">
+        <img src="/mnt/data/72fd60e2-295f-46a3-8c4c-e6bf42cbd77b.png" class="ai-logo-img" alt="KlingAI">
+      </a>
+    </div>
+  </div>
+</body>
+</html>
