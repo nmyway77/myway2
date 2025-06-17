@@ -1,0 +1,245 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>AI 엔진 바로가기 - MYWAY (수정/삭제 아이콘/콤보박스 현재탭 이동)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body { min-height: 100vh; margin: 0; padding: 0; background: #fff; font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif; width: 100%; }
+    body { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .topbar { width: 100%; max-width: 680px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 18px 10px 8px 10px; box-sizing: border-box; }
+    .combo { font-size: 1rem; padding: 7px 16px; border-radius: 7px; border: 1px solid #e4e5f0; background: #f5f8ff; }
+    .topbar-btns { display: flex; gap: 7px; }
+    .topbar-btns button { padding: 7px 13px; font-size: 1rem; border-radius: 7px; border: 1px solid #e7e7e7; background: #f4f7ff; cursor: pointer; font-weight: bold; transition: background 0.13s; }
+    .topbar-btns button:hover { background: #e1eaff; }
+    .container { width: 100%; max-width: 560px; display: flex; flex-direction: column; align-items: center; margin-top: 30px; margin-bottom: 60px; padding-left: 6px; padding-right: 6px;}
+    .logo-row { display: flex; justify-content: center; gap: 24px; margin-bottom: 32px; width: 100%; flex-wrap: nowrap; transition: max-width 0.1s; }
+    .ai-logo-wrap { width: 90px; height: 100px; border-radius: 18px; background: #fff; box-shadow: 0 3px 24px 0 #b1c7e866; border: 3px solid #e5e8f6; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: box-shadow 0.15s, border-color 0.15s; cursor: pointer; overflow: hidden; margin: 0; flex: 0 0 auto; position: relative; }
+    .ai-logo-wrap:hover { box-shadow: 0 8px 32px 0 #7e94ff99; border-color: #94a2ff; background: #f7faff;}
+    .ai-logo-img { width: 54px; height: 54px; object-fit: contain; background: transparent; border-radius: 50%; transition: transform 0.12s; }
+    .ai-logo-wrap:hover .ai-logo-img { transform: scale(1.08) rotate(-3deg);}
+    .action-btns { display: flex; gap: 2px; margin-top: 6px; }
+    .action-btns button {
+      border: none; background: none; padding: 2px 4px; margin: 0;
+      border-radius: 4px; cursor: pointer; min-width: 24px; min-height: 24px;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0.8; transition: background 0.12s, opacity 0.12s;
+    }
+    .action-btns button:hover { opacity: 1; background: #f1f5ff; }
+    .edit-btn svg { fill: #3a75e7; }
+    .del-btn svg  { fill: #d44848; }
+    .action-btns svg { width: 17px; height: 17px; display: block; }
+    @media (max-width: 1100px) {
+      .container { max-width: 98vw; }
+      .logo-row { gap: 14px;}
+      .ai-logo-wrap { width: 75px; height: 88px;}
+      .ai-logo-img { width: 40px; height: 40px;}
+    }
+    @media (max-width: 900px) {
+      .container { max-width: 99vw;}
+      .logo-row { gap: 10px; }
+      .ai-logo-wrap { width: 64px; height: 72px;}
+      .ai-logo-img { width: 34px; height: 34px;}
+    }
+    @media (max-width: 700px) {
+      .ai-logo-wrap { width: 74px !important; height: 84px !important; }
+      .ai-logo-img  { width: 52px !important; height: 52px !important; }
+      .logo-row     { gap: 7vw !important; }
+    }
+    @media (max-width: 500px) {
+      .container { margin-top: 6px; margin-bottom: 9px;}
+      .logo-row { gap: 6vw !important; }
+      .ai-logo-wrap { width: 64px !important; height: 68px !important;}
+      .ai-logo-img  { width: 40px !important; height: 40px !important;}
+    }
+    .modal-bg {
+      position:fixed; z-index:10; left:0; top:0; width:100vw; height:100vh; background:#2228; display:flex; justify-content:center; align-items:center;
+    }
+    .modal-box {
+      background:#fff; border-radius:12px; box-shadow:0 6px 36px #00308a22;
+      padding: 24px 22px 14px 22px; min-width:230px; display:flex; flex-direction:column; gap:13px; align-items:center;
+    }
+    .modal-box input { font-size:1rem; padding:8px 12px; border:1px solid #bbb; border-radius:7px; width:220px;}
+    .modal-box button { font-size:1rem; padding:7px 18px; border-radius:7px; border:1px solid #e4e5f0; background:#eaf1ff; cursor:pointer;}
+    .modal-box label { font-size:1rem; color:#234;}
+  </style>
+</head>
+<body>
+  <!-- 상단바 -->
+  <div class="topbar">
+    <select class="combo" id="navCombo">
+      <option value="https://www.naver.com/">네이버</option>
+      <option value="https://www.google.com/">구글</option>
+      <option value="https://www.daum.net/">다음</option>
+      <option value="https://www.youtube.com/">유튜브</option>
+    </select>
+    <div class="topbar-btns">
+      <button id="addBtn">추가</button>
+      <button id="exportBtn">내보내기</button>
+      <button id="importBtn">가져오기</button>
+      <input type="file" id="importFile" style="display:none;">
+    </div>
+  </div>
+  <!-- 하단 그리드 -->
+  <div class="container" id="aiLogoContainer"></div>
+  <!-- 추가/수정 입력 모달 -->
+  <div id="modal" style="display:none;"></div>
+
+<script>
+let aiLogos = [
+  { url: "https://chat.openai.com/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMdM9MEQ0ExL1PmInT3U5I8v63YXBEdoIT0Q&s", alt: "" },
+  { url: "https://gemini.google.com/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSm5xNOdkOwTDL9cxAWHDDyjK-6HcM-qHCxhw&s", alt: "" }
+];
+// localStorage 복원
+if(localStorage['aiLogos']) {
+  try { aiLogos = JSON.parse(localStorage['aiLogos']); }catch(e){}
+}
+function save() {
+  localStorage['aiLogos'] = JSON.stringify(aiLogos);
+}
+function getLayout() {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  let iconsPerRow = 4, gap = 24, size = 90, imgSize = 54;
+  if (w <= 1100) { iconsPerRow = 4; gap = 14; size = 75; imgSize = 40;}
+  if (w <= 900)  { iconsPerRow = 3; gap = 10; size = 64; imgSize = 34;}
+  if (w <= 700) {
+    if (h > w) { iconsPerRow = 2; gap = w * 0.08; size = 74; imgSize = 52;}
+    else      { iconsPerRow = 3; gap = w * 0.08; size = 74; imgSize = 52; }
+  }
+  if (w <= 500)  { iconsPerRow = 2; gap = w * 0.10; size = 64; imgSize = 40;}
+  return { iconsPerRow, gap, size, imgSize };
+}
+// 실제 출력
+function renderLogos() {
+  const container = document.getElementById('aiLogoContainer');
+  container.innerHTML = "";
+  const { iconsPerRow, gap, size, imgSize } = getLayout();
+  let idx = 0;
+  while (idx < aiLogos.length) {
+    const count = Math.min(iconsPerRow, aiLogos.length - idx);
+    const row = document.createElement('div');
+    row.className = "logo-row";
+    row.style.maxWidth = (size * count + gap * (count - 1)) + "px";
+    row.style.gap = gap + "px";
+    for (let i = 0; i < count; i++, idx++) {
+      const l = aiLogos[idx];
+      const wrap = document.createElement('div');
+      wrap.className = "ai-logo-wrap";
+      wrap.onclick = (e) => {
+        if (e.target.tagName === 'BUTTON' || e.target.tagName === 'svg' || e.target.tagName === 'path') return;
+        window.open(l.url, '_blank');
+      };
+      const img = document.createElement('img');
+      img.className = "ai-logo-img";
+      img.src = l.img;
+      img.alt = l.alt || "";
+      img.style.width = img.style.height = imgSize + "px";
+      wrap.appendChild(img);
+      // 수정/삭제 버튼
+      const actionDiv = document.createElement('div');
+      actionDiv.className = "action-btns";
+      // 수정 (연필)
+      const editBtn = document.createElement('button');
+      editBtn.className = "edit-btn";
+      editBtn.title = "수정";
+      editBtn.innerHTML = `
+        <svg viewBox="0 0 20 20"><path d="M2 14.5V18h3.5l10-10.01-3.5-3.5L2 14.5zM19.71 6.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>
+      `;
+      editBtn.onclick = function(ev) {
+        ev.stopPropagation();
+        openModal(idx - count + i, true);
+      };
+      // 삭제 (휴지통)
+      const delBtn = document.createElement('button');
+      delBtn.className = "del-btn";
+      delBtn.title = "삭제";
+      delBtn.innerHTML = `
+        <svg viewBox="0 0 20 20"><path d="M6 7v7a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V7m-7 0V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M4 7h12"></path></svg>
+      `;
+      delBtn.onclick = function(ev) {
+        ev.stopPropagation();
+        if(confirm('정말 삭제?')) {
+          aiLogos.splice(idx - count + i, 1);
+          save(); renderLogos();
+        }
+      };
+      actionDiv.appendChild(editBtn);
+      actionDiv.appendChild(delBtn);
+      wrap.appendChild(actionDiv);
+      row.appendChild(wrap);
+    }
+    container.appendChild(row);
+  }
+}
+renderLogos();
+window.addEventListener('resize', renderLogos);
+// 콤보박스: 이동 (현재 창에서)
+document.getElementById('navCombo').onchange = function() {
+  const url = this.value;
+  if(url) window.location.href = url; // ← 현재 창에서 이동
+};
+// 추가/수정 모달
+function openModal(idx, isEdit) {
+  const modal = document.getElementById('modal');
+  let item = {img:"",url:"",alt:""};
+  if(isEdit) item = {...aiLogos[idx]};
+  modal.innerHTML = `
+    <div class="modal-bg" onclick="if(event.target.className==='modal-bg'){document.getElementById('modal').style.display='none';}">
+      <form class="modal-box" onsubmit="return false;">
+        <label>이미지 주소(URL):<br><input id="addImg" placeholder="https://..." value="${item.img || ""}"></label>
+        <label>링크 주소(URL):<br><input id="addUrl" placeholder="https://..." value="${item.url || ""}"></label>
+        <label style="display:none;">설명(옵션):<br><input id="addAlt" placeholder="이름/설명" value="${item.alt || ""}"></label>
+        <button type="submit" id="okBtn">${isEdit?"수정":"추가"}</button>
+        <button type="button" onclick="document.getElementById('modal').style.display='none';">취소</button>
+      </form>
+    </div>
+  `;
+  modal.style.display = 'block';
+  // 등록/수정 이벤트
+  document.getElementById('okBtn').onclick = function() {
+    var img=document.getElementById('addImg').value.trim();
+    var url=document.getElementById('addUrl').value.trim();
+    var alt=document.getElementById('addAlt').value.trim();
+    if(!img||!url) return alert('이미지와 링크 주소를 모두 입력!');
+    if(isEdit) aiLogos[idx]={img,url,alt};
+    else aiLogos.push({img,url,alt});
+    save(); renderLogos(); document.getElementById('modal').style.display='none';
+  };
+}
+// 추가
+document.getElementById('addBtn').onclick = function() { openModal(0, false); };
+// 내보내기
+document.getElementById('exportBtn').onclick = function() {
+  const blob = new Blob([JSON.stringify(aiLogos,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'ai_logos.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+// 가져오기
+document.getElementById('importBtn').onclick = function() {
+  document.getElementById('importFile').click();
+};
+document.getElementById('importFile').onchange = function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if(Array.isArray(data)) {
+        aiLogos = data; save(); renderLogos();
+      } else {
+        alert('불러오기 실패(잘못된 파일)');
+      }
+    } catch (err) {
+      alert('불러오기 실패(파일 오류)');
+    }
+  };
+  reader.readAsText(file);
+};
+</script>
+</body>
+</html>
