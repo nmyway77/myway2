@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>AI 엔진 바로가기 - MYWAY</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <style>
     html, body {
       min-height: 100vh; margin: 0; padding: 0;
@@ -27,7 +27,7 @@
       margin-bottom: 32px;
       width: 100%;
       flex-wrap: nowrap;
-      transition: max-width 0.1s;
+      transition: width 0.1s;
     }
     .ai-logo-wrap {
       width: 120px; height: 168px;
@@ -61,9 +61,8 @@
       .ai-logo-wrap { width: 84px; height: 118px;}
     }
     @media (max-width: 700px) {
-      /* 모바일 세로: 3개, 더 큰 사이즈! */
       .ai-logo-wrap { width: 95px !important; height: 133px !important; }
-      .logo-row     { gap: 6vw !important; }
+      .logo-row     { gap: 5vw !important; }
     }
     @media (max-width: 480px) {
       .main-title { font-size: 0.98rem; }
@@ -78,7 +77,7 @@
   <div class="main-subtitle">원하는 AI 엔진을 터치하세요</div>
   <div class="container" id="aiLogoContainer"></div>
   <script>
-    // 1. AI 엔진 목록 (필요한 만큼 추가)
+    // AI 엔진 목록
     const aiLogos = [
       { url: "https://chat.openai.com/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMdM9MEQ0ExL1PmInT3U5I8v63YXBEdoIT0Q&s", alt: "ChatGPT" },
       { url: "https://grok.x.ai/", img: "https://images.seeklogo.com/logo-png/61/2/grok-logo-png_seeklogo-613403.png", alt: "Grok" },
@@ -122,8 +121,9 @@
         const count = Math.min(iconsPerRow, aiLogos.length - idx);
         const row = document.createElement('div');
         row.className = "logo-row";
-        row.style.maxWidth = (sizeW * count + gap * (count - 1)) + "px";
+        row.style.width = "100%"; // 항상 100%
         row.style.gap = gap + "px";
+        row.style.justifyContent = "center";
         for (let i = 0; i < count; i++, idx++) {
           const l = aiLogos[idx];
           const a = document.createElement('a');
@@ -132,6 +132,7 @@
           a.target = "_blank";
           a.style.width = sizeW + "px";
           a.style.height = sizeH + "px";
+          a.style.flex = "0 0 auto";
           const img = document.createElement('img');
           img.className = "ai-logo-img";
           img.src = l.img;
