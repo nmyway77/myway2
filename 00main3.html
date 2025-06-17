@@ -55,6 +55,12 @@
       .ai-logo-wrap { width: 52px; height: 52px;}
       .ai-logo-img { width: 34px; height: 34px;}
     }
+    @media (max-width: 700px) {
+      /* 모바일: 세로/가로 모두 크기 크게! */
+      .ai-logo-wrap { width: 78px !important; height: 78px !important; }
+      .ai-logo-img  { width: 60px !important; height: 60px !important; }
+      .logo-row     { gap: 7vw !important; }
+    }
     @media (max-width: 480px) {
       .main-title { font-size: 1rem; }
       .main-subtitle { font-size: 0.95rem; }
@@ -88,10 +94,14 @@
       let iconsPerRow = 7, gap = 24, size = 74, imgSize = 54;
       if (w <= 1100) { iconsPerRow = 6; gap = 14; size = 60; imgSize = 40;}
       if (w <= 900)  { iconsPerRow = 5; gap = 10; size = 52; imgSize = 34;}
-      // 모바일 세로: 큼
-      if (w <= 700 && h > w) { iconsPerRow = 4; gap = w * 0.08; size = 78; imgSize = 60;} 
-      // 모바일 가로: 더 큼!
-      if (w <= 700 && h <= w) { iconsPerRow = 5; gap = w * 0.08; size = 88; imgSize = 68;} 
+      // 모바일: 세로/가로 모두 같은 크기!
+      if (w <= 700) {
+        if (h > w) { // 세로
+          iconsPerRow = 4; gap = w * 0.08; size = 78; imgSize = 60;
+        } else {     // 가로
+          iconsPerRow = 5; gap = w * 0.08; size = 78; imgSize = 60; // **size 동일**
+        }
+      }
       if (w <= 500)  { iconsPerRow = 3; gap = w * 0.10; size = 68; imgSize = 48;}
       return { iconsPerRow, gap, size, imgSize };
     }
