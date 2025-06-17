@@ -1,0 +1,181 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>AI 엔진 바로가기 - MYWAY</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      min-height: 100vh; margin: 0; padding: 0;
+      background: #fff; font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      width: 100%;
+    }
+    body { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .main-title { 
+      margin-top: 100px;
+      font-size: 1.3rem; font-weight: 700; color: #333862;
+      text-shadow: 0 2px 12px #ffffff99; margin-bottom: 8px;
+      text-align: center; user-select: none;
+    }
+    .main-subtitle { font-size: 0.8rem; color: #6a739c; margin-bottom: 34px; text-align: center; user-select: none; }
+    .container { width: 100%; max-width: 560px; display: flex; flex-direction: column; align-items: center;
+      margin-top: 40px; margin-bottom: 60px; min-height: 150vh; padding-left: 6px; padding-right: 6px;}
+    .logo-row {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 32px;
+      width: 100%;
+      flex-wrap: nowrap;
+      transition: max-width 0.1s;
+    }
+    .ai-logo-wrap {
+      width: 74px; height: 74px; border-radius: 50%; background: #fff;
+      box-shadow: 0 3px 24px 0 #b1c7e866; border: 3px solid #e5e8f6;
+      display: flex; justify-content: center; align-items: center;
+      transition: box-shadow 0.15s, border-color 0.15s;
+      cursor: pointer; overflow: hidden; margin: 0;
+      flex: 0 0 auto;
+    }
+    .ai-logo-wrap:hover { box-shadow: 0 8px 32px 0 #7e94ff99; border-color: #94a2ff; background: #f7faff;}
+    .ai-logo-img { width: 54px; height: 54px; object-fit: contain; background: transparent;
+      border-radius: 50%; transition: transform 0.12s;}
+    .ai-logo-wrap:hover .ai-logo-img { transform: scale(1.08) rotate(-3deg);}
+    .group-title {
+      width: 100%; max-width: 500px;
+      font-size: 1.07rem; font-weight: 600;
+      margin: 34px 0 10px 0;
+      letter-spacing: -0.5px;
+      color: #244;
+      text-align: left;
+      padding-left: 8px;
+      user-select: none;
+    }
+    @media (max-width: 1100px) {
+      .container { max-width: 98vw; }
+      .logo-row { gap: 14px;}
+      .ai-logo-wrap { width: 60px; height: 60px;}
+      .ai-logo-img { width: 40px; height: 40px;}
+    }
+    @media (max-width: 900px) {
+      .container { max-width: 99vw;}
+      .main-title { font-size: 1.35rem; margin-top: 64px;}
+      .main-subtitle { font-size: 1.07rem; }
+      .logo-row { gap: 10px; }
+      .ai-logo-wrap { width: 52px; height: 52px;}
+      .ai-logo-img { width: 34px; height: 34px;}
+    }
+    @media (max-width: 700px) {
+      .ai-logo-wrap { width: 78px !important; height: 78px !important; }
+      .ai-logo-img  { width: 60px !important; height: 60px !important; }
+      .logo-row     { gap: 7vw !important; }
+    }
+    @media (max-width: 480px) {
+      .main-title { font-size: 1rem; }
+      .main-subtitle { font-size: 0.95rem; }
+      .container { margin-top: 6px; margin-bottom: 9px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="main-title">AI & 검색포털 바로가기</div>
+  <div class="main-subtitle">원하는 AI 엔진을 터치하세요</div>
+  <div class="container" id="aiLogoContainer"></div>
+  <script>
+    // 1번 그룹 (예: AI/생성형)
+    const group1 = [
+
+      { url: "https://myway.kr/newsitesbar2.html", img: "https://img.freepik.com/free-vector/gradient-breaking-news-logo-design_23-2151157239.jpg?semt=ais_hybrid&w=740", alt: "ChatGPT" },
+      { url: "https://myway.kr/livesitesbar2.html", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwrF0iQRJqKDGCwk9G-vPKmot-fi9yDtIoTg&s", alt: "Grok" },
+
+
+    ];
+    // 2번 그룹 (예: 검색/포털)
+    const group2 = [
+
+      { url: "https://chat.openai.com/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMdM9MEQ0ExL1PmInT3U5I8v63YXBEdoIT0Q&s", alt: "ChatGPT" },
+      { url: "https://grok.x.ai/", img: "https://images.seeklogo.com/logo-png/61/2/grok-logo-png_seeklogo-613403.png", alt: "Grok" },
+      { url: "https://gemini.google.com/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSm5xNOdkOwTDL9cxAWHDDyjK-6HcM-qHCxhw&s", alt: "Gemini" },
+      { url: "https://www.perplexity.ai/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpPv1KMnK1H9jPpIRzMvNRjyGSauDIOsOONQ&s", alt: "Perplexity" },
+      { url: "https://copilot.microsoft.com/", img: "https://www.shutterstock.com/image-vector/colorful-logo-design-on-white-600nw-2504051213.jpg", alt: "Copilot" },
+      { url: "https://openai.com/sora", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2OVrKb0J0mELcaCuOnUmBnFhu1DFIb_XmPg&s", alt: "Sora" },
+      { url: "https://hailuoai.com/", img: "https://images.seeklogo.com/logo-png/61/2/hailuo-icon-logo-png_seeklogo-611637.png", alt: "HailuoAI" },
+      { url: "https://www.klingai.com/", img: "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/kling-color.png", alt: "KlingAI" },
+
+      { url: "https://www.google.com.au/webhp?hl=en&gl=au", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYMMskKN9Ql1Ep4wG_vEW01t98DUBVXeXE8A&s", alt: "google" },
+      { url: "https://www.youtube.com/", img: "https://img.freepik.com/premium-vector/youtube-app-icon_676644-281.jpg?w=360", alt: "youtube" },
+      { url: "https://www.naver.com/", img: "https://play-lh.googleusercontent.com/jYtnK__ibJh9emODIgTyjZdbKym1iAj4RfoVhQZcfbG-DuTSHR5moHVx9CQnqg1yoco9", alt: "naver" },
+      { url: "https://www.daum.net/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTm-uCPPoWEDsQjRWs3MrM1nkrcqxygYAXbvg&s", alt: "daum" },
+      { url: "https://www.bing.com/", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Bing_Fluent_Logo.svg/1356px-Bing_Fluent_Logo.svg.png", alt: "bing" },
+      { url: "https://www.msn.com/ko-kr/news", img: "https://images.icon-icons.com/1488/PNG/512/5307-msn_102525.png", alt: "msn" }
+    ];
+
+    // 그대로 그룹별 출력 (기존 디자인/로직 1도 안 건드림)
+    function getLayout() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      let iconsPerRow = 7, gap = 24, size = 74, imgSize = 54;
+      if (w <= 1100) { iconsPerRow = 6; gap = 14; size = 60; imgSize = 40;}
+      if (w <= 900)  { iconsPerRow = 5; gap = 10; size = 52; imgSize = 34;}
+      if (w <= 700) {
+        if (h > w) { iconsPerRow = 4; gap = w * 0.08; size = 78; imgSize = 60;}
+        else       { iconsPerRow = 5; gap = w * 0.08; size = 78; imgSize = 60;}
+      }
+      if (w <= 500)  { iconsPerRow = 3; gap = w * 0.10; size = 68; imgSize = 48;}
+      return { iconsPerRow, gap, size, imgSize };
+    }
+
+    function renderGroup(arr) {
+      const { iconsPerRow, gap, size, imgSize } = getLayout();
+      let idx = 0;
+      const rows = [];
+      while (idx < arr.length) {
+        const count = Math.min(iconsPerRow, arr.length - idx);
+        const row = document.createElement('div');
+        row.className = "logo-row";
+        row.style.maxWidth = (size * count + gap * (count - 1)) + "px";
+        row.style.gap = gap + "px";
+        for (let i = 0; i < count; i++, idx++) {
+          const l = arr[idx];
+          const a = document.createElement('a');
+          a.className = "ai-logo-wrap";
+          a.href = l.url;
+          a.target = "_blank";
+          a.style.width = a.style.height = size + "px";
+          const img = document.createElement('img');
+          img.className = "ai-logo-img";
+          img.src = l.img;
+          img.alt = l.alt;
+          img.style.width = img.style.height = imgSize + "px";
+          a.appendChild(img);
+          row.appendChild(a);
+        }
+        rows.push(row);
+      }
+      return rows;
+    }
+
+    function renderAll() {
+      const container = document.getElementById('aiLogoContainer');
+      container.innerHTML = "";
+
+      // 1단 제목
+      const g1Title = document.createElement("div");
+      g1Title.className = "group-title";
+      g1Title.textContent = "";
+      container.appendChild(g1Title);
+      renderGroup(group1).forEach(row => container.appendChild(row));
+
+      // 2단 제목
+      const g2Title = document.createElement("div");
+      g2Title.className = "group-title";
+      g2Title.textContent = "";
+      container.appendChild(g2Title);
+      renderGroup(group2).forEach(row => container.appendChild(row));
+    }
+
+    renderAll();
+    window.addEventListener('resize', renderAll);
+  </script>
+</body>
+</html>
