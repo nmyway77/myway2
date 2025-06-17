@@ -1,0 +1,257 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>MYWAY.KR: 멀티검색, 나만의 디스플레이, 즐겨찾기</title>
+  <base target="_blank">
+  <meta property="og:title" content="MYWAY.KR: 멀티검색 & 나만의 디스플레이& 썸네일 추출기" />
+  <meta property="og:description" content="멀티검색, 나만의 디스플레이, 즐겨찾기,한국의 정보모음, Korea travel information, MYWAY.KR" />
+  <meta property="og:url" content="https://myway.kr" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://myway.kr/mywaylogo.png" />
+  <meta name="description" content="멀티검색, 나만의 디스플레이,즐겨찾기, 한국의 정보모음,썸네일 추출기, Korea travel information, MYWAY.KR" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="naver-site-verification" content="4e88b51e170829dfb01ce587eaf5575804dd5a2" />
+  <style>
+    body { font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif; background: #fff; margin: 0; padding: 0;}
+
+    .searchbar-wrap {
+      display: flex; justify-content: center; align-items: center;
+      margin-top: 18px; margin-bottom: 15px;
+    }
+    .searchbar-form {
+      display: flex; align-items: center;
+      border-radius: 40px;
+      padding: 2.2px;
+      background: linear-gradient(90deg, #ea98aa 0%, #be6b90 100%);
+      min-width: 320px; max-width: 600px; width: 100%; height: 56px;
+      box-shadow: 0 2px 14px #d1b8c61b;
+      overflow: hidden;
+    }
+    .searchbar-inner {
+      display: flex; align-items: center;
+      background: #fff;
+      border-radius: 36px;
+      width: 100%; height: 100%;
+      overflow: hidden;
+    }
+    .searchbar-select {
+      background: #fff; border: none; padding: 0 13px; font-size: 1.01rem;
+      color: #b06685; font-weight: bold; outline: none; cursor: pointer; min-width: 95px;
+    }
+    .searchbar-input {
+      flex: 1; border: none; padding: 0 13px; font-size: 1.02rem;
+      background: #fff; color: #be6b90; outline: none; height: 100%;
+    }
+    .searchbar-input::placeholder {
+      color: #b98aa7; opacity: 1; font-weight: 500;
+    }
+    .searchbar-btn {
+      background: linear-gradient(135deg, #ea98aa 0%, #be6b90 100%);
+      color: #fff; border: none;
+      padding: 0 24px; min-width: 86px; height: 100%;
+      font-size: 1.08rem; font-weight: bold; cursor: pointer;
+      border-radius: 0 34px 34px 0; letter-spacing: 0.1px;
+      transition: background 0.15s;
+      box-shadow: 0 1px 7px #b0668540;
+      display: flex; align-items: center; justify-content: center;
+      text-shadow: 0 1px 7px #7b375922;
+    }
+    .searchbar-btn:hover { filter: brightness(0.95) saturate(1.13);}
+    /* ----- /검색바 ----- */
+
+
+    /* ★ 네비바 항상 고정 + 가로 스크롤 항상 표시 */
+    .screen-links {
+      text-align: center; margin-top: 3px; margin-bottom: 30px;
+      display: flex;
+      justify-content: center;   /* PC: 중앙정렬 */
+      align-items: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      position: sticky;
+      top: 76px; /* 검색바 높이에 맞춰 조정 */
+      z-index: 101;
+      background: #fff;
+      padding-left: 8px;
+      padding-right: 8px;
+      min-height: 44px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+    }
+    .screen-links a {
+      display: inline-block; margin: 0 3px; font-size: 0.92rem;
+      color: #be6b90; font-weight: bold; text-decoration: none;
+      cursor: pointer; transition: color 0.14s, background 0.14s;
+      padding: 3px 12px 4px 12px; border-radius: 14px;
+      letter-spacing: 0.02em; line-height: 1.58; white-space: nowrap;
+      border: 1.1px solid transparent;
+    }
+    .screen-links a:hover, .screen-links a.active {
+      color: #fff; background: #be6b90; border: 1.1px solid #be6b90;
+      text-decoration: none;
+    }
+    #main-frame {
+      position: fixed; left: 0; top: 135px; width: 100vw;
+      height: calc(100vh - 120px); border: none; margin: 0;
+      background: #f5f7fa; z-index: 10; transition: none;
+      border-radius: 0; display: block;
+    }
+    @media (max-width: 700px) {
+      .searchbar-form { min-width: 0; width: 98%; height: 52px; padding: 1.8px;}
+      .searchbar-select, .searchbar-input, .searchbar-btn { font-size: 1.03rem;}
+      .searchbar-input { padding: 0 8px; }
+      .searchbar-inner { border-radius: 22px;}
+      .screen-links {
+        text-align: left;
+        margin-top: 12px !important; margin-bottom: 16px;
+        top: 66px !important;  /* 모바일에선 더 위로 */
+        height: 38px !important; min-height: 38px !important;
+        justify-content: flex-start !important; /* ★★모바일: 왼쪽정렬★★ */
+      }
+      .screen-links a {
+        margin: 0 2px; font-size: 1.05rem; padding: 0 10px 0 10px;
+        border-radius: 11px; line-height: 38px !important; height: 38px !important;
+      }
+      #main-frame {
+        top: 120px; height: calc(100vh - 120px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 검색엔진바 -->
+  <div class="searchbar-wrap">
+    <form class="searchbar-form" id="searchFormParent" target="_blank" autocomplete="off">
+      <div class="searchbar-inner">
+        <select class="searchbar-select" id="engineParent">
+          <option value="naver">네이버 ▼</option>
+          <option value="google">Google ▼</option>
+          <option value="youtube">Youtube ▼</option>
+          <option value="daum">다음 ▼</option>
+          <option value="duckduckgo">DuckDuckGo ▼</option>
+          <option value="msn">MSN ▼</option>
+          <option value="yahoo">Yahoo ▼</option>
+          <option value="yandex">Yandex ▼</option>
+          <option value="naver_shopping">네이버 쇼핑 ▼</option>
+          <option value="joonggonara">중고나라 ▼</option>
+          <option value="naver_cafe">네이버카페 중고 ▼</option>
+          <option value="daangn">당근마켓 ▼</option>
+          <option value="bunjang">번개장터</option>
+          <option value="danawa">다나와 ▼</option>
+          <option value="coupang">쿠팡 ▼</option>
+          <option value="aliexpress">알리 (한글/영어) ▼</option>
+          <option value="amazon">아마존 (한글/영어) ▼</option>
+          <option value="ebay">이베이 (한글/영어) ▼</option>
+          <option value="romanize">한글이름 → 영어 ▼</option>
+          <option value="postcode">우편번호 검색 ▼</option>
+          <option value="phone_114">114 전화번호 검색 ▼</option>
+          <option value="hanja_naver">네이버 한자검색 ▼</option>
+          <option value="afreecatv">AfreecaTV ▼</option>
+          <option value="tvcast">TVCAST ▼</option>
+          <option value="kakaotv">KakaoTV ▼</option>
+          <option value="vimeo">Vimeo ▼</option>
+          <option value="ms_edgestore">MS EDGE 스토어 ▼</option>
+          <option value="chrome_webstore">크롬 웹스토어 ▼</option>
+          <option value="naver_software">네이버 자료실 ▼</option>
+          <option value="kyobo">교보문고 ▼</option>
+          <option value="aladin">알라딘 ▼</option>
+          <option value="twitter">Twitter ▼</option>
+          <option value="instagram">Instagram ▼</option>
+          <option value="kakao_story">kakao.com ▼</option>
+          <option value="tumblr">Tumblr ▼</option>
+          <option value="tiktok">TikTok ▼</option>
+          <option value="pinterest">Pinterest ▼</option>
+          <option value="naver_music">네이버 음악 ▼</option>
+          <option value="melon">멜론 ▼</option>
+          <option value="bugs">벅스 ▼</option>
+        </select>
+        <input class="searchbar-input" id="queryParent" type="text" placeholder="검색어를 입력하세요" autocomplete="off" />
+        <button class="searchbar-btn" type="submit">검색</button>
+      </div>
+    </form>
+  </div>
+  <div class="screen-links" id="parent-links">
+   <a href="#" onclick="showScreenParent(event, '00main7.html')">AI</a>
+    <a href="#" onclick="showScreenParent(event, '0newsbar.html')">News</a>
+    <a href="#" onclick="showScreenParent(event, 'livesitesbar2.html')">Live-TV</a>
+    <a href="#" onclick="showScreenParent(event, 'radiositesbar2.html')">Radio</a>
+    <a href="#" onclick="showScreenParent(event, 'bbssitesbar2.html')">BBS</a>
+    <a href="#" onclick="showScreenParent(event, 'making001.html')">Making</a>
+    <a href="#" onclick="showScreenParent(event, 'screen17.html')">L-A</a>
+    <a href="#" onclick="showScreenParent(event, 'screen2.html')">L-B</a>
+    <a href="#" onclick="showScreenParent(event, 'mainpage3.html')">L-C</a>
+    <a href="#" onclick="showScreenParent(event, 'mainpage43.html')">L-D</a>
+    <a href="#" onclick="showScreenParent(event, 'mainpage2.html')">L-E</a>
+  </div>
+
+
+  <iframe id="main-frame" src="00main7.html" allowfullscreen></iframe>
+
+
+  <script>
+    // 검색엔진 배열 (부모용)
+    var snarkEnginesParent = [
+      { key: "naver",  home: "https://www.naver.com/", search: "https://search.naver.com/search.naver?query=" },
+      { key: "google", home: "https://www.google.co.uk/webhp?hl=ko&gl=uk", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=" },
+      { key: "youtube", home: "https://www.youtube.com/", search: "https://www.youtube.com/results?search_query=" },
+      { key: "daum", home: "https://www.daum.net/", search: "https://search.daum.net/search?w=tot&t__nil_searchbox=suggest&sug=&q=" },
+      { key: "duckduckgo", home: "https://duckduckgo.com", search: "https://duckduckgo.com/?q=" },
+      { key: "msn", home: "https://www.msn.com/ko-kr/news", search: "https://www.bing.com/search?q=" },
+      { key: "yahoo", home: "https://www.yahoo.com", search: "https://search.yahoo.com/search?p=" },
+      { key: "yandex", home: "https://yandex.ru", search: "https://yandex.ru/search/?lr=10635&text=" },
+      { key: "naver_shopping", home: "https://shopping.naver.com/", search: "https://shopping.naver.com/search/all_search.nhn?where=all&frm=NVSCTAB&query=" },
+      { key: "joonggonara", home: "https://cafe.naver.com/joonggonara", search: "https://web.joongna.com/search/" },
+      { key: "naver_cafe", home: "https://cafe.naver.com", search: "https://cafe.naver.com/ca-fe/home/search/c-articles?q=" },
+      { key: "daangn", home: "https://www.daangn.com", search: "https://www.daangn.com/search/" },
+      { key: "bunjang", home: "https://m.bunjang.co.kr", search: "https://m.bunjang.co.kr/search/products?q=" },
+      { key: "danawa", home: "https://www.danawa.com/", search: "https://search.danawa.com/dsearch.php?k1=" },
+      { key: "coupang", home: "https://www.coupang.com", search: "https://www.coupang.com/np/search?q=" },
+      { key: "aliexpress", home: "https://ko.aliexpress.com/", search: "https://ko.aliexpress.com/w/wholesale-" },
+      { key: "amazon", home: "https://www.amazon.com/", search: "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=" },
+      { key: "ebay", home: "https://www.ebay.com/", search: "https://www.ebay.com/sch/i.html?_from=R40&_trksid=p2050601.m570.l1313&_nkw=" },
+      { key: "romanize", home: "https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38", search: "https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38&idx=&act=&searchKeyword=" },
+      { key: "postcode", home: "https://search.naver.com/search.naver?sm=tab_hty.top&where=nexearch&ie=utf8&query=%EC%9A%B0%EC%B2%B4%EA%B5%AD+%EC%9A%B0%ED%8E%B8%EB%B2%88%ED%98%B8&where=nexearch", search: "https://www.juso.go.kr/support/AddressMainSearch.do?searchKeyword=" },
+      { key: "phone_114", home: "https://www.114.co.kr", search: "https://www.114.co.kr/search/result/all?query=" },
+      { key: "hanja_naver", home: "http://hanja.naver.com", search: "http://hanja.naver.com/search?query=" },
+      { key: "afreecatv", home: "https://www.afreecatv.com/", search: "https://www.afreecatv.com/total_search.html?szKeyword=" },
+      { key: "tvcast", home: "https://tvcast.naver.com/", search: "https://tv.naver.com/search?query=" },
+      { key: "kakaotv", home: "https://tv.kakao.com/", search: "https://tv.kakao.com/search?q=" },
+      { key: "vimeo", home: "https://www.vimeo.com", search: "https://vimeo.com/search?q=" },
+      { key: "ms_edgestore", home: "https://microsoftedge.microsoft.com", search: "https://microsoftedge.microsoft.com/addons/search/" },
+      { key: "chrome_webstore", home: "https://chrome.google.com/webstore/category/extensions?hl=ko", search: "https://chrome.google.com/webstore/search/" },
+      { key: "naver_software", home: "https://software.naver.com", search: "https://software.naver.com/search.nhn?query=" },
+      { key: "kyobo", home: "https://search.kyobobook.co.kr", search: "https://search.kyobobook.co.kr/web/search?vPstrKeyWord=" },
+      { key: "aladin", home: "https://search.kyobobook.co.kr", search: "https://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=All&SearchWord=" },
+      { key: "yahoo_2", home: "https://www.yahoo.com", search: "https://search.yahoo.com/search;_ylt=Ar5458YY5y_GWWeBR2VSqUubvZx4?p=" },
+      { key: "twitter", home: "https://twitter.com", search: "https://twitter.com/search?q=" },
+      { key: "instagram", home: "https://www.instagram.com", search: "https://www.instagram.com/explore/tags/" },
+      { key: "kakao_story", home: "https://story.kakao.com", search: "https://story.kakao.com/hashtag/" },
+      { key: "tumblr", home: "https://www.tumblr.com", search: "https://www.tumblr.com/search/" },
+      { key: "tiktok", home: "https://www.tiktok.com", search: "https://www.tiktok.com/search?q=" },
+      { key: "pinterest", home: "https://pinterest.com", search: "https://pinterest.com/search/?q=" },
+      { key: "naver_music", home: "https://music.naver.com", search: "https://music.naver.com/search/search.nhn?query=" },
+      { key: "melon", home: "https://www.melon.com", search: "https://www.melon.com/search/total/index.htm?q=" },
+      { key: "bugs", home: "https://bugs.co.kr", search: "https://music.bugs.co.kr/search/integrated?q=" }
+    ];
+    document.getElementById('searchFormParent').onsubmit = function(e) {
+      e.preventDefault();
+      const engineKey = document.getElementById('engineParent').value;
+      const query = document.getElementById('queryParent').value.trim();
+      const engineObj = snarkEnginesParent.find(e => e.key === engineKey);
+      if (engineObj) {
+        let url = query ? (engineObj.search + encodeURIComponent(query)) : engineObj.home;
+        window.open(url, "_blank");
+      }
+    };
+    function showScreenParent(e, url) {
+      e.preventDefault();
+      document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
+      e.target.classList.add('active');
+      var frame = document.getElementById('main-frame');
+      frame.src = url;
+    }
+  </script>
+</body>
+</html>
