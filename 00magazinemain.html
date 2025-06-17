@@ -31,7 +31,7 @@
     }
     .ai-logo-wrap {
       width: 120px; height: 168px;
-      border-radius: 18px; /* 라운드 잡지형 */
+      border-radius: 0; /* 완전 직각 네모! */
       background: #fff;
       box-shadow: 0 3px 24px 0 #b1c7e866; border: 3px solid #e5e8f6;
       display: flex; justify-content: center; align-items: center;
@@ -44,7 +44,7 @@
       width: 100%; height: 100%;
       object-fit: cover;
       background: transparent;
-      border-radius: 10px;
+      border-radius: 0;   /* 완전 직각 네모! */
       transition: transform 0.12s;
     }
     .ai-logo-wrap:hover .ai-logo-img { transform: scale(1.05) rotate(-2deg);}
@@ -79,9 +79,9 @@
   <script>
     // 1. AI 엔진 목록 (필요한 만큼 추가)
     const aiLogos = [
-      { url: "https://chat.openai.com/", img: "https://64.media.tumblr.com/c10d2bfa1a48856fc48f0f45ef70ce48/tumblr_inline_qqnwieFvDM1r45nlo_500.jpg", alt: "ChatGPT" },
-      { url: "https://grok.x.ai/", img: "https://64.media.tumblr.com/c10d2bfa1a48856fc48f0f45ef70ce48/tumblr_inline_qqnwieFvDM1r45nlo_500.jpg", alt: "Grok" },
-      { url: "https://gemini.google.com/", img: "https://64.media.tumblr.com/c10d2bfa1a48856fc48f0f45ef70ce48/tumblr_inline_qqnwieFvDM1r45nlo_500.jpg", alt: "Gemini" },
+      { url: "https://chat.openai.com/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMdM9MEQ0ExL1PmInT3U5I8v63YXBEdoIT0Q&s", alt: "ChatGPT" },
+      { url: "https://grok.x.ai/", img: "https://images.seeklogo.com/logo-png/61/2/grok-logo-png_seeklogo-613403.png", alt: "Grok" },
+      { url: "https://gemini.google.com/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSm5xNOdkOwTDL9cxAWHDDyjK-6HcM-qHCxhw&s", alt: "Gemini" },
       { url: "https://www.perplexity.ai/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpPv1KMnK1H9jPpIRzMvNRjyGSauDIOsOONQ&s", alt: "Perplexity" },
       { url: "https://copilot.microsoft.com/", img: "https://www.shutterstock.com/image-vector/colorful-logo-design-on-white-600nw-2504051213.jpg", alt: "Copilot" },
       { url: "https://openai.com/sora", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2OVrKb0J0mELcaCuOnUmBnFhu1DFIb_XmPg&s", alt: "Sora" },
