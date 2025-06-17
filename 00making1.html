@@ -128,7 +128,10 @@ function renderLogos() {
       wrap.className = "ai-logo-wrap";
       wrap.onclick = (e) => {
         if (e.target.tagName === 'BUTTON' || e.target.tagName === 'svg' || e.target.tagName === 'path') return;
-        window.open(l.url, '_blank');
+       
+        window.open(l.url, );
+
+       
       };
       const img = document.createElement('img');
       img.className = "ai-logo-img";
