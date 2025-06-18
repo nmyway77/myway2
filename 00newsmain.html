@@ -162,6 +162,9 @@
           a.href = l.url;
           a.target = "_blank";
           a.style.width = a.style.height = size + "px";
+
+a.title = l.alt;  // <<== 바로 이 줄만 추가!
+         
           const img = document.createElement('img');
           img.className = "ai-logo-img";
           img.src = l.img;
