@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -17,7 +17,7 @@
     }
     .main-desc {
       width:100%; max-width:700px; text-align:center; 
-      font-size:0.8rem; font-family: 'Nanum Myeongjo', 'Georgia', serif;
+      font-size:0.9rem; font-family: 'Nanum Myeongjo', 'Georgia', serif;
       color:#7d84a8; margin-bottom: 14px; letter-spacing:0.01em;
     }
 
@@ -27,55 +27,65 @@
     .topbar-btns { display: flex; gap: 7px; }
     .topbar-btns button { padding: 7px 13px; font-size: 1rem; border-radius: 7px; border: 1px solid #e7e7e7; background: #f4f7ff; cursor: pointer; font-weight: bold; transition: background 0.13s; }
     .topbar-btns button:hover { background: #e1eaff; }
-    .container { width: 100%; max-width: 560px; display: flex; flex-direction: column; align-items: center; margin-top: 30px; margin-bottom: 60px; padding-left: 6px; padding-right: 6px;}
-    .logo-row { display: flex; justify-content: center; gap: 24px; margin-bottom: 32px; width: 100%; flex-wrap: nowrap; transition: max-width 0.1s; }
-    .ai-logo-wrap { width: 90px; height: 100px; border-radius: 18px; background: #fff; box-shadow: 0 3px 24px 0 #b1c7e866; border: 3px solid #e5e8f6; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: box-shadow 0.15s, border-color 0.15s; cursor: pointer; overflow: hidden; margin: 0; flex: 0 0 auto; position: relative; }
+    .container { width: 100%; max-width: 504px; display: flex; flex-direction: column; align-items: center; margin-top: 30px; margin-bottom: 60px; padding-left: 6px; padding-right: 6px;}
+    .logo-row { display: flex; justify-content: center; gap: 21.6px; margin-bottom: 28.8px; width: 100%; flex-wrap: nowrap; transition: max-width 0.1s; }
+    /* ↓↓↓ 원형 & 10% 작게 ↓↓↓ */
+    .ai-logo-wrap { 
+      width: 81px; height: 81px; 
+      border-radius: 50%;
+      background: #fff; 
+      box-shadow: 0 3px 24px 0 #b1c7e866; 
+      border: 2.7px solid #e5e8f6; 
+      display: flex; flex-direction: column; justify-content: center; align-items: center; 
+      transition: box-shadow 0.15s, border-color 0.15s; cursor: pointer; 
+      overflow: hidden; margin: 0; flex: 0 0 auto; position: relative; 
+    }
     .ai-logo-wrap:hover { box-shadow: 0 8px 32px 0 #7e94ff99; border-color: #94a2ff; background: #f7faff;}
-    .ai-logo-img { width: 54px; height: 54px; object-fit: contain; background: transparent; border-radius: 50%; transition: transform 0.12s; }
+    .ai-logo-img { width: 48.6px; height: 48.6px; object-fit: contain; background: transparent; border-radius: 50%; transition: transform 0.12s; }
     .ai-logo-wrap:hover .ai-logo-img { transform: scale(1.08) rotate(-3deg);}
     .action-btns { display: flex; gap: 2px; margin-top: 6px; }
     .action-btns button {
       border: none; background: none; padding: 2px 4px; margin: 0;
-      border-radius: 4px; cursor: pointer; min-width: 24px; min-height: 24px;
+      border-radius: 4px; cursor: pointer; min-width: 21.6px; min-height: 21.6px;
       display: flex; align-items: center; justify-content: center;
       opacity: 0.8; transition: background 0.12s, opacity 0.12s;
     }
     .action-btns button:hover { opacity: 1; background: #f1f5ff; }
     .edit-btn svg { fill: #3a75e7; }
     .del-btn svg  { fill: #d44848; }
-    .action-btns svg { width: 17px; height: 17px; display: block; }
+    .action-btns svg { width: 15.3px; height: 15.3px; display: block; }
     @media (max-width: 1100px) {
-      .container { max-width: 98vw; }
-      .logo-row { gap: 14px;}
-      .ai-logo-wrap { width: 75px; height: 88px;}
-      .ai-logo-img { width: 40px; height: 40px;}
+      .container { max-width: 88.2vw; }
+      .logo-row { gap: 12.6px;}
+      .ai-logo-wrap { width: 67.5px; height: 67.5px;}
+      .ai-logo-img { width: 36px; height: 36px;}
     }
     @media (max-width: 900px) {
-      .container { max-width: 99vw;}
-      .logo-row { gap: 10px; }
-      .ai-logo-wrap { width: 64px; height: 72px;}
-      .ai-logo-img { width: 34px; height: 34px;}
+      .container { max-width: 89.1vw;}
+      .logo-row { gap: 9px; }
+      .ai-logo-wrap { width: 57.6px; height: 57.6px;}
+      .ai-logo-img { width: 30.6px; height: 30.6px;}
     }
     @media (max-width: 700px) {
-      .ai-logo-wrap { width: 74px !important; height: 84px !important; }
-      .ai-logo-img  { width: 52px !important; height: 52px !important; }
-      .logo-row     { gap: 7vw !important; }
+      .ai-logo-wrap { width: 66.6px !important; height: 66.6px !important; }
+      .ai-logo-img  { width: 46.8px !important; height: 46.8px !important; }
+      .logo-row     { gap: 6.3vw !important; }
     }
     @media (max-width: 500px) {
       .container { margin-top: 6px; margin-bottom: 9px;}
-      .logo-row { gap: 6vw !important; }
-      .ai-logo-wrap { width: 64px !important; height: 68px !important;}
-      .ai-logo-img  { width: 40px !important; height: 40px !important;}
+      .logo-row { gap: 5.4vw !important; }
+      .ai-logo-wrap { width: 57.6px !important; height: 57.6px !important;}
+      .ai-logo-img  { width: 36px !important; height: 36px !important;}
     }
     .modal-bg {
       position:fixed; z-index:10; left:0; top:0; width:100vw; height:100vh; background:#2228; display:flex; justify-content:center; align-items:center;
     }
     .modal-box {
       background:#fff; border-radius:12px; box-shadow:0 6px 36px #00308a22;
-      padding: 24px 22px 14px 22px; min-width:230px; display:flex; flex-direction:column; gap:13px; align-items:center;
+      padding: 24px 22px 14px 22px; min-width:207px; display:flex; flex-direction:column; gap:13px; align-items:center;
     }
-    .modal-box input { font-size:1rem; padding:8px 12px; border:1px solid #bbb; border-radius:7px; width:220px;}
-    .modal-box button { font-size:1rem; padding:7px 18px; border-radius:7px; border:1px solid #e4e5f0; background:#eaf1ff; cursor:pointer;}
+    .modal-box input { font-size:1rem; padding:8px 12px; border:1px solid #bbb; border-radius:7px; width:198px;}
+    .modal-box button { font-size:1rem; padding:7px 16.2px; border-radius:7px; border:1px solid #e4e5f0; background:#eaf1ff; cursor:pointer;}
     .modal-box label { font-size:1rem; color:#234;}
 
     /* --- 하단 설명서 공간 --- */
@@ -109,9 +119,9 @@
   <div class="topbar">
     <select class="combo" id="navCombo">
       <option value="00makingmain.html">Type1</option>
-      <option value=".">Type2</option>
-      <option value=".">Type3</option>
-      <option value=".">Type4</option>
+      <option value="00makingmain.html">Type2</option>
+      <option value="00makingmain.html">Type3</option>
+      <option value="00makingmain.html">Type4</option>
     </select>
     <div class="topbar-btns">
       <button id="addBtn">추가</button>
@@ -133,12 +143,12 @@
       <li><strong>수정/삭제</strong>: 각 아이콘 아래의 <span style="color:#3a75e7;">연필</span> 또는 <span style="color:#d44848;">휴지통</span> 아이콘을 클릭하세요.</li>
       <li><strong>순서 변경</strong>: 마우스로 드래그해서 아이콘 순서를 바꿀 수 있습니다.</li>
       <li><strong>내보내기/가져오기</strong>: 저장된 목록을 JSON 파일로 내보내거나 불러올 수 있습니다.</li>
-     <li><strong>브라우저를 끄기전</strong>: 꼭 내보내기 버튼으로 저장을 하세요.</li>
+      <li><strong>브라우저를 끄기전</strong>: 꼭 내보내기 버튼으로 저장을 하세요.</li>
       <li><strong>콤보박스</strong>: 원하는 검색엔진을 선택하면 <b>현재 창에서 바로 이동</b>합니다.</li>
     </ul>
     <div style="margin-top:14px; color:#757ba7; font-size:1rem;">
       ⚡ <b>TIP</b>: <b>모바일</b>에서도 아이콘을 눌러 바로 사이트에 접속할 수 있습니다.<br>
-          <b>데이터는 브라우저에 안전하게 저장</b>되어, 새로고침해도 보존됩니다. 단, 다음날을 가져오기를 해야합니
+      <b>데이터는 브라우저에 안전하게 저장</b>되어, 새로고침해도 보존됩니다. 단, 다음날을 가져오기를 해야합니
     </div>
   </div>
 <script>
@@ -157,14 +167,14 @@ function save() {
 function getLayout() {
   const w = window.innerWidth;
   const h = window.innerHeight;
-  let iconsPerRow = 4, gap = 24, size = 90, imgSize = 54;
-  if (w <= 1100) { iconsPerRow = 4; gap = 14; size = 75; imgSize = 40;}
-  if (w <= 900)  { iconsPerRow = 3; gap = 10; size = 64; imgSize = 34;}
+  let iconsPerRow = 4, gap = 21.6, size = 81, imgSize = 48.6;
+  if (w <= 1100) { iconsPerRow = 4; gap = 12.6; size = 67.5; imgSize = 36;}
+  if (w <= 900)  { iconsPerRow = 3; gap = 9; size = 57.6; imgSize = 30.6;}
   if (w <= 700) {
-    if (h > w) { iconsPerRow = 2; gap = w * 0.08; size = 74; imgSize = 52;}
-    else      { iconsPerRow = 3; gap = w * 0.08; size = 74; imgSize = 52; }
+    if (h > w) { iconsPerRow = 2; gap = w * 0.07; size = 66.6; imgSize = 46.8;}
+    else      { iconsPerRow = 3; gap = w * 0.07; size = 66.6; imgSize = 46.8; }
   }
-  if (w <= 500)  { iconsPerRow = 2; gap = w * 0.10; size = 64; imgSize = 40;}
+  if (w <= 500)  { iconsPerRow = 2; gap = w * 0.09; size = 57.6; imgSize = 36;}
   return { iconsPerRow, gap, size, imgSize };
 }
 // 실제 출력
