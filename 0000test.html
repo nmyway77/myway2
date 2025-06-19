@@ -1,0 +1,210 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>AI 엔진 바로가기 - MYWAY</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      min-height: 100vh; margin: 0; padding: 0;
+      background: #fff; font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      width: 100%;
+    }
+    body { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .main-title { margin-top: 50px; font-size: 1.3rem; font-weight: 700; color: #333862; text-shadow: 0 2px 12px #ffffff99; margin-bottom: 8px; text-align: center; user-select: none; }
+    .main-subtitle { font-size: 0.8rem; color: #6a739c; margin-bottom: 5px; text-align: center; user-select: none; }
+    .container { width: 100%; max-width: 560px; display: flex; flex-direction: column; align-items: center; margin-top: 40px; margin-bottom: 60px; min-height: 150vh; padding-left: 6px; padding-right: 6px;}
+    .logo-row { display: flex; justify-content: center; gap: 24px; margin-bottom: 32px; width: 100%; flex-wrap: nowrap; transition: max-width 0.1s;}
+    .ai-logo-wrap { width: 74px; height: 74px; border-radius: 50%; background: #fff; box-shadow: 0 3px 24px 0 #b1c7e866; border: 3px solid #e5e8f6; display: flex; justify-content: center; align-items: center; transition: box-shadow 0.15s, border-color 0.15s; cursor: pointer; overflow: hidden; margin: 0; flex: 0 0 auto; }
+    .ai-logo-wrap:hover { box-shadow: 0 8px 32px 0 #7e94ff99; border-color: #94a2ff; background: #f7faff;}
+    .ai-logo-img { width: 54px; height: 54px; object-fit: contain; background: transparent; border-radius: 50%; transition: transform 0.12s;}
+    .ai-logo-wrap:hover .ai-logo-img { transform: scale(1.08) rotate(-3deg);}
+    .group-title { width: 100%; max-width: 500px; font-size: 1.07rem; font-weight: 600; margin: 34px 0 10px 0; letter-spacing: -0.5px; color: #244; text-align: left; padding-left: 8px; user-select: none; }
+
+    /* ★★ 추가: 텍스트 네비, 여백 스타일 ★★ */
+    .nav-link-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 38px;
+      margin-top: 60px;   /* 아이콘 아래 3줄(3em) 여백 */
+      margin-bottom: 22px; /* 네비 밑 1줄 여백 */
+      font-size: 1.12rem;
+      font-weight: 600;
+      user-select: none;
+    }
+    .nav-link {
+      color: #2e3860;
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 7px;
+      transition: background 0.13s, color 0.13s;
+    }
+    .nav-link:hover, .nav-link.active {
+      color: #2050e6;
+      background: #eef3ff;
+    }
+    /* iframe 스타일 */
+    #bottom-frame-wrap {
+      width: 100vw; max-width: 800px; margin: 0 auto; 
+      display: flex; justify-content: center;
+      background: #f9fbff;
+      border-top: 1px solid #d1d4e4;
+      box-shadow: 0 2px 12px #a8adbc22;
+      z-index: 11;
+    }
+    #bottom-frame {
+      width: 100vw; max-width: 800px; height: 440px; border: none;
+      display: block; background: #fff;
+    }
+    @media (max-width: 900px) {
+      #bottom-frame, #bottom-frame-wrap { max-width: 99vw; }
+    }
+    @media (max-width: 700px) {
+      #bottom-frame, #bottom-frame-wrap { max-width: 100vw; height: 320px;}
+      #bottom-frame { height: 300px; }
+      .nav-link-row { gap: 17px; font-size: 1rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="main-title">AI & 검색포털 바로가기</div>
+  <div class="main-subtitle">원하는 AI 엔진을 터치하세요</div>
+  <div class="container" id="aiLogoContainer"></div>
+
+  <!-- 아이콘 그리드 아래 3줄 여백 + 텍스트 네비 -->
+  <div class="nav-link-row" id="textNavRow">
+    <span class="nav-link" data-url="https://www.naver.com/">네이버</span>
+    <span class="nav-link" data-url="https://www.youtube.com/">유튜브</span>
+    <span class="nav-link" data-url="https://www.google.com/">구글</span>
+    <span class="nav-link" data-url="https://www.daum.net/">다음</span>
+    <span class="nav-link" data-url="https://www.bing.com/">빙</span>
+    <span class="nav-link" data-url="https://www.perplexity.ai/">퍼플렉시티</span>
+  </div>
+  <!-- 네비 밑 1줄 여백 후 iframe -->
+  <div id="bottom-frame-wrap">
+    <iframe id="bottom-frame" src="" allowfullscreen></iframe>
+  </div>
+
+  <script>
+    // 기존 아이콘 로직 (수정X)
+    const group1 = [
+      { url: "https://myway.kr/newsitesbar2.html", img: "https://img.freepik.com/free-vector/gradient-breaking-news-logo-design_23-2151157239.jpg?semt=ais_hybrid&w=740", alt: "ChatGPT" },
+      { url: "https://myway.kr/livesitesbar2.html", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwrF0iQRJqKDGCwk9G-vPKmot-fi9yDtIoTg&s", alt: "Grok" },
+    ];
+    const group2 = [
+      { url: "https://chat.openai.com/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMdM9MEQ0ExL1PmInT3U5I8v63YXBEdoIT0Q&s", alt: "ChatGPT" },
+      { url: "https://grok.x.ai/", img: "https://images.seeklogo.com/logo-png/61/2/grok-logo-png_seeklogo-613403.png", alt: "Grok" },
+      { url: "https://gemini.google.com/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSm5xNOdkOwTDL9cxAWHDDyjK-6HcM-qHCxhw&s", alt: "Gemini" },
+      { url: "https://www.perplexity.ai/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpPv1KMnK1H9jPpIRzMvNRjyGSauDIOsOONQ&s", alt: "Perplexity" },
+      { url: "https://copilot.microsoft.com/", img: "https://www.shutterstock.com/image-vector/colorful-logo-design-on-white-600nw-2504051213.jpg", alt: "Copilot" },
+      { url: "https://openai.com/sora", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2OVrKb0J0mELcaCuOnUmBnFhu1DFIb_XmPg&s", alt: "Sora" },
+      { url: "https://hailuoai.com/", img: "https://images.seeklogo.com/logo-png/61/2/hailuo-icon-logo-png_seeklogo-611637.png", alt: "HailuoAI" },
+      { url: "https://www.klingai.com/", img: "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/kling-color.png", alt: "KlingAI" },
+      { url: "https://www.google.com.au/webhp?hl=en&gl=au", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYMMskKN9Ql1Ep4wG_vEW01t98DUBVXeXE8A&s", alt: "google" },
+      { url: "https://www.youtube.com/", img: "https://img.freepik.com/premium-vector/youtube-app-icon_676644-281.jpg?w=360", alt: "youtube" },
+      { url: "https://www.naver.com/", img: "https://play-lh.googleusercontent.com/jYtnK__ibJh9emODIgTyjZdbKym1iAj4RfoVhQZcfbG-DuTSHR5moHVx9CQnqg1yoco9", alt: "naver" },
+      { url: "https://www.daum.net/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTm-uCPPoWEDsQjRWs3MrM1nkrcqxygYAXbvg&s", alt: "daum" },
+      { url: "https://www.bing.com/", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Bing_Fluent_Logo.svg/1356px-Bing_Fluent_Logo.svg.png", alt: "bing" },
+      { url: "https://www.msn.com/ko-kr/news", img: "https://images.icon-icons.com/1488/PNG/512/5307-msn_102525.png", alt: "msn" }
+    ];
+
+    function getLayout() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      let iconsPerRow = 7, gap = 24, size = 74, imgSize = 54;
+      if (w <= 1100) { iconsPerRow = 6; gap = 14; size = 60; imgSize = 40;}
+      if (w <= 900)  { iconsPerRow = 5; gap = 10; size = 52; imgSize = 34;}
+      if (w <= 700) {
+        if (h > w) { iconsPerRow = 4; gap = w * 0.08; size = 78; imgSize = 60;}
+        else       { iconsPerRow = 5; gap = w * 0.08; size = 78; imgSize = 60;}
+      }
+      if (w <= 500)  { iconsPerRow = 3; gap = w * 0.10; size = 68; imgSize = 48;}
+      return { iconsPerRow, gap, size, imgSize };
+    }
+
+    function renderGroup(arr) {
+      const { iconsPerRow, gap, size, imgSize } = getLayout();
+      let idx = 0;
+      const rows = [];
+      while (idx < arr.length) {
+        const count = Math.min(iconsPerRow, arr.length - idx);
+        const row = document.createElement('div');
+        row.className = "logo-row";
+        row.style.maxWidth = (size * count + gap * (count - 1)) + "px";
+        row.style.gap = gap + "px";
+        for (let i = 0; i < count; i++, idx++) {
+          const l = arr[idx];
+          const a = document.createElement('a');
+          a.className = "ai-logo-wrap";
+          a.href = l.url;
+          a.target = "_blank";
+          a.style.width = a.style.height = size + "px";
+          const img = document.createElement('img');
+          img.className = "ai-logo-img";
+          img.src = l.img;
+          img.alt = l.alt;
+          img.style.width = img.style.height = imgSize + "px";
+          a.appendChild(img);
+          row.appendChild(a);
+        }
+        rows.push(row);
+      }
+      return rows;
+    }
+
+    function renderAll() {
+      const container = document.getElementById('aiLogoContainer');
+      container.innerHTML = "";
+
+      const g1Title = document.createElement("div");
+      g1Title.className = "group-title";
+      g1Title.textContent = "";
+      container.appendChild(g1Title);
+      renderGroup(group1).forEach(row => container.appendChild(row));
+
+      const g2Title = document.createElement("div");
+      g2Title.className = "group-title";
+      g2Title.textContent = "";
+      container.appendChild(g2Title);
+      renderGroup(group2).forEach(row => container.appendChild(row));
+    }
+
+    renderAll();
+    window.addEventListener('resize', renderAll);
+
+    // --- 텍스트 네비/iframe 동작 ---
+    const navRow = document.getElementById('textNavRow');
+    const frameWrap = document.getElementById('bottom-frame-wrap');
+    const frame = document.getElementById('bottom-frame');
+    let lastActive = null;
+
+    function setNavActive(el) {
+      navRow.querySelectorAll('.nav-link').forEach(e => e.classList.remove('active'));
+      if (el) el.classList.add('active');
+    }
+
+    navRow.addEventListener('click', function(e) {
+      const item = e.target.closest('.nav-link');
+      if (!item) return;
+      setNavActive(item);
+      const url = item.getAttribute('data-url');
+      frame.src = url;
+      frameWrap.style.display = 'flex';
+      setTimeout(() => {
+        frameWrap.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    });
+
+    // 기본(네이버) 자동 노출
+    window.addEventListener('DOMContentLoaded', function() {
+      const defaultNav = navRow.querySelector('.nav-link'); // 첫번째
+      if (defaultNav) {
+        setNavActive(defaultNav);
+        frame.src = defaultNav.getAttribute('data-url');
+        frameWrap.style.display = 'flex';
+      }
+    });
+  </script>
+</body>
+</html>
