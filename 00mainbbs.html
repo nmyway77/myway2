@@ -1,0 +1,185 @@
+  <html lang="ko">
+<head>
+  <base target="_blank76">
+  <meta charset="UTF-8">
+  <title>MYWAY 인플루언서 influencer </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
+    .dashboard { max-width: 1200px; margin: 0 auto; padding: 34px 0 60px 0;}
+    .gallery-label {
+      font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
+      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
+    }
+    .gallery-row {
+      width: 100%; max-width: 1080px; margin: 0 auto;
+      text-align: center;
+    }
+    .list-row {
+      display: inline-block;
+      vertical-align: top;
+      box-sizing: border-box;
+      position: relative;
+      transition: width 0.2s, height 0.2s;
+      background: #fff;
+    }
+    .list-row:last-child { margin-right: 0; }
+    .imgframe {
+      width: 100%; height: 100%;
+      background: #fff;
+      position: relative;
+      box-sizing: border-box;
+      z-index: 0;
+      border-radius: 0;
+      box-shadow: 0 6px 6px 0 rgba(90,90,130,0.11);
+      overflow: hidden;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
+    .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
+    .img-item img {
+      display: block; width: 100%; height: 100%;
+      object-fit: contain;
+      background: #fff;
+      margin: 0;
+      border: none;
+      padding: 0;
+    }
+    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
+    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
+    /* 매거진 공통 스타일 (갤4 + 갤1~3 전부 적용) */
+    .list-row.magazine {
+      width: 150px;
+      height: 213px;
+      margin: 0 12px 36px 0;
+    }
+    .img-wrap.magazine { height: 100%; }
+    .img-item.magazine { height: 100%; }
+    @media (max-width: 1080px) {
+      .list-row.magazine { width: 28vw; height: 40vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
+    }
+    @media (max-width: 700px) {
+      .list-row.magazine { width: 44vw; height: 62vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <span class="gallery-label">USEFUL</span>
+    <div class="gallery-row" id="gallery1"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery2"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery3"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery4"></div>
+    <span class="gallery-label"> </span>
+    <div class="gallery-row" id="gallery5"></div>
+    <span class="gallery-label"> </span>
+    <div class="gallery-row" id="gallery6"></div>
+    <span class="gallery-label"> </span>
+    <div class="gallery-row" id="gallery7"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery8"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery9"></div>
+    <span class="gallery-label"> </span>
+    <div class="gallery-row" id="gallery10"></div>
+  </div>
+  <script>
+    // 갤러리1~10 예시 데이터(갤5~10은 샘플 1개만 입력, 필요시 채우세요)
+    const gallery1Data = [
+      
+     { url: "https://program.download/category/download/windows/", img: "https://myway.kr/ps.jpg" },
+  { url: "https://koreapops.tumblr.com/", img: "https://myway.kr/kpop.jpg" },                        
+{ url: "https://href.li/?https://weather.naver.com/today", img: "https://64.media.tumblr.com/60683a77f0b5af341ea35c1cd338b003/tumblr_inline_njsrusDnzd1r45nlo.jpg" },
+{ url: "https://href.li/?http://search.daum.net/search?w=tot&t__nil_searchbox=suggest&sug=&q=%EB%8B%AC%EB%A0%A5", img: "https://64.media.tumblr.com/f5c5bd385fe2d840c056766098200357/tumblr_inline_qsf45y2uY31r45nlo_500.jpg" },
+{ url: "https://fortune.nate.com/contents/freeunse/freeunseframe.nate?freeUnseId=today03", img: "https://64.media.tumblr.com/d10db7a0d6c4349442b0b317f49d6dcd/tumblr_inline_njsrufTXaG1r45nlo.jpg" },
+{ url: "https://myway.kr/temp2.html", img: "https://64.media.tumblr.com/807b7573f37e5ee0fd01f268ba982d84/tumblr_inline_qsf478UGvB1r45nlo_500.jpg" },
+{ url: "https://kr.piliapp.com/time-now/", img: "https://nmyway77.github.io/myway7/watch.jpg" },
+{ url: "https://korean.visitkorea.or.kr/kfes/list/wntyFstvlList.do", img: "https://64.media.tumblr.com/4f84ae07194ed542fa4bd8107748c865/tumblr_inline_qsf46fjOtI1r45nlo_500.jpg" },
+
+    { url: "https://xn--989a00af8jnslv3dba.com/", img: "https://myway.kr/asset21.jpg" },
+{ url: "https://hogangnono.com/", img: "https://myway.kr/asset22.jpg" },             
+  { url: "https://ko.semrush.com/trending-websites/kr/all", img: "https://myway.kr/topsites.jpg" },    
+    { url: "https://myway.kr/imagegridfolder33.html", img: "https://myway.kr/grid1.jpg" },   
+     { url: "type3.html", img: "https://myway.kr/t3.jpg" },
+{ url: "grininout77.html.html", img: "https://myway.kr/t4.jpg" },
+     { url: "https://myway.kr/liveform.html", img: "https://myway.kr/yz.jpg" },
+     { url: "https://github.com/", img: "github.jpg" },
+{ url: "https://html5-editor.net/", img: "webediter.jpg" },
+{ url: "https://code.livegap.com/", img: "htmlmaker.jpg" },
+ { url: "https://mycar.kr/mainpage4.html", img: "grid2.jpg" },    
+  { url: "extract7.html", img: "thumb1.jpg" },    
+{ url: "https://kr.noxinfluencer.com/youtube-channel-rank/top-100-all-all-youtuber-sorted-by-subs-weekly", img: "https://myway.kr/influencer.jpg" },  
+      
+    ];
+    const gallery2Data = [
+
+  
+      
+    ];
+    const gallery3Data = [
+
+     
+      
+    ];
+    const gallery4Data = [
+     
+    ];
+    const gallery5Data = [
+   
+    ];
+    const gallery6Data = [
+    
+    ];
+    const gallery7Data = [
+     
+    ];
+    const gallery8Data = [
+    
+    ];
+    const gallery9Data = [
+      
+    ];
+    const gallery10Data = [
+     
+    ];
+
+    // 그림자 png
+    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
+    // 모든 갤러리를 매거진 타입으로!
+    function renderGallery(data, targetId) {
+      const el = document.getElementById(targetId);
+      el.innerHTML = data.map(item => `
+        <div class="list-row magazine">
+          <div class="imgframe">
+            <div class="img-wrap magazine">
+              <div class="img-item magazine">
+                <a href="${item.url}" target="_blank" rel="noopener">
+                  <img src="${item.img}">
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="shadow-line">
+            <img src="${shadowUrl}">
+          </div>
+        </div>
+      `).join('');
+    }
+    renderGallery(gallery1Data, 'gallery1');
+    renderGallery(gallery2Data, 'gallery2');
+    renderGallery(gallery3Data, 'gallery3');
+    renderGallery(gallery4Data, 'gallery4');
+    renderGallery(gallery5Data, 'gallery5');
+    renderGallery(gallery6Data, 'gallery6');
+    renderGallery(gallery7Data, 'gallery7');
+    renderGallery(gallery8Data, 'gallery8');
+    renderGallery(gallery9Data, 'gallery9');
+    renderGallery(gallery10Data, 'gallery10');
+  </script>
+</body>
+</html>
