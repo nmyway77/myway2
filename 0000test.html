@@ -1,185 +1,250 @@
-  <html lang="ko">
+ <!DOCTYPE html>
+<html lang="ko">
 <head>
-  <base target="_blank76">
   <meta charset="UTF-8">
-  <title>MYWAY 인플루언서 influencer </title>
+  <title>AI 엔진 바로가기 - MYWAY</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
-    .dashboard { max-width: 1200px; margin: 0 auto; padding: 34px 0 60px 0;}
-    .gallery-label {
-      font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
-      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
+    html, body {
+      min-height: 100vh; margin: 0; padding: 0;
+      background: #fff; font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      width: 100%;
     }
-    .gallery-row {
-      width: 100%; max-width: 1080px; margin: 0 auto;
-      text-align: center;
+    body { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .main-title { 
+      margin-top: 50px;
+      font-size: 1.1rem; font-weight: 700; color: #333862;
+      text-shadow: 0 2px 12px #ffffff99; margin-bottom: 8px;
+      text-align: center; user-select: none;
     }
-    .list-row {
-      display: inline-block;
-      vertical-align: top;
-      box-sizing: border-box;
-      position: relative;
-      transition: width 0.2s, height 0.2s;
-      background: #fff;
-    }
-    .list-row:last-child { margin-right: 0; }
-    .imgframe {
-      width: 100%; height: 100%;
-      background: #fff;
-      position: relative;
-      box-sizing: border-box;
-      z-index: 0;
-      border-radius: 0;
-      box-shadow: 0 6px 6px 0 rgba(90,90,130,0.11);
-      overflow: hidden;
+    .main-subtitle { font-size: 0.9rem; color: #6a739c; margin-bottom: 5px; text-align: center; user-select: none; }
+    .container { width: 100%; max-width: 560px; display: flex; flex-direction: column; align-items: center;
+      margin-top: 40px; margin-bottom: 60px;     min-height: 180vh;    padding-left: 6px; padding-right: 6px;}
+    .logo-row {
       display: flex;
-      align-items: flex-start;
       justify-content: center;
+      gap: 24px;
+      margin-bottom: 32px;
+      width: 100%;
+      flex-wrap: nowrap;
+      transition: max-width 0.1s;
     }
-    .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
-    .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
-    .img-item img {
-      display: block; width: 100%; height: 100%;
-      object-fit: contain;
-      background: #fff;
-      margin: 0;
-      border: none;
-      padding: 0;
+    .ai-logo-wrap {
+      width: 74px; height: 74px; border-radius: 50%; background: #fff;
+      box-shadow: 0 3px 24px 0 #b1c7e866; border: 3px solid #e5e8f6;
+      display: flex; justify-content: center; align-items: center;
+      transition: box-shadow 0.15s, border-color 0.15s;
+      cursor: pointer; overflow: hidden; margin: 0;
+      flex: 0 0 auto;
     }
-    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
-    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
-    /* 매거진 공통 스타일 (갤4 + 갤1~3 전부 적용) */
-    .list-row.magazine {
-      width: 150px;
-      height: 213px;
-      margin: 0 12px 36px 0;
+    .ai-logo-wrap:hover { box-shadow: 0 8px 32px 0 #7e94ff99; border-color: #94a2ff; background: #f7faff;}
+    .ai-logo-img { width: 54px; height: 54px; object-fit: contain; background: transparent;
+      border-radius: 50%; transition: transform 0.12s;}
+    .ai-logo-wrap:hover .ai-logo-img { transform: scale(1.08) rotate(-3deg);}
+    .group-title {
+      width: 100%; max-width: 500px;
+      font-size: 1.07rem; font-weight: 600;
+      margin: 34px 0 10px 0;
+      letter-spacing: -0.5px;
+      color: #244;
+      text-align: left;
+      padding-left: 8px;
+      user-select: none;
     }
-    .img-wrap.magazine { height: 100%; }
-    .img-item.magazine { height: 100%; }
-    @media (max-width: 1080px) {
-      .list-row.magazine { width: 28vw; height: 40vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
+    @media (max-width: 1100px) {
+      .container { max-width: 98vw; }
+      .logo-row { gap: 14px;}
+      .ai-logo-wrap { width: 60px; height: 60px;}
+      .ai-logo-img { width: 40px; height: 40px;}
+    }
+    @media (max-width: 900px) {
+      .container { max-width: 99vw;}
+      .main-title { font-size: 1.35rem; margin-top: 64px;}
+      .main-subtitle { font-size: 1.07rem; }
+      .logo-row { gap: 10px; }
+      .ai-logo-wrap { width: 52px; height: 52px;}
+      .ai-logo-img { width: 34px; height: 34px;}
     }
     @media (max-width: 700px) {
-      .list-row.magazine { width: 44vw; height: 62vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
+      .ai-logo-wrap { width: 78px !important; height: 78px !important; }
+      .ai-logo-img  { width: 60px !important; height: 60px !important; }
+      .logo-row     { gap: 7vw !important; }
+    }
+    @media (max-width: 480px) {
+      .main-title { font-size: 1rem; }
+      .main-subtitle { font-size: 0.95rem; }
+      .container { margin-top: 6px; margin-bottom: 9px;}
     }
   </style>
 </head>
 <body>
-  <div class="dashboard">
-    <a class="gallery-label" href="https://myway.kr/bbssitesbar2.html" target="_blank">BBS</a>
-    <div class="gallery-row" id="gallery1"></div>
-   < a class="gallery-label" href="https://bbs.example.com/" target="_blank">BBS</a>
-    <div class="gallery-row" id="gallery2"></div>
-  < a class="gallery-label" href="https://bbs.example.com/" target="_blank">BBS</a>
-    <div class="gallery-row" id="gallery3"></div>
-  <a class="gallery-label" href="https://bbs.example.com/" target="_blank">BBS</a>
-    <div class="gallery-row" id="gallery4"></div>
-  < a class="gallery-label" href="https://bbs.example.com/" target="_blank">BBS</a>
-    <div class="gallery-row" id="gallery5"></div>
-    <span class="gallery-label"> </span>
-    <div class="gallery-row" id="gallery6"></div>
-    <span class="gallery-label"> </span>
-    <div class="gallery-row" id="gallery7"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery8"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery9"></div>
-    <span class="gallery-label"> </span>
-    <div class="gallery-row" id="gallery10"></div>
-  </div>
+  <div class="main-title">LIVE TV & RADIO</div>
+  <div class="main-subtitle">Myway.Kr</div>
+  <div class="container" id="aiLogoContainer"></div>
   <script>
-    // 갤러리1~10 예시 데이터(갤5~10은 샘플 1개만 입력, 필요시 채우세요)
-    const gallery1Data = [
-      
-     { url: "https://program.download/category/download/windows/", img: "https://myway.kr/ps.jpg" },
-  { url: "https://koreapops.tumblr.com/", img: "https://myway.kr/kpop.jpg" },                        
-{ url: "https://href.li/?https://weather.naver.com/today", img: "https://64.media.tumblr.com/60683a77f0b5af341ea35c1cd338b003/tumblr_inline_njsrusDnzd1r45nlo.jpg" },
-{ url: "https://href.li/?http://search.daum.net/search?w=tot&t__nil_searchbox=suggest&sug=&q=%EB%8B%AC%EB%A0%A5", img: "https://64.media.tumblr.com/f5c5bd385fe2d840c056766098200357/tumblr_inline_qsf45y2uY31r45nlo_500.jpg" },
-{ url: "https://fortune.nate.com/contents/freeunse/freeunseframe.nate?freeUnseId=today03", img: "https://64.media.tumblr.com/d10db7a0d6c4349442b0b317f49d6dcd/tumblr_inline_njsrufTXaG1r45nlo.jpg" },
-{ url: "https://myway.kr/temp2.html", img: "https://64.media.tumblr.com/807b7573f37e5ee0fd01f268ba982d84/tumblr_inline_qsf478UGvB1r45nlo_500.jpg" },
-{ url: "https://kr.piliapp.com/time-now/", img: "https://nmyway77.github.io/myway7/watch.jpg" },
-{ url: "https://korean.visitkorea.or.kr/kfes/list/wntyFstvlList.do", img: "https://64.media.tumblr.com/4f84ae07194ed542fa4bd8107748c865/tumblr_inline_qsf46fjOtI1r45nlo_500.jpg" },
-
-    { url: "https://xn--989a00af8jnslv3dba.com/", img: "https://myway.kr/asset21.jpg" },
-{ url: "https://hogangnono.com/", img: "https://myway.kr/asset22.jpg" },             
-  { url: "https://ko.semrush.com/trending-websites/kr/all", img: "https://myway.kr/topsites.jpg" },    
-    { url: "https://myway.kr/imagegridfolder33.html", img: "https://myway.kr/grid1.jpg" },   
-     { url: "type3.html", img: "https://myway.kr/t3.jpg" },
-{ url: "grininout77.html.html", img: "https://myway.kr/t4.jpg" },
-     { url: "https://myway.kr/liveform.html", img: "https://myway.kr/yz.jpg" },
-     { url: "https://github.com/", img: "github.jpg" },
-{ url: "https://html5-editor.net/", img: "webediter.jpg" },
-{ url: "https://code.livegap.com/", img: "htmlmaker.jpg" },
- { url: "https://mycar.kr/mainpage4.html", img: "grid2.jpg" },    
-  { url: "extract7.html", img: "thumb1.jpg" },    
-{ url: "https://kr.noxinfluencer.com/youtube-channel-rank/top-100-all-all-youtuber-sorted-by-subs-weekly", img: "https://myway.kr/influencer.jpg" },  
-      
-    ];
-    const gallery2Data = [
-
-  
-      
-    ];
-    const gallery3Data = [
-
+    // 1번 그룹 (예: AI/생성형)
+    const group1 = [
      
-      
-    ];
-    const gallery4Data = [
-     
-    ];
-    const gallery5Data = [
-   
-    ];
-    const gallery6Data = [
+     { url: "newsitesbar2.html", img: "https://img.freepik.com/free-vector/gradient-breaking-news-logo-design_23-2151157239.jpg?semt=ais_hybrid&w=740", alt: "ChatGPT" },
+      { url: "livesitesbar2.html", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwrF0iQRJqKDGCwk9G-vPKmot-fi9yDtIoTg&s", alt: "Grok" },
+ { url: "bbssitesbar2.html", img: "https://cdn.worldvectorlogo.com/logos/bbs.svg", alt: "Grok" },
     
     ];
-    const gallery7Data = [
+    // 2번 그룹 (예: 검색/포털)
+    const group2 = [
+      { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList", img: "https://seeklogo.com/images/K/kbs-1-logo-9D776A1DF1-seeklogo.com.png", alt: "KBS2" },
+      { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList", img: "https://imgcdn.cloudrsst.com:944/channels/thumbs/0bbd08802d6779b43051b798b5548acb.png", alt: "KBS1" },
+      { url: "https://www.sbs.co.kr/live/S01?div=main_live", img: "https://daoift3qrrnil.cloudfront.net/company_groups/images/000/001/606/webp/SBS_%EB%A1%9C%EA%B3%A0.webp?1684485530", alt: "SBS" },
+      { url: "https://onair.imbc.com/", img: "https://mblogthumb-phinf.pstatic.net/20160625_171/ppanppane_1466811662044EcWUF_PNG/%BF%A5%BA%F1%BE%BE%B7%CE%B0%ED_%281%29.png?type=w800", alt: "MBC" },
+      { url: "https://onair.imbc.com/MbicLive", img: "https://m.imbc.com/images/mbic-popup-top.png", alt: "MBIC LIVE" },
      
-    ];
-    const gallery8Data = [
-    
-    ];
-    const gallery9Data = [
+      { url: "https://onair.jtbc.co.kr/", img: "https://i.namu.wiki/i/uuAyWQDvgF1TRyWeJbxFrOdxXwA1wEz6giX6fy4KW7m60W6QD2gu6x5woH4ZQ2Ne_BgH6dmFZ1gxB_hYPX1HBg.webp", alt: "JTBC " },
       
-    ];
-    const gallery10Data = [
+      { url: "https://ichannela.com/com/cmm/onair.do", img: "https://www.cuk.edu/type/common/img/kor/info/coperComp_logo10.png", alt: "채널A" },
+      { url: "https://broadcast.tvchosun.com/onair/on.cstv", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1v7RTS87LXPgpQvZ4m9AOmjl_bBaM1fky0A&s", alt: "TV조선" },
+      { url: "https://www.mbn.co.kr/vod/onair", img: "https://images.seeklogo.com/logo-png/40/2/mbn-logo-png_seeklogo-408045.png", alt: "MBN" },
+      { url: "https://www.ytn.co.kr/_hd/hd_live.html", img: "https://play-lh.googleusercontent.com/X7IpTCgMJtXcbsNxucP64-GF0WDoaQcIlqHAQ0tB9fRdldSlalvg-RIx9MV2DlODYllO", alt: "YTN" },
+      { url: "https://www.yonhapnewstv.co.kr/live", img: "https://smart-link.github.io/yna-icons/images/icon-5.png", alt: "연합뉴스TV" },
+      { url: "https://www.arirang.com/live?lang=en", img: "https://cdn.imweb.me/upload/S20190924d96cb87805e79/512ac13e1a3ad.jpg", alt: "아리랑TV" },
+      { url: "https://www.ebs.co.kr/onair?mainTop&channelCodeString=tv", img: "https://cdn.mediatoday.co.kr/news/photo/202403/316758_444671_4350.jpg", alt: "EBS" },
+      { url: "https://news.sbs.co.kr/news/live.do?plink=GNB&cooper=SBSNEWS", img: "https://upload.wikimedia.org/wikipedia/commons/9/9a/SBS_News_logo.png", alt: "SBS NEWS" },
+      { url: "https://news.kbs.co.kr/news/pc/news24/news24.html?ref=pGnb", img: "https://upload.wikimedia.org/wikipedia/commons/b/b9/KBS_News_Logo.jpg", alt: "KBS NEWS" },
+      { url: "https://imnews.imbc.com/more/onair/", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/MBC_News_2018.svg/1200px-MBC_News_2018.svg.png", alt: "MBC NEWS" },
+
+ 
+      { url: "https://news.jtbc.co.kr/live", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/JTBC_News_logo.png/960px-JTBC_News_logo.png", alt: "JTBC NEWS" },
+
+     
+      { url: "https://www.mtn.co.kr/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc4UT-gcGHUeu64WaELxKN5MQLRzkClkfjug&s", alt: "머니투데이" },
+
+  { url: "https://www.sentv.co.kr/onair", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrivixtHfo0e5E2w5LangPHAPtp7YBVlZkjQ&s", alt: "서울경제TV" },
+      { url: "https://tv.edaily.co.kr/Live/HighVod", img: "https://yt3.googleusercontent.com/r6InF8iqxYSMljw_paJBYT6VnmHZ67hRumEABh47QQm1MSQQ2Dnc6xDPLTdi3J9urM7qfub47g=s900-c-k-c0x00ffffff-no-rj", alt: "이데일리" },
+      { url: "https://mbnmoney.mbn.co.kr/tv/onair", img: "https://yt3.googleusercontent.com/ytc/AIdro_lbGp0je-5GCNT3QxIDaEEVNX1AS7ldEg9J-c4dxsbUcE4=s900-c-k-c0x00ffffff-no-rj", alt: "매일경제 TV" },
+      { url: "https://www.wowtv.co.kr/LiveCenter/Live/Index?liveID=1", img: "https://yt3.googleusercontent.com/501bzg5HztyCgqUJVQGwWf8Yi4Ytq_T2ZEWlMHPZPYU26ztf8-mefrjzWL9MjqD_IWvbmOLHvQ=s900-c-k-c0x00ffffff-no-rj", alt: "한국경제TV" },
+     
+        { url: "https://shoppinglive.naver.com/home", img: "https://i.namu.wiki/i/YwP9aFZZ0JfkT02FGPYevQJ8phT6c6_yQp-qg_E-AoXKyTEDJr3b-RK43VnzQc7-cUtAlLEz_Uisr912xx_UUw.webp", alt: "네이버live 쇼핑" },
+{ url: "https://tv.kakao.com/live", img: "https://t1.kakaocdn.net/kakaocorp/kakaocorp/admin/6452d326017800001.png", alt: "카카오tv" },
+{ url: "https://tv.naver.com/l/livehome", img: "https://cdn.the-pr.co.kr/news/photo/201901/41892_63002_4436.png", alt: "네이버tv" },
+{ url: "https://www.youtube.com/@GiGAeyesLiveTV/streams", img: "https://yt3.googleusercontent.com/4vU0ZN4Dk2Cc-Hk-o_afvUqrsHLlEZIJfDvCJyS4RTEmu7ox_6jRFM4P4hk8iRoE20O42KZG8tQ=s900-c-k-c0x00ffffff-no-rj", alt: "live cctv" },
+{ url: "https://www.youtube.com/@funjeju/streams", img: "https://lh4.googleusercontent.com/proxy/M4h9nEPz83dxLqkSchZXldMb_JcE5erQtZZIzqyAXGJNbkiT9OPY_qRfx6w_L5aGBEUHEIAmKHakRpGoicoV-k4Lrax5VxjTtojm", alt: "제tv" },
+
+     
+{ url: "https://www.earthcam.com/search/ft_search.php?term=KOREA", img: "https://st4.depositphotos.com/15809744/24883/v/450/depositphotos_248837430-stock-illustration-webcam-icon-design-template-vector.jpg", alt: "korea cctv" },
+     { url: "https://www.skylinewebcams.com/en/webcam/south-korea.html", img: "https://st4.depositphotos.com/15809744/24883/v/450/depositphotos_248837430-stock-illustration-webcam-icon-design-template-vector.jpg", alt: "korea cctv2" },
+
+     { url: "https://www.webcamtaxi.com/en/south-korea/seoul.html", img: "https://st4.depositphotos.com/15809744/24883/v/450/depositphotos_248837430-stock-illustration-webcam-icon-design-template-vector.jpg", alt: "korea cctv3" },
+
+    { url: "https://www.outdooractive.com/en/webcams/#area=1019227&bm=osm%3Asummer&filter=r-fullyTranslatedLangus-en,sb-sortedBy-0&view=map&wt=South%20Korea&zc=6.,128.25439,35.81781", img: "https://st4.depositphotos.com/15809744/24883/v/450/depositphotos_248837430-stock-illustration-webcam-icon-design-template-vector.jpg", alt: "korea cctv4" },
+
+{ url: "https://tv.seoul.go.kr/onair/seoul24.do", img: "https://media-cdn.tripadvisor.com/media/photo-s/13/28/14/02/i-seoul-u.jpg", alt: "seoul24" },
+
+
      
     ];
 
-    // 그림자 png
-    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
-    // 모든 갤러리를 매거진 타입으로!
-    function renderGallery(data, targetId) {
-      const el = document.getElementById(targetId);
-      el.innerHTML = data.map(item => `
-        <div class="list-row magazine">
-          <div class="imgframe">
-            <div class="img-wrap magazine">
-              <div class="img-item magazine">
-                <a href="${item.url}" target="_blank" rel="noopener">
-                  <img src="${item.img}">
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="shadow-line">
-            <img src="${shadowUrl}">
-          </div>
-        </div>
-      `).join('');
+    // 3번 그룹 (예: AI툴 모음)
+    const group3 = [
+  { url: "https://href.li/?https://www.netflix.com/", img: "https://img1.daumcdn.net/thumb/R720x0.q80/?scode=mtistory2&fname=https%3A%2F%2Ft1.daumcdn.net%2Fcfile%2Ftistory%2F9945E24D5EDF7C1110", alt: "넷플릭스" },
+      { url: "https://href.li/?https://www.disneyplus.com/ko-kr", img: "https://s.yimg.com/ny/api/res/1.2/wc7n7lj8OYExtHptEqaMOg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTY0MDtoPTY0MA--/https://media.zenfs.com/en/evening_standard_239/be0710aaaf5abfdcfe63e97dda34ea9a", alt: "디즈니+" },
+      { url: "https://www.coupangplay.com/catalog", img: "https://d2juy7qzamcf56.cloudfront.net/2024-11-26/09738456-1277-4953-80fb-fc9c9d2df777.png", alt: "쿠팡플레이" },
+     
+      { url: "https://www.nbcnews.com/watch", img: "https://uk.radio.net/300/nbcnewsnow.png?version=3514917925ad9b0a85d1f0f5941b9920", alt: "NBC NEWS" },
+      { url: "https://abcnews.go.com/Live", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/ABC_News_Live_logo.svg/1200px-ABC_News_Live_logo.svg.png", alt: "ABC NEWS" },
+      { url: "https://www3.nhk.or.jp/nhkworld/en/live/", img: "https://is2-ssl.mzstatic.com/image/thumb/Purple111/v4/bc/66/b0/bc66b085-22a7-1da2-467d-eeac946fcde6/source/512x512bb.jpg", alt: "NHK" },
+      { url: "https://www.livenowfox.com/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTl7ehW_5FLnSHIKGvBOYqT-atSyt9XLcFbA&s", alt: "FOX NEWS" }
+
+
+
+     
+    ];
+
+    // 4번 그룹 (예: 이미지 생성/AI/기타)
+    const group4 = [
+      { url: "https://miniwebapp.imbc.com/index?channel=mfm", img: "https://i.namu.wiki/i/vTgTt-dxXfOsfXVWIvLgMaKazq4LrBg721Be9fx_3CzjuxEza-HDXToyFRE8_E5_EsC6LJbL9oTfSwCMK-OsEA.webp", alt: "MBC RADIO" },
+      { url: "https://radio.kbs.co.kr/", img: "https://cdn-radiotime-logos.tunein.com/s50603g.png", alt: "KBS RADIO" },
+      { url: "https://www.cbs.co.kr/radio", img: "https://play-lh.googleusercontent.com/nQdumRnqvPSmpTlEb_OsvimCZC2v6urJr-yi0Csm7Uqql3DzOhHeDe6-mYjn4ET34w", alt: "CBS" },
+      { url: "https://www.tbn.or.kr/onair/tbnlive.tbn?area_code=2", img: "https://yt3.googleusercontent.com/OpvkdwkXnEIEt-BbBt9sJ-9DFl8Z7AY7RnyvoPz_wffbKVgcNcvjz_NGuyV5_OGXTEDO1piVbA=s900-c-k-c0x00ffffff-no-rj", alt: "TBN 교통방송" }
+    ];
+
+    function getLayout() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      let iconsPerRow = 7, gap = 24, size = 74, imgSize = 54;
+      if (w <= 1100) { iconsPerRow = 6; gap = 14; size = 60; imgSize = 40;}
+      if (w <= 900)  { iconsPerRow = 5; gap = 10; size = 52; imgSize = 34;}
+      if (w <= 700) {
+        if (h > w) { iconsPerRow = 4; gap = w * 0.08; size = 78; imgSize = 60;}
+        else       { iconsPerRow = 5; gap = w * 0.08; size = 78; imgSize = 60;}
+      }
+      if (w <= 500)  { iconsPerRow = 3; gap = w * 0.10; size = 68; imgSize = 48;}
+      return { iconsPerRow, gap, size, imgSize };
     }
-    renderGallery(gallery1Data, 'gallery1');
-    renderGallery(gallery2Data, 'gallery2');
-    renderGallery(gallery3Data, 'gallery3');
-    renderGallery(gallery4Data, 'gallery4');
-    renderGallery(gallery5Data, 'gallery5');
-    renderGallery(gallery6Data, 'gallery6');
-    renderGallery(gallery7Data, 'gallery7');
-    renderGallery(gallery8Data, 'gallery8');
-    renderGallery(gallery9Data, 'gallery9');
-    renderGallery(gallery10Data, 'gallery10');
+
+    function renderGroup(arr) {
+      const { iconsPerRow, gap, size, imgSize } = getLayout();
+      let idx = 0;
+      const rows = [];
+      while (idx < arr.length) {
+        const count = Math.min(iconsPerRow, arr.length - idx);
+        const row = document.createElement('div');
+        row.className = "logo-row";
+        row.style.maxWidth = (size * count + gap * (count - 1)) + "px";
+        row.style.gap = gap + "px";
+        for (let i = 0; i < count; i++, idx++) {
+          const l = arr[idx];
+          const a = document.createElement('a');
+          a.className = "ai-logo-wrap";
+          a.href = l.url;
+          a.target = "_blank";
+          a.style.width = a.style.height = size + "px";
+          const img = document.createElement('img');
+          img.className = "ai-logo-img";
+          img.src = l.img;
+          img.alt = l.alt;
+          img.style.width = img.style.height = imgSize + "px";
+          a.appendChild(img);
+          row.appendChild(a);
+        }
+        rows.push(row);
+      }
+      return rows;
+    }
+
+    function renderAll() {
+      const container = document.getElementById('aiLogoContainer');
+      container.innerHTML = "";
+
+      // 1단 제목
+      const g1Title = document.createElement("div");
+      g1Title.className = "group-title";
+      g1Title.textContent = "";
+      container.appendChild(g1Title);
+      renderGroup(group1).forEach(row => container.appendChild(row));
+
+      // 2단 제목
+      const g2Title = document.createElement("div");
+      g2Title.className = "group-title";
+      g2Title.textContent = "";
+      container.appendChild(g2Title);
+      renderGroup(group2).forEach(row => container.appendChild(row));
+
+      // 3단 제목
+      const g3Title = document.createElement("div");
+      g3Title.className = "group-title";
+      g3Title.textContent = "";
+      container.appendChild(g3Title);
+      renderGroup(group3).forEach(row => container.appendChild(row));
+
+      // 4단 제목
+      const g4Title = document.createElement("div");
+      g4Title.className = "group-title";
+     g4Title.innerHTML = `<a href="radiositesbar2.html" target="_blank" style="color:inherit; text-decoration:none;">RADIO</a>`;
+      container.appendChild(g4Title);
+      renderGroup(group4).forEach(row => container.appendChild(row));
+    }
+
+    renderAll();
+    window.addEventListener('resize', renderAll);
   </script>
 </body>
 </html>
