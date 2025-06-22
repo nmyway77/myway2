@@ -130,6 +130,40 @@
         top: 120px; height: calc(100vh - 120px);
       }
     }
+
+
+.tooltip {
+  position: relative;
+  cursor: pointer;
+}
+.tooltip .tooltiptext {
+  visibility: hidden;
+  min-width: 84px;
+  background: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 7px;
+  padding: 5px 9px;
+  position: absolute;
+  z-index: 1;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.23s;
+  font-size: 12px;
+  pointer-events: none;
+  white-space: pre-line;
+}
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+
+
+   
   </style>
 </head>
 <body>
@@ -185,7 +219,7 @@
     </form>
   </div>
   <div class="screen-links" id="parent-links">
-   <a href="#" onclick="showScreenParent(event, '00aimain3.html')"></a>
+   <a href="#" class="tooltip" onclick="showScreenParent(event, 'mainpage43.html')">I  <span class="tooltiptext">여기에 말풍선 표시</span></a>
     <a href="#" onclick="showScreenParent(event, '0newsbar.html')"></a>
     <a href="#" onclick="showScreenParent(event, 'livesitesbar2.html')"></a>
     <a href="#" onclick="showScreenParent(event, 'radiositesbar2.html')"></a>
