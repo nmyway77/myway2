@@ -192,6 +192,39 @@
     navScroll.addEventListener('scroll', updateNavArrows);
     window.addEventListener('resize', updateNavArrows);
     setTimeout(updateNavArrows, 300);
+
+
+
+
+
+
+  (function(){
+    const el = document.getElementById('nav-scroll');
+    let isDown = false, startX, scrollLeft;
+    el.addEventListener('mousedown', function(e){
+      isDown = true;
+      el.classList.add('dragging');
+      startX = e.pageX - el.offsetLeft;
+      scrollLeft = el.scrollLeft;
+      e.preventDefault();
+    });
+    el.addEventListener('mouseleave', ()=>{ isDown=false; el.classList.remove('dragging'); });
+    el.addEventListener('mouseup', ()=>{ isDown=false; el.classList.remove('dragging'); });
+    el.addEventListener('mousemove', function(e){
+      if(!isDown) return;
+      const x = e.pageX - el.offsetLeft;
+      const walk = (x - startX) * 1.1; // drag speed
+      el.scrollLeft = scrollLeft - walk;
+    });
+  })();
+
+
+
+
+
+
+
+   
   </script>
 </body>
 </html>
