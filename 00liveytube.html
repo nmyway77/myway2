@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>유튜브 채널 디렉토리 뷰어</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', 'Apple SD Gothic Neo', sans-serif;
+      background: linear-gradient(135deg, #23243a 0%, #314a6a 100%);
+      color: #fff;
+      min-height: 100vh;
+    }
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 290px; min-width: 210px;
+      background: rgba(27, 35, 52, 0.96);
+      padding: 30px 15px 20px 22px;
+      box-sizing: border-box;
+      display: flex; flex-direction: column;
+      border-top-right-radius: 32px;
+      border-bottom-right-radius: 32px;
+      box-shadow: 4px 0 26px #0006;
+      border-right: 1.5px solid #3e5c8888;
+    }
+    .sidebar-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 38px;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 12px #0005;
+      text-align:left;
+    }
+    .directory-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      flex: 1;
+    }
+    .directory-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 12px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 1.13rem;
+      background: rgba(37,55,90,0.88);
+      box-shadow: 0 3px 16px #0002;
+      transition: background 0.18s, box-shadow 0.18s, color 0.16s;
+      border: 1.5px solid transparent;
+      font-weight: 500;
+      user-select: none;
+      position: relative;
+    }
+    .directory-item.selected, .directory-item:hover {
+      background: linear-gradient(90deg, #3576ed 10%, #65e0f6 95%);
+      color: #222e4c;
+      border: 1.5px solid #63c6ff;
+      box-shadow: 0 6px 30px #1588c866, 0 2px 10px #63e0ff33;
+      z-index: 2;
+    }
+    .directory-icon {
+      width: 26px; height: 26px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .directory-label {
+      flex: 1;
+      letter-spacing: 0.02em;
+      font-size: 1.07em;
+      font-weight: 600;
+    }
+    .main {
+      flex: 1 1 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(120deg, #242a39 0%, #3a5975 90%);
+      position: relative;
+    }
+    .video-frame {
+      width: 78vw; max-width: 950px;
+      height: 61vh; min-height: 330px; max-height: 85vh;
+      border: none;
+      border-radius: 22px;
+      background: #222;
+      box-shadow: 0 12px 54px #1a579a2b, 0 2px 14px #263f5722;
+      transition: box-shadow 0.24s;
+    }
+    @media (max-width: 850px) {
+      .container {flex-direction: column;}
+      .sidebar {
+        width: 100%;
+        min-width: 0;
+        border-radius: 0 0 22px 22px;
+        border-right: none;
+        box-shadow: none;
+      }
+      .main {padding: 7vw 0;}
+      .video-frame {width: 97vw; height: 40vw; min-height: 160px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="sidebar-title">채널 디렉토리</div>
+      <div class="directory-list" id="dirList">
+        <!-- 폴더/채널 예시 목록 (여기서 수정!) -->
+        <div class="directory-item selected" data-url="https://www.youtube.com/embed/5qap5aO4i9A">
+          <span class="directory-icon">📁</span>
+          <span class="directory-label">LoFi Girl 라이브</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/embed/cCk8Uws2pXg">
+          <span class="directory-icon">🎬</span>
+          <span class="directory-label">SBS 뉴스 라이브</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/embed/60ItHLz5WEA">
+          <span class="directory-icon">🎵</span>
+          <span class="directory-label">Alan Walker - Faded</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/embed/dyRsYk0LyA8">
+          <span class="directory-icon">🧑‍🏫</span>
+          <span class="directory-label">TED: The power of introverts</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/embed/U9BwWKXjVaI">
+          <span class="directory-icon">💡</span>
+          <span class="directory-label">흥미로운 과학 다큐</span>
+        </div>
+      </div>
+    </div>
+    <div class="main">
+      <iframe class="video-frame" id="videoFrame"
+        src="https://www.youtube.com/embed/5qap5aO4i9A"
+        allowfullscreen></iframe>
+    </div>
+  </div>
+  <script>
+    // 좌측 디렉토리 클릭 → 동영상 변경
+    const items = document.querySelectorAll('.directory-item');
+    const frame = document.getElementById('videoFrame');
+    items.forEach(item => {
+      item.addEventListener('click', function() {
+        // 모두 selected 해제
+        items.forEach(i => i.classList.remove('selected'));
+        this.classList.add('selected');
+        frame.src = this.dataset.url;
+      });
+    });
+  </script>
+</body>
+</html>

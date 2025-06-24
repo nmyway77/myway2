@@ -1,0 +1,190 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>유튜브 채널 디렉토리 뷰어</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', 'Apple SD Gothic Neo', sans-serif;
+      background: linear-gradient(135deg, #23243a 0%, #314a6a 100%);
+      color: #fff;
+      min-height: 100vh;
+    }
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 220px; min-width: 120px;
+      background: rgba(27, 35, 52, 0.96);
+      padding: 18px 6px 10px 8px;
+      box-sizing: border-box;
+      display: flex; flex-direction: column;
+      border-top-right-radius: 26px;
+      border-bottom-right-radius: 26px;
+      box-shadow: 4px 0 26px #0006;
+      border-right: 1.5px solid #3e5c8888;
+    }
+    .sidebar-title {
+      font-size: 1.03rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 12px #0005;
+      text-align:left;
+      padding-left: 7px;
+    }
+    .directory-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #457bba44 #222c;
+      max-height: 85vh;
+      padding-right: 3px;
+    }
+    .directory-list::-webkit-scrollbar { width: 7px; }
+    .directory-list::-webkit-scrollbar-thumb { background: #2a466d88; border-radius: 6px; }
+
+    .directory-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 8px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.68rem;
+      background: rgba(37,55,90,0.80);
+      box-shadow: 0 1.5px 7px #0001;
+      transition: background 0.16s, box-shadow 0.16s, color 0.13s;
+      border: 1px solid transparent;
+      font-weight: 500;
+      user-select: none;
+      position: relative;
+      min-height: 26px;
+    }
+    .directory-item.selected, .directory-item:hover {
+      background: linear-gradient(90deg, #3576ed 10%, #65e0f6 95%);
+      color: #222e4c;
+      border: 1px solid #63c6ff;
+      box-shadow: 0 2.5px 10px #1588c844, 0 1px 4px #63e0ff16;
+      z-index: 2;
+    }
+    .directory-icon {
+      width: 16px; height: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.0em;
+      opacity: 0.9;
+    }
+    .directory-label {
+      flex: 1;
+      letter-spacing: 0.01em;
+      font-size: 0.94em;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .main {
+      flex: 1 1 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(120deg, #242a39 0%, #3a5975 90%);
+      position: relative;
+    }
+    .video-frame {
+      width: 78vw; max-width: 950px;
+      height: 61vh; min-height: 170px; max-height: 85vh;
+      border: none;
+      border-radius: 15px;
+      background: #222;
+      box-shadow: 0 6px 32px #1a579a2b, 0 2px 8px #263f5711;
+      transition: box-shadow 0.18s;
+    }
+    @media (max-width: 850px) {
+      .container {flex-direction: column;}
+      .sidebar {
+        width: 100%;
+        min-width: 0;
+        border-radius: 0 0 18px 18px;
+        border-right: none;
+        box-shadow: none;
+      }
+      .main {padding: 7vw 0;}
+      .video-frame {width: 97vw; height: 35vw; min-height: 90px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="sidebar-title">채널 디렉토리</div>
+      <div class="directory-list" id="dirList">
+        <!-- 많이 넣어도 스크롤! -->
+        <div class="directory-item selected" data-url="https://www.youtube.com/embed/5qap5aO4i9A">
+          <span class="directory-icon">📁</span>
+          <span class="directory-label">LoFi Girl 라이브</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/embed/cCk8Uws2pXg">
+          <span class="directory-icon">🎬</span>
+          <span class="directory-label">SBS 뉴스 라이브</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/embed/60ItHLz5WEA">
+          <span class="directory-icon">🎵</span>
+          <span class="directory-label">Alan Walker - Faded</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/embed/dyRsYk0LyA8">
+          <span class="directory-icon">🧑‍🏫</span>
+          <span class="directory-label">TED: The power of introverts</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/embed/U9BwWKXjVaI">
+          <span class="directory-icon">💡</span>
+          <span class="directory-label">흥미로운 과학 다큐</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/embed/FTQbiNvZqaY">
+          <span class="directory-icon">🎸</span>
+          <span class="directory-label">Queen - Don't Stop Me Now</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/embed/Sagg08DrO5U">
+          <span class="directory-icon">🐱</span>
+          <span class="directory-label">귀여운 고양이 영상</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/embed/3JZ_D3ELwOQ">
+          <span class="directory-icon">🎤</span>
+          <span class="directory-label">Adele - Hello</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/embed/kXYiU_JCYtU">
+          <span class="directory-icon">🎸</span>
+          <span class="directory-label">Linkin Park - Numb</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/embed/tgbNymZ7vqY">
+          <span class="directory-icon">🐤</span>
+          <span class="directory-label">Sesame Street - Rubber Duckie</span>
+        </div>
+      </div>
+    </div>
+    <div class="main">
+      <iframe class="video-frame" id="videoFrame"
+        src="https://www.youtube.com/embed/5qap5aO4i9A"
+        allowfullscreen></iframe>
+    </div>
+  </div>
+  <script>
+    // 좌측 디렉토리 클릭 → 동영상 변경
+    const items = document.querySelectorAll('.directory-item');
+    const frame = document.getElementById('videoFrame');
+    items.forEach(item => {
+      item.addEventListener('click', function() {
+        items.forEach(i => i.classList.remove('selected'));
+        this.classList.add('selected');
+        frame.src = this.dataset.url;
+      });
+    });
+  </script>
+</body>
+</html>
