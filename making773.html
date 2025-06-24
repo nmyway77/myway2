@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -71,6 +71,20 @@
       border: none;
       padding: 0;
     }
+    .edit-btn {
+      position: absolute;
+      top: 7px; right: 9px;
+      padding: 4px 12px;
+      font-size: 14px;
+      background: #2e2e54c0;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 4;
+      transition: background .15s;
+    }
+    .edit-btn:hover { background: #436cff; }
     .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
     .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
     /* 매거진 공통 스타일 (갤4 + 갤1~3 전부 적용) */
@@ -100,6 +114,8 @@
     #modal .save-btn { background: #4067d1; color: #fff; }
     #modal .cancel-btn { background: #dc3545; color: #fff; }
   </style>
+  <!-- 드래그 기능을 위해 SortableJS 추가 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 </head>
 <body>
   <!-- 상단바 -->
@@ -213,12 +229,15 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
 
+    let editing = { gallery: null, index: null };
+
     // 갤러리 렌더
     function renderGallery(data, targetId) {
       const el = document.getElementById(targetId);
-      el.innerHTML = data.map(item => `
-        <div class="list-row magazine">
+      el.innerHTML = data.map((item, idx) => `
+        <div class="list-row magazine" data-idx="${idx}">
           <div class="imgframe">
+            <button class="edit-btn" type="button" title="수정">수정</button>
             <div class="img-wrap magazine">
               <div class="img-item magazine">
                 <a href="${item.url}" target="_blank" rel="noopener">
@@ -232,6 +251,36 @@
           </div>
         </div>
       `).join('');
+
+      // 수정 버튼 이벤트 연결
+      Array.from(el.querySelectorAll('.edit-btn')).forEach((btn, idx) => {
+        btn.onclick = function(e) {
+          e.stopPropagation();
+          editing.gallery = targetId;
+          editing.index = idx;
+          const data = getData();
+          const item = data[targetId][idx];
+          document.getElementById('modal-img').value = item.img;
+          document.getElementById('modal-link').value = item.url;
+          document.getElementById('modal-dir').value = targetId;
+          document.getElementById('modal-overlay').style.display = 'flex';
+        };
+      });
+
+      // 드래그(순서 바꾸기)
+      Sortable.create(el, {
+        animation: 160,
+        handle: ".imgframe", // 이미지 프레임 전체로 드래그
+        ghostClass: "drag-ghost",
+        onEnd: function (evt) {
+          let galleryKey = targetId;
+          let galleryData = getData();
+          const moved = galleryData[galleryKey].splice(evt.oldIndex, 1)[0];
+          galleryData[galleryKey].splice(evt.newIndex, 0, moved);
+          setData(galleryData);
+          renderGallery(galleryData[galleryKey], galleryKey); // 다시 렌더(이벤트 유지)
+        }
+      });
     }
     // 전체 렌더
     function renderAll() {
@@ -243,6 +292,8 @@
 
     // [추가] 버튼
     document.getElementById('add-btn').onclick = () => {
+      editing.gallery = null;
+      editing.index = null;
       document.getElementById('modal-img').value = "";
       document.getElementById('modal-link').value = "";
       document.getElementById('modal-dir').value = "gallery1";
@@ -261,8 +312,21 @@
       if (!img) { alert("이미지 주소를 입력하세요."); return; }
       if (!link) { alert("링크 주소를 입력하세요."); return; }
       let data = getData();
-      if (!data[dir]) data[dir] = [];
-      data[dir].push({ url: link, img });
+      // 수정인지 새 추가인지 구분
+      if (editing.gallery !== null && editing.index !== null) {
+        // 분류(디렉토리)가 바뀌었는지 확인
+        if (editing.gallery === dir) {
+          data[dir][editing.index] = { url: link, img };
+        } else {
+          // 분류가 변경된 경우: 이전 분류에서 삭제 후 새 분류에 추가
+          data[editing.gallery].splice(editing.index, 1);
+          if (!data[dir]) data[dir] = [];
+          data[dir].push({ url: link, img });
+        }
+      } else {
+        if (!data[dir]) data[dir] = [];
+        data[dir].push({ url: link, img });
+      }
       setData(data);
       document.getElementById('modal-overlay').style.display = 'none';
       renderAll();
