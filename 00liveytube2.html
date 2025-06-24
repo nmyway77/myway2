@@ -17,20 +17,23 @@
       height: 100vh;
     }
     .sidebar {
-      width: 220px; min-width: 120px;
-      background: rgba(27, 35, 52, 0.96);
-      padding: 18px 6px 10px 8px;
+      width: 240px;
+      min-width: 140px;
+      background: rgba(27, 35, 52, 0.98);
+      padding: 22px 10px 14px 15px;
       box-sizing: border-box;
       display: flex; flex-direction: column;
       border-top-right-radius: 26px;
       border-bottom-right-radius: 26px;
       box-shadow: 4px 0 26px #0006;
       border-right: 1.5px solid #3e5c8888;
+      z-index: 3;
+      transition: width 0.2s;
     }
     .sidebar-title {
-      font-size: 1.03rem;
+      font-size: 1.2rem;
       font-weight: 700;
-      margin-bottom: 18px;
+      margin-bottom: 22px;
       letter-spacing: 0.5px;
       text-shadow: 0 2px 12px #0005;
       text-align:left;
@@ -39,53 +42,53 @@
     .directory-list {
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 11px;
       flex: 1;
       overflow-y: auto;
       scrollbar-width: thin;
-      scrollbar-color: #457bba44 #222c;
-      max-height: 85vh;
-      padding-right: 3px;
+      scrollbar-color: transparent transparent;  /* 투명 */
+      max-height: 84vh;
+      padding-right: 2px;
     }
-    .directory-list::-webkit-scrollbar { width: 7px; }
-    .directory-list::-webkit-scrollbar-thumb { background: #2a466d88; border-radius: 6px; }
+    .directory-list::-webkit-scrollbar { width: 7px; background: transparent;}
+    .directory-list::-webkit-scrollbar-thumb { background: transparent; }
+    .directory-list::-webkit-scrollbar-track { background: transparent; }
 
     .directory-item {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 7px 8px;
-      border-radius: 10px;
+      gap: 10px;
+      padding: 13px 10px;
+      border-radius: 12px;
       cursor: pointer;
-      font-size: 0.68rem;
-      background: rgba(37,55,90,0.80);
-      box-shadow: 0 1.5px 7px #0001;
+      font-size: 1.02rem;
+      background: rgba(37,55,90,0.82);
+      box-shadow: 0 2px 9px #0002;
       transition: background 0.16s, box-shadow 0.16s, color 0.13s;
       border: 1px solid transparent;
-      font-weight: 500;
+      font-weight: 600;
       user-select: none;
-      position: relative;
-      min-height: 26px;
+      min-height: 28px;
+      white-space: nowrap;
     }
     .directory-item.selected, .directory-item:hover {
       background: linear-gradient(90deg, #3576ed 10%, #65e0f6 95%);
       color: #222e4c;
-      border: 1px solid #63c6ff;
-      box-shadow: 0 2.5px 10px #1588c844, 0 1px 4px #63e0ff16;
+      border: 1.2px solid #63c6ff;
+      box-shadow: 0 4px 16px #1588c844, 0 1px 5px #63e0ff11;
       z-index: 2;
     }
     .directory-icon {
-      width: 16px; height: 16px;
+      width: 22px; height: 22px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.0em;
-      opacity: 0.9;
+      font-size: 1.16em;
+      opacity: 0.95;
     }
     .directory-label {
       flex: 1;
       letter-spacing: 0.01em;
-      font-size: 0.94em;
+      font-size: 1.06em;
       font-weight: 600;
-      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -96,27 +99,64 @@
       align-items: center;
       background: linear-gradient(120deg, #242a39 0%, #3a5975 90%);
       position: relative;
+      min-width: 0;
     }
     .video-frame {
       width: 78vw; max-width: 950px;
-      height: 61vh; min-height: 170px; max-height: 85vh;
+      height: 61vh; min-height: 180px; max-height: 85vh;
       border: none;
-      border-radius: 15px;
+      border-radius: 18px;
       background: #222;
       box-shadow: 0 6px 32px #1a579a2b, 0 2px 8px #263f5711;
       transition: box-shadow 0.18s;
     }
-    @media (max-width: 850px) {
-      .container {flex-direction: column;}
+    @media (max-width: 900px) {
+      .container { flex-direction: column; }
       .sidebar {
-        width: 100%;
+        width: 100vw;
         min-width: 0;
-        border-radius: 0 0 18px 18px;
+        border-radius: 0 0 20px 20px;
         border-right: none;
         box-shadow: none;
+        padding: 8px 0 7px 0;
+        position: relative;
       }
-      .main {padding: 7vw 0;}
-      .video-frame {width: 97vw; height: 35vw; min-height: 90px;}
+      .sidebar-title {
+        font-size: 1.1rem;
+        padding-left: 17px;
+        margin-bottom: 9px;
+      }
+      .directory-list {
+        flex-direction: row;
+        gap: 6px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        max-height: none;
+        height: 46px;
+        padding: 0 8px 0 8px;
+        align-items: center;
+        scrollbar-width: thin;
+        scrollbar-color: transparent transparent;
+      }
+      .directory-item {
+        font-size: 0.93rem;
+        padding: 10px 11px;
+        min-width: 120px;
+        min-height: 30px;
+        border-radius: 11px;
+        white-space: nowrap;
+        margin-bottom: 0;
+      }
+      .main {
+        padding: 0;
+      }
+      .video-frame {
+        width: 98vw;
+        height: 50vw;
+        min-height: 140px;
+        max-width: 99vw;
+        border-radius: 14px;
+      }
     }
   </style>
 </head>
@@ -125,7 +165,6 @@
     <div class="sidebar">
       <div class="sidebar-title">채널 디렉토리</div>
       <div class="directory-list" id="dirList">
-        <!-- 많이 넣어도 스크롤! -->
         <div class="directory-item selected" data-url="https://www.youtube.com/embed/5qap5aO4i9A">
           <span class="directory-icon">📁</span>
           <span class="directory-label">LoFi Girl 라이브</span>
@@ -170,11 +209,17 @@
     </div>
     <div class="main">
       <iframe class="video-frame" id="videoFrame"
-        src="https://www.youtube.com/embed/5qap5aO4i9A"
+        src="https://www.youtube.com/embed/5qap5aO4i9A?autoplay=1"
+        allow="autoplay; encrypted-media"
         allowfullscreen></iframe>
     </div>
   </div>
   <script>
+    // always add autoplay=1 to url
+    function getAutoPlayUrl(url) {
+      // 이미 쿼리문이 있으면 &autoplay=1, 없으면 ?autoplay=1
+      return url.includes('?') ? url + '&autoplay=1' : url + '?autoplay=1';
+    }
     // 좌측 디렉토리 클릭 → 동영상 변경
     const items = document.querySelectorAll('.directory-item');
     const frame = document.getElementById('videoFrame');
@@ -182,9 +227,10 @@
       item.addEventListener('click', function() {
         items.forEach(i => i.classList.remove('selected'));
         this.classList.add('selected');
-        frame.src = this.dataset.url;
+        frame.src = getAutoPlayUrl(this.dataset.url);
       });
     });
+    // 모바일에서 최초 재생시, 사파리/크롬 정책 때문에 자동재생이 안될 수도 있습니다(음소거 없음 등)
   </script>
 </body>
 </html>
