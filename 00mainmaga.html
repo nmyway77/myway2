@@ -1,0 +1,215 @@
+   <html lang="ko">
+<head>
+  <base target="_blank76">
+  <meta charset="UTF-8">
+  <title>MYWAY 인플루언서 influencer </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
+    .dashboard { max-width: 1200px; margin: 0 auto; padding: 34px 0 60px 0;}
+    .gallery-label {
+      font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
+      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
+    }
+    .gallery-row {
+      width: 100%; max-width: 1080px; margin: 0 auto;
+      text-align: center;
+    }
+    .list-row {
+      display: inline-block;
+      vertical-align: top;
+      box-sizing: border-box;
+      position: relative;
+      transition: width 0.2s, height 0.2s;
+      background: #fff;
+    }
+    .list-row:last-child { margin-right: 0; }
+    .imgframe {
+      width: 100%; height: 100%;
+      background: #fff;
+      position: relative;
+      box-sizing: border-box;
+      z-index: 0;
+      border-radius: 0;
+      box-shadow: 0 6px 6px 0 rgba(90,90,130,0.11);
+      overflow: hidden;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
+    .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
+    .img-item img {
+      display: block; width: 100%; height: 100%;
+      object-fit: contain;
+      background: #fff;
+      margin: 0;
+      border: none;
+      padding: 0;
+    }
+    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
+    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
+    /* 매거진 공통 스타일 (갤4 + 갤1~3 전부 적용) */
+    .list-row.magazine {
+      width: 150px;
+      height: 213px;
+      margin: 0 12px 36px 0;
+    }
+    .img-wrap.magazine { height: 100%; }
+    .img-item.magazine { height: 100%; }
+    @media (max-width: 1080px) {
+      .list-row.magazine { width: 28vw; height: 40vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
+    }
+    @media (max-width: 700px) {
+      .list-row.magazine { width: 44vw; height: 62vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <a class="gallery-label" href="https://myway.kr/00barcctv.html" target="_blank">CCTV</a>
+    <div class="gallery-row" id="gallery1"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery2"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery3"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery4"></div>
+    <span class="gallery-label"> </span>
+    <div class="gallery-row" id="gallery5"></div>
+    <span class="gallery-label"> </span>
+    <div class="gallery-row" id="gallery6"></div>
+    <span class="gallery-label"> </span>
+    <div class="gallery-row" id="gallery7"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery8"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery9"></div>
+    <span class="gallery-label"> </span>
+    <div class="gallery-row" id="gallery10"></div>
+  </div>
+  <script>
+    // 갤러리1~10 예시 데이터(갤5~10은 샘플 1개만 입력, 필요시 채우세요)
+    const gallery1Data = [
+{ url: "https://www.ulleung.go.kr/live/index.do?lnk_uid=222", img: "https://kr.object.ncloudstorage.com/srv-kbmaeil/data2/content/image/2021/06/08/.cache/512/2021060800000008.jpg" },
+
+
+       
+{ url: "https://www.youtube.com/watch?v=KOaYSWzKI1M&ab_channel=BusanLiveCam-GwanganBridge", img: "https://img.youtube.com/vi/KOaYSWzKI1M/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=yIAwuNCFXOk&ab_channel=GiGAeyesLiveTV", img: "https://img.youtube.com/vi/yIAwuNCFXOk/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=1e5h0TUD67I&ab_channel=GiGAeyesLiveTV", img: "https://img.youtube.com/vi/1e5h0TUD67I/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=Al-_GZNWmKQ&ab_channel=GiGAeyesLiveTV", img: "https://img.youtube.com/vi/Al-_GZNWmKQ/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=TFtNCtPCKr4&ab_channel=GiGAeyesLiveTV", img: "https://img.youtube.com/vi/TFtNCtPCKr4/sddefault.jpg" },
+
+
+       { url: "https://www.youtube.com/@%EA%B0%95%EC%9B%90%EA%B3%A0%EC%84%B1%EA%B5%B0/streams", img: "https://myway.kr/0000gsung.jpg" },
+{ url: "https://www.youtube.com/@gwangan_bridge/streams", img: "https://myway.kr/0000kb.jpg" },
+{ url: "https://www.youtube.com/@BusanHaeundaeLive/streams", img: "https://myway.kr/0000bh.jpg" },
+       { url: "https://www.youtube.com/@riverworker/streams", img: "https://myway.kr/0000rk.jpg" },
+{ url: "https://www.youtube.com/@earthcam/streams", img: "https://myway.kr/0000wc.jpg" },
+       { url: "https://www.youtube.com/@healinglivenowon7260/streams", img: "https://myway.kr/0000ng.jpg" },
+
+
+
+       
+
+
+       
+       
+{ url: "https://www.youtube.com/@funjeju/streams", img: "https://img.youtube.com/vi/VQpeFGfyARs/sddefault.jpg" },
+{ url: "https://d.kbs.co.kr/special/cctv", img: "https://d.kbs.co.kr/static/images/common/kbs_og.jpg" },
+       { url: "https://coast.mof.go.kr/coastScene/coastMediaService.do", img: "https://mn.kbs.co.kr/data/news/2020/07/30/4506351_PEV.jpg" },
+       { url: "https://www.utic.go.kr/map/map.do?menu=incident", img: "https://lh5.googleusercontent.com/proxy/-1kmiNUCVp6fOOlPK8B9bR5s39wuyZ0IKR9KSNjJI4PFCe9Md9IPcOe9KN26tMmnih3aZjnDfnBclFzNNhxZcv28_Ilkmt8pmFOsWS3s-Ui-trvtfZt1KyEB" },
+{ url: "https://www.its.go.kr/map/cctv", img: "https://play-lh.googleusercontent.com/MIz7luVIX2o9jy7rREgmxkGnMeO-QTXWIZlkqP-5yB0wdH8OUdjtr9PybHQ166ssCAY" },
+       { url: "https://topis.seoul.go.kr/map/openCctvMap.do", img: "https://play-lh.googleusercontent.com/E60oCwB5sXGKR5PWdo5xc81W_kydTDgEk1v6_EzFjaX_H-f6G7CxoUt3QTm3hLGB5g" },
+       { url: "https://www.roadplus.co.kr/main/main.do", img: "https://play-lh.googleusercontent.com/QxFWTK0kU2toYg6fXVyC6zn9z2L6aRGeYOlci5QjgXiyyP3D6uzUvoedZYn4x93ZZ5M" },
+       { url: "https://www.youtube.com/watch?v=3jKcm4TQxHY&ab_channel=GiGAeyesLiveTV", img: "https://img.youtube.com/vi/3jKcm4TQxHY/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=3HFJPDI5LHs&ab_channel=GiGAeyesLiveTV", img: "https://img.youtube.com/vi/3HFJPDI5LHs/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=zuWxsbV-mlA&ab_channel=GiGAeyesLiveTV", img: "https://img.youtube.com/vi/zuWxsbV-mlA/sddefault.jpg" },   
+   { url: "https://www.youtube.com/watch?v=_kd-vEuMGCE&ab_channel=GiGAeyesLiveTV", img: "https://img.youtube.com/vi/_kd-vEuMGCE/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=_gmTN6ssF7I&ab_channel=GiGAeyesLiveTV", img: "https://img.youtube.com/vi/_gmTN6ssF7I/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=_694GtePH-Y&ab_channel=GiGAeyesLiveTV", img: "https://img.youtube.com/vi/_694GtePH-Y/sddefault.jpg" },
+    { url: "https://www.youtube.com/watch?v=2--j0SVYmRY&ab_channel=GiGAeyesLiveTV", img: "https://img.youtube.com/vi/2--j0SVYmRY/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=GOt7UVVp-5Y&ab_channel=GiGAeyesLiveTV", img: "https://img.youtube.com/vi/GOt7UVVp-5Y/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=ZopiySgQjsc&ab_channel=GiGAeyesLiveTV", img: "https://img.youtube.com/vi/ZopiySgQjsc/sddefault.jpg" },
+    { url: "https://tv.seoul.go.kr/onair/seoul24.do", img: "https://img.youtube.com/vi/6ZuXKXb11Rg/sddefault.jpg" },
+    { url: "https://www.youtube.com/@UNvillage_live/live", img: "https://i.ytimg.com/vi/14CCosd8fac/maxresdefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=IUhW_gzRleI&ab_channel=%EC%84%9C%EC%9A%B8%ED%95%9C%EA%B0%95%EB%9D%BC%EC%9D%B4%EB%B8%8C247SeoulLiveCam", img: "https://img.youtube.com/vi/IUhW_gzRleI/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=3Uf3w-UHB4U&ab_channel=%EC%84%9C%EC%9A%B8%ED%95%9C%EA%B0%95%EB%9D%BC%EC%9D%B4%EB%B8%8C247SeoulLiveCam", img: "https://img.youtube.com/vi/3Uf3w-UHB4U/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=m0bJROup7iE&ab_channel=%EC%84%9C%EC%9A%B8%ED%95%9C%EA%B0%95%EB%9D%BC%EC%9D%B4%EB%B8%8C247SeoulLiveCam", img: "https://img.youtube.com/vi/m0bJROup7iE/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=-JhoMGoAfFc&ab_channel=%EB%8D%B0%EC%9D%BC%EB%A6%AC%EC%84%9C%EC%9A%B8%ED%95%9C%EA%B0%95%EB%9D%BC%EC%9D%B4%EB%B8%8C%EC%BA%A0", img: "https://img.youtube.com/vi/-JhoMGoAfFc/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=J_vNwxaOtTs&ab_channel=YTN%EC%84%9C%EC%9A%B8%ED%83%80%EC%9B%8C", img: "https://img.youtube.com/vi/J_vNwxaOtTs/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=jBiG-3cC6jA&ab_channel=%EA%B0%80%ED%86%A8%EB%A6%AD%EC%9D%B8%ED%84%B0%EB%84%B7%EA%B5%BF%EB%89%B4%EC%8A%A4", img: "https://img.youtube.com/vi/jBiG-3cC6jA/sddefault.jpg" },
+{ url: "https://www.outdooractive.com/en/webcams/#area=1019227&bm=osm%3Asummer&caml=3mj,lgpaxm,5td1oi,0,0&filter=r-fullyTranslatedLangus-en,sb-sortedBy-0&view=map&wt=South%20Korea&zc=5.69913,129.78441,35.16485", img: "https://play-lh.googleusercontent.com/qXBOdC6WVNPPZso8m5_Z_lCiNTG130ZwHAumXlLpF5r9yaPYICJw9tGGtPt5v9yh35E" },
+
+       
+    ];
+    const gallery2Data = [
+
+  
+      
+    ];
+    const gallery3Data = [
+
+     
+      
+    ];
+    const gallery4Data = [
+     
+    ];
+    const gallery5Data = [
+   
+    ];
+    const gallery6Data = [
+    
+    ];
+    const gallery7Data = [
+     
+    ];
+    const gallery8Data = [
+    
+    ];
+    const gallery9Data = [
+      
+    ];
+    const gallery10Data = [
+     
+    ];
+
+    // 그림자 png
+    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
+    // 모든 갤러리를 매거진 타입으로!
+    function renderGallery(data, targetId) {
+      const el = document.getElementById(targetId);
+      el.innerHTML = data.map(item => `
+        <div class="list-row magazine">
+          <div class="imgframe">
+            <div class="img-wrap magazine">
+              <div class="img-item magazine">
+                <a href="${item.url}" target="_blank" rel="noopener">
+                  <img src="${item.img}">
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="shadow-line">
+            <img src="${shadowUrl}">
+          </div>
+        </div>
+      `).join('');
+    }
+    renderGallery(gallery1Data, 'gallery1');
+    renderGallery(gallery2Data, 'gallery2');
+    renderGallery(gallery3Data, 'gallery3');
+    renderGallery(gallery4Data, 'gallery4');
+    renderGallery(gallery5Data, 'gallery5');
+    renderGallery(gallery6Data, 'gallery6');
+    renderGallery(gallery7Data, 'gallery7');
+    renderGallery(gallery8Data, 'gallery8');
+    renderGallery(gallery9Data, 'gallery9');
+    renderGallery(gallery10Data, 'gallery10');
+  </script>
+</body>
+</html>
