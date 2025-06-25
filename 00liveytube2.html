@@ -9,8 +9,15 @@
     .container {display: flex; min-height: 100vh;}
     .sidebar {width: 240px; min-width: 140px; background:rgba(27,35,52,0.98); padding:22px 10px 14px 15px; box-sizing: border-box; display: flex; flex-direction: column; border-top-right-radius:26px; border-bottom-right-radius:26px; box-shadow:4px 0 26px #0006; border-right:1.5px solid #3e5c8888; z-index:3;}
     .sidebar-title {font-size:1.2rem; font-weight:700; margin-bottom:22px; letter-spacing:0.5px; text-shadow:0 2px 12px #0005; text-align:left; padding-left:7px;}
-    .directory-list {display:flex; flex-direction:column; gap:11px; flex:1; overflow-y:auto; scrollbar-width:thin; max-height:84vh; padding-right:2px;}
-    .directory-list::-webkit-scrollbar { width: 7px; background: transparent;}
+  
+    .directory-list {display:flex; flex-direction:column; gap:11px; flex:1; overflow-y:auto;  scrollbar-width: none;      scrollbar-width:thin; max-height:84vh; padding-right:2px;}
+
+
+
+    
+    .directory-list::-webkit-scrollbar {      width: 0 !important;        background: transparent;}
+
+    
     .directory-list::-webkit-scrollbar-thumb { background: transparent; }
     .directory-list::-webkit-scrollbar-track { background: transparent; }
     .directory-item {display:flex; align-items:center; gap:10px; padding:13px 10px; border-radius:12px; cursor:pointer; font-size:1.02rem; background:rgba(37,55,90,0.82); box-shadow:0 2px 9px #0002; transition:background 0.16s, box-shadow 0.16s, color 0.13s; border:1px solid transparent; font-weight:600; user-select:none; min-height:28px; white-space:nowrap;}
