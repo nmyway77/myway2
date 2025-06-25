@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>MYWAY 인플루언서 influencer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
+    .topbar {
+      position: fixed; top: 0; left: 0; width: 100vw; z-index: 1001;
+      background: #2e2e54;
+      color: #fff;
+      display: flex; align-items: center; justify-content: flex-start;
+      box-shadow: 0 4px 18px #29317018;
+      padding: 0 14px; height: 54px;
+      min-width: 360px;
+      font-size: 16px;
+    }
+    .topbar button {
+      padding: 8px 18px;
+      margin-right: 8px;
+      background: #436cff;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .2s;
+    }
+    .topbar button#export-btn { background: #30bc8a; }
+    .topbar button#import-btn { background: #ffc94a; color: #232356; }
+    .dashboard { max-width: 1200px; margin: 0 auto; padding: 64px 0 60px 0;}
+    .gallery-label {
+      font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
+      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
+    }
+    .gallery-row {
+      width: 100%; max-width: 1080px; margin: 0 auto;
+      text-align: center;
+    }
+    .list-row {
+      display: inline-block;
+      vertical-align: top;
+      box-sizing: border-box;
+      position: relative;
+      transition: width 0.2s, height 0.2s;
+      background: #fff;
+    }
+    .list-row:last-child { margin-right: 0; }
+    .imgframe {
+      width: 100%; height: 100%;
+      background: #fff;
+      position: relative;
+      box-sizing: border-box;
+      z-index: 0;
+      border-radius: 0;
+      box-shadow: 0 6px 6px 0 rgba(90,90,130,0.11);
+      overflow: hidden;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
+    .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
+    .img-item img {
+      display: block; width: 100%; height: 100%;
+      object-fit: contain;
+      background: #fff;
+      margin: 0;
+      border: none;
+      padding: 0;
+    }
+    .edit-btn {
+      position: absolute;
+      top: 7px; right: 9px;
+      padding: 4px 12px;
+      font-size: 14px;
+      background: #2e2e54c0;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 4;
+      transition: background .15s;
+    }
+    .edit-btn:hover { background: #436cff; }
+    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
+    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
+    /* 매거진 공통 스타일 (갤4 + 갤1~3 전부 적용) */
+    .list-row.magazine {
+      width: 150px;
+      height: 213px;
+      margin: 0 12px 36px 0;
+    }
+    .img-wrap.magazine { height: 100%; }
+    .img-item.magazine { height: 100%; }
+    @media (max-width: 1080px) {
+      .list-row.magazine { width: 28vw; height: 40vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
+    }
+    @media (max-width: 700px) {
+      .list-row.magazine { width: 44vw; height: 62vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
+    }
+    /* 입력 모달 스타일 */
+    #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.57); display: none; align-items: center; justify-content: center; z-index: 2002;}
+    #modal { background: #fff; padding: 28px 22px 22px 22px; border-radius: 7px; width: 320px; box-shadow: 0 2px 16px #24248238;}
+    #modal h3 { margin-bottom: 16px; font-size: 20px; color:#313181;}
+    #modal label { display:block; margin-bottom:6px; color:#232356; font-weight:600;}
+    #modal input, #modal select { width: 100%; margin-bottom: 14px; padding: 8px; border: 1px solid #b2c1e6; border-radius: 5px; font-size: 14px;}
+    #modal .actions { text-align: right; }
+    #modal .actions button {
+      padding: 8px 14px; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px; font-size: 15px;
+    }
+    #modal .save-btn { background: #4067d1; color: #fff; }
+    #modal .cancel-btn { background: #dc3545; color: #fff; }
+  </style>
+  <!-- 드래그 기능을 위해 SortableJS 추가 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+</head>
+<body>
+  <!-- 상단바 -->
+  <nav class="topbar">
+    <button id="add-btn">추가</button>
+    <button id="export-btn">내보내기</button>
+    <button id="import-btn">가져오기</button>
+    <input type="file" id="import-file" accept="application/json" style="display:none">
+  </nav>
+  <div class="dashboard" style="margin-top:50px;">
+    <span class="gallery-label">influencers 영화</span>
+    <div class="gallery-row" id="gallery1"></div>
+    <span class="gallery-label">influencers 먹방</span>
+    <div class="gallery-row" id="gallery2"></div>
+    <span class="gallery-label">influencers 여행</span>
+    <div class="gallery-row" id="gallery3"></div>
+    <span class="gallery-label">influencers 배우</span>
+    <div class="gallery-row" id="gallery4"></div>
+    <span class="gallery-label">influencers 음악</span>
+    <div class="gallery-row" id="gallery5"></div>
+    <span class="gallery-label">influencers 영화 6</span>
+    <div class="gallery-row" id="gallery6"></div>
+    <span class="gallery-label">influencers 영화 7</span>
+    <div class="gallery-row" id="gallery7"></div>
+    <span class="gallery-label">influencers 영화 8</span>
+    <div class="gallery-row" id="gallery8"></div>
+    <span class="gallery-label">influencers 영화 9</span>
+    <div class="gallery-row" id="gallery9"></div>
+    <span class="gallery-label">influencers 영화 10</span>
+    <div class="gallery-row" id="gallery10"></div>
+  </div>
+  <!-- 입력 모달 -->
+  <div id="modal-overlay">
+    <div id="modal">
+      <h3>이미지 추가</h3>
+      <label>이미지 URL</label>
+      <input type="text" id="modal-img" placeholder="이미지 주소">
+      <label>링크 URL</label>
+      <input type="text" id="modal-link" placeholder="연결될 링크 주소">
+      <label>분류(디렉토리)</label>
+      <select id="modal-dir">
+        <option value="gallery1">influencers 영화</option>
+        <option value="gallery2">influencers 먹방</option>
+        <option value="gallery3">influencers 여행</option>
+        <option value="gallery4">influencers 배우</option>
+        <option value="gallery5">influencers 음악</option>
+        <option value="gallery6">influencers 영화 6</option>
+        <option value="gallery7">influencers 영화 7</option>
+        <option value="gallery8">influencers 영화 8</option>
+        <option value="gallery9">influencers 영화 9</option>
+        <option value="gallery10">influencers 영화 10</option>
+      </select>
+      <div class="actions">
+        <button class="cancel-btn" type="button">취소</button>
+        <button class="save-btn" type="button">저장</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // 데이터 저장용 키
+    const STORAGE_KEY = "influencer_gallery_v2";
+    // 기본 데이터(초기 렌더용)
+    const defaultData = {
+      gallery1: [
+        { url: "https://www.youtube.com/@popcorncokemovie/videos", img: "https://yt3.googleusercontent.com/4vsl0dMmf2_zJh9hNMoFP7KPnfxEKCeWSn5iYdQvuJUVUkBf9eFu3qqdHWIN1DDULygUcGDmww=s900-c-k-c0x00ffffff-no-rj" },
+        { url: "https://www.youtube.com/results?search_query=%EC%A7%80%EB%AC%B4%EB%B9%84", img: "https://yt3.googleusercontent.com/ytc/AIdro_nLr4j1MqKUus9uB2RADncMRaC__c2D6MKj4x4YbA4IwcU=s900-c-k-c0x00ffffff-no-rj" }
+      ],
+      gallery2: [
+        { url: "https://program.download/category/download/windows/", img: "https://myway.kr/ps.jpg" }
+      ],
+      gallery3: [
+        { url: "http://www.auction.co.kr/", img: "https://64.media.tumblr.com/e97d9391e0aeefcb82d1fb7bfe8748a5/tumblr_inline_njqty4XgTA1r45nlo.jpg" }
+      ],
+      gallery4: [
+        { url: "http://www.allurekorea.com/", img: "https://64.media.tumblr.com/5a097048470fe45a4b30c4e5f4e097a8/tumblr_inline_qqnwhh0G5P1r45nlo_500.jpg" }
+      ],
+      gallery5: [
+        { url: "#", img: "https://myway.kr/sample1.jpg" }
+      ],
+      gallery6: [
+        { url: "#", img: "https://myway.kr/sample2.jpg" }
+      ],
+      gallery7: [
+        { url: "#", img: "https://myway.kr/sample3.jpg" }
+      ],
+      gallery8: [
+        { url: "#", img: "https://myway.kr/sample4.jpg" }
+      ],
+      gallery9: [
+        { url: "#", img: "https://myway.kr/sample5.jpg" }
+      ],
+      gallery10: [
+        { url: "#", img: "https://myway.kr/sample6.jpg" }
+      ]
+    };
+    // 그림자 png
+    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
+
+    // 데이터 불러오기
+    function getData() {
+      let data = localStorage.getItem(STORAGE_KEY);
+      if (!data) return JSON.parse(JSON.stringify(defaultData));
+      try {
+        return JSON.parse(data);
+      } catch (e) {
+        return JSON.parse(JSON.stringify(defaultData));
+      }
+    }
+    // 데이터 저장
+    function setData(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    let editing = { gallery: null, index: null };
+
+    // 갤러리 렌더
+    function renderGallery(data, targetId) {
+      const el = document.getElementById(targetId);
+      el.innerHTML = data.map((item, idx) => `
+        <div class="list-row magazine" data-idx="${idx}">
+          <div class="imgframe">
+            <button class="edit-btn" type="button" title="수정">수정</button>
+            <div class="img-wrap magazine">
+              <div class="img-item magazine">
+                <a href="${item.url}" target="_blank" rel="noopener">
+                  <img src="${item.img}">
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="shadow-line">
+            <img src="${shadowUrl}">
+          </div>
+        </div>
+      `).join('');
+
+      // 수정 버튼 이벤트 연결
+      Array.from(el.querySelectorAll('.edit-btn')).forEach((btn, idx) => {
+        btn.onclick = function(e) {
+          e.stopPropagation();
+          editing.gallery = targetId;
+          editing.index = idx;
+          const data = getData();
+          const item = data[targetId][idx];
+          document.getElementById('modal-img').value = item.img;
+          document.getElementById('modal-link').value = item.url;
+          document.getElementById('modal-dir').value = targetId;
+          document.getElementById('modal-overlay').style.display = 'flex';
+        };
+      });
+
+      // 드래그(순서 바꾸기)
+      Sortable.create(el, {
+        animation: 160,
+        handle: ".imgframe", // 이미지 프레임 전체로 드래그
+        ghostClass: "drag-ghost",
+        onEnd: function (evt) {
+          let galleryKey = targetId;
+          let galleryData = getData();
+          const moved = galleryData[galleryKey].splice(evt.oldIndex, 1)[0];
+          galleryData[galleryKey].splice(evt.newIndex, 0, moved);
+          setData(galleryData);
+          renderGallery(galleryData[galleryKey], galleryKey); // 다시 렌더(이벤트 유지)
+        }
+      });
+    }
+    // 전체 렌더
+    function renderAll() {
+      const data = getData();
+      for (let i = 1; i <= 10; i++) {
+        renderGallery(data[`gallery${i}`] || [], `gallery${i}`);
+      }
+    }
+
+    // [추가] 버튼
+    document.getElementById('add-btn').onclick = () => {
+      editing.gallery = null;
+      editing.index = null;
+      document.getElementById('modal-img').value = "";
+      document.getElementById('modal-link').value = "";
+      document.getElementById('modal-dir').value = "gallery1";
+      document.getElementById('modal-overlay').style.display = 'flex';
+      document.getElementById('modal-img').focus();
+    };
+    // [취소] 버튼
+    document.querySelector('#modal .cancel-btn').onclick = () => {
+      document.getElementById('modal-overlay').style.display = 'none';
+    };
+    // [저장] 버튼
+    document.querySelector('#modal .save-btn').onclick = () => {
+      const img = document.getElementById('modal-img').value.trim();
+      const link = document.getElementById('modal-link').value.trim();
+      const dir = document.getElementById('modal-dir').value;
+      if (!img) { alert("이미지 주소를 입력하세요."); return; }
+      if (!link) { alert("링크 주소를 입력하세요."); return; }
+      let data = getData();
+      // 수정인지 새 추가인지 구분
+      if (editing.gallery !== null && editing.index !== null) {
+        // 분류(디렉토리)가 바뀌었는지 확인
+        if (editing.gallery === dir) {
+          data[dir][editing.index] = { url: link, img };
+        } else {
+          // 분류가 변경된 경우: 이전 분류에서 삭제 후 새 분류에 추가
+          data[editing.gallery].splice(editing.index, 1);
+          if (!data[dir]) data[dir] = [];
+          data[dir].push({ url: link, img });
+        }
+      } else {
+        if (!data[dir]) data[dir] = [];
+        data[dir].push({ url: link, img });
+      }
+      setData(data);
+      document.getElementById('modal-overlay').style.display = 'none';
+      renderAll();
+    };
+
+    // [내보내기]
+    document.getElementById('export-btn').onclick = () => {
+      const data = getData();
+      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'influencer_gallery.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+    // [가져오기]
+    document.getElementById('import-btn').onclick = () => {
+      document.getElementById('import-file').click();
+    };
+    document.getElementById('import-file').onchange = e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = evt => {
+        try {
+          const data = JSON.parse(evt.target.result);
+          setData(data);
+          renderAll();
+          alert('가져오기가 완료되었습니다.');
+        } catch {
+          alert('불러오기 실패(잘못된 파일)');
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = null;
+    };
+
+    // 페이지 로드시
+    renderAll();
+  </script>
+</body>
+</html>
