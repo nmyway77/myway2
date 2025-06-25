@@ -38,49 +38,17 @@
       width:100%; height:100%; border:0; border-radius:18px; background:#000; display:block;
       min-height:180px;
     }
-    .url-input-wrap {
-      margin-bottom: 14px;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 9px;
-    }
-    .url-input-wrap input {
-      width: 410px; max-width: 66vw;
-      padding: 10px 18px; border-radius: 9px;
-      border: 1.5px solid #a6adcb;
-      font-size: 1.11rem;
-      outline: none;
-      margin-right: 4px;
-    }
-    .url-input-wrap button {
-      padding: 9px 20px;
-      border-radius: 9px; border: none;
-      background: #2b3a87;
-      color: #fff;
-      font-weight: bold;
-      font-size: 1.05rem;
-      cursor: pointer;
-      transition: background 0.14s;
-    }
-    .url-input-wrap button:hover { background: #4159cb; }
   </style>
 </head>
 <body>
   <div class="yt-container">
     <div class="yt-inner">
-      <!-- 입력창+버튼 추가(디자인 영향없게 위에) -->
-      <div class="url-input-wrap">
-        <input type="text" id="urlInput" placeholder="유튜브/Vimeo/MP4 등 영상 주소를 입력하세요" />
-        <button onclick="showVideoFromInput()">확인</button>
-      </div>
-      <!-- 제목 (변경 가능) -->
+      <!-- ===== 제목(여기만 바꿔서 사용하세요!) ===== -->
       <div class="yt-title" id="ytTitle">부산 광안대교</div>
       <div class="yt-frame-box" id="ytFrameBox">
-        <iframe
-          id="mainFrame"
-          src="https://www.youtube.com/embed/jqOh5kpJk9E?rel=0&autoplay=1"
+        <!-- 주소만 바꿔서 사용하세요! (유튜브/Vimeo/mp4/임베드 등 모두 가능) -->
+        <iframe id="mainFrame"
+          src="https://www.youtube.com/watch?v=jqOh5kpJk9E"
           allowfullscreen allow="autoplay; encrypted-media"></iframe>
       </div>
     </div>
@@ -105,10 +73,12 @@
       return {type: 'link', code: input};
     }
 
-    function showVideoFromInput() {
-      const url = document.getElementById('urlInput').value.trim();
+    // 페이지 로딩 시 <iframe> src를 자동 변환
+    window.addEventListener('DOMContentLoaded', function(){
       const frameBox = document.getElementById('ytFrameBox');
-      const parsed = parseToEmbed(url);
+      const origElem = document.getElementById('mainFrame');
+      const src = origElem.getAttribute('src') || '';
+      const parsed = parseToEmbed(src);
 
       if (parsed.type === 'youtube' || parsed.type === 'vimeo' || parsed.type === 'link') {
         frameBox.innerHTML = `<iframe src="${parsed.code}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
@@ -119,15 +89,7 @@
       } else {
         frameBox.innerHTML = `<div style="color:#fff;text-align:center;">알 수 없는 주소입니다.</div>`;
       }
-      // 영상 제목 바꾸고 싶으면 아래를 확장하세요!
-      // document.getElementById('ytTitle').innerText = url;
-    }
-
-    // 엔터 입력시도 반응
-    document.getElementById('urlInput').addEventListener('keydown', function(e){
-      if(e.key === 'Enter') showVideoFromInput();
     });
   </script>
 </body>
 </html>
-
