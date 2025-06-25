@@ -1,0 +1,132 @@
+ !DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>아이프레임 유튜브 영상+제목</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body { margin:0; padding:0; height:100%; background:#21253a; }
+    .yt-container {
+      min-height:100vh; width:100vw;
+      display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(135deg, #232845 0%, #222b48 100%);
+      padding-bottom:190px;
+      box-sizing:border-box;
+    }
+    .yt-inner {
+      width:92vw; max-width:880px;
+      display:flex; flex-direction:column; align-items:center;
+      gap:18px;
+    }
+    .yt-title {
+      color:#fff; font-size:1.35rem; font-weight:600;
+      letter-spacing:0.02em; margin-bottom:3px; margin-top:6px;
+      text-shadow:0 2px 12px #0019;
+      text-align:center;
+      line-height:1.3;
+      word-break:keep-all;
+      background:rgba(36,42,82,0.7); border-radius:12px; padding:10px 22px 7px 22px;
+      box-shadow:0 2px 16px #2229;
+      max-width:800px;
+    }
+    .yt-frame-box {
+      width:100%; aspect-ratio:16/9;
+      background:#000; border-radius:18px; box-shadow:0 4px 40px #2232ab55;
+      overflow:hidden; display:flex; align-items:center; justify-content:center;
+    }
+    iframe, video {
+      width:100%; height:100%; border:0; border-radius:18px; background:#000; display:block;
+      min-height:180px;
+    }
+    .url-input-wrap {
+      margin-bottom: 14px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 9px;
+    }
+    .url-input-wrap input {
+      width: 410px; max-width: 66vw;
+      padding: 10px 18px; border-radius: 9px;
+      border: 1.5px solid #a6adcb;
+      font-size: 1.11rem;
+      outline: none;
+      margin-right: 4px;
+    }
+    .url-input-wrap button {
+      padding: 9px 20px;
+      border-radius: 9px; border: none;
+      background: #2b3a87;
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: background 0.14s;
+    }
+    .url-input-wrap button:hover { background: #4159cb; }
+  </style>
+</head>
+<body>
+  <div class="yt-container">
+    <div class="yt-inner">
+      <!-- 입력창+버튼 추가(디자인 영향없게 위에) -->
+      <div class="url-input-wrap">
+        <input type="text" id="urlInput" placeholder="유튜브/Vimeo/MP4 등 영상 주소를 입력하세요" />
+        <button onclick="showVideoFromInput()">확인</button>
+      </div>
+      <!-- 제목 (변경 가능) -->
+      <div class="yt-title" id="ytTitle">속초 해변</div>
+      <div class="yt-frame-box" id="ytFrameBox">
+        <iframe
+          id="mainFrame"
+          src="https://www.youtube.com/watch?v=5w__FG2fGa4&ab_channel=GiGAeyesLiveTV"
+          allowfullscreen allow="autoplay; encrypted-media"></iframe>
+      </div>
+    </div>
+  </div>
+  <script>
+    // 주소를 유튜브/Vimeo/MP4/Embed 등 자동 변환
+    function parseToEmbed(input) {
+      input = (input||"").trim();
+      // 유튜브
+      const ytMatch = input.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+      if (ytMatch) return {type: 'youtube', code: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1`};
+      if (input.match(/^https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]{11}/))
+        return {type: 'youtube', code: input.includes('autoplay=1') ? input : input + (input.includes('?') ? '&autoplay=1' : '?autoplay=1')};
+      // Vimeo
+      const vimeoMatch = input.match(/vimeo\.com\/(\d+)/);
+      if (vimeoMatch) return {type: 'vimeo', code: `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`};
+      // MP4/WebM/Ogg 파일
+      if (input.match(/\.(mp4|webm|ogg)(\?|$)/i)) return {type: 'video', code: input};
+      // 이미 임베드/iframe 코드 직접 입력시
+      if (input.startsWith('<iframe')) return {type: 'embed', code: input};
+      // 그냥 링크: iframe 시도
+      return {type: 'link', code: input};
+    }
+
+    function showVideoFromInput() {
+      const url = document.getElementById('urlInput').value.trim();
+      const frameBox = document.getElementById('ytFrameBox');
+      const parsed = parseToEmbed(url);
+
+      if (parsed.type === 'youtube' || parsed.type === 'vimeo' || parsed.type === 'link') {
+        frameBox.innerHTML = `<iframe src="${parsed.code}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+      } else if (parsed.type === 'video') {
+        frameBox.innerHTML = `<video src="${parsed.code}" controls autoplay></video>`;
+      } else if (parsed.type === 'embed') {
+        frameBox.innerHTML = parsed.code;
+      } else {
+        frameBox.innerHTML = `<div style="color:#fff;text-align:center;">알 수 없는 주소입니다.</div>`;
+      }
+      // 영상 제목 바꾸고 싶으면 아래를 확장하세요!
+      // document.getElementById('ytTitle').innerText = url;
+    }
+
+    // 엔터 입력시도 반응
+    document.getElementById('urlInput').addEventListener('keydown', function(e){
+      if(e.key === 'Enter') showVideoFromInput();
+    });
+  </script>
+</body>
+</html>
