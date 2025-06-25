@@ -1,0 +1,477 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>유튜브 채널 디렉토리 뷰어</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', 'Apple SD Gothic Neo', sans-serif;
+      background: linear-gradient(135deg, #23243a 0%, #314a6a 100%);
+      color: #fff;
+      min-height: 100vh;
+    }
+    .container {
+      display: flex;
+      min-height: 100vh;
+      height: auto;
+    }
+    .sidebar {
+      width: 240px;
+      min-width: 140px;
+      background: rgba(27, 35, 52, 0.98);
+      padding: 22px 10px 14px 15px;
+      box-sizing: border-box;
+      display: flex; flex-direction: column;
+      border-top-right-radius: 26px;
+      border-bottom-right-radius: 26px;
+      box-shadow: 4px 0 26px #0006;
+      border-right: 1.5px solid #3e5c8888;
+      z-index: 3;
+      transition: width 0.2s;
+    }
+    .sidebar-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 12px #0005;
+      text-align:left;
+      padding-left: 7px;
+    }
+    .dir-controls {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 15px;
+      align-items: center;
+    }
+    .dir-controls button {
+      padding: 7px 12px;
+      border-radius: 6px;
+      border: none;
+      background: #497ef3;
+      color: #fff;
+      font-size: 0.98em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .dir-controls button:hover { background: #3570de; }
+    .directory-list {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: transparent transparent;
+      max-height: 74vh;
+      padding-right: 2px;
+    }
+    .directory-list::-webkit-scrollbar { width: 7px; background: transparent;}
+    .directory-list::-webkit-scrollbar-thumb { background: transparent; }
+    .directory-list::-webkit-scrollbar-track { background: transparent; }
+    .directory-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1.02rem;
+      background: rgba(37,55,90,0.82);
+      box-shadow: 0 2px 9px #0002;
+      transition: background 0.16s, box-shadow 0.16s, color 0.13s;
+      border: 1px solid transparent;
+      font-weight: 600;
+      user-select: none;
+      min-height: 28px;
+      white-space: nowrap;
+      position: relative;
+    }
+    .directory-item.selected, .directory-item:hover {
+      background: linear-gradient(90deg, #3576ed 10%, #65e0f6 95%);
+      color: #222e4c;
+      border: 1.2px solid #63c6ff;
+      box-shadow: 0 4px 16px #1588c844, 0 1px 5px #63e0ff11;
+      z-index: 2;
+    }
+    .directory-label {
+      flex: 1;
+      letter-spacing: 0.01em;
+      font-size: 1.06em;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .del-btn {
+      background: #f15669;
+      border: none;
+      color: #fff;
+      border-radius: 8px;
+      font-size: 0.91em;
+      font-weight: bold;
+      padding: 2px 8px;
+      margin-left: 8px;
+      cursor: pointer;
+      opacity: 0.78;
+      transition: opacity 0.14s;
+      position: absolute; right: 6px; top: 6px; display:none;
+    }
+    .directory-item:hover .del-btn { display: inline-block; }
+    .main {
+      flex: 1 1 auto;
+      min-width: 0;
+      background: linear-gradient(120deg, #242a39 0%, #3a5975 90%);
+      position: relative;
+      overflow-y: auto;
+    }
+    .yt-container {
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      background: none;
+      padding-bottom: 190px;
+      box-sizing: border-box;
+    }
+    .yt-inner {
+      width: 92vw;
+      max-width: 980px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      margin-top: 48px;
+    }
+    .yt-frame-box {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+      border-radius: 18px;
+      box-shadow: 0 4px 40px #2232ab55;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 220px;
+    }
+    .video-frame, .yt-embed-frame, .yt-video-frame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      border-radius: 18px;
+      background: #000;
+      display: block;
+      min-height: 180px;
+    }
+    .external-link-frame {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 100%; color: #fff;
+      font-size: 1.2em; text-align: center;
+    }
+    /* 모달 */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.42);
+      z-index: 99;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal {
+      background: #252b4b;
+      color: #fff;
+      padding: 22px 19px 17px 19px;
+      border-radius: 11px;
+      box-shadow: 0 2px 38px #0005;
+      min-width: 235px;
+      width: 90vw;
+      max-width: 330px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      animation: fadeIn .21s;
+    }
+    @keyframes fadeIn {
+      from { opacity:0; transform:scale(0.95);}
+      to   { opacity:1; transform:scale(1);}
+    }
+    .modal input[type="text"] {
+      padding: 7px 10px;
+      border-radius: 6px;
+      border: 1px solid #486285;
+      font-size: 1.05em;
+      outline: none;
+      width: 100%;
+      margin-bottom: 5px;
+      background: #202747;
+      color: #fff;
+    }
+    .modal-actions {
+      display: flex; justify-content: flex-end; gap: 10px; margin-top: 2px;
+    }
+    .modal-actions button {
+      padding: 7px 16px;
+      border-radius: 5px;
+      border: none;
+      background: #497ef3;
+      color: #fff;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .modal-actions .cancel-btn { background: #a4a7b9; color: #333; }
+    .modal-actions button:hover { opacity: 0.95; }
+    @media (max-width: 900px) {
+      .container { flex-direction: column; }
+      .sidebar {
+        width: 100vw;
+        min-width: 0;
+        border-radius: 0 0 20px 20px;
+        border-right: none;
+        box-shadow: none;
+        padding: 8px 0 7px 0;
+        position: relative;
+      }
+      .sidebar-title {
+        font-size: 1.1rem;
+        padding-left: 17px;
+        margin-bottom: 9px;
+      }
+      .dir-controls input[type="text"] { width: 78px; }
+      .dir-controls input[type="text"]:last-child { width: 112px;}
+      .directory-list {
+        flex-direction: row;
+        gap: 6px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        max-height: none;
+        height: 46px;
+        padding: 0 8px 0 8px;
+        align-items: center;
+        scrollbar-width: thin;
+        scrollbar-color: transparent transparent;
+      }
+      .directory-item {
+        font-size: 0.93rem;
+        padding: 10px 11px;
+        min-width: 120px;
+        min-height: 30px;
+        border-radius: 11px;
+        white-space: nowrap;
+        margin-bottom: 0;
+      }
+      .main {
+        padding: 0;
+      }
+      .yt-container {
+        min-height: 90vh;
+        padding-bottom: 120px;
+      }
+      .yt-inner {
+        width: 99vw;
+        max-width: 99vw;
+        margin-top: 16px;
+      }
+      .yt-frame-box {
+        border-radius: 12px;
+      }
+      .video-frame, .yt-embed-frame, .yt-video-frame { border-radius: 12px; min-height: 100px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="sidebar-title">채널 디렉토리</div>
+      <div class="dir-controls">
+        <button id="add-btn">추가</button>
+        <button id="export-btn">내보내기</button>
+        <button id="import-btn">가져오기</button>
+        <input type="file" id="import-file" accept="application/json" style="display:none;">
+      </div>
+      <div class="directory-list" id="dirList">
+        <!-- JS로 렌더링 -->
+      </div>
+    </div>
+    <div class="main">
+      <div class="yt-container">
+        <div class="yt-inner">
+          <div class="yt-frame-box" id="frameBox">
+            <!-- JS로 영상 표시 -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 추가 모달 -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal">
+        <div style="font-size:1.09em; margin-bottom:6px;">디렉토리 추가</div>
+        <input type="text" id="modalLabel" placeholder="이름">
+        <input type="text" id="modalUrl" placeholder="유튜브/Embed/영상주소">
+        <div class="modal-actions">
+          <button class="cancel-btn" id="modalCancel">취소</button>
+          <button id="modalOk">추가</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const STORAGE_KEY = "yt_dirview_0625b";
+    const initialList = [
+      { label: "서울역", url: "https://www.youtube.com/embed/2--j0SVYmRY" },
+      { label: "경복궁", url: "https://www.youtube.com/embed/_kd-vEuMGCE" },
+      { label: "서울시청", url: "https://www.youtube.com/embed/UWPxEmIYc2E" },
+      { label: "광화문 대로", url: "https://www.youtube.com/embed/zuWxsbV-mlA" },
+      { label: "롯데월드", url: "https://www.youtube.com/embed/_694GtePH-Y" },
+      { label: "동대문DDP", url: "https://www.youtube.com/embed/GOt7UVVp-5Y" },
+      { label: "잠실대교", url: "https://www.youtube.com/embed/ZopiySgQjsc" },
+      { label: "한강 올림픽대로", url: "https://www.youtube.com/embed/3Uf3w-UHB4U" },
+      { label: "UN빌리지 앞", url: "https://www.youtube.com/embed/HmzyLbRtRRw" },
+      { label: "한강공원", url: "https://www.youtube.com/embed/m0bJROup7iE" }
+    ];
+    function parseToEmbed(input) {
+      input = (input||"").trim();
+      if (input.startsWith('<iframe')) return {type: 'embed', code: input};
+      const ytMatch = input.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+      if (ytMatch) return {type: 'youtube', code: `https://www.youtube.com/embed/${ytMatch[1]}`};
+      if (input.match(/\.(mp4|webm|ogg)($|\?)/i)) return {type: 'video', code: input};
+      const vimeoMatch = input.match(/vimeo\.com\/(\d+)/);
+      if (vimeoMatch) return {type: 'vimeo', code: `https://player.vimeo.com/video/${vimeoMatch[1]}`};
+      if (input.startsWith('https://www.youtube.com/embed/')) return {type: 'youtube', code: input};
+      return {type: 'link', code: input};
+    }
+    function showVideo(target, parsed) {
+      if (parsed.type === 'embed') {
+        target.innerHTML = parsed.code;
+      } else if (parsed.type === 'youtube' || parsed.type === 'vimeo') {
+        target.innerHTML = `<iframe class="video-frame" src="${parsed.code}?autoplay=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+      } else if (parsed.type === 'video') {
+        target.innerHTML = `<video class="video-frame" src="${parsed.code}" controls autoplay></video>`;
+      } else {
+        target.innerHTML = `<div class="external-link-frame"><a href="${parsed.code}" target="_blank" style="color:#fff;text-decoration:underline;">외부 링크로 이동</a></div>`;
+      }
+    }
+    let dirList = [];
+    function saveList() { localStorage.setItem(STORAGE_KEY, JSON.stringify(dirList)); }
+    function loadList() {
+      const d = localStorage.getItem(STORAGE_KEY);
+      if (d) return JSON.parse(d);
+      return initialList.slice();
+    }
+    function renderList(selectedIdx = 0) {
+      const listElem = document.getElementById("dirList");
+      listElem.innerHTML = "";
+      dirList.forEach((item, i) => {
+        const div = document.createElement("div");
+        div.className = "directory-item";
+        div.dataset.idx = i;
+        if (i === selectedIdx) div.classList.add("selected");
+        div.innerHTML = `<span class="directory-label">${item.label||"영상"}</span>
+          <button class="del-btn" title="삭제">×</button>`;
+        div.onclick = e => {
+          if(e.target.classList.contains('del-btn')) return;
+          document.querySelectorAll('.directory-item').forEach(x=>x.classList.remove('selected'));
+          div.classList.add('selected');
+          showVideoBox(item.url);
+        };
+        div.querySelector('.del-btn').onclick = function(ev){
+          ev.stopPropagation();
+          if(confirm("삭제하시겠습니까?")) {
+            dirList.splice(i,1);
+            saveList();
+            renderList(Math.max(0, i-1));
+            showVideoBox(dirList[Math.max(0,i-1)]?.url || "");
+          }
+        };
+        listElem.appendChild(div);
+      });
+      if (dirList.length > 0 && dirList[selectedIdx]) {
+        showVideoBox(dirList[selectedIdx].url);
+      } else {
+        showVideoBox("");
+      }
+    }
+    function showVideoBox(url) {
+      const frameBox = document.getElementById("frameBox");
+      const parsed = parseToEmbed(url||"");
+      showVideo(frameBox, parsed);
+    }
+    function init() {
+      dirList = loadList();
+      renderList(0);
+    }
+    // --- 모달 추가/닫기 ---
+    const modal = document.getElementById('modalOverlay');
+    const modalLabel = document.getElementById('modalLabel');
+    const modalUrl = document.getElementById('modalUrl');
+    const modalCancel = document.getElementById('modalCancel');
+    const modalOk = document.getElementById('modalOk');
+    document.getElementById('add-btn').onclick = () => {
+      modal.style.display = 'flex';
+      modalLabel.value = '';
+      modalUrl.value = '';
+      setTimeout(()=>modalLabel.focus(), 100);
+    };
+    function closeModal() { modal.style.display = 'none'; }
+    modalCancel.onclick = closeModal;
+    modalOk.onclick = () => {
+      const label = modalLabel.value.trim();
+      const url = modalUrl.value.trim();
+      if (!label || !url) {
+        alert('이름과 주소를 모두 입력하세요.');
+        return;
+      }
+      dirList.push({ label, url });
+      saveList();
+      closeModal();
+      renderList(dirList.length-1);
+    };
+    // 엔터로 확인, ESC로 닫기
+    modal.addEventListener('keydown', e=>{
+      if (e.key === 'Enter') { modalOk.click(); }
+      if (e.key === 'Escape') { closeModal(); }
+    });
+    // 바깥 클릭시 닫기
+    modal.onclick = (e) => { if(e.target === modal) closeModal(); };
+    // --- 내보내기/가져오기 ---
+    document.getElementById('export-btn').onclick = () => {
+      const blob = new Blob([JSON.stringify(dirList)], {type:"application/json"});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = "directory_list.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    };
+    document.getElementById('import-btn').onclick = () => {
+      document.getElementById('import-file').click();
+    };
+    document.getElementById('import-file').onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = evt => {
+        try {
+          const data = JSON.parse(evt.target.result);
+          if (Array.isArray(data)) {
+            dirList = data;
+            saveList();
+            renderList(0);
+          } else {
+            alert('파일이 올바르지 않습니다.');
+          }
+        } catch {
+          alert('불러오기 실패');
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = "";
+    };
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
