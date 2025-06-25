@@ -1,0 +1,366 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <base target="_blank">
+  <meta charset="UTF-8">
+  <title>그림 그리드 - 미디어 저장 영구 유지+드래그+폴더</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {margin:0; padding:0; background:#fff; font-family:'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif;}
+    .topbar {
+      position: fixed; top: 0; left: 0; width: 100vw; z-index: 1100;
+      background: rgba(54,56,110,0.98);
+      color: #fff;
+      display: flex; align-items: center; justify-content: flex-start;
+      box-shadow: 0 4px 18px #29317020;
+      padding: 0 16px;
+      height: 58px;
+      min-width: 360px;
+      backdrop-filter: blur(6px);
+    }
+    .topbar-left {
+      display: flex; align-items: center; gap: 9px;
+    }
+    .topbar button {
+      padding: 7px 14px;
+      background: #313181;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 15px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .topbar button#save-media-btn { background: #4067d1; }
+    .topbar button#export-btn { background: #21b781; }
+    .topbar button#import-btn { background: #ffe178; color: #222; }
+    .topbar select {
+      margin-left: 8px; padding: 7px 11px;
+      font-size: 15px; border-radius: 5px; border: 1px solid #ccd;
+      background: #fff; color: #232373; min-width: 110px;
+      font-family: inherit;
+    }
+    .topbar-folders {
+      display: flex; align-items: center; gap: 0;
+      margin-left: 20px; overflow-x: auto; white-space: nowrap;
+      flex: none; justify-content: flex-start;
+    }
+    .folder-tab {
+      display: inline-block; padding: 8px 18px; margin: 0 2px;
+      background: #ecedfa;
+      color: #3C3C8C; font-weight: 600; font-size: 15px;
+      border-radius: 50px;
+      border: 1.5px solid #dadfff;
+      cursor: pointer; user-select: none;
+      transition: background 0.18s, color 0.18s, border 0.18s;
+    }
+    .folder-tab.active, .folder-tab:hover {
+      background: #4e52ba;
+      color: #fff;
+      border: 1.5px solid #2e307c;
+    }
+    #controls { display:none; }
+    #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 200;}
+    #modal { background: #fff; padding: 20px; border-radius: 6px; width: 320px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);}
+    #modal h3 { margin-bottom: 10px; font-size: 18px; }
+    #modal input { width: 100%; margin-bottom: 10px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;}
+    .auto-thumb-btn { background: #eee; color: #333; border: 1px solid #aaa; border-radius: 4px; padding: 6px 10px; font-size: 13px; margin-bottom: 10px; margin-right: 5px; cursor: pointer; display: inline-block;}
+    .actions { text-align: right; }
+    .actions button { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px; font-size: 14px;}
+    .save-btn { background: #28a745; color: #fff; }
+    .cancel-btn { background: #dc3545; color: #fff; }
+    #media-grid { column-count: 5; column-gap: 10px; margin: 1506px auto 20px; width: 100%; max-width: 1400px;}
+    .grid-item { break-inside: avoid; margin-bottom: 10px; position: relative; background: #fff; box-shadow: 0 1px 6px #d0d0ff44;}
+    .grid-item img { width: 100%; height: auto; display: block; border-radius: 8px; cursor: pointer;}
+    .edit-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); border: none; color: #fff; padding: 4px 6px; border-radius: 4px; cursor: pointer; font-size: 12px;}
+    #html-editor, #html-preview { border-color: white;}
+    #html-edit-btn { display: block; margin: 0; padding: 8px 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; position: relative; top: 20px;}
+    #html-editor { display: none; width: 100%; height: 300px; font-family: monospace; font-size: 14px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; background: #f0f8ff; border-color: #007bff;}
+    #html-preview { width: 100%; padding: 10px; border: 1px solid #ddd; background: white;}
+    .editor-space { height: 80px;}
+    @media (max-width:1100px) {#media-grid{column-count:4;}}
+    @media (max-width:800px)  {#media-grid{column-count:3;}}
+    @media (max-width:600px)  {#media-grid{column-count:2;}}
+    @media (max-width:420px)  {#media-grid{column-count:1;}}
+    @media (max-width:650px)  {
+      .topbar { flex-wrap: wrap; height: auto; padding: 8px 2vw; }
+      .topbar-left { flex-wrap: wrap; gap: 6px; }
+      .topbar-folders { margin-left: 7px; }
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+</head>
+<body>
+  <!-- 상단바 -->
+  <nav class="topbar">
+    <div class="topbar-left">
+      <button id="save-media-btn">미디어 저장</button>
+      <button id="export-btn">내보내기</button>
+      <button id="import-btn">가져오기</button>
+      <input type="file" id="import-file" accept="application/json" style="display:none">
+      <!-- 페이지 이동용 셀렉트 -->
+      <select id="page-switch">
+        <option value="">Type</option>
+        <option value="making001.html">BAR ▼</option>
+        <option value="making7777777.html">PIC1 ▼</option>
+        <option value="00makingmain.html">CIRCLE▼</option>
+        <option value="texttype6.html">TEXT ▼</option>
+        <option value="D.html">D</option>
+        <option value="E.html">E</option>
+        <option value="F.html">F</option>
+      </select>
+    </div>
+    <div class="topbar-folders" id="folder-tabs"></div>
+  </nav>
+
+  <h2 style="text-align: center; margin-top: 74px;">디스플레이형 즐겨찾기 만들기</h2>
+  <p style="text-align: center;"><a href="https://myway.kr/howtouse.html">이용방법안내&nbsp;</a> &nbsp; &nbsp; <a href="https://html5-editor.net/">웹에디터&nbsp;</a></p>
+
+  <div id="media-grid"></div>
+  <div class="editor-space"></div>
+  <button id="html-edit-btn">편집</button>
+  <textarea id="html-editor" placeholder="HTML 코드 편집"></textarea>
+  <div id="html-preview"></div>
+  <div id="modal-overlay">
+    <div id="modal">
+      <h3>미디어 저장</h3>
+      <input type="text" id="img-url" placeholder="사진 URL 입력" autofocus>
+      <button type="button" class="auto-thumb-btn" id="auto-thumb-btn">썸네일 자동찾기</button>
+      <input type="text" id="link-url" placeholder="연결 링크 입력">
+      <input type="text" id="media-folder" placeholder="폴더/디렉토리 (예: 여행)">
+      <div class="actions">
+        <button class="cancel-btn">취소</button>
+        <button class="save-btn">저장</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // 페이지 이동 셀렉트
+    document.getElementById('page-switch').addEventListener('change', function() {
+      if (this.value) location.href = this.value;
+    });
+
+    // 기존 변수 선언/코드 동일
+    const STORAGE_KEY = 'mediaList_uniquegrid90';
+    const HTML_KEY = 'mediaHtmlContent_uniquegrid90';
+    function extractYouTubeId(url) {
+      const regex = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([a-zA-Z0-9_-]{11})/;
+      const match = url.match(regex);
+      return match ? match[1] : null;
+    }
+
+    const saveBtn = document.getElementById('save-media-btn'),
+      exportBtn = document.getElementById('export-btn'),
+      importBtn = document.getElementById('import-btn'),
+      importFile = document.getElementById('import-file'),
+      overlay = document.getElementById('modal-overlay'),
+      cancelBtn = document.querySelector('.cancel-btn'),
+      confirmBtn = document.querySelector('.save-btn'),
+      imgInput = document.getElementById('img-url'),
+      linkInput = document.getElementById('link-url'),
+      folderInput = document.getElementById('media-folder'),
+      folderTabs = document.getElementById('folder-tabs'),
+      gridContainer = document.getElementById('media-grid'),
+      autoThumbBtn = document.getElementById('auto-thumb-btn');
+    let editingIndex = null;
+
+    saveBtn.onclick = () => openModal();
+    function openModal(item, idx) {
+      if (item) {
+        imgInput.value = item.imgUrl;
+        linkInput.value = item.linkUrl;
+        folderInput.value = item.folder || '';
+        confirmBtn.textContent = '수정';
+        editingIndex = idx;
+      } else {
+        imgInput.value = '';
+        linkInput.value = '';
+        folderInput.value = '';
+        confirmBtn.textContent = '저장';
+        editingIndex = null;
+      }
+      overlay.style.display = 'flex';
+      imgInput.focus();
+    }
+    cancelBtn.onclick = () => { overlay.style.display = 'none'; editingIndex = null; };
+
+    autoThumbBtn.onclick = function() {
+      const linkVal = linkInput.value.trim() || imgInput.value.trim();
+      const youtubeId = extractYouTubeId(linkVal);
+      if (youtubeId) {
+        imgInput.value = `https://img.youtube.com/vi/${youtubeId}/0.jpg`;
+        alert('유튜브 썸네일이 자동으로 입력되었습니다!');
+      } else {
+        alert('유튜브 영상 링크를 입력해 주세요.');
+      }
+    };
+
+    confirmBtn.onclick = () => {
+      const iurl = imgInput.value.trim();
+      if (!iurl) { alert('사진 URL을 입력해주세요.'); imgInput.focus(); return; }
+      let lurl = linkInput.value.trim();
+      if (!lurl) { alert('연결 링크를 입력해주세요.'); linkInput.focus(); return; }
+      if (!/^https?:\/\//i.test(lurl)) lurl = 'https://' + lurl;
+      const folder = folderInput.value.trim();
+      let list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      const data = { imgUrl: iurl, linkUrl: lurl, folder };
+      if (editingIndex !== null) list[editingIndex] = data;
+      else list.push(data);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      overlay.style.display = 'none';
+      renderGrid();
+      editingIndex = null;
+    };
+
+    exportBtn.onclick = () => {
+      const mediaList = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      const gridContent = gridContainer.innerHTML;
+      const htmlContent = htmlPreview.innerHTML;
+      const data = {
+        mediaList: mediaList,
+        gridContent: gridContent,
+        htmlContent: htmlContent
+      };
+      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'mediaList_and_html.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+
+    importBtn.onclick = () => importFile.click();
+    importFile.onchange = e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = evt => {
+        try {
+          const data = JSON.parse(evt.target.result);
+          if (Array.isArray(data.mediaList)) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data.mediaList));
+            renderGrid();
+          }
+          if (data.htmlContent) {
+            htmlPreview.innerHTML = data.htmlContent;
+            htmlEditor.value = data.htmlContent;
+            localStorage.setItem(HTML_KEY, data.htmlContent);
+          }
+          alert('데이터가 복원되었습니다.');
+        } catch {
+          alert('파일 읽기 중 오류가 발생했습니다.');
+        }
+      };
+      reader.readAsText(file);
+      importFile.value = null;
+    };
+
+    function updateFolderSelect(folders) {
+      // 폴더 셀렉트 제거(더 이상 사용하지 않음)
+      // 폴더 탭 동기화
+      folderTabs.innerHTML = '';
+      const makeTab = (name, isAll) => {
+        const tab = document.createElement('span');
+        tab.className = 'folder-tab' + (isAll ? ' active' : '');
+        tab.textContent = isAll ? '전체 폴더' : name;
+        tab.onclick = () => {
+          renderGrid();
+        };
+        if(isAll) tab.id = 'all-folder-tab';
+        folderTabs.appendChild(tab);
+      };
+      // 항상 전체 탭만 표시
+      makeTab('', true);
+      folders.forEach(f=>{
+        const tab = document.createElement('span');
+        tab.className = 'folder-tab';
+        tab.textContent = f;
+        tab.onclick = () => {
+          renderGrid();
+        };
+        folderTabs.appendChild(tab);
+      });
+    }
+
+    function renderGrid() {
+      let list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      gridContainer.innerHTML = '';
+      list.slice(0, 500).forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'grid-item';
+        card.style.position = 'relative';
+        const img = document.createElement('img');
+        img.src = item.imgUrl;
+        img.alt = '';
+        img.onerror = function() {
+          this.src = 'https://via.placeholder.com/300x180/ccc/fff?text=Image+Not+Found';
+        }
+        img.addEventListener('click', () => window.open(item.linkUrl, '_blank'));
+        const editBtn = document.createElement('button');
+        editBtn.className = 'edit-btn';
+        editBtn.textContent = '수정';
+        editBtn.addEventListener('click', e => { e.stopPropagation(); openModal(item, idx); });
+        card.append(img, editBtn);
+        gridContainer.append(card);
+      });
+
+      // 드래그 정렬(폴더별도 적용)
+      Sortable.create(gridContainer, {
+        animation: 150,
+        onEnd: function (evt) {
+          let allList = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+          const [moved] = allList.splice(evt.oldIndex, 1);
+          allList.splice(evt.newIndex, 0, moved);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(allList));
+          renderGrid();
+        }
+      });
+
+      // 폴더 옵션 업데이트(탭까지)
+      const folders = Array.from(new Set((JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')).map(x=>x.folder).filter(Boolean)));
+      updateFolderSelect(folders);
+
+      // 탭 강조 동기화
+      Array.from(document.querySelectorAll('.folder-tab')).forEach(tab=>{
+        tab.classList.remove('active');
+        if(tab.textContent === "전체 폴더") {
+          tab.classList.add('active');
+        }
+      });
+    }
+
+    // HTML 편집기 로직
+    const htmlEditBtn = document.getElementById('html-edit-btn');
+    const htmlEditor = document.getElementById('html-editor');
+    const htmlPreview = document.getElementById('html-preview');
+    let htmlEditing = false;
+
+    htmlEditBtn.onclick = () => {
+      htmlEditing = !htmlEditing;
+      if (htmlEditing) {
+        htmlEditor.style.display = 'block';
+        htmlPreview.style.display = 'none';
+        htmlEditBtn.textContent = '마침';
+        htmlEditor.value = htmlPreview.innerHTML;
+      } else {
+        htmlPreview.innerHTML = htmlEditor.value;
+        htmlEditor.style.display = 'none';
+        htmlPreview.style.display = 'block';
+        htmlEditBtn.textContent = '편집';
+        localStorage.setItem(HTML_KEY, htmlPreview.innerHTML);
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderGrid();
+      const savedHtml = localStorage.getItem(HTML_KEY);
+      if (savedHtml) {
+        htmlPreview.innerHTML = savedHtml;
+        htmlEditor.value = savedHtml;
+      }
+    });
+  </script>
+</body>
+</html>
