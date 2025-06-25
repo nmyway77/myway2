@@ -1,0 +1,99 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>아이프레임 유튜브 영상+제목</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body { margin:0; padding:0; height:100%; background:#21253a; }
+    .yt-container {
+      min-height:100vh; width:100vw;
+      display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(135deg, #232845 0%, #222b48 100%);
+      padding-bottom:190px;
+      box-sizing:border-box;
+    }
+    .yt-inner {
+      width:92vw; max-width:880px;
+      display:flex; flex-direction:column; align-items:center;
+      gap:18px;
+    }
+    .yt-title {
+      color:#fff; font-size:1.35rem; font-weight:600;
+      letter-spacing:0.02em; margin-bottom:3px; margin-top:6px;
+      text-shadow:0 2px 12px #0019;
+      text-align:center;
+      line-height:1.3;
+      word-break:keep-all;
+      background:rgba(36,42,82,0.7); border-radius:12px; padding:10px 22px 7px 22px;
+      box-shadow:0 2px 16px #2229;
+      max-width:800px;
+    }
+    .yt-frame-box {
+      width:100%; aspect-ratio:16/9;
+      background:#000; border-radius:18px; box-shadow:0 4px 40px #2232ab55;
+      overflow:hidden; display:flex; align-items:center; justify-content:center;
+    }
+    iframe, video {
+      width:100%; height:100%; border:0; border-radius:18px; background:#000; display:block;
+      min-height:180px;
+    }
+  </style>
+</head>
+<body>
+  <div class="yt-container">
+    <div class="yt-inner">
+      <!-- ===== 제목(여기만 바꿔서 사용하세요!) ===== -->
+      <div class="yt-title" id="ytTitle">부산 광안대교</div>
+      <div class="yt-frame-box" id="ytFrameBox">
+        <!-- 주소만 바꿔서 사용하세요! (유튜브/Vimeo/mp4/임베드 등 모두 가능) -->
+
+        <iframe id="mainFrame"
+          src="https://www.youtube.com/watch?v=5w__FG2fGa4&ab_channel=GiGAeyesLiveTV"
+          allowfullscreen allow="autoplay; encrypted-media"></iframe>
+      </div>
+
+
+
+    </div>
+  </div>
+  <script>
+    // 주소를 유튜브/Vimeo/MP4/Embed 등 자동 변환
+    function parseToEmbed(input) {
+      input = (input||"").trim();
+      // 유튜브
+      const ytMatch = input.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+      if (ytMatch) return {type: 'youtube', code: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1`};
+      if (input.match(/^https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]{11}/))
+        return {type: 'youtube', code: input.includes('autoplay=1') ? input : input + (input.includes('?') ? '&autoplay=1' : '?autoplay=1')};
+      // Vimeo
+      const vimeoMatch = input.match(/vimeo\.com\/(\d+)/);
+      if (vimeoMatch) return {type: 'vimeo', code: `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`};
+      // MP4/WebM/Ogg 파일
+      if (input.match(/\.(mp4|webm|ogg)(\?|$)/i)) return {type: 'video', code: input};
+      // 이미 임베드/iframe 코드 직접 입력시
+      if (input.startsWith('<iframe')) return {type: 'embed', code: input};
+      // 그냥 링크: iframe 시도
+      return {type: 'link', code: input};
+    }
+
+    // 페이지 로딩 시 <iframe> src를 자동 변환
+    window.addEventListener('DOMContentLoaded', function(){
+      const frameBox = document.getElementById('ytFrameBox');
+      const origElem = document.getElementById('mainFrame');
+      const src = origElem.getAttribute('src') || '';
+      const parsed = parseToEmbed(src);
+
+      if (parsed.type === 'youtube' || parsed.type === 'vimeo' || parsed.type === 'link') {
+        frameBox.innerHTML = `<iframe src="${parsed.code}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+      } else if (parsed.type === 'video') {
+        frameBox.innerHTML = `<video src="${parsed.code}" controls autoplay></video>`;
+      } else if (parsed.type === 'embed') {
+        frameBox.innerHTML = parsed.code;
+      } else {
+        frameBox.innerHTML = `<div style="color:#fff;text-align:center;">알 수 없는 주소입니다.</div>`;
+      }
+    });
+  </script>
+</body>
+</html>
