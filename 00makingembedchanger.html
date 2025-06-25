@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>동영상 주소 → Embed 코드 변환기</title>
+  <style>
+    body { background:#f5f7fa; font-family:'Segoe UI','맑은 고딕',sans-serif; margin:0; min-height:100vh;}
+    .main { max-width:480px; margin:40px auto 0 auto; background:#fff; border-radius:12px; box-shadow:0 2px 16px #00308915; padding:24px 22px 28px 22px;}
+    h2 { font-size:1.27rem; margin:0 0 16px 0; color:#204080; }
+    .input-area { margin-bottom:15px; }
+    input[type="text"] { width:100%; font-size:1.06em; padding:8px 10px; border:1.5px solid #91a2d6; border-radius:6px; box-sizing:border-box; }
+    button { padding:8px 24px; border-radius:7px; border:none; background:#2563eb; color:#fff; font-size:1.04em; cursor:pointer; margin-top:11px; }
+    button:hover { background:#1c49ac; }
+    .result { margin-top:19px; }
+    textarea { width:100%; min-height:55px; font-size:1em; padding:8px; border:1.5px solid #91a2d6; border-radius:6px; background:#f8faff; color:#2a3456; }
+    .preview { margin-top:20px; text-align:center; }
+    .preview iframe, .preview video { border-radius:12px; box-shadow:0 2px 16px #2a349033; background:#000; max-width:100%; }
+  </style>
+</head>
+<body>
+  <div class="main">
+    <h2>동영상 주소 → Embed 코드 변환기</h2>
+    <div class="input-area">
+      <input type="text" id="inputUrl" placeholder="유튜브/Vimeo/mp4/임베드 주소를 넣으세요">
+      <button id="convertBtn">Embed 코드 만들기</button>
+    </div>
+    <div class="result">
+      <label for="embedCode" style="font-size:1em;color:#1b2344;">Embed 코드:</label>
+      <textarea id="embedCode" readonly></textarea>
+    </div>
+    <div class="preview" id="previewArea"></div>
+  </div>
+  <script>
+    function urlToEmbedCode(url) {
+      url = (url||"").trim();
+
+      // 유튜브(모든 형태)
+      let yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+      if(yt) {
+        return `<iframe width="560" height="315" src="https://www.youtube.com/embed/${yt[1]}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+      }
+      // Vimeo
+      let vimeo = url.match(/vimeo\.com\/(\d+)/);
+      if(vimeo) {
+        return `<iframe src="https://player.vimeo.com/video/${vimeo[1]}" width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+      }
+      // mp4 등 video 파일
+      if(url.match(/\.(mp4|webm|ogg)($|\?)/i)) {
+        return `<video src="${url}" controls style="width:100%;max-width:640px;background:#000;" ></video>`;
+      }
+      // 이미 embed/iframe 코드면 그대로 반환
+      if(url.startsWith('<iframe') || url.startsWith('<video')) {
+        return url;
+      }
+      // 유튜브 embed 직접 입력
+      if(url.startsWith('https://www.youtube.com/embed/')) {
+        return `<iframe width="560" height="315" src="${url}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+      }
+      // 기타(그냥 링크)
+      return `<a href="${url}" target="_blank">${url}</a>`;
+    }
+
+    document.getElementById('convertBtn').onclick = function() {
+      const url = document.getElementById('inputUrl').value.trim();
+      const code = urlToEmbedCode(url);
+      document.getElementById('embedCode').value = code;
+      document.getElementById('previewArea').innerHTML = code;
+    };
+
+    // 엔터로 변환
+    document.getElementById('inputUrl').addEventListener('keydown', function(e){
+      if(e.key==='Enter') document.getElementById('convertBtn').click();
+    });
+  </script>
+</body>
+</html>
