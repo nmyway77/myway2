@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -12,124 +12,72 @@
   <meta name="description" content="멀티검색, FREE LIVE TV, 잡지모음, LIVE CCTV,썸네일 추출기, Korea travel information, MYWAY.KR" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="naver-site-verification" content="4e88b51e170829dfb01ce587eaf5575804dd5a2" />
+
   <style>
-    body { font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif; background: #fff; margin: 0; padding: 0;}
-
-    .searchbar-wrap {
-      display: flex; justify-content: center; align-items: center;
-      margin-top: 18px; margin-bottom: 15px;
+    body {
+      font-family: 'Segoe UI','맑은 고딕',Arial,sans-serif;
+      background: linear-gradient(135deg,#373e90 0%,#be3ad8 100%);
+      margin:0;padding:0;min-height:100vh;
     }
-    .searchbar-form {
-      display: flex; align-items: center;
-      border-radius: 40px;
-      padding: 2.2px;
-      background: linear-gradient(90deg, #ea98aa 0%, #be6b90 100%);
-     
-      min-width: 310px; max-width: 705px; width: 100%; height: 56px;
-     
-      box-shadow: 0 2px 14px #d1b8c61b;
-      overflow: hidden;
-    }
-    .searchbar-inner {
-      display: flex; align-items: center;
-      background: #fff;
-      border-radius: 36px;
-      width: 100%; height: 100%;
-      overflow: hidden;
-    }
-    .searchbar-select {
-      background: #fff; border: none; padding: 0 13px; font-size: 1.01rem;
-      color: #b06685; font-weight: bold; outline: none; cursor: pointer; min-width: 95px;
-    }
-    .searchbar-input {
-      flex: 1; border: none; padding: 0 13px; font-size: 1.02rem;
-      background: #fff; color: #be6b90; outline: none; height: 100%;
-    }
-    .searchbar-input::placeholder {
-      color: #b98aa7; opacity: 1; font-weight: 500;
-    }
-    .searchbar-btn {
-      background: linear-gradient(135deg, #ea98aa 0%, #be6b90 100%);
-      color: #fff; border: none;
-      padding: 0 24px; min-width: 86px; height: 100%;
-      font-size: 1.08rem; font-weight: bold; cursor: pointer;
-      border-radius: 0 34px 34px 0; letter-spacing: 0.1px;
-      transition: background 0.15s;
-      box-shadow: 0 1px 7px #b0668540;
-      display: flex; align-items: center; justify-content: center;
-      text-shadow: 0 1px 7px #7b375922;
-    }
-    .searchbar-btn:hover { filter: brightness(0.95) saturate(1.13);}
-    /* ----- /검색바 ----- */
-
-
-    /* ★ 네비바 항상 고정 + 가로 스크롤 항상 표시 */
-    .screen-links {
-      text-align: center; margin-top: 3px; margin-bottom: 30px;
-      display: flex;
-      justify-content: center;   /* PC: 중앙정렬 */
-      align-items: center;
-      overflow-x: auto;
-      overflow-y: hidden;
-      white-space: nowrap;
-      position: sticky;
-      top: 76px; /* 검색바 높이에 맞춰 조정 */
-      z-index: 101;
-      background: #fff;
-      padding-left: 8px;
-      padding-right: 8px;
-      min-height: 44px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: thin;
-    }
-    .screen-links a {
-      display: inline-block; margin: 0 3px; font-size: 0.92rem;
-
-     
-      color: #be6b90; font-weight:      bold;     text-decoration: none;
-
-     
-      cursor: pointer; transition: color 0.14s, background 0.14s;
-      padding: 3px 12px 4px 12px; border-radius: 14px;
-      letter-spacing: 0.02em; line-height: 1.58; white-space: nowrap;
-      border: 1.1px solid transparent;
-    }
-    .screen-links a:hover, .screen-links a.active {
-      color: #fff; background: #be6b90; border: 1.1px solid #be6b90;
-      text-decoration: none;
-    }
-    #main-frame {
-      position: fixed; left: 0; top: 135px; width: 100vw;
-      height: calc(100vh - 120px); border: none; margin: 0;
-      background: #f5f7fa; z-index: 10; transition: none;
-      border-radius: 0; display: block;
-    }
-    @media (max-width: 700px) {
-      .searchbar-form { min-width: 0; width: 98%; height: 52px; padding: 1.8px;}
-      .searchbar-select, .searchbar-input, .searchbar-btn { font-size: 1.03rem;}
-      .searchbar-input { padding: 0 8px; }
-      .searchbar-inner { border-radius: 22px;}
-      .screen-links {
-        text-align: left;
-        margin-top: 12px !important; margin-bottom: 16px;
-        top: 66px !important;  /* 모바일에선 더 위로 */
-        height: 38px !important; min-height: 38px !important;
-        justify-content: flex-start !important; /* ★★모바일: 왼쪽정렬★★ */
-      }
-      .screen-links a {
-        margin: 0 2px; font-size: 1.05rem; padding: 0 10px 0 10px;
-        border-radius: 11px; line-height: 38px !important; height: 38px !important;
-      }
-      #main-frame {
-        top: 120px; height: calc(100vh - 120px);
-      }
+    .searchbar-wrap {display:flex;justify-content:center;align-items:center;margin-top:30px;margin-bottom:18px;}
+    .searchbar-form {display:flex;align-items:center;border-radius:48px;padding:3.2px 4px;
+      background:linear-gradient(90deg,#71aaff 0%,#a965e2 100%);
+      min-width:310px;max-width:680px;width:100%;height:56px;
+      box-shadow:0 6px 32px #55277e2c;overflow:hidden;}
+    .searchbar-inner {display:flex;align-items:center;background:#fff;border-radius:44px;
+      width:100%;height:100%;overflow:hidden;box-shadow:0 1.5px 18px #5330ab19;}
+    .searchbar-select {background:#fff;border:none;padding:0 13px;font-size:1.08rem;
+      color:#523cbd;font-weight:bold;outline:none;cursor:pointer;min-width:97px;}
+    .searchbar-input {flex:1;border:none;padding:0 13px;font-size:1.10rem;background:#fff;
+      color:#5133a0;outline:none;height:100%;}
+    .searchbar-input::placeholder {color:#b8aee8;opacity:1;}
+    .searchbar-btn {background:linear-gradient(135deg,#7460fe 0%,#bc3adb 100%);
+      color:#fff;border:none;padding:0 24px;min-width:88px;height:100%;
+      font-size:1.1rem;font-weight:bold;cursor:pointer;
+      border-radius:0 42px 42px 0;transition:background 0.15s;
+      box-shadow:0 2px 12px #644ab658;
+      display:flex;align-items:center;justify-content:center;
+      letter-spacing:0.1px;text-shadow:0 1px 7px #8e5edc28;}
+    .searchbar-btn:hover {filter:brightness(0.98) saturate(1.18);}
+    .screen-links {text-align:center;margin-top:3px;margin-bottom:32px;
+      display:flex;justify-content:center;align-items:center;
+      overflow-x:auto;overflow-y:hidden;white-space:nowrap;
+      position:sticky;top:82px;z-index:101;
+      background:rgba(255,255,255,0.92);padding:8px 10px 7px 10px;
+      min-height:48px;-webkit-overflow-scrolling:touch;scrollbar-width:thin;
+      border-radius: 26px 26px 24px 24px;box-shadow: 0 4px 22px #1a14284a;
+      backdrop-filter: blur(3.5px);}
+    .screen-links a {display:inline-flex;align-items:center;gap:7px;
+      margin:0 5px;font-size:1.03rem;font-weight:bold;
+      color:#5a38be;text-decoration:none;cursor:pointer;
+      padding:7px 16px 7px 15px;border-radius:18px;letter-spacing:0.02em;
+      line-height:1.57;white-space:nowrap;
+      border:1.2px solid transparent;transition:all 0.15s;
+      box-shadow:0 1.5px 11px #644ab616;
+      background:rgba(255,255,255,0.67);font-family: inherit;}
+    .screen-links a:hover, .screen-links a.active {color:#fff;
+      background:linear-gradient(95deg,#7362ff 30%,#bc3adb 90%);
+      border:1.2px solid #7362ff;box-shadow:0 3px 16px #a06bff2a;}
+    #main-frame {position:fixed;left:0;top:148px;width:100vw;
+      height:calc(100vh - 133px);border:none;margin:0;
+      background:#f5f7fa;z-index:10;transition:none;border-radius:0;display:block;}
+    @media (max-width:700px) {
+      .searchbar-form{min-width:0;width:98%;height:50px;padding:2px;}
+      .searchbar-select,.searchbar-input,.searchbar-btn{font-size:1.03rem;}
+      .searchbar-input{padding:0 7px;}
+      .searchbar-inner{border-radius:18px;}
+      .screen-links{text-align:left;margin-top:12px!important;margin-bottom:16px;top:70px!important;
+        min-height:38px!important;justify-content:flex-start!important;
+        background:rgba(255,255,255,0.93);}
+      .screen-links a{margin:0 2px;font-size:0.99rem;padding:0 10px 0 10px;
+        border-radius:11px;line-height:36px!important;height:36px!important;}
+      #main-frame{top:114px;height:calc(100vh - 108px);}
     }
   </style>
 </head>
 <body>
-  <!-- 검색엔진바 -->
   <div class="searchbar-wrap">
-    <form class="searchbar-form" id="searchFormParent" target="_blank" autocomplete="off">
+    <form class="searchbar-form" id="searchFormParent" autocomplete="off">
       <div class="searchbar-inner">
         <select class="searchbar-select" id="engineParent">
           <option value="naver">네이버 ▼</option>
@@ -179,49 +127,31 @@
     </form>
   </div>
   <div class="screen-links" id="parent-links">
-   <a href="#" onclick="showScreenParent(event, '00aimain3.html')">AI</a>
-   <a href="#" onclick="showScreenParent(event, '00makingcircletext.html')">MINE</a>
+    <a href="#" onclick="showScreenParent(event, '00aimain3.html')">AI</a>
+    <a href="#" onclick="showScreenParent(event, '00makingcircletext.html')">MINE</a>
     <a href="#" onclick="showScreenParent(event, '00newsmain2.html')">NEWS</a>
     <a href="#" onclick="showScreenParent(event, '00tvmain2.html')">TV</a>
-  
     <a href="#" onclick="showScreenParent(event, '00mainbbs.html')">BBS</a>
-    
     <a href="#" onclick="showScreenParent(event, '00maincctv.html')">CCTV</a>
- <a href="#" onclick="showScreenParent(event, '00main00000.html')">H</a>
-   
-  <a href="#" onclick="showScreenParent(event, '00maincoin.html')">COIN</a>
-<a href="#" onclick="showScreenParent(event, '00mainmovie.html')">영화</a>
-<a href="#" onclick="showScreenParent(event, '00mainmaga.html')">잡지</a>
-
- <a href="#" onclick="showScreenParent(event, '00maincomics.html')">만화</a>
-  <a href="#" onclick="showScreenParent(event, 'mainpage43.html')">I</a>
-   
-<a href="#" onclick="showScreenParent(event, '00mainshopping.html')">쇼핑</a>
-
-   
-  
-  
+    <a href="#" onclick="showScreenParent(event, '00main00000.html')">H</a>
+    <a href="#" onclick="showScreenParent(event, '00maincoin.html')">COIN</a>
+    <a href="#" onclick="showScreenParent(event, '00mainmovie.html')">영화</a>
+    <a href="#" onclick="showScreenParent(event, '00mainmaga.html')">잡지</a>
+    <a href="#" onclick="showScreenParent(event, '00maincomics.html')">만화</a>
+    <a href="#" onclick="showScreenParent(event, 'mainpage43.html')">I</a>
+    <a href="#" onclick="showScreenParent(event, '00mainshopping.html')">쇼핑</a>
     <a href="#" onclick="showScreenParent(event, 'mainpage43.html')">K</a>
     <a href="#" onclick="showScreenParent(event, 'mainpage2.html')">L</a>
-   
-
-   
-<a href="#" onclick="showScreenParent(event, '00mainuseful.html')">U</a>
-   
-   
+    <a href="#" onclick="showScreenParent(event, '00mainuseful.html')">U</a>
   </div>
-
-
   <iframe id="main-frame" src="00main00000.html" allowfullscreen></iframe>
-
-
   <script>
     // 검색엔진 배열 (부모용)
     var snarkEnginesParent = [
       { key: "naver",  home: "https://www.naver.com/", search: "https://search.naver.com/search.naver?query=" },
-      { key: "google", home: "https://www.google.co.uk/webhp?hl=ko&gl=uk", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=" },
+      { key: "google", home: "https://www.google.com/", search: "https://www.google.com/search?q=" },
       { key: "youtube", home: "https://www.youtube.com/", search: "https://www.youtube.com/results?search_query=" },
-      { key: "daum", home: "https://www.daum.net/", search: "https://search.daum.net/search?w=tot&t__nil_searchbox=suggest&sug=&q=" },
+      { key: "daum", home: "https://www.daum.net/", search: "https://search.daum.net/search?q=" },
       { key: "duckduckgo", home: "https://duckduckgo.com", search: "https://duckduckgo.com/?q=" },
       { key: "msn", home: "https://www.msn.com/ko-kr/news", search: "https://www.bing.com/search?q=" },
       { key: "yahoo", home: "https://www.yahoo.com", search: "https://search.yahoo.com/search?p=" },
@@ -249,7 +179,6 @@
       { key: "naver_software", home: "https://software.naver.com", search: "https://software.naver.com/search.nhn?query=" },
       { key: "kyobo", home: "https://search.kyobobook.co.kr", search: "https://search.kyobobook.co.kr/web/search?vPstrKeyWord=" },
       { key: "aladin", home: "https://search.kyobobook.co.kr", search: "https://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=All&SearchWord=" },
-      { key: "yahoo_2", home: "https://www.yahoo.com", search: "https://search.yahoo.com/search;_ylt=Ar5458YY5y_GWWeBR2VSqUubvZx4?p=" },
       { key: "twitter", home: "https://twitter.com", search: "https://twitter.com/search?q=" },
       { key: "instagram", home: "https://www.instagram.com", search: "https://www.instagram.com/explore/tags/" },
       { key: "kakao_story", home: "https://story.kakao.com", search: "https://story.kakao.com/hashtag/" },
