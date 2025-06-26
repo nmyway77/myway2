@@ -216,6 +216,38 @@
           <option value="msn">MSN </option>
           <option value="yahoo">Yahoo </option>
           <option value="yandex">Yandex </option>
+          <option value="naver_shopping">네이버 쇼핑 </option>
+          <option value="joonggonara">중고나라 </option>
+          <option value="naver_cafe">네이버카페 중고 </option>
+          <option value="daangn">당근마켓 </option>
+          <option value="bunjang">번개장터</option>
+          <option value="danawa">다나와 </option>
+          <option value="coupang">쿠팡 </option>
+          <option value="aliexpress">알리 (한글/영어) </option>
+          <option value="amazon">아마존 (한글/영어) </option>
+          <option value="ebay">이베이 (한글/영어) </option>
+          <option value="romanize">한글이름 → 영어 </option>
+          <option value="postcode">우편번호 검색 </option>
+          <option value="phone_114">114 전화번호 검색 </option>
+          <option value="hanja_naver">네이버 한자검색 </option>
+          <option value="afreecatv">AfreecaTV </option>
+          <option value="tvcast">TVCAST </option>
+          <option value="kakaotv">KakaoTV </option>
+          <option value="vimeo">Vimeo </option>
+          <option value="ms_edgestore">MS EDGE 스토어 </option>
+          <option value="chrome_webstore">크롬 웹스토어 </option>
+          <option value="naver_software">네이버 자료실 </option>
+          <option value="kyobo">교보문고 </option>
+          <option value="aladin">알라딘 </option>
+          <option value="twitter">Twitter </option>
+          <option value="instagram">Instagram </option>
+          <option value="kakao_story">kakao.com </option>
+          <option value="tumblr">Tumblr </option>
+          <option value="tiktok">TikTok </option>
+          <option value="pinterest">Pinterest </option>
+          <option value="naver_music">네이버 음악 </option>
+          <option value="melon">멜론 </option>
+          <option value="bugs">벅스 </option>
         </select>
         <input class="searchbar-input" id="queryParent" type="text" placeholder="검색어를 입력하세요" autocomplete="off" />
         <button class="searchbar-btn" type="submit">검색</button>
@@ -245,14 +277,46 @@
   <script>
     // 검색엔진 배열 (부모용)
     var snarkEnginesParent = [
-      { key: "naver",  home: "https://www.naver.com/", search: "https://search.naver.com/search.naver?query=" },
+    { key: "naver",  home: "https://www.naver.com/", search: "https://search.naver.com/search.naver?query=" },
       { key: "google", home: "https://www.google.com/", search: "https://www.google.com/search?q=" },
       { key: "youtube", home: "https://www.youtube.com/", search: "https://www.youtube.com/results?search_query=" },
       { key: "daum", home: "https://www.daum.net/", search: "https://search.daum.net/search?q=" },
       { key: "duckduckgo", home: "https://duckduckgo.com", search: "https://duckduckgo.com/?q=" },
       { key: "msn", home: "https://www.msn.com/ko-kr/news", search: "https://www.bing.com/search?q=" },
       { key: "yahoo", home: "https://www.yahoo.com", search: "https://search.yahoo.com/search?p=" },
-      { key: "yandex", home: "https://yandex.ru", search: "https://yandex.ru/search/?lr=10635&text=" }
+      { key: "yandex", home: "https://yandex.ru", search: "https://yandex.ru/search/?lr=10635&text=" },
+      { key: "naver_shopping", home: "https://shopping.naver.com/", search: "https://shopping.naver.com/search/all_search.nhn?where=all&frm=NVSCTAB&query=" },
+      { key: "joonggonara", home: "https://cafe.naver.com/joonggonara", search: "https://web.joongna.com/search/" },
+      { key: "naver_cafe", home: "https://cafe.naver.com", search: "https://cafe.naver.com/ca-fe/home/search/c-articles?q=" },
+      { key: "daangn", home: "https://www.daangn.com", search: "https://www.daangn.com/search/" },
+      { key: "bunjang", home: "https://m.bunjang.co.kr", search: "https://m.bunjang.co.kr/search/products?q=" },
+      { key: "danawa", home: "https://www.danawa.com/", search: "https://search.danawa.com/dsearch.php?k1=" },
+      { key: "coupang", home: "https://www.coupang.com", search: "https://www.coupang.com/np/search?q=" },
+      { key: "aliexpress", home: "https://ko.aliexpress.com/", search: "https://ko.aliexpress.com/w/wholesale-" },
+      { key: "amazon", home: "https://www.amazon.com/", search: "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=" },
+      { key: "ebay", home: "https://www.ebay.com/", search: "https://www.ebay.com/sch/i.html?_from=R40&_trksid=p2050601.m570.l1313&_nkw=" },
+      { key: "romanize", home: "https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38", search: "https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38&idx=&act=&searchKeyword=" },
+      { key: "postcode", home: "https://search.naver.com/search.naver?sm=tab_hty.top&where=nexearch&ie=utf8&query=%EC%9A%B0%EC%B2%B4%EA%B5%AD+%EC%9A%B0%ED%8E%B8%EB%B2%88%ED%98%B8&where=nexearch", search: "https://www.juso.go.kr/support/AddressMainSearch.do?searchKeyword=" },
+      { key: "phone_114", home: "https://www.114.co.kr", search: "https://www.114.co.kr/search/result/all?query=" },
+      { key: "hanja_naver", home: "http://hanja.naver.com", search: "http://hanja.naver.com/search?query=" },
+      { key: "afreecatv", home: "https://www.afreecatv.com/", search: "https://www.afreecatv.com/total_search.html?szKeyword=" },
+      { key: "tvcast", home: "https://tvcast.naver.com/", search: "https://tv.naver.com/search?query=" },
+      { key: "kakaotv", home: "https://tv.kakao.com/", search: "https://tv.kakao.com/search?q=" },
+      { key: "vimeo", home: "https://www.vimeo.com", search: "https://vimeo.com/search?q=" },
+      { key: "ms_edgestore", home: "https://microsoftedge.microsoft.com", search: "https://microsoftedge.microsoft.com/addons/search/" },
+      { key: "chrome_webstore", home: "https://chrome.google.com/webstore/category/extensions?hl=ko", search: "https://chrome.google.com/webstore/search/" },
+      { key: "naver_software", home: "https://software.naver.com", search: "https://software.naver.com/search.nhn?query=" },
+      { key: "kyobo", home: "https://search.kyobobook.co.kr", search: "https://search.kyobobook.co.kr/web/search?vPstrKeyWord=" },
+      { key: "aladin", home: "https://search.kyobobook.co.kr", search: "https://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=All&SearchWord=" },
+      { key: "twitter", home: "https://twitter.com", search: "https://twitter.com/search?q=" },
+      { key: "instagram", home: "https://www.instagram.com", search: "https://www.instagram.com/explore/tags/" },
+      { key: "kakao_story", home: "https://story.kakao.com", search: "https://story.kakao.com/hashtag/" },
+      { key: "tumblr", home: "https://www.tumblr.com", search: "https://www.tumblr.com/search/" },
+      { key: "tiktok", home: "https://www.tiktok.com", search: "https://www.tiktok.com/search?q=" },
+      { key: "pinterest", home: "https://pinterest.com", search: "https://pinterest.com/search/?q=" },
+      { key: "naver_music", home: "https://music.naver.com", search: "https://music.naver.com/search/search.nhn?query=" },
+      { key: "melon", home: "https://www.melon.com", search: "https://www.melon.com/search/total/index.htm?q=" },
+      { key: "bugs", home: "https://bugs.co.kr", search: "https://music.bugs.co.kr/search/integrated?q=" }
     ];
     document.getElementById('searchFormParent').onsubmit = function(e) {
       e.preventDefault();
