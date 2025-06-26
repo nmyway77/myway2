@@ -2,232 +2,184 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>심플 네비+풀사이트 뷰어+콤보박스</title>
+  <title>AI 엔진 바로가기 - MYWAY</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
-      margin:0; padding:0;
-      width:100vw; height:100vh;
-      background:#fff;
-      font-family:'Montserrat','맑은 고딕',sans-serif;
-      overflow:hidden;
+      min-height: 100vh; margin: 0; padding: 0;
+      background: #fff; font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      width: 100%;
     }
-    .nav-bar-wrap {
-      width:100vw; max-width:100vw;
-      display:flex; align-items:center;
-      position:relative; z-index:2;
-      height:48px;
-      background: #fff;
-      border-radius: 0;
+    body { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .main-title { 
      
-      margin-top:0px;
+      margin-top: 50px;
      
-      margin-bottom:0;
-      overflow:visible;
-      /* border:1px solid #e7e7e7; */
-      border:none;
-      box-shadow: 0 2px 16px 0 #be6b9022;
+      font-size: 1.3rem; font-weight: 700; color: #333862;
+      text-shadow: 0 2px 12px #ffffff99; margin-bottom: 8px;
+      text-align: center; user-select: none;
     }
-    .combo-wrap {
-      display:flex; align-items:center;
-      margin-left: 8px;
-      margin-right: 3px;
+
+   
+    .main-subtitle { font-size: 0.8rem; color: #6a739c;      margin-bottom: 5px;       text-align: center; user-select: none; }
+
+
+   
+    .container { width: 100%; max-width: 560px; display: flex; flex-direction: column; align-items: center;
+      margin-top: 40px; margin-bottom: 60px;    min-height: 180vh;     padding-left: 6px; padding-right: 6px;}
+    .logo-row {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 32px;
+      width: 100%;
+      flex-wrap: nowrap;
+      transition: max-width 0.1s;
     }
-    .section-select {
-      border-radius:7px;
-      font-size:1.03rem;
-      padding:4px 18px 4px 10px;
-      border:1.7px solid #ea98aa;
-      background:#fff0f7;
-      color:#be6b90;
-      font-weight:500;
-      margin-right:7px;
-      transition: border 0.16s, background 0.18s;
+    .ai-logo-wrap {
+      width: 74px; height: 74px; border-radius: 50%; background: #fff;
+      box-shadow: 0 3px 24px 0 #b1c7e866; border: 3px solid #e5e8f6;
+      display: flex; justify-content: center; align-items: center;
+      transition: box-shadow 0.15s, border-color 0.15s;
+      cursor: pointer; overflow: hidden; margin: 0;
+      flex: 0 0 auto;
     }
-    .section-select:focus {
-      border:1.7px solid #be6b90;
-      background:#fbe0ee;
+    .ai-logo-wrap:hover { box-shadow: 0 8px 32px 0 #7e94ff99; border-color: #94a2ff; background: #f7faff;}
+    .ai-logo-img { width: 54px; height: 54px; object-fit: contain; background: transparent;
+      border-radius: 50%; transition: transform 0.12s;}
+    .ai-logo-wrap:hover .ai-logo-img { transform: scale(1.08) rotate(-3deg);}
+    .group-title {
+      width: 100%; max-width: 500px;
+      font-size: 1.07rem; font-weight: 600;
+      margin: 34px 0 10px 0;
+      letter-spacing: -0.5px;
+      color: #244;
+      text-align: left;
+      padding-left: 8px;
+      user-select: none;
     }
-    .nav-arrow {
-      width:30px; height:38px;
-      border:none; 
-      background:linear-gradient(135deg, #ea98aa55 0%, #be6b9090 100%);
-      color:#be6b90; font-size:1.35rem; border-radius:5px;
-      cursor:pointer; margin:0 2px;
-      display:flex; align-items:center; justify-content:center;
-      position:relative; z-index:3;
-      transition:background 0.12s, color 0.15s;
+    @media (max-width: 1100px) {
+      .container { max-width: 98vw; }
+      .logo-row { gap: 14px;}
+      .ai-logo-wrap { width: 60px; height: 60px;}
+      .ai-logo-img { width: 40px; height: 40px;}
     }
-    .nav-arrow:hover { background:linear-gradient(135deg, #be6b90bb 0%, #ea98aa 100%); color:#fff;}
-    .zoom-btns {
-      display: flex; gap:2px; margin-left:0px;
-      flex-shrink:0;
-    }
-    .zoom-btn {
-      width:24px; height:24px; border-radius:5px; border:1.4px solid #ea98aa;
-      background:linear-gradient(90deg, #fbe0ee 70%, #fff0f7 100%);
-      color:#be6b90; font-size:1.05rem; cursor:pointer;
-      display:flex; align-items:center; justify-content:center;
-      margin-right:6px; font-weight:400;
-      transition:background 0.14s, color 0.13s, border 0.15s;
-      box-shadow:none;
-    }
-    .zoom-btn:active { background:#f5d0e5; border-color:#be6b90; }
-    .nav-scroll-outer {
-      overflow:hidden; flex:1; display:flex; align-items:center; height:100%;
-      position:relative; margin:0 2px;
-    }
-    .nav-scroll {
-      display:flex; gap:4px; align-items:center; height:100%;
-      overflow-x:auto; scrollbar-width:none; scroll-behavior:smooth;
-    }
-    .nav-scroll::-webkit-scrollbar { display:none; }
-    .nav-link {
-      color:#be6b90;
-      background:none;
-      border:none;
-      font-size:0.96rem;
-      font-weight:400;
-      padding:3px 10px;
-      margin:0 0;
-      border-radius:13px;
-      cursor:pointer;
-      transition:background 0.14s, color 0.15s;
-      white-space:nowrap;
-      letter-spacing:0.01em;
-    }
-    .nav-link.active, .nav-link:hover {
-      background:linear-gradient(90deg, #ea98aa 0%, #be6b90 100%);
-      color:#fff;
+    @media (max-width: 900px) {
+      .container { max-width: 99vw;}
+      .main-title { font-size: 1.35rem; margin-top: 64px;}
+      .main-subtitle { font-size: 1.07rem; }
+      .logo-row { gap: 10px; }
+      .ai-logo-wrap { width: 52px; height: 52px;}
+      .ai-logo-img { width: 34px; height: 34px;}
     }
     @media (max-width: 700px) {
-      .nav-bar-wrap { height:38px;}
-      .nav-link { font-size:0.85rem; padding:2px 8px;}
-      .zoom-btn { width:20px; height:20px; font-size:0.97rem;}
-      .nav-arrow { width:25px; height:30px; font-size:1.15rem; }
-      .section-select { font-size:0.92rem; padding:3px 9px; }
+      .ai-logo-wrap { width: 78px !important; height: 78px !important; }
+      .ai-logo-img  { width: 60px !important; height: 60px !important; }
+      .logo-row     { gap: 7vw !important; }
     }
-    .iframe-container {
-      position:absolute; top:56px; left:0;
-      width:100vw; height:calc(100vh - 56px);
-      background:none; z-index:1; border:none; margin:0; padding:0;
-    }
-    iframe {
-      width:100vw; height:100vh; min-height:100%;
-      border:none; outline:none; margin:0; padding:0; display:block; background:#fff;
-    }
-    @media (max-width:700px) {
-      .iframe-container { top:43px; height:calc(100vh - 43px);}
+    @media (max-width: 480px) {
+      .main-title { font-size: 1rem; }
+      .main-subtitle { font-size: 0.95rem; }
+      .container { margin-top: 6px; margin-bottom: 9px;}
     }
   </style>
 </head>
 <body>
-  <div class="nav-bar-wrap">
-    <!-- 콤보박스: + 버튼 왼쪽! -->
-    <div class="combo-wrap">
-      <select class="section-select" id="section-select">
-        <option value="">섹션 이동...</option>
-         <option value="newsitesbar2.html">뉴스</option>
-        <option value="bbssitesbar2.html">BBS</option>
-        <option value="livesitesbar2.html">LIVE TV</option>
-        <option value="radiositesbar2.html">RADIO</option>
-        <option value="shop.html">쇼핑</option>
-        <option value="magazine.html">잡지</option>
-      </select>
-    </div>
-    <div class="zoom-btns">
-      <button class="zoom-btn" id="zoom-in" title="풀화면으로 전환">+</button>
-    </div>
-    <button class="nav-arrow" id="nav-left" style="display:none;">&#8592;</button>
-    <div class="nav-scroll-outer">
-      <div class="nav-scroll" id="nav-scroll">
-
-       
-   <button class="nav-link active" data-url="000000mmm.html">H</button>
-           <button class="nav-link " data-url="000000mmm.html">월별  일출 일몰 시간</button>
-       <button class="nav-link " data-url="https://astro.kasi.re.kr/life/pageView/9">오늘의 일출 일몰 시간</button>
-    
-        <button class="nav-link " data-url="https://www.khoa.go.kr/kcom/cnt/selectContentsPage.do?cntId=31201000">바다 갈라짐</button>
-       <button class="nav-link " data-url="https://www.khoa.go.kr/swtc/main.do">물때</button>
-       <button class="nav-link " data-url="https://www.khoa.go.kr/hightide/">실시간 전국물때</button>
-         <button class="nav-link " data-url="https://www.badatime.com/">물때표</button>
- 
-
-
-       
-       
-      </div>
-    </div>
-    <button class="nav-arrow" id="nav-right">&#8594;</button>
-  </div>
-  <div class="iframe-container">
-    <iframe id="main-iframe" src="00mainsun.html" allowfullscreen></iframe>
-  </div>
+  <div class="main-title"></div>
+  <div class="main-subtitle">MYWAY.KR</div>
+  <div class="container" id="aiLogoContainer"></div>
   <script>
-    // 콤보박스: 섹션 페이지 이동
-    document.getElementById('section-select').onchange = function() {
-      if (this.value) location.href = this.value;
-    };
+    // 1번 그룹 (예: AI/생성형)
+    const group1 = [
 
-    // + 버튼 : 풀페이지 전환
-    document.getElementById('zoom-in').onclick = function() {
-      if (window.top === window.self) return;
-      window.open(location.href, '_blank');
-    };
-    // 네비 클릭시 iframe src 변경 & active 클래스 처리
-    document.querySelectorAll('.nav-link').forEach(btn=>{
-      btn.addEventListener('click', function(){
-        document.querySelectorAll('.nav-link').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('main-iframe').src = btn.dataset.url;
-      });
-    });
-    // 네비바 가로 스크롤, 화살표 제어
-    const navScroll = document.getElementById('nav-scroll');
-    const leftArrow = document.getElementById('nav-left');
-    const rightArrow = document.getElementById('nav-right');
-    function updateNavArrows() {
-      leftArrow.style.display = navScroll.scrollLeft > 10 ? 'inline-flex' : 'none';
-      rightArrow.style.display = (navScroll.scrollLeft + navScroll.offsetWidth < navScroll.scrollWidth - 5) ? 'inline-flex' : 'none';
+     { url: "newsitesbar2.html", img: "00000mn.avif", alt: "news" },
+      { url: "livesitesbar2.html", img: "00000mt.png", alt: "tv" },
+ { url: "bbssitesbar2.html", img: "00000mb.svg", alt: "bbs" },
+{ url: "00barcctv.html", img: "00000mc.jpg", alt: "cctv" },
+{ url: "00barmagazine.html", img: "00000mm.avif", alt: "magazine"  },
+{ url: "radiositesbar2.html", img: "00000mr.jpg", alt: "radio"  },
+
+
+    ];
+    // 2번 그룹 (예: 검색/포털)
+    const group2 = [
+
+    
+    
+    ];
+
+    // 그대로 그룹별 출력 (기존 디자인/로직 1도 안 건드림)
+    function getLayout() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      let iconsPerRow = 7, gap = 24, size = 74, imgSize = 54;
+      if (w <= 1100) { iconsPerRow = 6; gap = 14; size = 60; imgSize = 40;}
+      if (w <= 900)  { iconsPerRow = 5; gap = 10; size = 52; imgSize = 34;}
+      if (w <= 700) {
+        if (h > w) { iconsPerRow = 4; gap = w * 0.08; size = 78; imgSize = 60;}
+        else       { iconsPerRow = 5; gap = w * 0.08; size = 78; imgSize = 60;}
+      }
+      if (w <= 500)  { iconsPerRow = 3; gap = w * 0.10; size = 68; imgSize = 48;}
+      return { iconsPerRow, gap, size, imgSize };
     }
-    rightArrow.onclick = ()=>{ navScroll.scrollBy({left:100, behavior:'smooth'});}
-    leftArrow.onclick = ()=>{ navScroll.scrollBy({left:-100, behavior:'smooth'});}
-    navScroll.addEventListener('scroll', updateNavArrows);
-    window.addEventListener('resize', updateNavArrows);
-    setTimeout(updateNavArrows, 300);
 
+    function renderGroup(arr) {
+      const { iconsPerRow, gap, size, imgSize } = getLayout();
+      let idx = 0;
+      const rows = [];
+      while (idx < arr.length) {
+        const count = Math.min(iconsPerRow, arr.length - idx);
+        const row = document.createElement('div');
+        row.className = "logo-row";
+        row.style.maxWidth = (size * count + gap * (count - 1)) + "px";
+        row.style.gap = gap + "px";
+        for (let i = 0; i < count; i++, idx++) {
+          const l = arr[idx];
+          const a = document.createElement('a');
+          a.className = "ai-logo-wrap";
+          a.href = l.url;
+          a.target = "_blank";
+          a.style.width = a.style.height = size + "px";
+          const img = document.createElement('img');
+          img.className = "ai-logo-img";
+          img.src = l.img;
+          img.alt = l.alt;
+          img.style.width = img.style.height = imgSize + "px";
+          a.appendChild(img);
+          row.appendChild(a);
+        }
+        rows.push(row);
+      }
+      return rows;
+    }
 
+    function renderAll() {
+      const container = document.getElementById('aiLogoContainer');
+      container.innerHTML = "";
 
+      // 1단 제목
+      const g1Title = document.createElement("div");
+      g1Title.className = "group-title";
+      g1Title.textContent = "";
+      container.appendChild(g1Title);
+      renderGroup(group1).forEach(row => container.appendChild(row));
 
+      // 2단 제목
+      const g2Title = document.createElement("div");
+      g2Title.className = "group-title";
+      g2Title.textContent = "";
+      container.appendChild(g2Title);
+      renderGroup(group2).forEach(row => container.appendChild(row));
+    }
 
-
-  (function(){
-    const el = document.getElementById('nav-scroll');
-    let isDown = false, startX, scrollLeft;
-    el.addEventListener('mousedown', function(e){
-      isDown = true;
-      el.classList.add('dragging');
-      startX = e.pageX - el.offsetLeft;
-      scrollLeft = el.scrollLeft;
-      e.preventDefault();
-    });
-    el.addEventListener('mouseleave', ()=>{ isDown=false; el.classList.remove('dragging'); });
-    el.addEventListener('mouseup', ()=>{ isDown=false; el.classList.remove('dragging'); });
-    el.addEventListener('mousemove', function(e){
-      if(!isDown) return;
-      const x = e.pageX - el.offsetLeft;
-      const walk = (x - startX) * 1.1; // drag speed
-      el.scrollLeft = scrollLeft - walk;
-    });
-  })();
-
-
-
-
-
-
-
-   
+    renderAll();
+    window.addEventListener('resize', renderAll);
   </script>
+
+
+  <iframe id="main-frame" src="temp2.html" width="100vw" height="100vh" style="border:none;"></iframe>
+
+
+ 
 </body>
 </html>
