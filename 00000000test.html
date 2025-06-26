@@ -58,17 +58,17 @@
       songListContainer.innerHTML = ''; // 기존 목록 비우기
 
       // 필터링된 노래 목록을 화면에 표시
-      filteredSongs.forEach(song => {
-        const songItem = document.createElement('div');
-        songItem.classList.add('song-item');
-        songItem.textContent = song.title;
-        songItem.onclick = function() {
-          playSong(song.url);
-        };
-        songListContainer.appendChild(songItem);
-      });
-
-      if (filteredSongs.length === 0) {
+      if (filteredSongs.length > 0) {
+        filteredSongs.forEach(song => {
+          const songItem = document.createElement('div');
+          songItem.classList.add('song-item');
+          songItem.textContent = song.title;
+          songItem.onclick = function() {
+            playSong(song.url);
+          };
+          songListContainer.appendChild(songItem);
+        });
+      } else {
         songListContainer.innerHTML = '<p>검색 결과가 없습니다.</p>';
       }
     }
