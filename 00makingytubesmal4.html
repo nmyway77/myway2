@@ -1,0 +1,365 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>아이프레임 유튜브 영상+디렉토리</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body { margin:0; padding:0; height:100%; background:#21253a; }
+    body { min-height:100vh; min-width:100vw;}
+    .yt-container {
+      min-height:100vh; width:100vw;
+      display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(135deg, #232845 0%, #222b48 100%);
+      padding-bottom:190px;
+      box-sizing:border-box;
+    }
+    .yt-inner {
+      width:92vw; max-width:880px;
+      display:flex; flex-direction:column; align-items:center;
+      gap:18px;
+    }
+    .yt-title {
+      color:#fff; font-size:1.35rem; font-weight:600;
+      letter-spacing:0.02em; margin-bottom:3px; margin-top:6px;
+      text-shadow:0 2px 12px #0019;
+      text-align:center;
+      line-height:1.3;
+      word-break:keep-all;
+      background:rgba(36,42,82,0.7); border-radius:12px; padding:10px 22px 7px 22px;
+      box-shadow:0 2px 16px #2229;
+      max-width:800px;
+    }
+    .yt-frame-box {
+      width:100%; aspect-ratio:16/9;
+      background:#000; border-radius:18px; box-shadow:0 4px 40px #2232ab55;
+      overflow:hidden; display:flex; align-items:center; justify-content:center;
+    }
+    iframe, video {
+      width:100%; height:100%; border:0; border-radius:18px; background:#000; display:block;
+      min-height:180px;
+    }
+    .side-nav {
+      position:fixed; left:0; top:0; bottom:0; width:220px;
+      background:#202242; z-index:50; display:flex; flex-direction:column;
+      border-right:1.5px solid #18192f;
+      min-height:100vh;
+      box-shadow:0 4px 20px #23243c22;
+    }
+    .side-nav .nav-btns {
+      display:flex; flex-direction:column; gap:0; margin-top:16px;
+    }
+    .side-nav .nav-btns button {
+      background:#243468; color:#fff; border:none; outline:none;
+      padding:14px 0; font-size:1rem; font-weight:500; cursor:pointer;
+      border-bottom:1px solid #23274c; transition:background 0.18s;
+    }
+    .side-nav .nav-btns button:hover { background:#3a4991; }
+    .side-nav .dir-list {
+      flex:1; overflow-y:auto; margin-top:8px;
+      display:flex; flex-direction:column; gap:0;
+    }
+    .side-nav .dir-item-wrap {
+      display:flex; align-items:center; gap:0; position:relative;
+      user-select:none;
+    }
+    .side-nav .dir-item {
+      flex:1 1 auto;
+      padding: 13px 8px 13px 18px; border-bottom:1px solid #21254b;
+      font-size:1rem; color:#c9d1ee; background:none; cursor:pointer;
+      text-align:left; outline:none; border:none;
+      transition:background 0.13s;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      border-right: none;
+      background: transparent;
+    }
+    .side-nav .dir-item.active,
+    .side-nav .dir-item:hover {
+      background: #2b3882; color: #fff;
+    }
+    .side-nav .item-actions {
+      display: flex; flex-direction: row; gap:0;
+      margin-right: 2px;
+    }
+    .side-nav .item-actions button {
+      background: none; border:none; color:#7ea7ff;
+      font-size:0.93rem; font-weight:700; cursor:pointer; padding: 0 4px;
+      margin-left: 3px; border-radius:5px;
+      transition:background 0.12s;
+    }
+    .side-nav .item-actions button:hover {
+      background: #314b87; color:#fff;
+    }
+    .dir-item-wrap.drag-over {
+      background: #25336c !important;
+    }
+    /* 오른쪽 영상리스트 */
+    .video-list-area {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3개씩 배치 */
+      gap: 15px;
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+    .video-row {
+      background: #222744;
+      border-radius: 10px;
+      padding: 12px 15px;
+      box-shadow: 0 2px 16px #2228;
+    }
+    .video-row .yt-title {
+      background: none;
+      box-shadow: none;
+      font-size: 1.08rem;
+      margin: 0 0 0 0;
+      padding: 0;
+      color: #fff;
+      min-width: 120px;
+      text-align: left;
+    }
+    .video-row .yt-frame-box {
+      aspect-ratio: 16/9;
+      min-width: 220px;
+      max-width: 100%;
+      min-height: 120px;
+    }
+    @media (max-width: 1200px) {
+      .video-list-area {
+        grid-template-columns: repeat(2, 1fr); /* 화면 크기에 따라 2개씩 */
+      }
+    }
+    @media (max-width: 900px) {
+      .video-list-area {
+        grid-template-columns: 1fr; /* 모바일에서는 1개씩 */
+      }
+    }
+    .modal-bg {
+      position:fixed; left:0;top:0;right:0;bottom:0; z-index:200;
+      background:rgba(15,20,40,0.38); display:flex; align-items:center; justify-content:center;
+    }
+    .modal-inner {
+      background:#2e3259; color:#fff; border-radius:15px; padding:28px 32px 18px 32px;
+      box-shadow:0 6px 44px #0005; min-width:320px;
+      display:flex; flex-direction:column; gap:17px;
+    }
+    .modal-inner label { font-size:1.08rem; margin-bottom:4px; }
+    .modal-inner input {
+      padding:10px 15px; border-radius:7px; border:none; margin-bottom:7px;
+      font-size:1rem; width:100%;
+    }
+    .modal-inner button {
+      padding:10px 0; border-radius:8px; border:none;
+      background:#4b67ff; color:#fff; font-size:1.07rem; font-weight:700; cursor:pointer;
+      transition:background 0.14s;
+      margin-top:8px;
+    }
+    .modal-inner button:hover { background:#6e83d8; }
+  </style>
+</head>
+<body>
+  <!-- 왼쪽 네비 -->
+  <div class="side-nav">
+    <div class="nav-btns">
+      <button onclick="openAddModal()">추가</button>
+      <button onclick="importData()">가져오기</button>
+      <button onclick="exportData()">내보내기</button>
+    </div>
+    <div class="dir-list" id="dirList"></div>
+  </div>
+  <div class="yt-container" style="margin-left:220px">
+    <div class="yt-inner">
+      <div class="yt-title" id="dirTitle">디렉토리를 선택하세요</div>
+      <div class="video-list-area" id="videoListArea"></div>
+    </div>
+  </div>
+  <!-- 추가 폼 (모달) -->
+  <div id="addModal" class="modal-bg" style="display:none">
+    <div class="modal-inner">
+      <label>디렉토리명</label>
+      <input id="addDir" type="text" placeholder="디렉토리명(중복불가)" autocomplete="off" />
+      <label>영상 주소</label>
+      <input id="addUrl" type="text" placeholder="유튜브/Vimeo/MP4 주소" autocomplete="off" />
+      <label>영상 제목</label>
+      <input id="addTitle" type="text" placeholder="영상 제목" autocomplete="off" />
+      <button id="addSaveBtn" onclick="saveVideo()">저장</button>
+      <button onclick="closeAddModal()" style="background:#2e3259;font-weight:400;">취소</button>
+    </div>
+  </div>
+  <script>
+    // 상태: {dirs:[{name, videos:[{url, title}]}], selectedDir}
+    let data = JSON.parse(localStorage.getItem('ytDirList') || '{"dirs":[],"selectedDir":null}');
+    function saveLocal() {
+      localStorage.setItem('ytDirList', JSON.stringify(data));
+    }
+
+    function renderDirList() {
+      const list = document.getElementById('dirList');
+      list.innerHTML = '';
+      data.dirs.forEach((d, i) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'dir-item-wrap';
+        const btn = document.createElement('button');
+        btn.className = 'dir-item' + (data.selectedDir===i ? ' active':'');
+        btn.textContent = d.name;
+        btn.onclick = () => { data.selectedDir = i; saveLocal(); renderDirList(); renderVideoList(); };
+        wrap.appendChild(btn);
+        // 삭제 버튼
+        const act = document.createElement('div');
+        act.className = 'item-actions';
+        const delBtn = document.createElement('button');
+        delBtn.innerText = '삭제';
+        delBtn.title = '삭제';
+        delBtn.onclick = (e) => {
+          e.stopPropagation();
+          if (confirm('정말 삭제할까요?')) {
+            data.dirs.splice(i,1);
+            if(data.selectedDir===i) data.selectedDir=null;
+            else if(data.selectedDir>i) data.selectedDir--;
+            saveLocal();
+            renderDirList();
+            renderVideoList();
+          }
+        };
+        act.appendChild(delBtn);
+        wrap.appendChild(act);
+        list.appendChild(wrap);
+      });
+    }
+
+    function renderVideoList() {
+      const area = document.getElementById('videoListArea');
+      area.innerHTML = '';
+      const dirTitle = document.getElementById('dirTitle');
+      if(data.selectedDir==null || !data.dirs[data.selectedDir]) {
+        dirTitle.textContent = '디렉토리를 선택하세요';
+        return;
+      }
+      const dir = data.dirs[data.selectedDir];
+      dirTitle.textContent = dir.name;
+      if(!dir.videos.length) {
+        area.innerHTML = '<div style="color:#ccc;text-align:center;font-size:1.1em;">영상이 없습니다.</div>';
+        return;
+      }
+      dir.videos.forEach(v => {
+        const row = document.createElement('div');
+        row.className = 'video-row';
+        const title = document.createElement('div');
+        title.className = 'yt-title';
+        title.textContent = v.title || '';
+        row.appendChild(title);
+        const box = document.createElement('div');
+        box.className = 'yt-frame-box';
+        // 자동재생 X (autoplay=1 제거)
+        const embed = parseToEmbedNoAuto(v.url);
+        if(embed.type==='youtube'||embed.type==='vimeo'||embed.type==='link') {
+          box.innerHTML = `<iframe src="${embed.code}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+        } else if(embed.type==='video') {
+          box.innerHTML = `<video src="${embed.code}" controls></video>`;
+        } else if(embed.type==='embed') {
+          box.innerHTML = embed.code;
+        } else {
+          box.innerHTML = `<div style="color:#fff;text-align:center;">알 수 없는 주소</div>`;
+        }
+        row.appendChild(box);
+        area.appendChild(row);
+      });
+    }
+    // 자동재생 없는 embed 변환
+    function parseToEmbedNoAuto(input) {
+      input = (input||"").trim();
+      // 유튜브
+      const ytMatch = input.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+      if (ytMatch) return {type: 'youtube', code: `https://www.youtube.com/embed/${ytMatch[1]}`};
+      if (input.match(/^https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]{11}/))
+        return {type: 'youtube', code: input.replace(/autoplay=1/g,'')};
+      // Vimeo
+      const vimeoMatch = input.match(/vimeo\.com\/(\d+)/);
+      if (vimeoMatch) return {type: 'vimeo', code: `https://player.vimeo.com/video/${vimeoMatch[1]}`};
+      // MP4/WebM/Ogg 파일
+      if (input.match(/\.(mp4|webm|ogg)(\?|$)/i)) return {type: 'video', code: input};
+      // 이미 임베드/iframe 코드 직접 입력시
+      if (input.startsWith('<iframe')) return {type: 'embed', code: input};
+      // 그냥 링크: iframe 시도
+      return {type: 'link', code: input};
+    }
+
+    function openAddModal() {
+      document.getElementById('addModal').style.display = 'flex';
+      document.getElementById('addDir').value = '';
+      document.getElementById('addUrl').value = '';
+      document.getElementById('addTitle').value = '';
+      setTimeout(()=>{ document.getElementById('addDir').focus(); }, 180);
+    }
+    function closeAddModal() {
+      document.getElementById('addModal').style.display = 'none';
+      document.getElementById('addDir').value = '';
+      document.getElementById('addUrl').value = '';
+      document.getElementById('addTitle').value = '';
+    }
+    // 저장
+    function saveVideo() {
+      let dir = document.getElementById('addDir').value.trim();
+      let url = document.getElementById('addUrl').value.trim();
+      let title = document.getElementById('addTitle').value.trim();
+      if(!dir || !url || !title) { alert('모두 입력하세요.'); return; }
+      let dirIdx = data.dirs.findIndex(d=>d.name===dir);
+      if(dirIdx===-1) {
+        // 새 디렉토리
+        data.dirs.push({name:dir, videos:[{url, title}]});
+        data.selectedDir = data.dirs.length-1;
+      } else {
+        // 기존 디렉토리
+        data.dirs[dirIdx].videos.push({url, title});
+        data.selectedDir = dirIdx;
+      }
+      saveLocal();
+      closeAddModal();
+      renderDirList();
+      renderVideoList();
+    }
+    // 내보내기
+    function exportData() {
+      const blob = new Blob([JSON.stringify(data)], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "myway_dir_videos.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    // 가져오기
+    function importData() {
+      const input = document.createElement('input');
+      input.type = "file";
+      input.accept = ".json,application/json";
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          try {
+            const json = JSON.parse(evt.target.result);
+            if (Array.isArray(json.dirs)) {
+              data = json;
+              saveLocal();
+              renderDirList();
+              renderVideoList();
+            } else {
+              alert('올바른 데이터가 아닙니다.');
+            }
+          } catch {
+            alert('가져오기 실패: JSON 파싱 에러');
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    }
+
+    // 최초 렌더
+    renderDirList();
+    renderVideoList();
+  </script>
+</body>
+</html>
