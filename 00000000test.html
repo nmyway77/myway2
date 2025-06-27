@@ -2,384 +2,351 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>MYWAY 인플루언서 influencer</title>
+  <title>MYWAY.KR: 멀티검색, 나만의 디스플레이, 즐겨찾기</title>
+  <meta property="og:title" content="MYWAY.KR: 멀티검색 & 검색엔진& 유튜브 썸네일 추출기" />
+  <meta property="og:description" content="멀티검색, 링크모음, 인기사이트 100,한국의 정보모음, Korea travel information, MYWAY.KR" />
+  <meta property="og:url" content="https://myway.kr" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://myway.kr/mywaylogo.png" />
+  <meta name="description" content="멀티검색, FREE LIVE TV, 잡지모음, LIVE CCTV,썸네일 추출기, Korea travel information, MYWAY.KR" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="naver-site-verification" content="4e88b51e170829dfb01ce587eaf5575804dd5a2" />
+  
   <style>
-    body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
-    .topbar {
-      position: fixed; top: 0; left: 0; width: 100vw; z-index: 1001;
-      background: #2e2e54;
-      color: #fff;
-      display: flex; align-items: center; justify-content: flex-start;
-      box-shadow: 0 4px 18px #29317018;
-      padding: 0 14px; height: 54px;
-      min-width: 360px;
-      font-size: 16px;
-    }
-    .topbar button {
-      padding: 8px 18px;
-      margin-right: 8px;
-      background: #436cff;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-size: 15px;
-      cursor: pointer;
-      font-family: inherit;
-      transition: background .2s;
-    }
-    .topbar button#export-btn { background: #30bc8a; }
-    .topbar button#import-btn { background: #ffc94a; color: #232356; }
-    .topbar select {
-      margin-left: 8px; padding: 7px 11px;
-      font-size: 15px; border-radius: 5px; border: 1px solid #ccd;
-      background: #fff; color: #232373; min-width: 110px;
-      font-family: inherit;
-    }
-    .dashboard { max-width: 1200px; margin: 0 auto; padding: 64px 0 60px 0;}
-    .gallery-label {
-      font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
-      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
-    }
-    .gallery-row {
-      width: 100%; max-width: 1080px; margin: 0 auto;
-      text-align: center;
-    }
-    .list-row {
-      display: inline-block;
-      vertical-align: top;
-      box-sizing: border-box;
-      position: relative;
-      transition: width 0.2s, height 0.2s;
-      background: #fff;
-    }
-    .list-row:last-child { margin-right: 0; }
-    .imgframe {
-      width: 100%; height: 100%;
-      background: #fff;
-      position: relative;
-      box-sizing: border-box;
-      z-index: 0;
-      border-radius: 0;
-      box-shadow: 0 6px 6px 0 rgba(90,90,130,0.11);
-      overflow: hidden;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-    }
-    .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
-    .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
-    .img-item img {
-      display: block;
-      background: #fff;
+    body {
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      background:  #fff;
       margin: 0;
-      border: none;
       padding: 0;
-      /* 이 아래 속성 삭제 또는 주석: object-fit: contain; width/height 100% 강제 X */
-      /* width: 100%; height: 100%; object-fit: contain; */
-      /* 대신 wide/tall class로 조절 */
+      min-height: 100vh;
+      overflow: hidden; /* 세로 스크롤 막기 */
     }
-    /* 아래 추가! */
-    .img-item img.wide-img  { width: 100%; height: auto; object-fit: contain; }
-    .img-item img.tall-img  { width: auto; height: 100%; object-fit: contain; }
+    .searchbar-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
-    .edit-btn {
-      position: absolute;
-      top: 7px; right: 9px;
-      padding: 4px 12px;
-      font-size: 14px;
-      background: #2e2e54c0;
+      
+      margin-top: 32px;
+      margin-bottom: 22px;
+
+      
+    }
+    .searchbar-form {
+      display: flex;
+      align-items: center;
+      border-radius: 48px;
+      padding: 3.2px 4px;
+      background: linear-gradient(90deg, #71aaff 0%, #a965e2 100%);
+      min-width: 310px;
+      max-width: 680px;
+      width: 100%;
+      height: 56px;
+      box-shadow: 0 6px 32px #55277e2c;
+      overflow: hidden;
+    }
+    .searchbar-inner {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-radius: 44px;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      box-shadow: 0 1.5px 18px #5330ab19;
+    }
+    .searchbar-select {
+      background: #fff;
+      border: none;
+      padding: 0 13px;
+      font-size: 1.08rem;
+      color: #523cbd;
+      font-weight: bold;
+      outline: none;
+      cursor: pointer;
+      min-width: 97px;
+    }
+    .searchbar-input {
+      flex: 1;
+      border: none;
+      padding: 0 13px;
+      font-size: 1.10rem;
+      background: #fff;
+      color: #5133a0;
+      outline: none;
+      height: 100%;
+    }
+    .searchbar-input::placeholder {
+      color: #b8aee8;
+      opacity: 1;
+    }
+    .searchbar-btn {
+      background: linear-gradient(135deg, #7460fe 0%, #bc3adb 100%);
       color: #fff;
       border: none;
-      border-radius: 6px;
+      padding: 0 24px;
+      min-width: 88px;
+      height: 100%;
+      font-size: 1.1rem;
+      font-weight: bold;
       cursor: pointer;
-      z-index: 4;
-      transition: background .15s;
+      border-radius: 0 42px 42px 0;
+      transition: background 0.15s;
+      box-shadow: 0 2px 12px #644ab658;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.1px;
+      text-shadow: 0 1px 7px #8e5edc28;
     }
-    .edit-btn:hover { background: #436cff; }
-    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
-    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
-    .list-row.magazine {
-      width: 150px;
-      height: 213px;
-      margin: 0 12px 36px 0;
+    .searchbar-btn:hover {
+      filter: brightness(0.98) saturate(1.18);
     }
-    .img-wrap.magazine { height: 100%; }
-    .img-item.magazine { height: 100%; }
-    @media (max-width: 1080px) {
-      .list-row.magazine { width: 28vw; height: 40vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
+    /* 네비바 디자인 유지 */
+    .screen-links {
+      text-align: center;
+      margin-top: 3px;
+      margin-bottom: 32px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: auto;
+      overflow-y: hidden; /* 세로 스크롤 차단 */
+      white-space: nowrap;
+      position: sticky;
+      top: 82px;
+      z-index: 101;
+      background: rgba(255, 255, 255, 0.92);
+      padding: 8px 10px 7px 10px;
+      min-height: 48px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      border-radius: 26px 26px 24px 24px;
+      box-shadow: 0 4px 22px #1a14284a;
+      backdrop-filter: blur(3.5px);
+    }
+    .screen-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin: 0 5px;
+      font-size: 1.03rem;
+      font-weight: bold;
+      color: #5a38be;
+      text-decoration: none;
+      cursor: pointer;
+      padding: 7px 16px 7px 15px;
+      border-radius: 18px;
+      letter-spacing: 0.02em;
+      line-height: 1.57;
+      white-space: nowrap;
+      border: 1.2px solid transparent;
+      transition: all 0.15s;
+      box-shadow: 0 1.5px 11px #644ab616;
+      background: rgba(255, 255, 255, 0.67);
+      font-family: inherit;
+    }
+    .screen-links a:hover, .screen-links a.active {
+      color: #fff;
+      background: linear-gradient(95deg, #7362ff 30%, #bc3adb 90%);
+      border: 1.2px solid #7362ff;
+      box-shadow: 0 3px 16px #a06bff2a;
+    }
+    #main-frame {
+      position: fixed;
+      left: 0;
+      top: 148px;
+      width: 100vw;
+      height: calc(100vh - 133px);
+      border: none;
+      margin: 0;
+      background: #f5f7fa;
+      z-index: 10;
+      transition: none;
+      border-radius: 0;
+      display: block;
     }
     @media (max-width: 700px) {
-      .list-row.magazine { width: 44vw; height: 62vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
+      .searchbar-form {
+        min-width: 0;
+        width: 98%;
+        height: 50px;
+        padding: 2px;
+      }
+      .searchbar-select, .searchbar-input, .searchbar-btn {
+        font-size: 1.03rem;
+      }
+      .searchbar-input {
+        padding: 0 7px;
+      }
+      .searchbar-inner {
+        border-radius: 18px;
+      }
+      .screen-links {
+        text-align: left;
+        margin-top: 12px !important;
+        margin-bottom: 16px;
+        top: 70px !important;
+        height: 38px !important;
+        min-height: 38px !important;
+        justify-content: flex-start !important;
+        background: rgba(255, 255, 255, 0.93);
+      }
+      .screen-links a {
+        margin: 0 2px;
+        font-size: 0.99rem;
+        padding: 0 10px 0 10px;
+        border-radius: 11px;
+        line-height: 36px !important;
+        height: 36px !important;
+      }
+      #main-frame {
+        top: 114px;
+        height: calc(100vh - 108px);
+      }
     }
-    #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.57); display: none; align-items: center; justify-content: center; z-index: 2002;}
-    #modal { background: #fff; padding: 28px 22px 22px 22px; border-radius: 7px; width: 320px; box-shadow: 0 2px 16px #24248238;}
-    #modal h3 { margin-bottom: 16px; font-size: 20px; color:#313181;}
-    #modal label { display:block; margin-bottom:6px; color:#232356; font-weight:600;}
-    #modal input, #modal select { width: 100%; margin-bottom: 14px; padding: 8px; border: 1px solid #b2c1e6; border-radius: 5px; font-size: 14px;}
-    #modal .actions { text-align: right; }
-    #modal .actions button {
-      padding: 8px 14px; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px; font-size: 15px;
-    }
-    #modal .save-btn { background: #4067d1; color: #fff; }
-    #modal .cancel-btn { background: #dc3545; color: #fff; }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 </head>
 <body>
-  <!-- 상단바 -->
-  <nav class="topbar">
-    <button id="add-btn">추가</button>
-    <button id="export-btn">내보내기</button>
-    <button id="import-btn">가져오기</button>
-    <input type="file" id="import-file" accept="application/json" style="display:none">
-    <!-- 페이지 이동 콤보박스 -->
-    <select id="page-switch">
-      <option value="">Type</option>
-      <option value="making001.html">BAR ▼</option>
-      <option value="00making77typeshort.html">PIC1 ▼</option>
-      <option value="00makingcircletext.html">CIRCLE▼</option>
-      <option value="00making10d.html.html">PIC2 ▼</option>
-    </select>
-  </nav>
-  <div class="dashboard" style="margin-top:50px;">
-    <span class="gallery-label">A</span>
-    <div class="gallery-row" id="gallery1"></div>
-    <span class="gallery-label">B</span>
-    <div class="gallery-row" id="gallery2"></div>
-    <span class="gallery-label">C</span>
-    <div class="gallery-row" id="gallery3"></div>
-    <span class="gallery-label">D</span>
-    <div class="gallery-row" id="gallery4"></div>
-    <span class="gallery-label">E</span>
-    <div class="gallery-row" id="gallery5"></div>
-    <span class="gallery-label">F</span>
-    <div class="gallery-row" id="gallery6"></div>
-    <span class="gallery-label">G</span>
-    <div class="gallery-row" id="gallery7"></div>
-    <span class="gallery-label">H</span>
-    <div class="gallery-row" id="gallery8"></div>
-    <span class="gallery-label">I</span>
-    <div class="gallery-row" id="gallery9"></div>
-    <span class="gallery-label">J</span>
-    <div class="gallery-row" id="gallery10"></div>
-  </div>
-  <!-- 입력 모달 -->
-  <div id="modal-overlay">
-    <div id="modal">
-      <h3>이미지 추가</h3>
-      <label>이미지 URL</label>
-      <input type="text" id="modal-img" placeholder="이미지 주소">
-      <label>링크 URL</label>
-      <input type="text" id="modal-link" placeholder="연결될 링크 주소">
-      <label>분류(디렉토리)</label>
-      <select id="modal-dir">
-        <option value="gallery1">A</option>
-        <option value="gallery2">B</option>
-        <option value="gallery3">C</option>
-        <option value="gallery4">D</option>
-        <option value="gallery5">E</option>
-        <option value="gallery6">F</option>
-        <option value="gallery7">G</option>
-        <option value="gallery8">H</option>
-        <option value="gallery9">I</option>
-        <option value="gallery10">J</option>
-      </select>
-      <div class="actions">
-        <button class="cancel-btn" type="button">취소</button>
-        <button class="save-btn" type="button">저장</button>
+  <div class="searchbar-wrap">
+    <form class="searchbar-form" id="searchFormParent" autocomplete="off">
+      <div class="searchbar-inner">
+        <select class="searchbar-select" id="engineParent">
+          <option value="naver">네이버 ▼</option>
+          <option value="google">Google </option>
+          <option value="youtube">Youtube </option>
+
+ <option value="soundcloud">음악검색 </option>
+          
+          
+          <option value="daum">다음 </option>
+          <option value="duckduckgo">DuckDuckGo </option>
+          <option value="msn">MSN </option>
+          <option value="yahoo">Yahoo </option>
+          <option value="yandex">Yandex </option>
+          <option value="naver_shopping">네이버 쇼핑 </option>
+          <option value="joonggonara">중고나라 </option>
+          <option value="naver_cafe">네이버카페 중고 </option>
+          <option value="daangn">당근마켓 </option>
+          <option value="bunjang">번개장터</option>
+          <option value="danawa">다나와 </option>
+          <option value="coupang">쿠팡 </option>
+          <option value="aliexpress">알리 (한글/영어) </option>
+          <option value="amazon">아마존 (한글/영어) </option>
+          <option value="ebay">이베이 (한글/영어) </option>
+          <option value="romanize">한글이름 → 영어 </option>
+          <option value="postcode">우편번호 검색 </option>
+          <option value="phone_114">114 전화번호 검색 </option>
+          <option value="hanja_naver">네이버 한자검색 </option>
+          <option value="afreecatv">AfreecaTV </option>
+          <option value="tvcast">TVCAST </option>
+          <option value="kakaotv">KakaoTV </option>
+          <option value="vimeo">Vimeo </option>
+          <option value="ms_edgestore">MS EDGE 스토어 </option>
+          <option value="chrome_webstore">크롬 웹스토어 </option>
+          <option value="naver_software">네이버 자료실 </option>
+          <option value="kyobo">교보문고 </option>
+          <option value="aladin">알라딘 </option>
+          <option value="twitter">Twitter </option>
+          <option value="instagram">Instagram </option>
+          <option value="kakao_story">kakao.com </option>
+          <option value="tumblr">Tumblr </option>
+          <option value="tiktok">TikTok </option>
+          <option value="pinterest">Pinterest </option>
+          <option value="naver_music">네이버 음악 </option>
+          <option value="melon">멜론 </option>
+          <option value="bugs">벅스 </option>
+        </select>
+        <input class="searchbar-input" id="queryParent" type="text" placeholder="검색어를 입력하세요  Myway.kr" autocomplete="off" />
+        <button class="searchbar-btn" type="submit">검색</button>
       </div>
-    </div>
+    </form>
   </div>
+  <div class="screen-links" id="parent-links">
+    <a href="#" onclick="showScreenParent(event, '00main00000.html')">AI</a>
+ 
+    <a href="#" onclick="showScreenParent(event, '00newsmain2.html')">NEWS</a>
+    <a href="#" onclick="showScreenParent(event, '00tvmain2.html')">TV</a>
+    <a href="#" onclick="showScreenParent(event, '00mainbbs.html')">BBS</a>
+    <a href="#" onclick="showScreenParent(event, '00maincctv.html')">CCTV</a>
+    <a href="#" onclick="showScreenParent(event, '00aimain3.html')">H</a>
+    <a href="#" onclick="showScreenParent(event, '00maincoin.html')">COIN</a>
+    <a href="#" onclick="showScreenParent(event, '00mainmovie.html')">영화</a>
+    <a href="#" onclick="showScreenParent(event, '00mainmaga.html')">잡지</a>
+    <a href="#" onclick="showScreenParent(event, '00maincomics.html')">만화</a>
+    <a href="#" onclick="showScreenParent(event, 'mainpage43.html')">I</a>
+    <a href="#" onclick="showScreenParent(event, '00mainshopping.html')">쇼핑</a>
+    <a href="#" onclick="showScreenParent(event, 'mainpage43.html')">K</a>
+    <a href="#" onclick="showScreenParent(event, 'mainpage2.html')">L</a>
+    <a href="#" onclick="showScreenParent(event, '00mainuseful.html')">U</a>
+  </div>
+  <iframe id="main-frame" src="00aimain3.html" allowfullscreen></iframe>
+
   <script>
-    // 페이지 이동 콤보박스
-    document.getElementById('page-switch').addEventListener('change', function() {
-      if (this.value) location.href = this.value;
-    });
+    // 검색엔진 배열 (부모용)
+    var snarkEnginesParent = [
+    { key: "naver",  home: "https://www.naver.com/", search: "https://search.naver.com/search.naver?query=" },
+      { key: "google", home: "https://www.google.com/", search: "https://www.google.com/search?q=" },
+      { key: "youtube", home: "https://www.youtube.com/", search: "https://www.youtube.com/results?search_query=" },
 
-    // 데이터 저장용 키
-    const STORAGE_KEY = "influencer_gallery_v2";
-    const defaultData = {
-      gallery1: [
-        { url: "https://www.youtube.com/@popcorncokemovie/videos", img: "https://yt3.googleusercontent.com/4vsl0dMmf2_zJh9hNMoFP7KPnfxEKCeWSn5iYdQvuJUVUkBf9eFu3qqdHWIN1DDULygUcGDmww=s900-c-k-c0x00ffffff-no-rj" },
-      ],
-      gallery2: [],
-      gallery3: [],
-      gallery4: [],
-      gallery5: [],
-      gallery6: [],
-      gallery7: [],
-      gallery8: [],
-      gallery9: [],
-      gallery10: []
-    };
-    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
 
-    function getData() {
-      let data = localStorage.getItem(STORAGE_KEY);
-      if (!data) return JSON.parse(JSON.stringify(defaultData));
-      try {
-        return JSON.parse(data);
-      } catch (e) {
-        return JSON.parse(JSON.stringify(defaultData));
+ { key: "soundcloud", home: "https://soundcloud.com/", search: "https://soundcloud.com/search?q=" },
+      
+      { key: "daum", home: "https://www.daum.net/", search: "https://search.daum.net/search?q=" },
+      { key: "duckduckgo", home: "https://duckduckgo.com", search: "https://duckduckgo.com/?q=" },
+      { key: "msn", home: "https://www.msn.com/ko-kr/news", search: "https://www.bing.com/search?q=" },
+      { key: "yahoo", home: "https://www.yahoo.com", search: "https://search.yahoo.com/search?p=" },
+      { key: "yandex", home: "https://yandex.ru", search: "https://yandex.ru/search/?lr=10635&text=" },
+      { key: "naver_shopping", home: "https://shopping.naver.com/", search: "https://shopping.naver.com/search/all_search.nhn?where=all&frm=NVSCTAB&query=" },
+      { key: "joonggonara", home: "https://cafe.naver.com/joonggonara", search: "https://web.joongna.com/search/" },
+      { key: "naver_cafe", home: "https://cafe.naver.com", search: "https://cafe.naver.com/ca-fe/home/search/c-articles?q=" },
+      { key: "daangn", home: "https://www.daangn.com", search: "https://www.daangn.com/search/" },
+      { key: "bunjang", home: "https://m.bunjang.co.kr", search: "https://m.bunjang.co.kr/search/products?q=" },
+      { key: "danawa", home: "https://www.danawa.com/", search: "https://search.danawa.com/dsearch.php?k1=" },
+      { key: "coupang", home: "https://www.coupang.com", search: "https://www.coupang.com/np/search?q=" },
+      { key: "aliexpress", home: "https://ko.aliexpress.com/", search: "https://ko.aliexpress.com/w/wholesale-" },
+      { key: "amazon", home: "https://www.amazon.com/", search: "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=" },
+      { key: "ebay", home: "https://www.ebay.com/", search: "https://www.ebay.com/sch/i.html?_from=R40&_trksid=p2050601.m570.l1313&_nkw=" },
+      { key: "romanize", home: "https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38", search: "https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38&idx=&act=&searchKeyword=" },
+      { key: "postcode", home: "https://search.naver.com/search.naver?sm=tab_hty.top&where=nexearch&ie=utf8&query=%EC%9A%B0%EC%B2%B4%EA%B5%AD+%EC%9A%B0%ED%8E%B8%EB%B2%88%ED%98%B8&where=nexearch", search: "https://www.juso.go.kr/support/AddressMainSearch.do?searchKeyword=" },
+      { key: "phone_114", home: "https://www.114.co.kr", search: "https://www.114.co.kr/search/result/all?query=" },
+      { key: "hanja_naver", home: "http://hanja.naver.com", search: "http://hanja.naver.com/search?query=" },
+      { key: "afreecatv", home: "https://www.afreecatv.com/", search: "https://www.afreecatv.com/total_search.html?szKeyword=" },
+      { key: "tvcast", home: "https://tvcast.naver.com/", search: "https://tv.naver.com/search?query=" },
+      { key: "kakaotv", home: "https://tv.kakao.com/", search: "https://tv.kakao.com/search?q=" },
+      { key: "vimeo", home: "https://www.vimeo.com", search: "https://vimeo.com/search?q=" },
+      { key: "ms_edgestore", home: "https://microsoftedge.microsoft.com", search: "https://microsoftedge.microsoft.com/addons/search/" },
+      { key: "chrome_webstore", home: "https://chrome.google.com/webstore/category/extensions?hl=ko", search: "https://chrome.google.com/webstore/search/" },
+      { key: "naver_software", home: "https://software.naver.com", search: "https://software.naver.com/search.nhn?query=" },
+      { key: "kyobo", home: "https://search.kyobobook.co.kr", search: "https://search.kyobobook.co.kr/web/search?vPstrKeyWord=" },
+      { key: "aladin", home: "https://search.kyobobook.co.kr", search: "https://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=All&SearchWord=" },
+      { key: "twitter", home: "https://twitter.com", search: "https://twitter.com/search?q=" },
+      { key: "instagram", home: "https://www.instagram.com", search: "https://www.instagram.com/explore/tags/" },
+      { key: "kakao_story", home: "https://story.kakao.com", search: "https://story.kakao.com/hashtag/" },
+      { key: "tumblr", home: "https://www.tumblr.com", search: "https://www.tumblr.com/search/" },
+      { key: "tiktok", home: "https://www.tiktok.com", search: "https://www.tiktok.com/search?q=" },
+      { key: "pinterest", home: "https://pinterest.com", search: "https://pinterest.com/search/?q=" },
+      { key: "naver_music", home: "https://music.naver.com", search: "https://music.naver.com/search/search.nhn?query=" },
+      { key: "melon", home: "https://www.melon.com", search: "https://www.melon.com/search/total/index.htm?q=" },
+      { key: "bugs", home: "https://bugs.co.kr", search: "https://music.bugs.co.kr/search/integrated?q=" }
+    ];
+    document.getElementById('searchFormParent').onsubmit = function(e) {
+      e.preventDefault();
+      const engineKey = document.getElementById('engineParent').value;
+      const query = document.getElementById('queryParent').value.trim();
+      const engineObj = snarkEnginesParent.find(e => e.key === engineKey);
+      if (engineObj) {
+        let url = query ? (engineObj.search + encodeURIComponent(query)) : engineObj.home;
+        window.open(url, "_blank");
       }
+    };
+    function showScreenParent(e, url) {
+      e.preventDefault();
+      document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
+      e.target.classList.add('active');
+      var frame = document.getElementById('main-frame');
+      frame.src = url;
     }
-    function setData(data) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
-
-    let editing = { gallery: null, index: null };
-
-    // ★ 여기서부터 renderGallery 함수가 바뀝니다
-    function renderGallery(data, targetId) {
-      const el = document.getElementById(targetId);
-      el.innerHTML = data.map((item, idx) => `
-        <div class="list-row magazine" data-idx="${idx}">
-          <div class="imgframe">
-            <button class="edit-btn" type="button" title="수정">수정</button>
-            <div class="img-wrap magazine">
-              <div class="img-item magazine">
-                <a href="${item.url}" target="_blank" rel="noopener">
-                  <img src="${item.img}" data-idx="${idx}">
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="shadow-line">
-            <img src="${shadowUrl}">
-          </div>
-        </div>
-      `).join('');
-
-      // 이미지를 불러온 후 가로/세로 비율에 따라 class 부여
-      Array.from(el.querySelectorAll('.img-item img')).forEach(img => {
-        img.onload = function() {
-          if (img.naturalWidth > img.naturalHeight) {
-            img.classList.add('wide-img');
-            img.classList.remove('tall-img');
-          } else {
-            img.classList.add('tall-img');
-            img.classList.remove('wide-img');
-          }
-        };
-        // 혹시 캐시 등으로 이미 로딩된 경우에도 적용
-        if (img.complete) {
-          setTimeout(() => {
-            if (img.naturalWidth > img.naturalHeight) {
-              img.classList.add('wide-img');
-              img.classList.remove('tall-img');
-            } else {
-              img.classList.add('tall-img');
-              img.classList.remove('wide-img');
-            }
-          }, 10);
-        }
-      });
-
-      Array.from(el.querySelectorAll('.edit-btn')).forEach((btn, idx) => {
-        btn.onclick = function(e) {
-          e.stopPropagation();
-          editing.gallery = targetId;
-          editing.index = idx;
-          const data = getData();
-          const item = data[targetId][idx];
-          document.getElementById('modal-img').value = item.img;
-          document.getElementById('modal-link').value = item.url;
-          document.getElementById('modal-dir').value = targetId;
-          document.getElementById('modal-overlay').style.display = 'flex';
-        };
-      });
-
-      Sortable.create(el, {
-        animation: 160,
-        handle: ".imgframe",
-        ghostClass: "drag-ghost",
-        onEnd: function (evt) {
-          let galleryKey = targetId;
-          let galleryData = getData();
-          const moved = galleryData[galleryKey].splice(evt.oldIndex, 1)[0];
-          galleryData[galleryKey].splice(evt.newIndex, 0, moved);
-          setData(galleryData);
-          renderGallery(galleryData[galleryKey], galleryKey);
-        }
-      });
-    }
-
-    function renderAll() {
-      const data = getData();
-      for (let i = 1; i <= 10; i++) {
-        renderGallery(data[`gallery${i}`] || [], `gallery${i}`);
-      }
-    }
-
-    document.getElementById('add-btn').onclick = () => {
-      editing.gallery = null;
-      editing.index = null;
-      document.getElementById('modal-img').value = "";
-      document.getElementById('modal-link').value = "";
-      document.getElementById('modal-dir').value = "gallery1";
-      document.getElementById('modal-overlay').style.display = 'flex';
-      document.getElementById('modal-img').focus();
-    };
-    document.querySelector('#modal .cancel-btn').onclick = () => {
-      document.getElementById('modal-overlay').style.display = 'none';
-    };
-    document.querySelector('#modal .save-btn').onclick = () => {
-      const img = document.getElementById('modal-img').value.trim();
-      const link = document.getElementById('modal-link').value.trim();
-      const dir = document.getElementById('modal-dir').value;
-      if (!img) { alert("이미지 주소를 입력하세요."); return; }
-      if (!link) { alert("링크 주소를 입력하세요."); return; }
-      let data = getData();
-      if (editing.gallery !== null && editing.index !== null) {
-        if (editing.gallery === dir) {
-          data[dir][editing.index] = { url: link, img };
-        } else {
-          data[editing.gallery].splice(editing.index, 1);
-          if (!data[dir]) data[dir] = [];
-          data[dir].push({ url: link, img });
-        }
-      } else {
-        if (!data[dir]) data[dir] = [];
-        data[dir].push({ url: link, img });
-      }
-      setData(data);
-      document.getElementById('modal-overlay').style.display = 'none';
-      renderAll();
-    };
-
-    document.getElementById('export-btn').onclick = () => {
-      const data = getData();
-      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'influencer_gallery.json';
-      a.click();
-      URL.revokeObjectURL(url);
-    };
-    document.getElementById('import-btn').onclick = () => {
-      document.getElementById('import-file').click();
-    };
-    document.getElementById('import-file').onchange = e => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = evt => {
-        try {
-          const data = JSON.parse(evt.target.result);
-          setData(data);
-          renderAll();
-          alert('가져오기가 완료되었습니다.');
-        } catch {
-          alert('불러오기 실패(잘못된 파일)');
-        }
-      };
-      reader.readAsText(file);
-      e.target.value = null;
-    };
-
-    renderAll();
   </script>
 </body>
 </html>
