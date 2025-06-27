@@ -52,8 +52,22 @@
       position: relative;
       transition: width 0.2s, height 0.2s;
       background: #fff;
+      /* 기본값 지우고 JS로 조절 */
     }
-    .list-row:last-child { margin-right: 0; }
+    .list-row.magazine {
+      width: 150px;
+      height: 213px;
+      margin: 0 12px 36px 0;
+      /* 기본 세로형 */
+    }
+    .list-row.magazine.wide-box {
+      width: 213px !important;
+      height: 150px !important;
+    }
+    .list-row.magazine.tall-box {
+      width: 150px !important;
+      height: 213px !important;
+    }
     .imgframe {
       width: 100%; height: 100%;
       background: #fff;
@@ -70,12 +84,27 @@
     .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
     .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
     .img-item img {
-      display: block; width: 100%; height: 100%;
-      object-fit: contain;
+      display: block;
       background: #fff;
       margin: 0;
       border: none;
       padding: 0;
+      object-fit: contain;
+      width: 100%; height: 100%;
+      transition: all .17s;
+    }
+    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
+    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
+    /* 반응형 wide-box, tall-box */
+    @media (max-width: 1080px) {
+      .list-row.magazine { width: 28vw; height: 40vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
+      .list-row.magazine.wide-box { width: 40vw !important; height: 28vw !important; }
+      .list-row.magazine.tall-box { width: 28vw !important; height: 40vw !important; }
+    }
+    @media (max-width: 700px) {
+      .list-row.magazine { width: 44vw; height: 62vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
+      .list-row.magazine.wide-box { width: 62vw !important; height: 44vw !important; }
+      .list-row.magazine.tall-box { width: 44vw !important; height: 62vw !important; }
     }
     .edit-btn {
       position: absolute;
@@ -91,21 +120,6 @@
       transition: background .15s;
     }
     .edit-btn:hover { background: #436cff; }
-    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
-    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
-    .list-row.magazine {
-      width: 150px;
-      height: 213px;
-      margin: 0 12px 36px 0;
-    }
-    .img-wrap.magazine { height: 100%; }
-    .img-item.magazine { height: 100%; }
-    @media (max-width: 1080px) {
-      .list-row.magazine { width: 28vw; height: 40vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
-    }
-    @media (max-width: 700px) {
-      .list-row.magazine { width: 44vw; height: 62vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
-    }
     #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.57); display: none; align-items: center; justify-content: center; z-index: 2002;}
     #modal { background: #fff; padding: 28px 22px 22px 22px; border-radius: 7px; width: 320px; box-shadow: 0 2px 16px #24248238;}
     #modal h3 { margin-bottom: 16px; font-size: 20px; color:#313181;}
@@ -127,7 +141,6 @@
     <button id="export-btn">내보내기</button>
     <button id="import-btn">가져오기</button>
     <input type="file" id="import-file" accept="application/json" style="display:none">
-    <!-- 페이지 이동 콤보박스 -->
     <select id="page-switch">
       <option value="">Type</option>
       <option value="making001.html">BAR ▼</option>
@@ -186,12 +199,10 @@
     </div>
   </div>
   <script>
-    // 페이지 이동 콤보박스
     document.getElementById('page-switch').addEventListener('change', function() {
       if (this.value) location.href = this.value;
     });
 
-    // 데이터 저장용 키
     const STORAGE_KEY = "influencer_gallery_v2";
     const defaultData = {
       gallery1: [
@@ -224,6 +235,7 @@
 
     let editing = { gallery: null, index: null };
 
+    // renderGallery: 박스 비율 동적으로
     function renderGallery(data, targetId) {
       const el = document.getElementById(targetId);
       el.innerHTML = data.map((item, idx) => `
@@ -233,7 +245,7 @@
             <div class="img-wrap magazine">
               <div class="img-item magazine">
                 <a href="${item.url}" target="_blank" rel="noopener">
-                  <img src="${item.img}">
+                  <img src="${item.img}" data-idx="${idx}">
                 </a>
               </div>
             </div>
@@ -243,6 +255,33 @@
           </div>
         </div>
       `).join('');
+
+      // 이미지 비율에 따라 박스 모양을 조절
+      Array.from(el.querySelectorAll('.img-item img')).forEach(img => {
+        img.onload = function() {
+          const box = img.closest('.list-row.magazine');
+          if (img.naturalWidth > img.naturalHeight) {
+            box.classList.add('wide-box');
+            box.classList.remove('tall-box');
+          } else {
+            box.classList.add('tall-box');
+            box.classList.remove('wide-box');
+          }
+        };
+        // 캐시된 경우도 적용
+        if (img.complete) {
+          setTimeout(() => {
+            const box = img.closest('.list-row.magazine');
+            if (img.naturalWidth > img.naturalHeight) {
+              box.classList.add('wide-box');
+              box.classList.remove('tall-box');
+            } else {
+              box.classList.add('tall-box');
+              box.classList.remove('wide-box');
+            }
+          }, 10);
+        }
+      });
 
       Array.from(el.querySelectorAll('.edit-btn')).forEach((btn, idx) => {
         btn.onclick = function(e) {
@@ -272,6 +311,7 @@
         }
       });
     }
+
     function renderAll() {
       const data = getData();
       for (let i = 1; i <= 10; i++) {
