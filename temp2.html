@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -244,6 +244,45 @@
   </style>
 </head>
 <body>
+
+    <!-- 계산기 -->
+    <div class="calc-card">
+      <div class="calc-title">📐 공학용 계산기</div>
+      <input type="text" class="calc-screen" id="screen" value="0" readonly>
+      <div class="calc-buttons">
+        <button class="calc-btn clear" onclick="clearScreen()">C</button>
+        <button class="calc-btn fn small" onclick="insert('Math.PI')">π</button>
+        <button class="calc-btn fn small" onclick="insert('Math.E')">e</button>
+        <button class="calc-btn fn small" onclick="insert('(')">(</button>
+        <button class="calc-btn fn small" onclick="insert(')')">)</button>
+        <button class="calc-btn fn" onclick="insert('Math.sin(')">sin</button>
+        <button class="calc-btn fn" onclick="insert('Math.cos(')">cos</button>
+        <button class="calc-btn fn" onclick="insert('Math.tan(')">tan</button>
+        <button class="calc-btn fn" onclick="insert('Math.log10(')">log</button>
+        <button class="calc-btn fn" onclick="insert('Math.log(')">ln</button>
+        <button class="calc-btn" onclick="insert('7')">7</button>
+        <button class="calc-btn" onclick="insert('8')">8</button>
+        <button class="calc-btn" onclick="insert('9')">9</button>
+        <button class="calc-btn op" onclick="insert('/')">÷</button>
+        <button class="calc-btn fn" onclick="insert('**')">^</button>
+        <button class="calc-btn" onclick="insert('4')">4</button>
+        <button class="calc-btn" onclick="insert('5')">5</button>
+        <button class="calc-btn" onclick="insert('6')">6</button>
+        <button class="calc-btn op" onclick="insert('*')">×</button>
+        <button class="calc-btn fn small" onclick="insert('Math.sqrt(')">√</button>
+        <button class="calc-btn" onclick="insert('1')">1</button>
+        <button class="calc-btn" onclick="insert('2')">2</button>
+        <button class="calc-btn" onclick="insert('3')">3</button>
+        <button class="calc-btn op" onclick="insert('-')">-</button>
+        <button class="calc-btn fn small" onclick="backspace()">←</button>
+        <button class="calc-btn" onclick="insert('0')">0</button>
+        <button class="calc-btn" onclick="insert('.')">.</button>
+        <button class="calc-btn op" onclick="insert('+')">+</button>
+        <button class="calc-btn equal" onclick="calculate()">=</button>
+      </div>
+    </div>
+  </div>
+ 
   <div class="main-wrap">
     <!-- 시계 -->
     <div>
@@ -296,43 +335,7 @@
         </div>
       </div>
     </div>
-    <!-- 계산기 -->
-    <div class="calc-card">
-      <div class="calc-title">📐 공학용 계산기</div>
-      <input type="text" class="calc-screen" id="screen" value="0" readonly>
-      <div class="calc-buttons">
-        <button class="calc-btn clear" onclick="clearScreen()">C</button>
-        <button class="calc-btn fn small" onclick="insert('Math.PI')">π</button>
-        <button class="calc-btn fn small" onclick="insert('Math.E')">e</button>
-        <button class="calc-btn fn small" onclick="insert('(')">(</button>
-        <button class="calc-btn fn small" onclick="insert(')')">)</button>
-        <button class="calc-btn fn" onclick="insert('Math.sin(')">sin</button>
-        <button class="calc-btn fn" onclick="insert('Math.cos(')">cos</button>
-        <button class="calc-btn fn" onclick="insert('Math.tan(')">tan</button>
-        <button class="calc-btn fn" onclick="insert('Math.log10(')">log</button>
-        <button class="calc-btn fn" onclick="insert('Math.log(')">ln</button>
-        <button class="calc-btn" onclick="insert('7')">7</button>
-        <button class="calc-btn" onclick="insert('8')">8</button>
-        <button class="calc-btn" onclick="insert('9')">9</button>
-        <button class="calc-btn op" onclick="insert('/')">÷</button>
-        <button class="calc-btn fn" onclick="insert('**')">^</button>
-        <button class="calc-btn" onclick="insert('4')">4</button>
-        <button class="calc-btn" onclick="insert('5')">5</button>
-        <button class="calc-btn" onclick="insert('6')">6</button>
-        <button class="calc-btn op" onclick="insert('*')">×</button>
-        <button class="calc-btn fn small" onclick="insert('Math.sqrt(')">√</button>
-        <button class="calc-btn" onclick="insert('1')">1</button>
-        <button class="calc-btn" onclick="insert('2')">2</button>
-        <button class="calc-btn" onclick="insert('3')">3</button>
-        <button class="calc-btn op" onclick="insert('-')">-</button>
-        <button class="calc-btn fn small" onclick="backspace()">←</button>
-        <button class="calc-btn" onclick="insert('0')">0</button>
-        <button class="calc-btn" onclick="insert('.')">.</button>
-        <button class="calc-btn op" onclick="insert('+')">+</button>
-        <button class="calc-btn equal" onclick="calculate()">=</button>
-      </div>
-    </div>
-  </div>
+
   <script>
     // ===== 시계 =====
     const clockCities = [
