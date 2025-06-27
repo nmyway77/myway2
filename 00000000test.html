@@ -1,5 +1,4 @@
-
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -39,6 +38,9 @@
       font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
       color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: auto;
       padding: 0 10px;
+      user-select: none;
+      cursor: grab;
+      display: flex; align-items: center; gap: 6px;
     }
     .add-dir-btn {
       font-size: 1rem; background: #274eff; color: #fff; border:none; border-radius: 7px;
@@ -46,11 +48,19 @@
     }
     .add-dir-btn:hover { background: #1d3685;}
     .remove-dir-btn {
-      font-size: 0.95rem; background: #ff4c54; color: #fff; border:none; border-radius: 6px;
-      padding: 3px 10px; margin-left:8px; cursor:pointer; vertical-align:middle;
-      transition:background 0.15s;
+      background: none;
+      border: none;
+      color: #888;
+      padding: 0;
+      margin-left: 5px;
+      font-size: 15px;
+      cursor: pointer;
+      vertical-align: middle;
+      transition: color 0.13s;
+      display: inline-flex; align-items: center; justify-content: center;
+      height: 20px; width: 20px;
     }
-    .remove-dir-btn:hover { background: #b91c1c;}
+    .remove-dir-btn:hover { color: #ff4c54;}
     .gallery-row {
       width: 100%; max-width: 1080px; margin: 0 auto;
       text-align: center;
@@ -107,17 +117,19 @@
     .edit-btn {
       position: absolute;
       top: 7px; right: 9px;
-      padding: 4px 12px;
-      font-size: 14px;
-      background: #2e2e54c0;
-      color: #fff;
+      padding: 0;
+      background: none;
+      color: #474785;
       border: none;
       border-radius: 6px;
       cursor: pointer;
       z-index: 4;
       transition: background .15s;
+      font-size: 15px;
+      height: 20px; width: 20px;
+      display: flex; align-items: center; justify-content: center;
     }
-    .edit-btn:hover { background: #436cff; }
+    .edit-btn:hover { background: #f3f3ff; color: #436cff;}
     #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.57); display: none; align-items: center; justify-content: center; z-index: 2002;}
     #modal { background: #fff; padding: 28px 22px 22px 22px; border-radius: 7px; width: 320px; box-shadow: 0 2px 16px #24248238;}
     #modal h3 { margin-bottom: 16px; font-size: 20px; color:#313181;}
@@ -129,6 +141,11 @@
     }
     #modal .save-btn { background: #4067d1; color: #fff; }
     #modal .cancel-btn { background: #dc3545; color: #fff; }
+    /* 드래그 시 강조 */
+    .sortable-ghost {
+      opacity: 0.6;
+      background: #e8f0ff !important;
+    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 </head>
@@ -207,17 +224,20 @@
       // 2. 각 디렉토리별 갤러리 row 동적
       const galleries = document.getElementById("galleries");
       galleries.innerHTML = dirs.map(dir => `
-        <span class="gallery-label" style="display:inline-block;">
-          ${dir}
-          <button class="remove-dir-btn" data-dir="${dir}" title="디렉토리 삭제">삭제</button>
-        </span>
-        <div class="gallery-row" id="gallery_${dir}"></div>
+        <div class="dir-label-outer" data-dir="${dir}" style="user-select:none;">
+          <span class="gallery-label" draggable="true" style="display:inline-block;">
+            ${dir}
+            <button class="remove-dir-btn" data-dir="${dir}" title="디렉토리 삭제">&#128465;</button>
+          </span>
+          <div class="gallery-row" id="gallery_${dir}"></div>
+        </div>
       `).join('');
       // 3. 각 갤러리 렌더
       for (let dir of dirs) renderGallery(gallery[dir]||[], `gallery_${dir}`);
       // 4. 삭제 버튼 이벤트
       galleries.querySelectorAll('.remove-dir-btn').forEach(btn => {
-        btn.onclick = function() {
+        btn.onclick = function(e) {
+          e.stopPropagation();
           const deldir = btn.getAttribute("data-dir");
           if (!confirm(`디렉토리 "${deldir}"를(을) 삭제하시겠습니까?\n(안의 이미지도 모두 삭제)`) ) return;
           let data = getData();
@@ -227,6 +247,20 @@
           renderAll();
         };
       });
+
+      // 5. 디렉토리(분류) 드래그 이동 (순서변경)
+      Sortable.create(galleries, {
+        animation: 150,
+        handle: ".gallery-label",
+        draggable: ".dir-label-outer",
+        onEnd: function (evt) {
+          let data = getData();
+          const moved = data.dirs.splice(evt.oldIndex, 1)[0];
+          data.dirs.splice(evt.newIndex, 0, moved);
+          setData(data);
+          renderAll();
+        }
+      });
     }
 
     // ---- 이미지 갤러리 렌더 ----
@@ -235,7 +269,7 @@
       el.innerHTML = data.map((item, idx) => `
         <div class="list-row magazine" data-idx="${idx}">
           <div class="imgframe">
-            <button class="edit-btn" type="button" title="수정">수정</button>
+            <button class="edit-btn" type="button" title="수정">&#9998;</button>
             <div class="img-wrap magazine">
               <div class="img-item magazine">
                 <a href="${item.url}" target="_blank" rel="noopener">
