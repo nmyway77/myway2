@@ -1,0 +1,431 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>MYWAY 인플루언서 influencer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
+    .topbar {
+      position: fixed; top: 0; left: 0; width: 100vw; z-index: 1001;
+      background: #2e2e54;
+      color: #fff;
+      display: flex; align-items: center; justify-content: flex-start;
+      box-shadow: 0 4px 18px #29317018;
+      padding: 0 14px; height: 54px;
+      min-width: 360px;
+      font-size: 16px;
+    }
+    .topbar button {
+      padding: 8px 18px;
+      margin-right: 8px;
+      background: #436cff;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .2s;
+    }
+    .topbar button#export-btn { background: #30bc8a; }
+    .topbar button#import-btn { background: #ffc94a; color: #232356; }
+    .dashboard { max-width: 1200px; margin: 0 auto; padding: 64px 0 60px 0;}
+    .gallery-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+    }
+    .gallery-label {
+      font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
+      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: auto;
+      padding: 0 10px;
+      user-select: none;
+      cursor: grab;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .add-dir-btn {
+      font-size: 1rem; background: #274eff; color: #fff; border:none; border-radius: 7px;
+      padding: 8px 18px; margin: 0 0 0 18px; cursor:pointer; transition:background 0.15s;
+    }
+    .add-dir-btn:hover { background: #1d3685;}
+    .remove-dir-btn {
+      background: none;
+      border: none;
+      color: #888;
+      padding: 0;
+      margin-left: 5px;
+      font-size: 15px;
+      cursor: pointer;
+      vertical-align: middle;
+      transition: color 0.13s;
+      display: inline-flex; align-items: center; justify-content: center;
+      height: 20px; width: 20px;
+    }
+    .remove-dir-btn:hover { color: #ff4c54;}
+    .gallery-row {
+      width: 100%; max-width: 1080px; margin: 0 auto;
+      text-align: center;
+    }
+    .list-row {
+      display: inline-block;
+      vertical-align: top;
+      box-sizing: border-box;
+      position: relative;
+      transition: width 0.2s, height 0.2s;
+      background: #fff;
+    }
+    .list-row:last-child { margin-right: 0; }
+    .imgframe {
+      width: 100%; height: 100%;
+      background: #fff;
+      position: relative;
+      box-sizing: border-box;
+      z-index: 0;
+      border-radius: 0;
+      box-shadow: 0 6px 6px 0 rgba(90,90,130,0.11);
+      overflow: hidden;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
+    .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
+    .img-item img {
+      display: block;
+      background: #fff;
+      margin: 0;
+      border: none;
+      padding: 0;
+      object-fit: contain;
+      width: 100%; height: 100%;
+      transition: all .17s;
+    }
+    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
+    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
+    .list-row.magazine { width: 200px; height: 284px; margin: 0 12px 36px 0; }
+    .list-row.magazine.wide-box { width: 284px !important; height: 200px !important; }
+    .list-row.magazine.tall-box { width: 200x !important; height: 284px !important; }
+    @media (max-width: 1080px) {
+      .list-row.magazine { width: 28vw; height: 40vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
+      .list-row.magazine.wide-box { width: 40vw !important; height: 28vw !important; }
+      .list-row.magazine.tall-box { width: 28vw !important; height: 40vw !important; }
+    }
+    @media (max-width: 700px) {
+      .list-row.magazine { width: 44vw; height: 62vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
+      .list-row.magazine.wide-box { width: 62vw !important; height: 44vw !important; }
+      .list-row.magazine.tall-box { width: 44vw !important; height: 62vw !important; }
+    }
+    .edit-btn {
+      position: absolute;
+      top: 7px; right: 9px;
+      padding: 0;
+      background: none;
+      color: #474785;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 4;
+      transition: background .15s;
+      font-size: 15px;
+      height: 20px; width: 20px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .edit-btn:hover { background: #f3f3ff; color: #436cff;}
+    #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.57); display: none; align-items: center; justify-content: center; z-index: 2002;}
+    #modal { background: #fff; padding: 28px 22px 22px 22px; border-radius: 7px; width: 320px; box-shadow: 0 2px 16px #24248238;}
+    #modal h3 { margin-bottom: 16px; font-size: 20px; color:#313181;}
+    #modal label { display:block; margin-bottom:6px; color:#232356; font-weight:600;}
+    #modal input, #modal select { width: 100%; margin-bottom: 14px; padding: 8px; border: 1px solid #b2c1e6; border-radius: 5px; font-size: 14px;}
+    #modal .actions { text-align: right; }
+    #modal .actions button {
+      padding: 8px 14px; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px; font-size: 15px;
+    }
+    #modal .save-btn { background: #4067d1; color: #fff; }
+    #modal .cancel-btn { background: #dc3545; color: #fff; }
+    /* 드래그 시 강조 */
+    .sortable-ghost {
+      opacity: 0.6;
+      background: #e8f0ff !important;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+</head>
+<body>
+  <nav class="topbar">
+    <button id="add-btn">추가</button>
+    <button id="export-btn">내보내기</button>
+    <button id="import-btn">가져오기</button>
+    <input type="file" id="import-file" accept="application/json" style="display:none">
+  </nav>
+  <div class="dashboard" style="margin-top:50px;">
+    <div class="gallery-header">
+      <span style="font-size:1.18rem;font-weight:700;color:#274eff;">디렉토리(분류) 목록</span>
+      <button class="add-dir-btn" id="add-dir-btn">+ 디렉토리 추가</button>
+    </div>
+    <div id="galleries"></div>
+  </div>
+  <!-- 입력 모달 -->
+  <div id="modal-overlay">
+    <div id="modal">
+      <h3>이미지 추가</h3>
+      <label>이미지 URL</label>
+      <input type="text" id="modal-img" placeholder="이미지 주소">
+      <label>링크 URL</label>
+      <input type="text" id="modal-link" placeholder="연결될 링크 주소">
+      <label>분류(디렉토리)</label>
+      <select id="modal-dir"></select>
+      <div class="actions">
+        <button class="cancel-btn" type="button">취소</button>
+        <button class="save-btn" type="button">저장</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // ---- 데이터 및 유틸 ----
+    const STORAGE_KEY = "influencer_gallery_v4";
+    const defaultDirs = [
+      "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"
+    ];
+    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
+
+    // 기본 데이터 구조 { dirs: ["A","B",...], gallery: {A:[], ...} }
+    function getData() {
+      let raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        let obj = { dirs: [...defaultDirs], gallery: {} };
+        for (let dir of obj.dirs) obj.gallery[dir] = [];
+        // 예시 하나만
+        obj.gallery["A"].push({ url:"https://www.youtube.com/@popcorncokemovie/videos", img:"https://yt3.googleusercontent.com/4vsl0dMmf2_zJh9hNMoFP7KPnfxEKCeWSn5iYdQvuJUVUkBf9eFu3qqdHWIN1DDULygUcGDmww=s900-c-k-c0x00ffffff-no-rj" });
+        return obj;
+      }
+      try {
+        let obj = JSON.parse(raw);
+        // 구조 보정
+        if (!obj.dirs) obj.dirs = [...defaultDirs];
+        if (!obj.gallery) obj.gallery = {};
+        for (let dir of obj.dirs) if (!obj.gallery[dir]) obj.gallery[dir] = [];
+        return obj;
+      } catch(e) {
+        let obj = { dirs: [...defaultDirs], gallery: {} };
+        for (let dir of obj.dirs) obj.gallery[dir] = [];
+        return obj;
+      }
+    }
+    function setData(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+    let editing = { gallery: null, index: null };
+
+    // ---- 디렉토리 동적 렌더 ----
+    function renderAll() {
+      const { dirs, gallery } = getData();
+      // 1. 디렉토리 선택 옵션 새로
+      const modalDirSel = document.getElementById('modal-dir');
+      modalDirSel.innerHTML = dirs.map(d=>`<option value="${d}">${d}</option>`).join('');
+      // 2. 각 디렉토리별 갤러리 row 동적
+      const galleries = document.getElementById("galleries");
+      galleries.innerHTML = dirs.map(dir => `
+        <div class="dir-label-outer" data-dir="${dir}" style="user-select:none;">
+          <span class="gallery-label" draggable="true" style="display:inline-block;">
+            ${dir}
+            <button class="remove-dir-btn" data-dir="${dir}" title="디렉토리 삭제">&#128465;</button>
+          </span>
+          <div class="gallery-row" id="gallery_${dir}"></div>
+        </div>
+      `).join('');
+      // 3. 각 갤러리 렌더
+      for (let dir of dirs) renderGallery(gallery[dir]||[], `gallery_${dir}`);
+      // 4. 삭제 버튼 이벤트
+      galleries.querySelectorAll('.remove-dir-btn').forEach(btn => {
+        btn.onclick = function(e) {
+          e.stopPropagation();
+          const deldir = btn.getAttribute("data-dir");
+          if (!confirm(`디렉토리 "${deldir}"를(을) 삭제하시겠습니까?\n(안의 이미지도 모두 삭제)`) ) return;
+          let data = getData();
+          data.dirs = data.dirs.filter(d => d !== deldir);
+          delete data.gallery[deldir];
+          setData(data);
+          renderAll();
+        };
+      });
+
+      // 5. 디렉토리(분류) 드래그 이동 (순서변경)
+      Sortable.create(galleries, {
+        animation: 150,
+        handle: ".gallery-label",
+        draggable: ".dir-label-outer",
+        onEnd: function (evt) {
+          let data = getData();
+          const moved = data.dirs.splice(evt.oldIndex, 1)[0];
+          data.dirs.splice(evt.newIndex, 0, moved);
+          setData(data);
+          renderAll();
+        }
+      });
+    }
+
+    // ---- 이미지 갤러리 렌더 ----
+    function renderGallery(data, targetId) {
+      const el = document.getElementById(targetId);
+      el.innerHTML = data.map((item, idx) => `
+        <div class="list-row magazine" data-idx="${idx}">
+          <div class="imgframe">
+            <button class="edit-btn" type="button" title="수정">&#9998;</button>
+            <div class="img-wrap magazine">
+              <div class="img-item magazine">
+                <a href="${item.url}" target="_blank" rel="noopener">
+                  <img src="${item.img}" data-idx="${idx}">
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="shadow-line">
+            <img src="${shadowUrl}">
+          </div>
+        </div>
+      `).join('');
+      // 이미지 비율따라 박스 비율 바꿈
+      Array.from(el.querySelectorAll('.img-item img')).forEach(img => {
+        img.onload = function() {
+          const box = img.closest('.list-row.magazine');
+          if (img.naturalWidth > img.naturalHeight) {
+            box.classList.add('wide-box');
+            box.classList.remove('tall-box');
+          } else {
+            box.classList.add('tall-box');
+            box.classList.remove('wide-box');
+          }
+        };
+        // 캐시된 경우 적용
+        if (img.complete) {
+          setTimeout(() => {
+            const box = img.closest('.list-row.magazine');
+            if (img.naturalWidth > img.naturalHeight) {
+              box.classList.add('wide-box');
+              box.classList.remove('tall-box');
+            } else {
+              box.classList.add('tall-box');
+              box.classList.remove('wide-box');
+            }
+          }, 10);
+        }
+      });
+      // 수정 버튼
+      Array.from(el.querySelectorAll('.edit-btn')).forEach((btn, idx) => {
+        btn.onclick = function(e) {
+          e.stopPropagation();
+          editing.gallery = targetId;
+          editing.index = idx;
+          const { gallery } = getData();
+          const item = gallery[targetId.replace("gallery_","")][idx];
+          document.getElementById('modal-img').value = item.img;
+          document.getElementById('modal-link').value = item.url;
+          document.getElementById('modal-dir').value = targetId.replace("gallery_","");
+          document.getElementById('modal-overlay').style.display = 'flex';
+        };
+      });
+      Sortable.create(el, {
+        animation: 160,
+        handle: ".imgframe",
+        ghostClass: "drag-ghost",
+        onEnd: function (evt) {
+          let galleryKey = targetId.replace("gallery_","");
+          let full = getData();
+          const moved = full.gallery[galleryKey].splice(evt.oldIndex, 1)[0];
+          full.gallery[galleryKey].splice(evt.newIndex, 0, moved);
+          setData(full);
+          renderGallery(full.gallery[galleryKey], targetId);
+        }
+      });
+    }
+
+    // ---- 이미지 추가/수정 ----
+    document.getElementById('add-btn').onclick = () => {
+      editing.gallery = null;
+      editing.index = null;
+      document.getElementById('modal-img').value = "";
+      document.getElementById('modal-link').value = "";
+      document.getElementById('modal-dir').value = getData().dirs[0] || "";
+      document.getElementById('modal-overlay').style.display = 'flex';
+      document.getElementById('modal-img').focus();
+    };
+    document.querySelector('#modal .cancel-btn').onclick = () => {
+      document.getElementById('modal-overlay').style.display = 'none';
+    };
+    document.querySelector('#modal .save-btn').onclick = () => {
+      const img = document.getElementById('modal-img').value.trim();
+      const link = document.getElementById('modal-link').value.trim();
+      const dir = document.getElementById('modal-dir').value;
+      if (!img) { alert("이미지 주소를 입력하세요."); return; }
+      if (!link) { alert("링크 주소를 입력하세요."); return; }
+      let full = getData();
+      if (editing.gallery !== null && editing.index !== null) {
+        let curdir = editing.gallery.replace("gallery_","");
+        if (curdir === dir) {
+          full.gallery[dir][editing.index] = { url: link, img };
+        } else {
+          full.gallery[curdir].splice(editing.index, 1);
+          if (!full.gallery[dir]) full.gallery[dir] = [];
+          full.gallery[dir].push({ url: link, img });
+        }
+      } else {
+        if (!full.gallery[dir]) full.gallery[dir] = [];
+        full.gallery[dir].push({ url: link, img });
+      }
+      setData(full);
+      document.getElementById('modal-overlay').style.display = 'none';
+      renderAll();
+    };
+
+    // ---- 디렉토리 추가 ----
+    document.getElementById('add-dir-btn').onclick = () => {
+      let dirName = prompt("새 디렉토리 이름을 입력하세요 (한글, 영문, 숫자 가능, 20자 이내)", "");
+      if (!dirName) return;
+      dirName = dirName.trim().replace(/[\n\r]/g, '').slice(0,20);
+      if (!dirName) return;
+      let full = getData();
+      if (full.dirs.includes(dirName)) {
+        alert("이미 존재하는 디렉토리입니다.");
+        return;
+      }
+      full.dirs.push(dirName);
+      full.gallery[dirName] = [];
+      setData(full);
+      renderAll();
+    };
+
+    // ---- 내보내기/가져오기 ----
+    document.getElementById('export-btn').onclick = () => {
+      const data = getData();
+      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'influencer_gallery.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+    document.getElementById('import-btn').onclick = () => {
+      document.getElementById('import-file').click();
+    };
+    document.getElementById('import-file').onchange = e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = evt => {
+        try {
+          const data = JSON.parse(evt.target.result);
+          setData(data);
+          renderAll();
+          alert('가져오기가 완료되었습니다.');
+        } catch {
+          alert('불러오기 실패(잘못된 파일)');
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = null;
+    };
+
+    renderAll();
+  </script>
+</body>
+</html>
