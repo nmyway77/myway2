@@ -13,33 +13,33 @@
       min-height: 100vh;
       overflow: hidden;
     }
-    .top-space {
-      height: 52px;
-    }
     .searchbar-outer {
       display: flex;
       justify-content: center;
       align-items: flex-start;
       width: 100vw;
-      margin-top: 0;
-      margin-bottom: 35px;
+      margin-top: 34px;
+      margin-bottom: 0px;
+      position: relative;
+      z-index: 20;
     }
     .searchbar-wrap {
       position: relative;
       width: 520px;
-      max-width: 96vw;
+      max-width: 97vw;
       height: 68px;
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 22;
     }
     .searchbar-shadow {
       position: absolute;
       left: 0; right: 0; bottom: 8px;
-      height: 30px;
+      height: 32px;
       z-index: 1;
       filter: blur(8px);
-      opacity: 0.36;
+      opacity: 0.37;
       pointer-events: none;
       background: radial-gradient(ellipse at center, #273354 60%, transparent 100%);
     }
@@ -132,55 +132,54 @@
     .searchbar-btn:active svg {
       stroke: #363989;
     }
-    /* 네비게이션 텍스트바 */
-    .nav-space {
-      height: 20px;
-    }
+    /* 네비게이션 바 */
     .screen-links {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 15px;
-      margin: 0 auto 30px auto;
-      width: 98vw;
-      max-width: 1200px;
-      padding: 17px 0 11px 0;
-      border-radius: 23px;
-      background: rgba(255,255,255,0.93);
-      font-size: 1.13rem;
-      font-weight: 700;
-      
-      color: #2b1e73 !important; /* 진한 남보라색 */
-      
-      box-shadow: 0 2px 18px #b8a0e71b;
+      gap: 16px;
+      margin: 19px auto 0 auto;  /* 위로 더 붙임! (기존 32px → 19px) */
+      width: 99vw;
+      max-width: 1150px;
+      padding: 0;
+      border-radius: 0;
+      background: none;
+      font-size: 0.96rem;
+      font-weight: 500;
+      color: #fff;
       flex-wrap: wrap;
       white-space: normal;
+      position: relative;
+      z-index: 200;
+      box-shadow: none;
+      letter-spacing: 0.01em;
     }
     .screen-links a {
-      color: #3b1e93 !important;
+      color: rgba(255,255,255,0.90) !important;
       text-decoration: none;
-      padding: 3px 14px 3px 14px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 1.12em;
-      letter-spacing: 0.02em;
-      transition: background 0.14s, color 0.14s;
-      margin: 0 3px;
+      padding: 2px 8px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 1em;
+      transition: background 0.12s, color 0.14s;
+      margin: 0 2px;
       background: none;
       border: none;
       outline: none;
       display: inline-block;
+      opacity: 0.94;
+      letter-spacing: 0.01em;
     }
     .screen-links a:hover, .screen-links a.active {
-      background: #ece4ff;
-      color: #b650f3 !important;
+      background: rgba(255,255,255,0.14);
+      color: #ffe8ff !important;
     }
     #main-frame {
       position: fixed;
       left: 0;
-      top: 176px;
+      top: 158px;
       width: 100vw;
-      height: calc(100vh - 180px);
+      height: calc(100vh - 160px);
       border: none;
       margin: 0;
       background: #f5f7fa;
@@ -189,18 +188,16 @@
       display: block;
     }
     @media (max-width: 700px) {
-      .top-space { height: 20px; }
-      .searchbar-outer { margin-bottom: 18px; }
+      .searchbar-outer { margin-top: 8px; }
       .searchbar-wrap { width: 99vw; min-width: 0; }
       .searchbar-box { padding: 0 5px 0 6px; }
       .searchbar-select, .searchbar-input { font-size: 1rem; }
-      .screen-links { font-size: 1rem; gap: 7px; padding: 11px 0 7px 0;}
-      #main-frame { top: 142px; height: calc(100vh - 146px); }
+      .screen-links { font-size: 0.95rem; gap: 5px; margin-top: 8px;}
+      #main-frame { top: 120px; height: calc(100vh - 125px); }
     }
   </style>
 </head>
 <body>
-  <div class="top-space"></div>
   <div class="searchbar-outer">
     <div class="searchbar-wrap">
       <div class="searchbar-shadow"></div>
@@ -261,7 +258,6 @@
       </form>
     </div>
   </div>
-  <div class="nav-space"></div>
   <div class="screen-links" id="parent-links">
     <a href="#" onclick="showScreenParent(event, '00main00000.html')">AI</a>
     <a href="#" onclick="showScreenParent(event, '00newsmain2.html')">NEWS</a>
