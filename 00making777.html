@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -47,7 +47,7 @@
       padding: 8px 18px; margin: 0 0 0 18px; cursor:pointer; transition:background 0.15s;
     }
     .add-dir-btn:hover { background: #1d3685;}
-    .remove-dir-btn {
+    .remove-dir-btn, .edit-dir-btn {
       background: none;
       border: none;
       color: #888;
@@ -61,6 +61,7 @@
       height: 20px; width: 20px;
     }
     .remove-dir-btn:hover { color: #ff4c54;}
+    .edit-dir-btn:hover { color: #4067d1;}
     .gallery-row {
       width: 100%; max-width: 1080px; margin: 0 auto;
       text-align: center;
@@ -187,19 +188,16 @@
     ];
     const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
 
-    // 기본 데이터 구조 { dirs: ["A","B",...], gallery: {A:[], ...} }
     function getData() {
       let raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) {
         let obj = { dirs: [...defaultDirs], gallery: {} };
         for (let dir of obj.dirs) obj.gallery[dir] = [];
-        // 예시 하나만
         obj.gallery["A"].push({ url:"https://www.youtube.com/@popcorncokemovie/videos", img:"https://yt3.googleusercontent.com/4vsl0dMmf2_zJh9hNMoFP7KPnfxEKCeWSn5iYdQvuJUVUkBf9eFu3qqdHWIN1DDULygUcGDmww=s900-c-k-c0x00ffffff-no-rj" });
         return obj;
       }
       try {
         let obj = JSON.parse(raw);
-        // 구조 보정
         if (!obj.dirs) obj.dirs = [...defaultDirs];
         if (!obj.gallery) obj.gallery = {};
         for (let dir of obj.dirs) if (!obj.gallery[dir]) obj.gallery[dir] = [];
@@ -227,6 +225,7 @@
         <div class="dir-label-outer" data-dir="${dir}" style="user-select:none;">
           <span class="gallery-label" draggable="true" style="display:inline-block;">
             ${dir}
+            <button class="edit-dir-btn" data-dir="${dir}" title="디렉토리명 수정">&#9998;</button>
             <button class="remove-dir-btn" data-dir="${dir}" title="디렉토리 삭제">&#128465;</button>
           </span>
           <div class="gallery-row" id="gallery_${dir}"></div>
@@ -234,6 +233,7 @@
       `).join('');
       // 3. 각 갤러리 렌더
       for (let dir of dirs) renderGallery(gallery[dir]||[], `gallery_${dir}`);
+
       // 4. 삭제 버튼 이벤트
       galleries.querySelectorAll('.remove-dir-btn').forEach(btn => {
         btn.onclick = function(e) {
@@ -247,8 +247,29 @@
           renderAll();
         };
       });
+      // 5. 디렉토리명 수정 버튼 이벤트
+      galleries.querySelectorAll('.edit-dir-btn').forEach(btn => {
+        btn.onclick = function(e) {
+          e.stopPropagation();
+          const oldDir = btn.getAttribute("data-dir");
+          let newDir = prompt("새 디렉토리명을 입력하세요 (20자 이내)", oldDir) || "";
+          newDir = newDir.trim().replace(/[\n\r]/g, '').slice(0,20);
+          if (!newDir || newDir === oldDir) return;
+          let data = getData();
+          if (data.dirs.includes(newDir)) {
+            alert("이미 존재하는 디렉토리입니다.");
+            return;
+          }
+          // 디렉토리명 변경
+          data.dirs = data.dirs.map(d => d === oldDir ? newDir : d);
+          data.gallery[newDir] = data.gallery[oldDir];
+          delete data.gallery[oldDir];
+          setData(data);
+          renderAll();
+        };
+      });
 
-      // 5. 디렉토리(분류) 드래그 이동 (순서변경)
+      // 6. 디렉토리 드래그 이동 (순서변경)
       Sortable.create(galleries, {
         animation: 150,
         handle: ".gallery-label",
@@ -429,3 +450,4 @@
   </script>
 </body>
 </html>
+
