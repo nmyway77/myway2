@@ -2,182 +2,243 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>이쁜 타이머 위젯 - 대형버전</title>
+  <title>워치 스타일 타이머</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      background: linear-gradient(135deg, #d4e1fa, #f2e5fa 90%);
+    html, body {
+      background: radial-gradient(ellipse at 50% 20%, #20222b 0%, #434657 100%);
+      min-height: 100vh; margin: 0; padding: 0;
+      width: 100vw; overflow-x: hidden;
+    }
+    .watch-face-wrap {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
       min-height: 100vh;
-      margin: 0; padding: 0;
-      display: flex; justify-content: center; align-items: center;
-      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      width: 100vw;
     }
-    .timer-widget {
-      background: linear-gradient(145deg, #fff, #dde6f4 80%);
-      box-shadow: 0 18px 64px #c6d4e966, 0 4px 18px #fff9;
-      border-radius: 3.6em;
-      padding: 64px 54px 54px 54px;
-      min-width: 450px; max-width: 600px;
-      display: flex; flex-direction: column; align-items: center;
-      border: 3px solid #e2eaf4;
+    .watch-face {
       position: relative;
-    }
-    .timer-circle {
-      width: 270px; height: 270px;
-      background: linear-gradient(120deg, #e2ebf9 60%, #c6d2ee 100%);
+      width: 340px; height: 340px;
+      max-width: 96vw; max-height: 96vw;
+      background: 
+        radial-gradient(ellipse at 60% 35%, #222634 45%, #23253a 99%),
+        linear-gradient(145deg,#3a3e4f 0 55%,#222436 100%);
       border-radius: 50%;
-      box-shadow: 0 16px 38px #a9b8da66, 0 3px 12px #fff;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 26px;
-      position: relative;
-      transition: box-shadow 0.2s;
+      box-shadow: 
+        0 8px 32px #16192180,
+        0 0 0 13px #585d6e1b,
+        0 0 0 2.5px #212b3a,
+        0 0 42px 3px #1f2235,
+        inset 0 3px 24px #3d4153, 
+        inset 0 -2px 12px #0a0a10;
+      overflow: visible;
+      border: 2px solid #595e6c;
+      margin-bottom: 24px;
+      transition: box-shadow 0.15s;
     }
-    .timer-time {
-      font-size: 4.3rem;
-      font-weight: bold;
-      color: #495e97;
-      letter-spacing: 2px;
-      text-shadow: 0 3px 13px #e3e8f7cc, 0 0px 2px #c6d2ee;
-      user-select: none;
+    .watch-face.ringing {
+      animation: ring-shake 0.18s linear infinite;
+      box-shadow: 0 0 40px #ff7c7c,0 0 0 13px #e784841b, 0 8px 38px #16192160;
     }
-    .timer-btns {
-      display: flex;
-      gap: 24px;
-      margin-top: 24px;
-      margin-bottom: 12px;
+    @keyframes ring-shake {
+      0%   { box-shadow: 0 0 40px #ff7c7c,0 0 0 13px #e784841b, 0 8px 38px #16192160;}
+      50%  { box-shadow: 0 0 60px #ff2c2c,0 0 0 15px #ffdbdb1b, 0 8px 38px #16192180;}
+      100% { box-shadow: 0 0 40px #ff7c7c,0 0 0 13px #e784841b, 0 8px 38px #16192160;}
     }
-    .timer-btn {
-      background: linear-gradient(90deg, #c6d6fa 10%, #a4c3ff 90%);
-      color: #445;
-      border: none;
-      border-radius: 2em;
-      font-size: 1.6rem;
-      font-weight: 600;
-      padding: 16px 38px;
-      box-shadow: 0 4px 16px #aac4ff55, 0 1px 2px #fff;
-      cursor: pointer;
-      transition: all 0.13s;
+    .watch-glass {
+      position: absolute;
+      left: 8%; top: 7%;
+      width: 78%; height: 28%;
+      background: linear-gradient(120deg,rgba(255,255,255,0.17) 10%,rgba(255,255,255,0.03) 80%);
+      border-radius: 54% 46% 45% 55% / 43% 48% 54% 57%;
+      z-index: 12;
+      pointer-events: none;
+      filter: blur(1.6px);
+      box-shadow: 0 1px 19px #fff5, 0 1.5px 10px #fcfdff14;
     }
-    .timer-btn:hover {
-      background: linear-gradient(90deg, #a4c3ff 10%, #c6d6fa 90%);
-      box-shadow: 0 8px 22px #a9b8da55, 0 0.5px 1px #fff;
-      color: #283455;
-      transform: scale(1.08);
+    .watch-center-dot {
+      position: absolute; left: 50%; top: 50%;
+      width: 23px; height: 23px;
+      margin-left: -11.5px; margin-top: -11.5px;
+      background: radial-gradient(ellipse at 55% 55%, #fff7de 0%, #cab48d 60%, #3c3a34 100%);
+      border-radius: 50%;
+      border: 2.5px solid #ffefd2;
+      box-shadow: 0 2px 19px #a2915b70, 0 0.5px 2px #fff;
+      z-index: 15;
     }
-    .timer-set {
-      margin-top: 18px;
-      display: flex;
-      gap: 9px;
-      font-size: 1.5rem;
-      align-items: center;
-      color: #567;
-    }
-    .timer-set input {
-      width: 65px;
-      padding: 7px 12px;
-      border-radius: 1em;
-      border: 2.2px solid #a4c3ff;
-      background: #f8faff;
-      font-size: 1.6rem;
-      text-align: center;
-      margin-right: 4px;
-    }
-    @media (max-width: 700px) {
-      .timer-widget { min-width: 98vw; max-width: 100vw; padding: 14vw 2vw 7vw 2vw; }
-      .timer-circle { width: 40vw; height: 40vw; min-width:120px; min-height:120px;}
-      .timer-time { font-size: 3.2rem; }
-      .timer-btn { font-size:1.2rem; padding: 10px 18px;}
-      .timer-set { font-size:1.05rem; }
-      .timer-set input { font-size:1.2rem; width:32px; padding:3px 7px;}
+    /* 바늘 */
+    .watch-hand { position: absolute; left: 50%; top: 50%; transform-origin: bottom center; pointer-events: none; transition: none;}
+    .watch-hand.min { width: 5.6px; height: 110px; background: linear-gradient(180deg,#36a9e9 55%,#ebf9ff 100%); border-radius: 5px; margin-left: -2.8px; z-index: 11; box-shadow: 0 4px 18px #41cfff31, 0 1px 7px #fff9;}
+    .watch-hand.sec { width: 2.9px; height: 138px; background: linear-gradient(180deg,#ee3f4a 80%,#fff 100%); border-radius: 1.3px; margin-left: -1.45px; z-index: 12; box-shadow: 0 3px 12px #ec949449, 0 0.5px 1px #fff9;}
+    .watch-hand.sec::after { content: ''; position: absolute; left: 50%; bottom: -10px; width: 8px; height: 14px; transform: translate(-50%,0); background: radial-gradient(circle at 65% 45%, #fff 0 50%, #e05050 100%); border-radius: 10px; box-shadow: 0 1px 4px #ec4040b7; opacity: 0.93;}
+    .watch-hand.ms { width: 2px; height: 90px; background: linear-gradient(180deg,#fffae0 70%,#eacb3b 100%); border-radius: 1.2px; margin-left: -1px; z-index: 10; opacity: 0.93; box-shadow: 0 2px 6px #f4e27b66;}
+    /* 눈금/숫자 */
+    .watch-num { position: absolute; left: 50%; top: 50%; font-size: 2.13rem; color: #ececf7; font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif; font-weight: 600; text-shadow: 0 3.5px 14px #40447073, 0 1px 4px #fff8; user-select: none; z-index: 7; letter-spacing: -2.5px; transform-origin: center center; transition: color 0.3s; opacity: 0.95; pointer-events: none;}
+    .watch-tick { position: absolute; left: 50%; top: 50%; width: 4.7px; height: 17px; background: linear-gradient(180deg,#ececf7 45%,#888d99 100%); border-radius: 2.2px; z-index: 4; transform-origin: center bottom; opacity: 0.16; transition: background 0.2s; pointer-events: none;}
+    .watch-tick.major { height: 29px; width: 7.7px; background: linear-gradient(180deg,#fff 85%,#4eaaff 100%); opacity: 0.7;}
+    /* 디지털/입력 */
+    .timer-digital { font-size: 2.18rem; font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif; font-weight: 800; color: #f7f7fb; letter-spacing: 2.5px; text-shadow: 0 1.5px 8px #23253899; margin-bottom: 18px; text-align: center; user-select: none; background: rgba(34,38,52,0.65); padding: 9px 34px 7px 34px; border-radius: 1.6em; box-shadow: 0 2px 8px #2225 0.5; width: max-content; min-width: 202px; margin-left: auto; margin-right: auto; white-space: pre;}
+    .timer-set { display: flex; justify-content: center; gap: 16px; margin-bottom: 14px;}
+    .timer-set input { width: 48px; font-size: 1.25rem; border-radius: 10px; border: 2px solid #b8d2f4; background: #f5f8ff; text-align: center; padding: 5px;}
+    .timer-set label { color: #a7bee7; font-size: 1.1rem; font-weight: 700;}
+    .timer-btns { display: flex; gap: 22px; margin-bottom: 9px; justify-content: center;}
+    .timer-btn { background: linear-gradient(90deg, #d9e7ff 10%, #b4d7fa 90%); color: #363f51; border: none; border-radius: 2.1em; font-size: 1.33rem; font-weight: 700; padding: 13px 32px; box-shadow: 0 4px 14px #93b1e844, 0 1px 2px #fff; cursor: pointer; transition: all 0.13s;}
+    .timer-btn:hover { background: linear-gradient(90deg, #b4d7fa 10%, #d9e7ff 90%); box-shadow: 0 8px 22px #3a78e366, 0 0.5px 1px #fff; color: #153a7e; transform: scale(1.07);}
+    @media (max-width: 520px) {
+      .watch-face { width: 97vw; height: 97vw; min-width:145px; min-height:145px; max-width:99vw; max-height:99vw;}
+      .watch-num { font-size: 1.15rem; }
+      .watch-hand.min { height: 34vw; }
+      .watch-hand.sec { height: 41vw; }
+      .watch-hand.ms  { height: 28vw; }
+      .watch-center-dot { width: 7vw; height: 7vw; margin-left:-3.5vw; margin-top:-3.5vw;}
+      .timer-digital { font-size: 1.14rem; padding: 7px 4vw 6px 4vw; min-width: 105px; }
+      .timer-set input { width: 31px; font-size: 0.97rem;}
+      .timer-btn { font-size: 0.98rem; padding: 8px 5vw; }
     }
   </style>
 </head>
 <body>
-  <div class="timer-widget">
-    <div class="timer-circle">
-      <span class="timer-time" id="display">05:00</span>
+  <div class="watch-face-wrap">
+    <div class="watch-face" id="watchFace">
+      <div class="watch-glass"></div>
+      <div class="watch-hand min" id="minHand"></div>
+      <div class="watch-hand sec" id="secHand"></div>
+      <div class="watch-hand ms"  id="msHand"></div>
+      <div class="watch-center-dot"></div>
     </div>
+    <form class="timer-set" onsubmit="return false;">
+      <label>분
+        <input type="number" min="0" max="59" id="setMin" value="1">
+      </label>
+      <label>초
+        <input type="number" min="0" max="59" id="setSec" value="0">
+      </label>
+    </form>
+    <div class="timer-digital" id="display">01:00.00</div>
     <div class="timer-btns">
       <button class="timer-btn" id="startBtn">시작</button>
       <button class="timer-btn" id="pauseBtn">일시정지</button>
       <button class="timer-btn" id="resetBtn">리셋</button>
     </div>
-    <div class="timer-set">
-      <label>분</label>
-      <input type="number" id="minInput" min="0" max="99" value="5">
-      <label>초</label>
-      <input type="number" id="secInput" min="0" max="59" value="0">
-      <button class="timer-btn" style="font-size:1.05rem;padding:8px 18px;" id="setBtn">설정</button>
-    </div>
   </div>
   <script>
-    let timer, timeLeft = 300, isRunning = false, originTime = 300;
+    // 시계 숫자/눈금
+    const face = document.getElementById('watchFace');
+    for(let n=1;n<=12;n++) {
+      const num = document.createElement('div');
+      num.className = 'watch-num';
+      num.textContent = n;
+      num.style.transform = `translate(-50%,-50%) rotate(${n*30}deg) translate(0,-115px) rotate(${-n*30}deg)`;
+      face.appendChild(num);
+    }
+    for(let i=0;i<60;i++) {
+      const tick = document.createElement('div');
+      tick.className = 'watch-tick'+(i%5===0?' major':'');
+      tick.style.transform = `translate(-50%,-100%) rotate(${i*6}deg) translate(0,-132px)`;
+      face.appendChild(tick);
+    }
+    // 바늘
+    const msHand  = document.getElementById('msHand');
+    const secHand = document.getElementById('secHand');
+    const minHand = document.getElementById('minHand');
     const display = document.getElementById('display');
-    const minInput = document.getElementById('minInput');
-    const secInput = document.getElementById('secInput');
-
-    function beep() {
-      // Web Audio API로 짧은 삑 소리 내기
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = ctx.createOscillator();
-        oscillator.type = 'sine';
-        oscillator.frequency.value = 1047; // C6 정도
-        oscillator.connect(ctx.destination);
-        oscillator.start();
-        setTimeout(() => {
-          oscillator.stop();
-          ctx.close();
-        }, 450); // 0.45초
-      } catch (e) {
-        // 혹시 브라우저가 지원 안 하면 무시
+    const startBtn = document.getElementById('startBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const setMin = document.getElementById('setMin');
+    const setSec = document.getElementById('setSec');
+    const watchFace = document.getElementById('watchFace');
+    // 상태
+    let total = 60000, left = 60000, running = false, startT = null, timer = null, alarmInt = null, alarmRinging = false;
+    function renderTime(ms) {
+      if (ms < 0) ms = 0;
+      const m = String(Math.floor(ms/60000)).padStart(2,'0');
+      const s = String(Math.floor(ms/1000)%60).padStart(2,'0');
+      const cs = String(Math.floor(ms/10)%100).padStart(2,'0');
+      display.textContent = `${m}:${s}.${cs}`;
+    }
+    function renderHands(ms) {
+      if (ms < 0) ms = 0;
+      const min  = (ms/60000)%60;
+      const sec  = (ms/1000)%60;
+      const ms10 = (ms/10)%100;
+      minHand.style.transform  = `translate(-50%,-100%) rotate(${min*6}deg)`;
+      secHand.style.transform  = `translate(-50%,-100%) rotate(${sec*6}deg)`;
+      msHand.style.transform   = `translate(-50%, -100%) rotate(${ms10*3.6}deg)`;
+    }
+    function update() {
+      let ms = left;
+      if (running && startT) ms -= (Date.now() - startT);
+      renderTime(ms);
+      renderHands(ms);
+      if (running) {
+        if (ms <= 0) { endTimer(); return; }
+        requestAnimationFrame(update);
       }
     }
-
-    function updateDisplay() {
-      const m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
-      const s = String(timeLeft % 60).padStart(2, '0');
-      display.textContent = `${m}:${s}`;
-    }
     function startTimer() {
-      if (isRunning) return;
-      isRunning = true;
-      timer = setInterval(() => {
-        if (timeLeft > 0) {
-          timeLeft--;
-          updateDisplay();
-        } else {
-          clearInterval(timer);
-          isRunning = false;
-          display.textContent = "타임업!";
-          beep();
-        }
-      }, 1000);
+      if (running || left<=0) return;
+      running = true;
+      startT = Date.now();
+      update();
     }
     function pauseTimer() {
-      clearInterval(timer);
-      isRunning = false;
+      if (!running) return;
+      left -= (Date.now() - startT);
+      running = false;
     }
     function resetTimer() {
-      clearInterval(timer);
-      isRunning = false;
-      timeLeft = originTime;
-      updateDisplay();
+      running = false;
+      total = (+setMin.value)*60000 + (+setSec.value)*1000;
+      if (total<0) total=0;
+      left = total;
+      renderTime(left); renderHands(left);
+      stopAlarm();
+      watchFace.classList.remove("ringing");
     }
-    function setTimer() {
-      const mins = Math.max(0, Math.min(99, parseInt(minInput.value, 10) || 0));
-      const secs = Math.max(0, Math.min(59, parseInt(secInput.value, 10) || 0));
-      timeLeft = mins * 60 + secs;
-      originTime = timeLeft;
-      updateDisplay();
-      clearInterval(timer);
-      isRunning = false;
+    function endTimer() {
+      running = false;
+      left = 0;
+      renderTime(0); renderHands(0);
+      playAlarm();
     }
-    document.getElementById('startBtn').onclick = startTimer;
-    document.getElementById('pauseBtn').onclick = pauseTimer;
-    document.getElementById('resetBtn').onclick = resetTimer;
-    document.getElementById('setBtn').onclick = setTimer;
-    updateDisplay();
+    // 알람음
+    function playAlarm() {
+      if (alarmRinging) return;
+      alarmRinging = true;
+      let ctx, osc, gain;
+      function ring() {
+        ctx = new (window.AudioContext || window.webkitAudioContext)();
+        osc = ctx.createOscillator();
+        gain = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.value = 1100 + Math.random()*900;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        gain.gain.value = 0.21;
+        osc.start();
+        setTimeout(()=>{ osc.frequency.value += 400; gain.gain.value = 0.13;}, 200);
+        setTimeout(()=>{ gain.gain.value = 0.01; }, 400);
+        setTimeout(()=>{ osc.stop(); ctx.close(); }, 550);
+      }
+      ring();
+      alarmInt = setInterval(ring, 700);
+      watchFace.classList.add('ringing');
+    }
+    function stopAlarm() {
+      if (!alarmRinging) return;
+      alarmRinging = false;
+      clearInterval(alarmInt);
+      alarmInt = null;
+      watchFace.classList.remove('ringing');
+    }
+    // 입력 변경 시
+    setMin.onchange = setSec.onchange = function() { resetTimer(); };
+    // 버튼
+    startBtn.onclick = startTimer;
+    pauseBtn.onclick = pauseTimer;
+    resetBtn.onclick = resetTimer;
+    // 최초 초기화
+    resetTimer();
   </script>
 </body>
 </html>
