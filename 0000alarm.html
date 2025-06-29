@@ -1,294 +1,216 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>대형 볼륨감 알람시계</title>
+  <title>워치 스타일 알람시계</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      background: linear-gradient(135deg, #d4e1fa, #f2e5fa 90%);
+    html, body {
+      background: radial-gradient(ellipse at 50% 20%, #20222b 0%, #434657 100%);
       min-height: 100vh; margin: 0; padding: 0;
-      display: flex; justify-content: center; align-items: center;
-      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      width: 100vw; overflow-x: hidden;
     }
-    .alarm-widget {
-      background: linear-gradient(145deg, #fff, #dde6f4 80%);
-      box-shadow: 0 18px 64px #c6d4e966, 0 4px 18px #fff9;
-      border-radius: 3.6em;
-      padding: 48px 44px 40px 44px;
-      min-width: 450px; max-width: 600px;
-      display: flex; flex-direction: column; align-items: center;
-      border: 3px solid #e2eaf4;
+    .watch-face-wrap {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh;
+      width: 100vw;
+    }
+    .watch-face {
       position: relative;
-    }
-    .clock-box {
-      width: 270px; height: 270px;
-      background: linear-gradient(120deg, #e2ebf9 60%, #c6d2ee 100%);
+      width: 340px; height: 340px;
+      max-width: 96vw; max-height: 96vw;
+      background: 
+        radial-gradient(ellipse at 60% 35%, #222634 45%, #23253a 99%),
+        linear-gradient(145deg,#3a3e4f 0 55%,#222436 100%);
       border-radius: 50%;
-      box-shadow: 0 16px 38px #a9b8da66, 0 3px 12px #fff;
-      position: relative;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 26px;
-      transition: box-shadow 0.2s;
-      user-select: none;
+      box-shadow: 
+        0 8px 32px #16192180,
+        0 0 0 13px #585d6e1b,
+        0 0 0 2.5px #212b3a,
+        0 0 42px 3px #1f2235,
+        inset 0 3px 24px #3d4153, 
+        inset 0 -2px 12px #0a0a10;
+      overflow: visible;
+      border: 2px solid #595e6c;
+      margin-bottom: 24px;
+      transition: box-shadow 0.15s;
     }
-    .clock-face {
-      position: absolute; left: 0; top: 0;
-      width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      pointer-events: none;
-    }
-    .tick {
-      position: absolute;
-      width: 6px; height: 22px;
-      left: 50%; top: 5px;
-      background: #b4c3ea;
-      border-radius: 2.2px;
-      transform-origin: 50% 115px;
-    }
-    .tick.major {
-      height: 30px;
-      background: #6276aa;
-      width: 7px;
-    }
-    .hand {
-      position: absolute;
-      left: 50%; top: 50%;
-      transform-origin: bottom center;
-      transition: none;
-      pointer-events: none;
-    }
-    .hand.hour {
-      width: 10px; height: 60px;
-      background: #495e97;
-      border-radius: 5px;
-      margin-left: -5px;
-      z-index: 2;
-      box-shadow: 0 2px 8px #c7cde744;
-    }
-    .hand.min {
-      width: 7px; height: 90px;
-      background: #4164d4;
-      border-radius: 4px;
-      margin-left: -3.5px;
-      z-index: 3;
-      box-shadow: 0 2px 10px #adcbff33;
-    }
-    .hand.sec {
-      width: 3px; height: 110px;
-      background: #ff5050;
-      border-radius: 1.5px;
-      margin-left: -1.5px;
-      z-index: 4;
-      box-shadow: 0 2px 8px #ffadad44;
-    }
-    .center-dot {
-      position: absolute; left: 50%; top: 50%;
-      width: 22px; height: 22px;
-      margin-left: -11px; margin-top: -11px;
-      background: radial-gradient(ellipse at center, #fff 45%, #b4bbcc 100%);
-      border-radius: 50%;
-      border: 2.5px solid #e3e9f7;
-      z-index: 10;
-      box-shadow: 0 2px 9px #dde7faee;
-    }
-    .alarm-digital {
-      font-size: 2.35rem;
-      font-weight: bold;
-      color: #283465;
-      letter-spacing: 1px;
-      text-shadow: 0 2px 9px #e3e8f7cc, 0 0px 1px #c6d2ee;
-      margin-bottom: 13px;
-      user-select: none;
-    }
-    .alarm-set-box {
-      display: flex; align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
-      font-size: 1.2rem;
-      color: #394879;
-    }
-    .alarm-set-box input {
-      width: 60px;
-      padding: 5px 8px;
-      border-radius: 7px;
-      border: 2px solid #a4c3ff;
-      background: #f8faff;
-      font-size: 1.2rem;
-      text-align: center;
-    }
-    .alarm-set-box label {
-      margin-right: 3px;
-    }
-    .alarm-toggle {
-      background: #ff6060;
-      color: #fff;
-      border: none;
-      border-radius: 1.5em;
-      padding: 9px 30px;
-      font-size: 1.15rem;
-      font-weight: bold;
-      margin-left: 16px;
-      margin-top: 4px;
-      box-shadow: 0 3px 12px #f9b1b1aa, 0 1px 2px #fff;
-      cursor: pointer;
-      transition: background 0.16s;
-    }
-    .alarm-toggle.on {
-      background: #52c267;
-      box-shadow: 0 3px 13px #b2f4c3aa, 0 1px 2px #fff;
-    }
-    .alarm-status {
-      font-size: 1.03rem;
-      margin-left: 7px;
-      color: #557d34;
-      letter-spacing: 0.06em;
-      font-weight: 600;
-      display: inline-block;
-      min-width: 60px;
-      vertical-align: middle;
-    }
-    .ringing {
-      animation: ring-shake 0.2s linear infinite;
+    .watch-face.ringing {
+      animation: ring-shake 0.18s linear infinite;
+      box-shadow: 0 0 40px #ff7c7c,0 0 0 13px #e784841b, 0 8px 38px #16192160;
     }
     @keyframes ring-shake {
-      0% { box-shadow: 0 18px 64px #ff9a9a, 0 4px 18px #fff9; }
-      50% { box-shadow: 0 10px 34px #e03e3e, 0 4px 18px #fff9; }
-      100% { box-shadow: 0 18px 64px #ff9a9a, 0 4px 18px #fff9; }
+      0%   { box-shadow: 0 0 40px #ff7c7c,0 0 0 13px #e784841b, 0 8px 38px #16192160;}
+      50%  { box-shadow: 0 0 60px #ff2c2c,0 0 0 15px #ffdbdb1b, 0 8px 38px #16192180;}
+      100% { box-shadow: 0 0 40px #ff7c7c,0 0 0 13px #e784841b, 0 8px 38px #16192160;}
     }
-    @media (max-width: 700px) {
-      .alarm-widget { min-width: 98vw; max-width: 100vw; padding: 10vw 2vw 7vw 2vw; }
-      .clock-box { width: 40vw; height: 40vw; min-width:120px; min-height:120px;}
-      .alarm-digital { font-size: 1.5rem; }
-      .alarm-set-box { font-size:1rem; }
-      .alarm-set-box input { width:32px; font-size:1rem;}
+    .watch-glass {
+      position: absolute;
+      left: 8%; top: 7%;
+      width: 78%; height: 28%;
+      background: linear-gradient(120deg,rgba(255,255,255,0.17) 10%,rgba(255,255,255,0.03) 80%);
+      border-radius: 54% 46% 45% 55% / 43% 48% 54% 57%;
+      z-index: 12;
+      pointer-events: none;
+      filter: blur(1.6px);
+      box-shadow: 0 1px 19px #fff5, 0 1.5px 10px #fcfdff14;
+    }
+    .watch-center-dot {
+      position: absolute; left: 50%; top: 50%;
+      width: 23px; height: 23px;
+      margin-left: -11.5px; margin-top: -11.5px;
+      background: radial-gradient(ellipse at 55% 55%, #fff7de 0%, #cab48d 60%, #3c3a34 100%);
+      border-radius: 50%;
+      border: 2.5px solid #ffefd2;
+      box-shadow: 0 2px 19px #a2915b70, 0 0.5px 2px #fff;
+      z-index: 15;
+    }
+    /* 바늘 */
+    .watch-hand { position: absolute; left: 50%; top: 50%; transform-origin: bottom center; pointer-events: none; transition: none;}
+    .watch-hand.hour { width: 8.5px; height: 78px; background: linear-gradient(180deg,#313548 75%,#ffeedd 100%); border-radius: 6px; margin-left: -4.25px; z-index: 10; box-shadow: 0 2px 8px #20284080, 0 2px 9px #fff1;}
+    .watch-hand.min { width: 5.6px; height: 110px; background: linear-gradient(180deg,#36a9e9 55%,#ebf9ff 100%); border-radius: 5px; margin-left: -2.8px; z-index: 11; box-shadow: 0 4px 18px #41cfff31, 0 1px 7px #fff9;}
+    .watch-hand.sec { width: 2.9px; height: 138px; background: linear-gradient(180deg,#ee3f4a 80%,#fff 100%); border-radius: 1.3px; margin-left: -1.45px; z-index: 12; box-shadow: 0 3px 12px #ec949449, 0 0.5px 1px #fff9;}
+    .watch-hand.sec::after { content: ''; position: absolute; left: 50%; bottom: -10px; width: 8px; height: 14px; transform: translate(-50%,0); background: radial-gradient(circle at 65% 45%, #fff 0 50%, #e05050 100%); border-radius: 10px; box-shadow: 0 1px 4px #ec4040b7; opacity: 0.93;}
+    /* 눈금/숫자 */
+    .watch-num { position: absolute; left: 50%; top: 50%; font-size: 2.13rem; color: #ececf7; font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif; font-weight: 600; text-shadow: 0 3.5px 14px #40447073, 0 1px 4px #fff8; user-select: none; z-index: 7; letter-spacing: -2.5px; transform-origin: center center; transition: color 0.3s; opacity: 0.95; pointer-events: none;}
+    .watch-tick { position: absolute; left: 50%; top: 50%; width: 4.7px; height: 17px; background: linear-gradient(180deg,#ececf7 45%,#888d99 100%); border-radius: 2.2px; z-index: 4; transform-origin: center bottom; opacity: 0.16; transition: background 0.2s; pointer-events: none;}
+    .watch-tick.major { height: 29px; width: 7.7px; background: linear-gradient(180deg,#fff 85%,#4eaaff 100%); opacity: 0.7;}
+    /* 디지털/입력 */
+    .alarm-digital { font-size: 2.18rem; font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif; font-weight: 800; color: #f7f7fb; letter-spacing: 2.5px; text-shadow: 0 1.5px 8px #23253899; margin-bottom: 14px; text-align: center; user-select: none; background: rgba(34,38,52,0.65); padding: 9px 34px 7px 34px; border-radius: 1.6em; box-shadow: 0 2px 8px #2225 0.5; width: max-content; min-width: 202px; margin-left: auto; margin-right: auto; white-space: pre;}
+    .alarm-set-box { display: flex; justify-content: center; align-items: center; gap: 16px; margin-bottom: 11px;}
+    .alarm-set-box input { width: 48px; font-size: 1.25rem; border-radius: 10px; border: 2px solid #b8d2f4; background: #f5f8ff; text-align: center; padding: 5px;}
+    .alarm-set-box label { color: #a7bee7; font-size: 1.1rem; font-weight: 700;}
+    .alarm-toggle { background: linear-gradient(90deg,#d9e7ff 10%, #b4d7fa 90%); color: #234; border: none; border-radius: 2em; font-size: 1.13rem; font-weight: 700; padding: 11px 23px; margin-left: 18px; box-shadow: 0 2px 8px #c5d5ff22,0 1px 2px #fff; cursor: pointer; transition: all 0.15s;}
+    .alarm-toggle.on { background: linear-gradient(90deg, #3fe85c 40%, #c5ffd4 100%); color: #1e401f;}
+    .alarm-toggle.ringing { background: linear-gradient(90deg,#ff8484 10%, #fff6e1 100%); color: #841b21; font-weight: 800;}
+    .alarm-status { color: #ffe67e; font-weight: 700; font-size: 1.08rem; margin-bottom: 9px; text-align: center; text-shadow: 0 1px 3px #123b;}
+    @media (max-width: 520px) {
+      .watch-face { width: 97vw; height: 97vw; min-width:145px; min-height:145px; max-width:99vw; max-height:99vw;}
+      .watch-num { font-size: 1.15rem; }
+      .watch-hand.hour { height: 17vw; }
+      .watch-hand.min { height: 34vw; }
+      .watch-hand.sec { height: 41vw; }
+      .watch-center-dot { width: 7vw; height: 7vw; margin-left:-3.5vw; margin-top:-3.5vw;}
+      .alarm-digital { font-size: 1.14rem; padding: 7px 4vw 6px 4vw; min-width: 105px; }
+      .alarm-set-box input { width: 31px; font-size: 0.97rem;}
+      .alarm-toggle { font-size: 0.97rem; padding: 8px 3vw;}
+      .alarm-status { font-size: 0.98rem;}
     }
   </style>
 </head>
 <body>
-  <div class="alarm-widget" id="alarmWidget">
-    <div class="clock-box" id="clockBox">
-      <div class="clock-face" id="clockFace"></div>
-      <div class="hand hour" id="hourHand"></div>
-      <div class="hand min" id="minHand"></div>
-      <div class="hand sec" id="secHand"></div>
-      <div class="center-dot"></div>
+  <div class="watch-face-wrap">
+    <div class="watch-face" id="watchFace">
+      <div class="watch-glass"></div>
+      <div class="watch-hand hour" id="hourHand"></div>
+      <div class="watch-hand min" id="minHand"></div>
+      <div class="watch-hand sec"  id="secHand"></div>
+      <div class="watch-center-dot"></div>
     </div>
-    <div class="alarm-digital" id="digitalClock">00:00:00</div>
     <div class="alarm-set-box">
-      <label>알람</label>
-      <input type="number" id="alarmHour" min="0" max="23" value="7"> :
-      <input type="number" id="alarmMin" min="0" max="59" value="0">
-      <button class="alarm-toggle" id="toggleAlarm">알람 OFF</button>
-      <span class="alarm-status" id="alarmStatus"></span>
+      <label>시 <input type="number" min="0" max="23" id="alarmHour" value="7"></label>
+      <label>분 <input type="number" min="0" max="59" id="alarmMin" value="0"></label>
+      <button class="alarm-toggle" id="alarmToggle">알람 ON</button>
     </div>
+    <div class="alarm-digital" id="display">--:--:--</div>
+    <div class="alarm-status" id="alarmStatus">알람 꺼짐</div>
   </div>
   <script>
-    // 눈금(틱) 그리기
-    const face = document.getElementById('clockFace');
-    for (let i=0; i<60; i++) {
+    // 시계 숫자/눈금
+    const face = document.getElementById('watchFace');
+    for(let n=1;n<=12;n++) {
+      const num = document.createElement('div');
+      num.className = 'watch-num';
+      num.textContent = n;
+      num.style.transform = `translate(-50%,-50%) rotate(${n*30}deg) translate(0,-115px) rotate(${-n*30}deg)`;
+      face.appendChild(num);
+    }
+    for(let i=0;i<60;i++) {
       const tick = document.createElement('div');
-      tick.className = 'tick' + ((i%5===0)?' major':'');
-      tick.style.transform = `rotate(${i*6}deg)`;
+      tick.className = 'watch-tick'+(i%5===0?' major':'');
+      tick.style.transform = `translate(-50%,-100%) rotate(${i*6}deg) translate(0,-132px)`;
       face.appendChild(tick);
     }
-
-    // 시계 바늘
+    // 바늘
     const hourHand = document.getElementById('hourHand');
     const minHand = document.getElementById('minHand');
     const secHand = document.getElementById('secHand');
-    const digitalClock = document.getElementById('digitalClock');
+    const display = document.getElementById('display');
+    const alarmToggle = document.getElementById('alarmToggle');
     const alarmHour = document.getElementById('alarmHour');
     const alarmMin = document.getElementById('alarmMin');
-    const toggleAlarm = document.getElementById('toggleAlarm');
     const alarmStatus = document.getElementById('alarmStatus');
-    const clockBox = document.getElementById('clockBox');
-    const alarmWidget = document.getElementById('alarmWidget');
-    let alarmEnabled = false;
-    let alarmRinging = false;
-    let alarmInterval = null;
-
-    // 요란한 소리(경보음) 생성 (반복)
+    const watchFace = document.getElementById('watchFace');
+    // 알람상태
+    let alarmOn = false, alarmRinging = false, alarmInt = null;
+    // 시계 업데이트
+    function updateClock() {
+      const now = new Date();
+      const h = now.getHours();
+      const m = now.getMinutes();
+      const s = now.getSeconds();
+      // 바늘
+      hourHand.style.transform = `translate(-50%,-100%) rotate(${(h%12)*30+(m/2)+(s/120)}deg)`;
+      minHand.style.transform = `translate(-50%,-100%) rotate(${m*6+(s/10)}deg)`;
+      secHand.style.transform = `translate(-50%,-100%) rotate(${s*6}deg)`;
+      // 디지털
+      display.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      // 알람 체크
+      if(alarmOn && !alarmRinging && h === +alarmHour.value && m === +alarmMin.value && s === 0){
+        playAlarm();
+      }
+      requestAnimationFrame(updateClock);
+    }
+    // 알람 ON/OFF
+    alarmToggle.onclick = function() {
+      alarmOn = !alarmOn;
+      stopAlarm();
+      if(alarmOn) {
+        alarmToggle.textContent = "알람 OFF";
+        alarmToggle.classList.add("on");
+        alarmStatus.textContent = `알람 설정: ${String(alarmHour.value).padStart(2,'0')}:${String(alarmMin.value).padStart(2,'0')}`;
+      } else {
+        alarmToggle.textContent = "알람 ON";
+        alarmToggle.classList.remove("on");
+        alarmStatus.textContent = "알람 꺼짐";
+      }
+    }
+    // 알람음
     function playAlarm() {
       if (alarmRinging) return;
       alarmRinging = true;
+      alarmToggle.classList.add("ringing");
+      watchFace.classList.add("ringing");
+      alarmStatus.textContent = "알람 울림!";
       let ctx, osc, gain;
       function ring() {
         ctx = new (window.AudioContext || window.webkitAudioContext)();
         osc = ctx.createOscillator();
         gain = ctx.createGain();
         osc.type = "triangle";
-        osc.frequency.value = 1100 + Math.random()*900;
+        osc.frequency.value = 1200 + Math.random()*800;
         osc.connect(gain);
         gain.connect(ctx.destination);
-        gain.gain.value = 0.25;
+        gain.gain.value = 0.19;
         osc.start();
-        setTimeout(()=>{
-          osc.frequency.value += 400;
-          gain.gain.value = 0.14;
-        }, 220);
-        setTimeout(()=>{
-          gain.gain.value = 0.01;
-        }, 420);
-        setTimeout(()=>{
-          osc.stop();
-          ctx.close();
-        }, 550);
+        setTimeout(()=>{ osc.frequency.value += 200; gain.gain.value = 0.09;}, 180);
+        setTimeout(()=>{ gain.gain.value = 0.02; }, 340);
+        setTimeout(()=>{ osc.stop(); ctx.close(); }, 460);
       }
       ring();
-      alarmInterval = setInterval(ring, 700); // 0.7초 간격
-      clockBox.classList.add('ringing');
+      alarmInt = setInterval(ring, 600);
     }
-
-    // 알람 멈추기
     function stopAlarm() {
       if (!alarmRinging) return;
       alarmRinging = false;
-      clearInterval(alarmInterval);
-      alarmInterval = null;
-      clockBox.classList.remove('ringing');
+      clearInterval(alarmInt);
+      alarmInt = null;
+      alarmToggle.classList.remove("ringing");
+      watchFace.classList.remove("ringing");
     }
-
-    // 시계 및 알람 체크
-    function updateClock() {
-      const now = new Date();
-      let h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
-      // 바늘 회전
-      hourHand.style.transform = `translate(-50%, -100%) rotate(${(h%12)*30 + m/2}deg)`;
-      minHand.style.transform = `translate(-50%, -100%) rotate(${m*6}deg)`;
-      secHand.style.transform = `translate(-50%, -100%) rotate(${s*6}deg)`;
-      // 디지털 표기
-      digitalClock.textContent = 
-        String(h).padStart(2,'0')+":"+
-        String(m).padStart(2,'0')+":"+
-        String(s).padStart(2,'0');
-      // 알람 체크
-      if (alarmEnabled && !alarmRinging) {
-        const ah = Number(alarmHour.value);
-        const am = Number(alarmMin.value);
-        if (h === ah && m === am && s === 0) {
-          playAlarm();
-        }
-      }
-      // 알람이 울릴 때, 분이 넘어가면 자동 중지
-      if (alarmRinging && (s > 7)) stopAlarm();
-      requestAnimationFrame(updateClock);
-    }
-
-    // 알람 ON/OFF
-    toggleAlarm.onclick = function() {
-      alarmEnabled = !alarmEnabled;
-      toggleAlarm.textContent = alarmEnabled ? "알람 ON" : "알람 OFF";
-      toggleAlarm.classList.toggle('on', alarmEnabled);
-      alarmStatus.textContent = alarmEnabled ?
-        ("설정: "+alarmHour.value.padStart(2,'0')+":"+alarmMin.value.padStart(2,'0')) : "";
-      if (!alarmEnabled) stopAlarm();
-    };
     alarmHour.onchange = alarmMin.onchange = function() {
-      alarmStatus.textContent = alarmEnabled ?
-        ("설정: "+alarmHour.value.padStart(2,'0')+":"+alarmMin.value.padStart(2,'0')) : "";
+      if(alarmOn) alarmStatus.textContent = `알람 설정: ${String(alarmHour.value).padStart(2,'0')}:${String(alarmMin.value).padStart(2,'0')}`;
     };
-
     // 시작
     updateClock();
   </script>
