@@ -1,0 +1,217 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>아날로그 스톱워치 - 대형 볼륨감</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: linear-gradient(135deg, #d4e1fa, #f2e5fa 90%);
+      min-height: 100vh; margin: 0; padding: 0;
+      display: flex; justify-content: center; align-items: center;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+    }
+    .stopwatch-widget {
+      background: linear-gradient(145deg, #fff, #dde6f4 80%);
+      box-shadow: 0 18px 64px #c6d4e966, 0 4px 18px #fff9;
+      border-radius: 3.6em;
+      padding: 48px 44px 40px 44px;
+      min-width: 450px; max-width: 600px;
+      display: flex; flex-direction: column; align-items: center;
+      border: 3px solid #e2eaf4;
+      position: relative;
+    }
+    .stopwatch-clock {
+      width: 270px; height: 270px;
+      background: linear-gradient(120deg, #e2ebf9 60%, #c6d2ee 100%);
+      border-radius: 50%;
+      box-shadow: 0 16px 38px #a9b8da66, 0 3px 12px #fff;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 26px;
+      transition: box-shadow 0.2s;
+      user-select: none;
+    }
+    .clock-face {
+      position: absolute; left: 0; top: 0;
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+    .tick {
+      position: absolute;
+      width: 6px; height: 22px;
+      left: 50%; top: 5px;
+      background: #b4c3ea;
+      border-radius: 2.2px;
+      transform-origin: 50% 115px;
+    }
+    .tick.major {
+      height: 30px;
+      background: #6276aa;
+      width: 7px;
+    }
+    .hand {
+      position: absolute;
+      left: 50%; top: 50%;
+      transform-origin: bottom center;
+      transition: none;
+      pointer-events: none;
+    }
+    .hand.sec {
+      width: 4px; height: 100px;
+      background: #ff5050;
+      border-radius: 2px;
+      margin-left: -2px;
+      box-shadow: 0 2px 8px #ffadad44;
+      z-index: 2;
+    }
+    .hand.min {
+      width: 8px; height: 62px;
+      background: #4164d4;
+      border-radius: 3.5px;
+      margin-left: -4px;
+      z-index: 3;
+      box-shadow: 0 2px 10px #adcbff33;
+    }
+    .hand.ms {
+      width: 2.5px; height: 80px;
+      background: #c9b850;
+      border-radius: 2px;
+      margin-left: -1.25px;
+      z-index: 1;
+      opacity: 0.8;
+      box-shadow: 0 1px 5px #d4c59144;
+    }
+    .center-dot {
+      position: absolute; left: 50%; top: 50%;
+      width: 22px; height: 22px;
+      margin-left: -11px; margin-top: -11px;
+      background: radial-gradient(ellipse at center, #fff 45%, #b4bbcc 100%);
+      border-radius: 50%;
+      border: 2.5px solid #e3e9f7;
+      z-index: 10;
+      box-shadow: 0 2px 9px #dde7faee;
+    }
+    .stopwatch-time {
+      font-size: 2.35rem;
+      font-weight: bold;
+      color: #283465;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 9px #e3e8f7cc, 0 0px 1px #c6d2ee;
+      margin-bottom: 13px;
+      user-select: none;
+    }
+    .stopwatch-btns {
+      display: flex;
+      gap: 24px;
+      margin-top: 16px;
+      margin-bottom: 6px;
+    }
+    .stopwatch-btn {
+      background: linear-gradient(90deg, #c6d6fa 10%, #a4c3ff 90%);
+      color: #445;
+      border: none;
+      border-radius: 2em;
+      font-size: 1.6rem;
+      font-weight: 600;
+      padding: 16px 38px;
+      box-shadow: 0 4px 16px #aac4ff55, 0 1px 2px #fff;
+      cursor: pointer;
+      transition: all 0.13s;
+    }
+    .stopwatch-btn:hover {
+      background: linear-gradient(90deg, #a4c3ff 10%, #c6d6fa 90%);
+      box-shadow: 0 8px 22px #a9b8da55, 0 0.5px 1px #fff;
+      color: #283455;
+      transform: scale(1.08);
+    }
+    @media (max-width: 700px) {
+      .stopwatch-widget { min-width: 98vw; max-width: 100vw; padding: 10vw 2vw 7vw 2vw; }
+      .stopwatch-clock { width: 40vw; height: 40vw; min-width:120px; min-height:120px;}
+      .stopwatch-time { font-size: 1.5rem; }
+      .stopwatch-btn { font-size:1.2rem; padding: 10px 18px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="stopwatch-widget">
+    <div class="stopwatch-clock">
+      <div class="clock-face" id="clockFace"></div>
+      <div class="hand ms" id="msHand"></div>
+      <div class="hand min" id="minHand"></div>
+      <div class="hand sec" id="secHand"></div>
+      <div class="center-dot"></div>
+    </div>
+    <div class="stopwatch-time" id="display">00:00.00</div>
+    <div class="stopwatch-btns">
+      <button class="stopwatch-btn" id="startBtn">시작</button>
+      <button class="stopwatch-btn" id="pauseBtn">일시정지</button>
+      <button class="stopwatch-btn" id="resetBtn">리셋</button>
+    </div>
+  </div>
+  <script>
+    // 시계 눈금(틱) 그리기
+    const face = document.getElementById('clockFace');
+    for (let i=0; i<60; i++) {
+      const tick = document.createElement('div');
+      tick.className = 'tick' + ((i%5===0)?' major':'');
+      tick.style.transform = `rotate(${i*6}deg)`;
+      face.appendChild(tick);
+    }
+    // 스톱워치 변수
+    let startTime = null, elapsed = 0, running = false, timer = null;
+    const display = document.getElementById('display');
+    const msHand = document.getElementById('msHand');
+    const secHand = document.getElementById('secHand');
+    const minHand = document.getElementById('minHand');
+    // 디지털 표기
+    function renderTime(ms) {
+      const m = String(Math.floor(ms/60000)).padStart(2,'0');
+      const s = String(Math.floor(ms/1000)%60).padStart(2,'0');
+      const cs = String(Math.floor(ms/10)%100).padStart(2,'0');
+      display.textContent = `${m}:${s}.${cs}`;
+    }
+    // 아날로그 바늘 움직이기
+    function renderHands(ms) {
+      const min = (ms/60000)%60;
+      const sec = (ms/1000)%60;
+      const ms10 = (ms/10)%100;
+      minHand.style.transform = `translate(-50%, -100%) rotate(${min*6}deg)`;
+      secHand.style.transform = `translate(-50%, -100%) rotate(${sec*6}deg)`;
+      msHand.style.transform  = `translate(-50%, -100%) rotate(${ms10*3.6}deg)`;
+    }
+    // 실시간 업데이트
+    function update() {
+      let ms = elapsed;
+      if (running && startTime) {
+        ms += Date.now() - startTime;
+      }
+      renderTime(ms);
+      renderHands(ms);
+      if (running) requestAnimationFrame(update);
+    }
+    // 버튼 기능
+    document.getElementById('startBtn').onclick = function() {
+      if (running) return;
+      running = true;
+      startTime = Date.now();
+      update();
+    };
+    document.getElementById('pauseBtn').onclick = function() {
+      if (!running) return;
+      elapsed += Date.now() - startTime;
+      running = false;
+    };
+    document.getElementById('resetBtn').onclick = function() {
+      running = false;
+      elapsed = 0;
+      startTime = null;
+      renderTime(0);
+      renderHands(0);
+    };
+    // 최초 초기화
+    renderTime(0); renderHands(0);
+  </script>
+</body>
+</html>
