@@ -1,0 +1,181 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>트리플 월드 시계</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: linear-gradient(135deg, #e7ebf7 0%, #f8fafd 100%);
+      min-height: 100vh;
+      margin: 0; padding: 0;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+    }
+    .widget-title {
+      margin-top: 44px;
+      margin-bottom: 28px;
+      font-size: 2.5rem;
+      text-align: center;
+      font-weight: 800;
+      color: #2e336e;
+      letter-spacing: 1.5px;
+      text-shadow: 0 4px 20px #b8c4ec1f;
+      user-select: none;
+    }
+    /* 시계 */
+    .clock-container {
+      width: 100%;
+      display: flex;
+      gap: 48px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .clock-card {
+      background: linear-gradient(110deg, #f4f7fa 80%, #eaf0fd 100%);
+      border-radius: 34px;
+      box-shadow: 0 8px 38px rgba(96,115,186,0.14);
+      padding: 54px 32px 38px 32px;
+      min-width: 410px; max-width: 520px;
+      display: flex; flex-direction: column; align-items: center;
+      margin-bottom: 10px;
+    }
+    .city-select {
+      margin-bottom: 22px;
+      font-size: 2rem;
+      border: none;
+      border-radius: 18px;
+      background: #eef2fa;
+      padding: 15px 38px;
+      font-weight: bold;
+      color: #3b4263;
+      box-shadow: 0 3px 13px rgba(96,115,186,0.09);
+    }
+    .clock-time {
+      font-size: 4.1rem;
+      font-weight: 900;
+      letter-spacing: 2.5px;
+      color: #30409a;
+      margin-bottom: 15px;
+    }
+    .clock-date {
+      font-size: 1.9rem;
+      color: #7b85ab;
+      letter-spacing: 1.3px;
+      margin-bottom: 13px;
+      text-align: center;
+    }
+    .clock-label {
+      font-size: 1.42rem;
+      color: #6671a6;
+      font-weight: 700;
+    }
+    @media (max-width: 1300px) {
+      .clock-container { gap: 24px; }
+      .clock-card { min-width: 320px; padding: 38px 14px 26px 14px; }
+    }
+    @media (max-width: 900px) {
+      .clock-container { flex-direction: column; align-items: center; }
+      .clock-card { min-width: 70vw; max-width: 97vw; }
+    }
+    @media (max-width: 600px) {
+      .widget-title { font-size: 1.6rem; }
+      .clock-container { gap: 12px; }
+      .clock-card { min-width: 93vw; padding: 23px 4vw 14px 4vw; }
+      .city-select { font-size: 1.2rem; padding: 10px 12vw; }
+      .clock-time { font-size: 2.1rem; }
+      .clock-date { font-size: 1.04rem; }
+      .clock-label { font-size: 0.95rem; }
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="widget-title">🌏 트리플 월드 시계</div>
+    <div class="clock-container">
+      <div class="clock-card">
+        <select class="city-select" id="city1"></select>
+        <div class="clock-time" id="time1"></div>
+        <div class="clock-date" id="date1"></div>
+        <div class="clock-label" id="label1"></div>
+      </div>
+      <div class="clock-card">
+        <select class="city-select" id="city2"></select>
+        <div class="clock-time" id="time2"></div>
+        <div class="clock-date" id="date2"></div>
+        <div class="clock-label" id="label2"></div>
+      </div>
+      <div class="clock-card">
+        <select class="city-select" id="city3"></select>
+        <div class="clock-time" id="time3"></div>
+        <div class="clock-date" id="date3"></div>
+        <div class="clock-label" id="label3"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const cities = [
+      {name: '서울(Seoul)', zone: 'Asia/Seoul', label: '대한민국'},
+      {name: '도쿄(Tokyo)', zone: 'Asia/Tokyo', label: '일본'},
+      {name: '런던(London)', zone: 'Europe/London', label: '영국'},
+      {name: '파리(Paris)', zone: 'Europe/Paris', label: '프랑스'},
+      {name: '뉴욕(New York)', zone: 'America/New_York', label: '미국'},
+      {name: '로스앤젤레스(LA)', zone: 'America/Los_Angeles', label: '미국'},
+      {name: '베이징(Beijing)', zone: 'Asia/Shanghai', label: '중국'},
+      {name: '시드니(Sydney)', zone: 'Australia/Sydney', label: '호주'},
+      {name: '홍콩(Hong Kong)', zone: 'Asia/Hong_Kong', label: '중국'},
+      {name: '방콕(Bangkok)', zone: 'Asia/Bangkok', label: '태국'},
+      {name: '싱가포르(Singapore)', zone: 'Asia/Singapore', label: '싱가포르'},
+      {name: '두바이(Dubai)', zone: 'Asia/Dubai', label: 'UAE'},
+      {name: '베를린(Berlin)', zone: 'Europe/Berlin', label: '독일'},
+      {name: '모스크바(Moscow)', zone: 'Europe/Moscow', label: '러시아'},
+      {name: '샌프란시스코(SF)', zone: 'America/Los_Angeles', label: '미국'},
+      {name: '토론토(Toronto)', zone: 'America/Toronto', label: '캐나다'},
+      {name: '브라질리아(Brasilia)', zone: 'America/Sao_Paulo', label: '브라질'}
+    ];
+
+    function fillCitySelect(sel, defaultIdx) {
+      sel.innerHTML = "";
+      cities.forEach((c, i) => {
+        const op = document.createElement('option');
+        op.value = c.zone;
+        op.textContent = c.name;
+        sel.appendChild(op);
+      });
+      sel.selectedIndex = defaultIdx;
+    }
+
+    function updateClocks() {
+      for (let i = 1; i <= 3; i++) {
+        const citySel = document.getElementById('city'+i);
+        const timeDiv = document.getElementById('time'+i);
+        const dateDiv = document.getElementById('date'+i);
+        const labelDiv = document.getElementById('label'+i);
+        const zone = citySel.value;
+        const now = new Date();
+        const tzTime = new Date(now.toLocaleString('en-US', {timeZone: zone}));
+        const hh = String(tzTime.getHours()).padStart(2, '0');
+        const mm = String(tzTime.getMinutes()).padStart(2, '0');
+        const ss = String(tzTime.getSeconds()).padStart(2, '0');
+        timeDiv.textContent = `${hh}:${mm}:${ss}`;
+        const weekday = ['일','월','화','수','목','금','토'][tzTime.getDay()];
+        dateDiv.textContent = 
+          `${tzTime.getFullYear()}-${(tzTime.getMonth()+1).toString().padStart(2,'0')}-${tzTime.getDate().toString().padStart(2,'0')} (${weekday})`;
+        const selected = cities.find(c=>c.zone===zone);
+        labelDiv.textContent = selected ? selected.label : '';
+      }
+      setTimeout(updateClocks, 1000);
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      fillCitySelect(document.getElementById('city1'), 0); // 기본 서울
+      fillCitySelect(document.getElementById('city2'), 4); // 기본 뉴욕
+      fillCitySelect(document.getElementById('city3'), 2); // 기본 런던
+
+      ['city1','city2','city3'].forEach(id => {
+        document.getElementById(id).addEventListener('change', updateClocks);
+      });
+      updateClocks();
+    });
+  </script>
+</body>
+</html>
