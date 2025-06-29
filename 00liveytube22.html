@@ -1,0 +1,136 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>유튜브 채널 디렉토리 뷰어 - 자동 변환</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {margin:0; font-family:'Montserrat','Apple SD Gothic Neo',sans-serif; background:linear-gradient(135deg,#23243a 0%,#314a6a 100%); color:#fff; min-height:100vh;}
+    .container {display: flex; min-height: 100vh;}
+    .sidebar {width: 240px; min-width: 140px; background:rgba(27,35,52,0.98); padding:22px 10px 14px 15px; box-sizing: border-box; display: flex; flex-direction: column; border-top-right-radius:26px; border-bottom-right-radius:26px; box-shadow:4px 0 26px #0006; border-right:1.5px solid #3e5c8888; z-index:3;}
+    .sidebar-title {font-size:1.2rem; font-weight:700; margin-bottom:22px; letter-spacing:0.5px; text-shadow:0 2px 12px #0005; text-align:left; padding-left:7px;}
+    .directory-list {
+      display:flex; flex-direction:column; gap:11px; flex:1; overflow-y:auto;
+      scrollbar-width: none !important; /* Firefox 완전숨김 */
+      max-height:84vh; padding-right:2px;
+    }
+    .directory-list::-webkit-scrollbar {
+      width: 0 !important;       /* 크롬/엣지/사파리 완전숨김 */
+      background: transparent !important;
+      display: none !important;
+    }
+    .directory-list::-webkit-scrollbar-thumb { background: transparent !important; }
+    .directory-list::-webkit-scrollbar-track { background: transparent !important; }
+    .directory-item {display:flex; align-items:center; gap:10px; padding:13px 10px; border-radius:12px; cursor:pointer; font-size:1.02rem; background:rgba(37,55,90,0.82); box-shadow:0 2px 9px #0002; transition:background 0.16s, box-shadow 0.16s, color 0.13s; border:1px solid transparent; font-weight:600; user-select:none; min-height:28px; white-space:nowrap;}
+    .directory-item.selected, .directory-item:hover {background:linear-gradient(90deg,#3576ed 10%,#65e0f6 95%); color:#222e4c; border:1.2px solid #63c6ff; box-shadow:0 4px 16px #1588c844, 0 1px 5px #63e0ff11; z-index:2;}
+    .directory-label {flex:1; letter-spacing:0.01em; font-size:1.06em; font-weight:600; overflow:hidden; text-overflow:ellipsis;}
+    .main {flex: 1 1 auto; min-width: 0; background: linear-gradient(120deg,#242a39 0%,#3a5975 90%); position: relative; overflow-y: auto;}
+    .yt-container {min-height:100vh; width:100%; display:flex; align-items:flex-start; justify-content:center; background:none; padding-bottom:190px; box-sizing:border-box;}
+    .yt-inner {width:92vw; max-width:980px; display:flex; flex-direction:column; align-items:center; gap:18px; margin-top:48px;}
+    .yt-frame-box {width:100%; aspect-ratio:16/9; background:#000; border-radius:18px; box-shadow:0 4px 40px #2232ab55; overflow:hidden; display:flex; align-items:center; justify-content:center;}
+    .video-frame {width:100%; height:100%; border:0; border-radius:18px; background:#000; display:block; min-height:180px;}
+    @media (max-width:900px) {
+      .container { flex-direction:column;}
+      .sidebar { width:100vw; min-width:0; border-radius:0 0 20px 20px; border-right:none; box-shadow:none; padding:8px 0 7px 0; position:relative;}
+      .sidebar-title { font-size:1.1rem; padding-left:17px; margin-bottom:9px;}
+      .directory-list { flex-direction:row; gap:6px; overflow-x:auto; overflow-y:hidden; max-height:none; height:46px; padding:0 8px 0 8px; align-items:center;}
+      .directory-item { font-size:0.93rem; padding:10px 11px; min-width:120px; min-height:30px; border-radius:11px; white-space:nowrap; margin-bottom:0;}
+      .main { padding:0;}
+      .yt-container { min-height:90vh; padding-bottom:120px;}
+      .yt-inner { width:99vw; max-width:99vw; margin-top:16px;}
+      .yt-frame-box { border-radius:12px;}
+      .video-frame { border-radius:12px; min-height:100px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="sidebar-title">채널 디렉토리</div>
+      <div class="directory-list" id="dirList">
+        <div class="directory-item selected" data-url="https://www.youtube.com/watch?v=2--j0SVYmRY">
+          <span class="directory-label">서울역</span>
+        </div>
+        <div class="directory-item" data-url="https://youtu.be/_kd-vEuMGCE">
+          <span class="directory-label">경복궁</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/embed/UWPxEmIYc2E">
+          <span class="directory-label">서울시청</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=zuWxsbV-mlA">
+          <span class="directory-label">광화문 대로</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/embed/_694GtePH-Y">
+          <span class="directory-label">롯데월드</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=GOt7UVVp-5Y">
+          <span class="directory-label">동대문DDP</span>
+        </div>
+        <div class="directory-item" data-url="https://youtu.be/ZopiySgQjsc">
+          <span class="directory-label">잠실대교</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=3Uf3w-UHB4U">
+          <span class="directory-label">한강 올림픽대로</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/embed/HmzyLbRtRRw">
+          <span class="directory-label">UN빌리지 앞</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=m0bJROup7iE">
+          <span class="directory-label">한강공원</span>
+        </div>
+        <div class="directory-item" data-url="https://youtu.be/ahSMyLJcp48">
+          <span class="directory-label">국회의사당전망</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=J_vNwxaOtTs&ab_channel=YTN%EC%84%9C%EC%9A%B8%ED%83%80%EC%9B%8C">
+          <span class="directory-label">YTN</span>
+        </div>
+      </div>
+    </div>
+    <div class="main">
+      <div class="yt-container">
+        <div class="yt-inner">
+          <div class="yt-frame-box">
+            <iframe class="video-frame" id="videoFrame"
+              src="https://www.youtube.com/embed/2--j0SVYmRY?autoplay=1"
+              allow="autoplay; encrypted-media"
+              allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // 주소 변환 함수: watch, youtu.be, embed 전부 처리
+    function toYouTubeEmbed(url) {
+      if(!url) return "";
+      // 1. 이미 embed 주소면 그대로 사용
+      if (url.includes('/embed/')) return url;
+      // 2. watch?v=... 주소면 ID 추출
+      let match = url.match(/(?:v=|embed\/|\.be\/)([a-zA-Z0-9_-]{11})/);
+      if (match) return 'https://www.youtube.com/embed/' + match[1];
+      // 3. 혹시 다른 형태면 그대로
+      return url;
+    }
+    function getAutoPlayUrl(url) {
+      if (!url) return "";
+      url = toYouTubeEmbed(url);
+      return url.includes('?') ? url + '&autoplay=1' : url + '?autoplay=1';
+    }
+    const items = document.querySelectorAll('.directory-item');
+    const frame = document.getElementById('videoFrame');
+    items.forEach(item => {
+      item.addEventListener('click', function() {
+        items.forEach(i => i.classList.remove('selected'));
+        this.classList.add('selected');
+        // 주소 변환 후 iframe에 할당
+        frame.src = getAutoPlayUrl(this.dataset.url);
+      });
+    });
+    // 페이지 진입 시 첫 번째 주소 변환
+    window.addEventListener('DOMContentLoaded', function(){
+      const first = document.querySelector('.directory-item.selected');
+      if(first) frame.src = getAutoPlayUrl(first.dataset.url);
+    });
+  </script>
+</body>
+</html>
