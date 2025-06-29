@@ -2,148 +2,205 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>아날로그 스톱워치 - 대형 볼륨감</title>
+  <title>워치 스타일 스톱워치 (정상 디지털/버튼/숫자)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      background: linear-gradient(135deg, #d4e1fa, #f2e5fa 90%);
+    html, body {
+      background: radial-gradient(ellipse at 50% 20%, #20222b 0%, #434657 100%);
       min-height: 100vh; margin: 0; padding: 0;
-      display: flex; justify-content: center; align-items: center;
-      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      width: 100vw;
+      overflow-x: hidden;
     }
-    .stopwatch-widget {
-      background: linear-gradient(145deg, #fff, #dde6f4 80%);
-      box-shadow: 0 18px 64px #c6d4e966, 0 4px 18px #fff9;
-      border-radius: 3.6em;
-      padding: 48px 44px 40px 44px;
-      min-width: 450px; max-width: 600px;
-      display: flex; flex-direction: column; align-items: center;
-      border: 3px solid #e2eaf4;
+    .watch-face-wrap {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh;
+      width: 100vw;
+    }
+    .watch-face {
       position: relative;
-    }
-    .stopwatch-clock {
-      width: 270px; height: 270px;
-      background: linear-gradient(120deg, #e2ebf9 60%, #c6d2ee 100%);
+      width: 340px; height: 340px;
+      max-width: 96vw; max-height: 96vw;
+      background: 
+        radial-gradient(ellipse at 60% 35%, #222634 45%, #23253a 99%),
+        linear-gradient(145deg,#3a3e4f 0 55%,#222436 100%);
       border-radius: 50%;
-      box-shadow: 0 16px 38px #a9b8da66, 0 3px 12px #fff;
-      position: relative;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 26px;
-      transition: box-shadow 0.2s;
-      user-select: none;
+      box-shadow: 
+        0 8px 32px #16192180,
+        0 0 0 13px #585d6e1b,
+        0 0 0 2.5px #212b3a,
+        0 0 42px 3px #1f2235,
+        inset 0 3px 24px #3d4153, 
+        inset 0 -2px 12px #0a0a10;
+      overflow: visible;
+      border: 2px solid #595e6c;
+      margin-bottom: 24px;
     }
-    .clock-face {
-      position: absolute; left: 0; top: 0;
-      width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      pointer-events: none;
-    }
-    .tick {
+    .watch-glass {
       position: absolute;
-      width: 6px; height: 22px;
-      left: 50%; top: 5px;
-      background: #b4c3ea;
-      border-radius: 2.2px;
-      transform-origin: 50% 115px;
+      left: 8%; top: 7%;
+      width: 78%; height: 28%;
+      background: linear-gradient(120deg,rgba(255,255,255,0.17) 10%,rgba(255,255,255,0.03) 80%);
+      border-radius: 54% 46% 45% 55% / 43% 48% 54% 57%;
+      z-index: 12;
+      pointer-events: none;
+      filter: blur(1.6px);
+      box-shadow: 0 1px 19px #fff5, 0 1.5px 10px #fcfdff14;
     }
-    .tick.major {
-      height: 30px;
-      background: #6276aa;
-      width: 7px;
+    .watch-center-dot {
+      position: absolute; left: 50%; top: 50%;
+      width: 23px; height: 23px;
+      margin-left: -11.5px; margin-top: -11.5px;
+      background: radial-gradient(ellipse at 55% 55%, #fff7de 0%, #cab48d 60%, #3c3a34 100%);
+      border-radius: 50%;
+      border: 2.5px solid #ffefd2;
+      box-shadow: 0 2px 19px #a2915b70, 0 0.5px 2px #fff;
+      z-index: 15;
     }
-    .hand {
+    /* 바늘 */
+    .watch-hand {
+      position: absolute; left: 50%; top: 50%;
+      transform-origin: bottom center;
+      pointer-events: none;
+      transition: none;
+    }
+    .watch-hand.min {
+      width: 5.6px; height: 110px;
+      background: linear-gradient(180deg,#36a9e9 55%,#ebf9ff 100%);
+      border-radius: 5px;
+      margin-left: -2.8px;
+      z-index: 11;
+      box-shadow: 0 4px 18px #41cfff31, 0 1px 7px #fff9;
+    }
+    .watch-hand.sec {
+      width: 2.9px; height: 138px;
+      background: linear-gradient(180deg,#ee3f4a 80%,#fff 100%);
+      border-radius: 1.3px;
+      margin-left: -1.45px;
+      z-index: 12;
+      box-shadow: 0 3px 12px #ec949449, 0 0.5px 1px #fff9;
+    }
+    .watch-hand.sec::after {
+      content: '';
+      position: absolute; left: 50%; bottom: -10px; width: 8px; height: 14px;
+      transform: translate(-50%,0);
+      background: radial-gradient(circle at 65% 45%, #fff 0 50%, #e05050 100%);
+      border-radius: 10px;
+      box-shadow: 0 1px 4px #ec4040b7;
+      opacity: 0.93;
+    }
+    .watch-hand.ms {
+      width: 2px; height: 90px;
+      background: linear-gradient(180deg,#fffae0 70%,#eacb3b 100%);
+      border-radius: 1.2px;
+      margin-left: -1px;
+      z-index: 10;
+      opacity: 0.93;
+      box-shadow: 0 2px 6px #f4e27b66;
+    }
+    /* 눈금/숫자 */
+    .watch-num {
       position: absolute;
       left: 50%; top: 50%;
-      transform-origin: bottom center;
-      transition: none;
+      font-size: 2.13rem;
+      color: #ececf7;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      font-weight: 600;
+      text-shadow: 0 3.5px 14px #40447073, 0 1px 4px #fff8;
+      user-select: none;
+      z-index: 7;
+      letter-spacing: -2.5px;
+      transform-origin: center center;
+      transition: color 0.3s;
+      opacity: 0.95;
       pointer-events: none;
     }
-    .hand.sec {
-      width: 4px; height: 100px;
-      background: #ff5050;
-      border-radius: 2px;
-      margin-left: -2px;
-      box-shadow: 0 2px 8px #ffadad44;
-      z-index: 2;
+    .watch-tick {
+      position: absolute;
+      left: 50%; top: 50%;
+      width: 4.7px; height: 17px;
+      background: linear-gradient(180deg,#ececf7 45%,#888d99 100%);
+      border-radius: 2.2px;
+      z-index: 4;
+      transform-origin: center bottom;
+      opacity: 0.16;
+      transition: background 0.2s;
+      pointer-events: none;
     }
-    .hand.min {
-      width: 8px; height: 62px;
-      background: #4164d4;
-      border-radius: 3.5px;
-      margin-left: -4px;
-      z-index: 3;
-      box-shadow: 0 2px 10px #adcbff33;
+    .watch-tick.major {
+      height: 29px;
+      width: 7.7px;
+      background: linear-gradient(180deg,#fff 85%,#4eaaff 100%);
+      opacity: 0.7;
     }
-    .hand.ms {
-      width: 2.5px; height: 80px;
-      background: #c9b850;
-      border-radius: 2px;
-      margin-left: -1.25px;
-      z-index: 1;
-      opacity: 0.8;
-      box-shadow: 0 1px 5px #d4c59144;
-    }
-    .center-dot {
-      position: absolute; left: 50%; top: 50%;
-      width: 22px; height: 22px;
-      margin-left: -11px; margin-top: -11px;
-      background: radial-gradient(ellipse at center, #fff 45%, #b4bbcc 100%);
-      border-radius: 50%;
-      border: 2.5px solid #e3e9f7;
-      z-index: 10;
-      box-shadow: 0 2px 9px #dde7faee;
-    }
-    .stopwatch-time {
-      font-size: 2.35rem;
-      font-weight: bold;
-      color: #283465;
-      letter-spacing: 1px;
-      text-shadow: 0 2px 9px #e3e8f7cc, 0 0px 1px #c6d2ee;
-      margin-bottom: 13px;
+    /* 디지털 */
+    .stopwatch-digital {
+      font-size: 2.18rem;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      font-weight: 800;
+      color: #f7f7fb;
+      letter-spacing: 2.5px;
+      text-shadow: 0 1.5px 8px #23253899;
+      margin-bottom: 18px;
+      text-align: center;
       user-select: none;
+      background: rgba(34,38,52,0.65);
+      padding: 9px 34px 7px 34px;
+      border-radius: 1.6em;
+      box-shadow: 0 2px 8px #2225 0.5;
+      width: max-content;
+      min-width: 202px;
+      margin-left: auto;
+      margin-right: auto;
+      /* 고정 너비/공백방지 */
+      white-space: pre;
     }
     .stopwatch-btns {
       display: flex;
-      gap: 24px;
-      margin-top: 16px;
-      margin-bottom: 6px;
+      gap: 22px;
+      margin-bottom: 9px;
+      justify-content: center;
     }
     .stopwatch-btn {
-      background: linear-gradient(90deg, #c6d6fa 10%, #a4c3ff 90%);
-      color: #445;
+      background: linear-gradient(90deg, #d9e7ff 10%, #b4d7fa 90%);
+      color: #363f51;
       border: none;
-      border-radius: 2em;
-      font-size: 1.6rem;
-      font-weight: 600;
-      padding: 16px 38px;
-      box-shadow: 0 4px 16px #aac4ff55, 0 1px 2px #fff;
+      border-radius: 2.1em;
+      font-size: 1.33rem;
+      font-weight: 700;
+      padding: 13px 32px;
+      box-shadow: 0 4px 14px #93b1e844, 0 1px 2px #fff;
       cursor: pointer;
       transition: all 0.13s;
     }
     .stopwatch-btn:hover {
-      background: linear-gradient(90deg, #a4c3ff 10%, #c6d6fa 90%);
-      box-shadow: 0 8px 22px #a9b8da55, 0 0.5px 1px #fff;
-      color: #283455;
-      transform: scale(1.08);
+      background: linear-gradient(90deg, #b4d7fa 10%, #d9e7ff 90%);
+      box-shadow: 0 8px 22px #3a78e366, 0 0.5px 1px #fff;
+      color: #153a7e;
+      transform: scale(1.07);
     }
-    @media (max-width: 700px) {
-      .stopwatch-widget { min-width: 98vw; max-width: 100vw; padding: 10vw 2vw 7vw 2vw; }
-      .stopwatch-clock { width: 40vw; height: 40vw; min-width:120px; min-height:120px;}
-      .stopwatch-time { font-size: 1.5rem; }
-      .stopwatch-btn { font-size:1.2rem; padding: 10px 18px;}
+    @media (max-width: 520px) {
+      .watch-face { width: 97vw; height: 97vw; min-width:145px; min-height:145px; max-width:99vw; max-height:99vw;}
+      .watch-num { font-size: 1.15rem; }
+      .watch-hand.min { height: 34vw; }
+      .watch-hand.sec { height: 41vw; }
+      .watch-hand.ms  { height: 28vw; }
+      .watch-center-dot { width: 7vw; height: 7vw; margin-left:-3.5vw; margin-top:-3.5vw;}
+      .stopwatch-digital { font-size: 1.14rem; padding: 7px 4vw 6px 4vw; min-width: 105px; }
+      .stopwatch-btn { font-size: 0.98rem; padding: 8px 5vw; }
     }
   </style>
 </head>
 <body>
-  <div class="stopwatch-widget">
-    <div class="stopwatch-clock">
-      <div class="clock-face" id="clockFace"></div>
-      <div class="hand ms" id="msHand"></div>
-      <div class="hand min" id="minHand"></div>
-      <div class="hand sec" id="secHand"></div>
-      <div class="center-dot"></div>
+  <div class="watch-face-wrap">
+    <div class="watch-face" id="watchFace">
+      <div class="watch-glass"></div>
+      <div class="watch-hand min" id="minHand"></div>
+      <div class="watch-hand sec" id="secHand"></div>
+      <div class="watch-hand ms"  id="msHand"></div>
+      <div class="watch-center-dot"></div>
+      <!-- 숫자, 눈금은 JS로 추가 -->
     </div>
-    <div class="stopwatch-time" id="display">00:00.00</div>
+    <div class="stopwatch-digital" id="display">00:00.00</div>
     <div class="stopwatch-btns">
       <button class="stopwatch-btn" id="startBtn">시작</button>
       <button class="stopwatch-btn" id="pauseBtn">일시정지</button>
@@ -151,47 +208,53 @@
     </div>
   </div>
   <script>
-    // 시계 눈금(틱) 그리기
-    const face = document.getElementById('clockFace');
-    for (let i=0; i<60; i++) {
+    // 숫자/눈금
+    const face = document.getElementById('watchFace');
+    for(let n=1;n<=12;n++) {
+      const num = document.createElement('div');
+      num.className = 'watch-num';
+      num.textContent = n;
+      // 숫자 1도 확실히 보이도록 위쪽 위치에 여유
+      num.style.transform = `translate(-50%,-50%) rotate(${n*30}deg) translate(0,-115px) rotate(${-n*30}deg)`;
+      face.appendChild(num);
+    }
+    for(let i=0;i<60;i++) {
       const tick = document.createElement('div');
-      tick.className = 'tick' + ((i%5===0)?' major':'');
-      tick.style.transform = `rotate(${i*6}deg)`;
+      tick.className = 'watch-tick'+(i%5===0?' major':'');
+      tick.style.transform = `translate(-50%,-100%) rotate(${i*6}deg) translate(0,-132px)`;
       face.appendChild(tick);
     }
-    // 스톱워치 변수
-    let startTime = null, elapsed = 0, running = false, timer = null;
-    const display = document.getElementById('display');
-    const msHand = document.getElementById('msHand');
+    // 바늘
+    const msHand  = document.getElementById('msHand');
     const secHand = document.getElementById('secHand');
     const minHand = document.getElementById('minHand');
-    // 디지털 표기
+    // 디지털
+    const display = document.getElementById('display');
+    // 스톱워치 동작
+    let startTime = null, elapsed = 0, running = false;
     function renderTime(ms) {
       const m = String(Math.floor(ms/60000)).padStart(2,'0');
       const s = String(Math.floor(ms/1000)%60).padStart(2,'0');
       const cs = String(Math.floor(ms/10)%100).padStart(2,'0');
       display.textContent = `${m}:${s}.${cs}`;
     }
-    // 아날로그 바늘 움직이기
     function renderHands(ms) {
-      const min = (ms/60000)%60;
-      const sec = (ms/1000)%60;
+      // 분: 1분=360도, 초:1초=360도, 1/100초=360도
+      const min  = (ms/60000)%60;
+      const sec  = (ms/1000)%60;
       const ms10 = (ms/10)%100;
-      minHand.style.transform = `translate(-50%, -100%) rotate(${min*6}deg)`;
-      secHand.style.transform = `translate(-50%, -100%) rotate(${sec*6}deg)`;
-      msHand.style.transform  = `translate(-50%, -100%) rotate(${ms10*3.6}deg)`;
+      minHand.style.transform  = `translate(-50%,-100%) rotate(${min*6}deg)`;
+      secHand.style.transform  = `translate(-50%,-100%) rotate(${sec*6}deg)`;
+      msHand.style.transform   = `translate(-50%, -100%) rotate(${ms10*3.6}deg)`;
     }
-    // 실시간 업데이트
     function update() {
       let ms = elapsed;
-      if (running && startTime) {
-        ms += Date.now() - startTime;
-      }
+      if (running && startTime) ms += Date.now() - startTime;
       renderTime(ms);
       renderHands(ms);
       if (running) requestAnimationFrame(update);
     }
-    // 버튼 기능
+    // 버튼
     document.getElementById('startBtn').onclick = function() {
       if (running) return;
       running = true;
@@ -207,8 +270,7 @@
       running = false;
       elapsed = 0;
       startTime = null;
-      renderTime(0);
-      renderHands(0);
+      renderTime(0); renderHands(0);
     };
     // 최초 초기화
     renderTime(0); renderHands(0);
