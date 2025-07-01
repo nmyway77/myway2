@@ -1,0 +1,165 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>MYWAY.KR: 네비바</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      background: #fff;
+      margin: 0; padding: 0;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    /* 네비바 영역 */
+    .screen-links-wrap {
+      position: fixed;  /* 상단에 고정 */
+      top: 0; left: 0; width: 100vw;
+      margin: 0 auto;
+      padding: 0;
+      box-sizing: border-box;
+      z-index: 99;   /* iframe 위에 보이게 */
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      filter: drop-shadow(0 6px 28px #b176f340);
+      background: transparent;
+    }
+    .screen-links {
+      display: flex;
+      gap: 16px;
+      font-size: 1.08rem;
+      font-weight: 500;
+      color: #fff;
+      white-space: nowrap;
+      background: linear-gradient(95deg, #7ed6fb 10%, #b176f3 90%);
+      padding: 0 24px;
+      user-select: none;
+      align-items: center;
+      border-radius: 22px;
+      box-shadow: 0 8px 32px 0 rgba(90,100,180,0.13), 0 2px 8px 0 rgba(255,255,255,0.10) inset;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      min-height: 48px;
+      min-width: 220px;
+      cursor: grab;
+      transition: box-shadow 0.2s;
+    }
+    .screen-links::-webkit-scrollbar { display: none; }
+    .screen-links a {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      padding: 6px 18px;
+      border-radius: 14px;
+      font-weight: 500;
+      font-size: 1em;
+      background: none;
+      display: inline-block;
+      opacity: 0.93;
+      letter-spacing: 0.01em;
+      transition: background 0.15s, color 0.13s, box-shadow 0.12s;
+      cursor: pointer;
+      white-space: nowrap;
+      margin: 0 1px;
+    }
+    .screen-links a:hover, .screen-links a.active {
+      background: rgba(255,255,255,0.22);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 2px 12px #b176f333;
+    }
+    @media (max-width: 700px) {
+      .screen-links { font-size: 0.93rem; gap: 8px; padding: 0 6px;}
+      .screen-links-wrap { margin-top: 0; }
+    }
+    /* 프레임 위치 (하단) */
+    #main-frame {
+      position: fixed;
+      left: 0;
+      top: 48px; /* 네비바 높이만큼 아래로 */
+      width: 100vw;
+      height: calc(100vh - 48px);
+      border: none;
+      margin: 0;
+      background: #f5f7fa;
+      z-index: 10;
+      border-radius: 0;
+      display: block;
+    }
+    @media (max-width: 700px) {
+      #main-frame { top: 48px; height: calc(100vh - 48px); }
+    }
+  </style>
+</head>
+<body>
+  <!-- 네비게이션 바 (스크롤/드래그) -->
+  <div class="screen-links-wrap">
+    <div class="screen-links" id="parent-links">
+      <a href="#" onclick="showScreenParent(event, '00livestock.html')">증권방송</a>
+      <a href="#" onclick="showScreenParent(event, '00livestock.html')">KBS뉴스</a>
+      <a href="#" onclick="showScreenParent(event, '00livestock.html')">MBC뉴스</a>
+      <a href="#" onclick="showScreenParent(event, '00livestock.html')">JTBC 뉴스</a>
+      <a href="#" onclick="showScreenParent(event, '00livestock.html')">SBS뉴스</a>
+      <a href="#" onclick="showScreenParent(event, '00livestock.html')">TV조선뉴스</a>
+    </div>
+  </div>
+  
+  <iframe id="main-frame" src="00livestock.html"></iframe>
+
+  <script>
+    // 네비바 클릭시 해당 페이지 출력
+    function showScreenParent(e, url) {
+      e.preventDefault();
+      document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
+      e.target.classList.add('active');
+      document.getElementById('main-frame').src = url;
+    }
+    // 네비바 드래그/터치 스크롤
+    (function(){
+      const nav = document.querySelector('.screen-links');
+      let isDown = false, startX = 0, scrollLeft = 0;
+
+      nav.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - nav.offsetLeft;
+        scrollLeft = nav.scrollLeft;
+        nav.style.cursor = 'grabbing';
+      });
+      nav.addEventListener('mouseleave', () => {
+        isDown = false;
+        nav.style.cursor = '';
+      });
+      nav.addEventListener('mouseup', () => {
+        isDown = false;
+        nav.style.cursor = '';
+      });
+      nav.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        const x = e.pageX - nav.offsetLeft;
+        nav.scrollLeft = scrollLeft - (x - startX);
+      });
+
+      // 모바일 터치
+      let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
+      nav.addEventListener('touchstart', function(e){
+        touchDragging = true;
+        touchStartX = e.touches[0].pageX - nav.offsetLeft;
+        touchScrollLeft = nav.scrollLeft;
+      });
+      nav.addEventListener('touchend', ()=>{ touchDragging=false; });
+      nav.addEventListener('touchmove', function(e){
+        if(!touchDragging) return;
+        const x = e.touches[0].pageX - nav.offsetLeft;
+        nav.scrollLeft = touchScrollLeft - (x - touchStartX);
+      });
+    })();
+    // 처음 로드시 첫 메뉴 선택 효과
+    window.addEventListener('DOMContentLoaded', ()=>{
+      document.querySelectorAll('#parent-links a')[0].classList.add('active');
+    });
+  </script>
+</body>
+</html>
