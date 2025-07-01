@@ -7,23 +7,22 @@
   <style>
     body {
       font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
-      background: #fff;
       margin: 0; padding: 0;
       min-height: 100vh;
       overflow: hidden;
+      background: linear-gradient(135deg, #7ed6fb 0%, #b176f3 100%);
     }
-    /* 네비바 영역 */
     .screen-links-wrap {
-      position: fixed;  /* 상단에 고정 */
+      position: fixed;
       top: 0; left: 0; width: 100vw;
       margin: 0 auto;
       padding: 0;
       box-sizing: border-box;
-      z-index: 99;   /* iframe 위에 보이게 */
+      z-index: 99;
       overflow: hidden;
       display: flex;
       justify-content: center;
-      filter: drop-shadow(0 6px 28px #b176f340);
+      filter: drop-shadow(0 12px 40px #8c39d6a0) drop-shadow(0 2px 24px #7ed6fb88);
       background: transparent;
     }
     .screen-links {
@@ -33,69 +32,92 @@
       font-weight: 500;
       color: #fff;
       white-space: nowrap;
-      background: linear-gradient(95deg, #7ed6fb 10%, #b176f3 90%);
-      padding: 0 24px;
+      background: linear-gradient(135deg, #7ed6fb 0%, #b176f3 100%);
+      padding: 0 32px;
       user-select: none;
       align-items: center;
-      border-radius: 22px;
-      box-shadow: 0 8px 32px 0 rgba(90,100,180,0.13), 0 2px 8px 0 rgba(255,255,255,0.10) inset;
+      border-radius: 32px;
+      box-shadow:
+        0 4px 32px 0 #7ed6fb50,
+        0 10px 40px 0 #b176f380,
+        0 2px 18px 0 #fff8 inset;
       overflow-x: auto;
       overflow-y: hidden;
       scrollbar-width: none;
       -ms-overflow-style: none;
-      min-height: 48px;
+      min-height: 54px;
       min-width: 220px;
       cursor: grab;
-      transition: box-shadow 0.2s;
+      transition: box-shadow 0.2s, background 0.2s;
     }
     .screen-links::-webkit-scrollbar { display: none; }
     .screen-links a {
-      color: rgba(255,255,255,0.85);
+      color: rgba(255,255,255,0.92);
       text-decoration: none;
-      padding: 6px 18px;
-      border-radius: 14px;
-      font-weight: 500;
+      padding: 0 10px;
+      border-radius: 0;
+      font-weight: 600;
       font-size: 1em;
       background: none;
       display: inline-block;
-      opacity: 0.93;
+      opacity: 0.97;
       letter-spacing: 0.01em;
-      transition: background 0.15s, color 0.13s, box-shadow 0.12s;
+      transition: color 0.17s, font-weight 0.16s;
       cursor: pointer;
       white-space: nowrap;
-      margin: 0 1px;
+      margin: 0 2px;
+      box-shadow: none;
+      position: relative;
+    }
+    .screen-links a::after {
+      content: '';
+      display: block;
+      position: absolute;
+      left: 30%;
+      right: 30%;
+      bottom: -4px;
+      height: 3px;
+      background: linear-gradient(90deg, #7ed6fb 0%, #b176f3 100%);
+      border-radius: 2px;
+      opacity: 0;
+      transform: scaleX(0.7);
+      transition: opacity 0.18s, transform 0.24s;
+      pointer-events: none;
     }
     .screen-links a:hover, .screen-links a.active {
-      background: rgba(255,255,255,0.22);
       color: #fff;
-      font-weight: 600;
-      box-shadow: 0 2px 12px #b176f333;
+      font-weight: 700;
+      text-shadow: 0 2px 8px #7ed6fb99, 0 1px 4px #b176f366;
+    }
+    .screen-links a:hover::after,
+    .screen-links a.active::after {
+      opacity: 1;
+      transform: scaleX(1);
     }
     @media (max-width: 700px) {
-      .screen-links { font-size: 0.93rem; gap: 8px; padding: 0 6px;}
+      .screen-links { font-size: 0.95rem; gap: 8px; padding: 0 7px;}
       .screen-links-wrap { margin-top: 0; }
     }
-    /* 프레임 위치 (하단) */
     #main-frame {
       position: fixed;
       left: 0;
-      top: 48px; /* 네비바 높이만큼 아래로 */
+      top: 58px;
       width: 100vw;
-      height: calc(100vh - 48px);
+      height: calc(100vh - 58px);
       border: none;
       margin: 0;
       background: #f5f7fa;
       z-index: 10;
       border-radius: 0;
       display: block;
+      transition: top 0.2s, height 0.2s;
     }
     @media (max-width: 700px) {
-      #main-frame { top: 48px; height: calc(100vh - 48px); }
+      #main-frame { top: 56px; height: calc(100vh - 56px); }
     }
   </style>
 </head>
 <body>
-  <!-- 네비게이션 바 (스크롤/드래그) -->
   <div class="screen-links-wrap">
     <div class="screen-links" id="parent-links">
       <a href="#" onclick="showScreenParent(event, '00livestock.html')">증권방송</a>
@@ -110,18 +132,15 @@
   <iframe id="main-frame" src="00livestock.html"></iframe>
 
   <script>
-    // 네비바 클릭시 해당 페이지 출력
     function showScreenParent(e, url) {
       e.preventDefault();
       document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
       e.target.classList.add('active');
       document.getElementById('main-frame').src = url;
     }
-    // 네비바 드래그/터치 스크롤
     (function(){
       const nav = document.querySelector('.screen-links');
       let isDown = false, startX = 0, scrollLeft = 0;
-
       nav.addEventListener('mousedown', (e) => {
         isDown = true;
         startX = e.pageX - nav.offsetLeft;
@@ -141,8 +160,6 @@
         const x = e.pageX - nav.offsetLeft;
         nav.scrollLeft = scrollLeft - (x - startX);
       });
-
-      // 모바일 터치
       let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
       nav.addEventListener('touchstart', function(e){
         touchDragging = true;
@@ -156,7 +173,6 @@
         nav.scrollLeft = touchScrollLeft - (x - touchStartX);
       });
     })();
-    // 처음 로드시 첫 메뉴 선택 효과
     window.addEventListener('DOMContentLoaded', ()=>{
       document.querySelectorAll('#parent-links a')[0].classList.add('active');
     });
