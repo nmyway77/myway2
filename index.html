@@ -293,7 +293,8 @@
       { key: "danawa", home: "https://www.danawa.com/", search: "https://search.danawa.com/dsearch.php?k1=" },
       { key: "coupang", home: "https://www.coupang.com", search: "https://www.coupang.com/np/search?q=" },
       
-      { key: "aliexpress", home: "https://ko.aliexpress.com/", search: "https://www.aliexpress.com/w/wholesale-"    , searchPostfix: ".html"    },
+     { key: "aliexpress", home: "https://ko.aliexpress.com/", search: "https://ko.aliexpress.com/w/wholesale-", searchPostfix: ".html" },
+
 
 
 
@@ -331,7 +332,16 @@
       const query = document.getElementById('queryParent').value.trim();
       const engineObj = snarkEnginesParent.find(e => e.key === engineKey);
       if (engineObj) {
-        let url = query ? (engineObj.search + encodeURIComponent(query)) : engineObj.home;
+
+       
+     let url = query
+  ? (engineObj.search + encodeURIComponent(query) + (engineObj.searchPostfix || ''))
+  : engineObj.home;
+
+
+
+
+       
         window.open(url, "_blank");
       }
     };
@@ -346,7 +356,14 @@
     // 네비바 드래그/터치로 좌우 스크롤 (순서 바꾸기 아님)
     (function(){
       const nav = document.querySelector('.screen-links');
+
+     
       let isDown = false, startX = 0, scrollLeft = 0;
+
+
+
+
+     
 
       nav.addEventListener('mousedown', (e) => {
         isDown = true;
