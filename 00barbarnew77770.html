@@ -1,0 +1,159 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>MYWAY.KR: 네비바</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      background: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    .screen-links-wrap {
+      width: 100vw;
+      position: relative;
+      margin: 0 auto;
+      padding: 0;
+      box-sizing: border-box;
+      z-index: 9;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      margin-top: 12px; /* 세로 공간 축소 */
+    }
+    .screen-links {
+      display: flex;
+      gap: 15px;
+      font-size: 0.96rem;
+      font-weight: 500;
+      color: #fff;
+      white-space: nowrap;
+      /* 볼륨감/입체 배경 (bar 전체) */
+      background: linear-gradient(180deg, #e4efff 10%, #a4baff 90%);
+      box-shadow:
+        0 4px 16px 0 #6b6ee533,
+        0 0.5px 12px 0 #ffffff33 inset;
+      padding: 0 12px;
+      user-select: none;
+      align-items: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      margin: 0 auto;
+      max-width: 900px;
+      min-width: 220px;
+      cursor: grab;
+      border-radius: 20px;
+      height: 34px; /* 기존의 절반 */
+      transition: none;
+    }
+    .screen-links::-webkit-scrollbar { display: none; }
+    .screen-links a {
+      color: rgba(55,35,130,0.92) !important;
+      text-decoration: none;
+      padding: 2px 8px;
+      border: none;
+      outline: none;
+      font-weight: 500;
+      font-size: 1em;
+      margin: 0 2px;
+      background: none;   /* 라운드/배경/박스/그림자 없음 */
+      opacity: 0.98;
+      letter-spacing: 0.01em;
+      transition: color 0.14s;
+      cursor: pointer;
+      white-space: nowrap;
+      line-height: 28px;
+      border-radius: 0;
+      box-shadow: none;
+      /* hover 효과도 글씨색만 살짝 */
+    }
+    .screen-links a:hover,
+    .screen-links a.active {
+      color: #ff7fe5 !important;
+      background: none;
+      font-weight: 700;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    @media (max-width: 700px) {
+      .screen-links { font-size: 0.88rem; gap: 8px; padding: 0 4px; height: 28px;}
+      .screen-links-wrap { padding: 0;}
+    }
+  </style>
+</head>
+<body>
+  <!-- 네비게이션 텍스트 (가운데정렬+좌우이동) -->
+  <div class="screen-links-wrap">
+    <div class="screen-links" id="parent-links">
+      <a href="#" onclick="showScreenParent(event, '00main00000.html')">A</a>
+      <a href="#" onclick="showScreenParent(event, '00makingcircletext.html')">MK</a>
+      <a href="#" onclick="showScreenParent(event, '00newsmain2.html')">NEWS</a>
+      <a href="#" onclick="showScreenParent(event, '00tvmain2.html')">TV</a>
+      <a href="#" onclick="showScreenParent(event, '00mainbbs.html')">BBS</a>
+      <a href="#" onclick="showScreenParent(event, '00maincctv.html')">CCTV</a>
+      <a href="#" onclick="showScreenParent(event, '00aimain3.html')">H</a>
+      <a href="#" onclick="showScreenParent(event, '00maincoin.html')">COIN</a>
+      <a href="#" onclick="showScreenParent(event, '00maincomics.html')">CM</a>
+      <a href="#" onclick="showScreenParent(event, '00mainmovie.html')">MV</a>
+      <a href="#" onclick="showScreenParent(event, '00mainmaga.html')">MZ</a>
+      <a href="#" onclick="showScreenParent(event, '00mainshopping.html')">SHOP</a>
+      <a href="#" onclick="showScreenParent(event, 'mainpage43.html')">I</a>
+      <a href="#" onclick="showScreenParent(event, 'mainpage2.html')">L</a>
+      <a href="#" onclick="showScreenParent(event, '00mainuseful.html')">U</a>
+    </div>
+  </div>
+  <iframe id="main-frame" src="00aimain3.html" allowfullscreen style="position:fixed;left:0;top:46px;width:100vw;height:calc(100vh - 48px);border:none;margin:0;background:#f5f7fa;z-index:10;border-radius:0;display:block;"></iframe>
+  <script>
+    function showScreenParent(e, url) {
+      e.preventDefault();
+      document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
+      e.target.classList.add('active');
+      var frame = document.getElementById('main-frame');
+      frame.src = url;
+    }
+    // 네비바 드래그/터치로 좌우 스크롤
+    (function(){
+      const nav = document.querySelector('.screen-links');
+      let isDown = false, startX = 0, scrollLeft = 0;
+      nav.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - nav.offsetLeft;
+        scrollLeft = nav.scrollLeft;
+        nav.style.cursor = 'grabbing';
+      });
+      nav.addEventListener('mouseleave', () => {
+        isDown = false;
+        nav.style.cursor = '';
+      });
+      nav.addEventListener('mouseup', () => {
+        isDown = false;
+        nav.style.cursor = '';
+      });
+      nav.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        const x = e.pageX - nav.offsetLeft;
+        nav.scrollLeft = scrollLeft - (x - startX);
+      });
+      // 모바일 터치
+      let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
+      nav.addEventListener('touchstart', function(e){
+        touchDragging = true;
+        touchStartX = e.touches[0].pageX - nav.offsetLeft;
+        touchScrollLeft = nav.scrollLeft;
+      });
+      nav.addEventListener('touchend', ()=>{ touchDragging=false; });
+      nav.addEventListener('touchmove', function(e){
+        if(!touchDragging) return;
+        const x = e.touches[0].pageX - nav.offsetLeft;
+        nav.scrollLeft = touchScrollLeft - (x - touchStartX);
+      });
+    })();
+  </script>
+</body>
+</html>
