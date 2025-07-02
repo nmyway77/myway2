@@ -1,0 +1,369 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>MYWAY.KR: 네비바</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      background: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    .screen-links-wrap {
+      width: 100vw;
+      position: relative;
+      margin: 0 auto;
+      padding: 0;
+      box-sizing: border-box;
+      z-index: 9;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      margin-top: 5px;
+    }
+    .nav-bar-inner {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      max-width: 2100px;
+    }
+    .combo-select {
+      height: 28px;
+      font-size: 1em;
+      border-radius: 8px;
+      border: none;
+      margin-right: 16px;
+      box-shadow: 0 1px 6px #aac9ff33;
+      background: linear-gradient(180deg, #e6effe 60%, #b1cfff 100%);
+      color: #2e358f;
+      padding: 0 12px;
+      outline: none;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .combo-select:focus {
+      box-shadow: 0 0 0 2px #a2bbfa99;
+    }
+    .screen-links {
+      display: flex;
+      gap: 5px;
+      font-size: 0.96rem;
+      font-weight: 500;
+      color: #fff;
+      white-space: nowrap;
+      background: linear-gradient(180deg, #e4efff 10%, #a4baff 90%);
+      box-shadow:
+        0 4px 16px 0 #6b6ee533,
+        0 0.5px 12px 0 #ffffff33 inset;
+      padding: 0 12px;
+      user-select: none;
+      align-items: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      margin: 0;
+      max-width: 2100px;
+      min-width: 220px;
+      cursor: grab;
+      border-radius: 20px;
+      height: 34px;
+      transition: none;
+    }
+    .screen-links::-webkit-scrollbar { display: none; }
+    .screen-links a {
+      color: rgba(55,35,130,0.92) !important;
+      text-decoration: none;
+      padding: 2px 8px;
+      border: none;
+      outline: none;
+      font-weight: 500;
+      font-size: 1em;
+      margin: 0 2px;
+      background: none;
+      opacity: 0.98;
+      letter-spacing: 0.01em;
+      transition: color 0.14s;
+      cursor: pointer;
+      white-space: nowrap;
+      line-height: 28px;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .screen-links a:hover,
+    .screen-links a.active {
+      color: #ff7fe5 !important;
+      background: none;
+      font-weight: 700;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      margin-right: 14px;
+      gap: 5px;
+    }
+    .nav-actions button {
+      height: 26px;
+      border-radius: 7px;
+      border: none;
+      background: #fff7fc;
+      color: #77499d;
+      font-size: 0.98em;
+      padding: 0 11px;
+      margin-left: 0;
+      cursor: pointer;
+      box-shadow: 0 1px 6px #aac9ff33;
+      transition: background 0.14s;
+      font-weight: 600;
+    }
+    .nav-actions button:hover {
+      background: #ffe1fc;
+    }
+    @media (max-width: 700px) {
+      .screen-links { font-size: 0.88rem; gap: 8px; padding: 0 4px; height: 28px;}
+      .screen-links-wrap { padding: 0;}
+      .nav-bar-inner { max-width: 100vw;}
+      .combo-select { font-size: 0.92em; height: 24px; margin-right: 7px; }
+      .nav-actions { margin-right: 3px; }
+      .nav-actions button { font-size: 0.93em; height: 22px; padding: 0 7px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 네비게이션 바 + 콤보박스 + 추가/내보내기/가져오기 버튼 -->
+  <div class="screen-links-wrap">
+    <div class="nav-bar-inner">
+      <div class="nav-actions">
+        <button onclick="addNavLink()">추가</button>
+        <button onclick="exportLinks()">내보내기</button>
+        <button onclick="importLinks()">가져오기</button>
+        <input type="file" id="importFile" style="display:none" accept="application/json">
+      </div>
+      <select class="combo-select" id="comboMenu">
+        <option value="">섹션 이동...</option>
+        <option value="newsitesbar2.html">뉴스</option>
+        <option value="bbssitesbar2.html">BBS</option>
+        <option value="livesitesbar2.html">LIVE TV</option>
+        <option value="radiositesbar2.html">RADIO</option>
+        <option value="00barcctv.html">CCTV</option>
+        <option value="00barmagazine.html">잡지</option>
+      </select>
+      <div class="screen-links" id="parent-links">
+        <a href="#" onclick="showScreenParent(event, '00tvmain2.html')">H</a>
+        <a href="#" onclick="showScreenParent(event, 'https://onair.imbc.com/')">MBC</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.sbs.co.kr/live/S01?div=main_live')">SBS</a>
+        <a href="#" onclick="showScreenParent(event, 'https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList')">KBS2</a>
+        <a href="#" onclick="showScreenParent(event, 'https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList')">KBS1</a>
+        <a href="#" onclick="showScreenParent(event, 'https://news.kbs.co.kr/news/pc/news24/news24.html')">KBS24</a>
+        <a href="#" onclick="showScreenParent(event, 'https://onair.jtbc.co.kr/')">JTBC</a>
+        <a href="#" onclick="showScreenParent(event, 'https://ichannela.com/com/cmm/onair.do')">채널A</a>
+        <a href="#" onclick="showScreenParent(event, 'https://broadcast.tvchosun.com/onair/on.cstv')">TV조선</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.ytn.co.kr/_hd/hd_live.html')">YTN</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.yonhapnewstv.co.kr/live')">연합뉴스</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.ebs.co.kr/onair?mainTop&channelCodeString=tv')">EBS TV</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.arirang.com/live?lang=en')">아리랑TV</a>
+        <a href="#" onclick="showScreenParent(event, 'https://news.sbs.co.kr/news/live.do?plink=GNB&cooper=SBSNEWS')">SBS뉴스</a>
+        <a href="#" onclick="showScreenParent(event, 'https://imnews.imbc.com/more/onair/')">MBC 뉴스</a>
+        <a href="#" onclick="showScreenParent(event, 'https://news.jtbc.co.kr/live')">JTBC 뉴스</a>
+        <a href="#" onclick="showScreenParent(event, '00barinnernew.html')">Live 방송모음</a>
+        <a href="#" onclick="showScreenParent(event, 'https://tv.naver.com/l')">네이버TV</a>
+        <a href="#" onclick="showScreenParent(event, 'https://chzzk.naver.com/lives')">치지직</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.sooplive.co.kr/live/all')">SOOP</a>
+        <a href="#" onclick="showScreenParent(event, 'https://lolesports.com/live/msi/aflol')">LCK</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.twitch.tv/')">트위치</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www3.nhk.or.jp/nhkworld/en/live/')">NHK</a>
+        <a href="#" onclick="showScreenParent(event, 'abc.html')">ABC </a>
+        <a href="#" onclick="showScreenParent(event, 'foxtv.html')">FOX NEWS</a>
+        <a href="#" onclick="showScreenParent(event, 'https://abc7.com/watch/live')">ABC7</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.gasengi.com/')">가생이 </a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.youtube.com/watch?v=LE3nfBHscmo')">L</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.khan.co.kr/')">U</a>
+      </div>
+    </div>
+  </div>
+  <iframe id="main-frame" src="https://www.ytn.co.kr/_hd/hd_live.html" allowfullscreen style="position:fixed;left:0;top:46px;width:100vw;height:calc(100vh - 48px);border:none;margin:0;background:#f5f7fa;z-index:10;border-radius:0;display:block;"></iframe>
+  <script>
+    // 콤보박스 클릭시 현재창 이동
+    document.getElementById('comboMenu').addEventListener('change', function() {
+      if (this.value) {
+        window.location.href = this.value;
+        this.selectedIndex = 0;
+      }
+    });
+
+    // 링크 목록 저장 및 불러오기용 (로컬스토리지+내보내기/가져오기)
+    const STORAGE_KEY = 'myway_custom_links_v2';
+
+    // 기본 네비 링크(초기화/리셋용)
+    const defaultLinks = [
+      { title:"H", url:"00tvmain2.html" },
+      { title:"MBC", url:"https://onair.imbc.com/" },
+      { title:"SBS", url:"https://www.sbs.co.kr/live/S01?div=main_live" },
+      { title:"KBS2", url:"https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList" },
+      { title:"KBS1", url:"https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList" },
+      { title:"KBS24", url:"https://news.kbs.co.kr/news/pc/news24/news24.html" },
+      { title:"JTBC", url:"https://onair.jtbc.co.kr/" },
+      { title:"채널A", url:"https://ichannela.com/com/cmm/onair.do" },
+      { title:"TV조선", url:"https://broadcast.tvchosun.com/onair/on.cstv" },
+      { title:"YTN", url:"https://www.ytn.co.kr/_hd/hd_live.html" },
+      { title:"연합뉴스", url:"https://www.yonhapnewstv.co.kr/live" },
+      { title:"EBS TV", url:"https://www.ebs.co.kr/onair?mainTop&channelCodeString=tv" },
+      { title:"아리랑TV", url:"https://www.arirang.com/live?lang=en" },
+      { title:"SBS뉴스", url:"https://news.sbs.co.kr/news/live.do?plink=GNB&cooper=SBSNEWS" },
+      { title:"MBC 뉴스", url:"https://imnews.imbc.com/more/onair/" },
+      { title:"JTBC 뉴스", url:"https://news.jtbc.co.kr/live" },
+      { title:"Live 방송모음", url:"00barinnernew.html" },
+      { title:"네이버TV", url:"https://tv.naver.com/l" },
+      { title:"치지직", url:"https://chzzk.naver.com/lives" },
+      { title:"SOOP", url:"https://www.sooplive.co.kr/live/all" },
+      { title:"LCK", url:"https://lolesports.com/live/msi/aflol" },
+      { title:"트위치", url:"https://www.twitch.tv/" },
+      { title:"NHK", url:"https://www3.nhk.or.jp/nhkworld/en/live/" },
+      { title:"ABC", url:"abc.html" },
+      { title:"FOX NEWS", url:"foxtv.html" },
+      { title:"ABC7", url:"https://abc7.com/watch/live" },
+      { title:"가생이", url:"https://www.gasengi.com/" },
+      { title:"L", url:"https://www.youtube.com/watch?v=LE3nfBHscmo" },
+      { title:"U", url:"https://www.khan.co.kr/" }
+    ];
+
+    // 로컬스토리지에서 유저 커스텀 링크 읽기
+    function getCustomLinks() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        return data ? JSON.parse(data) : [];
+      } catch { return []; }
+    }
+    // 커스텀 링크 저장
+    function setCustomLinks(arr) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    }
+
+    // 네비게이션 링크 다시그리기
+    function renderLinks() {
+      const nav = document.getElementById('parent-links');
+      nav.innerHTML = "";
+      // 기본 링크
+      for(const link of defaultLinks){
+        const a = document.createElement('a');
+        a.textContent = link.title;
+        a.href = "#";
+        a.onclick = (e) => { showScreenParent(e, link.url); };
+        nav.appendChild(a);
+      }
+      // 커스텀 링크
+      for(const link of getCustomLinks()){
+        const a = document.createElement('a');
+        a.textContent = link.title;
+        a.href = "#";
+        a.style.fontWeight = '700';
+        a.onclick = (e) => { showScreenParent(e, link.url); };
+        nav.appendChild(a);
+      }
+    }
+
+    // 추가버튼 동작: 모달없이 prompt로
+    function addNavLink() {
+      let title = prompt('추가할 네비 이름(2~16자):');
+      if (!title || title.length<2 || title.length>16) return alert('제목은 2~16자 사이로 입력!');
+      let url = prompt('연결할 링크 주소를 입력하세요 (예: https://~):');
+      if (!url || !/^https?:\/\/|\.html$/i.test(url)) return alert('올바른 링크주소를 입력!');
+      const links = getCustomLinks();
+      links.push({ title, url });
+      setCustomLinks(links);
+      renderLinks();
+    }
+
+    // 내보내기: json 파일 저장
+    function exportLinks() {
+      const data = JSON.stringify(getCustomLinks(), null, 2);
+      const blob = new Blob([data], {type:'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = "myway_navlinks.json";
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(()=>document.body.removeChild(a),200);
+    }
+
+    // 가져오기: 파일 선택창
+    function importLinks() {
+      document.getElementById('importFile').click();
+    }
+    document.getElementById('importFile').addEventListener('change', function(e){
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev){
+        try {
+          const arr = JSON.parse(ev.target.result);
+          if(!Array.isArray(arr)) throw "형식 오류";
+          setCustomLinks(arr);
+          renderLinks();
+          alert('가져오기 완료!');
+        } catch {
+          alert('가져오기 실패 (json 파일만 가능)');
+        }
+      };
+      reader.readAsText(file);
+      this.value = "";
+    });
+
+    // 네비 클릭시 iframe에 페이지 노출
+    function showScreenParent(e, url) {
+      e.preventDefault();
+      document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
+      e.target.classList.add('active');
+      var frame = document.getElementById('main-frame');
+      frame.src = url;
+    }
+    // 드래그/터치로 네비바 스크롤
+    (function(){
+      const nav = document.querySelector('.screen-links');
+      let isDown = false, startX = 0, scrollLeft = 0;
+      nav.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - nav.offsetLeft;
+        scrollLeft = nav.scrollLeft;
+        nav.style.cursor = 'grabbing';
+      });
+      nav.addEventListener('mouseleave', () => {
+        isDown = false;
+        nav.style.cursor = '';
+      });
+      nav.addEventListener('mouseup', () => {
+        isDown = false;
+        nav.style.cursor = '';
+      });
+      nav.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        const x = e.pageX - nav.offsetLeft;
+        nav.scrollLeft = scrollLeft - (x - startX);
+      });
+      // 모바일 터치
+      let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
+      nav.addEventListener('touchstart', function(e){
+        touchDragging = true;
+        touchStartX = e.touches[0].pageX - nav.offsetLeft;
+        touchScrollLeft = nav.scrollLeft;
+      });
+      nav.addEventListener('touchend', ()=>{ touchDragging=false; });
+      nav.addEventListener('touchmove', function(e){
+        if(!touchDragging) return;
+        const x = e.touches[0].pageX - nav.offsetLeft;
+        nav.scrollLeft = touchScrollLeft - (x - touchStartX);
+      });
+    })();
+
+    // 최초 1회 네비링크 렌더링
+    renderLinks();
+
+  </script>
+</body>
+</html>
