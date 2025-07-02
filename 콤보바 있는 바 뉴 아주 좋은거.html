@@ -147,8 +147,22 @@
     // 콤보박스 클릭시 새창으로 이동
     document.getElementById('comboMenu').addEventListener('change', function() {
       if (this.value) {
-        window.open(this.value, '_blank');
-        this.selectedIndex = 0;
+
+
+       
+         window.location.href = this.value;  // ← 새창(x), 현재창에서 이동!
+    // window.open(this.value, '_blank'); // 이 줄은 주석처리 또는 삭제
+    this.selectedIndex = 0;
+
+
+
+
+
+
+
+
+
+       
       }
     });
 
