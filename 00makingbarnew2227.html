@@ -184,12 +184,17 @@
        
       </select>
       <div class="screen-links" id="parent-links">
-        <a href="#" onclick="showScreenParent(event, '00tvmain2.html')">H</a>
-        <a href="#" onclick="showScreenParent(event, 'https://onair.imbc.com/')">MBC</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.yna.co.kr/')">H</a>
+
+
+
+
+
+        
       </div>
     </div>
   </div>
-  <iframe id="main-frame" src="https://www.ytn.co.kr/_hd/hd_live.html" allowfullscreen style="position:fixed;left:0;top:46px;width:100vw;height:calc(100vh - 48px);border:none;margin:0;background:#f5f7fa;z-index:10;border-radius:0;display:block;"></iframe>
+  <iframe id="main-frame" src="https://www.yna.co.kr/" allowfullscreen style="position:fixed;left:0;top:46px;width:100vw;height:calc(100vh - 48px);border:none;margin:0;background:#f5f7fa;z-index:10;border-radius:0;display:block;"></iframe>
   <script>
     document.getElementById('comboMenu').addEventListener('change', function() {
       if (this.value) {
@@ -202,7 +207,11 @@
 
     const defaultLinks = [
       { title:"H", url:"00tvmain2.html" },
-      { title:"MBC", url:"https://onair.imbc.com/" }
+
+
+
+
+      
     ];
 
     function getCustomLinks() {
