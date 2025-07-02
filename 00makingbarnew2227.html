@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -93,6 +93,7 @@
       line-height: 28px;
       border-radius: 0;
       box-shadow: none;
+      position: relative;
     }
     .screen-links a:hover,
     .screen-links a.active {
@@ -125,6 +126,28 @@
     .nav-actions button:hover {
       background: #ffe1fc;
     }
+    .nav-x-btn {
+      color: #c14b7b;
+      background: none;
+      border: none;
+      font-weight: bold;
+      font-size: 1.05em;
+      margin-left: 3px;
+      cursor: pointer;
+      position: absolute;
+      right: -7px;
+      top: 2px;
+      z-index: 2;
+      padding: 0 2px 0 2px;
+      opacity: 0.76;
+      transition: color 0.16s;
+      line-height: 1;
+      border-radius: 50%;
+    }
+    .nav-x-btn:hover {
+      color: #ee2669;
+      background: #fff2;
+    }
     @media (max-width: 700px) {
       .screen-links { font-size: 0.88rem; gap: 8px; padding: 0 4px; height: 28px;}
       .screen-links-wrap { padding: 0;}
@@ -136,7 +159,6 @@
   </style>
 </head>
 <body>
-  <!-- 네비게이션 바 + 콤보박스 + 추가/내보내기/가져오기 버튼 -->
   <div class="screen-links-wrap">
     <div class="nav-bar-inner">
       <div class="nav-actions">
@@ -146,24 +168,29 @@
         <input type="file" id="importFile" style="display:none" accept="application/json">
       </div>
       <select class="combo-select" id="comboMenu">
-        <option value="">섹션 이동...</option>
-        <option value="newsitesbar2.html">뉴스</option>
-        <option value="bbssitesbar2.html">BBS</option>
-        <option value="livesitesbar2.html">LIVE TV</option>
-        <option value="radiositesbar2.html">RADIO</option>
-        <option value="00barcctv.html">CCTV</option>
-        <option value="00barmagazine.html">잡지</option>
+        <option value="">TYPE 이동...</option>
+
+
+
+    <option value="making001.html">BAR ▼</option>
+        <option value="00making77typeshort.html">PIC1 ▼</option>
+        <option value="00makingcircletext.html">CIRCLE▼</option>
+        <option value="00making10d.html.html">PIC2 ▼</option>
+
+
+
+
+
+       
       </select>
       <div class="screen-links" id="parent-links">
         <a href="#" onclick="showScreenParent(event, '00tvmain2.html')">H</a>
         <a href="#" onclick="showScreenParent(event, 'https://onair.imbc.com/')">MBC</a>
- 
       </div>
     </div>
   </div>
   <iframe id="main-frame" src="https://www.ytn.co.kr/_hd/hd_live.html" allowfullscreen style="position:fixed;left:0;top:46px;width:100vw;height:calc(100vh - 48px);border:none;margin:0;background:#f5f7fa;z-index:10;border-radius:0;display:block;"></iframe>
   <script>
-    // 콤보박스 클릭시 현재창 이동
     document.getElementById('comboMenu').addEventListener('change', function() {
       if (this.value) {
         window.location.href = this.value;
@@ -171,33 +198,27 @@
       }
     });
 
-    // 링크 목록 저장 및 불러오기용 (로컬스토리지+내보내기/가져오기)
     const STORAGE_KEY = 'myway_custom_links_v2';
 
-    // 기본 네비 링크(초기화/리셋용)
     const defaultLinks = [
       { title:"H", url:"00tvmain2.html" },
-      { title:"MBC", url:"https://onair.imbc.com/" },
-  
+      { title:"MBC", url:"https://onair.imbc.com/" }
     ];
 
-    // 로컬스토리지에서 유저 커스텀 링크 읽기
     function getCustomLinks() {
       try {
         const data = localStorage.getItem(STORAGE_KEY);
         return data ? JSON.parse(data) : [];
       } catch { return []; }
     }
-    // 커스텀 링크 저장
     function setCustomLinks(arr) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
     }
 
-    // 네비게이션 링크 다시그리기
+    // 네비게이션 링크 다시그리기 (+X버튼)
     function renderLinks() {
       const nav = document.getElementById('parent-links');
       nav.innerHTML = "";
-      // 기본 링크
       for(const link of defaultLinks){
         const a = document.createElement('a');
         a.textContent = link.title;
@@ -205,30 +226,87 @@
         a.onclick = (e) => { showScreenParent(e, link.url); };
         nav.appendChild(a);
       }
-      // 커스텀 링크
-      for(const link of getCustomLinks()){
+      getCustomLinks().forEach((link, idx) => {
+        const wrap = document.createElement('span');
+        wrap.style.position = "relative";
+        wrap.style.display = "inline-block";
         const a = document.createElement('a');
         a.textContent = link.title;
         a.href = "#";
         a.style.fontWeight = '700';
         a.onclick = (e) => { showScreenParent(e, link.url); };
-        nav.appendChild(a);
-      }
+        // 삭제(X)
+        const x = document.createElement('button');
+        x.className = "nav-x-btn";
+        x.title = "삭제";
+        x.innerHTML = "&times;";
+        x.onclick = (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if(confirm("삭제할까요?")) {
+            const links = getCustomLinks();
+            links.splice(idx,1);
+            setCustomLinks(links);
+            renderLinks();
+          }
+        };
+        wrap.appendChild(a);
+        wrap.appendChild(x);
+        nav.appendChild(wrap);
+      });
     }
 
-    // 추가버튼 동작: 모달없이 prompt로
+    // 제목/링크 입력창을 한 번에!
     function addNavLink() {
-      let title = prompt('추가할 네비 이름(2~16자):');
-      if (!title || title.length<2 || title.length>16) return alert('제목은 2~16자 사이로 입력!');
-      let url = prompt('연결할 링크 주소를 입력하세요 (예: https://~):');
-      if (!url || !/^https?:\/\/|\.html$/i.test(url)) return alert('올바른 링크주소를 입력!');
-      const links = getCustomLinks();
-      links.push({ title, url });
-      setCustomLinks(links);
-      renderLinks();
+      // 간단한 custom prompt UI를 동적으로
+      let form = document.createElement("div");
+      form.style.position = "fixed";
+      form.style.left = "0"; form.style.top = "0";
+      form.style.width = "100vw"; form.style.height = "100vh";
+      form.style.background = "rgba(30,16,46,0.12)";
+      form.style.display = "flex";
+      form.style.alignItems = "center";
+      form.style.justifyContent = "center";
+      form.style.zIndex = "9999";
+
+      form.innerHTML = `
+        <div style="background:#fff; border-radius:14px; box-shadow:0 4px 40px #aac3ef77; min-width:250px; max-width:96vw; padding:26px 25px 18px 25px; display:flex; flex-direction:column; gap:11px; align-items:center;">
+          <div style="font-size:1.14em; font-weight:600; color:#8347b2; letter-spacing:0.01em;">새 네비게이션 추가</div>
+          <input id="navTitle" placeholder="이름(2~16자)" style="width:94%; font-size:1em; border-radius:8px; border:1px solid #b5aeea; padding:7px 11px; margin-bottom:2px;">
+          <input id="navUrl" placeholder="링크주소 (https:// 또는 .html)" style="width:94%; font-size:1em; border-radius:8px; border:1px solid #b5aeea; padding:7px 11px;">
+          <div style="margin-top:10px; display:flex; gap:14px;">
+            <button id="navSave" style="background:#7e59e6; color:#fff; font-weight:700; border:none; border-radius:6px; font-size:1em; padding:5px 23px; cursor:pointer;">저장</button>
+            <button id="navCancel" style="background:#fff; color:#9a52ba; font-weight:600; border:1px solid #d7c7ed; border-radius:6px; font-size:1em; padding:5px 18px; cursor:pointer;">취소</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(form);
+      document.getElementById("navTitle").focus();
+
+      document.getElementById("navSave").onclick = function() {
+        let title = document.getElementById("navTitle").value.trim();
+        let url = document.getElementById("navUrl").value.trim();
+        if (!title || title.length<2 || title.length>16) {
+          alert('제목은 2~16자 사이로 입력!');
+          document.getElementById("navTitle").focus();
+          return;
+        }
+        if (!url || !/^https?:\/\/|\.html$/i.test(url)) {
+          alert('올바른 링크주소를 입력!');
+          document.getElementById("navUrl").focus();
+          return;
+        }
+        const links = getCustomLinks();
+        links.push({ title, url });
+        setCustomLinks(links);
+        renderLinks();
+        document.body.removeChild(form);
+      };
+      document.getElementById("navCancel").onclick = function() {
+        document.body.removeChild(form);
+      };
     }
 
-    // 내보내기: json 파일 저장
     function exportLinks() {
       const data = JSON.stringify(getCustomLinks(), null, 2);
       const blob = new Blob([data], {type:'application/json'});
@@ -239,8 +317,6 @@
       a.click();
       setTimeout(()=>document.body.removeChild(a),200);
     }
-
-    // 가져오기: 파일 선택창
     function importLinks() {
       document.getElementById('importFile').click();
     }
@@ -263,7 +339,6 @@
       this.value = "";
     });
 
-    // 네비 클릭시 iframe에 페이지 노출
     function showScreenParent(e, url) {
       e.preventDefault();
       document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
@@ -271,7 +346,6 @@
       var frame = document.getElementById('main-frame');
       frame.src = url;
     }
-    // 드래그/터치로 네비바 스크롤
     (function(){
       const nav = document.querySelector('.screen-links');
       let isDown = false, startX = 0, scrollLeft = 0;
@@ -294,7 +368,6 @@
         const x = e.pageX - nav.offsetLeft;
         nav.scrollLeft = scrollLeft - (x - startX);
       });
-      // 모바일 터치
       let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
       nav.addEventListener('touchstart', function(e){
         touchDragging = true;
@@ -309,9 +382,7 @@
       });
     })();
 
-    // 최초 1회 네비링크 렌더링
     renderLinks();
-
   </script>
 </body>
 </html>
