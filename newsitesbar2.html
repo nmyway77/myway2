@@ -1,263 +1,262 @@
- <!DOCTYPE html>
+ <!DOCTYPE html> 
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>심플 네비+풀사이트 뷰어+콤보박스</title>
+  <title>MYWAY.KR: 네비바</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    html, body {
-      margin:0; padding:0;
-      width:100vw; height:100vh;
-      background:#fff;
-      font-family:'Montserrat','맑은 고딕',sans-serif;
-      overflow:hidden;
+    body {
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      background: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow: hidden;
     }
-    .nav-bar-wrap {
-      width:100vw; max-width:100vw;
-      display:flex; align-items:center;
-      position:relative; z-index:2;
-      height:48px;
-      background: #fff;
-      border-radius: 0;
+    .screen-links-wrap {
+      width: 100vw;
+      position: relative;
+      margin: 0 auto;
+      padding: 0;
+      box-sizing: border-box;
+      z-index: 9;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      margin-top: 5px;
+    }
+    .nav-bar-inner {
+      display: flex;
+      align-items: center;
+      width: 100%;
+
      
-      margin-top:0px;
+
      
-      margin-bottom:0;
-      overflow:visible;
-      /* border:1px solid #e7e7e7; */
+ max-width: 2100px;
+
+
+     
+     
+    }
+    .combo-select {
+      height: 28px;
+      font-size: 1em;
+      border-radius: 8px;
       border: none;
-      box-shadow: 0 2px 16px 0 #be6b9022;
+      margin-right: 16px;
+      box-shadow: 0 1px 6px #aac9ff33;
+      background: linear-gradient(180deg, #e6effe 60%, #b1cfff 100%);
+      color: #2e358f;
+      padding: 0 12px;
+      outline: none;
+      cursor: pointer;
+      font-weight: 500;
     }
-    .combo-wrap {
-      display:flex; align-items:center;
-      margin-left: 8px;
-      margin-right: 3px;
+    .combo-select:focus {
+      box-shadow: 0 0 0 2px #a2bbfa99;
     }
-    .section-select {
-      border-radius:7px;
-      font-size:1.03rem;
-      padding:4px 18px 4px 10px;
-      border:1.7px solid #ea98aa;
-      background:#fff0f7;
-      color:#be6b90;
-      font-weight:500;
-      margin-right:7px;
-      transition: border 0.16s, background 0.18s;
+    .screen-links {
+      display: flex;
+
+     
+      gap: 5px;
+
+     
+      font-size: 0.96rem;
+      font-weight: 500;
+      color: #fff;
+      white-space: nowrap;
+      background: linear-gradient(180deg, #e4efff 10%, #a4baff 90%);
+      box-shadow:
+        0 4px 16px 0 #6b6ee533,
+        0 0.5px 12px 0 #ffffff33 inset;
+      padding: 0 12px;
+      user-select: none;
+      align-items: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      margin: 0;
+
+
+
+     
+      max-width: 2100px;
+
+
+
+
+     
+     
+      min-width: 220px;
+      cursor: grab;
+      border-radius: 20px;
+      height: 34px;
+      transition: none;
     }
-    .section-select:focus {
-      border:1.7px solid #be6b90;
-      background:#fbe0ee;
+    .screen-links::-webkit-scrollbar { display: none; }
+    .screen-links a {
+      color: rgba(55,35,130,0.92) !important;
+      text-decoration: none;
+      padding: 2px 8px;
+      border: none;
+      outline: none;
+      font-weight: 500;
+      font-size: 1em;
+      margin: 0 2px;
+      background: none;
+      opacity: 0.98;
+      letter-spacing: 0.01em;
+      transition: color 0.14s;
+      cursor: pointer;
+      white-space: nowrap;
+      line-height: 28px;
+      border-radius: 0;
+      box-shadow: none;
     }
-    .nav-arrow {
-      width:30px; height:38px;
-      border:none; 
-      background:linear-gradient(135deg, #ea98aa55 0%, #be6b9090 100%);
-      color:#be6b90; font-size:1.35rem; border-radius:5px;
-      cursor:pointer; margin:0 2px;
-      display:flex; align-items:center; justify-content:center;
-      position:relative; z-index:3;
-      transition:background 0.12s, color 0.15s;
+    .screen-links a:hover,
+    .screen-links a.active {
+      color: #ff7fe5 !important;
+      background: none;
+      font-weight: 700;
+      border-radius: 0;
+      box-shadow: none;
     }
-    .nav-arrow:hover { background:linear-gradient(135deg, #be6b90bb 0%, #ea98aa 100%); color:#fff;}
-    .zoom-btns {
-      display: flex; gap:2px; margin-left:0px;
-      flex-shrink:0;
-    }
-    .zoom-btn {
-      width:24px; height:24px; border-radius:5px; border:1.4px solid #ea98aa;
-      background:linear-gradient(90deg, #fbe0ee 70%, #fff0f7 100%);
-      color:#be6b90; font-size:1.05rem; cursor:pointer;
-      display:flex; align-items:center; justify-content:center;
-      margin-right:6px; font-weight:400;
-      transition:background 0.14s, color 0.13s, border 0.15s;
-      box-shadow:none;
-    }
-    .zoom-btn:active { background:#f5d0e5; border-color:#be6b90; }
-    .nav-scroll-outer {
-      overflow:hidden; flex:1; display:flex; align-items:center; height:100%;
-      position:relative; margin:0 2px;
-    }
-    .nav-scroll {
-      display:flex; gap:4px; align-items:center; height:100%;
-      overflow-x:auto; scrollbar-width:none; scroll-behavior:smooth;
-    }
-    .nav-scroll::-webkit-scrollbar { display:none; }
-    .nav-link {
-      color:#be6b90;
-      background:none;
-      border:none;
-      font-size:0.96rem;
-      font-weight:400;
-      padding:3px 10px;
-      margin:0 0;
-      border-radius:13px;
-      cursor:pointer;
-      transition:background 0.14s, color 0.15s;
-      white-space:nowrap;
-      letter-spacing:0.01em;
-    }
-    .nav-link.active, .nav-link:hover {
-      background:linear-gradient(90deg, #ea98aa 0%, #be6b90 100%);
-      color:#fff;
-    }
-    @media (max-width: 700px) {
-      .nav-bar-wrap { height:38px;}
-      .nav-link { font-size:0.85rem; padding:2px 8px;}
-      .zoom-btn { width:20px; height:20px; font-size:0.97rem;}
-      .nav-arrow { width:25px; height:30px; font-size:1.15rem; }
-      .section-select { font-size:0.92rem; padding:3px 9px; }
-    }
-    .iframe-container {
-      position:absolute; top:56px; left:0;
-      width:100vw; height:calc(100vh - 56px);
-      background:none; z-index:1; border:none; margin:0; padding:0;
-    }
-    iframe {
-      width:100vw; height:100vh; min-height:100%;
-      border:none; outline:none; margin:0; padding:0; display:block; background:#fff;
-    }
-    @media (max-width:700px) {
-      .iframe-container { top:43px; height:calc(100vh - 43px);}
+   
+    @media (max-width: 700px)
+   
+   
+   
+   {
+      .screen-links { font-size: 0.88rem; gap: 8px; padding: 0 4px; height: 28px;}
+      .screen-links-wrap { padding: 0;}
+      .nav-bar-inner { max-width: 100vw;}
+      .combo-select { font-size: 0.92em; height: 24px; margin-right: 7px; }
     }
   </style>
 </head>
 <body>
-  <div class="nav-bar-wrap">
-    <!-- 콤보박스: + 버튼 왼쪽! -->
-    <div class="combo-wrap">
-      <select class="section-select" id="section-select">
-        <option value="">섹션 이동...</option>
-       <option value="newsitesbar2.html">뉴스</option>
+  <!-- 네비게이션 바 + 콤보박스 -->
+  <div class="screen-links-wrap">
+    <div class="nav-bar-inner">
+      <select class="combo-select" id="comboMenu">
+         <option value="">섹션 이동...</option>
+     <option value="newsitesbar2.html">뉴스</option>
         <option value="bbssitesbar2.html">BBS</option>
         <option value="livesitesbar2.html">LIVE TV</option>
         <option value="radiositesbar2.html">RADIO</option>
         <option value="00barcctv.html">CCTV</option>
         <option value="00barmagazine.html">잡지</option>
+
+
+  
+
+
+
+
+       
       </select>
-    </div>
-    <div class="zoom-btns">
-      <button class="zoom-btn" id="zoom-in" title="풀화면으로 전환">+</button>
-    </div>
-    <button class="nav-arrow" id="nav-left" style="display:none;">&#8592;</button>
-    <div class="nav-scroll-outer">
-      <div class="nav-scroll" id="nav-scroll">
-         <button class="nav-link    active"     data-url="00newsmain.html">H</button>
-        <button class="nav-link" data-url="https://news.daum.net/">다음뉴스</button>
-        <button class="nav-link" data-url="https://ytn.co.kr/">YTN</button> 
-        <button class="nav-link" data-url="https://www.yna.co.kr/">연합신문</button>
-        <button class="nav-link" data-url="https://www.chosun.com/">조선일보</button>
-        <button class="nav-link" data-url="https://www.donga.com/">동아일보</button>
-        <button class="nav-link" data-url="https://www.joongang.co.kr/">중앙일보</button>
-        <button class="nav-link" data-url="https://www.hani.co.kr/">한겨레</button>
-              <button class="nav-link" data-url="https://www.ohmynews.com/">오마이뉴스</button>
-       
-     
-       <button class="nav-link" data-url="https://sports.donga.com//">스포츠동아</button>
- <button class="nav-link" data-url="https://www.sportschosun.com/">소포츠조선</button>
-       
-        <button class="nav-link" data-url="https://www.sportsseoul.com/">스포츠서울</button>
-        <button class="nav-link" data-url="https://www.stoo.com/">스포츠투데이</button>
-        <button class="nav-link" data-url="https://isplus.com/">일간스포츠</button>
-           <button class="nav-link" data-url="https://www.dispatch.co.kr/">디스패치</button>
-        <button class="nav-link" data-url="https://www.kmib.co.kr/">국민일보</button>
-        <button class="nav-link" data-url="https://imnews.imbc.com/pc_main.html">MBC 뉴스</button>
-        <button class="nav-link" data-url="https://news.sbs.co.kr/news/newsMain.do">SBS뉴스</button>
-        <button class="nav-link" data-url="https://news.kbs.co.kr/news/pc/main/main.html?">KBS뉴스</button>
- <button class="nav-link" data-url="https://news.jtbc.co.kr/">JTBC뉴스</button>
-        <button class="nav-link" data-url="https://www.bloter.net/">블로터</button>
-        <button class="nav-link" data-url="https://zdnet.co.kr/">ZDNET</button>
-       
-
- 
-       
-    
-
-
-        <button class="nav-link" data-url="https://www.kmib.co.kr/">국민일보</button>
-        <button class="nav-link" data-url="https://imnews.imbc.com/pc_main.html">MBC 뉴스</button>
-        <button class="nav-link" data-url="https://news.sbs.co.kr/news/newsMain.do">SBS뉴스</button>
-        <button class="nav-link" data-url="https://news.kbs.co.kr/news/pc/main/main.html?">KBS뉴스</button>
-
+      <div class="screen-links" id="parent-links">
 
        
-        <button class="nav-link" data-url="https://www.bloter.net/">블로터</button>
-        <button class="nav-link" data-url="https://zdnet.co.kr/">ZDNET</button>
-       
+<a href="#" class="active" onclick="showScreenParent(event, '00newsmain.html')">H</a>
+<a href="#" onclick="showScreenParent(event, 'https://news.daum.net/')">다음뉴스</a>
+<a href="#" onclick="showScreenParent(event, 'https://ytn.co.kr/')">YTN</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.yna.co.kr/')">연합신문</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.chosun.com/')">조선일보</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.donga.com/')">동아일보</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.joongang.co.kr/')">중앙일보</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.hani.co.kr/')">한겨레</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.ohmynews.com/')">오마이뉴스</a>
+<a href="#" onclick="showScreenParent(event, 'https://sports.donga.com//')">스포츠동아</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.sportschosun.com/')">소포츠조선</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.sportsseoul.com/')">스포츠서울</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.stoo.com/')">스포츠투데이</a>
+<a href="#" onclick="showScreenParent(event, 'https://isplus.com/')">일간스포츠</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.dispatch.co.kr/')">디스패치</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.kmib.co.kr/')">국민일보</a>
+<a href="#" onclick="showScreenParent(event, 'https://imnews.imbc.com/pc_main.html')">MBC 뉴스</a>
+<a href="#" onclick="showScreenParent(event, 'https://news.sbs.co.kr/news/newsMain.do')">SBS뉴스</a>
+<a href="#" onclick="showScreenParent(event, 'https://news.kbs.co.kr/news/pc/main/main.html?')">KBS뉴스</a>
+<a href="#" onclick="showScreenParent(event, 'https://news.jtbc.co.kr/')">JTBC뉴스</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.bloter.net/')">블로터</a>
+<a href="#" onclick="showScreenParent(event, 'https://zdnet.co.kr/')">ZDNET</a>
+<!-- 아래 중복 부분도 포함 -->
+<a href="#" onclick="showScreenParent(event, 'https://www.kmib.co.kr/')">국민일보</a>
+<a href="#" onclick="showScreenParent(event, 'https://imnews.imbc.com/pc_main.html')">MBC 뉴스</a>
+<a href="#" onclick="showScreenParent(event, 'https://news.sbs.co.kr/news/newsMain.do')">SBS뉴스</a>
+<a href="#" onclick="showScreenParent(event, 'https://news.kbs.co.kr/news/pc/main/main.html?')">KBS뉴스</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.bloter.net/')">블로터</a>
+<a href="#" onclick="showScreenParent(event, 'https://zdnet.co.kr/')">ZDNET</a>
+
+
        
       </div>
     </div>
-    <button class="nav-arrow" id="nav-right">&#8594;</button>
   </div>
-  <div class="iframe-container">
-   
-    <iframe id="main-iframe" src="https://news.daum.net/" allowfullscreen></iframe>
-   
-  </div>
+  <iframe id="main-frame" src="https://news.daum.net/" allowfullscreen style="position:fixed;left:0;top:46px;width:100vw;height:calc(100vh - 48px);border:none;margin:0;background:#f5f7fa;z-index:10;border-radius:0;display:block;"></iframe>
   <script>
-    // 콤보박스: 섹션 페이지 이동
-    document.getElementById('section-select').onchange = function() {
-      if (this.value) location.href = this.value;
-    };
+    // 콤보박스 클릭시 새창으로 이동
+    document.getElementById('comboMenu').addEventListener('change', function() {
+      if (this.value) {
+       
+      window.location.href = this.value;  // ← 새창(x), 현재창에서 이동!
+    // window.open(this.value, '_blank'); // 이 줄은 주석처리 또는 삭제
+    this.selectedIndex = 0;
 
-    // + 버튼 : 풀페이지 전환
-    document.getElementById('zoom-in').onclick = function() {
-      if (window.top === window.self) return;
-      window.open(location.href, '_blank');
-    };
-    // 네비 클릭시 iframe src 변경 & active 클래스 처리
-    document.querySelectorAll('.nav-link').forEach(btn=>{
-      btn.addEventListener('click', function(){
-        document.querySelectorAll('.nav-link').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('main-iframe').src = btn.dataset.url;
-      });
+
+
+
+       
+      }
     });
-    // 네비바 가로 스크롤, 화살표 제어
-    const navScroll = document.getElementById('nav-scroll');
-    const leftArrow = document.getElementById('nav-left');
-    const rightArrow = document.getElementById('nav-right');
-    function updateNavArrows() {
-      leftArrow.style.display = navScroll.scrollLeft > 10 ? 'inline-flex' : 'none';
-      rightArrow.style.display = (navScroll.scrollLeft + navScroll.offsetWidth < navScroll.scrollWidth - 5) ? 'inline-flex' : 'none';
-    }
-    rightArrow.onclick = ()=>{ navScroll.scrollBy({left:100, behavior:'smooth'});}
-    leftArrow.onclick = ()=>{ navScroll.scrollBy({left:-100, behavior:'smooth'});}
-    navScroll.addEventListener('scroll', updateNavArrows);
-    window.addEventListener('resize', updateNavArrows);
-    setTimeout(updateNavArrows, 300);
 
-
-
-
-
-
-  (function(){
-    const el = document.getElementById('nav-scroll');
-    let isDown = false, startX, scrollLeft;
-    el.addEventListener('mousedown', function(e){
-      isDown = true;
-      el.classList.add('dragging');
-      startX = e.pageX - el.offsetLeft;
-      scrollLeft = el.scrollLeft;
+    function showScreenParent(e, url) {
       e.preventDefault();
-    });
-    el.addEventListener('mouseleave', ()=>{ isDown=false; el.classList.remove('dragging'); });
-    el.addEventListener('mouseup', ()=>{ isDown=false; el.classList.remove('dragging'); });
-    el.addEventListener('mousemove', function(e){
-      if(!isDown) return;
-      const x = e.pageX - el.offsetLeft;
-      const walk = (x - startX) * 1.1; // drag speed
-      el.scrollLeft = scrollLeft - walk;
-    });
-  })();
-
-
-
-
-
-
-
-   
+      document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
+      e.target.classList.add('active');
+      var frame = document.getElementById('main-frame');
+      frame.src = url;
+    }
+    // 네비바 드래그/터치로 좌우 스크롤
+    (function(){
+      const nav = document.querySelector('.screen-links');
+      let isDown = false, startX = 0, scrollLeft = 0;
+      nav.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - nav.offsetLeft;
+        scrollLeft = nav.scrollLeft;
+        nav.style.cursor = 'grabbing';
+      });
+      nav.addEventListener('mouseleave', () => {
+        isDown = false;
+        nav.style.cursor = '';
+      });
+      nav.addEventListener('mouseup', () => {
+        isDown = false;
+        nav.style.cursor = '';
+      });
+      nav.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        const x = e.pageX - nav.offsetLeft;
+        nav.scrollLeft = scrollLeft - (x - startX);
+      });
+      // 모바일 터치
+      let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
+      nav.addEventListener('touchstart', function(e){
+        touchDragging = true;
+        touchStartX = e.touches[0].pageX - nav.offsetLeft;
+        touchScrollLeft = nav.scrollLeft;
+      });
+      nav.addEventListener('touchend', ()=>{ touchDragging=false; });
+      nav.addEventListener('touchmove', function(e){
+        if(!touchDragging) return;
+        const x = e.touches[0].pageX - nav.offsetLeft;
+        nav.scrollLeft = touchScrollLeft - (x - touchStartX);
+      });
+    })();
   </script>
 </body>
 </html>
