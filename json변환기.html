@@ -1,0 +1,90 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>MYWAY JSON → url,img 변환기</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f7f9fd; padding: 40px; }
+    h2 { color: #264785; }
+    textarea { width: 98%; height: 110px; font-size: 1em; margin-bottom: 10px; }
+    .input-wrap { margin-bottom: 24px; }
+    label { font-weight: bold; color: #354160;}
+    button { margin-right: 14px; margin-top: 6px; padding: 9px 24px; border-radius: 7px; border: none; background: #4976e9; color: #fff; font-size: 1em; cursor: pointer; }
+    button:hover { background: #3557a6; }
+    input[type="file"] { margin-top: 8px; }
+    pre { background: #1e2430; color: #fff; padding: 19px; border-radius: 9px; margin-top: 20px; font-size: 1em;}
+    .output-wrap { margin-top: 14px;}
+    .desc { color: #888; font-size: 0.96em; margin-bottom: 16px;}
+  </style>
+</head>
+<body>
+  <h2>MYWAY JSON → url, img 배열 변환기</h2>
+  <div class="desc">
+    <b>1)</b> 파일 첨부 또는 <b>2)</b> 아래 입력란에 JSON 내용 붙여넣기<br>
+    (gallery1~gallery10 등 여러 디렉토리 구조도 OK!)
+  </div>
+  <div class="input-wrap">
+    <input type="file" id="fileInput" accept=".json">
+    <button onclick="convertFile()">파일 변환</button>
+  </div>
+  <div class="input-wrap">
+    <label>JSON 내용 직접 붙여넣기:</label><br>
+    <textarea id="input" placeholder='여기에 json 내용을 붙여넣으세요'></textarea>
+    <button onclick="convertText()">텍스트 변환</button>
+  </div>
+  <div class="output-wrap">
+    <label>변환 결과:</label>
+    <pre id="output"></pre>
+  </div>
+  <script>
+    function extractAndConvert(obj) {
+      let all = [];
+      if (Array.isArray(obj)) {
+        // 이미 배열일 때
+        all = obj;
+      } else if (typeof obj === "object" && obj !== null) {
+        // 객체 구조: gallery1~gallery10 등
+        Object.keys(obj).forEach(k => {
+          if (Array.isArray(obj[k])) all.push(...obj[k]);
+        });
+      }
+      return all.map(x => `{ url: "${x.url}", img: "${x.img}" }`).join(',\n');
+    }
+
+    function convertText() {
+      const input = document.getElementById('input').value.trim();
+      let output = '';
+      try {
+        const obj = JSON.parse(input);
+        output = extractAndConvert(obj);
+        if (!output) output = '데이터가 없습니다.';
+      } catch (e) {
+        output = '파싱 오류! JSON 내용을 다시 확인하세요.';
+      }
+      document.getElementById('output').textContent = output;
+    }
+
+    function convertFile() {
+      const fileInput = document.getElementById('fileInput');
+      if (fileInput.files.length === 0) {
+        alert('json 파일을 먼저 선택하세요!');
+        return;
+      }
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        let output = '';
+        try {
+          const obj = JSON.parse(e.target.result);
+          output = extractAndConvert(obj);
+          if (!output) output = '데이터가 없습니다.';
+        } catch (err) {
+          output = 'json 파싱 오류: ' + err.message;
+        }
+        document.getElementById('output').textContent = output;
+      };
+      reader.readAsText(file, 'utf-8');
+    }
+  </script>
+</body>
+</html>
