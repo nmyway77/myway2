@@ -1,24 +1,23 @@
- <html lang="ko">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <title>MYWAY 인플루언서 influencer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
-    .dashboard { max-width: 1200px; margin: 0 auto; padding: 34px 0 60px 0;}
+    .dashboard { max-width: 1200px; margin: 0 auto; padding: 12px 0 40px 0;} /* 상단여백 축소 */
     .gallery-label {
-      font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
+      font-weight: bold; font-size: 1.15rem; margin: 28px 0 14px 0;
       color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
     }
     .gallery-row {
       display: flex;
       flex-wrap: wrap;
-      justify-content: flex-start; /* 여러개일 때 왼쪽정렬, center로 하면 가운데 */
+      justify-content: center;  /* 중앙정렬 */
       gap: 0 16px;
-      max-width: 900px;
+      max-width: 1235px;  /* 5개씩 딱 맞게! (283*5 + 16*4) */
       margin: 0 auto;
       min-height: 200px;
-      /* 아래 추가 */
       align-items: flex-start;
     }
     .list-row {
@@ -28,6 +27,7 @@
       margin-bottom: 36px;
       transition: width 0.2s, height 0.2s;
       display: block;
+      max-width: 283px;
     }
     .imgframe {
       width: 100%; height: 100%;
@@ -59,10 +59,10 @@
     .box-portrait  { width:200px; height:283px; }
     .box-landscape { width:283px; height:200px; }
 
-    /* 박스 최대크기 제한(한 개일 때도 커지지 않게!) */
-    .list-row { max-width: 283px; }
-
     /* 반응형(모바일) */
+    @media (max-width: 1235px) {
+      .gallery-row { max-width: 98vw; }
+    }
     @media (max-width: 1080px) {
       .gallery-row { max-width: 98vw; }
       .box-portrait  { width:28vw; height:40vw; min-width:80px; min-height:100px;}
@@ -112,36 +112,15 @@
 { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0241&program_id=PS-2021069490-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2021-0241/2021/9/14/1631595648857_334467.jpg" },
 { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2018-0138&program_id=PS-2018035619-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2018-0138/2018/3/29/1522286676074_102753.jpg" },
     ];
-    const gallery2Data = [
-
-     
-    ];
-    const gallery3Data = [
-     
-    ];
-    const gallery4Data = [
-      
-     
-    ];
-    const gallery5Data = [
-    
-     
-    ];
-    const gallery6Data = [
-    
-    ];
-    const gallery7Data = [
-     
-    ];
-    const gallery8Data = [
-      
-    ];
-    const gallery9Data = [
-     
-    ];
-    const gallery10Data = [
-     
-    ];
+    const gallery2Data = [];
+    const gallery3Data = [];
+    const gallery4Data = [];
+    const gallery5Data = [];
+    const gallery6Data = [];
+    const gallery7Data = [];
+    const gallery8Data = [];
+    const gallery9Data = [];
+    const gallery10Data = [];
     const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
 
     // 이미지 비율에 따라 박스 클래스 동적부여(최대한 단순, 기존과 구조/디자인 동일)

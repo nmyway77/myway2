@@ -1,24 +1,23 @@
- <html lang="ko">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <title>MYWAY 인플루언서 influencer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
-    .dashboard { max-width: 1200px; margin: 0 auto; padding: 34px 0 60px 0;}
+    .dashboard { max-width: 1200px; margin: 0 auto; padding: 12px 0 40px 0;} /* 상단여백 축소 */
     .gallery-label {
-      font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
+      font-weight: bold; font-size: 1.15rem; margin: 28px 0 14px 0;
       color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
     }
     .gallery-row {
       display: flex;
       flex-wrap: wrap;
-      justify-content: flex-start; /* 여러개일 때 왼쪽정렬, center로 하면 가운데 */
+      justify-content: center;  /* 중앙정렬 */
       gap: 0 16px;
-      max-width: 900px;
+      max-width: 1235px;  /* 5개씩 딱 맞게! (283*5 + 16*4) */
       margin: 0 auto;
       min-height: 200px;
-      /* 아래 추가 */
       align-items: flex-start;
     }
     .list-row {
@@ -28,6 +27,7 @@
       margin-bottom: 36px;
       transition: width 0.2s, height 0.2s;
       display: block;
+      max-width: 283px;
     }
     .imgframe {
       width: 100%; height: 100%;
@@ -59,10 +59,10 @@
     .box-portrait  { width:200px; height:283px; }
     .box-landscape { width:283px; height:200px; }
 
-    /* 박스 최대크기 제한(한 개일 때도 커지지 않게!) */
-    .list-row { max-width: 283px; }
-
     /* 반응형(모바일) */
+    @media (max-width: 1235px) {
+      .gallery-row { max-width: 98vw; }
+    }
     @media (max-width: 1080px) {
       .gallery-row { max-width: 98vw; }
       .box-portrait  { width:28vw; height:40vw; min-width:80px; min-height:100px;}
@@ -79,15 +79,15 @@
 </head>
 <body>
   <div class="dashboard">
-    <span class="gallery-label">influencers 영화</span>
+    <span class="gallery-label">드라마</span>
     <div class="gallery-row" id="gallery1"></div>
-    <span class="gallery-label">influencers 먹방</span>
+    <span class="gallery-label"></span>
     <div class="gallery-row" id="gallery2"></div>
-    <span class="gallery-label">influencers 여행</span>
+    <span class="gallery-label"></span>
     <div class="gallery-row" id="gallery3"></div>
-    <span class="gallery-label">influencers 배우</span>
+    <span class="gallery-label"></span>
     <div class="gallery-row" id="gallery4"></div>
-    <span class="gallery-label">influencers 음악</span>
+    <span class="gallery-label"></span>
     <div class="gallery-row" id="gallery5"></div>
     <span class="gallery-label">influencers 영화 6</span>
     <div class="gallery-row" id="gallery6"></div>
@@ -103,39 +103,24 @@
   <script>
     // 샘플 데이터(갤1~10)
     const gallery1Data = [
-      { url: "https://www.youtube.com/@popcorncokemovie/videos", img: "https://yt3.googleusercontent.com/4vsl0dMmf2_zJh9hNMoFP7KPnfxEKCeWSn5iYdQvuJUVUkBf9eFu3qqdHWIN1DDULygUcGDmww=s900-c-k-c0x00ffffff-no-rj" },
-      { url: "https://www.youtube.com/results?search_query=%EC%A7%80%EB%AC%B4%EB%B9%84", img: "https://yt3.googleusercontent.com/ytc/AIdro_nLr4j1MqKUus9uB2RADncMRaC__c2D6MKj4x4YbA4IwcU=s900-c-k-c0x00ffffff-no-rj" },
-      { url: "https://www.youtube.com/@popcorncokemovie/videos", img: "https://myway.kr/m001.jpg" }
+     { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0604&program_id=PS-2025109382-01-000&broadcast_complete_yn=N&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2024-0604/2025/1/15/1736897500225_566139.jpg" },
+{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2025-0018&program_id=PS-2025117266-01-000&broadcast_complete_yn=N&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2025-0018/2025/4/9/1744184563914_578417.jpg" },
+{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2025-0012&program_id=PS-2025106300-01-000&broadcast_complete_yn=N&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2025-0012/2025/3/20/1742445641008_572821.jpg" },
+{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2006-0272&program_id=PS-0000771891-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2006-0272/2021/12/15/1639531491551_355942.jpg" },
+{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2000-0112&program_id=PS-0000447021-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2000-0112/2022/5/3/1651553428404_382079.jpg" },
+{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0505&program_id=PS-2025061251-01-000&broadcast_complete_yn=N&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2024-0505/2025/5/22/1747900600354_585600.jpg" },
+{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0241&program_id=PS-2021069490-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2021-0241/2021/9/14/1631595648857_334467.jpg" },
+{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2018-0138&program_id=PS-2018035619-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2018-0138/2018/3/29/1522286676074_102753.jpg" },
     ];
-    const gallery2Data = [
-      { url: "https://program.download/category/download/windows/", img: "https://myway.kr/ps.jpg" },
-      { url: "https://koreapops.tumblr.com/", img: "https://myway.kr/kpop.jpg" }
-    ];
-    const gallery3Data = [
-      { url: "http://www.auction.co.kr/", img: "https://64.media.tumblr.com/e97d9391e0aeefcb82d1fb7bfe8748a5/tumblr_inline_njqty4XgTA1r45nlo.jpg" },
-      { url: "http://www.gmarket.co.kr/", img: "https://64.media.tumblr.com/4b13568a56efb8c2f9b51b8d3c5bface/tumblr_inline_njqu1l7g9v1r45nlo.jpg" }
-    ];
-    const gallery4Data = [
-      { url: "http://www.allurekorea.com/", img: "https://64.media.tumblr.com/5a097048470fe45a4b30c4e5f4e097a8/tumblr_inline_qqnwhh0G5P1r45nlo_500.jpg" }
-    ];
-    const gallery5Data = [
-      { url: "#", img: "https://myway.kr/sample1.jpg" }
-    ];
-    const gallery6Data = [
-      { url: "#", img: "https://myway.kr/sample2.jpg" }
-    ];
-    const gallery7Data = [
-      { url: "#", img: "https://myway.kr/sample3.jpg" }
-    ];
-    const gallery8Data = [
-      { url: "#", img: "https://myway.kr/sample4.jpg" }
-    ];
-    const gallery9Data = [
-      { url: "#", img: "https://myway.kr/sample5.jpg" }
-    ];
-    const gallery10Data = [
-      { url: "#", img: "https://myway.kr/sample6.jpg" }
-    ];
+    const gallery2Data = [];
+    const gallery3Data = [];
+    const gallery4Data = [];
+    const gallery5Data = [];
+    const gallery6Data = [];
+    const gallery7Data = [];
+    const gallery8Data = [];
+    const gallery9Data = [];
+    const gallery10Data = [];
     const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
 
     // 이미지 비율에 따라 박스 클래스 동적부여(최대한 단순, 기존과 구조/디자인 동일)
