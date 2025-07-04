@@ -1,0 +1,190 @@
+
+   <html lang="ko">
+<head>
+  <base target="_blank76">
+  <meta charset="UTF-8">
+  <title>MYWAY 인플루언서 influencer </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
+    .dashboard { max-width: 1200px; margin: 0 auto; padding: 34px 0 60px 0;}
+    .gallery-label {
+      font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
+      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
+    }
+    .gallery-row {
+      width: 100%; max-width: 1080px; margin: 0 auto;
+      text-align: center;
+    }
+    .list-row {
+      display: inline-block;
+      vertical-align: top;
+      box-sizing: border-box;
+      position: relative;
+      transition: width 0.2s, height 0.2s;
+      background: #fff;
+    }
+    .list-row:last-child { margin-right: 0; }
+    .imgframe {
+      width: 100%; height: 100%;
+      background: #fff;
+      position: relative;
+      box-sizing: border-box;
+      z-index: 0;
+      border-radius: 0;
+      box-shadow: 0 6px 6px 0 rgba(90,90,130,0.11);
+      overflow: hidden;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
+    .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
+    .img-item img {
+      display: block; width: 100%; height: 100%;
+      object-fit: contain;
+      background: #fff;
+      margin: 0;
+      border: none;
+      padding: 0;
+    }
+    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
+    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
+    /* 매거진 공통 스타일 (갤4 + 갤1~3 전부 적용) */
+    .list-row.magazine {
+      width: 150px;
+      height: 213px;
+      margin: 0 12px 36px 0;
+    }
+    .img-wrap.magazine { height: 100%; }
+    .img-item.magazine { height: 100%; }
+    @media (max-width: 1080px) {
+      .list-row.magazine { width: 28vw; height: 40vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
+    }
+    @media (max-width: 700px) {
+      .list-row.magazine { width: 44vw; height: 62vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <a class="gallery-label" href="" target="_blank">MOVIE</a>
+    <div class="gallery-row" id="gallery1"></div>
+    <span class="gallery-label">유튜브 영화리뷰어</span>
+    <div class="gallery-row" id="gallery2"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery3"></div>
+    <span class="gallery-label">OTT</span>
+    <div class="gallery-row" id="gallery4"></div>
+    <span class="gallery-label"> </span>
+    <div class="gallery-row" id="gallery5"></div>
+    <span class="gallery-label"> </span>
+    <div class="gallery-row" id="gallery6"></div>
+    <span class="gallery-label"> </span>
+    <div class="gallery-row" id="gallery7"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery8"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery9"></div>
+    <span class="gallery-label"> </span>
+    <div class="gallery-row" id="gallery10"></div>
+  </div>
+  <script>
+    // 갤러리1~10 예시 데이터(갤5~10은 샘플 1개만 입력, 필요시 채우세요)
+    const gallery1Data = [
+ { url: "http://www.cgv.co.kr/", img: "https://play-lh.googleusercontent.com/dVQ6d8I7XDOkr72-jcAUHsCfQ_ih9p9HUaca82obM6LlmJOKAA8BuY776Xns40Nifg" },
+
+    
+       { url: "https://www.kobis.or.kr/kobis/business/mast/mvie/findOpenScheduleList.do", img: "https://static.vecteezy.com/system/resources/previews/017/178/221/non_2x/new-sticker-label-on-transparent-background-free-png.png" },
+             { url: "https://www.megabox.co.kr/", img: "https://cdn.nvp.co.kr/news/photo/201606/54066_51907_1537.png" },
+       
+       { url: "https://www.vkobis.or.kr/", img: "https://png.pngtree.com/png-vector/20230808/ourmid/pngtree-film-reel-clipart-flat-vector-illustration-style-cartoon-of-movie-trailers-png-image_6869464.png" },
+        { url: "https://www.lottecinema.co.kr", img: "https://play-lh.googleusercontent.com/pmWpm2WTx2-9dTGeAfU0LMyofNgPNZlbzbFhYxFm0c9BOaJl83jxoVQLxJcxThGiHxE" },
+    ];
+    const gallery2Data = [
+
+          { url: "https://www.youtube.com/@popcorncokemovie/videos", img: "https://yt3.googleusercontent.com/4vsl0dMmf2_zJh9hNMoFP7KPnfxEKCeWSn5iYdQvuJUVUkBf9eFu3qqdHWIN1DDULygUcGDmww=s900-c-k-c0x00ffffff-no-rj" },
+{ url: "https://www.youtube.com/results?search_query=%EC%A7%80%EB%AC%B4%EB%B9%84", img: "https://yt3.googleusercontent.com/ytc/AIdro_nLr4j1MqKUus9uB2RADncMRaC__c2D6MKj4x4YbA4IwcU=s900-c-k-c0x00ffffff-no-rj" },
+{ url: "https://www.youtube.com/@popcorncokemovie/videos", img: "https://myway.kr/m001.jpg" },
+{ url: "https://www.youtube.com/results?search_query=%EB%8B%AC%EB%B9%9B%EB%AE%A4%EC%A6%88", img: "https://i.namu.wiki/i/wTUOFdz3yvDdO4mvVdufd6ZzU7MCCAxd1RAsET2tIfs7ITQd4CLE4bAOOu9IV1SD3NUfapHF5838h4bKZ_Tu1w.webp" },
+{ url: "https://www.youtube.com/results?search_query=%EA%B3%A0%EB%AA%BD", img: "https://yt3.googleusercontent.com/ytc/AIdro_n2VEZCHj55JE9Ppw79uhETNd-JVDibC-WBxWnLXQSUIMs=s900-c-k-c0x00ffffff-no-rj" },
+{ url: "https://www.youtube.com/results?search_query=%EC%82%90%EB%A7%A8", img: "https://yt3.googleusercontent.com/ytc/AIdro_mtkN4YfxiRYrroG8Sdq9XwJNgs5Dn0TdeNlAdrzIF5tsU=s900-c-k-c0x00ffffff-no-rj" },
+{ url: "https://www.youtube.com/@karang/videos", img: "https://yt3.googleusercontent.com/BiKXtvU_71mOW0jsKbTraXktRO7zm8TVzoNltXeiEA-IpxO1aIwiURvC4109Rdk-AzMriHlVSg=s900-c-k-c0x00ffffff-no-rj" },
+{ url: "https://www.youtube.com/results?search_query=%EB%93%9C%EB%A6%BC%ED%85%94%EB%9F%AC", img: "https://yt3.googleusercontent.com/gjtbY0LqxuQNNC3wwon3jf8HmnGOSWo5sEt5XTsSFHiTPERK9xVk0ohumOtJTgGdT7Hu6S3A=s900-c-k-c0x00ffffff-no-rj" },
+{ url: "https://www.youtube.com/@Hometown-VideoRoom", img: "https://yt3.googleusercontent.com/ytc/AIdro_nSb6W2ntwiYFaGoG50OzUS_LCAMSTSadHUMx3MCgnnBaY=s900-c-k-c0x00ffffff-no-rj" },
+{ url: "https://www.youtube.com/@%EB%AC%B4%EB%B9%84%EB%B0%A9/videos", img: "https://yt3.googleusercontent.com/YIMP_GsUjkgGnUo3Lfq94csM7fm6HIyRBMTr1JvX4mC8rCw0nPHT8PAOIPd-oRKru4eEBdnd=s900-c-k-c0x00ffffff-no-rj" },
+
+      
+    ];
+    const gallery3Data = [
+
+     
+ 
+    ];
+    const gallery4Data = [
+
+      { url: "https://href.li/?https://www.netflix.com/", img: "https://img1.daumcdn.net/thumb/R720x0.q80/?scode=mtistory2&fname=https%3A%2F%2Ft1.daumcdn.net%2Fcfile%2Ftistory%2F9945E24D5EDF7C1110", alt: "넷플릭스" },
+      { url: "https://href.li/?https://www.disneyplus.com/ko-kr", img: "https://s.yimg.com/ny/api/res/1.2/wc7n7lj8OYExtHptEqaMOg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTY0MDtoPTY0MA--/https://media.zenfs.com/en/evening_standard_239/be0710aaaf5abfdcfe63e97dda34ea9a", alt: "디즈니+" },
+      { url: "https://www.coupangplay.com/catalog", img: "https://d2juy7qzamcf56.cloudfront.net/2024-11-26/09738456-1277-4953-80fb-fc9c9d2df777.png", alt: "쿠팡플레이" },
+   
+        { url: "https://www.bing.com/search?q=%eb%ac%b4%eb%a3%8c%ec%98%81%ed%99%94&FPIG=8B66B576118C4193BD5E34D3245CE59B&first=8&FORM=PERE", img: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%2Fid%2FOIP.CqrYCzXMk12yyf2s5nKwJwHaEc%3Fr%3D0%26pid%3DApi&f=1&ipt=60c92cdf965a10a4366a92dd380d2617c87b3d2392d9d2f1e29d884e8c556ff7&ipo=images", alt: "쿠팡플레이" },
+   
+      
+
+
+       
+    ];
+    const gallery5Data = [
+   
+    ];
+    const gallery6Data = [
+    
+    ];
+    const gallery7Data = [
+     
+    ];
+    const gallery8Data = [
+    
+    ];
+    const gallery9Data = [
+      
+    ];
+    const gallery10Data = [
+     
+    ];
+
+    // 그림자 png
+    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
+    // 모든 갤러리를 매거진 타입으로!
+    function renderGallery(data, targetId) {
+      const el = document.getElementById(targetId);
+      el.innerHTML = data.map(item => `
+        <div class="list-row magazine">
+          <div class="imgframe">
+            <div class="img-wrap magazine">
+              <div class="img-item magazine">
+                <a href="${item.url}" target="_blank" rel="noopener">
+                  <img src="${item.img}">
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="shadow-line">
+            <img src="${shadowUrl}">
+          </div>
+        </div>
+      `).join('');
+    }
+    renderGallery(gallery1Data, 'gallery1');
+    renderGallery(gallery2Data, 'gallery2');
+    renderGallery(gallery3Data, 'gallery3');
+    renderGallery(gallery4Data, 'gallery4');
+    renderGallery(gallery5Data, 'gallery5');
+    renderGallery(gallery6Data, 'gallery6');
+    renderGallery(gallery7Data, 'gallery7');
+    renderGallery(gallery8Data, 'gallery8');
+    renderGallery(gallery9Data, 'gallery9');
+    renderGallery(gallery10Data, 'gallery10');
+  </script>
+</body>
+</html>
