@@ -1,190 +1,171 @@
- <html lang="ko">
+<!DOCTYPE html>
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>MYWAY 인플루언서 influencer</title>
+  <title>MYWAY.KR: 네비바</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
-    .dashboard { max-width: 1200px; margin: 0 auto; padding: 34px 0 60px 0;}
-    .gallery-label {
-      font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
-      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
+    body {
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      background: #fff;
+      margin: 0; padding: 0;
+      min-height: 100vh;
+      overflow: hidden;
     }
-    .gallery-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-start; /* 여러개일 때 왼쪽정렬, center로 하면 가운데 */
-      gap: 0 16px;
-      max-width: 900px;
+    /* 네비바 영역 */
+    .screen-links-wrap {
+      width: 100vw;
+      position: relative;
       margin: 0 auto;
-      min-height: 200px;
-      /* 아래 추가 */
-      align-items: flex-start;
-    }
-    .list-row {
+      padding: 0;
       box-sizing: border-box;
-      position: relative;
-      background: #fff;
-      margin-bottom: 36px;
-      transition: width 0.2s, height 0.2s;
-      display: block;
-    }
-    .imgframe {
-      width: 100%; height: 100%;
-      background: #fff;
-      position: relative;
-      box-sizing: border-box;
-      z-index: 0;
-      border-radius: 0;
-      box-shadow: 0 6px 6px 0 rgba(90,90,130,0.11);
+      z-index: 9;
       overflow: hidden;
       display: flex;
-      align-items: flex-start;
       justify-content: center;
+      margin-top: 44px;
+      /* 볼륨감 */
+      filter: drop-shadow(0 6px 28px #b176f340);
     }
-    .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
-    .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
-    .img-item img {
-      display: block; width: 100%; height: 100%;
-      object-fit: contain;
-      background: #fff;
-      margin: 0;
-      border: none;
-      padding: 0;
+    .screen-links {
+      display: flex;
+      gap: 16px;
+      font-size: 1.08rem;
+      font-weight: 500;
+      color: #fff;
+      white-space: nowrap;
+      background: linear-gradient(95deg, #7ed6fb 10%, #b176f3 90%);
+      padding: 0 24px;
+      user-select: none;
+      align-items: center;
+      border-radius: 22px;
+      box-shadow: 0 8px 32px 0 rgba(90,100,180,0.13), 0 2px 8px 0 rgba(255,255,255,0.10) inset;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      min-height: 48px;
+      min-width: 220px;
+      cursor: grab;
+      transition: box-shadow 0.2s;
     }
-    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
-    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
-
-    /* ----------- 크기 강제 지정 ------------ */
-    .box-portrait  { width:200px; height:283px; }
-    .box-landscape { width:283px; height:200px; }
-
-    /* 박스 최대크기 제한(한 개일 때도 커지지 않게!) */
-    .list-row { max-width: 283px; }
-
-    /* 반응형(모바일) */
-    @media (max-width: 1080px) {
-      .gallery-row { max-width: 98vw; }
-      .box-portrait  { width:28vw; height:40vw; min-width:80px; min-height:100px;}
-      .box-landscape { width:40vw; height:28vw; min-width:80px; min-height:100px;}
-      .list-row { max-width: 40vw; }
+    .screen-links::-webkit-scrollbar { display: none; }
+    .screen-links a {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      padding: 6px 18px;
+      border-radius: 14px;
+      font-weight: 500;
+      font-size: 1em;
+      background: none;
+      display: inline-block;
+      opacity: 0.93;
+      letter-spacing: 0.01em;
+      transition: background 0.15s, color 0.13s, box-shadow 0.12s;
+      cursor: pointer;
+      white-space: nowrap;
+      margin: 0 1px;
+    }
+    .screen-links a:hover, .screen-links a.active {
+      background: rgba(255,255,255,0.22);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 2px 12px #b176f333;
     }
     @media (max-width: 700px) {
-      .gallery-row { max-width: 99vw; }
-      .box-portrait  { width:44vw; height:62vw; min-width:65px; min-height:85px;}
-      .box-landscape { width:62vw; height:44vw; min-width:65px; min-height:85px;}
-      .list-row { max-width: 62vw; }
+      .screen-links { font-size: 0.93rem; gap: 8px; padding: 0 6px;}
+      .screen-links-wrap { margin-top: 24px; }
+    }
+    /* 프레임 위치 (하단) */
+    #main-frame {
+      position: fixed;
+      left: 0;
+      top: 108px;
+      width: 100vw;
+      height: calc(100vh - 110px);
+      border: none;
+      margin: 0;
+      background: #f5f7fa;
+      z-index: 10;
+      border-radius: 0;
+      display: block;
+    }
+    @media (max-width: 700px) {
+      #main-frame { top: 74px; height: calc(100vh - 76px); }
     }
   </style>
 </head>
 <body>
-  <div class="dashboard">
-    <span class="gallery-label">influencers 영화</span>
-    <div class="gallery-row" id="gallery1"></div>
-    <span class="gallery-label">influencers 먹방</span>
-    <div class="gallery-row" id="gallery2"></div>
-    <span class="gallery-label">influencers 여행</span>
-    <div class="gallery-row" id="gallery3"></div>
-    <span class="gallery-label">influencers 배우</span>
-    <div class="gallery-row" id="gallery4"></div>
-    <span class="gallery-label">influencers 음악</span>
-    <div class="gallery-row" id="gallery5"></div>
-    <span class="gallery-label">influencers 영화 6</span>
-    <div class="gallery-row" id="gallery6"></div>
-    <span class="gallery-label">influencers 영화 7</span>
-    <div class="gallery-row" id="gallery7"></div>
-    <span class="gallery-label">influencers 영화 8</span>
-    <div class="gallery-row" id="gallery8"></div>
-    <span class="gallery-label">influencers 영화 9</span>
-    <div class="gallery-row" id="gallery9"></div>
-    <span class="gallery-label">influencers 영화 10</span>
-    <div class="gallery-row" id="gallery10"></div>
-  </div>
-  <script>
-    // 샘플 데이터(갤1~10)
-    const gallery1Data = [
-      { url: "https://www.youtube.com/@popcorncokemovie/videos", img: "https://yt3.googleusercontent.com/4vsl0dMmf2_zJh9hNMoFP7KPnfxEKCeWSn5iYdQvuJUVUkBf9eFu3qqdHWIN1DDULygUcGDmww=s900-c-k-c0x00ffffff-no-rj" },
-      { url: "https://www.youtube.com/results?search_query=%EC%A7%80%EB%AC%B4%EB%B9%84", img: "https://yt3.googleusercontent.com/ytc/AIdro_nLr4j1MqKUus9uB2RADncMRaC__c2D6MKj4x4YbA4IwcU=s900-c-k-c0x00ffffff-no-rj" },
-      { url: "https://www.youtube.com/@popcorncokemovie/videos", img: "https://myway.kr/m001.jpg" }
-    ];
-    const gallery2Data = [
-      { url: "https://program.download/category/download/windows/", img: "https://myway.kr/ps.jpg" },
-      { url: "https://koreapops.tumblr.com/", img: "https://myway.kr/kpop.jpg" }
-    ];
-    const gallery3Data = [
-      { url: "http://www.auction.co.kr/", img: "https://64.media.tumblr.com/e97d9391e0aeefcb82d1fb7bfe8748a5/tumblr_inline_njqty4XgTA1r45nlo.jpg" },
-      { url: "http://www.gmarket.co.kr/", img: "https://64.media.tumblr.com/4b13568a56efb8c2f9b51b8d3c5bface/tumblr_inline_njqu1l7g9v1r45nlo.jpg" }
-    ];
-    const gallery4Data = [
-      { url: "http://www.allurekorea.com/", img: "https://64.media.tumblr.com/5a097048470fe45a4b30c4e5f4e097a8/tumblr_inline_qqnwhh0G5P1r45nlo_500.jpg" }
-    ];
-    const gallery5Data = [
-      { url: "#", img: "https://myway.kr/sample1.jpg" }
-    ];
-    const gallery6Data = [
-      { url: "#", img: "https://myway.kr/sample2.jpg" }
-    ];
-    const gallery7Data = [
-      { url: "#", img: "https://myway.kr/sample3.jpg" }
-    ];
-    const gallery8Data = [
-       { url: "https://www.youtube.com/@popcorncokemovie/videos", img: "https://yt3.googleusercontent.com/4vsl0dMmf2_zJh9hNMoFP7KPnfxEKCeWSn5iYdQvuJUVUkBf9eFu3qqdHWIN1DDULygUcGDmww=s900-c-k-c0x00ffffff-no-rj" },
-      { url: "https://www.youtube.com/results?search_query=%EC%A7%80%EB%AC%B4%EB%B9%84", img: "https://yt3.googleusercontent.com/ytc/AIdro_nLr4j1MqKUus9uB2RADncMRaC__c2D6MKj4x4YbA4IwcU=s900-c-k-c0x00ffffff-no-rj" },
-      { url: "https://www.youtube.com/@popcorncokemovie/videos", img: "https://myway.kr/m001.jpg" }
-    ];
-    const gallery9Data = [
-      { url: "#", img: "https://myway.kr/sample5.jpg" }
-    ];
-    const gallery10Data = [
-      { url: "#", img: "https://myway.kr/sample6.jpg" }
-    ];
-    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
+  <!-- 네비게이션 바 (스크롤/드래그) -->
+  <div class="screen-links-wrap">
+    <div class="screen-links" id="parent-links">
+      <a href="#" onclick="window.open('00maindramainner2.html', '_blank')">+</a>
+    <a href="#" onclick="showScreenParent(event, '00tvmain2.html')">live 방송사 </a>
+       <a href="#" onclick="showScreenParent(event, '00maindramakbs.html')">KBS무료VOD</a>
+      <a href="#" onclick="showScreenParent(event, '00maindramasbs.html')">SBS 무료VOD</a>
+  
+      
+      <a href="#" onclick="showScreenParent(event, '00maindramambc.html')">MBC 무료VOD</a>
+      <a href="#" onclick="showScreenParent(event, '00maindramajtbc.html')">JTBC무료VOD</a>
+      <a href="#" onclick="showScreenParent(event, '00livestock.html')"></a>
+     
 
-    // 이미지 비율에 따라 박스 클래스 동적부여(최대한 단순, 기존과 구조/디자인 동일)
-    function renderGallery(data, targetId) {
-      const el = document.getElementById(targetId);
-      el.innerHTML = data.map(item => `
-        <div class="list-row">
-          <div class="imgframe">
-            <div class="img-wrap">
-              <div class="img-item">
-                <a href="${item.url}" target="_blank" rel="noopener">
-                  <img src="${item.img}">
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="shadow-line">
-            <img src="${shadowUrl}">
-          </div>
-        </div>
-      `).join('');
-      // 동적 크기 클래스 부여
-      Array.from(el.querySelectorAll('.list-row')).forEach((box, i) => {
-        const img = box.querySelector('img');
-        function applyBoxClass() {
-          if (img.naturalWidth > img.naturalHeight) {
-            box.classList.add('box-landscape');
-            box.classList.remove('box-portrait');
-          } else {
-            box.classList.add('box-portrait');
-            box.classList.remove('box-landscape');
-          }
-        }
-        img.onload = applyBoxClass;
-        if (img.complete) setTimeout(applyBoxClass, 20);
-      });
+    </div>
+  </div>
+  
+  <iframe id="main-frame" src="00tvmain2.html"></iframe>
+
+  <script>
+    // 네비바 클릭시 해당 페이지 출력
+    function showScreenParent(e, url) {
+      e.preventDefault();
+      document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
+      e.target.classList.add('active');
+      document.getElementById('main-frame').src = url;
     }
-    renderGallery(gallery1Data, 'gallery1');
-    renderGallery(gallery2Data, 'gallery2');
-    renderGallery(gallery3Data, 'gallery3');
-    renderGallery(gallery4Data, 'gallery4');
-    renderGallery(gallery5Data, 'gallery5');
-    renderGallery(gallery6Data, 'gallery6');
-    renderGallery(gallery7Data, 'gallery7');
-    renderGallery(gallery8Data, 'gallery8');
-    renderGallery(gallery9Data, 'gallery9');
-    renderGallery(gallery10Data, 'gallery10');
+    // 네비바 드래그/터치 스크롤
+    (function(){
+      const nav = document.querySelector('.screen-links');
+      let isDown = false, startX = 0, scrollLeft = 0;
+
+      nav.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - nav.offsetLeft;
+        scrollLeft = nav.scrollLeft;
+        nav.style.cursor = 'grabbing';
+      });
+      nav.addEventListener('mouseleave', () => {
+        isDown = false;
+        nav.style.cursor = '';
+      });
+      nav.addEventListener('mouseup', () => {
+        isDown = false;
+        nav.style.cursor = '';
+      });
+      nav.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        const x = e.pageX - nav.offsetLeft;
+        nav.scrollLeft = scrollLeft - (x - startX);
+      });
+
+      // 모바일 터치
+      let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
+      nav.addEventListener('touchstart', function(e){
+        touchDragging = true;
+        touchStartX = e.touches[0].pageX - nav.offsetLeft;
+        touchScrollLeft = nav.scrollLeft;
+      });
+      nav.addEventListener('touchend', ()=>{ touchDragging=false; });
+      nav.addEventListener('touchmove', function(e){
+        if(!touchDragging) return;
+        const x = e.touches[0].pageX - nav.offsetLeft;
+        nav.scrollLeft = touchScrollLeft - (x - touchStartX);
+      });
+    })();
+    // 처음 로드시 첫 메뉴 선택 효과
+    window.addEventListener('DOMContentLoaded', ()=>{
+      document.querySelectorAll('#parent-links a')[0].classList.add('active');
+    });
   </script>
 </body>
 </html>
