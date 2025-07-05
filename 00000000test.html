@@ -20,14 +20,16 @@
       padding: 0;
       box-sizing: border-box;
       z-index: 9;
-      overflow: hidden;
+      overflow: visible;
       display: flex;
       justify-content: center;
+      align-items: center;
       margin-top: 5px;
     }
     .nav-bar-inner {
       display: flex;
       align-items: center;
+      justify-content: center;
       width: 100%;
       max-width: 1000px;
     }
@@ -66,13 +68,14 @@
       overflow-y: hidden;
       scrollbar-width: none;
       -ms-overflow-style: none;
-      margin: 0;
+      margin: 0 auto;
       max-width: 1000px;
       min-width: 220px;
       cursor: grab;
       border-radius: 20px;
       height: 34px;
       transition: none;
+      justify-content: center;  /* 중앙정렬 */
     }
     .screen-links::-webkit-scrollbar { display: none; }
     .screen-links a {
@@ -125,9 +128,8 @@
       visibility: hidden; /* 초기 숨김 */
     }
     .nav-arrow:hover { background: #b3d2ff; color: #232365; }
-    .nav-arrow.left { left: -2px; }
-    .nav-arrow.right { right: -2px; }
-    /* 네비가 넘칠 때만 보이게 (JS에서 visibility 컨트롤) */
+    .nav-arrow.left { left: 0px; }
+    .nav-arrow.right { right: 0px; }
 
     @media (max-width: 700px) {
       .screen-links { font-size: 0.88rem; gap: 8px; padding: 0 4px; height: 28px;}
@@ -254,10 +256,8 @@
     window.addEventListener('DOMContentLoaded', function(){
       setTimeout(updateArrows, 60); // 렌더 후 체크
     });
-
     // 혹시 링크 수/문구 바뀌는 경우도 재체크
     setInterval(updateArrows, 800);
-
   </script>
 </body>
 </html>
