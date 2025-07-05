@@ -1,40 +1,32 @@
 <html lang="ko">
 <head>
+  <base target="_blank76">
   <meta charset="UTF-8">
-  <title>MYWAY 인플루언서 influencer</title>
+  <title>MYWAY 인플루언서 influencer </title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
-    .dashboard { max-width: 1200px; margin: 0 auto; padding: 12px 0 40px 0;} /* 상단여백 축소 */
+    .dashboard { max-width: 1200px; margin: 0 auto; padding: 34px 0 60px 0;}
     .gallery-label {
-
-
-      
-      font-weight: bold; font-size: 1.0rem;       margin: 17px        0 14px 0;
+      font-weight: bold; font-size: 1.0rem;   margin: 7px 0 18px 0;
 
 
       
       color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
     }
     .gallery-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;  /* 중앙정렬 */
-      gap: 0 16px;
-      max-width: 1235px;  /* 5개씩 딱 맞게! (283*5 + 16*4) */
-      margin: 0 auto;
-      min-height: 200px;
-      align-items: flex-start;
+      width: 100%; max-width: 1080px; margin: 0 auto;
+      text-align: center;
     }
     .list-row {
+      display: inline-block;
+      vertical-align: top;
       box-sizing: border-box;
       position: relative;
-      background: #fff;
-      margin-bottom: 36px;
       transition: width 0.2s, height 0.2s;
-      display: block;
-      max-width: 283px;
+      background: #fff;
     }
+    .list-row:last-child { margin-right: 0; }
     .imgframe {
       width: 100%; height: 100%;
       background: #fff;
@@ -60,32 +52,25 @@
     }
     .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
     .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
-
-    /* ----------- 크기 강제 지정 ------------ */
-    .box-portrait  { width:200px; height:283px; }
-    .box-landscape { width:283px; height:200px; }
-
-    /* 반응형(모바일) */
-    @media (max-width: 1235px) {
-      .gallery-row { max-width: 98vw; }
+    /* 매거진 공통 스타일 (갤4 + 갤1~3 전부 적용) */
+    .list-row.magazine {
+      width: 150px;
+      height: 213px;
+      margin: 0 12px 36px 0;
     }
+    .img-wrap.magazine { height: 100%; }
+    .img-item.magazine { height: 100%; }
     @media (max-width: 1080px) {
-      .gallery-row { max-width: 98vw; }
-      .box-portrait  { width:28vw; height:40vw; min-width:80px; min-height:100px;}
-      .box-landscape { width:40vw; height:28vw; min-width:80px; min-height:100px;}
-      .list-row { max-width: 40vw; }
+      .list-row.magazine { width: 28vw; height: 40vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
     }
     @media (max-width: 700px) {
-      .gallery-row { max-width: 99vw; }
-      .box-portrait  { width:44vw; height:62vw; min-width:65px; min-height:85px;}
-      .box-landscape { width:62vw; height:44vw; min-width:65px; min-height:85px;}
-      .list-row { max-width: 62vw; }
+      .list-row.magazine { width: 44vw; height: 62vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
     }
   </style>
 </head>
 <body>
   <div class="dashboard">
-    <span class="gallery-label">Myway.kr</span>
+    <span class="gallery-label">영화 리뷰어</span>
     <div class="gallery-row" id="gallery1"></div>
     <span class="gallery-label"></span>
     <div class="gallery-row" id="gallery2"></div>
@@ -107,12 +92,9 @@
     <div class="gallery-row" id="gallery10"></div>
   </div>
   <script>
-    // 샘플 데이터(갤1~10)
+    // 갤러리1~10 예시 데이터(갤5~10은 샘플 1개만 입력, 필요시 채우세요)
     const gallery1Data = [
-
-
-
-          { url: "https://www.youtube.com/@popcorncokemovie/videos", img: "https://yt3.googleusercontent.com/4vsl0dMmf2_zJh9hNMoFP7KPnfxEKCeWSn5iYdQvuJUVUkBf9eFu3qqdHWIN1DDULygUcGDmww=s900-c-k-c0x00ffffff-no-rj" },
+   { url: "https://www.youtube.com/@popcorncokemovie/videos", img: "https://yt3.googleusercontent.com/4vsl0dMmf2_zJh9hNMoFP7KPnfxEKCeWSn5iYdQvuJUVUkBf9eFu3qqdHWIN1DDULygUcGDmww=s900-c-k-c0x00ffffff-no-rj" },
 { url: "https://www.youtube.com/results?search_query=%EC%A7%80%EB%AC%B4%EB%B9%84", img: "https://yt3.googleusercontent.com/ytc/AIdro_nLr4j1MqKUus9uB2RADncMRaC__c2D6MKj4x4YbA4IwcU=s900-c-k-c0x00ffffff-no-rj" },
 { url: "https://www.youtube.com/@popcorncokemovie/videos", img: "https://myway.kr/m001.jpg" },
 { url: "https://www.youtube.com/results?search_query=%EB%8B%AC%EB%B9%9B%EB%AE%A4%EC%A6%88", img: "https://i.namu.wiki/i/wTUOFdz3yvDdO4mvVdufd6ZzU7MCCAxd1RAsET2tIfs7ITQd4CLE4bAOOu9IV1SD3NUfapHF5838h4bKZ_Tu1w.webp" },
@@ -123,71 +105,49 @@
 { url: "https://www.youtube.com/@Hometown-VideoRoom", img: "https://yt3.googleusercontent.com/ytc/AIdro_nSb6W2ntwiYFaGoG50OzUS_LCAMSTSadHUMx3MCgnnBaY=s900-c-k-c0x00ffffff-no-rj" },
 { url: "https://www.youtube.com/@%EB%AC%B4%EB%B9%84%EB%B0%A9/videos", img: "https://yt3.googleusercontent.com/YIMP_GsUjkgGnUo3Lfq94csM7fm6HIyRBMTr1JvX4mC8rCw0nPHT8PAOIPd-oRKru4eEBdnd=s900-c-k-c0x00ffffff-no-rj" },
 
-
-
-
-
-
-
-
-
-
-      
+     
     ];
     const gallery2Data = [
-      
-
-
-
-
-
-      
-
-      
+      { url: "https://program.download/category/download/windows/", img: "https://myway.kr/ps.jpg" },
+      { url: "https://koreapops.tumblr.com/", img: "https://myway.kr/kpop.jpg" }
     ];
     const gallery3Data = [
-
-
-  
-
-      
+      { url: "http://www.auction.co.kr/", img: "https://64.media.tumblr.com/e97d9391e0aeefcb82d1fb7bfe8748a5/tumblr_inline_njqty4XgTA1r45nlo.jpg" },
+      { url: "http://www.gmarket.co.kr/", img: "https://64.media.tumblr.com/4b13568a56efb8c2f9b51b8d3c5bface/tumblr_inline_njqu1l7g9v1r45nlo.jpg" },
+      { url: "http://shopping.naver.com/", img: "https://64.media.tumblr.com/75aaf70369c882c5ca9800a0e8d7ee49/tumblr_inline_njqu3tdsp51r45nlo.jpg" }
     ];
     const gallery4Data = [
-
-
-
-      
+      { url: "http://www.allurekorea.com/", img: "https://64.media.tumblr.com/5a097048470fe45a4b30c4e5f4e097a8/tumblr_inline_qqnwhh0G5P1r45nlo_500.jpg" }
     ];
     const gallery5Data = [
-
-
-
-      
+      { url: "#", img: "https://myway.kr/sample1.jpg" }
     ];
     const gallery6Data = [
-
-
-
-
-
-
-
-      
+      { url: "#", img: "https://myway.kr/sample2.jpg" }
     ];
-    const gallery7Data = [];
-    const gallery8Data = [];
-    const gallery9Data = [];
-    const gallery10Data = [];
-    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
+    const gallery7Data = [
+      { url: "#", img: "https://myway.kr/sample3.jpg" }
+    ];
+    const gallery8Data = [
+      { url: "#", img: "https://myway.kr/sample4.jpg" }
+    ];
+    const gallery9Data = [
+      { url: "#", img: "https://myway.kr/sample5.jpg" }
+    ];
+    const gallery10Data = [
+      { url: "#", img: "https://myway.kr/sample6.jpg" }
+    ];
 
-    // 이미지 비율에 따라 박스 클래스 동적부여(최대한 단순, 기존과 구조/디자인 동일)
+    // 그림자 png
+    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
+    // 모든 갤러리를 매거진 타입으로!
     function renderGallery(data, targetId) {
       const el = document.getElementById(targetId);
       el.innerHTML = data.map(item => `
-        <div class="list-row">
+        <div class="list-row magazine">
           <div class="imgframe">
-            <div class="img-wrap">
-              <div class="img-item">
+            <div class="img-wrap magazine">
+              <div class="img-item magazine">
                 <a href="${item.url}" target="_blank" rel="noopener">
                   <img src="${item.img}">
                 </a>
@@ -199,21 +159,6 @@
           </div>
         </div>
       `).join('');
-      // 동적 크기 클래스 부여
-      Array.from(el.querySelectorAll('.list-row')).forEach((box, i) => {
-        const img = box.querySelector('img');
-        function applyBoxClass() {
-          if (img.naturalWidth > img.naturalHeight) {
-            box.classList.add('box-landscape');
-            box.classList.remove('box-portrait');
-          } else {
-            box.classList.add('box-portrait');
-            box.classList.remove('box-landscape');
-          }
-        }
-        img.onload = applyBoxClass;
-        if (img.complete) setTimeout(applyBoxClass, 20);
-      });
     }
     renderGallery(gallery1Data, 'gallery1');
     renderGallery(gallery2Data, 'gallery2');
