@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -8,10 +8,8 @@
     body {
       font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
       background: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      overflow: hidden;
+      margin: 0; padding: 0;
+      min-height: 100vh; overflow: hidden;
     }
     .screen-links-wrap {
       width: 100vw;
@@ -20,14 +18,16 @@
       padding: 0;
       box-sizing: border-box;
       z-index: 9;
-      overflow: hidden;
+      overflow: visible;
       display: flex;
       justify-content: center;
+      align-items: center;
       margin-top: 5px;
     }
     .nav-bar-inner {
       display: flex;
       align-items: center;
+      justify-content: center;
       width: 100%;
       max-width: 1000px;
     }
@@ -45,8 +45,14 @@
       cursor: pointer;
       font-weight: 500;
     }
-    .combo-select:focus {
-      box-shadow: 0 0 0 2px #a2bbfa99;
+    .combo-select:focus { box-shadow: 0 0 0 2px #a2bbfa99; }
+    .screen-links-box {
+      display: flex;
+      align-items: center;
+      position: relative;
+      max-width: 1000px;
+      min-width: 220px;
+      width: 100%;
     }
     .screen-links {
       display: flex;
@@ -66,13 +72,15 @@
       overflow-y: hidden;
       scrollbar-width: none;
       -ms-overflow-style: none;
-      margin: 0;
+      margin: 0 auto;
+      width: 100%;
       max-width: 1000px;
       min-width: 220px;
       cursor: grab;
       border-radius: 20px;
       height: 34px;
       transition: none;
+      justify-content: center;
     }
     .screen-links::-webkit-scrollbar { display: none; }
     .screen-links a {
@@ -104,44 +112,40 @@
     }
     /* 화살표(arrow) 버튼 디자인 */
     .nav-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 28px; height: 34px;
-      background: rgba(220,233,255,0.72);
+      background: rgba(220,233,255,0.80);
       border: none;
       border-radius: 50%;
       box-shadow: 0 2px 8px #aac9ff33;
       color: #4252b7;
       font-size: 17px;
       cursor: pointer;
-      z-index: 10;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: background 0.15s;
       opacity: 0.93;
       outline: none;
-      visibility: hidden; /* 초기 숨김 */
+      width: 28px; height: 34px;
+      margin: 0 4px;
+      visibility: hidden;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
     }
     .nav-arrow:hover { background: #b3d2ff; color: #232365; }
-    .nav-arrow.left { left: -2px; }
-    .nav-arrow.right { right: -2px; }
-    /* 네비가 넘칠 때만 보이게 (JS에서 visibility 컨트롤) */
-
     @media (max-width: 700px) {
       .screen-links { font-size: 0.88rem; gap: 8px; padding: 0 4px; height: 28px;}
       .screen-links-wrap { padding: 0;}
       .nav-bar-inner { max-width: 100vw;}
       .combo-select { font-size: 0.92em; height: 24px; margin-right: 7px; }
       .nav-arrow { width: 24px; height: 28px; font-size: 15px; }
+      .screen-links-box { max-width: 100vw; }
     }
   </style>
 </head>
 <body>
   <!-- 네비게이션 바 + 콤보박스 -->
-  <div class="screen-links-wrap" style="position:relative;">
-    <button class="nav-arrow left" id="nav-arrow-left" tabindex="-1" aria-label="왼쪽 이동">&lt;</button>
+  <div class="screen-links-wrap">
     <div class="nav-bar-inner">
       <select class="combo-select" id="comboMenu">
          <option value="">섹션 이동...</option>
@@ -155,41 +159,20 @@
          <option value="00maindramainner2.html">드라마</option>
          <option value="index.html">Myway.kr</option>
       </select>
-      <div class="screen-links" id="parent-links">
-
-
-
-        
-    <a href="#" class="active" onclick="showScreenParent(event, 'https://waffleboard.io/ranking')">H</a>
-<a href="#" onclick="showScreenParent(event, 'https://modu.pcpp.go.kr/suggest-board')">국민제안</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.dcinside.com/')">dcinsid</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.fmkorea.com/')">fmkorea</a>
-<a href="#" onclick="showScreenParent(event, 'https://theqoo.net/hot?filter_mode=normal')">theqoo</a>
-<a href="#" onclick="showScreenParent(event, 'https://ppomppu.co.kr/hot.php')">뽐뿌</a>
-<a href="#" onclick="showScreenParent(event, 'https://mlbpark.donga.com/mp/b.php?search_select=sct&search_input=&select=spf&m=search&b=kbotown&query=%EC%98%A4%ED%94%BC%EC%85%9C')">엠엘파크</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.missycoupons.com/zero/board.php#id=general')">missycoupons</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.inven.co.kr/board/webzine/2097?iskin=webzine')">inven</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.instiz.net/pt?srt=3#greentop')">instiz</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.bobaedream.co.kr/list?code=freeb')">bobaedream</a>
-<a href="#" onclick="showScreenParent(event, 'https://hiphopplaya.com/')">hiphopplaya</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.dogdrip.net/?mid=dogdrip&sort_index=popular')">dogdrip</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.ilbe.com//')">일베</a>
-<a href="#" onclick="showScreenParent(event, 'https://pann.nate.com/')">Nate판</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.ygosu.com/community/best_article/?type=daily')">ygosu</a>
-<a href="#" onclick="showScreenParent(event, 'https://bbs.ruliweb.com/best/humor/now?orderby=readcount&range=7d')">ruliweb</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.clien.net/service/recommend')">clien</a>
-<a href="#" onclick="showScreenParent(event, 'http://www.gasengi.com/main/board.php?bo_table=commu08')">gasengi</a>
-<a href="#" onclick="showScreenParent(event, 'http://www.etoland.co.kr/bbs/board.php?bo_table=hit')">etoland</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.ygosu.com/community/best_article/?type=daily')">ygosu</a>
-
-
-
-
-
-        
+      <div class="screen-links-box">
+        <button class="nav-arrow left" id="nav-arrow-left" tabindex="-1" aria-label="왼쪽 이동">&lt;</button>
+        <div class="screen-links" id="parent-links">
+          <a href="#" onclick="showScreenParent(event, '00tvmain2.html')">H </a>
+          <a href="#" onclick="window.open('livesitesbar2.html', '_blank')">LIVE TV</a>
+          <a href="#" onclick="showScreenParent(event, '00maintvvod.html')">FREE VOD</a>
+          <a href="#" onclick="showScreenParent(event, 'https://allvod.sbs.co.kr/free')">SBS VOD</a>
+          <a href="#" onclick="showScreenParent(event, 'https://vod.kbs.co.kr/')">KBS VOD</a>
+          <a href="#" onclick="showScreenParent(event, 'https://global.imbc.com/MovieProgram/0')">MBC VOD</a>
+          <a href="#" onclick="showScreenParent(event, 'https://vod.jtbc.co.kr/')">JTBC VOD</a>
+        </div>
+        <button class="nav-arrow right" id="nav-arrow-right" tabindex="-1" aria-label="오른쪽 이동">&gt;</button>
       </div>
     </div>
-    <button class="nav-arrow right" id="nav-arrow-right" tabindex="-1" aria-label="오른쪽 이동">&gt;</button>
   </div>
   <iframe id="main-frame" src="https://allvod.sbs.co.kr/free"  allowfullscreen style="position:fixed;left:0;top:46px;width:100vw;height:calc(100vh - 48px);border:none;margin:0;background:#f5f7fa;z-index:10;border-radius:0;display:block;"></iframe>
   <script>
@@ -278,10 +261,8 @@
     window.addEventListener('DOMContentLoaded', function(){
       setTimeout(updateArrows, 60); // 렌더 후 체크
     });
-
     // 혹시 링크 수/문구 바뀌는 경우도 재체크
     setInterval(updateArrows, 800);
-
   </script>
 </body>
 </html>
