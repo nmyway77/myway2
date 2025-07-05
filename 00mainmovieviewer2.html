@@ -1,257 +1,435 @@
- <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>MYWAY.KR: 네비바</title>
+  <title>MYWAY 인플루언서 influencer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
-      background: #fff;
-      margin: 0; padding: 0;
-      min-height: 100vh;
-      overflow: hidden;
+    body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
+    .dashboard { max-width: 1200px; margin: 0 auto; padding: 12px 0 40px 0;} /* 상단여백 축소 */
+    .gallery-label {
+
+
+      
+      font-weight: bold; font-size: 1.0rem;       margin: 17px        0 14px 0;
+
+
+      
+      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
     }
-    /* 네비바 영역 */
-    .screen-links-wrap {
-      width: 100vw;
-      position: relative;
+    .gallery-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;  /* 중앙정렬 */
+      gap: 0 16px;
+      max-width: 1235px;  /* 5개씩 딱 맞게! (283*5 + 16*4) */
       margin: 0 auto;
-      padding: 0;
+      min-height: 200px;
+      align-items: flex-start;
+    }
+    .list-row {
       box-sizing: border-box;
-      z-index: 9;
+      position: relative;
+      background: #fff;
+      margin-bottom: 36px;
+      transition: width 0.2s, height 0.2s;
+      display: block;
+      max-width: 283px;
+    }
+    .imgframe {
+      width: 100%; height: 100%;
+      background: #fff;
+      position: relative;
+      box-sizing: border-box;
+      z-index: 0;
+      border-radius: 0;
+      box-shadow: 0 6px 6px 0 rgba(90,90,130,0.11);
       overflow: hidden;
       display: flex;
+      align-items: flex-start;
       justify-content: center;
-
-     
-      margin-top: 24px;
-     
-      filter: drop-shadow(0 6px 28px #b176f340);
     }
-    .screen-links {
-      display: flex;
-      gap: 5px;
-      font-size: 0.93rem;
-      font-weight: 500;
-      color: #fff;
-      white-space: nowrap;
-      background: linear-gradient(95deg, #7ed6fb 10%, #b176f3 90%);
-      padding: 0 14px;
-      user-select: none;
-      align-items: center;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px 0 rgba(90,100,180,0.13), 0 2px 8px 0 rgba(255,255,255,0.10) inset;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      min-height: 34px;
-      min-width: 220px;
-      cursor: grab;
-      transition: box-shadow 0.2s;
-    }
-    .screen-links::-webkit-scrollbar { display: none; }
-    .screen-links a {
-      color: rgba(255,255,255,0.85);
-      text-decoration: none;
-      padding: 3px 10px;
-      border-radius: 10px;
-      font-weight: 500;
-      font-size: 0.97em;
-      background: none;
-      display: inline-block;
-      opacity: 0.93;
-      letter-spacing: 0.01em;
-      transition: background 0.15s, color 0.13s, box-shadow 0.12s;
-      cursor: pointer;
-      white-space: nowrap;
-      margin: 0 1px;
-    }
-    .screen-links a:hover, .screen-links a.active {
-      background: rgba(255,255,255,0.22);
-      color: #fff;
-      font-weight: 600;
-      box-shadow: 0 2px 12px #b176f333;
-    }
-    @media (max-width: 700px) {
-      .screen-links { font-size: 0.88rem; gap: 6px; padding: 0 4px;}
-      .screen-links-wrap { margin-top: 20px; }
-      .screen-links { min-height: 26px; }
-    }
-    /* 프레임 위치 (하단) */
-    #main-frame {
-      position: fixed;
-      left: 0;
-
-
-
-     
-      top: 64px;
-
-     
-      width: 100vw;
-      height: calc(100vh - 96px);
-      border: none;
+    .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
+    .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
+    .img-item img {
+      display: block; width: 100%; height: 100%;
+      object-fit: contain;
+      background: #fff;
       margin: 0;
-      background: #f5f7fa;
-      z-index: 10;
-      border-radius: 0;
-      display: block;
+      border: none;
+      padding: 0;
+    }
+    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
+    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
+
+    /* ----------- 크기 강제 지정 ------------ */
+    .box-portrait  { width:200px; height:283px; }
+    .box-landscape { width:283px; height:200px; }
+
+    /* 반응형(모바일) */
+    @media (max-width: 1235px) {
+      .gallery-row { max-width: 98vw; }
+    }
+    @media (max-width: 1080px) {
+      .gallery-row { max-width: 98vw; }
+      .box-portrait  { width:28vw; height:40vw; min-width:80px; min-height:100px;}
+      .box-landscape { width:40vw; height:28vw; min-width:80px; min-height:100px;}
+      .list-row { max-width: 40vw; }
     }
     @media (max-width: 700px) {
-      #main-frame { top: 58px; height: calc(100vh - 60px); }
-    }
-
-    /* ◀▶ 좌우 화살표 */
-    .nav-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 20px; height: 32px;
-      display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(to right, #b176f3 40%, transparent 100%);
-      border: none;
-      outline: none;
-      z-index: 11;
-      cursor: pointer;
-      opacity: 0.82;
-      transition: opacity 0.18s;
-      padding: 0;
-      border-radius: 11px;
-      user-select: none;
-    }
-    .nav-arrow.right {
-      right: 2px;
-      background: linear-gradient(to left, #b176f3 44%, transparent 100%);
-    }
-    .nav-arrow.left {
-      left: 2px;
-      background: linear-gradient(to right, #b176f3 44%, transparent 100%);
-    }
-    .nav-arrow svg {
-      display: block;
-      width: 13px;
-      height: 18px;
-    }
-    .nav-arrow:active {
-      opacity: 1;
-    }
-    .nav-arrow[hidden] {
-      display: none;
+      .gallery-row { max-width: 99vw; }
+      .box-portrait  { width:44vw; height:62vw; min-width:65px; min-height:85px;}
+      .box-landscape { width:62vw; height:44vw; min-width:65px; min-height:85px;}
+      .list-row { max-width: 62vw; }
     }
   </style>
 </head>
 <body>
-  <!-- 네비게이션 바 (스크롤/드래그) -->
-  <div class="screen-links-wrap" style="position:relative;">
-    <!-- 좌 화살표 -->
-    <button class="nav-arrow left" id="nav-arrow-left" aria-label="왼쪽 이동" hidden>
-      <svg viewBox="0 0 13 20"><polygon points="9,3 2,10 9,17" fill="#fff" opacity="0.86"/></svg>
-    </button>
-    <div class="screen-links" id="parent-links">
-      <a href="#" onclick="window.open('00mainmovieinner2.html', '_blank')">+</a>
-      <a href="#" class="active" onclick="showScreenParent(event, '00mainmovie23.html')">H</a>
-           <a href="#" onclick="showScreenParent(event, '00mainmovie.html')">무료영화 모음</a>
-        <a href="#" onclick="showScreenParent(event, '00mainmovieviewer.html')">영화 리뷰</a>
- <a href="#" onclick="showScreenParent(event, '00mainmovieviewer2.html')">영화 리뷰어</a>
-    
-    </div>
-    <!-- 우 화살표 -->
-    <button class="nav-arrow right" id="nav-arrow-right" aria-label="오른쪽 이동" hidden>
-      <svg viewBox="0 0 13 20"><polygon points="4,3 11,10 4,17" fill="#fff" opacity="0.88"/></svg>
-    </button>
+  <div class="dashboard">
+    <span class="gallery-label">Myway.kr</span>
+    <div class="gallery-row" id="gallery1"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery2"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery3"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery4"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery5"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery6"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery7"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery8"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery9"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery10"></div>
   </div>
-  
-  <iframe id="main-frame" src="00mainmovie.html"></iframe>
-
   <script>
-    // 네비바 클릭시 해당 페이지 출력
-    function showScreenParent(e, url) {
-      e.preventDefault();
-      document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
-      e.target.classList.add('active');
-      document.getElementById('main-frame').src = url;
+    // 샘플 데이터(갤1~10)
+    const gallery1Data = [
+
+
+
+{ url: "https://www.youtube.com/watch?v=dBXVCx20GaI&ab_channel=Boxoffice%7C4KFullMovies", img: "https://img.youtube.com/vi/dBXVCx20GaI/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=YNemVi1H8Ck&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/YNemVi1H8Ck/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=Trqj71QbBsU&list=PLuBIJqLCZWDsnbCahYy2efs3qH_lShfCm&ab_channel=TQ007", img: "https://img.youtube.com/vi/Trqj71QbBsU/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=qxzDiXxOeAc&list=PLuBIJqLCZWDt9iFtQ63y3j2axK4PGUdkO&ab_channel=TQ007", img: "https://img.youtube.com/vi/qxzDiXxOeAc/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=I0UgB6xX_ME&list=PLxuO7c1ouEXursV23ZibQ7tmu6QWOMitR&ab_channel=RobertMay", img: "https://img.youtube.com/vi/I0UgB6xX_ME/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=OHeSdVtC7a8&list=PLuBIJqLCZWDt7F1klEkPlNTHWO2o71-eN&ab_channel=TQ007", img: "https://img.youtube.com/vi/OHeSdVtC7a8/sddefault.jpg" },
+
+
+
+{ url: "https://www.youtube.com/@TQ00Z/playlists", img: "https://img.youtube.com/vi/f3a5oIDvQTg/sddefault.jpg" },
+
+
+
+
+
+
+
+
+
+
+
+      
+      
+      { url: "https://www.youtube.com/watch?v=8zuDc18wyiw&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/8zuDc18wyiw/sddefault.jpg" },
+      
+ { url: "https://www.youtube.com/watch?v=plaU0sa1MQ8&ab_channel=SSMovieRecaps", img: "https://img.youtube.com/vi/plaU0sa1MQ8/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=xzglePk2zAo&ab_channel=VSci-Fi-FullFreeSci-FiMovies", img: "https://img.youtube.com/vi/xzglePk2zAo/sddefault.jpg" },
+
+
+
+
+{ url: "https://www.youtube.com/watch?v=wpHvBrIIJnA&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/wpHvBrIIJnA/sddefault.jpg" },
+
+
+
+      
+
+      
+
+{ url: "https://www.youtube.com/watch?v=-ioKNbjCdLM&ab_channel=LionMalus", img: "https://img.youtube.com/vi/-ioKNbjCdLM/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=M17vU6hgNu4&ab_channel=SmingsWorld", img: "https://img.youtube.com/vi/M17vU6hgNu4/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=Bl9p7dWvFcg&ab_channel=SmingsWorld", img: "https://img.youtube.com/vi/Bl9p7dWvFcg/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=erLjUZ9fxDk&ab_channel=SmingsWorld", img: "https://img.youtube.com/vi/erLjUZ9fxDk/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=WiWvLVmJGbo&ab_channel=SmingsWorld", img: "https://img.youtube.com/vi/WiWvLVmJGbo/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=pdYteeK5s1s&ab_channel=IOF-Hindi", img: "https://img.youtube.com/vi/pdYteeK5s1s/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=UiGBEQoxz-g&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/UiGBEQoxz-g/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Rk8vW_GGxok&ab_channel=%EB%82%98%ED%98%BC%EC%9E%90%EB%85%BC%EB%8B%A4", img: "https://img.youtube.com/vi/Rk8vW_GGxok/sddefault.jpg" },
+
+
+
+
+
+
+      { url: "https://www.youtube.com/watch?v=KId5Mg7K9HE&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/KId5Mg7K9HE/sddefault.jpg" },
+
+
+
+{ url: "https://www.youtube.com/watch?v=77AsImTSzok&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/77AsImTSzok/sddefault.jpg" },
+      
+
+{ url: "https://www.youtube.com/watch?v=DYEW2G_sB7Q&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/DYEW2G_sB7Q/sddefault.jpg" },
+      
+
+
+{ url: "https://www.youtube.com/watch?v=lIVdXD-snZg&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/lIVdXD-snZg/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Zj8qo0aaG_I&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Zj8qo0aaG_I/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=6jxkQLb05Ho&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/6jxkQLb05Ho/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Kj9oxB5Sg9I&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Kj9oxB5Sg9I/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=DxcXM-dsauk&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/DxcXM-dsauk/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=9YPd6TOfAm8&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/9YPd6TOfAm8/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=iUZD6O8pGC8&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/iUZD6O8pGC8/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=8aQ1l3qhA-I&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/8aQ1l3qhA-I/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=5FtabbwJ6FI&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/5FtabbwJ6FI/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Wmnt0RRIogY&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Wmnt0RRIogY/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=AgHz4qhQ2mk&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/AgHz4qhQ2mk/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=fTu6n2Q0wC8&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/fTu6n2Q0wC8/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Gi9_6BAfEGY&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Gi9_6BAfEGY/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=VCBHLn8ymDQ&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/VCBHLn8ymDQ/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=ZqYiKNa8VWM&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/ZqYiKNa8VWM/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=Q7E0tugZels&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Q7E0tugZels/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=JywU3Y8zwzw&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/JywU3Y8zwzw/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=0y1p42k34LI&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/0y1p42k34LI/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=qyA6ZTgittc&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/qyA6ZTgittc/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=gSgXsirvOl4&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/gSgXsirvOl4/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=beG3c2LtfuI&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/beG3c2LtfuI/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=B2cGYwc8M6Q&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/B2cGYwc8M6Q/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=kdB2kK_vwzk&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/kdB2kK_vwzk/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=J8721jcYkdU&ab_channel=%ED%94%8C%EB%A0%88%EC%9D%B4%EB%AC%B4%EB%B9%84", img: "https://img.youtube.com/vi/J8721jcYkdU/sddefault.jpg" },
+
+      
+{ url: "https://www.youtube.com/watch?v=5QPrB8m5DF4&ab_channel=Su-HyeongPark", img: "https://img.youtube.com/vi/5QPrB8m5DF4/sddefault.jpg" },
+
+      
+
+
+
+
+      
+
+
+
+      
+      
+       
+   
+{ url: "https://www.youtube.com/watch?v=f6hxvT0y3fA&ab_channel=Boxoffice%7CROMANCE%7CFullMovies", img: "https://img.youtube.com/vi/f6hxvT0y3fA/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=U4LI2Wf8egg&ab_channel=ClipFlixKorea", img: "https://img.youtube.com/vi/U4LI2Wf8egg/sddefault.jpg" },
+
+
+
+{ url: "https://www.youtube.com/watch?v=Ikfv6pH2WmM&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Ikfv6pH2WmM/sddefault.jpg" },
+
+
+
+      
+
+
+
+    { url: "https://www.youtube.com/watch?v=zkb2mtPV3vE&ab_channel=Viraldrama", img: "https://img.youtube.com/vi/zkb2mtPV3vE/sddefault.jpg" },
+      
+{ url: "https://www.youtube.com/watch?v=Gar1ONSRku8&ab_channel=LionMalus", img: "https://img.youtube.com/vi/Gar1ONSRku8/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=7Ke4pWDzmJg&ab_channel=IOF-Hindi", img: "https://img.youtube.com/vi/7Ke4pWDzmJg/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=2G2zlNfPesA&list=PL28d5JImIlH6aF6WYpRANAxlpk6oA0BnQ&ab_channel=%ED%95%9C%EA%B5%AD%EC%95%A0%EB%8B%88%EB%A9%94%EC%9D%B4%EC%85%98KoreanAnimation", img: "https://img.youtube.com/vi/2G2zlNfPesA/sddefault.jpg" },
+
+
+
+{ url: "https://www.youtube.com/watch?v=Y6D136RHiVc&ab_channel=%ED%95%9C%EA%B5%AD%EA%B3%A0%EC%A0%84%EC%98%81%ED%99%94KoreanClassicFilm", img: "https://img.youtube.com/vi/Y6D136RHiVc/sddefault.jpg" },
+
+   { url: "https://www.youtube.com/watch?v=eygaIptkEx0&ab_channel=DisasterMovies", img: "https://img.youtube.com/vi/eygaIptkEx0/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=hOdCKTUsu6A&ab_channel=ReelVisionMovies", img: "https://img.youtube.com/vi/hOdCKTUsu6A/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=lHxJd0l5dck&ab_channel=HitSeries", img: "https://img.youtube.com/vi/lHxJd0l5dck/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=eV7xAef7RQo&ab_channel=Cin%C3%A9film", img: "https://img.youtube.com/vi/eV7xAef7RQo/sddefault.jpg" },
+      
+{ url: "https://www.youtube.com/watch?v=jvqbubqCVsc&list=PLAEE4E29C29BC8BC2&ab_channel=GEM%3ACinemaCollection", img: "https://img.youtube.com/vi/jvqbubqCVsc/sddefault.jpg" },
+      
+
+{ url: "https://www.youtube.com/watch?v=ChyHumL9u3I&ab_channel=TheFilmDepot", img: "https://img.youtube.com/vi/ChyHumL9u3I/sddefault.jpg" },
+      
+{ url: "https://www.youtube.com/watch?v=bFfRNFMPeNo&list=PLwI2xy-W0M6I8AuJTq8dtC9aXMa-0SM0u&ab_channel=LoveDelight", img: "https://img.youtube.com/vi/bFfRNFMPeNo/sddefault.jpg" },
+      
+
+{ url: "https://www.youtube.com/watch?v=8urw36dsA3I&list=PLlsbL68NnCv1Vb5Xx-KgCQys3VAhlhDpO&ab_channel=%ED%95%9C%EA%B5%AD%EA%B3%A0%EC%A0%84%EC%98%81%ED%99%94KoreanClassicFilm", img: "https://img.youtube.com/vi/8urw36dsA3I/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=JE7xl6WhAdA&ab_channel=CineTimeAcrossAges", img: "https://img.youtube.com/vi/JE7xl6WhAdA/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=gFiptJvLsk4&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/gFiptJvLsk4/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Xpm7URf-Jb8&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/Xpm7URf-Jb8/sddefault.jpg" },
+
+      { url: "https://www.youtube.com/watch?v=LMo4yaYwpqE&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/LMo4yaYwpqE/sddefault.jpg" },
+      
+{ url: "https://www.youtube.com/watch?v=7ODYzPni_IE&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/7ODYzPni_IE/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=lzFsrnMDE8k&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/lzFsrnMDE8k/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=3cQIpH4nKII&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/3cQIpH4nKII/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=vGCQPi430o0&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/vGCQPi430o0/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=TYsvaoOkLWQ&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/TYsvaoOkLWQ/sddefault.jpg" },
+
+
+
+
+{ url: "https://www.youtube.com/watch?v=i9ipCLciNVk&list=PLum50h_rWpG5e-46sLWgZAvWrbGzms---&index=13&ab_channel=eurosleaze", img: "https://img.youtube.com/vi/i9ipCLciNVk/sddefault.jpg" },
+      
+{ url: "https://www.youtube.com/watch?v=AWuxeDm1SGA&ab_channel=SamuelGoldwynFilms", img: "https://img.youtube.com/vi/AWuxeDm1SGA/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=ytm851gqCqo&ab_channel=LOL%21Throwbacks", img: "https://img.youtube.com/vi/ytm851gqCqo/hqdefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=7kguwrO1lfY&ab_channel=HarryPotter", img: "https://img.youtube.com/vi/7kguwrO1lfY/sddefault.jpg" },
+
+
+      
+    ];
+    const gallery2Data = [
+      
+
+
+
+
+
+      
+
+      
+    ];
+    const gallery3Data = [
+
+
+  
+
+      
+    ];
+    const gallery4Data = [
+
+
+
+      
+    ];
+    const gallery5Data = [
+
+
+
+      
+    ];
+    const gallery6Data = [
+
+
+
+
+
+
+
+      
+    ];
+    const gallery7Data = [];
+    const gallery8Data = [];
+    const gallery9Data = [];
+    const gallery10Data = [];
+    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
+
+    // 이미지 비율에 따라 박스 클래스 동적부여(최대한 단순, 기존과 구조/디자인 동일)
+    function renderGallery(data, targetId) {
+      const el = document.getElementById(targetId);
+      el.innerHTML = data.map(item => `
+        <div class="list-row">
+          <div class="imgframe">
+            <div class="img-wrap">
+              <div class="img-item">
+                <a href="${item.url}" target="_blank" rel="noopener">
+                  <img src="${item.img}">
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="shadow-line">
+            <img src="${shadowUrl}">
+          </div>
+        </div>
+      `).join('');
+      // 동적 크기 클래스 부여
+      Array.from(el.querySelectorAll('.list-row')).forEach((box, i) => {
+        const img = box.querySelector('img');
+        function applyBoxClass() {
+          if (img.naturalWidth > img.naturalHeight) {
+            box.classList.add('box-landscape');
+            box.classList.remove('box-portrait');
+          } else {
+            box.classList.add('box-portrait');
+            box.classList.remove('box-landscape');
+          }
+        }
+        img.onload = applyBoxClass;
+        if (img.complete) setTimeout(applyBoxClass, 20);
+      });
     }
-    // 네비바 드래그/터치 스크롤
-    (function(){
-      const nav = document.querySelector('.screen-links');
-      let isDown = false, startX = 0, scrollLeft = 0;
-
-      nav.addEventListener('mousedown', (e) => {
-        isDown = true;
-        startX = e.pageX - nav.offsetLeft;
-        scrollLeft = nav.scrollLeft;
-        nav.style.cursor = 'grabbing';
-      });
-      nav.addEventListener('mouseleave', () => {
-        isDown = false;
-        nav.style.cursor = '';
-      });
-      nav.addEventListener('mouseup', () => {
-        isDown = false;
-        nav.style.cursor = '';
-      });
-      nav.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        const x = e.pageX - nav.offsetLeft;
-        nav.scrollLeft = scrollLeft - (x - startX);
-      });
-
-      // 모바일 터치
-      let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
-      nav.addEventListener('touchstart', function(e){
-        touchDragging = true;
-        touchStartX = e.touches[0].pageX - nav.offsetLeft;
-        touchScrollLeft = nav.scrollLeft;
-      });
-      nav.addEventListener('touchend', ()=>{ touchDragging=false; });
-      nav.addEventListener('touchmove', function(e){
-        if(!touchDragging) return;
-        const x = e.touches[0].pageX - nav.offsetLeft;
-        nav.scrollLeft = touchScrollLeft - (x - touchStartX);
-      });
-    })();
-    // 처음 로드시 첫 메뉴 선택 효과
-    window.addEventListener('DOMContentLoaded', ()=>{
-      document.querySelectorAll('#parent-links a')[0].classList.add('active');
-      checkNavOverflow();
-    });
-
-    // ▶ 좌/우 화살표 (스크롤 가능할 때만 표시, 클릭 시 이동)
-    const nav = document.querySelector('.screen-links');
-    const leftArrow = document.getElementById('nav-arrow-left');
-    const rightArrow = document.getElementById('nav-arrow-right');
-    function checkNavOverflow() {
-      if (!nav) return;
-      // 좌우 스크롤 가능한 경우만 화살표 노출
-      if (nav.scrollWidth > nav.clientWidth) {
-        leftArrow.hidden = nav.scrollLeft < 5;
-        rightArrow.hidden = nav.scrollLeft + nav.clientWidth + 5 >= nav.scrollWidth;
-      } else {
-        leftArrow.hidden = true;
-        rightArrow.hidden = true;
-      }
-    }
-    nav.addEventListener('scroll', checkNavOverflow);
-    window.addEventListener('resize', checkNavOverflow);
-    setTimeout(checkNavOverflow, 120);
-
-    // 좌/우 화살표 클릭 시 부드럽게 이동
-    leftArrow.addEventListener('click', function() {
-      nav.scrollBy({left: -110, behavior: 'smooth'});
-      setTimeout(checkNavOverflow, 220);
-    });
-    rightArrow.addEventListener('click', function() {
-      nav.scrollBy({left: 110, behavior: 'smooth'});
-      setTimeout(checkNavOverflow, 220);
-    });
-
-    // 네비 영역 클릭 or 드래그 후에도 체크
-    nav.addEventListener('mousedown', ()=>setTimeout(checkNavOverflow,220));
-    nav.addEventListener('mouseup', ()=>setTimeout(checkNavOverflow,220));
-    nav.addEventListener('touchend', ()=>setTimeout(checkNavOverflow,220));
-
+    renderGallery(gallery1Data, 'gallery1');
+    renderGallery(gallery2Data, 'gallery2');
+    renderGallery(gallery3Data, 'gallery3');
+    renderGallery(gallery4Data, 'gallery4');
+    renderGallery(gallery5Data, 'gallery5');
+    renderGallery(gallery6Data, 'gallery6');
+    renderGallery(gallery7Data, 'gallery7');
+    renderGallery(gallery8Data, 'gallery8');
+    renderGallery(gallery9Data, 'gallery9');
+    renderGallery(gallery10Data, 'gallery10');
   </script>
 </body>
 </html>
