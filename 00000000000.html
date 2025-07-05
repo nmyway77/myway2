@@ -29,9 +29,7 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      
-      max-width: 1400px;
-      
+      max-width: 1000px;
     }
     .combo-select {
       height: 28px;
@@ -52,12 +50,10 @@
       display: flex;
       align-items: center;
       position: relative;
-      
-      max-width: 1400px;
-
-      
+      max-width: 1000px;
       min-width: 220px;
       width: 100%;
+      justify-content: center;
     }
     .screen-links {
       display: flex;
@@ -79,17 +75,13 @@
       -ms-overflow-style: none;
       margin: 0 auto;
       width: 100%;
-
-      
-      max-width: 1400px;
-
-      
+      max-width: 1000px;
       min-width: 220px;
       cursor: grab;
       border-radius: 20px;
       height: 34px;
       transition: none;
-      justify-content: center;
+      /* justify-content: flex-start;  ← 중앙정렬 대신 왼쪽 정렬 (기본값이 flex-start) */
     }
     .screen-links::-webkit-scrollbar { display: none; }
     .screen-links a {
@@ -153,7 +145,6 @@
   </style>
 </head>
 <body>
-  <!-- 네비게이션 바 + 콤보박스 -->
   <div class="screen-links-wrap">
     <div class="nav-bar-inner">
       <select class="combo-select" id="comboMenu">
@@ -174,10 +165,8 @@
 
 
 
-
           
-        
-      <a href="#" class="active" onclick="showScreenParent(event, 'https://waffleboard.io/ranking')">H</a>
+       <a href="#" class="active" onclick="showScreenParent(event, 'https://waffleboard.io/ranking')">H</a>
 <a href="#" onclick="showScreenParent(event, 'https://modu.pcpp.go.kr/suggest-board')">국민제안</a>
 <a href="#" onclick="showScreenParent(event, 'https://www.dcinside.com/')">dcinsid</a>
 <a href="#" onclick="showScreenParent(event, 'https://www.fmkorea.com/')">fmkorea</a>
@@ -202,14 +191,13 @@
 
 
 
-
           
         </div>
         <button class="nav-arrow right" id="nav-arrow-right" tabindex="-1" aria-label="오른쪽 이동">&gt;</button>
       </div>
     </div>
   </div>
-  <iframe id="main-frame" src="https://allvod.sbs.co.kr/free"  allowfullscreen style="position:fixed;left:0;top:46px;width:100vw;height:calc(100vh - 48px);border:none;margin:0;background:#f5f7fa;z-index:10;border-radius:0;display:block;"></iframe>
+  <iframe id="main-frame" src="https://allvod.sbs.co.kr/free" allowfullscreen style="position:fixed;left:0;top:46px;width:100vw;height:calc(100vh - 48px);border:none;margin:0;background:#f5f7fa;z-index:10;border-radius:0;display:block;"></iframe>
   <script>
     // 콤보박스 클릭시 새창으로 이동
     document.getElementById('comboMenu').addEventListener('change', function() {
@@ -294,10 +282,15 @@
     window.addEventListener('resize', updateArrows);
     // 네비로드 후 최초 상태
     window.addEventListener('DOMContentLoaded', function(){
-      setTimeout(updateArrows, 60); // 렌더 후 체크
+      setTimeout(function(){
+        // 항상 맨 왼쪽부터 시작!
+        document.querySelector('.screen-links').scrollLeft = 0;
+        updateArrows();
+      }, 60);
     });
     // 혹시 링크 수/문구 바뀌는 경우도 재체크
     setInterval(updateArrows, 800);
   </script>
 </body>
 </html>
+
