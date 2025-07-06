@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -12,6 +12,7 @@
       min-height: 100vh;
       overflow: hidden;
     }
+    /* 네비바 영역 */
     .screen-links-wrap {
       width: 100vw;
       position: relative;
@@ -22,27 +23,11 @@
       overflow: hidden;
       display: flex;
       justify-content: center;
-      margin-top: 5px;
+
+     
+      margin-top: 24px;
+     
       filter: drop-shadow(0 6px 28px #b176f340);
-    }
-    .nav-bar-inner {
-      display: flex;
-      align-items: center;
-      justify-content: center; /* 중앙정렬 */
-      width: 100%;
-      gap: 7px;
-    }
-    .combo-select {
-      font-size: 0.96em;
-      padding: 5px 10px;
-      border-radius: 8px;
-      border: 1px solid #a8b5e0;
-      background: #f9fbff;
-      color: #212d6a;
-      margin-right: 8px;
-      min-width: 88px;
-      height: 29px;
-      outline: none;
     }
     .screen-links {
       display: flex;
@@ -93,12 +78,18 @@
       .screen-links { font-size: 0.88rem; gap: 6px; padding: 0 4px;}
       .screen-links-wrap { margin-top: 20px; }
       .screen-links { min-height: 26px; }
-      .nav-bar-inner { gap: 5px; }
     }
+    /* 프레임 위치 (하단) */
     #main-frame {
       position: fixed;
       left: 0;
-      top: 45px;
+
+
+
+     
+      top: 64px;
+
+     
       width: 100vw;
       height: calc(100vh - 96px);
       border: none;
@@ -111,6 +102,8 @@
     @media (max-width: 700px) {
       #main-frame { top: 58px; height: calc(100vh - 60px); }
     }
+
+    /* ◀▶ 좌우 화살표 */
     .nav-arrow {
       position: absolute;
       top: 50%;
@@ -150,87 +143,54 @@
   </style>
 </head>
 <body>
-  <!-- 네비게이션 바 + 콤보박스 -->
+  <!-- 네비게이션 바 (스크롤/드래그) -->
   <div class="screen-links-wrap" style="position:relative;">
-    <div class="nav-bar-inner">
-      <!-- 콤보박스 예시 -->
-      <select class="combo-select" id="comboMenu">
-         <option value="">섹션 이동...</option>
-         <option value="newsitesbar2.html">뉴스</option>
-         <option value="bbssitesbar2.html">BBS</option>
-         <option value="livesitesbar2.html">LIVE TV</option>
-         <option value="radiositesbar2.html">RADIO</option>
-         <option value="00barcctv.html">CCTV</option>
-          <option value="00mainmovieinner2.html">무료영화</option>
-         <option value="00barmagazine.html">잡지</option>
-         <option value="00maindramainner2.html">드라마</option>
-         <option value="index.html">Myway.kr</option>
-      </select>
-      <!-- 좌 화살표 -->
-      <button class="nav-arrow left" id="nav-arrow-left" aria-label="왼쪽 이동" hidden>
-        <svg viewBox="0 0 13 20"><polygon points="9,3 2,10 9,17" fill="#fff" opacity="0.86"/></svg>
-      </button>
-      <div class="screen-links" id="parent-links">
-        
- <a href="#" class="active" onclick="showScreenParent(event, '00newsmain.html')">H</a>
-<a href="#" onclick="showScreenParent(event, 'https://news.daum.net/')">다음</a>
-<a href="#" onclick="showScreenParent(event, 'https://ytn.co.kr/')">YTN</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.yna.co.kr/')">연합</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.chosun.com/')">조선</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.donga.com/')">동아</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.joongang.co.kr/')">중앙</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.hani.co.kr/')">한겨레</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.ohmynews.com/')">오마이</a>
-<a href="#" onclick="showScreenParent(event, 'https://sports.donga.com//')">스포츠동아</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.sportschosun.com/')">소포츠조선</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.sportsseoul.com/')">스포츠서울</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.stoo.com/')">스포츠투데이</a>
-<a href="#" onclick="showScreenParent(event, 'https://isplus.com/')">일간스포츠</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.mk.co.kr/star/')">스타투데이</a>
-       <a href="#" onclick="showScreenParent(event, 'https://imnews.imbc.com/pc_main.html')">MBC</a>
-<a href="#" onclick="showScreenParent(event, 'https://news.sbs.co.kr/news/newsMain.do')">SBS</a>
-<a href="#" onclick="showScreenParent(event, 'https://news.kbs.co.kr/news/pc/main/main.html?')">KBS</a>
+    <!-- 좌 화살표 -->
+    <button class="nav-arrow left" id="nav-arrow-left" aria-label="왼쪽 이동" hidden>
+      <svg viewBox="0 0 13 20"><polygon points="9,3 2,10 9,17" fill="#fff" opacity="0.86"/></svg>
+    </button>
+    <div class="screen-links" id="parent-links">
 
-       
-<a href="#" onclick="showScreenParent(event, 'https://www.kmib.co.kr/')">국민</a>
-       <a href="#" onclick="showScreenParent(event, 'https://www.bloter.net/')">블로터</a>
-<a href="#" onclick="showScreenParent(event, 'https://zdnet.co.kr/')">ZDNET</a>
+<a href="00mainmovieinner2.html" target="_blank" class="expand-btn">+(확대)</a>
 
-<a href="#" onclick="showScreenParent(event, 'https://news.jtbc.co.kr/')">JTBC뉴스</a>
-<a href="#" onclick="showScreenParent(event, 'https://www.dispatch.co.kr/')">디스패치</a>
+     
+
+      <a href="#" class="active" onclick="showScreenParent(event, '00mainbbs.html')">H</a>
+
+      
+       <a href="#" onclick="showScreenParent(event, 'https://modu.pcpp.go.kr/suggest-board')">국민제안</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.dcinside.com/')">dcinsid</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.fmkorea.com/')">fmkorea</a>
+<a href="#" onclick="showScreenParent(event, 'https://theqoo.net/hot?filter_mode=normal')">theqoo</a>
+<a href="#" onclick="showScreenParent(event, 'https://ppomppu.co.kr/hot.php')">뽐뿌</a>
+<a href="#" onclick="showScreenParent(event, 'https://mlbpark.donga.com/mp/b.php?search_select=sct&search_input=&select=spf&m=search&b=kbotown&query=%EC%98%A4%ED%94%BC%EC%85%9C')">엠엘파크</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.missycoupons.com/zero/board.php#id=general')">missycoupons</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.inven.co.kr/board/webzine/2097?iskin=webzine')">inven</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.instiz.net/pt?srt=3#greentop')">instiz</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.bobaedream.co.kr/list?code=freeb')">bobaedream</a>
+<a href="#" onclick="showScreenParent(event, 'https://hiphopplaya.com/')">hiphopplaya</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.dogdrip.net/?mid=dogdrip&sort_index=popular')">dogdrip</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.ilbe.com//')">일베</a>
+<a href="#" onclick="showScreenParent(event, 'https://pann.nate.com/')">Nate판</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.ygosu.com/community/best_article/?type=daily')">ygosu</a>
+<a href="#" onclick="showScreenParent(event, 'https://bbs.ruliweb.com/best/humor/now?orderby=readcount&range=7d')">ruliweb</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.clien.net/service/recommend')">clien</a>
+<a href="#" onclick="showScreenParent(event, 'http://www.gasengi.com/main/board.php?bo_table=commu08')">gasengi</a>
+<a href="#" onclick="showScreenParent(event, 'http://www.etoland.co.kr/bbs/board.php?bo_table=hit')">etoland</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.ygosu.com/community/best_article/?type=daily')">ygosu</a>
        
 
-<!-- 아래 중복 부분도 포함 -->
-
-<a href="#" onclick="showScreenParent(event, 'https://imnews.imbc.com/pc_main.html')">MBC 뉴스</a>
-<a href="#" onclick="showScreenParent(event, 'https://news.sbs.co.kr/news/newsMain.do')">SBS뉴스</a>
-<a href="#" onclick="showScreenParent(event, 'https://news.kbs.co.kr/news/pc/main/main.html?')">KBS뉴스</a>
-
-
-       
-       
-
-
-
-
-
-        
-      </div>
-      <!-- 우 화살표 -->
-      <button class="nav-arrow right" id="nav-arrow-right" aria-label="오른쪽 이동" hidden>
-        <svg viewBox="0 0 13 20"><polygon points="4,3 11,10 4,17" fill="#fff" opacity="0.88"/></svg>
-      </button>
+    
     </div>
+    <!-- 우 화살표 -->
+    <button class="nav-arrow right" id="nav-arrow-right" aria-label="오른쪽 이동" hidden>
+      <svg viewBox="0 0 13 20"><polygon points="4,3 11,10 4,17" fill="#fff" opacity="0.88"/></svg>
+    </button>
   </div>
   
-  <iframe id="main-frame" src="https://news.daum.net/"></iframe>
+  <iframe id="main-frame" src="00mainmovie.html"></iframe>
 
   <script>
-    // 콤보박스 이동
-    document.getElementById('comboMenu').addEventListener('change', function() {
-      if(this.value) location.href = this.value;
-    });
-
     // 네비바 클릭시 해당 페이지 출력
     function showScreenParent(e, url) {
       e.preventDefault();
@@ -289,6 +249,7 @@
     const rightArrow = document.getElementById('nav-arrow-right');
     function checkNavOverflow() {
       if (!nav) return;
+      // 좌우 스크롤 가능한 경우만 화살표 노출
       if (nav.scrollWidth > nav.clientWidth) {
         leftArrow.hidden = nav.scrollLeft < 5;
         rightArrow.hidden = nav.scrollLeft + nav.clientWidth + 5 >= nav.scrollWidth;
@@ -301,6 +262,7 @@
     window.addEventListener('resize', checkNavOverflow);
     setTimeout(checkNavOverflow, 120);
 
+    // 좌/우 화살표 클릭 시 부드럽게 이동
     leftArrow.addEventListener('click', function() {
       nav.scrollBy({left: -110, behavior: 'smooth'});
       setTimeout(checkNavOverflow, 220);
@@ -310,9 +272,11 @@
       setTimeout(checkNavOverflow, 220);
     });
 
+    // 네비 영역 클릭 or 드래그 후에도 체크
     nav.addEventListener('mousedown', ()=>setTimeout(checkNavOverflow,220));
     nav.addEventListener('mouseup', ()=>setTimeout(checkNavOverflow,220));
     nav.addEventListener('touchend', ()=>setTimeout(checkNavOverflow,220));
+
   </script>
 </body>
 </html>
