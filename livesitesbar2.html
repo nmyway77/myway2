@@ -1,4 +1,4 @@
- <!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -8,10 +8,8 @@
     body {
       font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
       background: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      overflow: hidden;
+      margin: 0; padding: 0;
+      min-height: 100vh; overflow: hidden;
     }
     .screen-links-wrap {
       width: 100vw;
@@ -20,31 +18,35 @@
       padding: 0;
       box-sizing: border-box;
       z-index: 9;
-      overflow: hidden;
+      overflow: visible;
       display: flex;
       justify-content: center;
+      align-items: center;
       margin-top: 5px;
     }
     .nav-bar-inner {
       display: flex;
       align-items: center;
+      justify-content: center;
       width: 100%;
 
-     
 
-     
- max-width: 2100px;
+      
+      max-width: 2100px;
 
 
-     
-     
+      
     }
     .combo-select {
       height: 28px;
       font-size: 1em;
       border-radius: 8px;
       border: none;
-      margin-right: 16px;
+
+      
+      margin-right: 3px;
+
+      
       box-shadow: 0 1px 6px #aac9ff33;
       background: linear-gradient(180deg, #e6effe 60%, #b1cfff 100%);
       color: #2e358f;
@@ -53,16 +55,23 @@
       cursor: pointer;
       font-weight: 500;
     }
-    .combo-select:focus {
-      box-shadow: 0 0 0 2px #a2bbfa99;
+    .combo-select:focus { box-shadow: 0 0 0 2px #a2bbfa99; }
+    .screen-links-box {
+      display: flex;
+      align-items: center;
+      position: relative;
+
+      
+      max-width: 2000px;
+
+      
+      min-width: 220px;
+      width: 100%;
+      justify-content: center;
     }
     .screen-links {
       display: flex;
-
-     
       gap: 5px;
-
-     
       font-size: 0.96rem;
       font-weight: 500;
       color: #fff;
@@ -78,23 +87,21 @@
       overflow-y: hidden;
       scrollbar-width: none;
       -ms-overflow-style: none;
-      margin: 0;
+      margin: 0 auto;
+      width: 100%;
 
-
-
-     
+      
       max-width: 2100px;
 
 
 
-
-     
-     
+      
       min-width: 220px;
       cursor: grab;
       border-radius: 20px;
       height: 34px;
       transition: none;
+      /* justify-content: flex-start;  ← 중앙정렬 대신 왼쪽 정렬 (기본값이 flex-start) */
     }
     .screen-links::-webkit-scrollbar { display: none; }
     .screen-links a {
@@ -124,26 +131,45 @@
       border-radius: 0;
       box-shadow: none;
     }
-   
-    @media (max-width: 700px)
-   
-   
-   
-   {
+    /* 화살표(arrow) 버튼 디자인 */
+    .nav-arrow {
+      background: rgba(220,233,255,0.80);
+      border: none;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px #aac9ff33;
+      color: #4252b7;
+      font-size: 17px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      opacity: 0.93;
+      outline: none;
+      width: 28px; height: 34px;
+      margin: 0 4px;
+      visibility: hidden;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+    }
+    .nav-arrow:hover { background: #b3d2ff; color: #232365; }
+    @media (max-width: 700px) {
       .screen-links { font-size: 0.88rem; gap: 8px; padding: 0 4px; height: 28px;}
       .screen-links-wrap { padding: 0;}
       .nav-bar-inner { max-width: 100vw;}
       .combo-select { font-size: 0.92em; height: 24px; margin-right: 7px; }
+      .nav-arrow { width: 24px; height: 28px; font-size: 15px; }
+      .screen-links-box { max-width: 100vw; }
     }
   </style>
 </head>
 <body>
-  <!-- 네비게이션 바 + 콤보박스 -->
   <div class="screen-links-wrap">
     <div class="nav-bar-inner">
       <select class="combo-select" id="comboMenu">
          <option value="">섹션 이동...</option>
-         <option value="newsitesbar2.html">뉴스</option>
+           <option value="newsitesbar2.html">뉴스</option>
          <option value="bbssitesbar2.html">BBS</option>
          <option value="livesitesbar2.html">LIVE TV</option>
          <option value="radiositesbar2.html">RADIO</option>
@@ -152,16 +178,15 @@
          <option value="00barmagazine.html">잡지</option>
          <option value="00maindramainner2.html">드라마</option>
          <option value="index.html">Myway.kr</option>
-
-  
-
-
-
-
-       
       </select>
-      <div class="screen-links" id="parent-links">
-       <a href="#" onclick="showScreenParent(event, '00tvmain2.html')">H</a>
+      <div class="screen-links-box">
+        <button class="nav-arrow left" id="nav-arrow-left" tabindex="-1" aria-label="왼쪽 이동">&lt;</button>
+        <div class="screen-links" id="parent-links">
+
+
+
+          
+        <a href="#" onclick="showScreenParent(event, '00tvmain2.html')">H</a>
  
            <a href="#" onclick="showScreenParent(event, 'https://onair.imbc.com/')">MBC</a>
         <a href="#" onclick="showScreenParent(event, 'https://www.sbs.co.kr/live/S01?div=main_live')">SBS</a>
@@ -187,6 +212,15 @@
 
 <a href="#" onclick="showScreenParent(event, 'https://tv.naver.com/l')">네이버TV</a>
 
+
+ <a href="#" onclick="showScreenParent(event, 'https://chzzk.naver.com/lives')">치지직</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.sooplive.co.kr/live/all')">SOOP</a>
+
+
+
+
+          
+
          <a href="#" onclick="window.open('https://thetvapp.to/', '_blank')">미국live tv 모음</a>
  
        
@@ -195,10 +229,7 @@
       
                 
         
-        <a href="#" onclick="showScreenParent(event, 'https://chzzk.naver.com/lives')">치지직</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www.sooplive.co.kr/live/all')">SOOP</a>
-
-
+       
   <a href="#" onclick="showScreenParent(event, 'https://lolesports.com/live/msi/aflol')">LCK</a>
         
        
@@ -219,10 +250,11 @@
         <a href="#" onclick="showScreenParent(event, 'https://www3.nhk.or.jp/nhkworld/en/live/')">NHK</a>
 
 
-     
 
 
-       
+          
+        </div>
+        <button class="nav-arrow right" id="nav-arrow-right" tabindex="-1" aria-label="오른쪽 이동">&gt;</button>
       </div>
     </div>
   </div>
@@ -231,15 +263,8 @@
     // 콤보박스 클릭시 새창으로 이동
     document.getElementById('comboMenu').addEventListener('change', function() {
       if (this.value) {
-       
-      window.location.href = this.value;  // ← 새창(x), 현재창에서 이동!
-    // window.open(this.value, '_blank'); // 이 줄은 주석처리 또는 삭제
-    this.selectedIndex = 0;
-
-
-
-
-       
+        window.location.href = this.value;  // ← 새창(x), 현재창에서 이동!
+        this.selectedIndex = 0;
       }
     });
 
@@ -250,6 +275,7 @@
       var frame = document.getElementById('main-frame');
       frame.src = url;
     }
+
     // 네비바 드래그/터치로 좌우 스크롤
     (function(){
       const nav = document.querySelector('.screen-links');
@@ -287,6 +313,45 @@
         nav.scrollLeft = touchScrollLeft - (x - touchStartX);
       });
     })();
+
+    // ---- [화살표(arrow) 제어] ----
+    function updateArrows() {
+      const nav = document.querySelector('.screen-links');
+      const left = document.getElementById('nav-arrow-left');
+      const right = document.getElementById('nav-arrow-right');
+      // 네비가 넘치면 화살표 노출
+      const maxScroll = nav.scrollWidth - nav.clientWidth;
+      if (maxScroll > 6) { // 스크롤 가능
+        left.style.visibility = (nav.scrollLeft > 6) ? 'visible' : 'hidden';
+        right.style.visibility = (nav.scrollLeft < maxScroll - 6) ? 'visible' : 'hidden';
+      } else {
+        left.style.visibility = 'hidden';
+        right.style.visibility = 'hidden';
+      }
+    }
+    // 버튼 클릭시 네비 스크롤
+    document.getElementById('nav-arrow-left').onclick = function() {
+      const nav = document.querySelector('.screen-links');
+      nav.scrollBy({ left: -120, behavior: 'smooth' });
+    };
+    document.getElementById('nav-arrow-right').onclick = function() {
+      const nav = document.querySelector('.screen-links');
+      nav.scrollBy({ left: 120, behavior: 'smooth' });
+    };
+    // 스크롤 될 때마다, 창 크기 변동마다 업데이트
+    document.querySelector('.screen-links').addEventListener('scroll', updateArrows);
+    window.addEventListener('resize', updateArrows);
+    // 네비로드 후 최초 상태
+    window.addEventListener('DOMContentLoaded', function(){
+      setTimeout(function(){
+        // 항상 맨 왼쪽부터 시작!
+        document.querySelector('.screen-links').scrollLeft = 0;
+        updateArrows();
+      }, 60);
+    });
+    // 혹시 링크 수/문구 바뀌는 경우도 재체크
+    setInterval(updateArrows, 800);
   </script>
 </body>
 </html>
+
