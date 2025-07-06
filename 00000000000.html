@@ -23,12 +23,13 @@
       overflow: hidden;
       display: flex;
       justify-content: center;
-      margin-top: 24px;
+      
+      margin-top: 30px;
       filter: drop-shadow(0 6px 28px #b176f340);
     }
     .screen-links {
       display: flex;
-      gap: 5px;
+      gap: 0px;
       font-size: 0.93rem;
       font-weight: 500;
       color: #fff;
@@ -43,7 +44,9 @@
       overflow-y: hidden;
       scrollbar-width: none;
       -ms-overflow-style: none;
-      min-height: 34px;
+      
+      min-height: 30px;
+      
       min-width: 220px;
       cursor: grab;
       transition: box-shadow 0.2s;
@@ -73,14 +76,25 @@
     }
     @media (max-width: 700px) {
       .screen-links { font-size: 0.88rem; gap: 6px; padding: 0 4px;}
-      .screen-links-wrap { margin-top: 20px; }
+
+
+
+      
+      .screen-links-wrap { margin-top: 10px; }
+
+      
+
+      
       .screen-links { min-height: 26px; }
     }
     /* 프레임 위치 (하단) */
     #main-frame {
       position: fixed;
       left: 0;
-      top: 64px;
+      
+      top: 65px;
+
+      
       width: 100vw;
       height: calc(100vh - 96px);
       border: none;
@@ -182,11 +196,16 @@
 <a href="#" onclick="showScreenParent(event, 'https://www.lofficielkorea.com/')">로피시엘</a>
 <a href="#" onclick="showScreenParent(event, 'https://www.noblesse.com/home/main.php')">노블레스닷컴</a>
 <a href="#" onclick="showScreenParent(event, 'https://health.chosun.com/')">헬스조선</a>
+<a href="#" onclick="showScreenParent(event, 'https://shindonga.donga.com/')">월간신동아</a>
+       <a href="#" onclick="showScreenParent(event, 'https://www.mk.co.kr/economy/')">매경이코노미</a>
+<a href="#" onclick="showScreenParent(event, 'https://ktxmagazine.kr/')">KTX</a>
 
 
 
 
-      
+       
+
+    
     </div>
     <!-- 우 화살표 -->
     <button class="nav-arrow right" id="nav-arrow-right" aria-label="오른쪽 이동" hidden>
@@ -194,7 +213,7 @@
     </button>
   </div>
   
-  <iframe id="main-frame" src="00mainmaga.html"></iframe>
+  <iframe id="main-frame" src="00mainmaga.html">dcinsid<"></iframe>
 
   <script>
     // 네비바 클릭시 해당 페이지 출력
