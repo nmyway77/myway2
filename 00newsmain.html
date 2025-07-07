@@ -14,7 +14,8 @@
     body { display: flex; flex-direction: column; align-items: center; width: 100%; }
     .main-title { 
      
-      margin-top: 50px;
+      margin-top: 0px;
+     
      
       font-size: 1.3rem; font-weight: 700; color: #333862;
       text-shadow: 0 2px 12px #ffffff99; margin-bottom: 8px;
@@ -22,12 +23,18 @@
     }
 
    
-    .main-subtitle { font-size: 0.8rem; color: #6a739c;      margin-bottom: 5px;       text-align: center; user-select: none; }
+    .main-subtitle { font-size: 0.8rem; color: #6a739c;      margin-bottom: 0px;       text-align: center; user-select: none; }
 
 
    
     .container { width: 100%; max-width: 560px; display: flex; flex-direction: column; align-items: center;
-      margin-top: 40px; margin-bottom: 60px; min-height: 150vh; padding-left: 6px; padding-right: 6px;}
+                
+      margin-top: 5px; margin-bottom: 5px; 
+                
+                
+                min-height: 150vh; padding-left: 6px; padding-right: 6px;}
+
+   
     .logo-row {
       display: flex;
       justify-content: center;
@@ -86,22 +93,14 @@
   </style>
 </head>
 <body>
-  <div class="main-title">뉴스사이트 바로가기</div>
+  <div class="main-title"></div>
   <div class="main-subtitle"></div>
   <div class="container" id="aiLogoContainer"></div>
   <script>
     // 1번 그룹 (예: AI/생성형)
     const group1 = [
 
-      { url: "https://myway.kr/newsitesbar2.html", img: "https://img.freepik.com/free-vector/gradient-breaking-news-logo-design_23-2151157239.jpg?semt=ais_hybrid&w=740", alt: "ChatGPT" },
-      { url: "https://myway.kr/livesitesbar2.html", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwrF0iQRJqKDGCwk9G-vPKmot-fi9yDtIoTg&s", alt: "Grok" },
-
-
-    ];
-    // 2번 그룹 (예: 검색/포털)
-    const group2 = [
-
-
+  
       { url: "https://www.hani.co.kr/", img: "https://yt3.googleusercontent.com/lrhT-9GirTu8tJAHggeD49Qv7mgMwy0yljNYixQMbP6N9xi7tTwq3U6TsTolyPm-wHkf6UpECAo=s900-c-k-c0x00ffffff-no-rj", alt: "한겨레" },
       { url: "https://www.chosun.com/", img: "https://about.chosun.com/images/img_logo03.png", alt: "조선일보" },
       { url: "https://www.joongang.co.kr/", img: "https://i.namu.wiki/i/qvZEvi4YFHL2-T5tLcXHCcjC6BWyk3Z0UYOr5o8HG3hAZVBLUgsijNhvlvHoPNH1CKOmZcyBwJ6u12QOJQ9mXQ.svg", alt: "중앙일보" },
@@ -141,6 +140,12 @@
 { url: "https://sports.chosun.com/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsH2SSPlYw6hQT-0xkkFEc0ynJLlpApceucQ&s", alt: "스포츠조선" },
     
       { url: "http://www.sportsseoul.com/", img: "https://lh5.ggpht.com/kinl3gNjjaUEfMAdWs5X2DMZPCZe8gvVfOtG4x_wGsp9xqR0kkepneznzGV4mWwjKlSv", alt: "스포츠서울" },
+
+
+    ];
+    // 2번 그룹 (예: 검색/포털)
+    const group2 = [
+
 
     ];
 
