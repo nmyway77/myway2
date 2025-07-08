@@ -284,8 +284,57 @@
   </div>
  
   <div class="main-wrap">
-
-  
+    <!-- 시계 -->
+    <div>
+      <div class="widget-title">🌏 듀얼 월드 시계</div>
+      <div class="clock-container">
+        <div class="clock-card">
+          <select class="city-select" id="city1"></select>
+          <div class="clock-time" id="time1"></div>
+          <div class="clock-date" id="date1"></div>
+          <div class="clock-label" id="label1"></div>
+        </div>
+        <div class="clock-card">
+          <select class="city-select" id="city2"></select>
+          <div class="clock-time" id="time2"></div>
+          <div class="clock-date" id="date2"></div>
+          <div class="clock-label" id="label2"></div>
+        </div>
+      </div>
+    </div>
+    <!-- 날씨 -->
+    <div>
+      <div class="widget-title">🌦️ 3개 도시 날씨</div>
+      <div class="weather-dashboard">
+        <div class="weather-card" id="wcard1">
+          <button class="refresh-btn" onclick="fetchWeather(1)">⟳</button>
+          <select class="city-select" id="wcity1"></select>
+          <div class="weather-icon" id="wicon1">☁️</div>
+          <div class="weather-main" id="wmain1">--</div>
+          <div class="weather-temp" id="wtemp1">-- ℃</div>
+          <div class="weather-humid" id="whumid1">-- %</div>
+          <div class="weather-status" id="wstatus1"></div>
+        </div>
+        <div class="weather-card" id="wcard2">
+          <button class="refresh-btn" onclick="fetchWeather(2)">⟳</button>
+          <select class="city-select" id="wcity2"></select>
+          <div class="weather-icon" id="wicon2">☁️</div>
+          <div class="weather-main" id="wmain2">--</div>
+          <div class="weather-temp" id="wtemp2">-- ℃</div>
+          <div class="weather-humid" id="whumid2">-- %</div>
+          <div class="weather-status" id="wstatus2"></div>
+        </div>
+        <div class="weather-card" id="wcard3">
+          <button class="refresh-btn" onclick="fetchWeather(3)">⟳</button>
+          <select class="city-select" id="wcity3"></select>
+          <div class="weather-icon" id="wicon3">☁️</div>
+          <div class="weather-main" id="wmain3">--</div>
+          <div class="weather-temp" id="wtemp3">-- ℃</div>
+          <div class="weather-humid" id="whumid3">-- %</div>
+          <div class="weather-status" id="wstatus3"></div>
+        </div>
+      </div>
+    </div>
 
   <script>
     // ===== 시계 =====
