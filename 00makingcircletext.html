@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -39,6 +39,9 @@
     .usage-guide ul { margin-top: 6px; margin-bottom: 2px; }
     .usage-guide li { margin-bottom: 6px; }
     .usage-guide strong { color: #2369a3; font-weight: 700;}
+    /* 드래그 스타일 */
+    .dragging { opacity: 0.6; }
+    .drag-over { border: 2px dashed #8ba0f7; }
   </style>
 </head>
 <body>
@@ -56,6 +59,8 @@
       <button id="addBtn">추가</button>
       <button id="exportBtn">내보내기</button>
       <button id="importBtn">가져오기</button>
+      <button id="clearAllBtn">전체삭제</button>
+      <button id="undoClearBtn" style="display:none;">복원</button>
       <input type="file" id="importFile" style="display:none;">
     </div>
   </div>
@@ -82,6 +87,8 @@ let aiLogos = [
   { text: "ChatGPT", url: "https://chat.openai.com/" },
   { text: "Gemini", url: "https://gemini.google.com/" }
 ];
+let aiLogosBackup = null; // 전체삭제 복원용
+
 // localStorage 복원
 if(localStorage['aiTextLinks']) {
   try { aiLogos = JSON.parse(localStorage['aiTextLinks']); }catch(e){}
@@ -102,22 +109,68 @@ function getLayout() {
   if (w <= 500)  { iconsPerRow = 2; gap = w * 0.09; size = 57.6; }
   return { iconsPerRow, gap, size };
 }
-// 출력
+
+// 드래그 순서변경 로직
+let dragIndex = null;
+let dragElem = null;
+function onDragStart(e, idx) {
+  dragIndex = idx;
+  dragElem = e.currentTarget;
+  dragElem.classList.add("dragging");
+  e.dataTransfer.effectAllowed = "move";
+  try { e.dataTransfer.setData('text/plain', ''); } catch(e){}
+}
+function onDragOver(e, idx) {
+  e.preventDefault();
+  const target = e.currentTarget;
+  if (target !== dragElem) {
+    target.classList.add("drag-over");
+  }
+}
+function onDragLeave(e, idx) {
+  e.currentTarget.classList.remove("drag-over");
+}
+function onDrop(e, idx) {
+  e.preventDefault();
+  e.currentTarget.classList.remove("drag-over");
+  if (dragIndex !== null && dragIndex !== idx) {
+    const moved = aiLogos.splice(dragIndex, 1)[0];
+    aiLogos.splice(idx, 0, moved);
+    save();
+    renderLogos();
+  }
+  dragIndex = null;
+  dragElem = null;
+}
+function onDragEnd(e) {
+  if(dragElem) dragElem.classList.remove("dragging");
+  dragIndex = null; dragElem = null;
+}
+
+// 출력 (모든 인덱스를 0~aiLogos.length로 처리)
 function renderLogos() {
   const container = document.getElementById('aiLogoContainer');
   container.innerHTML = "";
   const { iconsPerRow, gap, size } = getLayout();
-  let idx = 0;
-  while (idx < aiLogos.length) {
-    const count = Math.min(iconsPerRow, aiLogos.length - idx);
+  let rows = [];
+  // 1. 아이템 인덱스만 배열로 미리 생성 (고정)
+  let indices = aiLogos.map((_, i) => i);
+  for(let rowStart=0; rowStart<indices.length; rowStart += iconsPerRow) {
+    let rowIndices = indices.slice(rowStart, rowStart+iconsPerRow);
     const row = document.createElement('div');
     row.className = "logo-row";
-    row.style.maxWidth = (size * count + gap * (count - 1)) + "px";
+    row.style.maxWidth = (size * rowIndices.length + gap * (rowIndices.length - 1)) + "px";
     row.style.gap = gap + "px";
-    for (let i = 0; i < count; i++, idx++) {
+    rowIndices.forEach(idx => {
       const l = aiLogos[idx];
       const wrap = document.createElement('div');
       wrap.className = "ai-logo-wrap";
+      wrap.setAttribute("draggable", "true");
+      wrap.ondragstart = (e) => onDragStart(e, idx);
+      wrap.ondragover  = (e) => onDragOver(e, idx);
+      wrap.ondragleave = (e) => onDragLeave(e, idx);
+      wrap.ondrop      = (e) => onDrop(e, idx);
+      wrap.ondragend   = onDragEnd;
       wrap.onclick = (e) => {
         if (e.target.tagName === 'BUTTON' || e.target.tagName === 'svg' || e.target.tagName === 'path') return;
         window.open(l.url, );
@@ -140,7 +193,7 @@ function renderLogos() {
       `;
       editBtn.onclick = function(ev) {
         ev.stopPropagation();
-        openModal(idx - count + i, true);
+        openModal(idx, true);
       };
       // 삭제 (휴지통)
       const delBtn = document.createElement('button');
@@ -152,7 +205,7 @@ function renderLogos() {
       delBtn.onclick = function(ev) {
         ev.stopPropagation();
         if(confirm('정말 삭제?')) {
-          aiLogos.splice(idx - count + i, 1);
+          aiLogos.splice(idx, 1);
           save(); renderLogos();
         }
       };
@@ -160,17 +213,19 @@ function renderLogos() {
       actionDiv.appendChild(delBtn);
       wrap.appendChild(actionDiv);
       row.appendChild(wrap);
-    }
+    });
     container.appendChild(row);
   }
 }
 renderLogos();
 window.addEventListener('resize', renderLogos);
+
 // 콤보박스: 이동 (현재 창에서)
 document.getElementById('navCombo').onchange = function() {
   const url = this.value;
   if(url) window.location.href = url;
 };
+
 // 추가/수정 모달
 function openModal(idx, isEdit) {
   const modal = document.getElementById('modal');
@@ -198,6 +253,7 @@ function openModal(idx, isEdit) {
   };
 }
 document.getElementById('addBtn').onclick = function() { openModal(0, false); };
+
 // 내보내기
 document.getElementById('exportBtn').onclick = function() {
   const blob = new Blob([JSON.stringify(aiLogos,null,2)], {type:'application/json'});
@@ -229,6 +285,24 @@ document.getElementById('importFile').onchange = function(e) {
   };
   reader.readAsText(file);
 };
+
+// === 전체 삭제/복원 ===
+document.getElementById('clearAllBtn').onclick = function() {
+  if(aiLogos.length === 0) return;
+  if(!confirm('정말 전체 삭제하시겠습니까?')) return;
+  aiLogosBackup = JSON.parse(JSON.stringify(aiLogos)); // deep copy
+  aiLogos = [];
+  save(); renderLogos();
+  document.getElementById('undoClearBtn').style.display = 'inline-block';
+};
+document.getElementById('undoClearBtn').onclick = function() {
+  if(aiLogosBackup && aiLogos.length === 0) {
+    aiLogos = JSON.parse(JSON.stringify(aiLogosBackup));
+    save(); renderLogos();
+    document.getElementById('undoClearBtn').style.display = 'none';
+  }
+};
+
 </script>
 </body>
 </html>
