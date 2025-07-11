@@ -1,9 +1,8 @@
-
- <!DOCTYPE html>
+DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>무료만화 사이트 모음,free manga,free comics,  - MYWAY.KR</title>
+  <title>KPOP,K-POP,KOREA SINGERS,KOREA POP,KOREA POPS,KOREAN POP, TV, 4K MOVIE,FREE,  - MYWAY.KR</title>
 <meta name="description" content="무료로 즐기는 최신 무료영화, 한국의 인기가수 노래모음, 만화 , 실시간 스트리밍 정보. Free movies, watch latest films for free!">
 <meta property="og:title" content="무료영화, 최신 영화 추천 | Free Movies, Streaming - MYWAY.KR">
 <meta property="og:description" content="최신 무료영화와 인기작들을 무료로 시청하세요. Free movies, streaming, live TV, K-Drama, all in one place!">
@@ -14,224 +13,297 @@
 <link rel="manifest" href="/site.webmanifest">
 
 
- 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <style>
-    html, body {
-      min-height: 100vh; margin: 0; padding: 0;
-      background: #fff; font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
-      width: 100%;
+    body {
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      background: #fff;
+      margin: 0; padding: 0;
+      min-height: 100vh;
+      overflow: hidden;
     }
-    body { display: flex; flex-direction: column; align-items: center; width: 100%; }
-    .main-title { 
-
-     
-      margin-top: 0px;
-
-     
-      font-size: 1.1rem; font-weight: 700; color: #333862;
-      text-shadow: 0 2px 12px #ffffff99; margin-bottom: 8px;
-      text-align: center; user-select: none;
-    }
-    .main-subtitle { font-size: 0.9rem; color: #6a739c; margin-bottom: 5px; text-align: center; user-select: none; }
-    .container { width: 100%; max-width: 560px; display: flex; flex-direction: column; align-items: center;
-
-
-                
-      margin-top: 0px; margin-bottom: 0px;     min-height: 180vh;    padding-left: 6px; padding-right: 6px;}
-
-
-   
-    .logo-row {
+    /* 네비바 영역 */
+    .screen-links-wrap {
+      width: 100vw;
+      position: relative;
+      margin: 0 auto;
+      padding: 0;
+      box-sizing: border-box;
+      z-index: 9;
+      overflow: hidden;
       display: flex;
       justify-content: center;
-      gap: 24px;
-      margin-bottom: 32px;
-      width: 100%;
-      flex-wrap: nowrap;
-      transition: max-width 0.1s;
+      
+      margin-top: 30px;
+      filter: drop-shadow(0 6px 28px #b176f340);
     }
-    .ai-logo-wrap {
-      width: 74px; height: 74px; border-radius: 50%; background: #fff;
-      box-shadow: 0 3px 24px 0 #b1c7e866; border: 3px solid #e5e8f6;
-      display: flex; justify-content: center; align-items: center;
-      transition: box-shadow 0.15s, border-color 0.15s;
-      cursor: pointer; overflow: hidden; margin: 0;
-      flex: 0 0 auto;
-    }
-    .ai-logo-wrap:hover { box-shadow: 0 8px 32px 0 #7e94ff99; border-color: #94a2ff; background: #f7faff;}
-    .ai-logo-img { width: 54px; height: 54px; object-fit: contain; background: transparent;
-      border-radius: 50%; transition: transform 0.12s;}
-    .ai-logo-wrap:hover .ai-logo-img { transform: scale(1.08) rotate(-3deg);}
-    .group-title {
-      width: 100%; max-width: 500px;
-      font-size: 1.07rem; font-weight: 600;
-      margin: 34px 0 10px 0;
-      letter-spacing: -0.5px;
-      color: #244;
-      text-align: left;
-      padding-left: 8px;
+    .screen-links {
+      display: flex;
+      gap: 0px;
+      font-size: 0.93rem;
+      font-weight: 500;
+      color: #fff;
+      white-space: nowrap;
+      background: linear-gradient(95deg, #7ed6fb 10%, #b176f3 90%);
+      padding: 0 14px;
       user-select: none;
+      align-items: center;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px 0 rgba(90,100,180,0.13), 0 2px 8px 0 rgba(255,255,255,0.10) inset;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      
+      min-height: 30px;
+      
+      min-width: 220px;
+      cursor: grab;
+      transition: box-shadow 0.2s;
     }
-    @media (max-width: 1100px) {
-      .container { max-width: 98vw; }
-      .logo-row { gap: 14px;}
-      .ai-logo-wrap { width: 60px; height: 60px;}
-      .ai-logo-img { width: 40px; height: 40px;}
+    .screen-links::-webkit-scrollbar { display: none; }
+    .screen-links a {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      padding: 3px 10px;
+      border-radius: 10px;
+      font-weight: 500;
+      font-size: 0.97em;
+      background: none;
+      display: inline-block;
+      opacity: 0.93;
+      letter-spacing: 0.01em;
+      transition: background 0.15s, color 0.13s, box-shadow 0.12s;
+      cursor: pointer;
+      white-space: nowrap;
+      margin: 0 1px;
     }
-    @media (max-width: 900px) {
-      .container { max-width: 99vw;}
-      .main-title { font-size: 1.35rem; margin-top: 64px;}
-      .main-subtitle { font-size: 1.07rem; }
-      .logo-row { gap: 10px; }
-      .ai-logo-wrap { width: 52px; height: 52px;}
-      .ai-logo-img { width: 34px; height: 34px;}
+    .screen-links a:hover, .screen-links a.active {
+      background: rgba(255,255,255,0.22);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 2px 12px #b176f333;
     }
     @media (max-width: 700px) {
-      .ai-logo-wrap { width: 78px !important; height: 78px !important; }
-      .ai-logo-img  { width: 60px !important; height: 60px !important; }
-      .logo-row     { gap: 7vw !important; }
+      .screen-links { font-size: 0.88rem; gap: 6px; padding: 0 4px;}
+
+
+
+      
+      .screen-links-wrap { margin-top: 10px; }
+
+      
+
+      
+      .screen-links { min-height: 26px; }
     }
-    @media (max-width: 480px) {
-      .main-title { font-size: 1rem; }
-      .main-subtitle { font-size: 0.95rem; }
-      .container { margin-top: 6px; margin-bottom: 9px;}
+    /* 프레임 위치 (하단) */
+    #main-frame {
+      position: fixed;
+      left: 0;
+      
+      top: 65px;
+
+      
+      width: 100vw;
+      height: calc(100vh - 96px);
+      border: none;
+      margin: 0;
+      background: #f5f7fa;
+      z-index: 10;
+      border-radius: 0;
+      display: block;
     }
-   .group-title { text-align: center; }
-   margin-bottom: 10.0em;
+    @media (max-width: 700px) {
+      #main-frame { top: 58px; height: calc(100vh - 60px); }
+    }
+    /* ◀▶ 좌우 화살표 */
+    .nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(to right, #b176f3 40%, transparent 100%);
+      border: none;
+      outline: none;
+      z-index: 11;
+      cursor: pointer;
+      opacity: 0.82;
+      transition: opacity 0.18s;
+      padding: 0;
+      border-radius: 11px;
+      user-select: none;
+    }
+    .nav-arrow.right {
+      right: 2px;
+      background: linear-gradient(to left, #b176f3 44%, transparent 100%);
+    }
+    .nav-arrow.left {
+      left: 2px;
+      background: linear-gradient(to right, #b176f3 44%, transparent 100%);
+    }
+    .nav-arrow svg {
+      display: block;
+      width: 13px;
+      height: 18px;
+    }
+    .nav-arrow:active {
+      opacity: 1;
+    }
+    .nav-arrow[hidden] {
+      display: none;
+    }
+
+    /* === window.open 새창(탑윈도우)에서만 max-width로 잘림 방지 === */
+    body.window-top {
+      padding-left: env(safe-area-inset-left, 0px);
+      padding-right: env(safe-area-inset-right, 0px);
+    }
+    body.window-top .screen-links-wrap {
+      max-width: 100vw !important;
+      width: auto !important;
+    }
+    body.window-top .screen-links {
+      max-width: 100vw !important;
+      width: auto !important;
+    }
+    body.window-top #main-frame {
+      left: 0;
+      width: 100vw;
+    }
   </style>
+  <script>
+    // 새창/아이프레임 환경 분기 (탑윈도우면 window-top 클래스)
+    (function(){
+      if(window.self === window.top){
+        document.addEventListener('DOMContentLoaded',function(){
+          document.body.classList.add('window-top');
+        });
+      }
+    })();
+  </script>
 </head>
 <body>
+  <!-- 네비게이션 바 (스크롤/드래그) -->
+  <div class="screen-links-wrap" style="position:relative;">
+    <!-- 좌 화살표 -->
+    <button class="nav-arrow left" id="nav-arrow-left" aria-label="왼쪽 이동" hidden>
+      <svg viewBox="0 0 13 20"><polygon points="9,3 2,10 9,17" fill="#fff" opacity="0.86"/></svg>
+    </button>
+    <div class="screen-links" id="parent-links">
+   
+<a href="" target="_blank" class="expand-btn">+(확대)</a>
+      
+       <a href="#" class="active" onclick="showScreenParent(event, '00mainmusicmain.html')">H</a>
 
+      
+    
+<a href="#" onclick="showScreenParent(event, 'mainpage43.html')">HOME</a>
+<a href="#" onclick="showScreenParent(event, '')">A</a>
+<a href="#" onclick="showScreenParent(event, '')">EVENT</a>
+<a href="#" onclick="showScreenParent(event, '')"></a>
 
- 
-
-
- 
-  <div class="main-title"></div>
-
- 
-  <div class="main-subtitle"></div>
-  <div class="container" id="aiLogoContainer"></div>
-  <script>
-    // 1번 그룹 (예: AI/생성형)
-    const group1 = [
-     
-{ url: "http://www.cgv.co.kr/", img: "https://play-lh.googleusercontent.com/dVQ6d8I7XDOkr72-jcAUHsCfQ_ih9p9HUaca82obM6LlmJOKAA8BuY776Xns40Nifg" },
+       
 
     
-       { url: "https://www.kobis.or.kr/kobis/business/mast/mvie/findOpenScheduleList.do", img: "https://static.vecteezy.com/system/resources/previews/017/178/221/non_2x/new-sticker-label-on-transparent-background-free-png.png" },
-             { url: "https://www.megabox.co.kr/", img: "https://cdn.nvp.co.kr/news/photo/201606/54066_51907_1537.png" },
-       
-       { url: "https://www.vkobis.or.kr/", img: "https://png.pngtree.com/png-vector/20230808/ourmid/pngtree-film-reel-clipart-flat-vector-illustration-style-cartoon-of-movie-trailers-png-image_6869464.png" },
-        { url: "https://www.lottecinema.co.kr", img: "https://play-lh.googleusercontent.com/pmWpm2WTx2-9dTGeAfU0LMyofNgPNZlbzbFhYxFm0c9BOaJl83jxoVQLxJcxThGiHxE" },
+    </div>
+    <!-- 우 화살표 -->
+    <button class="nav-arrow right" id="nav-arrow-right" aria-label="오른쪽 이동" hidden>
+      <svg viewBox="0 0 13 20"><polygon points="4,3 11,10 4,17" fill="#fff" opacity="0.88"/></svg>
+    </button>
+  </div>
+  
+  <iframe id="main-frame" src="00aimain3.html">dcinsid<"></iframe>
 
-     
-    ];
-    // 2번 그룹 (예: 검색/포털)
-    const group2 = [
-  { url: "https://href.li/?https://www.netflix.com/", img: "https://img1.daumcdn.net/thumb/R720x0.q80/?scode=mtistory2&fname=https%3A%2F%2Ft1.daumcdn.net%2Fcfile%2Ftistory%2F9945E24D5EDF7C1110", alt: "넷플릭스" },
-      { url: "https://href.li/?https://www.disneyplus.com/ko-kr", img: "https://s.yimg.com/ny/api/res/1.2/wc7n7lj8OYExtHptEqaMOg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTY0MDtoPTY0MA--/https://media.zenfs.com/en/evening_standard_239/be0710aaaf5abfdcfe63e97dda34ea9a", alt: "디즈니+" },
-      { url: "https://www.coupangplay.com/catalog", img: "https://d2juy7qzamcf56.cloudfront.net/2024-11-26/09738456-1277-4953-80fb-fc9c9d2df777.png", alt: "쿠팡플레이" },
-   
-     
-    ];
+  <script>
+    // 네비바 클릭시 해당 페이지 출력
+    function showScreenParent(e, url) {
+      e.preventDefault();
+      document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
+      e.target.classList.add('active');
+      document.getElementById('main-frame').src = url;
+    }
+    // 네비바 드래그/터치 스크롤
+    (function(){
+      const nav = document.querySelector('.screen-links');
+      let isDown = false, startX = 0, scrollLeft = 0;
 
-    // 3번 그룹 (예: AI툴 모음)
-    const group3 = [
+      nav.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - nav.offsetLeft;
+        scrollLeft = nav.scrollLeft;
+        nav.style.cursor = 'grabbing';
+      });
+      nav.addEventListener('mouseleave', () => {
+        isDown = false;
+        nav.style.cursor = '';
+      });
+      nav.addEventListener('mouseup', () => {
+        isDown = false;
+        nav.style.cursor = '';
+      });
+      nav.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        const x = e.pageX - nav.offsetLeft;
+        nav.scrollLeft = scrollLeft - (x - startX);
+      });
 
-        { url: "https://duckduckgo.com/?q=%EB%AC%B4%EB%A3%8C%EC%98%81%ED%99%94%EC%82%AC%EC%9D%B4%ED%8A%B8&ia=web", img: "https://e7.pngegg.com/pngimages/381/351/png-clipart-computer-icons-google-search-icon-design-magnifying-glass-cartoon-logo-android.png", alt: "쿠팡플레이" },
-   
-      
-    ];
+      // 모바일 터치
+      let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
+      nav.addEventListener('touchstart', function(e){
+        touchDragging = true;
+        touchStartX = e.touches[0].pageX - nav.offsetLeft;
+        touchScrollLeft = nav.scrollLeft;
+      });
+      nav.addEventListener('touchend', ()=>{ touchDragging=false; });
+      nav.addEventListener('touchmove', function(e){
+        if(!touchDragging) return;
+        const x = e.touches[0].pageX - nav.offsetLeft;
+        nav.scrollLeft = touchScrollLeft - (x - touchStartX);
+      });
+    })();
+    // 처음 로드시 첫 메뉴 선택 효과
+    window.addEventListener('DOMContentLoaded', ()=>{
+      document.querySelectorAll('#parent-links a')[0].classList.add('active');
+      checkNavOverflow();
+    });
 
-    // 4번 그룹 (예: 이미지 생성/AI/기타)
-    const group4 = [
-
-
-
-      
- ];
-
-    function getLayout() {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      let iconsPerRow = 7, gap = 24, size = 74, imgSize = 54;
-      if (w <= 1100) { iconsPerRow = 6; gap = 14; size = 60; imgSize = 40;}
-      if (w <= 900)  { iconsPerRow = 5; gap = 10; size = 52; imgSize = 34;}
-      if (w <= 700) {
-        if (h > w) { iconsPerRow = 4; gap = w * 0.08; size = 78; imgSize = 60;}
-        else       { iconsPerRow = 5; gap = w * 0.08; size = 78; imgSize = 60;}
+    // ▶ 좌/우 화살표 (스크롤 가능할 때만 표시, 클릭 시 이동)
+    const nav = document.querySelector('.screen-links');
+    const leftArrow = document.getElementById('nav-arrow-left');
+    const rightArrow = document.getElementById('nav-arrow-right');
+    function checkNavOverflow() {
+      if (!nav) return;
+      // 좌우 스크롤 가능한 경우만 화살표 노출
+      if (nav.scrollWidth > nav.clientWidth) {
+        leftArrow.hidden = nav.scrollLeft < 5;
+        rightArrow.hidden = nav.scrollLeft + nav.clientWidth + 5 >= nav.scrollWidth;
+      } else {
+        leftArrow.hidden = true;
+        rightArrow.hidden = true;
       }
-      if (w <= 500)  { iconsPerRow = 3; gap = w * 0.10; size = 68; imgSize = 48;}
-      return { iconsPerRow, gap, size, imgSize };
     }
+    nav.addEventListener('scroll', checkNavOverflow);
+    window.addEventListener('resize', checkNavOverflow);
+    setTimeout(checkNavOverflow, 120);
 
-    function renderGroup(arr) {
-      const { iconsPerRow, gap, size, imgSize } = getLayout();
-      let idx = 0;
-      const rows = [];
-      while (idx < arr.length) {
-        const count = Math.min(iconsPerRow, arr.length - idx);
-        const row = document.createElement('div');
-        row.className = "logo-row";
-        row.style.maxWidth = (size * count + gap * (count - 1)) + "px";
-        row.style.gap = gap + "px";
-        for (let i = 0; i < count; i++, idx++) {
-          const l = arr[idx];
-          const a = document.createElement('a');
-          a.className = "ai-logo-wrap";
-          a.href = l.url;
-          a.target = "_blank";
-          a.style.width = a.style.height = size + "px";
-          const img = document.createElement('img');
-          img.className = "ai-logo-img";
-          img.src = l.img;
-          img.alt = l.alt;
-          img.style.width = img.style.height = imgSize + "px";
-          a.appendChild(img);
-          row.appendChild(a);
-        }
-        rows.push(row);
-      }
-      return rows;
-    }
+    // 좌/우 화살표 클릭 시 부드럽게 이동
+    leftArrow.addEventListener('click', function() {
+      nav.scrollBy({left: -110, behavior: 'smooth'});
+      setTimeout(checkNavOverflow, 220);
+    });
+    rightArrow.addEventListener('click', function() {
+      nav.scrollBy({left: 110, behavior: 'smooth'});
+      setTimeout(checkNavOverflow, 220);
+    });
 
-    function renderAll() {
-      const container = document.getElementById('aiLogoContainer');
-      container.innerHTML = "";
+    // 네비 영역 클릭 or 드래그 후에도 체크
+    nav.addEventListener('mousedown', ()=>setTimeout(checkNavOverflow,220));
+    nav.addEventListener('mouseup', ()=>setTimeout(checkNavOverflow,220));
+    nav.addEventListener('touchend', ()=>setTimeout(checkNavOverflow,220));
 
-      // 1단 제목
-      const g1Title = document.createElement("div");
-      g1Title.className = "group-title";
-      g1Title.textContent = "";
-      container.appendChild(g1Title);
-      renderGroup(group1).forEach(row => container.appendChild(row));
-
-      // 2단 제목
-      const g2Title = document.createElement("div");
-      g2Title.className = "group-title";
-      g2Title.textContent = "";
-      container.appendChild(g2Title);
-      renderGroup(group2).forEach(row => container.appendChild(row));
-
-      // 3단 제목
-      const g3Title = document.createElement("div");
-      g3Title.className = "group-title";
-      g3Title.textContent = "";
-      container.appendChild(g3Title);
-      renderGroup(group3).forEach(row => container.appendChild(row));
-
-      // 4단 제목
-      const g4Title = document.createElement("div");
-      g4Title.className = "group-title";
-     g4Title.innerHTML = `<a href="radiositesbar2.html" target="_blank" style="color:inherit; text-decoration:none;"></a>`;
-      container.appendChild(g4Title);
-      renderGroup(group4).forEach(row => container.appendChild(row));
-    }
-
-    renderAll();
-    window.addEventListener('resize', renderAll);
   </script>
 </body>
 </html>
