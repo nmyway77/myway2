@@ -1,179 +1,235 @@
-   <html lang="ko">
+
+ <!DOCTYPE html>
+<html lang="ko">
 <head>
-  <base target="_blank76">
   <meta charset="UTF-8">
-  <title>MYWAY 인플루언서 influencer </title>
+  <title>무료만화 사이트 모음,free manga,free comics,  - MYWAY.KR</title>
+<meta name="description" content="무료로 즐기는 최신 무료영화, 한국의 인기가수 노래모음, 만화 , 실시간 스트리밍 정보. Free movies, watch latest films for free!">
+<meta property="og:title" content="무료영화, 최신 영화 추천 | Free Movies, Streaming - MYWAY.KR">
+<meta property="og:description" content="최신 무료영화와 인기작들을 무료로 시청하세요. Free movies, streaming, live TV, K-Drama, all in one place!">
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+
+
+ 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
-    .dashboard { max-width: 1200px; margin: 0 auto; padding: 34px 0 60px 0;}
-    .gallery-label {
-      font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
-      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
+    html, body {
+      min-height: 100vh; margin: 0; padding: 0;
+      background: #fff; font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      width: 100%;
     }
-    .gallery-row {
-      width: 100%; max-width: 1080px; margin: 0 auto;
-      text-align: center;
+    body { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .main-title { 
+
+     
+      margin-top: 0px;
+
+     
+      font-size: 1.1rem; font-weight: 700; color: #333862;
+      text-shadow: 0 2px 12px #ffffff99; margin-bottom: 8px;
+      text-align: center; user-select: none;
     }
-    .list-row {
-      display: inline-block;
-      vertical-align: top;
-      box-sizing: border-box;
-      position: relative;
-      transition: width 0.2s, height 0.2s;
-      background: #fff;
-    }
-    .list-row:last-child { margin-right: 0; }
-    .imgframe {
-      width: 100%; height: 100%;
-      background: #fff;
-      position: relative;
-      box-sizing: border-box;
-      z-index: 0;
-      border-radius: 0;
-      box-shadow: 0 6px 6px 0 rgba(90,90,130,0.11);
-      overflow: hidden;
+    .main-subtitle { font-size: 0.9rem; color: #6a739c; margin-bottom: 5px; text-align: center; user-select: none; }
+    .container { width: 100%; max-width: 560px; display: flex; flex-direction: column; align-items: center;
+
+
+                
+      margin-top: 0px; margin-bottom: 0px;     min-height: 180vh;    padding-left: 6px; padding-right: 6px;}
+
+
+   
+    .logo-row {
       display: flex;
-      align-items: flex-start;
       justify-content: center;
+      gap: 24px;
+      margin-bottom: 32px;
+      width: 100%;
+      flex-wrap: nowrap;
+      transition: max-width 0.1s;
     }
-    .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
-    .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
-    .img-item img {
-      display: block; width: 100%; height: 100%;
-      object-fit: contain;
-      background: #fff;
-      margin: 0;
-      border: none;
-      padding: 0;
+    .ai-logo-wrap {
+      width: 74px; height: 74px; border-radius: 50%; background: #fff;
+      box-shadow: 0 3px 24px 0 #b1c7e866; border: 3px solid #e5e8f6;
+      display: flex; justify-content: center; align-items: center;
+      transition: box-shadow 0.15s, border-color 0.15s;
+      cursor: pointer; overflow: hidden; margin: 0;
+      flex: 0 0 auto;
     }
-    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
-    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
-    /* 매거진 공통 스타일 (갤4 + 갤1~3 전부 적용) */
-    .list-row.magazine {
-      width: 150px;
-      height: 213px;
-      margin: 0 12px 36px 0;
+    .ai-logo-wrap:hover { box-shadow: 0 8px 32px 0 #7e94ff99; border-color: #94a2ff; background: #f7faff;}
+    .ai-logo-img { width: 54px; height: 54px; object-fit: contain; background: transparent;
+      border-radius: 50%; transition: transform 0.12s;}
+    .ai-logo-wrap:hover .ai-logo-img { transform: scale(1.08) rotate(-3deg);}
+    .group-title {
+      width: 100%; max-width: 500px;
+      font-size: 1.07rem; font-weight: 600;
+      margin: 34px 0 10px 0;
+      letter-spacing: -0.5px;
+      color: #244;
+      text-align: left;
+      padding-left: 8px;
+      user-select: none;
     }
-    .img-wrap.magazine { height: 100%; }
-    .img-item.magazine { height: 100%; }
-    @media (max-width: 1080px) {
-      .list-row.magazine { width: 28vw; height: 40vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
+    @media (max-width: 1100px) {
+      .container { max-width: 98vw; }
+      .logo-row { gap: 14px;}
+      .ai-logo-wrap { width: 60px; height: 60px;}
+      .ai-logo-img { width: 40px; height: 40px;}
+    }
+    @media (max-width: 900px) {
+      .container { max-width: 99vw;}
+      .main-title { font-size: 1.35rem; margin-top: 64px;}
+      .main-subtitle { font-size: 1.07rem; }
+      .logo-row { gap: 10px; }
+      .ai-logo-wrap { width: 52px; height: 52px;}
+      .ai-logo-img { width: 34px; height: 34px;}
     }
     @media (max-width: 700px) {
-      .list-row.magazine { width: 44vw; height: 62vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
+      .ai-logo-wrap { width: 78px !important; height: 78px !important; }
+      .ai-logo-img  { width: 60px !important; height: 60px !important; }
+      .logo-row     { gap: 7vw !important; }
     }
+    @media (max-width: 480px) {
+      .main-title { font-size: 1rem; }
+      .main-subtitle { font-size: 0.95rem; }
+      .container { margin-top: 6px; margin-bottom: 9px;}
+    }
+   .group-title { text-align: center; }
+   margin-bottom: 10.0em;
   </style>
 </head>
 <body>
-  <div class="dashboard">
-    <a class="gallery-label" href="" target="_blank">만화</a>
-    <div class="gallery-row" id="gallery1"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery2"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery3"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery4"></div>
-    <span class="gallery-label"> </span>
-    <div class="gallery-row" id="gallery5"></div>
-    <span class="gallery-label"> </span>
-    <div class="gallery-row" id="gallery6"></div>
-    <span class="gallery-label"> </span>
-    <div class="gallery-row" id="gallery7"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery8"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery9"></div>
-    <span class="gallery-label"> </span>
-    <div class="gallery-row" id="gallery10"></div>
-  </div>
+
+
+ 
+
+
+ 
+  <div class="main-title"></div>
+
+ 
+  <div class="main-subtitle"></div>
+  <div class="container" id="aiLogoContainer"></div>
   <script>
-    // 갤러리1~10 예시 데이터(갤5~10은 샘플 1개만 입력, 필요시 채우세요)
-    const gallery1Data = [
-
-       
-
- { url: "https://comic.naver.com/index", img: "https://myway.kr/NWT.jpg" },
-     { url: "https://webtoon.kakao.com/", img: "https://myway.kr/kwr.jpg" },
-     { url: "https://www.toomics.com/", img: "https://myway.kr/tmic.jpg" },
-{ url: "https://www.bomtoon.com/bom/comic/free", img: "https://myway.kr/bomt.jpg" },
+    // 1번 그룹 (예: AI/생성형)
+    const group1 = [
+     
+   { url: "https://comic.naver.com/index", img: "https://i.namu.wiki/i/ugTlJol27avmPIWdkWY3fk18VR1J7BPr_AwwIKaF8fu2v9VW2Bmto6jQungo__wBfkhNMOGMDfemB_D1nctdyw.svg" },
+     { url: "https://webtoon.kakao.com/", img: "https://upload.wikimedia.org/wikipedia/commons/8/8f/Kakao_page_logo.png" },
+     { url: "https://www.toomics.com/", img: "https://play-lh.googleusercontent.com/DUS5sjyQsaE9Us4WuJ4_CPMyBgdqV4YJGpdWmoiOOQ-3GJALRprXWNlqDTPip6X1JTOw" },
+{ url: "https://www.bomtoon.com/bom/comic/free", img: "https://play-lh.googleusercontent.com/kM5rMvD1lLEysyF7csBtsEwCxHtcCxc-9t2Kn05YPdUaGU4Z--0ySJDOKghhwdv5EBol" },
       { url: "https://sports.khan.co.kr/comics/comics_author.html", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCg9Mkm6Y6g62qNOkqYXdujygQQ2CqYnLuxw&s" },
 { url: "https://spcartoon.kr/", img: "https://www.sportschosun.com/img/thum_sns.png" },
        { url: "https://comic.sportsseoul.com/", img: "https://play-lh.googleusercontent.com/xA3JvveLtwrIxiRGv_8pW5aP_hwZWoZXUdA8DKfm9PVMmwD8kWKAddGTQfM_Bnv-1HU" },
 
 
-{ url: "https://duckduckgo.com/?q=%EC%9B%B9%ED%88%B0+%EB%AC%B4%EB%A3%8C+%EC%82%AC%EC%9D%B4%ED%8A%B8+%EC%88%9C%EC%9C%84&ia=web", img: "https://webtooninfo.com/webtooninfo-logo1.png" },
+{ url: "https://duckduckgo.com/?q=%EC%9B%B9%ED%88%B0+%EB%AC%B4%EB%A3%8C+%EC%82%AC%EC%9D%B4%ED%8A%B8+%EC%88%9C%EC%9C%84&ia=web", img: "https://e7.pngegg.com/pngimages/381/351/png-clipart-computer-icons-google-search-icon-design-magnifying-glass-cartoon-logo-android.png" },
 
 
-       
+
+     
     ];
-    const gallery2Data = [
+    // 2번 그룹 (예: 검색/포털)
+    const group2 = [
+
+    ];
+
+    // 3번 그룹 (예: AI툴 모음)
+    const group3 = [
+
+     
+    ];
+
+    // 4번 그룹 (예: 이미지 생성/AI/기타)
+    const group4 = [
 
 
 
-       
       
-    ];
-    const gallery3Data = [
+ ];
 
-     
-      
-    ];
-    const gallery4Data = [
-     
-    ];
-    const gallery5Data = [
-   
-    ];
-    const gallery6Data = [
-    
-    ];
-    const gallery7Data = [
-     
-    ];
-    const gallery8Data = [
-    
-    ];
-    const gallery9Data = [
-      
-    ];
-    const gallery10Data = [
-     
-    ];
-
-    // 그림자 png
-    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
-    // 모든 갤러리를 매거진 타입으로!
-    function renderGallery(data, targetId) {
-      const el = document.getElementById(targetId);
-      el.innerHTML = data.map(item => `
-        <div class="list-row magazine">
-          <div class="imgframe">
-            <div class="img-wrap magazine">
-              <div class="img-item magazine">
-                <a href="${item.url}" target="_blank" rel="noopener">
-                  <img src="${item.img}">
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="shadow-line">
-            <img src="${shadowUrl}">
-          </div>
-        </div>
-      `).join('');
+    function getLayout() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      let iconsPerRow = 7, gap = 24, size = 74, imgSize = 54;
+      if (w <= 1100) { iconsPerRow = 6; gap = 14; size = 60; imgSize = 40;}
+      if (w <= 900)  { iconsPerRow = 5; gap = 10; size = 52; imgSize = 34;}
+      if (w <= 700) {
+        if (h > w) { iconsPerRow = 4; gap = w * 0.08; size = 78; imgSize = 60;}
+        else       { iconsPerRow = 5; gap = w * 0.08; size = 78; imgSize = 60;}
+      }
+      if (w <= 500)  { iconsPerRow = 3; gap = w * 0.10; size = 68; imgSize = 48;}
+      return { iconsPerRow, gap, size, imgSize };
     }
-    renderGallery(gallery1Data, 'gallery1');
-    renderGallery(gallery2Data, 'gallery2');
-    renderGallery(gallery3Data, 'gallery3');
-    renderGallery(gallery4Data, 'gallery4');
-    renderGallery(gallery5Data, 'gallery5');
-    renderGallery(gallery6Data, 'gallery6');
-    renderGallery(gallery7Data, 'gallery7');
-    renderGallery(gallery8Data, 'gallery8');
-    renderGallery(gallery9Data, 'gallery9');
-    renderGallery(gallery10Data, 'gallery10');
+
+    function renderGroup(arr) {
+      const { iconsPerRow, gap, size, imgSize } = getLayout();
+      let idx = 0;
+      const rows = [];
+      while (idx < arr.length) {
+        const count = Math.min(iconsPerRow, arr.length - idx);
+        const row = document.createElement('div');
+        row.className = "logo-row";
+        row.style.maxWidth = (size * count + gap * (count - 1)) + "px";
+        row.style.gap = gap + "px";
+        for (let i = 0; i < count; i++, idx++) {
+          const l = arr[idx];
+          const a = document.createElement('a');
+          a.className = "ai-logo-wrap";
+          a.href = l.url;
+          a.target = "_blank";
+          a.style.width = a.style.height = size + "px";
+          const img = document.createElement('img');
+          img.className = "ai-logo-img";
+          img.src = l.img;
+          img.alt = l.alt;
+          img.style.width = img.style.height = imgSize + "px";
+          a.appendChild(img);
+          row.appendChild(a);
+        }
+        rows.push(row);
+      }
+      return rows;
+    }
+
+    function renderAll() {
+      const container = document.getElementById('aiLogoContainer');
+      container.innerHTML = "";
+
+      // 1단 제목
+      const g1Title = document.createElement("div");
+      g1Title.className = "group-title";
+      g1Title.textContent = "";
+      container.appendChild(g1Title);
+      renderGroup(group1).forEach(row => container.appendChild(row));
+
+      // 2단 제목
+      const g2Title = document.createElement("div");
+      g2Title.className = "group-title";
+      g2Title.textContent = "";
+      container.appendChild(g2Title);
+      renderGroup(group2).forEach(row => container.appendChild(row));
+
+      // 3단 제목
+      const g3Title = document.createElement("div");
+      g3Title.className = "group-title";
+      g3Title.textContent = "";
+      container.appendChild(g3Title);
+      renderGroup(group3).forEach(row => container.appendChild(row));
+
+      // 4단 제목
+      const g4Title = document.createElement("div");
+      g4Title.className = "group-title";
+     g4Title.innerHTML = `<a href="radiositesbar2.html" target="_blank" style="color:inherit; text-decoration:none;"></a>`;
+      container.appendChild(g4Title);
+      renderGroup(group4).forEach(row => container.appendChild(row));
+    }
+
+    renderAll();
+    window.addEventListener('resize', renderAll);
   </script>
 </body>
 </html>
