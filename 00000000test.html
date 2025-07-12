@@ -151,7 +151,7 @@
       width: 100vw;
     }
     /* === + 전체화면 버튼 스타일 === */
-    .fullscreen-btn {
+    .fullscreen-btn-myway {
       font-size: 1.15em;
       font-weight: bold;
       color: #fff;
@@ -173,14 +173,13 @@
       opacity: 0.96;
       padding: 0;
     }
-    .fullscreen-btn:active {
+    .fullscreen-btn-myway:active {
       background: linear-gradient(95deg, #b176f3 30%, #7ed6fb 100%);
       box-shadow: 0 2px 14px #b176f380;
       color: #fff;
     }
   </style>
   <script>
-    // 새창/아이프레임 환경 분기 (탑윈도우면 window-top 클래스)
     (function(){
       if(window.self === window.top){
         document.addEventListener('DOMContentLoaded',function(){
@@ -191,11 +190,8 @@
   </script>
 </head>
 <body>
-  <!-- 네비게이션 바 (스크롤/드래그) -->
   <div class="screen-links-wrap" style="position:relative;">
-    <!-- + 전체화면 버튼 추가 -->
-    <button class="fullscreen-btn" id="fullscreen-btn" title="전체화면 토글">＋</button>
-    <!-- 좌 화살표 -->
+    <button class="fullscreen-btn-myway" id="fullscreen-btn-myway" title="전체화면 토글">＋</button>
     <button class="nav-arrow left" id="nav-arrow-left" aria-label="왼쪽 이동" hidden>
       <svg viewBox="0 0 13 20"><polygon points="9,3 2,10 9,17" fill="#fff" opacity="0.86"/></svg>
     </button>
@@ -209,7 +205,6 @@
       <a href="#" onclick="showScreenParent(event, 'https://myway.kr/00making777.html')">L1</a>
       <a href="#" onclick="showScreenParent(event, 'https://myway.kr/making77.html')">L2</a>
     </div>
-    <!-- 우 화살표 -->
     <button class="nav-arrow right" id="nav-arrow-right" aria-label="오른쪽 이동" hidden>
       <svg viewBox="0 0 13 20"><polygon points="4,3 11,10 4,17" fill="#fff" opacity="0.88"/></svg>
     </button>
@@ -217,18 +212,17 @@
   <iframe id="main-frame" src="https://myway.kr/00makingcircletext.html">dcinsid<"></iframe>
 
   <script>
-    // 네비바 클릭시 해당 페이지 출력
     function showScreenParent(e, url) {
       e.preventDefault();
       document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
       e.target.classList.add('active');
       document.getElementById('main-frame').src = url;
     }
+
     // 네비바 드래그/터치 스크롤
     (function(){
       const nav = document.querySelector('.screen-links');
       let isDown = false, startX = 0, scrollLeft = 0;
-
       nav.addEventListener('mousedown', (e) => {
         isDown = true;
         startX = e.pageX - nav.offsetLeft;
@@ -248,7 +242,6 @@
         const x = e.pageX - nav.offsetLeft;
         nav.scrollLeft = scrollLeft - (x - startX);
       });
-
       // 모바일 터치
       let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
       nav.addEventListener('touchstart', function(e){
@@ -263,19 +256,17 @@
         nav.scrollLeft = touchScrollLeft - (x - touchStartX);
       });
     })();
-    // 처음 로드시 첫 메뉴 선택 효과
+
     window.addEventListener('DOMContentLoaded', ()=>{
       document.querySelectorAll('#parent-links a')[0].classList.add('active');
       checkNavOverflow();
     });
 
-    // ▶ 좌/우 화살표 (스크롤 가능할 때만 표시, 클릭 시 이동)
     const nav = document.querySelector('.screen-links');
     const leftArrow = document.getElementById('nav-arrow-left');
     const rightArrow = document.getElementById('nav-arrow-right');
     function checkNavOverflow() {
       if (!nav) return;
-      // 좌우 스크롤 가능한 경우만 화살표 노출
       if (nav.scrollWidth > nav.clientWidth) {
         leftArrow.hidden = nav.scrollLeft < 5;
         rightArrow.hidden = nav.scrollLeft + nav.clientWidth + 5 >= nav.scrollWidth;
@@ -288,7 +279,6 @@
     window.addEventListener('resize', checkNavOverflow);
     setTimeout(checkNavOverflow, 120);
 
-    // 좌/우 화살표 클릭 시 부드럽게 이동
     leftArrow.addEventListener('click', function() {
       nav.scrollBy({left: -110, behavior: 'smooth'});
       setTimeout(checkNavOverflow, 220);
@@ -302,40 +292,47 @@
     nav.addEventListener('mouseup', ()=>setTimeout(checkNavOverflow,220));
     nav.addEventListener('touchend', ()=>setTimeout(checkNavOverflow,220));
 
-    // ★ 전체화면 버튼 기능 (복구 기능 포함)
-    const fullscreenBtn = document.getElementById('fullscreen-btn');
-    fullscreenBtn.addEventListener('click', function() {
+    // ★ 전체화면 토글 + 자동 복구 로직 (변수 및 id 완전 독립!)
+    const fsBtn = document.getElementById('fullscreen-btn-myway');
+    let mywayFullscreenRecover = false;
+    fsBtn.addEventListener('click', function() {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen();
         this.innerText = "×";
         this.title = "전체화면 해제";
-        this.dataset.wasFullscreen = "1"; // 전체화면 상태 기록
+        mywayFullscreenRecover = true;
       } else {
         document.exitFullscreen();
         this.innerText = "＋";
         this.title = "전체화면 토글";
-        this.dataset.wasFullscreen = "0";
+        mywayFullscreenRecover = false;
       }
     });
 
-    // 전체화면 상태 변화 감지해서 버튼 UI 자동복구(×→＋) 및 복구
     document.addEventListener('fullscreenchange', function() {
-      var btn = document.getElementById('fullscreen-btn');
       if (!document.fullscreenElement) {
-        btn.innerText = "＋";
-        btn.title = "전체화면 토글";
-        // ---- 자동 전체화면 복구! ----
-        if (btn.dataset.wasFullscreen === "1") {
+        fsBtn.innerText = "＋";
+        fsBtn.title = "전체화면 토글";
+        // 자동 전체화면 복구 (사용자가 직접 해제한 경우는 복구 안함)
+        if (mywayFullscreenRecover) {
           setTimeout(function() {
             document.documentElement.requestFullscreen();
-          }, 180);
+          }, 200);
         }
-        btn.dataset.wasFullscreen = "0";
       } else {
-        btn.innerText = "×";
-        btn.title = "전체화면 해제";
-        btn.dataset.wasFullscreen = "1";
+        fsBtn.innerText = "×";
+        fsBtn.title = "전체화면 해제";
       }
+    });
+
+    // 혹시 iframe에서 전체화면 빠져나가면 자동복구 (import 등 이벤트 대응)
+    window.addEventListener('blur', function() {
+      // blur 이후에 fullscreen이 꺼진 경우만 복구 (아주 짧은 시간 후 체크)
+      setTimeout(function() {
+        if (mywayFullscreenRecover && !document.fullscreenElement) {
+          document.documentElement.requestFullscreen();
+        }
+      }, 350);
     });
   </script>
 </body>
