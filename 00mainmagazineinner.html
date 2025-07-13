@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
- 
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
   <title>KPOP,K-POP,KOREA SINGERS,KOREA POP,KOREA POPS,KOREAN POP, TV, 4K MOVIE,FREE,  - MYWAY.KR</title>
   <meta name="description" content="무료로 즐기는 최신 무료영화, 한국의 인기가수 노래모음, 만화 , 실시간 스트리밍 정보. Free movies, watch latest films for free!">
   <meta property="og:title" content="무료영화, 최신 영화 추천 | Free Movies, Streaming - MYWAY.KR">
@@ -206,8 +205,9 @@
     <div class="screen-links" id="parent-links">
 
 
-     
-<a href="#" onclick="showScreenParent(event, '00mainmaga.html')">H</a>
+
+        
+ <a href="#" onclick="showScreenParent(event, '00mainmaga.html')">H</a>
 <a href="#" onclick="showScreenParent(event, 'https://www.vogue.co.kr/')">VOGUE</a>
 <a href="#" onclick="showScreenParent(event, 'https://www.allurekorea.com/')">allure</a>
 <a href="#" onclick="showScreenParent(event, 'https://woman.donga.com/')">여성동아</a>
@@ -223,7 +223,11 @@
 <a href="#" onclick="showScreenParent(event, 'https://ktxmagazine.kr/')">KTX</a>
 
 
-      
+
+
+
+
+        
     </div>
     <button class="nav-arrow right" id="nav-arrow-right" aria-label="오른쪽 이동" hidden>
       <svg viewBox="0 0 13 20"><polygon points="4,3 11,10 4,17" fill="#fff" opacity="0.88"/></svg>
@@ -232,28 +236,32 @@
   <iframe id="main-frame" src="00mainmaga.html">dcinsid<"></iframe>
 
   <script>
-    // "확대" 버튼 클릭시: 네비/전체페이지를 새창 복제, 그리고 기존(작은)창은 영상/소리 즉시 정지!
+    // "확대" 버튼 클릭시: 현재 보고 있는 src를 파라미터로 새창 열기 + 작은창 미디어 정지
     function expandCurrentFullPage(e) {
       e.preventDefault();
       var frame = document.getElementById('main-frame');
       var currentSrc = frame.src;
-
-      // 1. 새창을 열어서 전체페이지+현재 src 전달 (이전과 동일)
-      var win = window.open('', '_blank');
-      if (!win) {
-        alert('팝업 차단을 해제해 주세요!');
-        return;
-      }
-      var html =
-        "<!DOCTYPE html>\n" +
-        document.documentElement.outerHTML.replace(/src="[^"]*"/, 'src="' + currentSrc + '"');
-      win.document.open();
-      win.document.write(html);
-      win.document.close();
-
-      // 2. 기존 작은 창의 동영상/소리 즉시 정지 (iframe src를 blank로!)
+      // ?src=xxxx 식으로 파라미터 전달 (encodeURIComponent로 안전하게)
+      window.open(window.location.pathname + '?src=' + encodeURIComponent(currentSrc), '_blank');
+      // 기존 창의 동영상 정지 (iframe 비우기)
       frame.src = 'about:blank';
     }
+
+    // location.search에서 src값 읽기
+    function getParam(name) {
+      let params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    // 페이지 로드시, ?src= 있으면 해당 주소로 iframe 띄움
+    window.addEventListener('DOMContentLoaded', function() {
+      var newSrc = getParam('src');
+      if (newSrc) {
+        document.getElementById('main-frame').src = newSrc;
+      }
+      document.querySelectorAll('#parent-links a')[0].classList.add('active');
+      checkNavOverflow();
+    });
 
     // 네비바 클릭시 해당 페이지 출력
     function showScreenParent(e, url) {
@@ -263,7 +271,7 @@
       document.getElementById('main-frame').src = url;
     }
 
-    // 네비바 드래그/터치 스크롤
+    // 네비바 드래그/터치 스크롤 (이하 동일)
     (function(){
       const nav = document.querySelector('.screen-links');
       let isDown = false, startX = 0, scrollLeft = 0;
@@ -286,7 +294,6 @@
         const x = e.pageX - nav.offsetLeft;
         nav.scrollLeft = scrollLeft - (x - startX);
       });
-      // 모바일 터치
       let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
       nav.addEventListener('touchstart', function(e){
         touchDragging = true;
@@ -300,11 +307,6 @@
         nav.scrollLeft = touchScrollLeft - (x - touchStartX);
       });
     })();
-
-    window.addEventListener('DOMContentLoaded', ()=>{
-      document.querySelectorAll('#parent-links a')[0].classList.add('active');
-      checkNavOverflow();
-    });
 
     const nav = document.querySelector('.screen-links');
     const leftArrow = document.getElementById('nav-arrow-left');
