@@ -2,20 +2,10 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>KPOP,K-POP,KOREA SINGERS,KOREA POP,KOREA POPS,KOREAN POP, TV, 4K MOVIE,FREE,  - MYWAY.KR</title>
-  <meta name="description" content="무료로 즐기는 최신 무료영화, 한국의 인기가수 노래모음, 만화 , 실시간 스트리밍 정보. Free movies, watch latest films for free!">
-  <meta property="og:title" content="무료영화, 최신 영화 추천 | Free Movies, Streaming - MYWAY.KR">
-  <meta property="og:description" content="최신 무료영화와 인기작들을 무료로 시청하세요. Free movies, streaming, live TV, K-Drama, all in one place!">
-
-
-
-
-
-  
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
+ <title>실시간 뉴스, 속보,  뉴스종합 링크, 각 신문사 언론사 종합링크,  - MYWAY.KR</title>
+<meta name="description" content="무료로 즐기는 최신 무료영화, 인기 영화, 드라마, 만화 , 실시간 스트리밍 정보. Free movies, watch latest films for free!">
+<meta property="og:title" content="무료영화, 최신 영화 추천 | Free Movies, Streaming - MYWAY.KR">
+<meta property="og:description" content="최신 무료영화와 인기작들을 무료로 시청하세요. Free movies, streaming, live TV, K-Drama, all in one place!">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <style>
     body {
@@ -37,6 +27,35 @@
       justify-content: center;
       margin-top: 20px;
       filter: drop-shadow(0 6px 28px #b176f340);
+      align-items: center;
+    }
+    .expand-btn {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #fff;
+      background: linear-gradient(95deg, #7ed6fb 70%, #b176f3 130%);
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      margin-right: 9px;
+      margin-left: 3px;
+      cursor: pointer;
+      box-shadow: 0 1px 6px #b176f32e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      outline: none;
+      transition: background 0.15s, box-shadow 0.12s;
+      z-index: 20;
+      opacity: 0.96;
+      text-decoration: none;
+      line-height: 1.2;
+    }
+    .expand-btn:active {
+      background: linear-gradient(95deg, #b176f3 30%, #7ed6fb 100%);
+      box-shadow: 0 2px 14px #b176f380;
+      color: #fff;
     }
     .screen-links {
       display: flex;
@@ -156,37 +175,8 @@
       left: 0;
       width: 100vw;
     }
-    /* === + 전체화면 버튼 스타일 === */
-    .fullscreen-btn {
-      font-size: 1.15em;
-      font-weight: bold;
-      color: #fff;
-      background: linear-gradient(95deg, #7ed6fb 70%, #b176f3 130%);
-      border: none;
-      border-radius: 50%;
-      width: 28px;
-      height: 28px;
-      margin-right: 9px;
-      margin-left: 3px;
-      cursor: pointer;
-      box-shadow: 0 1px 6px #b176f32e;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      outline: none;
-      transition: background 0.15s, box-shadow 0.12s;
-      z-index: 20;
-      opacity: 0.96;
-      padding: 0;
-    }
-    .fullscreen-btn:active {
-      background: linear-gradient(95deg, #b176f3 30%, #7ed6fb 100%);
-      box-shadow: 0 2px 14px #b176f380;
-      color: #fff;
-    }
   </style>
   <script>
-    // 새창/아이프레임 환경 분기 (탑윈도우면 window-top 클래스)
     (function(){
       if(window.self === window.top){
         document.addEventListener('DOMContentLoaded',function(){
@@ -197,20 +187,16 @@
   </script>
 </head>
 <body>
-  <!-- 네비게이션 바 (스크롤/드래그) -->
   <div class="screen-links-wrap" style="position:relative;">
-    <!-- + 전체화면 버튼 추가 -->
-    <button class="fullscreen-btn" id="fullscreen-btn" title="전체화면 토글">＋</button>
-    <!-- 좌 화살표 -->
+    <a href="#" class="expand-btn" onclick="expandCurrentFullPage(event)" title="전체화면 확대">＋</a>
     <button class="nav-arrow left" id="nav-arrow-left" aria-label="왼쪽 이동" hidden>
       <svg viewBox="0 0 13 20"><polygon points="9,3 2,10 9,17" fill="#fff" opacity="0.86"/></svg>
     </button>
     <div class="screen-links" id="parent-links">
-      
-      
+        
  <a href="#" class="active" onclick="showScreenParent(event, '00newsmain.html')">H</a>
 <a href="#" onclick="showScreenParent(event, 'https://news.daum.net/')">다음</a>
-      <a href="#" onclick="showScreenParent(event, 'https://news.naver.com//')">네이버</a>
+         <a href="#" onclick="showScreenParent(event, 'https://news.naver.com//')">네이버</a>
 <a href="#" onclick="showScreenParent(event, 'https://ytn.co.kr/')">YTN</a>
 <a href="#" onclick="showScreenParent(event, 'https://www.yna.co.kr/')">연합</a>
 <a href="#" onclick="showScreenParent(event, 'https://www.chosun.com/')">조선</a>
@@ -228,10 +214,25 @@
 <a href="#" onclick="showScreenParent(event, 'https://news.sbs.co.kr/news/newsMain.do')">SBS</a>
 <a href="#" onclick="showScreenParent(event, 'https://news.kbs.co.kr/news/pc/main/main.html?')">KBS</a>
 
+       
+<a href="#" onclick="showScreenParent(event, 'https://www.kmib.co.kr/')">국민</a>
+       <a href="#" onclick="showScreenParent(event, 'https://www.bloter.net/')">블로터</a>
+<a href="#" onclick="showScreenParent(event, 'https://zdnet.co.kr/')">ZDNET</a>
 
-      
+<a href="#" onclick="showScreenParent(event, 'https://news.jtbc.co.kr/')">JTBC뉴스</a>
+<a href="#" onclick="showScreenParent(event, 'https://www.dispatch.co.kr/')">디스패치</a>
+       
+
+<!-- 아래 중복 부분도 포함 -->
+
+<a href="#" onclick="showScreenParent(event, 'https://imnews.imbc.com/pc_main.html')">MBC 뉴스</a>
+<a href="#" onclick="showScreenParent(event, 'https://news.sbs.co.kr/news/newsMain.do')">SBS뉴스</a>
+<a href="#" onclick="showScreenParent(event, 'https://news.kbs.co.kr/news/pc/main/main.html?')">KBS뉴스</a>
+
+
+       
+       
     </div>
-    <!-- 우 화살표 -->
     <button class="nav-arrow right" id="nav-arrow-right" aria-label="오른쪽 이동" hidden>
       <svg viewBox="0 0 13 20"><polygon points="4,3 11,10 4,17" fill="#fff" opacity="0.88"/></svg>
     </button>
@@ -246,11 +247,39 @@
       e.target.classList.add('active');
       document.getElementById('main-frame').src = url;
     }
-    // 네비바 드래그/터치 스크롤
+
+    // (1) "확대" 버튼 클릭시: 현재 iframe src를 복제해 전체 페이지를 새창에 출력!
+    function expandCurrentFullPage(e) {
+      e.preventDefault();
+      var currentSrc = document.getElementById('main-frame').src;
+
+      // 새창에 전체 페이지 복사
+      var win = window.open('', '_blank');
+      if (!win) {
+        alert('팝업 차단을 해제해 주세요!');
+        return;
+      }
+
+      // 전체 HTML 복제 (여기서 src만 현재값으로 대체)
+      var html =
+        "<!DOCTYPE html>\n" +
+        document.documentElement.outerHTML.replace(/src="[^"]*"/, 'src="' + currentSrc + '"');
+
+      // 새창에 복사
+      win.document.open();
+      win.document.write(html);
+      win.document.close();
+
+      // 페이지가 다 그려진 뒤, 네비 클릭/드래그 등 스크립트가 정상 동작하도록 리로드 트리거
+      win.onload = function() {
+        // 혹시 필요한 추가 작업(없어도 됨)
+      };
+    }
+
+    // 네비바 드래그/터치 스크롤 (아래는 그대로)
     (function(){
       const nav = document.querySelector('.screen-links');
       let isDown = false, startX = 0, scrollLeft = 0;
-
       nav.addEventListener('mousedown', (e) => {
         isDown = true;
         startX = e.pageX - nav.offsetLeft;
@@ -270,7 +299,6 @@
         const x = e.pageX - nav.offsetLeft;
         nav.scrollLeft = scrollLeft - (x - startX);
       });
-
       // 모바일 터치
       let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
       nav.addEventListener('touchstart', function(e){
@@ -285,19 +313,17 @@
         nav.scrollLeft = touchScrollLeft - (x - touchStartX);
       });
     })();
-    // 처음 로드시 첫 메뉴 선택 효과
+
     window.addEventListener('DOMContentLoaded', ()=>{
       document.querySelectorAll('#parent-links a')[0].classList.add('active');
       checkNavOverflow();
     });
 
-    // ▶ 좌/우 화살표 (스크롤 가능할 때만 표시, 클릭 시 이동)
     const nav = document.querySelector('.screen-links');
     const leftArrow = document.getElementById('nav-arrow-left');
     const rightArrow = document.getElementById('nav-arrow-right');
     function checkNavOverflow() {
       if (!nav) return;
-      // 좌우 스크롤 가능한 경우만 화살표 노출
       if (nav.scrollWidth > nav.clientWidth) {
         leftArrow.hidden = nav.scrollLeft < 5;
         rightArrow.hidden = nav.scrollLeft + nav.clientWidth + 5 >= nav.scrollWidth;
@@ -310,7 +336,6 @@
     window.addEventListener('resize', checkNavOverflow);
     setTimeout(checkNavOverflow, 120);
 
-    // 좌/우 화살표 클릭 시 부드럽게 이동
     leftArrow.addEventListener('click', function() {
       nav.scrollBy({left: -110, behavior: 'smooth'});
       setTimeout(checkNavOverflow, 220);
@@ -323,31 +348,7 @@
     nav.addEventListener('mousedown', ()=>setTimeout(checkNavOverflow,220));
     nav.addEventListener('mouseup', ()=>setTimeout(checkNavOverflow,220));
     nav.addEventListener('touchend', ()=>setTimeout(checkNavOverflow,220));
-
-    // ★ 전체화면 버튼 기능
-    document.getElementById('fullscreen-btn').addEventListener('click', function() {
-      // 전체화면 해제 상태면 전체화면 진입
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-        this.innerText = "×"; // 아이콘 변환
-        this.title = "전체화면 해제";
-      } else {
-        document.exitFullscreen();
-        this.innerText = "＋"; // 다시 +
-        this.title = "전체화면 토글";
-      }
-    });
-    // 전체화면 상태 변화 감지해서 버튼 UI 자동복구(×→＋)
-    document.addEventListener('fullscreenchange', function() {
-      var btn = document.getElementById('fullscreen-btn');
-      if (!document.fullscreenElement) {
-        btn.innerText = "＋";
-        btn.title = "전체화면 토글";
-      } else {
-        btn.innerText = "×";
-        btn.title = "전체화면 해제";
-      }
-    });
   </script>
 </body>
 </html>
+ 
