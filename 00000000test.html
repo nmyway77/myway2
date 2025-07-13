@@ -31,6 +31,35 @@
       justify-content: center;
       margin-top: 20px;
       filter: drop-shadow(0 6px 28px #b176f340);
+      align-items: center;
+    }
+    .expand-btn {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #fff;
+      background: linear-gradient(95deg, #7ed6fb 70%, #b176f3 130%);
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      margin-right: 9px;
+      margin-left: 3px;
+      cursor: pointer;
+      box-shadow: 0 1px 6px #b176f32e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      outline: none;
+      transition: background 0.15s, box-shadow 0.12s;
+      z-index: 20;
+      opacity: 0.96;
+      text-decoration: none;
+      line-height: 1.2;
+    }
+    .expand-btn:active {
+      background: linear-gradient(95deg, #b176f3 30%, #7ed6fb 100%);
+      box-shadow: 0 2px 14px #b176f380;
+      color: #fff;
     }
     .screen-links {
       display: flex;
@@ -150,33 +179,6 @@
       left: 0;
       width: 100vw;
     }
-    .fullscreen-btn-myway {
-      font-size: 1.15em;
-      font-weight: bold;
-      color: #fff;
-      background: linear-gradient(95deg, #7ed6fb 70%, #b176f3 130%);
-      border: none;
-      border-radius: 50%;
-      width: 28px;
-      height: 28px;
-      margin-right: 9px;
-      margin-left: 3px;
-      cursor: pointer;
-      box-shadow: 0 1px 6px #b176f32e;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      outline: none;
-      transition: background 0.15s, box-shadow 0.12s;
-      z-index: 20;
-      opacity: 0.96;
-      padding: 0;
-    }
-    .fullscreen-btn-myway:active {
-      background: linear-gradient(95deg, #b176f3 30%, #7ed6fb 100%);
-      box-shadow: 0 2px 14px #b176f380;
-      color: #fff;
-    }
   </style>
   <script>
     (function(){
@@ -189,8 +191,11 @@
   </script>
 </head>
 <body>
+  <!-- 네비게이션 바 (스크롤/드래그) -->
   <div class="screen-links-wrap" style="position:relative;">
-    <button class="fullscreen-btn-myway" id="fullscreen-btn-myway" title="전체화면 토글">＋</button>
+    <!-- + (확대) 버튼 추가 -->
+    <a href="#" class="expand-btn" onclick="expandCurrentPage(event)" title="지금 보고 있는 페이지 새창에서 확대">＋</a>
+    <!-- 좌 화살표 -->
     <button class="nav-arrow left" id="nav-arrow-left" aria-label="왼쪽 이동" hidden>
       <svg viewBox="0 0 13 20"><polygon points="9,3 2,10 9,17" fill="#fff" opacity="0.86"/></svg>
     </button>
@@ -204,6 +209,7 @@
       <a href="#" onclick="showScreenParent(event, 'https://myway.kr/00making777.html')">L1</a>
       <a href="#" onclick="showScreenParent(event, 'https://myway.kr/making77.html')">L2</a>
     </div>
+    <!-- 우 화살표 -->
     <button class="nav-arrow right" id="nav-arrow-right" aria-label="오른쪽 이동" hidden>
       <svg viewBox="0 0 13 20"><polygon points="4,3 11,10 4,17" fill="#fff" opacity="0.88"/></svg>
     </button>
@@ -211,65 +217,22 @@
   <iframe id="main-frame" src="https://myway.kr/00makingcircletext.html">dcinsid<"></iframe>
 
   <script>
-    // (1) 전체화면 토글/상태관리
-    const fsBtn = document.getElementById('fullscreen-btn-myway');
-    let mywayFullscreenRecover = false;
-
-    function enterFullscreenIfNeeded() {
-      if (mywayFullscreenRecover && !document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-      }
+    // (확대) 버튼 클릭시 현재 보고 있는 페이지 새창으로!
+    function expandCurrentPage(e) {
+      e.preventDefault();
+      var src = document.getElementById('main-frame').src;
+      window.open(src, '_blank');
     }
 
-    fsBtn.addEventListener('click', function() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-        this.innerText = "×";
-        this.title = "전체화면 해제";
-        mywayFullscreenRecover = true;
-      } else {
-        document.exitFullscreen();
-        this.innerText = "＋";
-        this.title = "전체화면 토글";
-        mywayFullscreenRecover = false;
-      }
-    });
-
-    document.addEventListener('fullscreenchange', function() {
-      if (!document.fullscreenElement) {
-        fsBtn.innerText = "＋";
-        fsBtn.title = "전체화면 토글";
-      } else {
-        fsBtn.innerText = "×";
-        fsBtn.title = "전체화면 해제";
-      }
-    });
-
-    // (2) 네비 링크 클릭 시 전체화면 복구
+    // 네비바 클릭시 해당 페이지 출력
     function showScreenParent(e, url) {
       e.preventDefault();
       document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
       e.target.classList.add('active');
       document.getElementById('main-frame').src = url;
-      // 네비 클릭 후 전체화면 자동 복구 시도
-      setTimeout(enterFullscreenIfNeeded, 30);
     }
 
-    // (3) "가져오기" 버튼/input 클릭 시 전체화면 복구
-    document.addEventListener('click', function(e){
-      // input[type="file"], [id*='import'], [data-import], button[text*='가져오기'], 등등
-      const el = e.target;
-      if (
-        (el.tagName === 'INPUT' && el.type === 'file') ||
-        (el.tagName === 'BUTTON' && el.textContent && (el.textContent.indexOf('가져오기') !== -1 || el.textContent.indexOf('Import') !== -1)) ||
-        (el.id && el.id.indexOf('import') !== -1) ||
-        (el.dataset && el.dataset.import)
-      ) {
-        setTimeout(enterFullscreenIfNeeded, 200); // import 동작 후 전체화면 복구
-      }
-    }, true);
-
-    // (4) 네비바 드래그/터치/화살표 등 기존 코드(그대로)
+    // 네비바 드래그/터치 스크롤
     (function(){
       const nav = document.querySelector('.screen-links');
       let isDown = false, startX = 0, scrollLeft = 0;
@@ -292,6 +255,7 @@
         const x = e.pageX - nav.offsetLeft;
         nav.scrollLeft = scrollLeft - (x - startX);
       });
+      // 모바일 터치
       let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
       nav.addEventListener('touchstart', function(e){
         touchDragging = true;
