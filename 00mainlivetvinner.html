@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-
+ 
   <meta charset="UTF-8">
   <title>KPOP,K-POP,KOREA SINGERS,KOREA POP,KOREA POPS,KOREAN POP, TV, 4K MOVIE,FREE,  - MYWAY.KR</title>
   <meta name="description" content="무료로 즐기는 최신 무료영화, 한국의 인기가수 노래모음, 만화 , 실시간 스트리밍 정보. Free movies, watch latest films for free!">
@@ -204,7 +204,8 @@
       <svg viewBox="0 0 13 20"><polygon points="9,3 2,10 9,17" fill="#fff" opacity="0.86"/></svg>
     </button>
     <div class="screen-links" id="parent-links">
-        
+
+
       
  <a href="#" onclick="showScreenParent(event, '00tvmain2.html')">H</a>
  
@@ -243,8 +244,8 @@
         <a href="#" onclick="showScreenParent(event, 'foxtv.html')">FOX NEWS</a>
 
 
-       
-       
+
+      
     </div>
     <button class="nav-arrow right" id="nav-arrow-right" aria-label="오른쪽 이동" hidden>
       <svg viewBox="0 0 13 20"><polygon points="4,3 11,10 4,17" fill="#fff" opacity="0.88"/></svg>
@@ -253,6 +254,29 @@
   <iframe id="main-frame" src="00tvmain2.html">dcinsid<"></iframe>
 
   <script>
+    // "확대" 버튼 클릭시: 네비/전체페이지를 새창 복제, 그리고 기존(작은)창은 영상/소리 즉시 정지!
+    function expandCurrentFullPage(e) {
+      e.preventDefault();
+      var frame = document.getElementById('main-frame');
+      var currentSrc = frame.src;
+
+      // 1. 새창을 열어서 전체페이지+현재 src 전달 (이전과 동일)
+      var win = window.open('', '_blank');
+      if (!win) {
+        alert('팝업 차단을 해제해 주세요!');
+        return;
+      }
+      var html =
+        "<!DOCTYPE html>\n" +
+        document.documentElement.outerHTML.replace(/src="[^"]*"/, 'src="' + currentSrc + '"');
+      win.document.open();
+      win.document.write(html);
+      win.document.close();
+
+      // 2. 기존 작은 창의 동영상/소리 즉시 정지 (iframe src를 blank로!)
+      frame.src = 'about:blank';
+    }
+
     // 네비바 클릭시 해당 페이지 출력
     function showScreenParent(e, url) {
       e.preventDefault();
@@ -261,35 +285,7 @@
       document.getElementById('main-frame').src = url;
     }
 
-    // (1) "확대" 버튼 클릭시: 현재 iframe src를 복제해 전체 페이지를 새창에 출력!
-    function expandCurrentFullPage(e) {
-      e.preventDefault();
-      var currentSrc = document.getElementById('main-frame').src;
-
-      // 새창에 전체 페이지 복사
-      var win = window.open('', '_blank');
-      if (!win) {
-        alert('팝업 차단을 해제해 주세요!');
-        return;
-      }
-
-      // 전체 HTML 복제 (여기서 src만 현재값으로 대체)
-      var html =
-        "<!DOCTYPE html>\n" +
-        document.documentElement.outerHTML.replace(/src="[^"]*"/, 'src="' + currentSrc + '"');
-
-      // 새창에 복사
-      win.document.open();
-      win.document.write(html);
-      win.document.close();
-
-      // 페이지가 다 그려진 뒤, 네비 클릭/드래그 등 스크립트가 정상 동작하도록 리로드 트리거
-      win.onload = function() {
-        // 혹시 필요한 추가 작업(없어도 됨)
-      };
-    }
-
-    // 네비바 드래그/터치 스크롤 (아래는 그대로)
+    // 네비바 드래그/터치 스크롤
     (function(){
       const nav = document.querySelector('.screen-links');
       let isDown = false, startX = 0, scrollLeft = 0;
@@ -364,4 +360,3 @@
   </script>
 </body>
 </html>
- 
