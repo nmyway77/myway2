@@ -2,20 +2,16 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-  <title>KPOP,K-POP,KOREA SINGERS,KOREA POP,KOREA POPS,KOREAN POP, TV, 4K MOVIE,FREE,  - MYWAY.KR</title>
-  <meta name="description" content="무료로 즐기는 최신 무료영화, 한국의 인기가수 노래모음, 만화 , 실시간 스트리밍 정보. Free movies, watch latest films for free!">
-  <meta property="og:title" content="무료영화, 최신 영화 추천 | Free Movies, Streaming - MYWAY.KR">
-  <meta property="og:description" content="최신 무료영화와 인기작들을 무료로 시청하세요. Free movies, streaming, live TV, K-Drama, all in one place!">
+   <title>뉴스사이트 모음,LIVE NEWS</title>
+<meta name="description" content="무료로 즐기는 최신 무료영화, 한국의 인기가수 노래모음, 만화 , 여성잡지모음. Free movies, watch latest films for free!">
+<meta property="og:title" content="무료영화, 최신 영화 추천 | Free Movies, Streaming - MYWAY.KR">
+<meta property="og:description" content="최신 무료영화와 인기작들을 무료로 시청하세요. Free movies, streaming, live TV, K-Drama, all in one place!">
 
 
-
-
-
-  
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <style>
     body {
@@ -203,7 +199,14 @@
       <svg viewBox="0 0 13 20"><polygon points="9,3 2,10 9,17" fill="#fff" opacity="0.86"/></svg>
     </button>
     <div class="screen-links" id="parent-links">
- <a href="#" class="active" onclick="showScreenParent(event, '00newsmain.html')">H</a>
+
+
+
+
+
+
+        
+       <a href="#" class="active" onclick="showScreenParent(event, '00newsmain.html')">H</a>
 <a href="#" onclick="showScreenParent(event, 'https://news.daum.net/')">다음</a>
          <a href="#" onclick="showScreenParent(event, 'https://news.naver.com//')">네이버</a>
 <a href="#" onclick="showScreenParent(event, 'https://ytn.co.kr/')">YTN</a>
@@ -222,6 +225,12 @@
        <a href="#" onclick="showScreenParent(event, 'https://imnews.imbc.com/pc_main.html')">MBC</a>
 <a href="#" onclick="showScreenParent(event, 'https://news.sbs.co.kr/news/newsMain.do')">SBS</a>
 <a href="#" onclick="showScreenParent(event, 'https://news.kbs.co.kr/news/pc/main/main.html?')">KBS</a>
+
+
+
+
+
+        
     </div>
     <button class="nav-arrow right" id="nav-arrow-right" aria-label="오른쪽 이동" hidden>
       <svg viewBox="0 0 13 20"><polygon points="4,3 11,10 4,17" fill="#fff" opacity="0.88"/></svg>
@@ -235,19 +244,15 @@
       e.preventDefault();
       var frame = document.getElementById('main-frame');
       var currentSrc = frame.src;
-      // ?src=xxxx 식으로 파라미터 전달 (encodeURIComponent로 안전하게)
       window.open(window.location.pathname + '?src=' + encodeURIComponent(currentSrc), '_blank');
-      // 기존 창의 동영상 정지 (iframe 비우기)
       frame.src = 'about:blank';
     }
 
-    // location.search에서 src값 읽기
     function getParam(name) {
       let params = new URLSearchParams(window.location.search);
       return params.get(name);
     }
 
-    // 페이지 로드시, ?src= 있으면 해당 주소로 iframe 띄움
     window.addEventListener('DOMContentLoaded', function() {
       var newSrc = getParam('src');
       if (newSrc) {
@@ -257,12 +262,22 @@
       checkNavOverflow();
     });
 
-    // 네비바 클릭시 해당 페이지 출력
+    // 네비바 클릭시 해당 페이지 출력 + 중앙 오도록
     function showScreenParent(e, url) {
       e.preventDefault();
       document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
       e.target.classList.add('active');
       document.getElementById('main-frame').src = url;
+
+      // 클릭한 메뉴 중앙 오도록 스크롤 (추가)
+      const parent = document.getElementById('parent-links');
+      const el = e.target;
+      if (parent && el) {
+        const offset = el.offsetLeft - parent.offsetLeft
+          - parent.clientWidth / 2
+          + el.clientWidth / 2;
+        parent.scrollTo({ left: offset, behavior: 'smooth' });
+      }
     }
 
     // 네비바 드래그/터치 스크롤 (이하 동일)
@@ -334,5 +349,3 @@
   </script>
 </body>
 </html>
-
- 
