@@ -2,7 +2,10 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>MYWAY.KR: 네비바</title>
+   <title>live cctv,korea live cctv</title>
+<meta name="description" content="무료로 즐기는 최신 무료영화, 한국의 인기가수 노래모음, 만화 , 여성잡지모음. Free movies, watch latest films for free!">
+<meta property="og:title" content="무료영화, 최신 영화 추천 | Free Movies, Streaming - MYWAY.KR">
+<meta property="og:description" content="최신 무료영화와 인기작들을 무료로 시청하세요. Free movies, streaming, live TV, K-Drama, all in one place!">
 
 
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -10,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="manifest" href="/site.webmanifest">
 
-  
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -69,11 +72,7 @@
       overflow-y: hidden;
       scrollbar-width: none;
       -ms-overflow-style: none;
-
-      
       min-height: 34px;
-
-      
       min-width: 220px;
       cursor: grab;
       transition: box-shadow 0.2s;
@@ -110,10 +109,7 @@
     #main-frame {
       position: fixed;
       left: 0;
-      
-      top: 55px;
-
-      
+      top: 45px;
       width: 100vw;
       height: calc(100vh - 96px);
       border: none;
@@ -186,8 +182,6 @@
         <svg viewBox="0 0 13 20"><polygon points="9,3 2,10 9,17" fill="#fff" opacity="0.86"/></svg>
       </button>
       <div class="screen-links" id="parent-links">
-
-
         
 <a href="#" class="active" onclick="showScreenParent(event, '00maincctv.html')">H</a>
 <a href="#" onclick="showScreenParent(event, 'https://www.ulleung.go.kr/live/index.do')">독도 LIVE</a>
@@ -202,7 +196,9 @@
 <a href="#" onclick="showScreenParent(event, 'https://www.roadplus.co.kr/main/main.do')">고속도로1</a>
 <a href="#" onclick="window.open('https://www.its.go.kr/map/cctv', '_blank')">고속도로2</a>
 
-        
+       
+       
+
       </div>
       <!-- 우 화살표 -->
       <button class="nav-arrow right" id="nav-arrow-right" aria-label="오른쪽 이동" hidden>
@@ -219,13 +215,24 @@
       if(this.value) location.href = this.value;
     });
 
-    // 네비바 클릭시 해당 페이지 출력
+    // 네비바 클릭시 해당 페이지 출력 + 클릭 메뉴 중앙 이동
     function showScreenParent(e, url) {
       e.preventDefault();
       document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
       e.target.classList.add('active');
       document.getElementById('main-frame').src = url;
+
+      // --- 클릭한 메뉴를 네비바 중앙에 오도록 스크롤 ---
+      const parent = document.getElementById('parent-links');
+      const el = e.target;
+      if (parent && el) {
+        const offset = el.offsetLeft - parent.offsetLeft
+          - parent.clientWidth / 2
+          + el.clientWidth / 2;
+        parent.scrollTo({ left: offset, behavior: 'smooth' });
+      }
     }
+
     // 네비바 드래그/터치 스크롤
     (function(){
       const nav = document.querySelector('.screen-links');
@@ -265,6 +272,7 @@
         nav.scrollLeft = touchScrollLeft - (x - touchStartX);
       });
     })();
+
     // 처음 로드시 첫 메뉴 선택 효과
     window.addEventListener('DOMContentLoaded', ()=>{
       document.querySelectorAll('#parent-links a')[0].classList.add('active');
