@@ -1,13 +1,49 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "MYWAY.KR",
+  "url": "https://myway.kr",
+  "logo": "https://myway.kr/mywaylogo.png"
+}
+</script>
+
+
+  
   <meta charset="UTF-8">
-  <title>MYWAY.KR: 멀티검색, 나만의 디스플레이, 즐겨찾기</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Myway.kr,myway,kpop,KOREA TRAVEL,무료만화, 무료영화,KPOP,KDRAMA,K-POP,KMOVIE,K-DRAMA,K-MOVIE,  링크사이트 총정리 - MYWAY.KR</title>
+
+<link rel="icon" href="/mywaylogo.png" type="image/png">
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+
+  
+  
+
+  
+<meta name="description" content="무료로 볼 수 있는 만화, 영화, 웹툰 링크사이트를 모아둔 곳. 최신 무료만화, 무료영화 정보 매일 업데이트!">
+<base target="_blank">
+<meta property="og:title" content="MYWAY.KR: 멀티검색 & 검색엔진& 유튜브 썸네일 추출기" />
+<meta property="og:description" content="무료만화, 무료영화,KPOP,KDRAMA,K-POP,KMOVIE,K-DRAMA,K-MOVIE,KOREA TRAVEL, 링크사이트 등 다양한 무료 컨텐츠 모음. MYWAY.KR에서 최신 정보 확인하세요!" />
+<meta property="og:url" content="https://myway.kr" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://myway.kr/mywaylogo.png" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="naver-site-verification" content="4e88b51e170829dfb01ce587eaf5575804dd5a2" />
   <style>
     body {
       font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
-      background: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
+       background: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
       margin: 0;
       padding: 0;
       min-height: 100vh;
@@ -25,7 +61,9 @@
     }
     .searchbar-wrap {
       position: relative;
+      
       width: 650px;
+      
       max-width: 97vw;
       height: 68px;
       display: flex;
@@ -106,6 +144,7 @@
       fill: none;
       transition: stroke 0.12s;
     }
+    /* 네비바 영역 (드래그로 스크롤) */
     .screen-links-wrap {
       width: 100vw;
       position: relative;
@@ -120,7 +159,7 @@
     .screen-links {
       display: flex;
       gap: 15px;
-      font-size: 0.96rem;
+     font-size: 0.96rem;
       font-weight: 500;
       color: #fff;
       white-space: nowrap;
@@ -134,7 +173,14 @@
       scrollbar-width: none;
       -ms-overflow-style: none;
       margin: 0 auto;
-      max-width: 900px;
+
+
+      
+      max-width: 1800px;
+
+
+
+      
       min-width: 220px;
       cursor: grab;
       transition: none;
@@ -145,6 +191,12 @@
       text-decoration: none;
       padding: 2px 8px;
       border-radius: 8px;
+
+
+      
+
+
+      
       font-weight: 500;
       font-size: 1em;
       margin: 0 2px;
@@ -168,23 +220,6 @@
       .screen-links-wrap { padding: 0;}
       .searchbar-outer { margin-bottom: 10px !important; }
     }
-    /* --- 확대버튼 스타일(가장 심플/깨지지 않음) --- */
-    .expand-btn {
-      display: inline-block;
-      margin: 12px auto 2px auto;
-      background: #d8e7ff;
-      color: #493ab2;
-      font-size: 0.98rem;
-      border: none;
-      border-radius: 16px;
-      padding: 4px 15px 4px 13px;
-      cursor: pointer;
-      font-weight: bold;
-      box-shadow: 0 2px 10px #98b9e555;
-      letter-spacing: 0.02em;
-      transition: background 0.17s;
-    }
-    .expand-btn:hover { background: #c0d4fa; color: #1f1940; }
   </style>
 </head>
 <body>
@@ -196,8 +231,9 @@
           <select class="searchbar-select" id="engineParent">
             <option value="naver">네이버 ▼</option>
             <option value="google">Google </option>
+  <option value="Reddit">Reddit</option>
             <option value="youtube">Youtube </option>
-            <option value="soundcloud">음악검색 </option>
+            <option value="soundcloud">SoundCloud </option>
             <option value="daum">다음 </option>
             <option value="duckduckgo">DuckDuckGo </option>
             <option value="msn">MSN </option>
@@ -214,7 +250,7 @@
             <option value="amazon">아마존 (한글/영어) </option>
             <option value="ebay">이베이 (한글/영어) </option>
             <option value="romanize">한글이름 → 영어 </option>
-            <option value="jusoen">한글주소 → 영어 </option>
+             <option value="jusoen">한글주소 → 영어 </option>
             <option value="postcode">우편번호 검색 </option>
             <option value="phone_114">114 전화번호 검색 </option>
             <option value="hanja_naver">네이버 한자검색 </option>
@@ -248,42 +284,54 @@
       </form>
     </div>
   </div>
-
   <!-- 네비게이션 텍스트 (가운데정렬+좌우이동) -->
   <div class="screen-links-wrap">
     <div class="screen-links" id="parent-links">
-      <a href="#" onclick="showScreenParent(event, '00main00000.html')">A</a>
-      <a href="#" onclick="showScreenParent(event, '00makingcircletext.html')">MK</a>
-      <a href="#" onclick="showScreenParent(event, '00newsmain2.html')">NEWS</a>
-      <a href="#" onclick="showScreenParent(event, '00maintvinner2.html')">TV</a>
-      <a href="#" onclick="showScreenParent(event, '00mainmovieinner.html')">MOVIE</a>
-      <a href="#" onclick="showScreenParent(event, '00mainmaga.html')">MZ</a>
-      <a href="#" onclick="showScreenParent(event, '00mainbbsinner.html')">BBS</a>
-      <a href="#" onclick="showScreenParent(event, '00maincctvinner2.html')">CCTV</a>
-      <a href="#" onclick="showScreenParent(event, '00aimain3.html')">H</a>
+  
+          <a href="#" onclick="showScreenParent(event, '00mainbbsinner.html')">BBS</a>
+     
+    
+      <a href="#" onclick="showScreenParent(event, '00mainnewsinner.html')">NEWS</a>
+        <a href="#" onclick="showScreenParent(event, '00mainradioinner.html')">RADIO</a>
+      <a href="#" onclick="showScreenParent(event, '00mainlivetvinner.html')">LIVE TV</a>
+      <a href="#" onclick="showScreenParent(event, '00maintvinner2.html')">VOD</a>
+        <a href="#" onclick="showScreenParent(event, '00mainmovieinner.html')">MOVIE</a>
+ <a href="#" onclick="showScreenParent(event, '00mainmusicinner.html')">MUSIC</a>
+ <a href="#" onclick="showScreenParent(event, '00maincctvinner2.html')">CCTV</a>
+       <a href="#" onclick="showScreenParent(event, 'indexinner.html')">H</a>
+                 <a href="#" onclick="showScreenParent(event, '00mainmakinginner.html')">Making</a>   
+        <a href="#" onclick="showScreenParent(event, '00mainmagazineinner.html')">Magazine</a>
+   
+ 
+      
       <a href="#" onclick="showScreenParent(event, '00maincoin.html')">COIN</a>
-      <a href="#" onclick="showScreenParent(event, '00maincomics.html')">CM</a>
-      <a href="#" onclick="showScreenParent(event, '00mainshopping.html')">SHOP</a>
-      <a href="#" onclick="showScreenParent(event, 'mainpage43.html')">I</a>
+      
+  <a href="#" onclick="showScreenParent(event, '00maincomics.html')">MAN HWA</a>
+
+         
+    
+    
+    <a href="#" onclick="showScreenParent(event, '00mainshopping.html')">SHOP</a>
+    
+
       <a href="#" onclick="showScreenParent(event, 'mainpage2.html')">L</a>
       <a href="#" onclick="showScreenParent(event, '00mainuseful.html')">U</a>
+      
     </div>
   </div>
-
-  <!-- ★ 확대 버튼: iframe 바로 위에 위치 (위치 변경 원하면 어디든 이동 가능) -->
-  <div style="text-align:center;">
-    <button class="expand-btn" onclick="window.open(document.getElementById('main-frame').src, '_blank', 'width='+screen.availWidth+',height='+screen.availHeight+',top=0,left=0'); return false;">
-      + (확대)
-    </button>
-  </div>
-
-  <iframe id="main-frame" src="00mainmovieinner.html" allowfullscreen style="position:fixed;left:0;top:158px;width:100vw;height:calc(100vh - 160px);border:none;margin:0;background:#f5f7fa;z-index:10;border-radius:0;display:block;"></iframe>
+  
+  <iframe id="main-frame" src="indexinner.html" allowfullscreen style="position:fixed;left:0;top:158px;width:100vw;height:calc(100vh - 160px);border:none;margin:0;background:#f5f7fa;z-index:10;border-radius:0;display:block;"></iframe>
+ 
+  
+  
+  
   
   <script>
-    // 검색엔진 기능(기존 그대로)
+    // 검색엔진 기능(기존 그대로, 필요하면 추가)
     var snarkEnginesParent = [
       { key: "naver",  home: "https://www.naver.com/", search: "https://search.naver.com/search.naver?query=" },
       { key: "google", home: "https://www.google.com/webhp?hl=en&gl=au", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=" },
+      { key: "Reddit", home: "https://www.reddit.com/", search: "https://www.reddit.com/search/?q=" },
       { key: "youtube", home: "https://www.youtube.com/", search: "https://www.youtube.com/results?search_query=" },
       { key: "soundcloud", home: "https://soundcloud.com/", search: "https://soundcloud.com/search?q=" },
       { key: "daum", home: "https://www.daum.net/", search: "https://search.daum.net/search?q=" },
@@ -298,11 +346,18 @@
       { key: "bunjang", home: "https://m.bunjang.co.kr", search: "https://m.bunjang.co.kr/search/products?q=" },
       { key: "danawa", home: "https://www.danawa.com/", search: "https://search.danawa.com/dsearch.php?k1=" },
       { key: "coupang", home: "https://www.coupang.com", search: "https://www.coupang.com/np/search?q=" },
-      { key: "aliexpress", home: "https://ko.aliexpress.com/", search: "https://ko.aliexpress.com/w/wholesale-", searchPostfix: ".html" },
+      
+     { key: "aliexpress", home: "https://ko.aliexpress.com/", search: "https://ko.aliexpress.com/w/wholesale-", searchPostfix: ".html" },
+
+
+
+
+      
       { key: "amazon", home: "https://www.amazon.com/", search: "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=" },
       { key: "ebay", home: "https://www.ebay.com/", search: "https://www.ebay.com/sch/i.html?_from=R40&_trksid=p2050601.m570.l1313&_nkw=" },
       { key: "romanize", home: "https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38", search: "https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38&idx=&act=&searchKeyword=" },
-      { key: "jusoen", home: "https://www.jusoen.com/", search: "https://www.jusoen.com/addreng.asp?p1=" },
+     { key: "jusoen", home: "https://www.jusoen.com/", search: "https://www.jusoen.com/addreng.asp?p1=" },
+      
       { key: "postcode", home: "https://search.naver.com/search.naver?sm=tab_hty.top&where=nexearch&ie=utf8&query=%EC%9A%B0%EC%B2%B4%EA%B5%AD+%EC%9A%B0%ED%8E%B8%EB%B2%88%ED%98%B8&where=nexearch", search: "https://www.juso.go.kr/support/AddressMainSearch.do?searchKeyword=" },
       { key: "phone_114", home: "https://www.114.co.kr", search: "https://www.114.co.kr/search/result/all?query=" },
       { key: "hanja_naver", home: "http://hanja.naver.com", search: "http://hanja.naver.com/search?query=" },
@@ -331,9 +386,16 @@
       const query = document.getElementById('queryParent').value.trim();
       const engineObj = snarkEnginesParent.find(e => e.key === engineKey);
       if (engineObj) {
-        let url = query
-          ? (engineObj.search + encodeURIComponent(query) + (engineObj.searchPostfix || ''))
-          : engineObj.home;
+
+       
+     let url = query
+  ? (engineObj.search + encodeURIComponent(query) + (engineObj.searchPostfix || ''))
+  : engineObj.home;
+
+
+
+
+       
         window.open(url, "_blank");
       }
     };
@@ -344,10 +406,19 @@
       var frame = document.getElementById('main-frame');
       frame.src = url;
     }
+
     // 네비바 드래그/터치로 좌우 스크롤 (순서 바꾸기 아님)
     (function(){
       const nav = document.querySelector('.screen-links');
+
+     
       let isDown = false, startX = 0, scrollLeft = 0;
+
+
+
+
+     
+
       nav.addEventListener('mousedown', (e) => {
         isDown = true;
         startX = e.pageX - nav.offsetLeft;
@@ -367,6 +438,7 @@
         const x = e.pageX - nav.offsetLeft;
         nav.scrollLeft = scrollLeft - (x - startX);
       });
+
       // 모바일 터치
       let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
       nav.addEventListener('touchstart', function(e){
