@@ -1,400 +1,397 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "MYWAY.KR",
+  "url": "https://myway.kr",
+  "logo": "https://myway.kr/mywaylogo.png"
+}
+</script>
   <meta charset="UTF-8">
-  <title>아이프레임 유튜브 영상+제목</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Myway.kr,myway,kpop,KOREA TRAVEL,무료만화, 무료영화,KPOP,KDRAMA,K-POP,KMOVIE,K-DRAMA,K-MOVIE,  링크사이트 총정리 - MYWAY.KR</title>
+
+<link rel="icon" href="/mywaylogo.png" type="image/png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+
+<meta name="description" content="무료로 볼 수 있는 만화, 영화, 웹툰 링크사이트를 모아둔 곳. 최신 무료만화, 무료영화 정보 매일 업데이트!">
+<base target="_blank">
+<meta property="og:title" content="MYWAY.KR: 멀티검색 & 검색엔진& 유튜브 썸네일 추출기" />
+<meta property="og:description" content="무료만화, 무료영화,KPOP,KDRAMA,K-POP,KMOVIE,K-DRAMA,K-MOVIE,KOREA TRAVEL, 링크사이트 등 다양한 무료 컨텐츠 모음. MYWAY.KR에서 최신 정보 확인하세요!" />
+<meta property="og:url" content="https://myway.kr" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://myway.kr/mywaylogo.png" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="naver-site-verification" content="4e88b51e170829dfb01ce587eaf5575804dd5a2" />
   <style>
-    html, body { margin:0; padding:0; height:100%; background:#21253a; }
-    body { min-height:100vh; min-width:100vw;}
-    .yt-container {
-      min-height:100vh; width:100vw;
-      display:flex; align-items:center; justify-content:center;
-      background:linear-gradient(135deg, #232845 0%, #222b48 100%);
-      padding-bottom:190px;
-      box-sizing:border-box;
+    body {
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+       background: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow: hidden;
     }
-    .yt-inner {
-      width:92vw; max-width:880px;
-      display:flex; flex-direction:column; align-items:center;
-      gap:18px;
-    }
-    .yt-title {
-      color:#fff; font-size:1.35rem; font-weight:600;
-      letter-spacing:0.02em; margin-bottom:3px; margin-top:6px;
-      text-shadow:0 2px 12px #0019;
-      text-align:center;
-      line-height:1.3;
-      word-break:keep-all;
-      background:rgba(36,42,82,0.7); border-radius:12px; padding:10px 22px 7px 22px;
-      box-shadow:0 2px 16px #2229;
-      max-width:800px;
-    }
-    .yt-frame-box {
-      width:100%; aspect-ratio:16/9;
-      background:#000; border-radius:18px; box-shadow:0 4px 40px #2232ab55;
-      overflow:hidden; display:flex; align-items:center; justify-content:center;
-    }
-    iframe, video {
-      width:100%; height:100%; border:0; border-radius:18px; background:#000; display:block;
-      min-height:180px;
-    }
-    .url-input-wrap {
-      margin-bottom: 14px;
-      width: 100%;
+    .searchbar-outer {
       display: flex;
       justify-content: center;
+      align-items: flex-start;
+      width: 100vw;
+      margin-top: 36px;
+      margin-bottom: 22px;
+      position: relative;
+      z-index: 10;
+    }
+    .searchbar-wrap {
+      position: relative;
+      width: 650px;
+      max-width: 97vw;
+      height: 68px;
+      display: flex;
       align-items: center;
-      gap: 9px;
+      justify-content: center;
+      z-index: 11;
     }
-    .url-input-wrap input {
-      width: 410px; max-width: 66vw;
-      padding: 10px 18px; border-radius: 9px;
-      border: 1.5px solid #a6adcb;
-      font-size: 1.11rem;
-      outline: none;
-      margin-right: 4px;
+    .searchbar-form {
+      width: 100%; height: 100%;
+      display: flex; align-items: center;
+      position: relative;
+      z-index: 2;
     }
-    .url-input-wrap button {
-      padding: 9px 20px;
-      border-radius: 9px; border: none;
-      background: #2b3a87;
-      color: #fff;
-      font-weight: bold;
-      font-size: 1.05rem;
-      cursor: pointer;
-      transition: background 0.14s;
+    .searchbar-box {
+      position: relative;
+      display: flex; align-items: center;
+      background: linear-gradient(180deg, #fafdff 70%, #e6f0ff 100%);
+      border-radius: 38px;
+      width: 100%;
+      height: 100%;
+      box-shadow: 0 6px 32px 0 rgba(90,100,180,0.13), 0 2px 8px 0 rgba(255,255,255,0.14) inset;
+      padding: 0 24px 0 18px;
+      overflow: hidden;
     }
-    .url-input-wrap button:hover { background: #4159cb; }
-    /* ----- 왼쪽 네비 추가 ----- */
-    .side-nav {
-      position:fixed; left:0; top:0; bottom:0; width:220px;
-      background:#202242; z-index:50; display:flex; flex-direction:column;
-      border-right:1.5px solid #18192f;
-      min-height:100vh;
-      box-shadow:0 4px 20px #23243c22;
-    }
-    .side-nav .nav-btns {
-      display:flex; flex-direction:column; gap:0; margin-top:16px;
-    }
-    .side-nav .nav-btns button {
-      background:#243468; color:#fff; border:none; outline:none;
-      padding:14px 0; font-size:1rem; font-weight:500; cursor:pointer;
-      border-bottom:1px solid #23274c; transition:background 0.18s;
-    }
-    .side-nav .nav-btns button:hover { background:#3a4991; }
-    .side-nav .video-list {
-      flex:1; overflow-y:auto; margin-top:8px;
-      display:flex; flex-direction:column; gap:0;
-    }
-    .side-nav .video-item-wrap {
-      display:flex; align-items:center; gap:0; position:relative;
-      user-select:none;
-    }
-    .side-nav .video-item {
-      flex:1 1 auto;
-      padding: 13px 8px 13px 18px; border-bottom:1px solid #21254b;
-      font-size:1rem; color:#c9d1ee; background:none; cursor:pointer;
-      text-align:left; outline:none; border:none;
-      transition:background 0.13s;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-      border-right: none;
+    .searchbar-select {
       background: transparent;
+      border: none;
+      padding: 0 15px 0 3px;
+      font-size: 1.13rem;
+      color: #483ca3;
+      font-weight: bold;
+      outline: none;
+      cursor: pointer;
+      min-width: 100px;
+      z-index: 4;
+      height: 44px;
+      border-radius: 16px;
+      margin-right: 7px;
     }
-    .side-nav .video-item.active,
-    .side-nav .video-item:hover {
-      background: #2b3882; color: #fff;
+    .searchbar-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: #6e4ac3;
+      outline: none;
+      font-size: 1.14rem;
+      padding: 0 13px;
+      height: 44px;
+      z-index: 4;
+      font-family: inherit;
     }
-    .side-nav .item-actions {
-      display: flex; flex-direction: row; gap:0;
+    .searchbar-input::placeholder {
+      color: #b8aee8;
+      opacity: 1;
+      letter-spacing: 0.01em;
+    }
+    .searchbar-btn {
+      background: none;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      min-width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      margin-left: 2px;
       margin-right: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 4;
+      transition: background 0.17s;
     }
-    .side-nav .item-actions button {
-      background: none; border:none; color:#7ea7ff;
-      font-size:0.93rem; font-weight:700; cursor:pointer; padding: 0 4px;
-      margin-left: 3px; border-radius:5px;
-      transition:background 0.12s;
+    .searchbar-btn svg {
+      width: 28px; height: 28px;
+      stroke: #856ad3;
+      stroke-width: 2.6;
+      fill: none;
+      transition: stroke 0.12s;
     }
-    .side-nav .item-actions button:hover {
-      background: #314b87; color:#fff;
+    /* 네비바 영역 (드래그로 스크롤) */
+    .screen-links-wrap {
+      width: 100vw;
+      position: relative;
+      margin: 0 auto;
+      padding: 0;
+      box-sizing: border-box;
+      z-index: 9;
+      overflow: hidden; /* 스크롤바 숨김 */
+      display: flex;
+      justify-content: center;
     }
-    .video-item-wrap.drag-over {
-      background: #25336c !important;
+    .screen-links {
+      display: flex;
+      gap: 15px;
+     font-size: 0.96rem;
+      font-weight: 500;
+      color: #fff;
+      white-space: nowrap;
+      background: none;
+      padding: 0 12px;
+      user-select: none;
+      box-shadow: none;
+      align-items: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      margin: 0 auto;
+      max-width: 1800px;
+      min-width: 220px;
+      cursor: grab;
+      transition: none;
     }
-    @media (max-width:900px) {
-      .side-nav { width: 130px; min-width:90px; }
-      .yt-inner { max-width:92vw; }
+    .screen-links::-webkit-scrollbar { display: none; }
+    .screen-links a {
+      color: rgba(255,255,255,0.76) !important;
+      text-decoration: none;
+      padding: 2px 8px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 1em;
+      margin: 0 2px;
+      background: none;
+      border: none;
+      outline: none;
+      display: inline-block;
+      opacity: 0.93;
+      letter-spacing: 0.01em;
+      transition: background 0.12s, color 0.14s;
+      cursor: pointer;
+      white-space: nowrap;
     }
-    /* ---- 추가 폼 모달 ---- */
-    .modal-bg {
-      position:fixed; left:0;top:0;right:0;bottom:0; z-index:200;
-      background:rgba(15,20,40,0.38); display:flex; align-items:center; justify-content:center;
+    .screen-links a:hover, .screen-links a.active {
+      background: rgba(255,255,255,0.14);
+      color: #ffe8ff !important;
+      font-weight: 500;
     }
-    .modal-inner {
-      background:#2e3259; color:#fff; border-radius:15px; padding:28px 32px 18px 32px;
-      box-shadow:0 6px 44px #0005; min-width:320px;
-      display:flex; flex-direction:column; gap:17px;
+    @media (max-width: 700px) {
+      .screen-links { font-size: 0.88rem; gap: 8px; padding: 0 4px;}
+      .screen-links-wrap { padding: 0;}
+      .searchbar-outer { margin-bottom: 10px !important; }
     }
-    .modal-inner label { font-size:1.08rem; margin-bottom:4px; }
-    .modal-inner input {
-      padding:10px 15px; border-radius:7px; border:none; margin-bottom:7px;
-      font-size:1rem; width:100%;
-    }
-    .modal-inner button {
-      padding:10px 0; border-radius:8px; border:none;
-      background:#4b67ff; color:#fff; font-size:1.07rem; font-weight:700; cursor:pointer;
-      transition:background 0.14s;
-      margin-top:8px;
-    }
-    .modal-inner button:hover { background:#6e83d8; }
   </style>
 </head>
 <body>
-  <!-- 왼쪽 네비 -->
-  <div class="side-nav">
-    <div class="nav-btns">
-      <button onclick="openAddModal()">추가</button>
-      <button onclick="importData()">가져오기</button>
-      <button onclick="exportData()">내보내기</button>
+  <!-- 검색바 -->
+  <div class="searchbar-outer">
+    <div class="searchbar-wrap">
+      <form class="searchbar-form" id="searchFormParent" autocomplete="off">
+        <div class="searchbar-box">
+          <select class="searchbar-select" id="engineParent">
+            <option value="naver">네이버 ▼</option>
+            <option value="google">Google </option>
+            <option value="Reddit">Reddit</option>
+            <option value="youtube">Youtube </option>
+            <option value="soundcloud">SoundCloud </option>
+            <option value="daum">다음 </option>
+            <option value="duckduckgo">DuckDuckGo </option>
+            <option value="msn">MSN </option>
+            <option value="yahoo">Yahoo </option>
+            <option value="yandex">Yandex </option>
+            <option value="naver_shopping">네이버 쇼핑 </option>
+            <option value="joonggonara">중고나라 </option>
+            <option value="naver_cafe">네이버카페 중고 </option>
+            <option value="daangn">당근마켓 </option>
+            <option value="bunjang">번개장터</option>
+            <option value="danawa">다나와 </option>
+            <option value="coupang">쿠팡 </option>
+            <option value="aliexpress">알리 (한글/영어) </option>
+            <option value="amazon">아마존 (한글/영어) </option>
+            <option value="ebay">이베이 (한글/영어) </option>
+            <option value="romanize">한글이름 → 영어 </option>
+            <option value="jusoen">한글주소 → 영어 </option>
+            <option value="postcode">우편번호 검색 </option>
+            <option value="phone_114">114 전화번호 검색 </option>
+            <option value="hanja_naver">네이버 한자검색 </option>
+            <option value="afreecatv">AfreecaTV </option>
+            <option value="tvcast">TVCAST </option>
+            <option value="kakaotv">KakaoTV </option>
+            <option value="vimeo">Vimeo </option>
+            <option value="ms_edgestore">MS EDGE 스토어 </option>
+            <option value="chrome_webstore">크롬 웹스토어 </option>
+            <option value="naver_software">네이버 자료실 </option>
+            <option value="kyobo">교보문고 </option>
+            <option value="aladin">알라딘 </option>
+            <option value="twitter">Twitter </option>
+            <option value="instagram">Instagram </option>
+            <option value="kakao_story">kakao.com </option>
+            <option value="tumblr">Tumblr </option>
+            <option value="tiktok">TikTok </option>
+            <option value="pinterest">Pinterest </option>
+            <option value="naver_music">네이버 음악 </option>
+            <option value="melon">멜론 </option>
+            <option value="bugs">벅스 </option>
+          </select>
+          <input class="searchbar-input" id="queryParent" type="text" placeholder="검색어를 입력하세요  Myway.kr" autocomplete="off" />
+          <button class="searchbar-btn" type="submit" title="검색">
+            <svg viewBox="0 0 32 32">
+              <circle cx="15" cy="15" r="10"/>
+              <line x1="23" y1="23" x2="30" y2="30"/>
+            </svg>
+          </button>
+        </div>
+      </form>
     </div>
-    <div class="video-list" id="videoList"></div>
   </div>
-  <div class="yt-container" style="margin-left:220px">
-    <div class="yt-inner">
-      <div class="url-input-wrap" style="display:none">
-        <input type="text" id="urlInput" placeholder="유튜브/Vimeo/MP4 등 영상 주소를 입력하세요" />
-        <button onclick="showVideoFromInput()">확인</button>
-      </div>
-      <div class="yt-title" id="ytTitle">속초 해변</div>
-      <div class="yt-frame-box" id="ytFrameBox">
-        <iframe id="mainFrame" src="https://www.youtube.com/embed/5w__FG2fGa4?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-      </div>
+  <!-- 네비게이션 텍스트 (가운데정렬+좌우이동) -->
+  <div class="screen-links-wrap">
+    <div class="screen-links" id="parent-links">
+  
+          <a href="#" onclick="showScreenParent(event, '00mainbbsinner.html')">BBS</a>
+      <a href="#" onclick="showScreenParent(event, '00mainnewsinner.html')">NEWS</a>
+      <a href="#" onclick="showScreenParent(event, '00mainradioinner.html')">RADIO</a>
+      <a href="#" onclick="showScreenParent(event, '00mainlivetvinner.html')">LIVE TV</a>
+      <a href="#" onclick="showScreenParent(event, '00maintvinner2.html')">VOD</a>
+      <a href="#" onclick="showScreenParent(event, '00mainmovieinner.html')">MOVIE</a>
+      <a href="#" onclick="showScreenParent(event, '00mainmusicinner.html')">MUSIC</a>
+      <a href="#" onclick="showScreenParent(event, '00maincctvinner2.html')">CCTV</a>
+      <a href="#" onclick="showScreenParent(event, 'indexinner.html')">H</a>
+      <a href="#" onclick="showScreenParent(event, '00mainmakinginner.html')">Making</a>   
+      <a href="#" onclick="showScreenParent(event, '00mainmagazineinner.html')">Magazine</a>
+      <a href="#" onclick="showScreenParent(event, '00maincoin.html')">COIN</a>
+      <a href="#" onclick="showScreenParent(event, '00maincomics.html')">MAN HWA</a>
+      <a href="#" onclick="showScreenParent(event, '00mainshopping.html')">SHOP</a>
+      <a href="#" onclick="showScreenParent(event, 'mainpage2.html')">L</a>
+      <a href="#" onclick="showScreenParent(event, '00mainuseful.html')">U</a>
     </div>
   </div>
-  <!-- 추가/수정 폼 (모달) -->
-  <div id="addModal" class="modal-bg" style="display:none">
-    <div class="modal-inner">
-      <label>영상 주소</label>
-      <input id="addUrl" type="text" placeholder="유튜브/Vimeo/MP4 주소" autocomplete="off" />
-      <label>제목</label>
-      <input id="addTitle" type="text" placeholder="영상 제목" autocomplete="off" />
-      <button id="addSaveBtn" onclick="saveVideo()">저장</button>
-      <button onclick="closeAddModal()" style="background:#2e3259;font-weight:400;">취소</button>
-    </div>
-  </div>
-
+  <iframe id="main-frame" src="indexinner.html" allowfullscreen style="position:fixed;left:0;top:158px;width:100vw;height:calc(100vh - 160px);border:none;margin:0;background:#f5f7fa;z-index:10;border-radius:0;display:block;"></iframe>
   <script>
-    // 상태
-    let videos = JSON.parse(localStorage.getItem('ytNaviList') || '[]');
-    let selectedIdx = (videos.length>0) ? 0 : null;
-    let editIdx = null; // 수정 모드
-
-    // 임베드 변환 함수
-    function parseToEmbed(input) {
-      input = (input||"").trim();
-      // 유튜브
-      const ytMatch = input.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
-      if (ytMatch) return {type: 'youtube', code: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1`};
-      if (input.match(/^https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]{11}/))
-        return {type: 'youtube', code: input.includes('autoplay=1') ? input : input + (input.includes('?') ? '&autoplay=1' : '?autoplay=1')};
-      // Vimeo
-      const vimeoMatch = input.match(/vimeo\.com\/(\d+)/);
-      if (vimeoMatch) return {type: 'vimeo', code: `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`};
-      // MP4/WebM/Ogg 파일
-      if (input.match(/\.(mp4|webm|ogg)(\?|$)/i)) return {type: 'video', code: input};
-      // 이미 임베드/iframe 코드 직접 입력시
-      if (input.startsWith('<iframe')) return {type: 'embed', code: input};
-      // 그냥 링크: iframe 시도
-      return {type: 'link', code: input};
+    // 검색엔진 기능(기존 그대로, 필요하면 추가)
+    var snarkEnginesParent = [
+      { key: "naver",  home: "https://www.naver.com/", search: "https://search.naver.com/search.naver?query=" },
+      { key: "google", home: "https://www.google.com/webhp?hl=en&gl=au", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=" },
+      { key: "Reddit", home: "https://www.reddit.com/", search: "https://www.reddit.com/search/?q=" },
+      { key: "youtube", home: "https://www.youtube.com/", search: "https://www.youtube.com/results?search_query=" },
+      { key: "soundcloud", home: "https://soundcloud.com/", search: "https://soundcloud.com/search?q=" },
+      { key: "daum", home: "https://www.daum.net/", search: "https://search.daum.net/search?q=" },
+      { key: "duckduckgo", home: "https://duckduckgo.com", search: "https://duckduckgo.com/?q=" },
+      { key: "msn", home: "https://www.msn.com/ko-kr/news", search: "https://www.bing.com/search?q=" },
+      { key: "yahoo", home: "https://www.yahoo.com", search: "https://search.yahoo.com/search?p=" },
+      { key: "yandex", home: "https://yandex.ru", search: "https://yandex.ru/search/?lr=10635&text=" },
+      { key: "naver_shopping", home: "https://shopping.naver.com/", search: "https://search.shopping.naver.com/ns/search?query=" },
+      { key: "joonggonara", home: "https://cafe.naver.com/joonggonara", search: "https://web.joongna.com/search/" },
+      { key: "naver_cafe", home: "https://cafe.naver.com", search: "https://cafe.naver.com/ca-fe/home/search/c-articles?q=" },
+      { key: "daangn", home: "https://www.daangn.com", search: "https://www.daangn.com/search/" },
+      { key: "bunjang", home: "https://m.bunjang.co.kr", search: "https://m.bunjang.co.kr/search/products?q=" },
+      { key: "danawa", home: "https://www.danawa.com/", search: "https://search.danawa.com/dsearch.php?k1=" },
+      { key: "coupang", home: "https://www.coupang.com", search: "https://www.coupang.com/np/search?q=" },
+      { key: "aliexpress", home: "https://ko.aliexpress.com/", search: "https://ko.aliexpress.com/w/wholesale-", searchPostfix: ".html" },
+      { key: "amazon", home: "https://www.amazon.com/", search: "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=" },
+      { key: "ebay", home: "https://www.ebay.com/", search: "https://www.ebay.com/sch/i.html?_from=R40&_trksid=p2050601.m570.l1313&_nkw=" },
+      { key: "romanize", home: "https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38", search: "https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38&idx=&act=&searchKeyword=" },
+      { key: "jusoen", home: "https://www.jusoen.com/", search: "https://www.jusoen.com/addreng.asp?p1=" },
+      { key: "postcode", home: "https://search.naver.com/search.naver?sm=tab_hty.top&where=nexearch&ie=utf8&query=%EC%9A%B0%EC%B2%B4%EA%B5%AD+%EC%9A%B0%ED%8E%B8%EB%B2%88%ED%98%B8&where=nexearch", search: "https://www.juso.go.kr/support/AddressMainSearch.do?searchKeyword=" },
+      { key: "phone_114", home: "https://www.114.co.kr", search: "https://www.114.co.kr/search/result/all?query=" },
+      { key: "hanja_naver", home: "http://hanja.naver.com", search: "http://hanja.naver.com/search?query=" },
+      { key: "afreecatv", home: "https://www.afreecatv.com/", search: "https://www.afreecatv.com/total_search.html?szKeyword=" },
+      { key: "tvcast", home: "https://tvcast.naver.com/", search: "https://tv.naver.com/search?query=" },
+      { key: "kakaotv", home: "https://tv.kakao.com/", search: "https://tv.kakao.com/search?q=" },
+      { key: "vimeo", home: "https://www.vimeo.com", search: "https://vimeo.com/search?q=" },
+      { key: "ms_edgestore", home: "https://microsoftedge.microsoft.com", search: "https://microsoftedge.microsoft.com/addons/search/" },
+      { key: "chrome_webstore", home: "https://chrome.google.com/webstore/category/extensions?hl=ko", search: "https://chrome.google.com/webstore/search/" },
+      { key: "naver_software", home: "https://software.naver.com", search: "https://software.naver.com/search.nhn?query=" },
+      { key: "kyobo", home: "https://search.kyobobook.co.kr", search: "https://search.kyobobook.co.kr/web/search?vPstrKeyWord=" },
+      { key: "aladin", home: "https://search.kyobobook.co.kr", search: "https://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=All&SearchWord=" },
+      { key: "twitter", home: "https://twitter.com", search: "https://twitter.com/search?q=" },
+      { key: "instagram", home: "https://www.instagram.com", search: "https://www.instagram.com/explore/tags/" },
+      { key: "kakao_story", home: "https://story.kakao.com", search: "https://story.kakao.com/hashtag/" },
+      { key: "tumblr", home: "https://www.tumblr.com", search: "https://www.tumblr.com/search/" },
+      { key: "tiktok", home: "https://www.tiktok.com", search: "https://www.tiktok.com/search?q=" },
+      { key: "pinterest", home: "https://pinterest.com", search: "https://pinterest.com/search/?q=" },
+      { key: "naver_music", home: "https://music.naver.com", search: "https://music.naver.com/search/search.nhn?query=" },
+      { key: "melon", home: "https://www.melon.com", search: "https://www.melon.com/search/total/index.htm?q=" },
+      { key: "bugs", home: "https://bugs.co.kr", search: "https://music.bugs.co.kr/search/integrated?q=" }
+    ];
+    document.getElementById('searchFormParent').onsubmit = function(e) {
+      e.preventDefault();
+      const engineKey = document.getElementById('engineParent').value;
+      const query = document.getElementById('queryParent').value.trim();
+      const engineObj = snarkEnginesParent.find(e => e.key === engineKey);
+      if (engineObj) {
+        let url = query
+          ? (engineObj.search + encodeURIComponent(query) + (engineObj.searchPostfix || ''))
+          : engineObj.home;
+        window.open(url, "_blank");
+      }
+    };
+    function showScreenParent(e, url) {
+      e.preventDefault();
+      document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
+      e.target.classList.add('active');
+      var frame = document.getElementById('main-frame');
+      frame.src = url;
+      // ▼ 추가된 부분(네비바 중앙 이동)
+      const parent = document.getElementById('parent-links');
+      const el = e.target;
+      if (parent && el) {
+        const offset = el.offsetLeft - parent.offsetLeft
+          - parent.clientWidth / 2
+          + el.clientWidth / 2;
+        parent.scrollTo({ left: offset, behavior: 'smooth' });
+      }
     }
-
-    // 영상 목록 네비 렌더링 (+수정/삭제/드래그)
-    function renderList() {
-      const list = document.getElementById('videoList');
-      list.innerHTML = '';
-      videos.forEach((v, i) => {
-        // wrapper
-        const wrap = document.createElement('div');
-        wrap.className = 'video-item-wrap';
-        wrap.draggable = true;
-        wrap.dataset.idx = i;
-
-        // Drag 이벤트
-        wrap.ondragstart = (e) => {
-          e.dataTransfer.setData('idx', i);
-          setTimeout(()=>{ wrap.classList.add('dragging'); }, 0);
-        };
-        wrap.ondragend = (e) => {
-          document.querySelectorAll('.video-item-wrap').forEach(el=>el.classList.remove('dragging','drag-over'));
-        };
-        wrap.ondragover = (e) => {
-          e.preventDefault();
-          wrap.classList.add('drag-over');
-        };
-        wrap.ondragleave = (e) => {
-          wrap.classList.remove('drag-over');
-        };
-        wrap.ondrop = (e) => {
-          e.preventDefault();
-          wrap.classList.remove('drag-over');
-          const from = parseInt(e.dataTransfer.getData('idx'), 10);
-          const to = i;
-          if (from !== to) {
-            videos.splice(to, 0, videos.splice(from,1)[0]);
-            localStorage.setItem('ytNaviList', JSON.stringify(videos));
-            if(selectedIdx === from) selectedIdx = to;
-            else if(selectedIdx > from && selectedIdx <= to) selectedIdx -= 1;
-            else if(selectedIdx < from && selectedIdx >= to) selectedIdx += 1;
-            renderList();
-            renderMain();
-          }
-        };
-
-        // 네비(제목) 버튼
-        const btn = document.createElement('button');
-        btn.className = 'video-item' + (i===selectedIdx ? ' active':'');
-        btn.textContent = v.title || `영상 ${i+1}`;
-        btn.onclick = () => { selectedIdx = i; renderList(); renderMain(); };
-        wrap.appendChild(btn);
-
-        // 수정/삭제
-        const act = document.createElement('div');
-        act.className = 'item-actions';
-        const editBtn = document.createElement('button');
-        editBtn.innerText = '수정';
-        editBtn.title = '수정';
-        editBtn.onclick = (e) => {
-          e.stopPropagation();
-          openEditModal(i);
-        };
-        const delBtn = document.createElement('button');
-        delBtn.innerText = '삭제';
-        delBtn.title = '삭제';
-        delBtn.onclick = (e) => {
-          e.stopPropagation();
-          if (confirm('정말 삭제할까요?')) {
-            videos.splice(i,1);
-            if(selectedIdx >= videos.length) selectedIdx = videos.length-1;
-            if(selectedIdx<0) selectedIdx = null;
-            localStorage.setItem('ytNaviList', JSON.stringify(videos));
-            renderList();
-            renderMain();
-          }
-        };
-        act.appendChild(editBtn);
-        act.appendChild(delBtn);
-        wrap.appendChild(act);
-
-        list.appendChild(wrap);
+    // 네비바 드래그/터치로 좌우 스크롤 (순서 바꾸기 아님)
+    (function(){
+      const nav = document.querySelector('.screen-links');
+      let isDown = false, startX = 0, scrollLeft = 0;
+      nav.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - nav.offsetLeft;
+        scrollLeft = nav.scrollLeft;
+        nav.style.cursor = 'grabbing';
       });
-    }
-
-    // 영상 표시
-    function renderMain() {
-      let v = (selectedIdx!=null && videos[selectedIdx]) ? videos[selectedIdx] : null;
-      if (v) {
-        document.getElementById('ytTitle').textContent = v.title || '';
-        const parsed = parseToEmbed(v.url);
-        if (parsed.type === 'youtube' || parsed.type === 'vimeo' || parsed.type === 'link') {
-          document.getElementById('ytFrameBox').innerHTML = `<iframe src="${parsed.code}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
-        } else if (parsed.type === 'video') {
-          document.getElementById('ytFrameBox').innerHTML = `<video src="${parsed.code}" controls autoplay></video>`;
-        } else if (parsed.type === 'embed') {
-          document.getElementById('ytFrameBox').innerHTML = parsed.code;
-        } else {
-          document.getElementById('ytFrameBox').innerHTML = `<div style="color:#fff;text-align:center;">알 수 없는 주소입니다.</div>`;
-        }
-      } else {
-        // 기본: 최초화면
-        document.getElementById('ytTitle').textContent = '속초 해변';
-        document.getElementById('ytFrameBox').innerHTML = `<iframe src="https://www.youtube.com/embed/5w__FG2fGa4?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
-      }
-    }
-
-    // 추가/수정 모달
-    function openAddModal() {
-      editIdx = null;
-      document.getElementById('addModal').style.display = 'flex';
-      document.getElementById('addUrl').value = '';
-      document.getElementById('addTitle').value = '';
-      document.getElementById('addSaveBtn').innerText = '저장';
-      setTimeout(()=>{ document.getElementById('addUrl').focus(); }, 180);
-    }
-    function openEditModal(idx) {
-      editIdx = idx;
-      document.getElementById('addModal').style.display = 'flex';
-      document.getElementById('addUrl').value = videos[idx].url;
-      document.getElementById('addTitle').value = videos[idx].title;
-      document.getElementById('addSaveBtn').innerText = '수정저장';
-      setTimeout(()=>{ document.getElementById('addUrl').focus(); }, 180);
-    }
-    function closeAddModal() {
-      document.getElementById('addModal').style.display = 'none';
-      document.getElementById('addUrl').value = '';
-      document.getElementById('addTitle').value = '';
-      editIdx = null;
-    }
-    // 저장/수정 저장
-    function saveVideo() {
-      let url = document.getElementById('addUrl').value.trim();
-      let title = document.getElementById('addTitle').value.trim();
-      if (!url || !title) { alert('영상 주소와 제목을 입력하세요.'); return; }
-      if(editIdx===null) {
-        videos.push({ url, title });
-        selectedIdx = videos.length-1;
-      } else {
-        videos[editIdx] = { url, title };
-        selectedIdx = editIdx;
-      }
-      localStorage.setItem('ytNaviList', JSON.stringify(videos));
-      closeAddModal();
-      renderList();
-      renderMain();
-    }
-    // 내보내기
-    function exportData() {
-      const data = JSON.stringify(videos, null, 2);
-      const blob = new Blob([data], {type:"application/json"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = "myway_videos.json";
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-    // 가져오기
-    function importData() {
-      const input = document.createElement('input');
-      input.type = "file";
-      input.accept = ".json,application/json";
-      input.onchange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          try {
-            const json = JSON.parse(evt.target.result);
-            if (Array.isArray(json) && json[0]?.url && json[0]?.title) {
-              videos = json;
-              selectedIdx = videos.length>0 ? 0 : null;
-              localStorage.setItem('ytNaviList', JSON.stringify(videos));
-              renderList();
-              renderMain();
-            } else {
-              alert('올바른 데이터가 아닙니다.');
-            }
-          } catch {
-            alert('가져오기 실패: JSON 파싱 에러');
-          }
-        };
-        reader.readAsText(file);
-      };
-      input.click();
-    }
-
-    // 최초 렌더
-    renderList();
-    renderMain();
+      nav.addEventListener('mouseleave', () => {
+        isDown = false;
+        nav.style.cursor = '';
+      });
+      nav.addEventListener('mouseup', () => {
+        isDown = false;
+        nav.style.cursor = '';
+      });
+      nav.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        const x = e.pageX - nav.offsetLeft;
+        nav.scrollLeft = scrollLeft - (x - startX);
+      });
+      // 모바일 터치
+      let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
+      nav.addEventListener('touchstart', function(e){
+        touchDragging = true;
+        touchStartX = e.touches[0].pageX - nav.offsetLeft;
+        touchScrollLeft = nav.scrollLeft;
+      });
+      nav.addEventListener('touchend', ()=>{ touchDragging=false; });
+      nav.addEventListener('touchmove', function(e){
+        if(!touchDragging) return;
+        const x = e.touches[0].pageX - nav.offsetLeft;
+        nav.scrollLeft = touchScrollLeft - (x - touchStartX);
+      });
+    })();
   </script>
 </body>
 </html>
