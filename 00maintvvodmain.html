@@ -184,20 +184,24 @@
     const group4 = [
   ];
 
-    function getLayout() {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      let iconsPerRow = 7, gap = 24, size = 74, imgSize = 54;
-      if (w <= 1100) { iconsPerRow = 6; gap = 14; size = 60; imgSize = 40;}
-      if (w <= 900)  { iconsPerRow = 5; gap = 10; size = 52; imgSize = 34;}
-      if (w <= 700) {
-        if (h > w) { iconsPerRow = 4; gap = w * 0.08; size = 78; imgSize = 60;}
-        else       { iconsPerRow = 5; gap = w * 0.08; size = 78; imgSize = 60;}
-      }
-      if (w <= 500)  { iconsPerRow = 3; gap = w * 0.10; size = 68; imgSize = 48;}
-      return { iconsPerRow, gap, size, imgSize };
-    }
 
+   
+
+function getLayout() {
+  let iconsPerRow = 10, gap = 24, size = 74, imgSize = 54;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  if (w <= 1100) { iconsPerRow = 7; }
+  if (w <= 900)  { iconsPerRow = 5; }
+  if (w <= 700)  { iconsPerRow = 4; }
+  if (w <= 500)  { iconsPerRow = 3; }
+  return { iconsPerRow, gap, size, imgSize };
+}
+
+
+
+
+   
     function renderGroup(arr) {
       const { iconsPerRow, gap, size, imgSize } = getLayout();
       let idx = 0;
