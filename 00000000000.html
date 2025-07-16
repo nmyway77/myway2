@@ -251,16 +251,13 @@
     ];
 
 function getLayout() {
-  // 원하는 숫자로 iconsPerRow만 크게!
-  let iconsPerRow = 12, gap = 24, size = 74, imgSize = 54;
+  let iconsPerRow = 9, gap = 24, size = 74, imgSize = 54;
   const w = window.innerWidth;
   const h = window.innerHeight;
-  // 반응형 구간도 크기 고정!
-  if (w <= 1100) { iconsPerRow = 9; }
-  if (w <= 900)  { iconsPerRow = 7; }
+  if (w <= 1100) { iconsPerRow = 7; }
+  if (w <= 900)  { iconsPerRow = 5; }
   if (w <= 700)  { iconsPerRow = 4; }
   if (w <= 500)  { iconsPerRow = 3; }
-  // size, imgSize, gap 고정!
   return { iconsPerRow, gap, size, imgSize };
 }
 
