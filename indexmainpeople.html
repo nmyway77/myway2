@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>5단 테마별 반응형 갤러리</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      background: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    .theme-section {
+      max-width: 1300px;
+      margin: 30px auto 30px;
+    }
+    .theme-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #22235e;
+      margin: 12px 0 18px 12px;
+      letter-spacing: 1px;
+    }
+    .media-grid {
+      column-count: 6;
+      column-gap: 10px;
+      width: 100%;
+      min-height: 200px;
+      background: #fff;
+    }
+    .grid-item {
+      break-inside: avoid;
+      margin-bottom: 10px;
+      position: relative;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .grid-item a {
+      display: block;
+      text-decoration: none;
+    }
+    .grid-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .grid-item img:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+    .edit-btn {
+      display: none !important;
+    }
+    /* 반응형 */
+    @media (max-width: 1600px) {
+      .media-grid { column-count: 5; }
+    }
+    @media (max-width: 1200px) {
+      .media-grid { column-count: 4; }
+    }
+    @media (max-width: 900px) {
+      .media-grid { column-count: 3; }
+    }
+    @media (max-width: 700px) {
+      .media-grid { column-count: 2; }
+    }
+    @media (max-width: 450px) {
+      .media-grid { column-count: 2; }
+    }
+    @media (max-width: 350px) {
+      .media-grid { column-count: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1단: 예시 테마 -->
+  <div class="theme-section">
+
+    
+    
+    <div class="media-grid">
+      <!-- 여행 유튜버 grid-item 들 -->
+      
+     
+<div class="grid-item">
+  <a href="https://www.youtube.com/@PaniBottle/videos" target="_blank" rel="noopener">
+    <img src="https://cdn.slist.kr/news/photo/202503/628228_982165_5647.jpg" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+   
+<div class="grid-item">
+  <a href="https://www.youtube.com/@cure0721/videos" target="_blank" rel="noopener">
+    <img src="https://i.namu.wiki/i/eQ6EfZy5W4vur_O_qNoLTu5Ya7RZ400lkoX-Y5kPnmjZGDeLjeMDELp2e8k30bYhBc8P8Y2igfqO4h9IIFZ-kQ.webp" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@nakang/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/OWzcwKXkXOG-7ZQEje-1D0Lf4ppMb6qGA9anzF_gtUIkYPVGyJJW_vaPpC9OzHq8GL7xohg1vEU=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@im1G/videos" target="_blank" rel="noopener">
+    <img src="https://www.ftimes.kr/news/photo/202501/29301_36429_3557.jpg" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@Youngalnam/videos" target="_blank" rel="noopener">
+    <img src="https://i.namu.wiki/i/_toZptIyMDgzYEM4yhFzz8DT9kvyxRWwNEWEn47dCZvjXRc5CY-bHpk60mjOmnizlbAjsc8r_g4OgIDjuEpm7A.webp" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@JBKWAK/videos" target="_blank" rel="noopener">
+    <img src="https://economist.co.kr/data/isp/image/2024/10/10/isp20241010000060.800x.0.png" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+   <div class="grid-item">
+  <a href="https://www.youtube.com/@JFlaMusic/videos" target="_blank" rel="noopener">
+    <img src="https://wimg.heraldcorp.com/content/default/2023/07/13/20230713000417_0.jpg" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+   
+<div class="grid-item">
+  <a href="https://www.youtube.com/@Mochilero_korean/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/exy_ve5D0k4VDtOxy1Yv8p-N3yns0ys9iVYrQ2A0IR8GzhtiF0Ztd21X0z3ElCOsGAaR2KeRqi0=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+   
+   <div class="grid-item">
+  <a href="https://www.youtube.com/@Ssoyoung/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/ytc/AIdro_n1eVcavGdPI70m8fVwMWEDzSrX6rqZ8HOwf5gtPxYShmc=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@soy_the_world/videos" target="_blank" rel="noopener">
+    <img src="https://i.namu.wiki/i/Jd7ws0TxMrpl1S4lBPjUcpG6i25CNEYbTeIbQ_yHspFkFj60GGh-eL2ImukdfeHiefkF8gpDSy83ei3N1-CjgA.webp" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@NomadShaun/videos" target="_blank" rel="noopener">
+    <img src="https://www.fashionbiz.co.kr/images/articleImg/listImg/1717403801136-%EC%A7%80%ED%94%84.jpg" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@%EC%A1%B0%ED%8A%9C%EB%B8%8C/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/yf1q-VSg4JEqygxes5xWBsnc7tBmfgSFTFxIxuFYPpxlPoyB4e8U2u-V8Zy3XeS0fODJ8Vhpcg=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+   
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@gongsam_table203/videos" target="_blank" rel="noopener">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNqgMZc9mDQn81_qup7EtF0N3ip1UC0kjghw&s" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+   
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/results?search_query=%EC%A7%80%EB%AC%B4%EB%B9%84" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/ytc/AIdro_nLr4j1MqKUus9uB2RADncMRaC__c2D6MKj4x4YbA4IwcU=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@waterfall_jang/videos" target="_blank" rel="noopener">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_awPTptdEue9ReUtQniHX2zkTdA2Pxm5K5g&s" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@koreanjay/videos" target="_blank" rel="noopener">
+    <img src="https://news.nateimg.co.kr/orgImg/is/2025/02/05/isp20250205000112.800x.8.jpg" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@CHOMAD/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/ytc/AIdro_kOvt9wOxgQkO09TqXc3oBx6r4alOrnL6sp1gknN-wmnoI=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+
+
+
+
+   
+
+   
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@carrotman1198/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/cOxmc12zG9zYHIL_r4LReE6xQwiJKFqsCTgBXIEp5jQk47nNRB5WYdTCeNd9Cl1EgGIAFdZoURc=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@ssugirit/videos" target="_blank" rel="noopener">
+    <img src="https://i.namu.wiki/i/hA5cazhI1jToEyeVfTXdJ7uQE1LRvduAKzHCJdKeSlP3n9XtBcjjD-CqZAv875nlqBZel1B_QaQJt8Jor-7JLA.webp" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+   
+   
+<div class="grid-item">
+  <a href="https://www.youtube.com/@jangsin/videos" target="_blank" rel="noopener">
+    <img src="https://i.namu.wiki/i/RV75er7pJp29halVLkNInNtxIvLO6Ye3xst7VtXcgfixBpjt6qKCs_gI9XkD8vgAOTB4KdSRHT77ZKHVzRKBOA.webp" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@trankilo/videos" target="_blank" rel="noopener">
+    <img src="https://blogger.googleusercontent.com/img/a/AVvXsEjHm1hvzA5r79-lpksHpLuMAKuTCxM0rPCjlAmsdCWX77jySx_zWrBds5Vnn4k3YePlgzv3CLAMRR7QCSSgtIXUcFXe4mRSqroWcOONnKKLPVnfCLbXXCAv2QqEgsKVo7Af8Cskjxa9rupKyVTcqkqw99hPy89YiMgxUuxHOqYX8oOIRQyEv3eKJv8Y6suw=w400-h368" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@captainbrother/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.ggpht.com/DXk0HlYUksWw3QTm9uoKmJYWA1QCh9cipUtAxb6cxHMSR_LyC_dS9NW_uk-9l6RH2BvxYDywFzWsUHQ=s1600-nd-v1" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+   
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@ddoddunam/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/jRokwv8WoOY1cIwSEEHIabSA8X14raqB3h2rwFSVXrOcQzuSx5pzqxTEuCYCXzQO6lia1q2yEg=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@Jayworldtraveler/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/ytc/AIdro_ncU2OOiLOtChH1QtKXYoegcUsOD1t1barO7jUWt0bR99o=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+   
+
+
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/results?search_query=%EC%82%90%EB%A7%A8" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/ytc/AIdro_mtkN4YfxiRYrroG8Sdq9XwJNgs5Dn0TdeNlAdrzIF5tsU=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/results?search_query=%EB%93%9C%EB%A6%BC%ED%85%94%EB%9F%AC" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/gjtbY0LqxuQNNC3wwon3jf8HmnGOSWo5sEt5XTsSFHiTPERK9xVk0ohumOtJTgGdT7Hu6S3A=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@aespa/videos" target="_blank" rel="noopener">
+    <img src="https://img9.yna.co.kr/etc/inner/KR/2025/05/23/AKR20250523069300005_01_i_P4.jpg" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@%EB%AF%B8%EB%8B%88%EB%A9%80%EC%9C%A0%EB%AA%A9%EB%AF%BC/videos" target="_blank" rel="noopener">
+    <img src="https://i.namu.wiki/i/TGvJjC504d_S9b2wa3XLdCo9B6alg49EuMzOXwhQkYxNgxxE633oterGDjYZuDyLuHjqW5CDAYVHve0eYdCQ5Q.webp" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@%EC%84%9C%EC%9E%AC%EB%A1%9C36/videos" target="_blank" rel="noopener">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjVFKumsIoZzF4hmhvOdd9A9D3uyIZnjBF5w&s" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@%EB%B8%8C%EB%A3%A8%EC%8A%A4%EB%A6%ACTV/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/Dk4j4nbuJMAihMjPkJslFzE5FB9B99lUXUBdu-qwL3cHG1B1Od3GZAWY967ER7yOob_o3AMTvA=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+
+
+
+
+   
+
+
+   
+<div class="grid-item">
+  <a href="https://www.youtube.com/@islandtraveler" target="_blank" rel="noopener">
+    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiyyjsNzaNllXN8Fvdcl9vpnR-93-0hUHRqUP8yxHGkfpFuP5ejLS_m9PEURIGfkG4RAdA3tvImfVa-ZZqQzASA2ns3tSZ2vJ7qyoiLY7GEn_LcvyZzamTDa2mB2pUssxgS5k5SjS7jVJ4/s757/8_1%25EC%2595%2584%25EC%259D%25BC%25EB%259E%259C%25EB%2593%259C%25ED%258A%25B8%25EB%259E%2598%25EB%25B8%2594%25EB%259F%25AC%25403x.png" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@jaeye0nyy/videos" target="_blank" rel="noopener">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCzR5GmIBwoz_RpRlpiRrK-eInHyVaW1wbTw&s" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@mindcpr/videos" target="_blank" rel="noopener">
+    <img src="https://i.namu.wiki/i/Q3dYektqTCEBtSynJDPSSGsYX63gskcggMdUX961euORPECk8fVgjNhhq9oYPGmsUzJq_zf1reodpnsgneT6nQ.webp" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@honggogo/videos" target="_blank" rel="noopener">
+    <img src="https://wimg.dt.co.kr/news/legacy/contents/images/202312/2023120502101970821002[3].jpg" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@%ED%8C%8C%ED%8C%8C%ED%8A%B8%EB%9E%98%EB%B8%94/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/cr95htuRuWoqS-BEvp8fzc8Orc85-_4dPP5duDz1b0hPBPWUoV3C1hjIJ348uTew-jnod4Fb_l8=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+
+
+   
+
+
+
+   
+
+
+
+   
+
+
+
+
+
+   
+
+
+
+
+   
+   
+<div class="grid-item">
+  <a href="https://www.youtube.com/results?search_query=%EA%B3%A0%EB%AA%BD" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/ytc/AIdro_n2VEZCHj55JE9Ppw79uhETNd-JVDibC-WBxWnLXQSUIMs=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@zzanbro/videos" target="_blank" rel="noopener">
+    <img src="https://i.namu.wiki/i/StlDlvF6vyn1SBNhPTDlNWdrZcl5Z_cIGEiQhab3GVYDmWWb5lr8Lv8nIpbSpyNtM--vD5uAxqJRnNmY7OiFLQ.webp" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+
+
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@Uiland/videos" target="_blank" rel="noopener">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiEN87c9AKKQs58VkfTTNE0QFRy_JX-sKTg_ngEGrRl9L23xEtSLImMVzm9dzv74uyiFk&usqp=CAU" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@%EC%88%98%EA%B8%B8%EB%94%B0%EB%9D%BC/videos" target="_blank" rel="noopener">
+    <img src="https://i.namu.wiki/i/5CdnLHd8f0OUCPKMWlwsktlZfkP63qET5PsaPzNd5KFV2abX0oTmrN_nBYJZ7EH06l83LVSfdIeathCFiP5RXg.webp" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@AngelinaleeTravel/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/ytc/AIdro_np5_IQWKTlIewAKltvioTp2e-ZrN7lyjFHv6boHQ5R6Q=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+   
+
+
+
+
+
+
+   
+<div class="grid-item">
+  <a href="https://www.youtube.com/@MrBeast/videos" target="_blank" rel="noopener">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS2EntOCdE0yEaIfacfxiU1ZyRi8RSeT-eu_HDeQSq6J_veZZesXpwlcxkWxM2NKMpWRb4CRyw9WdUGOQV7ZqK8g" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+
+   
+   
+<div class="grid-item">
+  <a href="https://www.youtube.com/@BABYMONSTER/videos" target="_blank" rel="noopener">
+    <img src="https://file2.nocutnews.co.kr/newsroom/image/2024/04/01/202404011407257278_0.jpg" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+   <div class="grid-item">
+  <a href="https://www.youtube.com/@%EB%AC%B4%EB%B9%84%EB%B0%A9/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/YIMP_GsUjkgGnUo3Lfq94csM7fm6HIyRBMTr1JvX4mC8rCw0nPHT8PAOIPd-oRKru4eEBdnd=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+   
+<div class="grid-item">
+  <a href="https://www.youtube.com/@sungsikyung/videos" target="_blank" rel="noopener">
+    <img src="https://i.namu.wiki/i/6KSrtQ4NViTFQ9FzEWFAEsZMlshA9mDck2cDK3Or-XU_nbgncPE0Ydx_ujECrMmz6yRyKMCnZ7p9JzPVysfuqw.webp" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+
+
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@kimstravel/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/ytc/AIdro_kf5L0GUSPUyoQ5icXJgN7LHMyBgNLOkCbMd0_lYPpR-qa6=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+   
+   
+   
+
+
+
+   
+
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@EatwithBoki/videos" target="_blank" rel="noopener">
+    <img src="https://i.ytimg.com/vi/CyQlwJDE_uk/maxresdefault.jpg" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+   
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@hamzymukbang/videos" target="_blank" rel="noopener">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvxZiH-EYkdAg0-K8gx4pH8DpNEC9KjNVRpw&s" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+   
+<div class="grid-item">
+  <a href="https://www.youtube.com/results?search_query=%EC%B9%A8%EC%B0%A9%EB%A7%A8" target="_blank" rel="noopener">
+    <img src="https://www.chosun.com/resizer/v2/FELDQIUY6T6GLQUS4DIQKHTAWE.jpg?auth=5c4226972605a896a8788513cf1ce3c15848c203c7fd6589ef47a914e21e350a&width=530&height=634&smart=true" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+   
+<div class="grid-item">
+  <a href="https://www.youtube.com/@bokyemtv/videos" target="_blank" rel="noopener">
+    <img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDEwMzFfOTAg%2FMDAxNzMwMzMwMzc4NTA3.hmz8_nPYYug9Z8kwoqvRI6tTl0Knbu_h-pOIGr9KvAcg.Gq-L_zCh0BmQwoB7Ksx5CQzQOGNnS5PZhZkLBVhWSLAg.JPEG%2FScreenshot%25A3%25DF20241031%25A3%25DF081749%25A3%25DFInstagram.jpg&type=sc960_832" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@kkujun/videos" target="_blank" rel="noopener">
+    <img src="https://i.namu.wiki/i/F39A-PXHCBr2ABo2FhTtfpk3dJeKR383grFFpH37dRRu_Bt4KE0cYwcVpVj9b-LmAGSF6yey2IaIgTeuvMe70Q.webp" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+   
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@geean84/videos" target="_blank" rel="noopener">
+    <img src="https://www.news1.kr/_next/image?url=https%3A%2F%2Fi3n.news1.kr%2Fsystem%2Fphotos%2F2023%2F12%2F4%2F6361299%2Fhigh.jpg&w=1920&q=75" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/results?search_query=%EC%B6%94%EC%84%B1%ED%9B%88" target="_blank" rel="noopener">
+    <img src="https://dimg.donga.com/wps/SPORTS/IMAGE/2025/05/20/131645368.1.jpg" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+   <div class="grid-item">
+  <a href="https://www.youtube.com/@%EC%88%9C%ED%92%8D%EC%84%A0%EC%9A%B0%EC%9A%A9%EC%97%AC/videos" target="_blank" rel="noopener">
+    <img src="https://res-kol.noxgroup.com/noxinfluencer/youtube/avatar/007a6e26946ce18f211e775fe3289ec7.png" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+   
+<div class="grid-item">
+  <a href="https://www.youtube.com/@luckyhongchul/videos" target="_blank" rel="noopener">
+    <img src="https://cdn.spotvnews.co.kr/news/photo/202308/625058_890647_021.jpg" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+   
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@tzuyang6145/videos" target="_blank" rel="noopener">
+    <img src="https://res-kol.noxgroup.com/noxinfluencer/youtube/avatar/8fa85a5847acbfcf82d75c791b427d47.png" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+
+   
+<div class="grid-item">
+  <a href="https://www.youtube.com/@kwangmani/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/XIhr-d-4t3DfdBl5wB8SdpushGD6Z88ZwCUPMiaNVIcK5avbEfS61wC8ZRtoxjKNuwNISVgVMQ=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+   
+<div class="grid-item">
+  <a href="https://www.youtube.com/results?search_query=%EB%94%B0%EA%B1%B0" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/QtUQRLkKCvAc8fLEBAbzpvKxyeL3qnIY3rOPzI8N8IjIaGs05rP2lcL2c43yfiBAOFCQlKJOVQ=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@jaehocance/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/g-RMSCfYZyWbP4zmaBYP-yvY-Q61CBFhHq3khzTrYfVkT5DI5wSo76vDhlL7wEdS-BjBtrPFjQ=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+
+   
+<div class="grid-item">
+  <a href="https://www.youtube.com/results?search_query=%EC%9E%A5%EC%98%81%EB%9E%80" target="_blank" rel="noopener">
+    <img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F609%2F2025%2F03%2F11%2F202503110902200810_1_20250311091510316.jpg&type=sc960_832" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@wandersuzie/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/nx1i6k0SCb3ny6MXWdyes8nh78TNrpygv7-9UT_1Ac8kV2wSYpdsyH-WwcYYimZyANo7_1YDAg=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+   
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@HeechulismTV/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/ytc/AIdro_lBe4uMfH7z7j6xEcGiJ2McjzZW6qHcEEWv_xPo_gq7R80=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+<div class="grid-item">
+  <a href="https://www.youtube.com/@gilgeodnam/videos" target="_blank" rel="noopener">
+    <img src="https://yt3.googleusercontent.com/X1JhpcnzbBEVh1qsyu9-XuKV2v0XVS6n2BFvFyjIaIFT09DyJiOaaOf-3WobCIazFtL8UEGshg=s900-c-k-c0x00ffffff-no-rj" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+   
+<div class="grid-item">
+  <a href="https://www.youtube.com/@dex101/videos" target="_blank" rel="noopener">
+    <img src="https://i.namu.wiki/i/2NdOwf3Hy-AoVppNz4JhPULzn7lcsoMuDErOpLt514UcIQyMbwjGxsSGG8wRToB7leZbtv-DxJxWSxdZeD57Aw.webp" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+   
+<div class="grid-item">
+  <a href="https://www.youtube.com/results?search_query=%EB%B9%A0%EB%8B%88%EB%B3%B4%ED%8B%80" target="_blank" rel="noopener">
+    <img src="https://i.namu.wiki/i/yNrlDsNmVoMjz1t8816MqSb53Ovcf2yTr4-mrsN0K55SLjSJomyb6CPBKcE-a8UsiKSbR0gN6qZQcD-Tct7AmnJSID5QZdNuz8rbJi1CXObcX31hX93XYBN6RDqYZEcWrDFPjGO9PqOLhvaLdxDROw.webp" alt="" />
+  </a>
+  <button class="edit-btn">수정</button>
+</div>
+
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     <!-- ... (여행 유튜버 이미지 더 추가) ... -->
+    </div>
+  </div>
+
+  <!-- 2단: 먹방 유튜버 -->
+  <div class="theme-section">
+    <div class="theme-title">영화및드라마 유투버</div>
+    <div class="media-grid">
+      <div class="grid-item">
+        <a href="https://www.youtube.com/@EatwithBoki/videos">
+          <img src="https://i.ytimg.com/vi/CyQlwJDE_uk/maxresdefault.jpg" alt="">
+        </a>
+        <button class="edit-btn">수정</button>
+      </div>
+      <!-- ... (먹방 유튜버 이미지 더 추가) ... -->
+    </div>
+  </div>
+
+  <!-- 3단: 음악 유튜버 -->
+  <div class="theme-section">
+    <div class="theme-title">음악 유튜버</div>
+    <div class="media-grid">
+      <div class="grid-item">
+        <a href="https://www.youtube.com/@JFlaMusic/videos">
+          <img src="https://wimg.heraldcorp.com/content/default/2023/07/13/20230713000417_0.jpg" alt="">
+        </a>
+        <button class="edit-btn">수정</button>
+      </div>
+      <!-- ... (음악 유튜버 이미지 더 추가) ... -->
+    </div>
+  </div>
+
+  <!-- 4단: VLOG 유튜버 -->
+  <div class="theme-section">
+    <div class="theme-title">VLOG 유튜버</div>
+    <div class="media-grid">
+      <div class="grid-item">
+        <a href="https://www.youtube.com/@NomadShaun/videos">
+          <img src="https://www.fashionbiz.co.kr/images/articleImg/listImg/1717403801136-%EC%A7%80%ED%94%84.jpg" alt="">
+        </a>
+        <button class="edit-btn">수정</button>
+      </div>
+      <!-- ... (VLOG 유튜버 이미지 더 추가) ... -->
+    </div>
+  </div>
+
+  <!-- 5단: 기타 유튜버 -->
+  <div class="theme-section">
+    <div class="theme-title">기타 유튜버</div>
+    <div class="media-grid">
+      <div class="grid-item">
+        <a href="https://www.youtube.com/@MrBeast/videos">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS2EntOCdE0yEaIfacfxiU1ZyRi8RSeT-eu_HDeQSq6J_veZZesXpwlcxkWxM2NKMpWRb4CRyw9WdUGOQV7ZqK8g" alt="">
+        </a>
+        <button class="edit-btn">수정</button>
+      </div>
+      <!-- ... (기타 유튜버 이미지 더 추가) ... -->
+    </div>
+  </div>
+
+</body>
+</html>
