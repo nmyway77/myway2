@@ -128,18 +128,23 @@
       url = toYouTubeEmbed(url);
       return url.includes('?') ? url + '&autoplay=1' : url + '?autoplay=1';
     }
+    // 핵심: 클릭한 네비바 항목이 네비바 중간(혹은 최상단)에 오도록 자동 스크롤
     const items = document.querySelectorAll('.directory-item');
     const frame = document.getElementById('videoFrame');
+    const list = document.getElementById('dirList');
     items.forEach(item => {
       item.addEventListener('click', function() {
         items.forEach(i => i.classList.remove('selected'));
         this.classList.add('selected');
         frame.src = getAutoPlayUrl(this.dataset.url);
-        // 스크롤 위치를 클릭한 아이템이 리스트의 최상단에 오도록 조정
-        const list = document.getElementById('dirList');
-        const itemTop = this.offsetTop;
+
+        // 아래 코드로 클릭한 항목이 항상 네비바의 '중간'에 오도록 부드럽게 스크롤
+        const listRect = list.getBoundingClientRect();
+        const itemRect = this.getBoundingClientRect();
+        // 현재 스크롤 위치 + (항목의 top 위치 - 리스트의 top 위치) - (리스트 높이/2 - 항목 높이/2)
+        const offset = (itemRect.top - listRect.top) + list.scrollTop - (listRect.height / 2) + (itemRect.height / 2);
         list.scrollTo({
-          top: itemTop,
+          top: offset,
           behavior: 'smooth'
         });
       });
