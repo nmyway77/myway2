@@ -1,341 +1,210 @@
-<!DOCTYPE html>
+
+<!DOCTYPE html> 
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-   <title>LIVE RADIO,실시간 라디오 방송, 실시간 TV,</title>
-<meta name="description" content="무료로 즐기는 최신 무료영화, 한국의 인기가수 노래모음, 만화 , 여성잡지모음. Free movies, watch latest films for free!">
-<meta property="og:title" content="무료영화, 최신 영화 추천 | Free Movies, Streaming - MYWAY.KR">
-<meta property="og:description" content="최신 무료영화와 인기작들을 무료로 시청하세요. Free movies, streaming, live TV, K-Drama, all in one place!">
-
-
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta charset="UTF-8">
+  <title>유튜브 채널 디렉토리 뷰어 - 자동 변환</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
-      background: #fff;
-      margin: 0; padding: 0;
-      min-height: 100vh;
-      overflow: hidden;
+    body {margin:0; font-family:'Montserrat','Apple SD Gothic Neo',sans-serif; background:linear-gradient(135deg,#23243a 0%,#314a6a 100%); color:#fff; min-height:100vh;}
+    .container {display: flex; min-height: 100vh;}
+    .sidebar {width: 240px; min-width: 140px; background:rgba(27,35,52,0.98); padding:22px 10px 14px 15px; box-sizing: border-box; display: flex; flex-direction: column; border-top-right-radius:26px; border-bottom-right-radius:26px; box-shadow:4px 0 26px #0006; border-right:1.5px solid #3e5c8888; z-index:3;}
+    .sidebar-title {font-size:1.2rem; font-weight:700; margin-bottom:22px; letter-spacing:0.5px; text-shadow:0 2px 12px #0005; text-align:left; padding-left:7px;}
+    .directory-list {
+      display:flex; flex-direction:column; gap:11px; flex:1; overflow-y:auto;
+      scrollbar-width: none !important;
+      max-height:84vh; padding-right:2px;
     }
-    .screen-links-wrap {
-      width: 100vw;
-      position: relative;
-      margin: 0 auto;
-      padding: 0;
-      box-sizing: border-box;
-      z-index: 9;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-      filter: drop-shadow(0 6px 28px #b176f340);
-      align-items: center;
+    .directory-list::-webkit-scrollbar {width: 0 !important; background: transparent !important; display: none !important;}
+    .directory-list::-webkit-scrollbar-thumb { background: transparent !important; }
+    .directory-list::-webkit-scrollbar-track { background: transparent !important; }
+    .directory-group {margin-bottom: 6px;}
+    .group-header {
+      background:rgba(37,55,90,0.9);
+      font-weight:700; font-size:1.09em; letter-spacing:0.04em;
+      padding:10px 10px 10px 14px; border-radius:12px; cursor:pointer; 
+      margin-bottom:3px; user-select:none; transition:background 0.15s;
+      box-shadow: 0 2px 9px #0002;
+      border:1px solid transparent; color:#60c8ff;
+      display: flex; align-items: center; gap: 4px;
     }
-    .expand-btn {
-      font-size: 1.1em;
-      font-weight: bold;
-      color: #fff;
-      background: linear-gradient(95deg, #7ed6fb 70%, #b176f3 130%);
-      border: none;
-      border-radius: 50%;
-      width: 28px;
-      height: 28px;
-      margin-right: 9px;
-      margin-left: 3px;
-      cursor: pointer;
-      box-shadow: 0 1px 6px #b176f32e;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      outline: none;
-      transition: background 0.15s, box-shadow 0.12s;
-      z-index: 20;
-      opacity: 0.96;
-      text-decoration: none;
-      line-height: 1.2;
+    .group-header.open, .group-header:hover {
+      background: linear-gradient(90deg,#3576ed 10%,#65e0f6 95%);
+      color:#222e4c; border:1.2px solid #63c6ff;
+      box-shadow:0 4px 16px #1588c844, 0 1px 5px #63e0ff11; 
     }
-    .expand-btn:active {
-      background: linear-gradient(95deg, #b176f3 30%, #7ed6fb 100%);
-      box-shadow: 0 2px 14px #b176f380;
-      color: #fff;
+    .group-arrow {
+      display: inline-block; transition: transform 0.2s;
+      font-size:1.15em;
     }
-    .screen-links {
-      display: flex;
-      gap: 0px;
-      font-size: 0.93rem;
-      font-weight: 500;
-      color: #fff;
-      white-space: nowrap;
-      background: linear-gradient(95deg, #7ed6fb 10%, #b176f3 90%);
-      padding: 0 14px;
-      user-select: none;
-      align-items: center;
-      border-radius: 16px;
-      box-shadow: 0 8px 32px 0 rgba(90,100,180,0.13), 0 2px 8px 0 rgba(255,255,255,0.10) inset;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      min-height: 30px;
-      min-width: 220px;
-      cursor: grab;
-      transition: box-shadow 0.2s;
+    .group-header.open .group-arrow {transform: rotate(90deg);}
+    .group-list {
+      display: none; flex-direction:column; gap:8px;
+      padding-left: 5px;
     }
-    .screen-links::-webkit-scrollbar { display: none; }
-    .screen-links a {
-      color: rgba(255,255,255,0.85);
-      text-decoration: none;
-      padding: 3px 10px;
-      border-radius: 10px;
-      font-weight: 500;
-      font-size: 0.97em;
-      background: none;
-      display: inline-block;
-      opacity: 0.93;
-      letter-spacing: 0.01em;
-      transition: background 0.15s, color 0.13s, box-shadow 0.12s;
-      cursor: pointer;
-      white-space: nowrap;
-      margin: 0 1px;
-    }
-    .screen-links a:hover, .screen-links a.active {
-      background: rgba(255,255,255,0.22);
-      color: #fff;
-      font-weight: 600;
-      box-shadow: 0 2px 12px #b176f333;
-    }
-    @media (max-width: 700px) {
-      .screen-links { font-size: 0.88rem; gap: 6px; padding: 0 4px;}
-      .screen-links-wrap { margin-top: 10px; }
-      .screen-links { min-height: 26px; }
-    }
-    #main-frame {
-      position: fixed;
-      left: 0;
-      top: 65px;
-      width: 100vw;
-      height: calc(100vh - 96px);
-      border: none;
-      margin: 0;
-      background: #f5f7fa;
-      z-index: 10;
-      border-radius: 0;
-      display: block;
-    }
-    @media (max-width: 700px) {
-      #main-frame { top: 58px; height: calc(100vh - 60px); }
-    }
-    .nav-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 20px; height: 32px;
-      display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(to right, #b176f3 40%, transparent 100%);
-      border: none;
-      outline: none;
-      z-index: 11;
-      cursor: pointer;
-      opacity: 0.82;
-      transition: opacity 0.18s;
-      padding: 0;
-      border-radius: 11px;
-      user-select: none;
-    }
-    .nav-arrow.right {
-      right: 2px;
-      background: linear-gradient(to left, #b176f3 44%, transparent 100%);
-    }
-    .nav-arrow.left {
-      left: 2px;
-      background: linear-gradient(to right, #b176f3 44%, transparent 100%);
-    }
-    .nav-arrow svg {
-      display: block;
-      width: 13px;
-      height: 18px;
-    }
-    .nav-arrow:active {
-      opacity: 1;
-    }
-    .nav-arrow[hidden] {
-      display: none;
-    }
-    body.window-top {
-      padding-left: env(safe-area-inset-left, 0px);
-      padding-right: env(safe-area-inset-right, 0px);
-    }
-    body.window-top .screen-links-wrap {
-      max-width: 100vw !important;
-      width: auto !important;
-    }
-    body.window-top .screen-links {
-      max-width: 100vw !important;
-      width: auto !important;
-    }
-    body.window-top #main-frame {
-      left: 0;
-      width: 100vw;
+    .group-list.open { display: flex;}
+    .directory-item {display:flex; align-items:center; gap:10px; padding:13px 10px; border-radius:12px; cursor:pointer; font-size:1.02rem; background:rgba(37,55,90,0.82); box-shadow:0 2px 9px #0002; transition:background 0.16s, box-shadow 0.16s, color 0.13s; border:1px solid transparent; font-weight:600; user-select:none; min-height:28px; white-space:nowrap;}
+    .directory-item.selected, .directory-item:hover {background:linear-gradient(90deg,#3576ed 10%,#65e0f6 95%); color:#222e4c; border:1.2px solid #63c6ff; box-shadow:0 4px 16px #1588c844, 0 1px 5px #63e0ff11; z-index:2;}
+    .directory-label {flex:1; letter-spacing:0.01em; font-size:1.06em; font-weight:600; overflow:hidden; text-overflow:ellipsis;}
+    .main {flex: 1 1 auto; min-width: 0; background: linear-gradient(120deg,#242a39 0%,#3a5975 90%); position: relative; overflow-y: auto;}
+    .yt-container {min-height:100vh; width:100%; display:flex; align-items:flex-start; justify-content:center; background:none; padding-bottom:190px; box-sizing:border-box;}
+    .yt-inner {width:92vw; max-width:980px; display:flex; flex-direction:column; align-items:center; gap:18px; margin-top:48px;}
+    .yt-frame-box {width:100%; aspect-ratio:16/9; background:#000; border-radius:18px; box-shadow:0 4px 40px #2232ab55; overflow:hidden; display:flex; align-items:center; justify-content:center;}
+    .video-frame {width:100%; height:100%; border:0; border-radius:18px; background:#000; display:block; min-height:180px;}
+    @media (max-width:900px) {
+      .container { flex-direction:column;}
+      .sidebar { width:100vw; min-width:0; border-radius:0 0 20px 20px; border-right:none; box-shadow:none; padding:8px 0 7px 0; position:relative;}
+      .sidebar-title { font-size:1.1rem; padding-left:17px; margin-bottom:9px;}
+      .directory-list { flex-direction:row; gap:6px; overflow-x:auto; overflow-y:hidden; max-height:none; height:46px; padding:0 8px 0 8px; align-items:center;}
+      .directory-group {margin-bottom:0;}
+      .group-list {padding-left:0;}
+      .directory-item { font-size:0.93rem; padding:10px 11px; min-width:120px; min-height:30px; border-radius:11px; white-space:nowrap; margin-bottom:0;}
+      .main { padding:0;}
+      .yt-container { min-height:90vh; padding-bottom:120px;}
+      .yt-inner { width:99vw; max-width:99vw; margin-top:16px;}
+      .yt-frame-box { border-radius:12px;}
+      .video-frame { border-radius:12px; min-height:100px;}
     }
   </style>
-  <script>
-    (function(){
-      if(window.self === window.top){
-        document.addEventListener('DOMContentLoaded',function(){
-          document.body.classList.add('window-top');
-        });
-      }
-    })();
-  </script>
 </head>
 <body>
-  <div class="screen-links-wrap" style="position:relative;">
-    <a href="#" class="expand-btn" onclick="expandCurrentFullPage(event)" title="전체화면 확대">＋</a>
-    <button class="nav-arrow left" id="nav-arrow-left" aria-label="왼쪽 이동" hidden>
-      <svg viewBox="0 0 13 20"><polygon points="9,3 2,10 9,17" fill="#fff" opacity="0.86"/></svg>
-    </button>
-    <div class="screen-links" id="parent-links">
-
-
-
-
-
-    
-    <a href="#" onclick="showScreenParent(event, '00maintvvodmain.html')">H </a>
-    
-        
-       <a href="#" onclick="showScreenParent(event, '00maintvvod.html')">FREE 드라마 VOD</a>
-   
-    <a href="#" onclick="showScreenParent(event, '')">예능 VOD</a>
-      
-      <a href="#" onclick="showScreenParent(event, '')">다큐 VOD</a>
-      <a href="#" onclick="showScreenParent(event, '')">기타 VOD</a>
-
-
-
-
-
-
-        
+  <div class="container">
+    <div class="sidebar">
+      <div class="sidebar-title">채널 디렉토리</div>
+      <div class="directory-list" id="dirList">
+        <!-- 그룹: 방송사별로 나눔 예시 -->
+        <div class="directory-group">
+          <div class="group-header open"><span class="group-arrow">&#9654;</span>KBS</div>
+          <div class="group-list open">
+            <div class="directory-item selected" data-url="https://www.youtube.com/watch?v=1bROU5AqM8w&ab_channel=KBSDramaClassic">
+              <span class="directory-label">KBS클래식드라마</span>
+            </div>
+            <div class="directory-item" data-url="https://www.youtube.com/watch?v=Cvuip6DvACs&ab_channel=KBSDrama">
+              <span class="directory-label">KBS드라마</span>
+            </div>
+            <div class="directory-item" data-url="https://www.youtube.com/watch?v=Po84TcoVjNo&ab_channel=KBSJoy">
+              <span class="directory-label">KBS JOY</span>
+            </div>
+          </div>
+        </div>
+        <div class="directory-group">
+          <div class="group-header"><span class="group-arrow">&#9654;</span>SBS</div>
+          <div class="group-list">
+            <div class="directory-item" data-url="https://www.youtube.com/watch?v=P8QordVAUyU&ab_channel=KBSEntertain%3A%EA%B9%94%EA%B9%94%ED%8B%B0%EB%B9%84">
+              <span class="directory-label">SBS깔깔</span>
+            </div>
+            <div class="directory-item" data-url="https://www.youtube.com/watch?v=OYFlcCS4CUk&ab_channel=SBS%EC%98%9B%EB%82%A0%EC%98%88%EB%8A%A5-%EB%B9%BD%EB%8A%A5">
+              <span class="directory-label">SBS 빽능</span>
+            </div>
+            <div class="directory-item" data-url="https://www.youtube.com/watch?v=Y2DwnBQlbmE&ab_channel=SBS%EC%98%9B%EB%82%A0%EB%93%9C%EB%9D%BC%EB%A7%88-%EB%B9%BD%EB%93%9C">
+              <span class="directory-label">SBS 빽드</span>
+            </div>
+            <div class="directory-item" data-url="https://www.youtube.com/watch?v=lDcWeklf6DI&ab_channel=%EB%9F%B0%EB%8B%9D%EB%A7%A8-%EC%8A%A4%EB%B8%8C%EC%8A%A4%EA%B3%B5%EC%8B%9D%EC%B1%84%EB%84%90">
+              <span class="directory-label">SBS런닝맨</span>
+            </div>
+          </div>
+        </div>
+        <div class="directory-group">
+          <div class="group-header"><span class="group-arrow">&#9654;</span>JTBC</div>
+          <div class="group-list">
+            <div class="directory-item" data-url="https://www.youtube.com/watch?v=RL2pFHjPaUI&ab_channel=JTBCVoyage">
+              <span class="directory-label">JTBC 젭티</span>
+            </div>
+            <div class="directory-item" data-url="https://www.youtube.com/watch?v=LK3CXlk4qVo&ab_channel=JTBCDrama">
+              <span class="directory-label">JTBC 드라마</span>
+            </div>
+          </div>
+        </div>
+        <div class="directory-group">
+          <div class="group-header"><span class="group-arrow">&#9654;</span>기타/연예</div>
+          <div class="group-list">
+            <div class="directory-item" data-url="https://www.youtube.com/watch?v=xOXG2HwypaM&ab_channel=iMBC%EC%97%B0%EC%98%88">
+              <span class="directory-label">IMBC 연예</span>
+            </div>
+            <div class="directory-item" data-url="https://www.youtube.com/watch?v=uCkYz-TQCrc&ab_channel=%EB%94%94%EA%B8%80%ED%81%B4%EB%9E%98%EC%8B%9D%3ADiggleClassic">
+              <span class="directory-label">디글</span>
+            </div>
+          </div>
+        </div>
+        <div class="directory-group">
+          <div class="group-header"><span class="group-arrow">&#9654;</span>경제/뉴스</div>
+          <div class="group-list">
+            <div class="directory-item" data-url="https://www.youtube.com/watch?v=s9xL1DpBsfQ&ab_channel=%EB%A7%A4%EC%9D%BC%EA%B2%BD%EC%A0%9CTV">
+              <span class="directory-label">매경</span>
+            </div>
+            <div class="directory-item" data-url="https://www.youtube.com/watch?v=NJUjU9ALj4A&ab_channel=%ED%95%9C%EA%B5%AD%EA%B2%BD%EC%A0%9CTV">
+              <span class="directory-label">한국경제</span>
+            </div>
+            <div class="directory-item" data-url="https://www.youtube.com/watch?v=lb1oB2feqkQ">
+              <span class="directory-label">머니투데이</span>
+            </div>
+            <div class="directory-item" data-url="https://www.youtube.com/watch?v=Y4JYZO0Ad7o">
+              <span class="directory-label">서울경제</span>
+            </div>
+            <div class="directory-item" data-url="https://www.youtube.com/watch?v=5cFoz90FUMk">
+              <span class="directory-label">이데일리</span>
+            </div>
+            <div class="directory-item" data-url="https://www.youtube.com/watch?v=hfyG1tc_BRk&ab_channel=%ED%86%A0%EB%A7%88%ED%86%A0%EC%A6%9D%EA%B6%8C%ED%86%B5">
+              <span class="directory-label">토마토증권</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <button class="nav-arrow right" id="nav-arrow-right" aria-label="오른쪽 이동" hidden>
-      <svg viewBox="0 0 13 20"><polygon points="4,3 11,10 4,17" fill="#fff" opacity="0.88"/></svg>
-    </button>
+    <div class="main">
+      <div class="yt-container">
+        <div class="yt-inner">
+          <div class="yt-frame-box">
+            <iframe class="video-frame" id="videoFrame"
+              src="https://www.youtube.com/watch?v=1bROU5AqM8w&ab_channel=KBSDramaClassic?autoplay=1"
+              allow="autoplay; encrypted-media"
+              allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <iframe id="main-frame" src="00maintvvod.html">dcinsid<"></iframe>
-
   <script>
-    // "확대" 버튼 클릭시: 현재 보고 있는 src를 파라미터로 새창 열기 + 작은창 미디어 정지
-    function expandCurrentFullPage(e) {
-      e.preventDefault();
-      var frame = document.getElementById('main-frame');
-      var currentSrc = frame.src;
-      window.open(window.location.pathname + '?src=' + encodeURIComponent(currentSrc), '_blank');
-      frame.src = 'about:blank';
+    // 주소 변환 함수: watch, youtu.be, embed 전부 처리
+    function toYouTubeEmbed(url) {
+      if(!url) return "";
+      if (url.includes('/embed/')) return url;
+      let match = url.match(/(?:v=|embed\/|\.be\/)([a-zA-Z0-9_-]{11})/);
+      if (match) return 'https://www.youtube.com/embed/' + match[1];
+      return url;
     }
-
-    function getParam(name) {
-      let params = new URLSearchParams(window.location.search);
-      return params.get(name);
+    function getAutoPlayUrl(url) {
+      if (!url) return "";
+      url = toYouTubeEmbed(url);
+      return url.includes('?') ? url + '&autoplay=1' : url + '?autoplay=1';
     }
-
-    window.addEventListener('DOMContentLoaded', function() {
-      var newSrc = getParam('src');
-      if (newSrc) {
-        document.getElementById('main-frame').src = newSrc;
-      }
-      document.querySelectorAll('#parent-links a')[0].classList.add('active');
-      checkNavOverflow();
+    // 디렉토리 그룹 아코디언 효과
+    document.querySelectorAll('.group-header').forEach(header => {
+      header.addEventListener('click', function() {
+        document.querySelectorAll('.group-header').forEach(h => h.classList.remove('open'));
+        document.querySelectorAll('.group-list').forEach(list => list.classList.remove('open'));
+        this.classList.add('open');
+        this.nextElementSibling.classList.add('open');
+      });
     });
-
-    // 네비바 클릭시 해당 페이지 출력 + 중앙 오도록
-    function showScreenParent(e, url) {
-      e.preventDefault();
-      document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
-      e.target.classList.add('active');
-      document.getElementById('main-frame').src = url;
-
-      // 클릭한 메뉴 중앙 오도록 스크롤 (추가)
-      const parent = document.getElementById('parent-links');
-      const el = e.target;
-      if (parent && el) {
-        const offset = el.offsetLeft - parent.offsetLeft
-          - parent.clientWidth / 2
-          + el.clientWidth / 2;
-        parent.scrollTo({ left: offset, behavior: 'smooth' });
-      }
-    }
-
-    // 네비바 드래그/터치 스크롤 (이하 동일)
-    (function(){
-      const nav = document.querySelector('.screen-links');
-      let isDown = false, startX = 0, scrollLeft = 0;
-      nav.addEventListener('mousedown', (e) => {
-        isDown = true;
-        startX = e.pageX - nav.offsetLeft;
-        scrollLeft = nav.scrollLeft;
-        nav.style.cursor = 'grabbing';
+    // 채널 선택 및 영상 변경
+    const items = document.querySelectorAll('.directory-item');
+    const frame = document.getElementById('videoFrame');
+    items.forEach(item => {
+      item.addEventListener('click', function() {
+        items.forEach(i => i.classList.remove('selected'));
+        this.classList.add('selected');
+        frame.src = getAutoPlayUrl(this.dataset.url);
       });
-      nav.addEventListener('mouseleave', () => {
-        isDown = false;
-        nav.style.cursor = '';
-      });
-      nav.addEventListener('mouseup', () => {
-        isDown = false;
-        nav.style.cursor = '';
-      });
-      nav.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        const x = e.pageX - nav.offsetLeft;
-        nav.scrollLeft = scrollLeft - (x - startX);
-      });
-      let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
-      nav.addEventListener('touchstart', function(e){
-        touchDragging = true;
-        touchStartX = e.touches[0].pageX - nav.offsetLeft;
-        touchScrollLeft = nav.scrollLeft;
-      });
-      nav.addEventListener('touchend', ()=>{ touchDragging=false; });
-      nav.addEventListener('touchmove', function(e){
-        if(!touchDragging) return;
-        const x = e.touches[0].pageX - nav.offsetLeft;
-        nav.scrollLeft = touchScrollLeft - (x - touchStartX);
-      });
-    })();
-
-    const nav = document.querySelector('.screen-links');
-    const leftArrow = document.getElementById('nav-arrow-left');
-    const rightArrow = document.getElementById('nav-arrow-right');
-    function checkNavOverflow() {
-      if (!nav) return;
-      if (nav.scrollWidth > nav.clientWidth) {
-        leftArrow.hidden = nav.scrollLeft < 5;
-        rightArrow.hidden = nav.scrollLeft + nav.clientWidth + 5 >= nav.scrollWidth;
-      } else {
-        leftArrow.hidden = true;
-        rightArrow.hidden = true;
-      }
-    }
-    nav.addEventListener('scroll', checkNavOverflow);
-    window.addEventListener('resize', checkNavOverflow);
-    setTimeout(checkNavOverflow, 120);
-
-    leftArrow.addEventListener('click', function() {
-      nav.scrollBy({left: -110, behavior: 'smooth'});
-      setTimeout(checkNavOverflow, 220);
     });
-    rightArrow.addEventListener('click', function() {
-      nav.scrollBy({left: 110, behavior: 'smooth'});
-      setTimeout(checkNavOverflow, 220);
+    // 페이지 진입 시 첫 번째 주소 변환
+    window.addEventListener('DOMContentLoaded', function(){
+      const first = document.querySelector('.directory-item.selected');
+      if(first) frame.src = getAutoPlayUrl(first.dataset.url);
+      // 첫 번째 그룹만 오픈(초기화)
+      document.querySelectorAll('.group-header')[0].classList.add('open');
+      document.querySelectorAll('.group-list')[0].classList.add('open');
     });
-
-    nav.addEventListener('mousedown', ()=>setTimeout(checkNavOverflow,220));
-    nav.addEventListener('mouseup', ()=>setTimeout(checkNavOverflow,220));
-    nav.addEventListener('touchend', ()=>setTimeout(checkNavOverflow,220));
   </script>
 </body>
 </html>
