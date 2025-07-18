@@ -1,0 +1,272 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>TV 다시보기기 - MYWAY</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      min-height: 100vh; margin: 0; padding: 0;
+      background: #fff; font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      width: 100%;
+    }
+    body { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .main-title { 
+
+     
+      margin-top: 0px;
+
+     
+      font-size: 1.1rem; font-weight: 700; color: #333862;
+      text-shadow: 0 2px 12px #ffffff99; margin-bottom: 8px;
+      text-align: center; user-select: none;
+    }
+    .main-subtitle { font-size: 0.9rem; color: #6a739c; margin-bottom: 5px; text-align: center; user-select: none; }
+    .container { width: 100%; max-width: 560px; display: flex; flex-direction: column; align-items: center;
+
+
+                
+      margin-top: 0px; margin-bottom: 0px;     min-height: 180vh;    padding-left: 6px; padding-right: 6px;}
+
+
+   
+    .logo-row {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 32px;
+      width: 100%;
+      flex-wrap: nowrap;
+      transition: max-width 0.1s;
+    }
+    .ai-logo-wrap {
+      width: 74px; height: 74px; border-radius: 50%; background: #fff;
+      box-shadow: 0 3px 24px 0 #b1c7e866; border: 3px solid #e5e8f6;
+      display: flex; justify-content: center; align-items: center;
+      transition: box-shadow 0.15s, border-color 0.15s;
+      cursor: pointer; overflow: hidden; margin: 0;
+      flex: 0 0 auto;
+    }
+    .ai-logo-wrap:hover { box-shadow: 0 8px 32px 0 #7e94ff99; border-color: #94a2ff; background: #f7faff;}
+    .ai-logo-img { width: 54px; height: 54px; object-fit: contain; background: transparent;
+      border-radius: 50%; transition: transform 0.12s;}
+    .ai-logo-wrap:hover .ai-logo-img { transform: scale(1.08) rotate(-3deg);}
+    .group-title {
+      width: 100%; max-width: 500px;
+      font-size: 1.07rem; font-weight: 600;
+      margin: 34px 0 10px 0;
+      letter-spacing: -0.5px;
+      color: #244;
+      text-align: left;
+      padding-left: 8px;
+      user-select: none;
+    }
+    @media (max-width: 1100px) {
+      .container { max-width: 98vw; }
+      .logo-row { gap: 14px;}
+      .ai-logo-wrap { width: 60px; height: 60px;}
+      .ai-logo-img { width: 40px; height: 40px;}
+    }
+    @media (max-width: 900px) {
+      .container { max-width: 99vw;}
+      .main-title { font-size: 1.35rem; margin-top: 64px;}
+      .main-subtitle { font-size: 1.07rem; }
+      .logo-row { gap: 10px; }
+      .ai-logo-wrap { width: 52px; height: 52px;}
+      .ai-logo-img { width: 34px; height: 34px;}
+    }
+    @media (max-width: 700px) {
+      .ai-logo-wrap { width: 78px !important; height: 78px !important; }
+      .ai-logo-img  { width: 60px !important; height: 60px !important; }
+      .logo-row     { gap: 7vw !important; }
+    }
+    @media (max-width: 480px) {
+      .main-title { font-size: 1rem; }
+      .main-subtitle { font-size: 0.95rem; }
+      .container { margin-top: 6px; margin-bottom: 9px;}
+    }
+   .group-title { text-align: center; }
+   margin-bottom: 10.0em;
+  </style>
+</head>
+<body>
+
+
+ 
+
+
+ 
+  <div class="main-title"></div>
+
+ 
+  <div class="main-subtitle"></div>
+  <div class="container" id="aiLogoContainer"></div>
+  <script>
+    // 1번 그룹 (예: AI/생성형)
+    const group1 = [
+     
+   
+      { url: "https://vod.kbs.co.kr/", img: "https://play-lh.googleusercontent.com/_jxXbyqpn1S_XRf6ZOcyDp0Sdqje10tMNcfAQ0gtc1LlIWQUr3_nE6AjlNmQxPzCJA", alt: "KBS1" },
+      { url: "https://allvod.sbs.co.kr/free", img: "https://play-lh.googleusercontent.com/IMxMU5aPrcuxrnjVKfsMwU2aHfLEn6anjpgH_--kk3xjPEg0n5JwdMziwzst0Zbz_qRr", alt: "SBS" },
+     { url: "https://playvod.imbc.com/NowFree", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmbxRfl9nIpuAhW7AqR1p-GlL0injWdpW9dA&s", alt: "MBIC LIVE" },
+     
+      { url: "https://vod.jtbc.co.kr/", img: "https://i.namu.wiki/i/uuAyWQDvgF1TRyWeJbxFrOdxXwA1wEz6giX6fy4KW7m60W6QD2gu6x5woH4ZQ2Ne_BgH6dmFZ1gxB_hYPX1HBg.webp", alt: "JTBC " },
+      
+      { url: "https://ichannela.com/collection/main.do", img: "https://www.cuk.edu/type/common/img/kor/info/coperComp_logo10.png", alt: "채널A" },
+
+{ url: "https://www.youtube.com/watch?v=Az92mxIIBzA&list=PLbWQq5RyC9bkKpQFIhiifhu2Sz-pEWbQo&ab_channel=tvNDSTUDIO", img: "https://yt3.googleusercontent.com/-ioOyBzu55CHyoZNWz0ZvxcqAl7tD3YQqw1-bNzgdup_qDDpdc7Eq4g7wkJSFx5yChMD0nY3s2w=s900-c-k-c0x00ffffff-no-rj", alt: "채널A" },
+
+
+  { url: "https://www.youtube.com/@KBSdrama/videos", img: "https://yt3.googleusercontent.com/ytc/AIdro_m19daA-KZgxvYoXuRtSHO6vCjzoOBoqLdNxSfmHjZgdNY=s900-c-k-c0x00ffffff-no-rj", alt: "채널A" },
+ { url: "https://www.youtube.com/@kbsdramaclassic", img: "https://yt3.googleusercontent.com/NcQc53VPZ9zz4U65hKYamgv0Du5NgikBkTAUT8zXJpCByb6zEzJZFWh67WcxCr567UbIgf2l=s900-c-k-c0x00ffffff-no-rj", alt: "채널A" },
+
+  { url: "https://www.youtube.com/@JTBCentertainment/videos", img: "https://yt3.googleusercontent.com/dOxU5Ro4R_qKStEZhjGdyetcC8uWeiS_LTkI0tV-Nnj1vFBvCMlx8HBM7TwXMK3WRWXAdE0IGQ=s900-c-k-c0x00ffffff-no-rj", alt: "채널A" },
+
+     
+     
+
+  { url: "https://www.youtube.com/@ddeunddeun/videos", img: "https://yt3.googleusercontent.com/D0eRDrxMc6Yu0AZSQobnV21TwXPPUo9GWk4a5RunYUXpjyLqJdqw-WNeEZ1RjVfH39TeHr37ng=s900-c-k-c0x00ffffff-no-rj", alt: "채널A" },
+
+
+   { url: "https://www.youtube.com/@DiggleClassic", img: "https://yt3.googleusercontent.com/14-LcU9z8YjX-JKFBhqOK0H2SzJupGEJxtZwHmLXtbcpQQ1-YehNxiWim8SoLCDFEv6j2I-w=s900-c-k-c0x00ffffff-no-rj", alt: "채널A" },
+     
+{ url: "https://www.youtube.com/@Diggle/videos", img: "https://yt3.googleusercontent.com/m4J2Rpz6CwcqAKtqjOuvTjCXBDbORywU1TIQlo4j49LPMClAbt_ugICQ4r2ONwWxWUv39PtR=s900-c-k-c0x00ffffff-no-rj", alt: "채널A" },
+
+
+  { url: "https://www.youtube.com/@shortbox/videos", img: "https://i.namu.wiki/i/WI7LbR4CKs5noL-eYLwytjQIToEBCfBMep7t0bDJiMm4jS2wEeA0E_JB-cBdMPpsJH3DkyaFYclVUY1CVbZufg.webp", alt: "TV조선" },
+
+
+
+
+
+     
+      { url: "https://vod.tvchosun.com/home.cstv", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1v7RTS87LXPgpQvZ4m9AOmjl_bBaM1fky0A&s", alt: "TV조선" },
+  
+     { url: "https://www.ebs.co.kr/tv/program", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgA60A2xocV0_AlzU6IAobDJMEJa9ZzDmNzw&s", alt: "채널A" },
+
+
+    { url: "https://www.youtube.com/@%EA%B9%80%EC%8B%9C%EC%84%A0/videos", img: "https://i.namu.wiki/i/58yEzsBt8iBiK-itgzbT8CihOIe4v6E_rIUZw7FU3mFiv8DLWXW6iM5goIIJ9ik0Knbt8gsAQ90pEfxOanTiJw.webp", alt: "채널A" },
+
+ { url: "https://www.youtube.com/@%ED%94%BD%EC%B8%84/videos", img: "https://i.namu.wiki/i/Ba7_etpcg6alt9DCs6N79XAur43sitr0vjDyjl_AqFMe1PbZ5euyUx_OGkCYCadl6IBzovkHzeYxXOFQs3oR2w.webp", alt: "채널A" },
+
+   { url: "https://www.youtube.com/@A_plot_/videos", img: "https://yt3.googleusercontent.com/mTnHAknET2seGy-eArVIFTwqhLOX-yKq_DPT273i9qZIdB8K0WALKGiF4GlK02HrNfqbFQHhZ24=s900-c-k-c0x00ffffff-no-rj", alt: "채널A" },
+ { url: "https://www.youtube.com/@writingdown/videos", img: "https://i.namu.wiki/i/9Lt2rcwculG5LDxLCF9uFCHiORXo0Up1CA8Jl8gNWLLOymPTUw8bdXycbWPNeecXvOSJFuJC0G2jhYCgDMMRVw.webp", alt: "채널A" },
+
+
+   { url: "https://www.youtube.com/@dna__/videos", img: "https://yt3.googleusercontent.com/gJ5y4s5L7_mhGObcG40dM5_dTf-HzwiSyvSUvPaKKHQZak9Xi67HOq70WmLPEbenvcUd763C=s900-c-k-c0x00ffffff-no-rj", alt: "채널A" },
+
+
+ { url: "https://www.youtube.com/@sukfilm274/videos", img: "https://i.namu.wiki/i/g0_A24ZIPXkGxIYhTJcGhM9y7Ngxjoriop4L7kKPLdZnP3AZg4RR_oeNZSJnamTztsaGYXQoXysH3oHqlxgqGw.webp", alt: "채널A" },
+
+ { url: "https://www.youtube.com/@teamCoP/videos", img: "https://yt3.googleusercontent.com/YeUoGZXxJ9ksybpMAByuBbFf8IRQDPPUerBq-9SIfi4jKzBNyBZUvEf4v8gPkPzatFLUgd5EMg=s900-c-k-c0x00ffffff-no-rj", alt: "채널A" },
+
+
+ { url: "https://www.youtube.com/@LUV_SIGNAL/videos", img: "https://yt3.googleusercontent.com/6x2BOa8Gh3QX77VB6RVg8ojf74akF2GGT9C8f52vFSdcmcppUi3Y-FN1c1zL-3u_SnyuZp3Jgg=s900-c-k-c0x00ffffff-no-rj", alt: "채널A" },
+
+   { url: "https://www.youtube.com/@SOMEFILM/videos", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZQQSnSXK3kbj2QHxaX5Rle9dJBX6zRdUCPA&s", alt: "채널A" },
+
+     
+     
+    ];
+    // 2번 그룹 (예: 검색/포털)
+    const group2 = [
+
+    ];
+
+    // 3번 그룹 (예: AI툴 모음)
+    const group3 = [
+
+
+     
+    ];
+
+    // 4번 그룹 (예: 이미지 생성/AI/기타)
+    const group4 = [
+  ];
+
+
+   
+
+function getLayout() {
+  let iconsPerRow = 10, gap = 24, size = 74, imgSize = 54;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  if (w <= 1100) { iconsPerRow = 7; }
+  if (w <= 900)  { iconsPerRow = 5; }
+  if (w <= 700)  { iconsPerRow = 4; }
+  if (w <= 500)  { iconsPerRow = 3; }
+  return { iconsPerRow, gap, size, imgSize };
+}
+
+
+
+
+   
+    function renderGroup(arr) {
+      const { iconsPerRow, gap, size, imgSize } = getLayout();
+      let idx = 0;
+      const rows = [];
+      while (idx < arr.length) {
+        const count = Math.min(iconsPerRow, arr.length - idx);
+        const row = document.createElement('div');
+        row.className = "logo-row";
+        row.style.maxWidth = (size * count + gap * (count - 1)) + "px";
+        row.style.gap = gap + "px";
+        for (let i = 0; i < count; i++, idx++) {
+          const l = arr[idx];
+          const a = document.createElement('a');
+          a.className = "ai-logo-wrap";
+          a.href = l.url;
+          a.target = "_blank";
+          a.style.width = a.style.height = size + "px";
+          const img = document.createElement('img');
+          img.className = "ai-logo-img";
+          img.src = l.img;
+          img.alt = l.alt;
+          img.style.width = img.style.height = imgSize + "px";
+          a.appendChild(img);
+          row.appendChild(a);
+        }
+        rows.push(row);
+      }
+      return rows;
+    }
+
+    function renderAll() {
+      const container = document.getElementById('aiLogoContainer');
+      container.innerHTML = "";
+
+      // 1단 제목
+      const g1Title = document.createElement("div");
+      g1Title.className = "group-title";
+      g1Title.textContent = "";
+      container.appendChild(g1Title);
+      renderGroup(group1).forEach(row => container.appendChild(row));
+
+      // 2단 제목
+      const g2Title = document.createElement("div");
+      g2Title.className = "group-title";
+      g2Title.textContent = "";
+      container.appendChild(g2Title);
+      renderGroup(group2).forEach(row => container.appendChild(row));
+
+      // 3단 제목
+      const g3Title = document.createElement("div");
+      g3Title.className = "group-title";
+      g3Title.textContent = "";
+      container.appendChild(g3Title);
+      renderGroup(group3).forEach(row => container.appendChild(row));
+
+      // 4단 제목
+      const g4Title = document.createElement("div");
+      g4Title.className = "group-title";
+     g4Title.innerHTML = `<a href="radiositesbar2.html" target="_blank" style="color:inherit; text-decoration:none;"></a>`;
+      container.appendChild(g4Title);
+      renderGroup(group4).forEach(row => container.appendChild(row));
+    }
+
+    renderAll();
+    window.addEventListener('resize', renderAll);
+  </script>
+</body>
+</html>
