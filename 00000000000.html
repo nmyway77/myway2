@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -11,37 +11,16 @@
     .sidebar-title {font-size:1.2rem; font-weight:700; margin-bottom:22px; letter-spacing:0.5px; text-shadow:0 2px 12px #0005; text-align:left; padding-left:7px;}
     .directory-list {
       display:flex; flex-direction:column; gap:11px; flex:1; overflow-y:auto;
-      scrollbar-width: none !important;
+      scrollbar-width: none !important; /* Firefox 완전숨김 */
       max-height:84vh; padding-right:2px;
     }
-    .directory-list::-webkit-scrollbar {width: 0 !important; background: transparent !important; display: none !important;}
+    .directory-list::-webkit-scrollbar {
+      width: 0 !important;       /* 크롬/엣지/사파리 완전숨김 */
+      background: transparent !important;
+      display: none !important;
+    }
     .directory-list::-webkit-scrollbar-thumb { background: transparent !important; }
     .directory-list::-webkit-scrollbar-track { background: transparent !important; }
-    .directory-group {margin-bottom: 6px;}
-    .group-header {
-      background:rgba(37,55,90,0.9);
-      font-weight:700; font-size:1.09em; letter-spacing:0.04em;
-      padding:10px 10px 10px 14px; border-radius:12px; cursor:pointer; 
-      margin-bottom:3px; user-select:none; transition:background 0.15s;
-      box-shadow: 0 2px 9px #0002;
-      border:1px solid transparent; color:#60c8ff;
-      display: flex; align-items: center; gap: 4px;
-    }
-    .group-header.open, .group-header:hover {
-      background: linear-gradient(90deg,#3576ed 10%,#65e0f6 95%);
-      color:#222e4c; border:1.2px solid #63c6ff;
-      box-shadow:0 4px 16px #1588c844, 0 1px 5px #63e0ff11; 
-    }
-    .group-arrow {
-      display: inline-block; transition: transform 0.2s;
-      font-size:1.15em;
-    }
-    .group-header.open .group-arrow {transform: rotate(90deg);}
-    .group-list {
-      display: none; flex-direction:column; gap:8px;
-      padding-left: 5px;
-    }
-    .group-list.open { display: flex;}
     .directory-item {display:flex; align-items:center; gap:10px; padding:13px 10px; border-radius:12px; cursor:pointer; font-size:1.02rem; background:rgba(37,55,90,0.82); box-shadow:0 2px 9px #0002; transition:background 0.16s, box-shadow 0.16s, color 0.13s; border:1px solid transparent; font-weight:600; user-select:none; min-height:28px; white-space:nowrap;}
     .directory-item.selected, .directory-item:hover {background:linear-gradient(90deg,#3576ed 10%,#65e0f6 95%); color:#222e4c; border:1.2px solid #63c6ff; box-shadow:0 4px 16px #1588c844, 0 1px 5px #63e0ff11; z-index:2;}
     .directory-label {flex:1; letter-spacing:0.01em; font-size:1.06em; font-weight:600; overflow:hidden; text-overflow:ellipsis;}
@@ -55,8 +34,6 @@
       .sidebar { width:100vw; min-width:0; border-radius:0 0 20px 20px; border-right:none; box-shadow:none; padding:8px 0 7px 0; position:relative;}
       .sidebar-title { font-size:1.1rem; padding-left:17px; margin-bottom:9px;}
       .directory-list { flex-direction:row; gap:6px; overflow-x:auto; overflow-y:hidden; max-height:none; height:46px; padding:0 8px 0 8px; align-items:center;}
-      .directory-group {margin-bottom:0;}
-      .group-list {padding-left:0;}
       .directory-item { font-size:0.93rem; padding:10px 11px; min-width:120px; min-height:30px; border-radius:11px; white-space:nowrap; margin-bottom:0;}
       .main { padding:0;}
       .yt-container { min-height:90vh; padding-bottom:120px;}
@@ -71,82 +48,56 @@
     <div class="sidebar">
       <div class="sidebar-title">채널 디렉토리</div>
       <div class="directory-list" id="dirList">
-        <!-- 그룹: 방송사별로 나눔 예시 -->
-        <div class="directory-group">
-          <div class="group-header open"><span class="group-arrow">&#9654;</span>KBS</div>
-          <div class="group-list open">
-            <div class="directory-item selected" data-url="https://www.youtube.com/watch?v=1bROU5AqM8w&ab_channel=KBSDramaClassic">
-              <span class="directory-label">KBS클래식드라마</span>
-            </div>
-            <div class="directory-item" data-url="https://www.youtube.com/watch?v=Cvuip6DvACs&ab_channel=KBSDrama">
-              <span class="directory-label">KBS드라마</span>
-            </div>
-            <div class="directory-item" data-url="https://www.youtube.com/watch?v=Po84TcoVjNo&ab_channel=KBSJoy">
-              <span class="directory-label">KBS JOY</span>
-            </div>
-          </div>
+        <div class="directory-item selected" data-url="https://www.youtube.com/watch?v=1bROU5AqM8w&ab_channel=KBSDramaClassic">
+          <span class="directory-label">KBS클래식드라마</span>
         </div>
-        <div class="directory-group">
-          <div class="group-header"><span class="group-arrow">&#9654;</span>SBS</div>
-          <div class="group-list">
-            <div class="directory-item" data-url="https://www.youtube.com/watch?v=P8QordVAUyU&ab_channel=KBSEntertain%3A%EA%B9%94%EA%B9%94%ED%8B%B0%EB%B9%84">
-              <span class="directory-label">SBS깔깔</span>
-            </div>
-            <div class="directory-item" data-url="https://www.youtube.com/watch?v=OYFlcCS4CUk&ab_channel=SBS%EC%98%9B%EB%82%A0%EC%98%88%EB%8A%A5-%EB%B9%BD%EB%8A%A5">
-              <span class="directory-label">SBS 빽능</span>
-            </div>
-            <div class="directory-item" data-url="https://www.youtube.com/watch?v=Y2DwnBQlbmE&ab_channel=SBS%EC%98%9B%EB%82%A0%EB%93%9C%EB%9D%BC%EB%A7%88-%EB%B9%BD%EB%93%9C">
-              <span class="directory-label">SBS 빽드</span>
-            </div>
-            <div class="directory-item" data-url="https://www.youtube.com/watch?v=lDcWeklf6DI&ab_channel=%EB%9F%B0%EB%8B%9D%EB%A7%A8-%EC%8A%A4%EB%B8%8C%EC%8A%A4%EA%B3%B5%EC%8B%9D%EC%B1%84%EB%84%90">
-              <span class="directory-label">SBS런닝맨</span>
-            </div>
-          </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=Cvuip6DvACs&ab_channel=KBSDrama">
+          <span class="directory-label">KBS드라마</span>
         </div>
-        <div class="directory-group">
-          <div class="group-header"><span class="group-arrow">&#9654;</span>JTBC</div>
-          <div class="group-list">
-            <div class="directory-item" data-url="https://www.youtube.com/watch?v=RL2pFHjPaUI&ab_channel=JTBCVoyage">
-              <span class="directory-label">JTBC 젭티</span>
-            </div>
-            <div class="directory-item" data-url="https://www.youtube.com/watch?v=LK3CXlk4qVo&ab_channel=JTBCDrama">
-              <span class="directory-label">JTBC 드라마</span>
-            </div>
-          </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=Po84TcoVjNo&ab_channel=KBSJoy">
+          <span class="directory-label">KBS JOY</span>
         </div>
-        <div class="directory-group">
-          <div class="group-header"><span class="group-arrow">&#9654;</span>기타/연예</div>
-          <div class="group-list">
-            <div class="directory-item" data-url="https://www.youtube.com/watch?v=xOXG2HwypaM&ab_channel=iMBC%EC%97%B0%EC%98%88">
-              <span class="directory-label">IMBC 연예</span>
-            </div>
-            <div class="directory-item" data-url="https://www.youtube.com/watch?v=uCkYz-TQCrc&ab_channel=%EB%94%94%EA%B8%80%ED%81%B4%EB%9E%98%EC%8B%9D%3ADiggleClassic">
-              <span class="directory-label">디글</span>
-            </div>
-          </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=P8QordVAUyU&ab_channel=KBSEntertain%3A%EA%B9%94%EA%B9%94%ED%8B%B0%EB%B9%84">
+          <span class="directory-label">SBS깔깔</span>
         </div>
-        <div class="directory-group">
-          <div class="group-header"><span class="group-arrow">&#9654;</span>경제/뉴스</div>
-          <div class="group-list">
-            <div class="directory-item" data-url="https://www.youtube.com/watch?v=s9xL1DpBsfQ&ab_channel=%EB%A7%A4%EC%9D%BC%EA%B2%BD%EC%A0%9CTV">
-              <span class="directory-label">매경</span>
-            </div>
-            <div class="directory-item" data-url="https://www.youtube.com/watch?v=NJUjU9ALj4A&ab_channel=%ED%95%9C%EA%B5%AD%EA%B2%BD%EC%A0%9CTV">
-              <span class="directory-label">한국경제</span>
-            </div>
-            <div class="directory-item" data-url="https://www.youtube.com/watch?v=lb1oB2feqkQ">
-              <span class="directory-label">머니투데이</span>
-            </div>
-            <div class="directory-item" data-url="https://www.youtube.com/watch?v=Y4JYZO0Ad7o">
-              <span class="directory-label">서울경제</span>
-            </div>
-            <div class="directory-item" data-url="https://www.youtube.com/watch?v=5cFoz90FUMk">
-              <span class="directory-label">이데일리</span>
-            </div>
-            <div class="directory-item" data-url="https://www.youtube.com/watch?v=hfyG1tc_BRk&ab_channel=%ED%86%A0%EB%A7%88%ED%86%A0%EC%A6%9D%EA%B6%8C%ED%86%B5">
-              <span class="directory-label">토마토증권</span>
-            </div>
-          </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=OYFlcCS4CUk&ab_channel=SBS%EC%98%9B%EB%82%A0%EC%98%88%EB%8A%A5-%EB%B9%BD%EB%8A%A5">
+          <span class="directory-label">SBS 빽능</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=Y2DwnBQlbmE&ab_channel=SBS%EC%98%9B%EB%82%A0%EB%93%9C%EB%9D%BC%EB%A7%88-%EB%B9%BD%EB%93%9C">
+          <span class="directory-label">SBS 빽드</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=lDcWeklf6DI&ab_channel=%EB%9F%B0%EB%8B%9D%EB%A7%A8-%EC%8A%A4%EB%B8%8C%EC%8A%A4%EA%B3%B5%EC%8B%9D%EC%B1%84%EB%84%90">
+          <span class="directory-label">SBS런닝맨</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=RL2pFHjPaUI&ab_channel=JTBCVoyage">
+          <span class="directory-label">JTBC 젭티</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=LK3CXlk4qVo&ab_channel=JTBCDrama">
+          <span class="directory-label">JTBC 드라마</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=xOXG2HwypaM&ab_channel=iMBC%EC%97%B0%EC%98%88">
+          <span class="directory-label">IMBC 연예</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=uCkYz-TQCrc&ab_channel=%EB%94%94%EA%B8%80%ED%81%B4%EB%9E%98%EC%8B%9D%3ADiggleClassic">
+          <span class="directory-label">디글</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=s9xL1DpBsfQ&ab_channel=%EB%A7%A4%EC%9D%BC%EA%B2%BD%EC%A0%9CTV">
+          <span class="directory-label">매경</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=NJUjU9ALj4A&ab_channel=%ED%95%9C%EA%B5%AD%EA%B2%BD%EC%A0%9CTV">
+          <span class="directory-label">한국경제</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=lb1oB2feqkQ">
+          <span class="directory-label">머니투데이</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=Y4JYZO0Ad7o">
+          <span class="directory-label">서울경제</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=5cFoz90FUMk">
+          <span class="directory-label">이데일리</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=hfyG1tc_BRk&ab_channel=%ED%86%A0%EB%A7%88%ED%86%A0%EC%A6%9D%EA%B6%8C%ED%86%B5">
+          <span class="directory-label">토마토증권</span>
         </div>
       </div>
     </div>
@@ -177,16 +128,6 @@
       url = toYouTubeEmbed(url);
       return url.includes('?') ? url + '&autoplay=1' : url + '?autoplay=1';
     }
-    // 디렉토리 그룹 아코디언 효과
-    document.querySelectorAll('.group-header').forEach(header => {
-      header.addEventListener('click', function() {
-        document.querySelectorAll('.group-header').forEach(h => h.classList.remove('open'));
-        document.querySelectorAll('.group-list').forEach(list => list.classList.remove('open'));
-        this.classList.add('open');
-        this.nextElementSibling.classList.add('open');
-      });
-    });
-    // 채널 선택 및 영상 변경
     const items = document.querySelectorAll('.directory-item');
     const frame = document.getElementById('videoFrame');
     items.forEach(item => {
@@ -194,16 +135,21 @@
         items.forEach(i => i.classList.remove('selected'));
         this.classList.add('selected');
         frame.src = getAutoPlayUrl(this.dataset.url);
+        // 스크롤 위치를 클릭한 아이템이 리스트의 최상단에 오도록 조정
+        const list = document.getElementById('dirList');
+        const itemTop = this.offsetTop;
+        list.scrollTo({
+          top: itemTop,
+          behavior: 'smooth'
+        });
       });
     });
     // 페이지 진입 시 첫 번째 주소 변환
     window.addEventListener('DOMContentLoaded', function(){
       const first = document.querySelector('.directory-item.selected');
       if(first) frame.src = getAutoPlayUrl(first.dataset.url);
-      // 첫 번째 그룹만 오픈(초기화)
-      document.querySelectorAll('.group-header')[0].classList.add('open');
-      document.querySelectorAll('.group-list')[0].classList.add('open');
     });
   </script>
 </body>
 </html>
+
