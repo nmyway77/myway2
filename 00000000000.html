@@ -2,321 +2,292 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>아이프레임 유튜브 영상+제목</title>
+  <title>AI 엔진 바로가기 - MYWAY (텍스트/링크만)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* (기존 CSS 그대로) */
-    html, body { margin:0; padding:0; height:100%; background:#21253a; }
-    body { min-height:100vh; min-width:100vw;}
-    .yt-container {
-      min-height:100vh; width:100vw;
-      display:flex; align-items:center; justify-content:center;
-      background:linear-gradient(135deg, #232845 0%, #222b48 100%);
-      padding-bottom:190px;
-      box-sizing:border-box;
+    html, body { min-height: 100vh; margin: 0; padding: 0; background: #fff; font-family: 'Segoe UI', '맑은 고딕', 'Noto Sans KR', '나눔고딕', Arial, sans-serif; width: 100%; }
+    body { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .main-title { width:100%; max-width:700px; text-align:center; font-family: 'Montserrat', '맑은 고딕', 'Noto Sans KR', sans-serif; font-size:1.3rem; font-weight: 700; color: #3e437b; letter-spacing:-1px;   margin-top:70px;     margin-bottom:6px; text-shadow: 0 2px 14px #e6ecfa55; }
+    .main-desc { width:100%; max-width:700px; text-align:center; font-size:0.9rem; font-family: 'Nanum Myeongjo', 'Georgia', serif; color:#7d84a8; margin-bottom: 14px; letter-spacing:0.01em; }
+
+    /* 상단 고정 바 */
+    .topbar-fixed {
+      position: sticky;
+      top: 0;
+      z-index: 99;
+      background: #f9fbffcc;
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 18px 10px 8px 10px;
+      margin-bottom: 0;
+      box-sizing: border-box;
+      backdrop-filter: blur(2px);
+      border-bottom: 1px solid #dbe4f7;
     }
-    .yt-inner {
-      width:92vw; max-width:880px;
-      display:flex; flex-direction:column; align-items:center;
-      gap:18px;
-    }
-    .yt-title {
-      color:#fff; font-size:1.35rem; font-weight:600;
-      letter-spacing:0.02em; margin-bottom:3px; margin-top:6px;
-      text-shadow:0 2px 12px #0019;
-      text-align:center;
-      line-height:1.3;
-      word-break:keep-all;
-      background:rgba(36,42,82,0.7); border-radius:12px; padding:10px 22px 7px 22px;
-      box-shadow:0 2px 16px #2229;
-      max-width:800px;
-    }
-    .yt-frame-box {
-      width:100%; aspect-ratio:16/9;
-      background:#000; border-radius:18px; box-shadow:0 4px 40px #2232ab55;
-      overflow:hidden; display:flex; align-items:center; justify-content:center;
-    }
-    iframe, video {
-      width:100%; height:100%; border:0; border-radius:18px; background:#000; display:block;
-      min-height:180px;
-    }
-    .url-input-wrap { margin-bottom: 14px; width: 100%; display: flex; justify-content: center; align-items: center; gap: 9px;}
-    .url-input-wrap input {
-      width: 410px; max-width: 66vw; padding: 10px 18px; border-radius: 9px;
-      border: 1.5px solid #a6adcb; font-size: 1.11rem;
-      outline: none; margin-right: 4px;
-    }
-    .url-input-wrap button { padding: 9px 20px; border-radius: 9px; border: none; background: #2b3a87; color: #fff; font-weight: bold; font-size: 1.05rem; cursor: pointer; transition: background 0.14s;}
-    .url-input-wrap button:hover { background: #4159cb; }
-    .side-nav { position:fixed; left:0; top:0; bottom:0; width:220px; background:#202242; z-index:50; display:flex; flex-direction:column; border-right:1.5px solid #18192f; min-height:100vh; box-shadow:0 4px 20px #23243c22;}
-    .side-nav .nav-btns { display:flex; flex-direction:column; gap:0; margin-top:16px;}
-    .side-nav .nav-btns button { background:#243468; color:#fff; border:none; outline:none; padding:14px 0; font-size:1rem; font-weight:500; cursor:pointer; border-bottom:1px solid #23274c; transition:background 0.18s;}
-    .side-nav .nav-btns button:hover { background:#3a4991; }
-    .side-nav .video-list { flex:1; overflow-y:auto; margin-top:8px; display:flex; flex-direction:column; gap:0;}
-    .side-nav .video-item-wrap { display:flex; align-items:center; gap:0; position:relative; user-select:none;}
-    .side-nav .video-item { flex:1 1 auto; padding: 13px 8px 13px 18px; border-bottom:1px solid #21254b; font-size:1rem; color:#c9d1ee; background:none; cursor:pointer; text-align:left; outline:none; border:none; transition:background 0.13s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; border-right: none; background: transparent;}
-    .side-nav .video-item.active, .side-nav .video-item:hover { background: #2b3882; color: #fff;}
-    .side-nav .item-actions { display: flex; flex-direction: row; gap:0; margin-right: 2px;}
-    .side-nav .item-actions button { background: none; border:none; color:#7ea7ff; font-size:0.93rem; font-weight:700; cursor:pointer; padding: 0 4px; margin-left: 3px; border-radius:5px; transition:background 0.12s;}
-    .side-nav .item-actions button:hover { background: #314b87; color:#fff;}
-    .video-item-wrap.drag-over { background: #25336c !important;}
-    @media (max-width:900px) { .side-nav { width: 130px; min-width:90px; } .yt-inner { max-width:92vw; } }
-    .modal-bg { position:fixed; left:0;top:0;right:0;bottom:0; z-index:200; background:rgba(15,20,40,0.38); display:flex; align-items:center; justify-content:center;}
-    .modal-inner { background:#2e3259; color:#fff; border-radius:15px; padding:28px 32px 18px 32px; box-shadow:0 6px 44px #0005; min-width:320px; display:flex; flex-direction:column; gap:17px;}
-    .modal-inner label { font-size:1.08rem; margin-bottom:4px; }
-    .modal-inner input { padding:10px 15px; border-radius:7px; border:none; margin-bottom:7px; font-size:1rem; width:100%;}
-    .modal-inner button { padding:10px 0; border-radius:8px; border:none; background:#4b67ff; color:#fff; font-size:1.07rem; font-weight:700; cursor:pointer; transition:background 0.14s; margin-top:8px;}
-    .modal-inner button:hover { background:#6e83d8; }
+
+    .topbar-btns { display: flex; gap: 7px; }
+    .topbar-btns button { padding: 7px 13px; font-size: 1rem; border-radius: 7px; border: 1px solid #e7e7e7; background: #f4f7ff; cursor: pointer; font-weight: bold; transition: background 0.13s; }
+    .topbar-btns button:hover { background: #e1eaff; }
+    .container { width: 100%; max-width: 504px; display: flex; flex-direction: column; align-items: center; margin-top: 30px; margin-bottom: 60px; padding-left: 6px; padding-right: 6px;}
+    .logo-row { display: flex; justify-content: center; gap: 21.6px; margin-bottom: 28.8px; width: 100%; flex-wrap: nowrap; transition: max-width 0.1s; }
+    .ai-logo-wrap { width: 81px; height: 81px; border-radius: 50%; background: #f7faff; box-shadow: 0 3px 24px 0 #b1c7e866; border: 2.7px solid #e5e8f6; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: box-shadow 0.15s, border-color 0.15s; cursor: pointer; overflow: hidden; margin: 0; flex: 0 0 auto; position: relative; }
+    .ai-logo-wrap:hover { box-shadow: 0 8px 32px 0 #7e94ff99; border-color: #94a2ff; background: #f7faff;}
+    .ai-logo-text { width: 100%; text-align: center; font-size: 1.1rem; color: #234; font-weight: 600; letter-spacing: -0.5px; line-height: 1.23; display: flex; justify-content: center; align-items: center; height: 100%; }
+    .action-btns { display: flex; gap: 2px; margin-top: 6px; }
+    .action-btns button { border: none; background: none; padding: 2px 4px; margin: 0; border-radius: 4px; cursor: pointer; min-width: 21.6px; min-height: 21.6px; display: flex; align-items: center; justify-content: center; opacity: 0.8; transition: background 0.12s, opacity 0.12s; }
+    .action-btns button:hover { opacity: 1; background: #f1f5ff; }
+    .edit-btn svg { fill: #3a75e7; }
+    .del-btn svg  { fill: #d44848; }
+    .action-btns svg { width: 15.3px; height: 15.3px; display: block; }
+    @media (max-width: 1100px) { .container { max-width: 88.2vw; } .logo-row { gap: 12.6px;} .ai-logo-wrap { width: 67.5px; height: 67.5px;} }
+    @media (max-width: 900px)  { .container { max-width: 89.1vw;} .logo-row { gap: 9px; } .ai-logo-wrap { width: 57.6px; height: 57.6px;} }
+    @media (max-width: 700px)  { .ai-logo-wrap { width: 66.6px !important; height: 66.6px !important; } .logo-row { gap: 6.3vw !important; } }
+    @media (max-width: 500px)  { .container { margin-top: 6px; margin-bottom: 9px;} .logo-row { gap: 5.4vw !important; } .ai-logo-wrap { width: 57.6px !important; height: 57.6px !important;} }
+    .modal-bg { position:fixed; z-index:10; left:0; top:0; width:100vw; height:100vh; background:#2228; display:flex; justify-content:center; align-items:center; }
+    .modal-box { background:#fff; border-radius:12px; box-shadow:0 6px 36px #00308a22; padding: 24px 22px 14px 22px; min-width:207px; display:flex; flex-direction:column; gap:13px; align-items:center; }
+    .modal-box input { font-size:1rem; padding:8px 12px; border:1px solid #bbb; border-radius:7px; width:198px;}
+    .modal-box button { font-size:1rem; padding:7px 16.2px; border-radius:7px; border:1px solid #e4e5f0; background:#eaf1ff; cursor:pointer;}
+    .modal-box label { font-size:1rem; color:#234;}
+    .usage-guide { width: 100%; max-width: 650px; margin:85px auto 25px auto; background: #f5f6fa; border-radius: 16px; box-shadow: 0 2px 16px #aab7d711; padding: 28px 26px 22px 26px; font-size: 1.08rem; color: #374477; font-family: 'NanumSquare', 'Noto Sans KR', '맑은 고딕', 'Segoe UI', Arial, sans-serif; line-height: 1.75; letter-spacing: 0.01em;}
+    .usage-guide h3 { font-size: 1.25rem; color: #204090; margin-bottom: 10px; font-family: 'Montserrat', '맑은 고딕', 'Noto Sans KR', sans-serif; letter-spacing: -0.5px;}
+    .usage-guide ul { margin-top: 6px; margin-bottom: 2px; }
+    .usage-guide li { margin-bottom: 6px; }
+    .usage-guide strong { color: #2369a3; font-weight: 700;}
+    /* 드래그 스타일 */
+    .dragging { opacity: 0.6; }
+    .drag-over { border: 2px dashed #8ba0f7; }
   </style>
 </head>
 <body>
-  <!-- 왼쪽 네비 -->
-  <div class="side-nav">
-    <div class="nav-btns">
-      <button onclick="openAddModal()">추가</button>
-      <button onclick="importData()">가져오기</button>
-      <button onclick="exportData()">내보내기</button>
-    </div>
-    <div class="video-list" id="videoList"></div>
-  </div>
-  <div class="yt-container" style="margin-left:220px">
-    <div class="yt-inner">
-      <div class="url-input-wrap" style="display:none">
-        <input type="text" id="urlInput" placeholder="유튜브/Vimeo/MP4 등 영상 주소를 입력하세요" />
-        <button onclick="showVideoFromInput()">확인</button>
-      </div>
-      <div class="yt-title" id="ytTitle">속초 해변</div>
-      <div class="yt-frame-box" id="ytFrameBox">
-        <iframe id="mainFrame" src="https://www.youtube.com/embed/5w__FG2fGa4?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-      </div>
-      <div id="ytMsg" style="color:#fc6; text-align:center; margin-top:14px; font-size:0.97rem;"></div>
+  <div class="main-title">나만의 디스플레이형 즐겨찾기 만들기 (MYWAY)</div>
+  <div class="main-desc">추가버튼을 누르고 시작해보세요!</div>
+  <div class="topbar-fixed">
+    <div class="topbar-btns">
+      <button id="addBtn">추가</button>
+      <button id="exportBtn">내보내기</button>
+      <button id="importBtn">가져오기</button>
+      <button id="clearAllBtn">전체삭제</button>
+      <button id="undoClearBtn" style="display:none;">복원</button>
+      <input type="file" id="importFile" style="display:none;">
     </div>
   </div>
-  <!-- 추가/수정 폼 (모달) -->
-  <div id="addModal" class="modal-bg" style="display:none">
-    <div class="modal-inner">
-      <label>영상 주소</label>
-      <input id="addUrl" type="text" placeholder="유튜브/Vimeo/MP4 주소" autocomplete="off" />
-      <label>제목</label>
-      <input id="addTitle" type="text" placeholder="영상 제목" autocomplete="off" />
-      <button id="addSaveBtn" onclick="saveVideo()">저장</button>
-      <button onclick="closeAddModal()" style="background:#2e3259;font-weight:400;">취소</button>
+  <div class="container" id="aiLogoContainer"></div>
+  <div id="modal" style="display:none;"></div>
+  <div class="usage-guide">
+    <h3>📝 사용 설명서</h3>
+    <ul>
+      <li><strong>추가</strong>: <b>추가</b> 버튼을 누르고, 텍스트와 링크 주소를 입력하세요.</li>
+      <li><strong>수정/삭제</strong>: 각 아이콘 중앙의 <span style="color:#3a75e7;">텍스트</span> 위에 마우스를 올리고 연필 또는 휴지통 아이콘을 클릭하세요.</li>
+      <li><strong>순서 변경</strong>: 마우스로 드래그해서 아이콘 순서를 바꿀 수 있습니다.</li>
+      <li><strong>내보내기/가져오기</strong>: 저장된 목록을 JSON 파일로 내보내거나 불러올 수 있습니다.</li>
+      <li><strong>컴을 끄기전</strong>: 혹은 브라우저 청소를 하기전엔 꼭 내보내기 버튼으로 저장을 하세요.</li>
+      <li><strong>콤보박스</strong>: 원하는 Type 선택하면 <b> 바로 이동</b>합니다(미완성).</li>
+    </ul>
+    <div style="margin-top:14px; color:#757ba7; font-size:1rem;">
+      ⚡ <b>TIP</b>: <b>사이트주소는 </b>https:// 방식으로 저장해야 합니다.<br>
+      <b>데이터는 브라우저에 안전하게 저장</b>되어, 새로고침해도 보존됩니다. 단, 다음날엔 가져오기를 다시 해야합니다.
     </div>
   </div>
-  <script>
-    // 상태
-    let videos = JSON.parse(localStorage.getItem('ytNaviList') || '[]');
-    let selectedIdx = (videos.length>0) ? 0 : null;
-    let editIdx = null; // 수정 모드
-
-    // 임베드 변환 함수
-    function parseToEmbed(input) {
-      input = (input||"").trim();
-      // 유튜브
-      const ytMatch = input.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
-      if (ytMatch) return {type: 'youtube', code: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1`};
-      if (input.match(/^https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]{11}/))
-        return {type: 'youtube', code: input.includes('autoplay=1') ? input : input + (input.includes('?') ? '&autoplay=1' : '?autoplay=1')};
-      // Vimeo
-      const vimeoMatch = input.match(/vimeo\.com\/(\d+)/);
-      if (vimeoMatch) return {type: 'vimeo', code: `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`};
-      // MP4/WebM/Ogg 파일
-      if (input.match(/\.(mp4|webm|ogg)(\?|$)/i)) return {type: 'video', code: input};
-      // 이미 임베드/iframe 코드 직접 입력시
-      if (input.startsWith('<iframe')) return {type: 'embed', code: input};
-      // 그냥 링크: iframe 시도
-      return {type: 'link', code: input};
-    }
-
-    // 영상 목록 네비 렌더링 (+수정/삭제/드래그)
-    function renderList() {
-      const list = document.getElementById('videoList');
-      list.innerHTML = '';
-      videos.forEach((v, i) => {
-        // wrapper
-        const wrap = document.createElement('div');
-        wrap.className = 'video-item-wrap';
-        wrap.draggable = true;
-        wrap.dataset.idx = i;
-        // Drag 이벤트
-        wrap.ondragstart = (e) => {
-          e.dataTransfer.setData('idx', i);
-          setTimeout(()=>{ wrap.classList.add('dragging'); }, 0);
-        };
-        wrap.ondragend = (e) => {
-          document.querySelectorAll('.video-item-wrap').forEach(el=>el.classList.remove('dragging','drag-over'));
-        };
-        wrap.ondragover = (e) => {
-          e.preventDefault();
-          wrap.classList.add('drag-over');
-        };
-        wrap.ondragleave = (e) => {
-          wrap.classList.remove('drag-over');
-        };
-        wrap.ondrop = (e) => {
-          e.preventDefault();
-          wrap.classList.remove('drag-over');
-          const from = parseInt(e.dataTransfer.getData('idx'), 10);
-          const to = i;
-          if (from !== to) {
-            videos.splice(to, 0, videos.splice(from,1)[0]);
-            localStorage.setItem('ytNaviList', JSON.stringify(videos));
-            if(selectedIdx === from) selectedIdx = to;
-            else if(selectedIdx > from && selectedIdx <= to) selectedIdx -= 1;
-            else if(selectedIdx < from && selectedIdx >= to) selectedIdx += 1;
-            renderList();
-            renderMain();
-          }
-        };
-
-        // 네비(제목) 버튼
-        const btn = document.createElement('button');
-        btn.className = 'video-item' + (i===selectedIdx ? ' active':'');
-        btn.textContent = v.title || `영상 ${i+1}`;
-        btn.onclick = () => { selectedIdx = i; renderList(); renderMain(); };
-        wrap.appendChild(btn);
-
-        // 수정/삭제
-        const act = document.createElement('div');
-        act.className = 'item-actions';
-        const editBtn = document.createElement('button');
-        editBtn.innerText = '수정';
-        editBtn.title = '수정';
-        editBtn.onclick = (e) => {
-          e.stopPropagation();
-          openEditModal(i);
-        };
-        const delBtn = document.createElement('button');
-        delBtn.innerText = '삭제';
-        delBtn.title = '삭제';
-        delBtn.onclick = (e) => {
-          e.stopPropagation();
-          if (confirm('정말 삭제할까요?')) {
-            videos.splice(i,1);
-            if(selectedIdx >= videos.length) selectedIdx = videos.length-1;
-            if(selectedIdx<0) selectedIdx = null;
-            localStorage.setItem('ytNaviList', JSON.stringify(videos));
-            renderList();
-            renderMain();
-          }
-        };
-        act.appendChild(editBtn);
-        act.appendChild(delBtn);
-        wrap.appendChild(act);
-
-        list.appendChild(wrap);
-      });
-    }
-
-    // 영상 표시
-    function renderMain() {
-      let v = (selectedIdx!=null && videos[selectedIdx]) ? videos[selectedIdx] : null;
-      let msg = "";
-      if (v) {
-        document.getElementById('ytTitle').textContent = v.title || '';
-        const parsed = parseToEmbed(v.url);
-        if (parsed.type === 'youtube' || parsed.type === 'vimeo' || parsed.type === 'link') {
-          document.getElementById('ytFrameBox').innerHTML = `<iframe src="${parsed.code}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
-          msg = "※ 일부 유튜브 영상은 국가 또는 저작권에 따라 해외에서 재생이 제한될 수 있습니다.";
-        } else if (parsed.type === 'video') {
-          document.getElementById('ytFrameBox').innerHTML = `<video src="${parsed.code}" controls autoplay></video>`;
-        } else if (parsed.type === 'embed') {
-          document.getElementById('ytFrameBox').innerHTML = parsed.code;
-        } else {
-          document.getElementById('ytFrameBox').innerHTML = `<div style="color:#fff;text-align:center;">알 수 없는 주소입니다.</div>`;
-        }
-      } else {
-        // 기본: 최초화면
-        document.getElementById('ytTitle').textContent = '속초 해변';
-        document.getElementById('ytFrameBox').innerHTML = `<iframe src="https://www.youtube.com/embed/5w__FG2fGa4?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
-        msg = "※ 일부 유튜브 영상은 국가 또는 저작권에 따라 해외에서 재생이 제한될 수 있습니다.";
-      }
-      document.getElementById('ytMsg').textContent = msg;
-    }
-
-    // 추가/수정 모달
-    function openAddModal() {
-      editIdx = null;
-      document.getElementById('addModal').style.display = 'flex';
-      document.getElementById('addUrl').value = '';
-      document.getElementById('addTitle').value = '';
-      document.getElementById('addSaveBtn').innerText = '저장';
-      setTimeout(()=>{ document.getElementById('addUrl').focus(); }, 180);
-    }
-    function openEditModal(idx) {
-      editIdx = idx;
-      document.getElementById('addModal').style.display = 'flex';
-      document.getElementById('addUrl').value = videos[idx].url;
-      document.getElementById('addTitle').value = videos[idx].title;
-      document.getElementById('addSaveBtn').innerText = '수정저장';
-      setTimeout(()=>{ document.getElementById('addUrl').focus(); }, 180);
-    }
-    function closeAddModal() {
-      document.getElementById('addModal').style.display = 'none';
-      document.getElementById('addUrl').value = '';
-      document.getElementById('addTitle').value = '';
-      editIdx = null;
-    }
-    // 저장/수정 저장
-    function saveVideo() {
-      let url = document.getElementById('addUrl').value.trim();
-      let title = document.getElementById('addTitle').value.trim();
-      if (!url || !title) { alert('영상 주소와 제목을 입력하세요.'); return; }
-      if(editIdx===null) {
-        videos.push({ url, title });
-        selectedIdx = videos.length-1;
-      } else {
-        videos[editIdx] = { url, title };
-        selectedIdx = editIdx;
-      }
-      localStorage.setItem('ytNaviList', JSON.stringify(videos));
-      closeAddModal();
-      renderList();
-      renderMain();
-    }
-    // 내보내기
-    function exportData() {
-      const data = JSON.stringify(videos, null, 2);
-      const blob = new Blob([data], {type:"application/json"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = "myway_videos.json";
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-    // 가져오기
-    function importData() {
-      const input = document.createElement('input');
-      input.type = "file";
-      input.accept = ".json,application/json";
-      input.onchange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          try {
-            const json = JSON.parse(evt.target.result);
-            if (Array.isArray(json) && json[0]?.url && json[0]?.title) {
-              videos = json;
-              selectedIdx = videos.length>0 ? 0 : null;
-              localStorage.setItem('ytNaviList', JSON.stringify(videos));
-              renderList();
-              renderMain();
-            } else {
-              alert('올바른 데이터가 아닙니다.');
-            }
-          } catch {
-            alert('가져오기 실패: JSON 파싱 에러');
-          }
-        };
-        reader.readAsText(file);
+<script>
+let aiLogos = [
+  { text: "ChatGPT", url: "https://chat.openai.com/" },
+  { text: "Gemini", url: "https://gemini.google.com/" }
+];
+let aiLogosBackup = null;
+if(localStorage['aiTextLinks']) {
+  try { aiLogos = JSON.parse(localStorage['aiTextLinks']); }catch(e){}
+}
+function save() {
+  localStorage['aiTextLinks'] = JSON.stringify(aiLogos);
+}
+function getLayout() {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  let iconsPerRow = 4, gap = 21.6, size = 81;
+  if (w <= 1100) { iconsPerRow = 4; gap = 12.6; size = 67.5; }
+  if (w <= 900)  { iconsPerRow = 3; gap = 9; size = 57.6; }
+  if (w <= 700) {
+    if (h > w) { iconsPerRow = 2; gap = w * 0.07; size = 66.6; }
+    else      { iconsPerRow = 3; gap = w * 0.07; size = 66.6; }
+  }
+  if (w <= 500)  { iconsPerRow = 2; gap = w * 0.09; size = 57.6; }
+  return { iconsPerRow, gap, size };
+}
+let dragIndex = null;
+let dragElem = null;
+function onDragStart(e, idx) {
+  dragIndex = idx;
+  dragElem = e.currentTarget;
+  dragElem.classList.add("dragging");
+  e.dataTransfer.effectAllowed = "move";
+  try { e.dataTransfer.setData('text/plain', ''); } catch(e){}
+}
+function onDragOver(e, idx) {
+  e.preventDefault();
+  const target = e.currentTarget;
+  if (target !== dragElem) {
+    target.classList.add("drag-over");
+  }
+}
+function onDragLeave(e, idx) {
+  e.currentTarget.classList.remove("drag-over");
+}
+function onDrop(e, idx) {
+  e.preventDefault();
+  e.currentTarget.classList.remove("drag-over");
+  if (dragIndex !== null && dragIndex !== idx) {
+    const moved = aiLogos.splice(dragIndex, 1)[0];
+    aiLogos.splice(idx, 0, moved);
+    save();
+    renderLogos();
+  }
+  dragIndex = null;
+  dragElem = null;
+}
+function onDragEnd(e) {
+  if(dragElem) dragElem.classList.remove("dragging");
+  dragIndex = null; dragElem = null;
+}
+function renderLogos() {
+  const container = document.getElementById('aiLogoContainer');
+  container.innerHTML = "";
+  const { iconsPerRow, gap, size } = getLayout();
+  let rows = [];
+  let indices = aiLogos.map((_, i) => i);
+  for(let rowStart=0; rowStart<indices.length; rowStart += iconsPerRow) {
+    let rowIndices = indices.slice(rowStart, rowStart+iconsPerRow);
+    const row = document.createElement('div');
+    row.className = "logo-row";
+    row.style.maxWidth = (size * rowIndices.length + gap * (rowIndices.length - 1)) + "px";
+    row.style.gap = gap + "px";
+    rowIndices.forEach(idx => {
+      const l = aiLogos[idx];
+      const wrap = document.createElement('div');
+      wrap.className = "ai-logo-wrap";
+      wrap.setAttribute("draggable", "true");
+      wrap.ondragstart = (e) => onDragStart(e, idx);
+      wrap.ondragover  = (e) => onDragOver(e, idx);
+      wrap.ondragleave = (e) => onDragLeave(e, idx);
+      wrap.ondrop      = (e) => onDrop(e, idx);
+      wrap.ondragend   = onDragEnd;
+      wrap.onclick = (e) => {
+        if (e.target.tagName === 'BUTTON' || e.target.tagName === 'svg' || e.target.tagName === 'path') return;
+        window.open(l.url, );
       };
-      input.click();
+      const textDiv = document.createElement('div');
+      textDiv.className = "ai-logo-text";
+      textDiv.textContent = l.text;
+      wrap.appendChild(textDiv);
+      const actionDiv = document.createElement('div');
+      actionDiv.className = "action-btns";
+      const editBtn = document.createElement('button');
+      editBtn.className = "edit-btn";
+      editBtn.title = "수정";
+      editBtn.innerHTML = `
+        <svg viewBox="0 0 20 20"><path d="M2 14.5V18h3.5l10-10.01-3.5-3.5L2 14.5zM19.71 6.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>
+      `;
+      editBtn.onclick = function(ev) {
+        ev.stopPropagation();
+        openModal(idx, true);
+      };
+      const delBtn = document.createElement('button');
+      delBtn.className = "del-btn";
+      delBtn.title = "삭제";
+      delBtn.innerHTML = `
+        <svg viewBox="0 0 20 20"><path d="M6 7v7a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V7m-7 0V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M4 7h12"></path></svg>
+      `;
+      delBtn.onclick = function(ev) {
+        ev.stopPropagation();
+        if(confirm('정말 삭제?')) {
+          aiLogos.splice(idx, 1);
+          save(); renderLogos();
+        }
+      };
+      actionDiv.appendChild(editBtn);
+      actionDiv.appendChild(delBtn);
+      wrap.appendChild(actionDiv);
+      row.appendChild(wrap);
+    });
+    container.appendChild(row);
+  }
+}
+renderLogos();
+window.addEventListener('resize', renderLogos);
+
+function openModal(idx, isEdit) {
+  const modal = document.getElementById('modal');
+  let item = {text:"",url:""};
+  if(isEdit) item = {...aiLogos[idx]};
+  modal.innerHTML = `
+    <div class="modal-bg" onclick="if(event.target.className==='modal-bg'){document.getElementById('modal').style.display='none';}">
+      <form class="modal-box" onsubmit="return false;">
+        <label>텍스트(이름):<br><input id="addText" maxlength="20" placeholder="예: ChatGPT" value="${item.text || ""}"></label>
+        <label>링크 주소(URL):<br><input id="addUrl" placeholder="https://..." value="${item.url || ""}"></label>
+        <button type="submit" id="okBtn">${isEdit?"수정":"추가"}</button>
+        <button type="button" onclick="document.getElementById('modal').style.display='none';">취소</button>
+      </form>
+    </div>
+  `;
+  modal.style.display = 'block';
+  document.getElementById('addText').focus();
+  document.getElementById('okBtn').onclick = function() {
+    var text=document.getElementById('addText').value.trim();
+    var url=document.getElementById('addUrl').value.trim();
+    if(!text||!url) return alert('텍스트와 링크 주소를 모두 입력!');
+    if(isEdit) aiLogos[idx]={text,url};
+    else aiLogos.push({text,url});
+    save(); renderLogos(); document.getElementById('modal').style.display='none';
+  };
+}
+document.getElementById('addBtn').onclick = function() { openModal(0, false); };
+document.getElementById('exportBtn').onclick = function() {
+  const blob = new Blob([JSON.stringify(aiLogos,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'ai_textlinks.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+document.getElementById('importBtn').onclick = function() {
+  document.getElementById('importFile').click();
+};
+document.getElementById('importFile').onchange = function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if(Array.isArray(data)) {
+        aiLogos = data; save(); renderLogos();
+      } else {
+        alert('불러오기 실패(잘못된 파일)');
+      }
+    } catch (err) {
+      alert('불러오기 실패(파일 오류)');
     }
-    // 최초 렌더
-    renderList();
-    renderMain();
-  </script>
+  };
+  reader.readAsText(file);
+};
+document.getElementById('clearAllBtn').onclick = function() {
+  if(aiLogos.length === 0) return;
+  if(!confirm('정말 전체 삭제하시겠습니까?')) return;
+  aiLogosBackup = JSON.parse(JSON.stringify(aiLogos));
+  aiLogos = [];
+  save(); renderLogos();
+  document.getElementById('undoClearBtn').style.display = 'inline-block';
+};
+document.getElementById('undoClearBtn').onclick = function() {
+  if(aiLogosBackup && aiLogos.length === 0) {
+    aiLogos = JSON.parse(JSON.stringify(aiLogosBackup));
+    save(); renderLogos();
+    document.getElementById('undoClearBtn').style.display = 'none';
+  }
+};
+</script>
 </body>
 </html>
