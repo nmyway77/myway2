@@ -1,0 +1,341 @@
+!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>AI 엔진 바로가기 - MYWAY (텍스트/링크만)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      font-family: 'Segoe UI', '맑은 고딕', 'Noto Sans KR', '나눔고딕', Arial, sans-serif;
+      width: 100%;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+
+.topbar-sticky-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 12px;  /* 원하는 만큼(예시 12px) 위로 띄움 */
+  background: #fff;   /* 배경 흰색 유지 */
+}
+
+
+
+
+    
+    /* 상단 고정 바: 상단유격 0, 버튼간격 최소 */
+    .topbar-fixed {
+      position: sticky;
+      
+      top: 3;
+      
+      z-index: 99;
+      background: #f9fbffcc;
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0;        /* 버튼 사이 gap 0 */
+      
+      padding: 3;    /* 상하좌우 여백 0 */
+      
+      margin: 3;
+      box-sizing: border-box;
+      border-bottom: 1px solid #e6ebf6;
+    }
+    .topbar-btns {
+      display: flex;
+      gap: 0;      /* 버튼 간 gap 0 */
+    }
+    .topbar-btns button {
+      padding: 3.5px 8px;   /* 버튼 위아래 3.5px, 좌우 8px로 최소화 */
+      font-size: 0.98rem;
+      border-radius: 7px;
+      border: 1px solid #e7e7e7;
+      background: #f4f7ff;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.13s;
+      margin: 0;
+    }
+    .topbar-btns button:hover { background: #e1eaff; }
+
+    /* 나머지 부분은 그대로 */
+    .container {
+      width: 100%;
+      max-width: 504px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 30px;
+      margin-bottom: 60px;
+      padding-left: 6px;
+      padding-right: 6px;
+    }
+    .logo-row { display: flex; justify-content: center; gap: 21.6px; margin-bottom: 28.8px; width: 100%; flex-wrap: nowrap; transition: max-width 0.1s; }
+    .ai-logo-wrap { width: 81px; height: 81px; border-radius: 50%; background: #f7faff; box-shadow: 0 3px 24px 0 #b1c7e866; border: 2.7px solid #e5e8f6; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: box-shadow 0.15s, border-color 0.15s; cursor: pointer; overflow: hidden; margin: 0; flex: 0 0 auto; position: relative; }
+    .ai-logo-wrap:hover { box-shadow: 0 8px 32px 0 #7e94ff99; border-color: #94a2ff; background: #f7faff;}
+    .ai-logo-text { width: 100%; text-align: center; font-size: 1.1rem; color: #234; font-weight: 600; letter-spacing: -0.5px; line-height: 1.23; display: flex; justify-content: center; align-items: center; height: 100%; }
+    .action-btns { display: flex; gap: 2px; margin-top: 6px; }
+    .action-btns button { border: none; background: none; padding: 2px 4px; margin: 0; border-radius: 4px; cursor: pointer; min-width: 21.6px; min-height: 21.6px; display: flex; align-items: center; justify-content: center; opacity: 0.8; transition: background 0.12s, opacity 0.12s; }
+    .action-btns button:hover { opacity: 1; background: #f1f5ff; }
+    .edit-btn svg { fill: #3a75e7; }
+    .del-btn svg  { fill: #d44848; }
+    .action-btns svg { width: 15.3px; height: 15.3px; display: block; }
+    @media (max-width: 1100px) { .container { max-width: 88.2vw; } .logo-row { gap: 12.6px;} .ai-logo-wrap { width: 67.5px; height: 67.5px;} }
+    @media (max-width: 900px)  { .container { max-width: 89.1vw;} .logo-row { gap: 9px; } .ai-logo-wrap { width: 57.6px; height: 57.6px;} }
+    @media (max-width: 700px)  { .ai-logo-wrap { width: 66.6px !important; height: 66.6px !important; } .logo-row { gap: 6.3vw !important; } }
+    @media (max-width: 500px)  { .container { margin-top: 6px; margin-bottom: 9px;} .logo-row { gap: 5.4vw !important; } .ai-logo-wrap { width: 57.6px !important; height: 57.6px !important;} }
+    .modal-bg { position:fixed; z-index:10; left:0; top:0; width:100vw; height:100vh; background:#2228; display:flex; justify-content:center; align-items:center; }
+    .modal-box { background:#fff; border-radius:12px; box-shadow:0 6px 36px #00308a22; padding: 24px 22px 14px 22px; min-width:207px; display:flex; flex-direction:column; gap:13px; align-items:center; }
+    .modal-box input { font-size:1rem; padding:8px 12px; border:1px solid #bbb; border-radius:7px; width:198px;}
+    .modal-box button { font-size:1rem; padding:7px 16.2px; border-radius:7px; border:1px solid #e4e5f0; background:#eaf1ff; cursor:pointer;}
+    .modal-box label { font-size:1rem; color:#234;}
+    .usage-guide { width: 100%; max-width: 650px; margin:85px auto 25px auto; background: #f5f6fa; border-radius: 16px; box-shadow: 0 2px 16px #aab7d711; padding: 28px 26px 22px 26px; font-size: 1.08rem; color: #374477; font-family: 'NanumSquare', 'Noto Sans KR', '맑은 고딕', 'Segoe UI', Arial, sans-serif; line-height: 1.75; letter-spacing: 0.01em;}
+    .usage-guide h3 { font-size: 1.25rem; color: #204090; margin-bottom: 10px; font-family: 'Montserrat', '맑은 고딕', 'Noto Sans KR', sans-serif; letter-spacing: -0.5px;}
+    .usage-guide ul { margin-top: 6px; margin-bottom: 2px; }
+    .usage-guide li { margin-bottom: 6px; }
+    .usage-guide strong { color: #2369a3; font-weight: 700;}
+    .dragging { opacity: 0.6; }
+    .drag-over { border: 2px dashed #8ba0f7; }
+  </style>
+</head>
+<body>
+  <div class="topbar-fixed">
+    <div class="topbar-btns">
+      <button id="addBtn">추가</button>
+      <button id="exportBtn">내보내기</button>
+      <button id="importBtn">가져오기</button>
+      <button id="clearAllBtn">전체삭제</button>
+      <button id="undoClearBtn" style="display:none;">복원</button>
+      <input type="file" id="importFile" style="display:none;">
+    </div>
+  </div>
+  <div class="container" id="aiLogoContainer"></div>
+  <div id="modal" style="display:none;"></div>
+  <div class="usage-guide">
+    <h3>📝 사용 설명서</h3>
+    <ul>
+      <li><strong>추가</strong>: <b>추가</b> 버튼을 누르고, 텍스트와 링크 주소를 입력하세요.</li>
+      <li><strong>수정/삭제</strong>: 각 아이콘 중앙의 <span style="color:#3a75e7;">텍스트</span> 위에 마우스를 올리고 연필 또는 휴지통 아이콘을 클릭하세요.</li>
+      <li><strong>순서 변경</strong>: 마우스로 드래그해서 아이콘 순서를 바꿀 수 있습니다.</li>
+      <li><strong>내보내기/가져오기</strong>: 저장된 목록을 JSON 파일로 내보내거나 불러올 수 있습니다.</li>
+      <li><strong>컴을 끄기전</strong>: 혹은 브라우저 청소를 하기전엔 꼭 내보내기 버튼으로 저장을 하세요.</li>
+      <li><strong>콤보박스</strong>: 원하는 Type 선택하면 <b> 바로 이동</b>합니다(미완성).</li>
+    </ul>
+    <div style="margin-top:14px; color:#757ba7; font-size:1rem;">
+      ⚡ <b>TIP</b>: <b>사이트주소는 </b>https:// 방식으로 저장해야 합니다.<br>
+      <b>데이터는 브라우저에 안전하게 저장</b>되어, 새로고침해도 보존됩니다. 단, 다음날엔 가져오기를 다시 해야합니다.
+    </div>
+  </div>
+<script>
+// 이하 JS 코드는 이전과 동일하게 사용하시면 됩니다.
+let aiLogos = [
+  { text: "ChatGPT", url: "https://chat.openai.com/" },
+  { text: "Gemini", url: "https://gemini.google.com/" }
+];
+let aiLogosBackup = null;
+if(localStorage['aiTextLinks']) {
+  try { aiLogos = JSON.parse(localStorage['aiTextLinks']); }catch(e){}
+}
+function save() {
+  localStorage['aiTextLinks'] = JSON.stringify(aiLogos);
+}
+function getLayout() {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  let iconsPerRow = 4, gap = 21.6, size = 81;
+  if (w <= 1100) { iconsPerRow = 4; gap = 12.6; size = 67.5; }
+  if (w <= 900)  { iconsPerRow = 3; gap = 9; size = 57.6; }
+  if (w <= 700) {
+    if (h > w) { iconsPerRow = 2; gap = w * 0.07; size = 66.6; }
+    else      { iconsPerRow = 3; gap = w * 0.07; size = 66.6; }
+  }
+  if (w <= 500)  { iconsPerRow = 2; gap = w * 0.09; size = 57.6; }
+  return { iconsPerRow, gap, size };
+}
+let dragIndex = null;
+let dragElem = null;
+function onDragStart(e, idx) {
+  dragIndex = idx;
+  dragElem = e.currentTarget;
+  dragElem.classList.add("dragging");
+  e.dataTransfer.effectAllowed = "move";
+  try { e.dataTransfer.setData('text/plain', ''); } catch(e){}
+}
+function onDragOver(e, idx) {
+  e.preventDefault();
+  const target = e.currentTarget;
+  if (target !== dragElem) {
+    target.classList.add("drag-over");
+  }
+}
+function onDragLeave(e, idx) {
+  e.currentTarget.classList.remove("drag-over");
+}
+function onDrop(e, idx) {
+  e.preventDefault();
+  e.currentTarget.classList.remove("drag-over");
+  if (dragIndex !== null && dragIndex !== idx) {
+    const moved = aiLogos.splice(dragIndex, 1)[0];
+    aiLogos.splice(idx, 0, moved);
+    save();
+    renderLogos();
+  }
+  dragIndex = null;
+  dragElem = null;
+}
+function onDragEnd(e) {
+  if(dragElem) dragElem.classList.remove("dragging");
+  dragIndex = null; dragElem = null;
+}
+function renderLogos() {
+  const container = document.getElementById('aiLogoContainer');
+  container.innerHTML = "";
+  const { iconsPerRow, gap, size } = getLayout();
+  let rows = [];
+  let indices = aiLogos.map((_, i) => i);
+  for(let rowStart=0; rowStart<indices.length; rowStart += iconsPerRow) {
+    let rowIndices = indices.slice(rowStart, rowStart+iconsPerRow);
+    const row = document.createElement('div');
+    row.className = "logo-row";
+    row.style.maxWidth = (size * rowIndices.length + gap * (rowIndices.length - 1)) + "px";
+    row.style.gap = gap + "px";
+    rowIndices.forEach(idx => {
+      const l = aiLogos[idx];
+      const wrap = document.createElement('div');
+      wrap.className = "ai-logo-wrap";
+      wrap.setAttribute("draggable", "true");
+      wrap.ondragstart = (e) => onDragStart(e, idx);
+      wrap.ondragover  = (e) => onDragOver(e, idx);
+      wrap.ondragleave = (e) => onDragLeave(e, idx);
+      wrap.ondrop      = (e) => onDrop(e, idx);
+      wrap.ondragend   = onDragEnd;
+      wrap.onclick = (e) => {
+        if (e.target.tagName === 'BUTTON' || e.target.tagName === 'svg' || e.target.tagName === 'path') return;
+        window.open(l.url, );
+      };
+      const textDiv = document.createElement('div');
+      textDiv.className = "ai-logo-text";
+      textDiv.textContent = l.text;
+      wrap.appendChild(textDiv);
+      const actionDiv = document.createElement('div');
+      actionDiv.className = "action-btns";
+      const editBtn = document.createElement('button');
+      editBtn.className = "edit-btn";
+      editBtn.title = "수정";
+      editBtn.innerHTML = `
+        <svg viewBox="0 0 20 20"><path d="M2 14.5V18h3.5l10-10.01-3.5-3.5L2 14.5zM19.71 6.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>
+      `;
+      editBtn.onclick = function(ev) {
+        ev.stopPropagation();
+        openModal(idx, true);
+      };
+      const delBtn = document.createElement('button');
+      delBtn.className = "del-btn";
+      delBtn.title = "삭제";
+      delBtn.innerHTML = `
+        <svg viewBox="0 0 20 20"><path d="M6 7v7a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V7m-7 0V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M4 7h12"></path></svg>
+      `;
+      delBtn.onclick = function(ev) {
+        ev.stopPropagation();
+        if(confirm('정말 삭제?')) {
+          aiLogos.splice(idx, 1);
+          save(); renderLogos();
+        }
+      };
+      actionDiv.appendChild(editBtn);
+      actionDiv.appendChild(delBtn);
+      wrap.appendChild(actionDiv);
+      row.appendChild(wrap);
+    });
+    container.appendChild(row);
+  }
+}
+renderLogos();
+window.addEventListener('resize', renderLogos);
+
+function openModal(idx, isEdit) {
+  const modal = document.getElementById('modal');
+  let item = {text:"",url:""};
+  if(isEdit) item = {...aiLogos[idx]};
+  modal.innerHTML = `
+    <div class="modal-bg" onclick="if(event.target.className==='modal-bg'){document.getElementById('modal').style.display='none';}">
+      <form class="modal-box" onsubmit="return false;">
+        <label>텍스트(이름):<br><input id="addText" maxlength="20" placeholder="예: ChatGPT" value="${item.text || ""}"></label>
+        <label>링크 주소(URL):<br><input id="addUrl" placeholder="https://..." value="${item.url || ""}"></label>
+        <button type="submit" id="okBtn">${isEdit?"수정":"추가"}</button>
+        <button type="button" onclick="document.getElementById('modal').style.display='none';">취소</button>
+      </form>
+    </div>
+  `;
+  modal.style.display = 'block';
+  document.getElementById('addText').focus();
+  document.getElementById('okBtn').onclick = function() {
+    var text=document.getElementById('addText').value.trim();
+    var url=document.getElementById('addUrl').value.trim();
+    if(!text||!url) return alert('텍스트와 링크 주소를 모두 입력!');
+    if(isEdit) aiLogos[idx]={text,url};
+    else aiLogos.push({text,url});
+    save(); renderLogos(); document.getElementById('modal').style.display='none';
+  };
+}
+document.getElementById('addBtn').onclick = function() { openModal(0, false); };
+document.getElementById('exportBtn').onclick = function() {
+  const blob = new Blob([JSON.stringify(aiLogos,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'ai_textlinks.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+document.getElementById('importBtn').onclick = function() {
+  document.getElementById('importFile').click();
+};
+document.getElementById('importFile').onchange = function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if(Array.isArray(data)) {
+        aiLogos = data; save(); renderLogos();
+      } else {
+        alert('불러오기 실패(잘못된 파일)');
+      }
+    } catch (err) {
+      alert('불러오기 실패(파일 오류)');
+    }
+  };
+  reader.readAsText(file);
+};
+document.getElementById('clearAllBtn').onclick = function() {
+  if(aiLogos.length === 0) return;
+  if(!confirm('정말 전체 삭제하시겠습니까?')) return;
+  aiLogosBackup = JSON.parse(JSON.stringify(aiLogos));
+  aiLogos = [];
+  save(); renderLogos();
+  document.getElementById('undoClearBtn').style.display = 'inline-block';
+};
+document.getElementById('undoClearBtn').onclick = function() {
+  if(aiLogosBackup && aiLogos.length === 0) {
+    aiLogos = JSON.parse(JSON.stringify(aiLogosBackup));
+    save(); renderLogos();
+    document.getElementById('undoClearBtn').style.display = 'none';
+  }
+};
+</script>
+</body>
+</html>
