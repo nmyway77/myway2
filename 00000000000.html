@@ -5,12 +5,21 @@
   <title>AI 엔진 바로가기 - MYWAY (텍스트/링크만)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    html, body { min-height: 100vh; margin: 0; padding: 0; background: #fff; font-family: 'Segoe UI', '맑은 고딕', 'Noto Sans KR', '나눔고딕', Arial, sans-serif; width: 100%; }
-    body { display: flex; flex-direction: column; align-items: center; width: 100%; }
-    .main-title { width:100%; max-width:700px; text-align:center; font-family: 'Montserrat', '맑은 고딕', 'Noto Sans KR', sans-serif; font-size:1.3rem; font-weight: 700; color: #3e437b; letter-spacing:-1px;   margin-top:70px;     margin-bottom:6px; text-shadow: 0 2px 14px #e6ecfa55; }
-    .main-desc { width:100%; max-width:700px; text-align:center; font-size:0.9rem; font-family: 'Nanum Myeongjo', 'Georgia', serif; color:#7d84a8; margin-bottom: 14px; letter-spacing:0.01em; }
-
-    /* 상단 고정 바 */
+    html, body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      font-family: 'Segoe UI', '맑은 고딕', 'Noto Sans KR', '나눔고딕', Arial, sans-serif;
+      width: 100%;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    /* 상단 고정 바: 상단유격 0, 버튼간격 최소 */
     .topbar-fixed {
       position: sticky;
       top: 0;
@@ -21,22 +30,41 @@
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      gap: 10px;
-
-      
-      padding: 0px                10px 8px 10px;
-
-      
-      margin-bottom: 0;
+      gap: 0;        /* 버튼 사이 gap 0 */
+      padding: 0;    /* 상하좌우 여백 0 */
+      margin: 0;
       box-sizing: border-box;
-      backdrop-filter: blur(2px);
-      border-bottom: 1px solid #dbe4f7;
+      border-bottom: 1px solid #e6ebf6;
     }
-
-    .topbar-btns { display: flex; gap: 7px; }
-    .topbar-btns button { padding: 7px 13px; font-size: 1rem; border-radius: 7px; border: 1px solid #e7e7e7; background: #f4f7ff; cursor: pointer; font-weight: bold; transition: background 0.13s; }
+    .topbar-btns {
+      display: flex;
+      gap: 0;      /* 버튼 간 gap 0 */
+    }
+    .topbar-btns button {
+      padding: 3.5px 8px;   /* 버튼 위아래 3.5px, 좌우 8px로 최소화 */
+      font-size: 0.98rem;
+      border-radius: 7px;
+      border: 1px solid #e7e7e7;
+      background: #f4f7ff;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.13s;
+      margin: 0;
+    }
     .topbar-btns button:hover { background: #e1eaff; }
-    .container { width: 100%; max-width: 504px; display: flex; flex-direction: column; align-items: center; margin-top: 30px; margin-bottom: 60px; padding-left: 6px; padding-right: 6px;}
+
+    /* 나머지 부분은 그대로 */
+    .container {
+      width: 100%;
+      max-width: 504px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 30px;
+      margin-bottom: 60px;
+      padding-left: 6px;
+      padding-right: 6px;
+    }
     .logo-row { display: flex; justify-content: center; gap: 21.6px; margin-bottom: 28.8px; width: 100%; flex-wrap: nowrap; transition: max-width 0.1s; }
     .ai-logo-wrap { width: 81px; height: 81px; border-radius: 50%; background: #f7faff; box-shadow: 0 3px 24px 0 #b1c7e866; border: 2.7px solid #e5e8f6; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: box-shadow 0.15s, border-color 0.15s; cursor: pointer; overflow: hidden; margin: 0; flex: 0 0 auto; position: relative; }
     .ai-logo-wrap:hover { box-shadow: 0 8px 32px 0 #7e94ff99; border-color: #94a2ff; background: #f7faff;}
@@ -61,14 +89,11 @@
     .usage-guide ul { margin-top: 6px; margin-bottom: 2px; }
     .usage-guide li { margin-bottom: 6px; }
     .usage-guide strong { color: #2369a3; font-weight: 700;}
-    /* 드래그 스타일 */
     .dragging { opacity: 0.6; }
     .drag-over { border: 2px dashed #8ba0f7; }
   </style>
 </head>
 <body>
-  <div class="main-title">나만의 디스플레이형 즐겨찾기 만들기 (MYWAY)</div>
-  <div class="main-desc">추가버튼을 누르고 시작해보세요!</div>
   <div class="topbar-fixed">
     <div class="topbar-btns">
       <button id="addBtn">추가</button>
@@ -97,6 +122,7 @@
     </div>
   </div>
 <script>
+// 이하 JS 코드는 이전과 동일하게 사용하시면 됩니다.
 let aiLogos = [
   { text: "ChatGPT", url: "https://chat.openai.com/" },
   { text: "Gemini", url: "https://gemini.google.com/" }
