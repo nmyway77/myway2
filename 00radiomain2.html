@@ -1,0 +1,264 @@
+
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>AI 엔진 바로가기 - MYWAY</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      min-height: 100vh; margin: 0; padding: 0;
+      background: #fff; font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      width: 100%;
+    }
+    body { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .main-title { 
+     
+      margin-top: 5px;
+     
+     
+      font-size: 1.3rem; font-weight: 700; color: #333862;
+      text-shadow: 0 2px 12px #ffffff99; margin-bottom: 8px;
+      text-align: center; user-select: none;
+    }
+
+   
+    .main-subtitle { font-size: 0.8rem; color: #6a739c;      margin-bottom: 5px;       text-align: center; user-select: none; }
+
+
+   
+    .container { width: 100%; max-width: 560px; display: flex; flex-direction: column; align-items: center;
+
+
+                
+      margin-top: 5px; margin-bottom: 10px; 
+                
+                
+                min-height: 150vh; padding-left: 6px; padding-right: 6px;}
+
+
+   
+    .logo-row {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 32px;
+      width: 100%;
+      flex-wrap: nowrap;
+      transition: max-width 0.1s;
+    }
+    .ai-logo-wrap {
+      width: 74px; height: 74px; border-radius: 50%; background: #fff;
+      box-shadow: 0 3px 24px 0 #b1c7e866; border: 3px solid #e5e8f6;
+      display: flex; justify-content: center; align-items: center;
+      transition: box-shadow 0.15s, border-color 0.15s;
+      cursor: pointer; overflow: hidden; margin: 0;
+      flex: 0 0 auto;
+    }
+    .ai-logo-wrap:hover { box-shadow: 0 8px 32px 0 #7e94ff99; border-color: #94a2ff; background: #f7faff;}
+    .ai-logo-img { width: 54px; height: 54px; object-fit: contain; background: transparent;
+      border-radius: 50%; transition: transform 0.12s;}
+    .ai-logo-wrap:hover .ai-logo-img { transform: scale(1.08) rotate(-3deg);}
+    .group-title {
+      width: 100%; max-width: 500px;
+      font-size: 1.07rem; font-weight: 600;
+      margin: 34px 0 10px 0;
+      letter-spacing: -0.5px;
+      color: #244;
+      text-align: left;
+      padding-left: 8px;
+      user-select: none;
+    }
+    @media (max-width: 1100px) {
+      .container { max-width: 98vw; }
+      .logo-row { gap: 14px;}
+      .ai-logo-wrap { width: 60px; height: 60px;}
+      .ai-logo-img { width: 40px; height: 40px;}
+    }
+    @media (max-width: 900px) {
+      .container { max-width: 99vw;}
+      .main-title { font-size: 1.35rem; margin-top: 64px;}
+      .main-subtitle { font-size: 1.07rem; }
+      .logo-row { gap: 10px; }
+      .ai-logo-wrap { width: 52px; height: 52px;}
+      .ai-logo-img { width: 34px; height: 34px;}
+    }
+    @media (max-width: 700px) {
+      .ai-logo-wrap { width: 78px !important; height: 78px !important; }
+      .ai-logo-img  { width: 60px !important; height: 60px !important; }
+      .logo-row     { gap: 7vw !important; }
+    }
+    @media (max-width: 480px) {
+      .main-title { font-size: 1rem; }
+      .main-subtitle { font-size: 0.95rem; }
+      .container { margin-top: 6px; margin-bottom: 9px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="main-title"></div>
+  <div class="main-subtitle"></div>
+  <div class="container" id="aiLogoContainer"></div>
+  <script>
+    // 1번 그룹 (예: AI/생성형)
+    const group1 = [
+
+ { url: "https://miniwebapp.imbc.com/index?channel=mfm", img: "https://i.namu.wiki/i/vTgTt-dxXfOsfXVWIvLgMaKazq4LrBg721Be9fx_3CzjuxEza-HDXToyFRE8_E5_EsC6LJbL9oTfSwCMK-OsEA.webp", alt: "경향신문" },
+
+
+ { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=25&ch_type=radioList", img: "https://cdn-radiotime-logos.tunein.com/s50603g.png", alt: "경향신문" },
+
+
+
+ { url: "https://www.sbs.co.kr/live/S08?div=live_list", img: "https://i.namu.wiki/i/aHTv2hAN5_w3-pmqu-0q2OSQ8FnPo5rYUOheTAUk8CxWZe6FjVd1mebIbiXTgR466mD4LtQh8h7qtEe-5tw6SQ.webp", alt: "경향신문" },
+
+     
+ { url: "https://www.sbs.co.kr/live/S07?div=live_list", img: "https://i.namu.wiki/i/KcxXQjQQ2xkVT-fMRDeUYdbulVXIRUALMRrImrF8NCIaxdK96z_PXByJha1RIRq3Sonib7EuS9vtNVfHnK6pcQ.webp", alt: "경향신문" },
+
+
+     
+ { url: "https://www.cbs.co.kr/radio", img: "https://modo-phinf.pstatic.net/20150829_209/1440840503551b3k1R_JPEG/mosaF6ghCM.jpeg?type=f320_320", alt: "경향신문" },
+
+
+
+
+
+
+ { url: "https://www.tbn.or.kr/onair/tbnlive.tbn?area_code=2", img: "https://play-lh.googleusercontent.com/Vjbe0EONCcfvO7EUYQ-h6WgM2zCm0YyZjLIxu8iHfieEeh1x7YGwmdm2NRXhAVd3BaH1", alt: "경향신문" },
+
+     
+ { url: "https://tbs.seoul.kr/eFm/index.do", img: "https://cdn-profiles.tunein.com/s113003/images/logog.png?t=636294", alt: "경향신문" },
+
+
+     
+ { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=21&ch_type=radioList&bora=on&chat=on", img: "https://static.mytuner.mobi/media/tvos_radios/952/kbs-1radio-kbs-radio-1.9dea7458.png", alt: "경향신문" },
+
+
+
+
+
+
+
+     
+
+ { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=22&ch_type=radioList&bora=on&chat=on", img: "https://static.mytuner.mobi/media/tvos_radios/346/kbs-2radio-haepifm-kbs-radio-2-happy-fm.6115fe09.png", alt: "경향신문" },
+
+     
+ { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=23&ch_type=radioList", img: "https://static.mytuner.mobi/media/tvos_radios/hpRfkmDEVf.png", alt: "경향신문" },
+
+
+     
+ { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=24&ch_type=radioList&bora=on&chat=on", img: "https://yt3.googleusercontent.com/ytc/AIdro_kgNjzIDvp_zw-WnjRx5FhR-7W67ybj4XWRnXMcBJwgTw=w544-c-h544-k-c0x00ffffff-no-l90-rj", alt: "경향신문" },
+
+
+
+
+
+
+
+
+     { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=26&ch_type=radioList", img: "https://static-media.streema.com/media/cache/d9/78/d978b7562c07fd625995e62b2365ea49.png", alt: "경향신문" },
+
+
+
+
+     
+ { url: "https://edition.cnn.com/audio", img: "https://upload.wikimedia.org/wikipedia/commons/a/a8/CNN_en_Espa%C3%B1ol_Radio_logo.jpg", alt: "경향신문" },
+
+
+     
+ { url: "https://www.bbc.co.uk/sounds/stations", img: "https://radioink.com/wp-content/uploads/2023/01/BBC-Radio-Logo.png", alt: "경향신문" },
+
+
+
+      { url: "https://radio.garden/visit/buldana/vPxv9hwS", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSlgsDYp_Uu6Js6j6oQOmzpipcJsJkp2-mMQ&s", alt: "경향신문" },
+
+
+
+
+
+
+     
+
+     
+    ];
+    // 2번 그룹 (예: 검색/포털)
+    const group2 = [
+
+
+    ];
+
+    // 그대로 그룹별 출력 (기존 디자인/로직 1도 안 건드림)
+
+
+
+   
+function getLayout() {
+  let iconsPerRow = 10, gap = 24, size = 74, imgSize = 54;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  if (w <= 1100) { iconsPerRow = 7; }
+  if (w <= 900)  { iconsPerRow = 5; }
+  if (w <= 700)  { iconsPerRow = 4; }
+  if (w <= 500)  { iconsPerRow = 3; }
+  return { iconsPerRow, gap, size, imgSize };
+}
+
+
+
+
+   
+    function renderGroup(arr) {
+      const { iconsPerRow, gap, size, imgSize } = getLayout();
+      let idx = 0;
+      const rows = [];
+      while (idx < arr.length) {
+        const count = Math.min(iconsPerRow, arr.length - idx);
+        const row = document.createElement('div');
+        row.className = "logo-row";
+        row.style.maxWidth = (size * count + gap * (count - 1)) + "px";
+        row.style.gap = gap + "px";
+        for (let i = 0; i < count; i++, idx++) {
+          const l = arr[idx];
+          const a = document.createElement('a');
+          a.className = "ai-logo-wrap";
+          a.href = l.url;
+          a.target = "_blank";
+          a.style.width = a.style.height = size + "px";
+          const img = document.createElement('img');
+          img.className = "ai-logo-img";
+          img.src = l.img;
+          img.alt = l.alt;
+          img.style.width = img.style.height = imgSize + "px";
+          a.appendChild(img);
+          row.appendChild(a);
+        }
+        rows.push(row);
+      }
+      return rows;
+    }
+
+    function renderAll() {
+      const container = document.getElementById('aiLogoContainer');
+      container.innerHTML = "";
+
+      // 1단 제목
+      const g1Title = document.createElement("div");
+      g1Title.className = "group-title";
+      g1Title.textContent = "";
+      container.appendChild(g1Title);
+      renderGroup(group1).forEach(row => container.appendChild(row));
+
+      // 2단 제목
+      const g2Title = document.createElement("div");
+      g2Title.className = "group-title";
+      g2Title.textContent = "";
+      container.appendChild(g2Title);
+      renderGroup(group2).forEach(row => container.appendChild(row));
+    }
+
+    renderAll();
+    window.addEventListener('resize', renderAll);
+  </script>
+</body>
+</html>
