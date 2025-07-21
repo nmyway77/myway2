@@ -1,267 +1,480 @@
-
- <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>AI 엔진 바로가기 - MYWAY</title>
+  <title>MYWAY 인플루언서 influencer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    html,  body {
-      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
-       background: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      overflow: hidden;
+    body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
+    .dashboard { max-width: 1200px; margin: 0 auto;      padding:    0px            0 40px 0;} /* 상단여백 축소 */
+    .gallery-label {
+
+
+      
+      font-weight: bold; font-size: 1.0rem;       margin: 3px        0 14px 0;
+
+
+      
+      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
     }
-    body { display: flex; flex-direction: column; align-items: center; width: 100%; }
-    .main-title { 
-     
-      margin-top: 5px;
-     
-     
-      font-size: 1.3rem; font-weight: 700; color: #333862;
-      text-shadow: 0 2px 12px #ffffff99; margin-bottom: 8px;
-      text-align: center; user-select: none;
-    }
-
-   
-    .main-subtitle { font-size: 0.8rem; color: #6a739c;      margin-bottom: 5px;       text-align: center; user-select: none; }
-
-
-   
-    .container { width: 100%; max-width: 560px; display: flex; flex-direction: column; align-items: center;
-
-
-                
-      margin-top: 5px; margin-bottom: 10px; 
-                
-                
-                min-height: 150vh; padding-left: 6px; padding-right: 6px;}
-
-
-   
-    .logo-row {
+    .gallery-row {
       display: flex;
+      flex-wrap: wrap;
+      justify-content: center;  /* 중앙정렬 */
+      gap: 0 16px;
+      max-width: 1235px;  /* 5개씩 딱 맞게! (283*5 + 16*4) */
+      margin: 0 auto;
+      min-height: 200px;
+      align-items: flex-start;
+    }
+    .list-row {
+      box-sizing: border-box;
+      position: relative;
+      background: #fff;
+      margin-bottom: 36px;
+      transition: width 0.2s, height 0.2s;
+      display: block;
+      max-width: 283px;
+    }
+    .imgframe {
+      width: 100%; height: 100%;
+      background: #fff;
+      position: relative;
+      box-sizing: border-box;
+      z-index: 0;
+      border-radius: 0;
+      box-shadow: 0 6px 6px 0 rgba(90,90,130,0.11);
+      overflow: hidden;
+      display: flex;
+      align-items: flex-start;
       justify-content: center;
-      gap: 24px;
-      margin-bottom: 32px;
-      width: 100%;
-      flex-wrap: nowrap;
-      transition: max-width 0.1s;
     }
-    .ai-logo-wrap {
-      width: 74px; height: 74px; border-radius: 50%; background: #fff;
-      box-shadow: 0 3px 24px 0 #b1c7e866; border: 3px solid #e5e8f6;
-      display: flex; justify-content: center; align-items: center;
-      transition: box-shadow 0.15s, border-color 0.15s;
-      cursor: pointer; overflow: hidden; margin: 0;
-      flex: 0 0 auto;
+    .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
+    .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
+    .img-item img {
+      display: block; width: 100%; height: 100%;
+      object-fit: contain;
+      background: #fff;
+      margin: 0;
+      border: none;
+      padding: 0;
     }
-    .ai-logo-wrap:hover { box-shadow: 0 8px 32px 0 #7e94ff99; border-color: #94a2ff; background: #f7faff;}
-    .ai-logo-img { width: 54px; height: 54px; object-fit: contain; background: transparent;
-      border-radius: 50%; transition: transform 0.12s;}
-    .ai-logo-wrap:hover .ai-logo-img { transform: scale(1.08) rotate(-3deg);}
-    .group-title {
-      width: 100%; max-width: 500px;
-      font-size: 1.07rem; font-weight: 600;
-      margin: 34px 0 10px 0;
-      letter-spacing: -0.5px;
-      color: #244;
-      text-align: left;
-      padding-left: 8px;
-      user-select: none;
+    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
+    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
+
+    /* ----------- 크기 강제 지정 ------------ */
+    .box-portrait  { width:200px; height:283px; }
+    .box-landscape { width:283px; height:200px; }
+
+    /* 반응형(모바일) */
+    @media (max-width: 1235px) {
+      .gallery-row { max-width: 98vw; }
     }
-    @media (max-width: 1100px) {
-      .container { max-width: 98vw; }
-      .logo-row { gap: 14px;}
-      .ai-logo-wrap { width: 60px; height: 60px;}
-      .ai-logo-img { width: 40px; height: 40px;}
-    }
-    @media (max-width: 900px) {
-      .container { max-width: 99vw;}
-      .main-title { font-size: 1.35rem; margin-top: 64px;}
-      .main-subtitle { font-size: 1.07rem; }
-      .logo-row { gap: 10px; }
-      .ai-logo-wrap { width: 52px; height: 52px;}
-      .ai-logo-img { width: 34px; height: 34px;}
+    @media (max-width: 1080px) {
+      .gallery-row { max-width: 98vw; }
+      .box-portrait  { width:28vw; height:40vw; min-width:80px; min-height:100px;}
+      .box-landscape { width:40vw; height:28vw; min-width:80px; min-height:100px;}
+      .list-row { max-width: 40vw; }
     }
     @media (max-width: 700px) {
-      .ai-logo-wrap { width: 78px !important; height: 78px !important; }
-      .ai-logo-img  { width: 60px !important; height: 60px !important; }
-      .logo-row     { gap: 7vw !important; }
-    }
-    @media (max-width: 480px) {
-      .main-title { font-size: 1rem; }
-      .main-subtitle { font-size: 0.95rem; }
-      .container { margin-top: 6px; margin-bottom: 9px;}
+      .gallery-row { max-width: 99vw; }
+      .box-portrait  { width:44vw; height:62vw; min-width:65px; min-height:85px;}
+      .box-landscape { width:62vw; height:44vw; min-width:65px; min-height:85px;}
+      .list-row { max-width: 62vw; }
     }
   </style>
 </head>
 <body>
-  <div class="main-title"></div>
-  <div class="main-subtitle"></div>
-  <div class="container" id="aiLogoContainer"></div>
+  <div class="dashboard">
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery1"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery2"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery3"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery4"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery5"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery6"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery7"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery8"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery9"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery10"></div>
+  </div>
   <script>
-    // 1번 그룹 (예: AI/생성형)
-    const group1 = [
+    // 샘플 데이터(갤1~10)
+    const gallery1Data = [
 
- { url: "https://miniwebapp.imbc.com/index?channel=mfm", img: "https://i.namu.wiki/i/vTgTt-dxXfOsfXVWIvLgMaKazq4LrBg721Be9fx_3CzjuxEza-HDXToyFRE8_E5_EsC6LJbL9oTfSwCMK-OsEA.webp", alt: "경향신문" },
+      { url: "https://www.youtube.com/watch?v=SpzsPiViemQ&ab_channel=OnlyEnglishMovies", img: "https://img.youtube.com/vi/SpzsPiViemQ/sddefault.jpg" },
 
-
- { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=25&ch_type=radioList", img: "https://cdn-radiotime-logos.tunein.com/s50603g.png", alt: "경향신문" },
-
+{ url: "https://www.youtube.com/watch?v=SmDfDzlHyB8&t=3086s&ab_channel=ScreenRecords", img: "https://img.youtube.com/vi/SmDfDzlHyB8/sddefault.jpg" },
 
 
- { url: "https://www.sbs.co.kr/live/S08?div=live_list", img: "https://i.namu.wiki/i/aHTv2hAN5_w3-pmqu-0q2OSQ8FnPo5rYUOheTAUk8CxWZe6FjVd1mebIbiXTgR466mD4LtQh8h7qtEe-5tw6SQ.webp", alt: "경향신문" },
-
-     
- { url: "https://www.sbs.co.kr/live/S07?div=live_list", img: "https://i.namu.wiki/i/KcxXQjQQ2xkVT-fMRDeUYdbulVXIRUALMRrImrF8NCIaxdK96z_PXByJha1RIRq3Sonib7EuS9vtNVfHnK6pcQ.webp", alt: "경향신문" },
-
-
-     
- { url: "https://www.cbs.co.kr/radio", img: "https://modo-phinf.pstatic.net/20150829_209/1440840503551b3k1R_JPEG/mosaF6ghCM.jpeg?type=f320_320", alt: "경향신문" },
+{ url: "https://www.youtube.com/watch?v=xi-YD_V0SR0&ab_channel=OnlyEnglishMovies", img: "https://img.youtube.com/vi/xi-YD_V0SR0/sddefault.jpg" },
+      
+{ url: "https://www.youtube.com/watch?v=_nQJ8B5NtA8&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/_nQJ8B5NtA8/sddefault.jpg" },
+      { url: "https://www.youtube.com/watch?v=Eq5me8PSbp0&ab_channel=FocusTv", img: "https://img.youtube.com/vi/Eq5me8PSbp0/sddefault.jpg" },
 
 
+{ url: "https://www.youtube.com/watch?v=a510izXDwtA&ab_channel=osamuellvitor", img: "https://img.youtube.com/vi/a510izXDwtA/sddefault.jpg" },
+      
 
 
+{ url: "https://www.youtube.com/watch?v=AwR_hc3DU7s&ab_channel=Trollboi22", img: "https://img.youtube.com/vi/AwR_hc3DU7s/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=B6MxMML6Hmc&ab_channel=ScreenRecords", img: "https://img.youtube.com/vi/B6MxMML6Hmc/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=M0bM_tRFmxA&ab_channel=HoangChinh", img: "https://img.youtube.com/vi/M0bM_tRFmxA/sddefault.jpg" },
+
+      { url: "https://www.youtube.com/watch?v=z46qfGqJ_bE&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/z46qfGqJ_bE/sddefault.jpg" },
+
+      { url: "https://www.youtube.com/watch?v=c1irAuyueLA&ab_channel=CyberAssistindo", img: "https://img.youtube.com/vi/c1irAuyueLA/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=1h4QQmnuNCs&ab_channel=CyberAssistindo", img: "https://img.youtube.com/vi/1h4QQmnuNCs/sddefault.jpg" },
+      
+
+{ url: "https://www.youtube.com/watch?v=4CtrAfFVrpc&t=3491s&ab_channel=AstroGo3", img: "https://img.youtube.com/vi/4CtrAfFVrpc/sddefault.jpg" },
+
+      
+{ url: "https://www.youtube.com/watch?v=hZJYroqd0dI", img: "https://img.youtube.com/vi/hZJYroqd0dI/sddefault.jpg" },
 
 
- { url: "https://www.tbn.or.kr/onair/tbnlive.tbn?area_code=2", img: "https://play-lh.googleusercontent.com/Vjbe0EONCcfvO7EUYQ-h6WgM2zCm0YyZjLIxu8iHfieEeh1x7YGwmdm2NRXhAVd3BaH1", alt: "경향신문" },
+{ url: "https://www.youtube.com/watch?v=gFiptJvLsk4&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/gFiptJvLsk4/sddefault.jpg" },
+      
+ { url: "https://www.youtube.com/watch?v=wpPBXmuQNHc", img: "https://img.youtube.com/vi/wpPBXmuQNHc/sddefault.jpg" },
 
-     
- { url: "https://tbs.seoul.kr/eFm/index.do", img: "https://cdn-profiles.tunein.com/s113003/images/logog.png?t=636294", alt: "경향신문" },
+      
+   { url: "https://www.youtube.com/watch?v=mc93fO8ub8M", img: "https://img.youtube.com/vi/mc93fO8ub8M/sddefault.jpg" },
 
+      { url: "https://www.youtube.com/watch?v=pA1o0O7vP9M", img: "https://img.youtube.com/vi/pA1o0O7vP9M/sddefault.jpg" },
 
-     
- { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=21&ch_type=radioList&bora=on&chat=on", img: "https://static.mytuner.mobi/media/tvos_radios/952/kbs-1radio-kbs-radio-1.9dea7458.png", alt: "경향신문" },
+{ url: "https://www.youtube.com/watch?v=tVuL7tlG1K4&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/tVuL7tlG1K4/sddefault.jpg" },
 
+{ url: "https://www.youtube.com/watch?v=dBXVCx20GaI&ab_channel=Boxoffice%7C4KFullMovies", img: "https://img.youtube.com/vi/dBXVCx20GaI/sddefault.jpg" },
 
-
-
-
-
-
-     
-
- { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=22&ch_type=radioList&bora=on&chat=on", img: "https://static.mytuner.mobi/media/tvos_radios/346/kbs-2radio-haepifm-kbs-radio-2-happy-fm.6115fe09.png", alt: "경향신문" },
-
-     
- { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=23&ch_type=radioList", img: "https://static.mytuner.mobi/media/tvos_radios/hpRfkmDEVf.png", alt: "경향신문" },
+{ url: "https://www.youtube.com/watch?v=YNemVi1H8Ck&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/YNemVi1H8Ck/sddefault.jpg" },
 
 
-     
- { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=24&ch_type=radioList&bora=on&chat=on", img: "https://yt3.googleusercontent.com/ytc/AIdro_kgNjzIDvp_zw-WnjRx5FhR-7W67ybj4XWRnXMcBJwgTw=w544-c-h544-k-c0x00ffffff-no-l90-rj", alt: "경향신문" },
+{ url: "https://www.youtube.com/watch?v=Trqj71QbBsU&list=PLuBIJqLCZWDsnbCahYy2efs3qH_lShfCm&ab_channel=TQ007", img: "https://img.youtube.com/vi/Trqj71QbBsU/sddefault.jpg" },
 
 
+{ url: "https://www.youtube.com/watch?v=qxzDiXxOeAc&list=PLuBIJqLCZWDt9iFtQ63y3j2axK4PGUdkO&ab_channel=TQ007", img: "https://img.youtube.com/vi/qxzDiXxOeAc/sddefault.jpg" },
 
+{ url: "https://www.youtube.com/watch?v=I0UgB6xX_ME&list=PLxuO7c1ouEXursV23ZibQ7tmu6QWOMitR&ab_channel=RobertMay", img: "https://img.youtube.com/vi/I0UgB6xX_ME/sddefault.jpg" },
 
-
-
-
-
-     { url: "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=26&ch_type=radioList", img: "https://static-media.streema.com/media/cache/d9/78/d978b7562c07fd625995e62b2365ea49.png", alt: "경향신문" },
-
-
-
-
-     
- { url: "https://edition.cnn.com/audio", img: "https://upload.wikimedia.org/wikipedia/commons/a/a8/CNN_en_Espa%C3%B1ol_Radio_logo.jpg", alt: "경향신문" },
-
-
-     
- { url: "https://www.bbc.co.uk/sounds/stations", img: "https://radioink.com/wp-content/uploads/2023/01/BBC-Radio-Logo.png", alt: "경향신문" },
+{ url: "https://www.youtube.com/watch?v=OHeSdVtC7a8&list=PLuBIJqLCZWDt7F1klEkPlNTHWO2o71-eN&ab_channel=TQ007", img: "https://img.youtube.com/vi/OHeSdVtC7a8/sddefault.jpg" },
 
 
 
-      { url: "https://radio.garden/visit/buldana/vPxv9hwS", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSlgsDYp_Uu6Js6j6oQOmzpipcJsJkp2-mMQ&s", alt: "경향신문" },
+{ url: "https://www.youtube.com/@TQ00Z/playlists", img: "https://img.youtube.com/vi/f3a5oIDvQTg/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=evnaiKMlX_c&t=142s&ab_channel=FRAME25", img: "https://img.youtube.com/vi/evnaiKMlX_c/sddefault.jpg" },
 
 
 
 
 
 
-     
-
-     
-    ];
-    // 2번 그룹 (예: 검색/포털)
-    const group2 = [
 
 
-    ];
+      
+      
+      { url: "https://www.youtube.com/watch?v=8zuDc18wyiw&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/8zuDc18wyiw/sddefault.jpg" },
+      
+ { url: "https://www.youtube.com/watch?v=plaU0sa1MQ8&ab_channel=SSMovieRecaps", img: "https://img.youtube.com/vi/plaU0sa1MQ8/sddefault.jpg" },
 
-    // 그대로 그룹별 출력 (기존 디자인/로직 1도 안 건드림)
+{ url: "https://www.youtube.com/watch?v=xzglePk2zAo&ab_channel=VSci-Fi-FullFreeSci-FiMovies", img: "https://img.youtube.com/vi/xzglePk2zAo/sddefault.jpg" },
 
 
 
+
+{ url: "https://www.youtube.com/watch?v=wpHvBrIIJnA&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/wpHvBrIIJnA/sddefault.jpg" },
+
+
+
+      
+
+
+
+
+
+      
+{ url: "https://www.youtube.com/watch?v=M17vU6hgNu4&ab_channel=SmingsWorld", img: "https://img.youtube.com/vi/M17vU6hgNu4/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=Bl9p7dWvFcg&ab_channel=SmingsWorld", img: "https://img.youtube.com/vi/Bl9p7dWvFcg/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=erLjUZ9fxDk&ab_channel=SmingsWorld", img: "https://img.youtube.com/vi/erLjUZ9fxDk/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=WiWvLVmJGbo&ab_channel=SmingsWorld", img: "https://img.youtube.com/vi/WiWvLVmJGbo/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=pdYteeK5s1s&ab_channel=IOF-Hindi", img: "https://img.youtube.com/vi/pdYteeK5s1s/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=UiGBEQoxz-g&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/UiGBEQoxz-g/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Rk8vW_GGxok&ab_channel=%EB%82%98%ED%98%BC%EC%9E%90%EB%85%BC%EB%8B%A4", img: "https://img.youtube.com/vi/Rk8vW_GGxok/sddefault.jpg" },
+
+
+
+
+
+
+      { url: "https://www.youtube.com/watch?v=KId5Mg7K9HE&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/KId5Mg7K9HE/sddefault.jpg" },
+
+
+
+{ url: "https://www.youtube.com/watch?v=77AsImTSzok&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/77AsImTSzok/sddefault.jpg" },
+      
+
+{ url: "https://www.youtube.com/watch?v=DYEW2G_sB7Q&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/DYEW2G_sB7Q/sddefault.jpg" },
+      
+
+
+{ url: "https://www.youtube.com/watch?v=lIVdXD-snZg&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/lIVdXD-snZg/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Zj8qo0aaG_I&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Zj8qo0aaG_I/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=6jxkQLb05Ho&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/6jxkQLb05Ho/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Kj9oxB5Sg9I&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Kj9oxB5Sg9I/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=DxcXM-dsauk&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/DxcXM-dsauk/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=9YPd6TOfAm8&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/9YPd6TOfAm8/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=iUZD6O8pGC8&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/iUZD6O8pGC8/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=8aQ1l3qhA-I&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/8aQ1l3qhA-I/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=5FtabbwJ6FI&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/5FtabbwJ6FI/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Wmnt0RRIogY&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Wmnt0RRIogY/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=AgHz4qhQ2mk&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/AgHz4qhQ2mk/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=fTu6n2Q0wC8&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/fTu6n2Q0wC8/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Gi9_6BAfEGY&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Gi9_6BAfEGY/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=VCBHLn8ymDQ&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/VCBHLn8ymDQ/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=ZqYiKNa8VWM&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/ZqYiKNa8VWM/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=Q7E0tugZels&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Q7E0tugZels/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=JywU3Y8zwzw&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/JywU3Y8zwzw/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=0y1p42k34LI&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/0y1p42k34LI/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=qyA6ZTgittc&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/qyA6ZTgittc/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=gSgXsirvOl4&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/gSgXsirvOl4/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=beG3c2LtfuI&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/beG3c2LtfuI/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=B2cGYwc8M6Q&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/B2cGYwc8M6Q/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=kdB2kK_vwzk&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/kdB2kK_vwzk/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=J8721jcYkdU&ab_channel=%ED%94%8C%EB%A0%88%EC%9D%B4%EB%AC%B4%EB%B9%84", img: "https://img.youtube.com/vi/J8721jcYkdU/sddefault.jpg" },
+
+      
+{ url: "https://www.youtube.com/watch?v=5QPrB8m5DF4&ab_channel=Su-HyeongPark", img: "https://img.youtube.com/vi/5QPrB8m5DF4/sddefault.jpg" },
+
+      
+
+
+
+
+      
+
+
+
+      
+      
+       
    
-function getLayout() {
-  let iconsPerRow = 10, gap = 24, size = 74, imgSize = 54;
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  if (w <= 1100) { iconsPerRow = 7; }
-  if (w <= 900)  { iconsPerRow = 5; }
-  if (w <= 700)  { iconsPerRow = 4; }
-  if (w <= 500)  { iconsPerRow = 3; }
-  return { iconsPerRow, gap, size, imgSize };
-}
+{ url: "https://www.youtube.com/watch?v=f6hxvT0y3fA&ab_channel=Boxoffice%7CROMANCE%7CFullMovies", img: "https://img.youtube.com/vi/f6hxvT0y3fA/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=U4LI2Wf8egg&ab_channel=ClipFlixKorea", img: "https://img.youtube.com/vi/U4LI2Wf8egg/sddefault.jpg" },
+
+
+
+{ url: "https://www.youtube.com/watch?v=Ikfv6pH2WmM&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Ikfv6pH2WmM/sddefault.jpg" },
+
+
+
+      
+
+
+
+    { url: "https://www.youtube.com/watch?v=zkb2mtPV3vE&ab_channel=Viraldrama", img: "https://img.youtube.com/vi/zkb2mtPV3vE/sddefault.jpg" },
+      
+{ url: "https://www.youtube.com/watch?v=Gar1ONSRku8&ab_channel=LionMalus", img: "https://img.youtube.com/vi/Gar1ONSRku8/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=7Ke4pWDzmJg&ab_channel=IOF-Hindi", img: "https://img.youtube.com/vi/7Ke4pWDzmJg/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=2G2zlNfPesA&list=PL28d5JImIlH6aF6WYpRANAxlpk6oA0BnQ&ab_channel=%ED%95%9C%EA%B5%AD%EC%95%A0%EB%8B%88%EB%A9%94%EC%9D%B4%EC%85%98KoreanAnimation", img: "https://img.youtube.com/vi/2G2zlNfPesA/sddefault.jpg" },
+
+
+
+{ url: "https://www.youtube.com/watch?v=Y6D136RHiVc&ab_channel=%ED%95%9C%EA%B5%AD%EA%B3%A0%EC%A0%84%EC%98%81%ED%99%94KoreanClassicFilm", img: "https://img.youtube.com/vi/Y6D136RHiVc/sddefault.jpg" },
+
+   { url: "https://www.youtube.com/watch?v=eygaIptkEx0&ab_channel=DisasterMovies", img: "https://img.youtube.com/vi/eygaIptkEx0/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=hOdCKTUsu6A&ab_channel=ReelVisionMovies", img: "https://img.youtube.com/vi/hOdCKTUsu6A/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=lHxJd0l5dck&ab_channel=HitSeries", img: "https://img.youtube.com/vi/lHxJd0l5dck/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=eV7xAef7RQo&ab_channel=Cin%C3%A9film", img: "https://img.youtube.com/vi/eV7xAef7RQo/sddefault.jpg" },
+      
+{ url: "https://www.youtube.com/watch?v=jvqbubqCVsc&list=PLAEE4E29C29BC8BC2&ab_channel=GEM%3ACinemaCollection", img: "https://img.youtube.com/vi/jvqbubqCVsc/sddefault.jpg" },
+      
+
+{ url: "https://www.youtube.com/watch?v=ChyHumL9u3I&ab_channel=TheFilmDepot", img: "https://img.youtube.com/vi/ChyHumL9u3I/sddefault.jpg" },
+      
+{ url: "https://www.youtube.com/watch?v=bFfRNFMPeNo&list=PLwI2xy-W0M6I8AuJTq8dtC9aXMa-0SM0u&ab_channel=LoveDelight", img: "https://img.youtube.com/vi/bFfRNFMPeNo/sddefault.jpg" },
+      
+
+{ url: "https://www.youtube.com/watch?v=8urw36dsA3I&list=PLlsbL68NnCv1Vb5Xx-KgCQys3VAhlhDpO&ab_channel=%ED%95%9C%EA%B5%AD%EA%B3%A0%EC%A0%84%EC%98%81%ED%99%94KoreanClassicFilm", img: "https://img.youtube.com/vi/8urw36dsA3I/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=JE7xl6WhAdA&ab_channel=CineTimeAcrossAges", img: "https://img.youtube.com/vi/JE7xl6WhAdA/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=gFiptJvLsk4&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/gFiptJvLsk4/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Xpm7URf-Jb8&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/Xpm7URf-Jb8/sddefault.jpg" },
+
+      { url: "https://www.youtube.com/watch?v=LMo4yaYwpqE&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/LMo4yaYwpqE/sddefault.jpg" },
+      
+{ url: "https://www.youtube.com/watch?v=7ODYzPni_IE&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/7ODYzPni_IE/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=lzFsrnMDE8k&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/lzFsrnMDE8k/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=3cQIpH4nKII&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/3cQIpH4nKII/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=vGCQPi430o0&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/vGCQPi430o0/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=TYsvaoOkLWQ&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/TYsvaoOkLWQ/sddefault.jpg" },
 
 
 
 
-   
-    function renderGroup(arr) {
-      const { iconsPerRow, gap, size, imgSize } = getLayout();
-      let idx = 0;
-      const rows = [];
-      while (idx < arr.length) {
-        const count = Math.min(iconsPerRow, arr.length - idx);
-        const row = document.createElement('div');
-        row.className = "logo-row";
-        row.style.maxWidth = (size * count + gap * (count - 1)) + "px";
-        row.style.gap = gap + "px";
-        for (let i = 0; i < count; i++, idx++) {
-          const l = arr[idx];
-          const a = document.createElement('a');
-          a.className = "ai-logo-wrap";
-          a.href = l.url;
-          a.target = "_blank";
-          a.style.width = a.style.height = size + "px";
-          const img = document.createElement('img');
-          img.className = "ai-logo-img";
-          img.src = l.img;
-          img.alt = l.alt;
-          img.style.width = img.style.height = imgSize + "px";
-          a.appendChild(img);
-          row.appendChild(a);
+{ url: "https://www.youtube.com/watch?v=i9ipCLciNVk&list=PLum50h_rWpG5e-46sLWgZAvWrbGzms---&index=13&ab_channel=eurosleaze", img: "https://img.youtube.com/vi/i9ipCLciNVk/sddefault.jpg" },
+      
+{ url: "https://www.youtube.com/watch?v=AWuxeDm1SGA&ab_channel=SamuelGoldwynFilms", img: "https://img.youtube.com/vi/AWuxeDm1SGA/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=ytm851gqCqo&ab_channel=LOL%21Throwbacks", img: "https://img.youtube.com/vi/ytm851gqCqo/hqdefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=7kguwrO1lfY&ab_channel=HarryPotter", img: "https://img.youtube.com/vi/7kguwrO1lfY/sddefault.jpg" },
+
+
+      
+    ];
+    const gallery2Data = [
+      
+
+
+
+
+
+      
+
+      
+    ];
+    const gallery3Data = [
+
+
+  
+
+      
+    ];
+    const gallery4Data = [
+
+
+
+      
+    ];
+    const gallery5Data = [
+
+
+
+      
+    ];
+    const gallery6Data = [
+
+
+
+
+
+
+
+      
+    ];
+    const gallery7Data = [];
+    const gallery8Data = [];
+    const gallery9Data = [];
+    const gallery10Data = [];
+    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
+
+    // 이미지 비율에 따라 박스 클래스 동적부여(최대한 단순, 기존과 구조/디자인 동일)
+    function renderGallery(data, targetId) {
+      const el = document.getElementById(targetId);
+      el.innerHTML = data.map(item => `
+        <div class="list-row">
+          <div class="imgframe">
+            <div class="img-wrap">
+              <div class="img-item">
+                <a href="${item.url}" target="_blank" rel="noopener">
+                  <img src="${item.img}">
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="shadow-line">
+            <img src="${shadowUrl}">
+          </div>
+        </div>
+      `).join('');
+      // 동적 크기 클래스 부여
+      Array.from(el.querySelectorAll('.list-row')).forEach((box, i) => {
+        const img = box.querySelector('img');
+        function applyBoxClass() {
+          if (img.naturalWidth > img.naturalHeight) {
+            box.classList.add('box-landscape');
+            box.classList.remove('box-portrait');
+          } else {
+            box.classList.add('box-portrait');
+            box.classList.remove('box-landscape');
+          }
         }
-        rows.push(row);
-      }
-      return rows;
+        img.onload = applyBoxClass;
+        if (img.complete) setTimeout(applyBoxClass, 20);
+      });
     }
-
-    function renderAll() {
-      const container = document.getElementById('aiLogoContainer');
-      container.innerHTML = "";
-
-      // 1단 제목
-      const g1Title = document.createElement("div");
-      g1Title.className = "group-title";
-      g1Title.textContent = "";
-      container.appendChild(g1Title);
-      renderGroup(group1).forEach(row => container.appendChild(row));
-
-      // 2단 제목
-      const g2Title = document.createElement("div");
-      g2Title.className = "group-title";
-      g2Title.textContent = "";
-      container.appendChild(g2Title);
-      renderGroup(group2).forEach(row => container.appendChild(row));
-    }
-
-    renderAll();
-    window.addEventListener('resize', renderAll);
+    renderGallery(gallery1Data, 'gallery1');
+    renderGallery(gallery2Data, 'gallery2');
+    renderGallery(gallery3Data, 'gallery3');
+    renderGallery(gallery4Data, 'gallery4');
+    renderGallery(gallery5Data, 'gallery5');
+    renderGallery(gallery6Data, 'gallery6');
+    renderGallery(gallery7Data, 'gallery7');
+    renderGallery(gallery8Data, 'gallery8');
+    renderGallery(gallery9Data, 'gallery9');
+    renderGallery(gallery10Data, 'gallery10');
   </script>
 </body>
 </html>
