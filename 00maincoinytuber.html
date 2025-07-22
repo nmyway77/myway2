@@ -1,0 +1,219 @@
+   <html lang="ko">
+<head>
+  <base target="_blank76">
+  <meta charset="UTF-8">
+  <title>MYWAY 인플루언서 influencer </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
+    .dashboard { max-width: 1200px; margin: 0 auto; padding: 34px 0 60px 0;}
+    .gallery-label {
+      font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
+      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
+    }
+    .gallery-row {
+      width: 100%; max-width: 1080px; margin: 0 auto;
+      text-align: center;
+    }
+    .list-row {
+      display: inline-block;
+      vertical-align: top;
+      box-sizing: border-box;
+      position: relative;
+      transition: width 0.2s, height 0.2s;
+      background: #fff;
+    }
+    .list-row:last-child { margin-right: 0; }
+    .imgframe {
+      width: 100%; height: 100%;
+      background: #fff;
+      position: relative;
+      box-sizing: border-box;
+      z-index: 0;
+      border-radius: 0;
+      box-shadow: 0 6px 6px 0 rgba(90,90,130,0.11);
+      overflow: hidden;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
+    .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
+    .img-item img {
+      display: block; width: 100%; height: 100%;
+      object-fit: contain;
+      background: #fff;
+      margin: 0;
+      border: none;
+      padding: 0;
+    }
+    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
+    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
+    /* 매거진 공통 스타일 (갤4 + 갤1~3 전부 적용) */
+    .list-row.magazine {
+      width: 150px;
+      height: 213px;
+      margin: 0 12px 36px 0;
+    }
+    .img-wrap.magazine { height: 100%; }
+    .img-item.magazine { height: 100%; }
+    @media (max-width: 1080px) {
+      .list-row.magazine { width: 28vw; height: 40vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
+    }
+    @media (max-width: 700px) {
+      .list-row.magazine { width: 44vw; height: 62vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <span class="gallery-label">USEFUL</span>
+    <div class="gallery-row" id="gallery1"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery2"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery3"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery4"></div>
+    <span class="gallery-label"> </span>
+    <div class="gallery-row" id="gallery5"></div>
+    <span class="gallery-label"> </span>
+    <div class="gallery-row" id="gallery6"></div>
+    <span class="gallery-label"> </span>
+    <div class="gallery-row" id="gallery7"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery8"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery9"></div>
+    <span class="gallery-label"> </span>
+    <div class="gallery-row" id="gallery10"></div>
+  </div>
+  <script>
+    // 갤러리1~10 예시 데이터(갤5~10은 샘플 1개만 입력, 필요시 채우세요)
+    const gallery1Data = [
+      
+     { url: "https://program.download/category/download/windows/", img: "https://myway.kr/ps.jpg" },
+  { url: "https://koreapops.tumblr.com/", img: "https://myway.kr/kpop.jpg" },         
+       { url: "https://trends.google.co.kr/trending?geo=KR", img: "https://www.ascentkorea.com/wp-content/uploads/2024/02/Google-Trends-1.png" },
+{ url: "https://www.weather.go.kr/", img: "https://64.media.tumblr.com/60683a77f0b5af341ea35c1cd338b003/tumblr_inline_njsrusDnzd1r45nlo.jpg" },
+{ url: "https://href.li/?http://search.daum.net/search?w=tot&t__nil_searchbox=suggest&sug=&q=%EB%8B%AC%EB%A0%A5", img: "https://64.media.tumblr.com/f5c5bd385fe2d840c056766098200357/tumblr_inline_qsf45y2uY31r45nlo_500.jpg" },
+{ url: "https://fortune.nate.com/contents/freeunse/freeunseframe.nate?freeUnseId=today03", img: "https://64.media.tumblr.com/d10db7a0d6c4349442b0b317f49d6dcd/tumblr_inline_njsrufTXaG1r45nlo.jpg" },
+{ url: "https://myway.kr/temp2.html", img: "https://64.media.tumblr.com/807b7573f37e5ee0fd01f268ba982d84/tumblr_inline_qsf478UGvB1r45nlo_500.jpg" },
+{ url: "00barwatch.html", img: "https://nmyway77.github.io/myway7/watch.jpg" },
+{ url: "https://korean.visitkorea.or.kr/kfes/list/wntyFstvlList.do", img: "https://64.media.tumblr.com/4f84ae07194ed542fa4bd8107748c865/tumblr_inline_qsf46fjOtI1r45nlo_500.jpg" },
+
+    { url: "https://xn--989a00af8jnslv3dba.com/", img: "https://myway.kr/asset21.jpg" },
+{ url: "https://hogangnono.com/", img: "https://myway.kr/asset22.jpg" },             
+  { url: "https://ko.semrush.com/trending-websites/kr/all", img: "https://myway.kr/topsites.jpg" },    
+    { url: "https://myway.kr/imagegridfolder33.html", img: "https://myway.kr/grid1.jpg" },   
+     { url: "00making10d.html.html", img: "https://myway.kr/t3.jpg" },
+{ url: "making77.html", img: "https://myway.kr/t4.jpg" },
+     { url: "00makingyoutubeembed.html", img: "https://myway.kr/yz.jpg" },
+
+       
+     { url: "https://github.com/", img: "github.jpg" },
+{ url: "https://html5-editor.net/", img: "webediter.jpg" },
+{ url: "https://code.livegap.com/", img: "htmlmaker.jpg" },
+ { url: "00making10dnotyoe.html", img: "grid2.jpg" },    
+  { url: "extract7.html", img: "thumb1.jpg" },    
+       { url: "https://www.veed.io/convert/mp3-to-mp4", img: "0000mp3.jpg" },   
+ { url: "https://www.polarisofficetools.com/", img: "0000hwp.jpg" },   
+       
+{ url: "https://www.ilovepdf.com/ko/unlock_pdf", img: "0000pdf.jpg" },    
+        { url: "https://bigimage.11zon.com/ko/crop-circle-image/crop-picture-into-circle-online.php", img: "0000circle.jpg" },   
+{ url: "https://kr.noxinfluencer.com/youtube-channel-rank/top-100-all-all-youtuber-sorted-by-subs-weekly", img: "https://myway.kr/influencer.jpg" },  
+
+{ url: "https://astro.kasi.re.kr/life/pageView/6", img: "https://myway.kr/0000sun.jpg" },
+{ url: "https://astro.kasi.re.kr/life/pageView/9", img: "https://myway.kr/0000todaysun.jpg" },
+{ url: "https://www.khoa.go.kr/kcom/cnt/selectContentsPage.do?cntId=31201000", img: "https://myway.kr/0000sead.jpg" },
+{ url: "https://www.khoa.go.kr/swtc/main.do", img: "https://myway.kr/0000sea.jpg" },
+{ url: "https://www.khoa.go.kr/hightide/", img: "https://myway.kr/0000seareal.jpg" },
+{ url: "https://www.badatime.com/", img: "https://myway.kr/0000seatable.jpg" },
+
+
+
+{ url: "https://www.cardsales.or.kr/", img: "https://64.media.tumblr.com/9c5197e6417e49909cbab0c7029b89a8/tumblr_inline_rkn7hsGsrX1r45nlo_500.jpg" },
+{ url: "https://href.li/?https://www.miricanvas.com/design", img: "https://64.media.tumblr.com/438b300fed4c2a6290e074ef078b840a/tumblr_inline_rjx5bidGYP1r45nlo_500.jpg" },
+{ url: "https://www.bizhows.com/", img: "https://64.media.tumblr.com/c4c9599766fee7c86dc20990f874a7a2/tumblr_inline_rjx5bsA6n81r45nlo_500.jpg" },
+       
+
+{ url: "https://sightmap.co.kr/https-%ec%b0%a8%eb%8b%a8-%ec%9a%b0%ed%9a%8c-%eb%b0%a9%eb%b2%95-%ec%a0%95%eb%a6%ac-1%eb%b6%84%ec%bb%b7/", img: "https://64.media.tumblr.com/dade6ed857290118b3081143cd83aa2c/tumblr_inline_rmwzu4bBKh1r45nlo_500.jpg" },
+{ url: "https://sightmap.co.kr/%ec%9d%b8%ed%84%b0%eb%84%b7-%ec%86%8d%eb%8f%84-%ec%b8%a1%ec%a0%95-%ec%82%ac%ec%9d%b4%ed%8a%b8-%eb%aa%a8%ec%9d%8c-top-7/", img: "https://64.media.tumblr.com/99c96ae2e17231cccd62868cfac42b50/tumblr_inline_rmwzqecEZI1r45nlo_500.jpg" },
+{ url: "https://getunicorn.app/ko/product/unicorn-pro/android", img: "https://64.media.tumblr.com/f0bc3cd33e13d50a41d85b49e4e18a19/tumblr_inline_rk4lwwgWAc1r45nlo_500.jpg" },
+
+{ url: "https://etax.seoul.go.kr/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROObGbIXUgea4yfcBqcLOHHUQUZQylNUNDFw&s" },
+
+
+{ url: "https://favicon.io/", img: "https://cdn-icons-png.flaticon.com/512/7915/7915382.png" },
+
+{ url: "https://www.blogchart.co.kr/chart/week?page=&week=&cate=a25gdiM1MGVrLnBhaHBsZVJxJTAuZWQjMUFwYGtnJS4%2FLg%3D%3D", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKs7iiR_9r_MedeAZDht9dXuE6G7fTa-VFtA&s" },
+       
+       
+    ];
+    const gallery2Data = [
+
+  
+      
+    ];
+    const gallery3Data = [
+
+     
+      
+    ];
+    const gallery4Data = [
+     
+    ];
+    const gallery5Data = [
+   
+    ];
+    const gallery6Data = [
+    
+    ];
+    const gallery7Data = [
+     
+    ];
+    const gallery8Data = [
+    
+    ];
+    const gallery9Data = [
+      
+    ];
+    const gallery10Data = [
+     
+    ];
+
+    // 그림자 png
+    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
+    // 모든 갤러리를 매거진 타입으로!
+    function renderGallery(data, targetId) {
+      const el = document.getElementById(targetId);
+      el.innerHTML = data.map(item => `
+        <div class="list-row magazine">
+          <div class="imgframe">
+            <div class="img-wrap magazine">
+              <div class="img-item magazine">
+                <a href="${item.url}" target="_blank" rel="noopener">
+                  <img src="${item.img}">
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="shadow-line">
+            <img src="${shadowUrl}">
+          </div>
+        </div>
+      `).join('');
+    }
+    renderGallery(gallery1Data, 'gallery1');
+    renderGallery(gallery2Data, 'gallery2');
+    renderGallery(gallery3Data, 'gallery3');
+    renderGallery(gallery4Data, 'gallery4');
+    renderGallery(gallery5Data, 'gallery5');
+    renderGallery(gallery6Data, 'gallery6');
+    renderGallery(gallery7Data, 'gallery7');
+    renderGallery(gallery8Data, 'gallery8');
+    renderGallery(gallery9Data, 'gallery9');
+    renderGallery(gallery10Data, 'gallery10');
+  </script>
+</body>
+</html>
