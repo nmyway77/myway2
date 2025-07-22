@@ -1,179 +1,38 @@
-  <html lang="ko">
+<html lang="ko">
 <head>
-  <base target="_blank76">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "MYWAY.KR",
+  "url": "https://myway.kr",
+  "logo": "https://myway.kr/mywaylogo.png"
+}
+</script>
   <meta charset="UTF-8">
-  <title>MYWAY 인플루언서 influencer </title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Myway.kr,myway,kpop,KOREA TRAVEL,무료만화, 무료영화,KPOP,KDRAMA,K-POP,KMOVIE,K-DRAMA,K-MOVIE,  링크사이트 총정리 - MYWAY.KR</title>
+
+<link rel="icon" href="/mywaylogo.png" type="image/png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+
+<meta name="description" content="무료로 볼 수 있는 만화, 영화, 웹툰 링크사이트를 모아둔 곳. 최신 무료만화, 무료영화 정보 매일 업데이트!">
+<base target="_blank">
+<meta property="og:title" content="MYWAY.KR: 멀티검색 & 검색엔진& 유튜브 썸네일 추출기" />
+<meta property="og:description" content="무료만화, 무료영화,KPOP,KDRAMA,K-POP,KMOVIE,K-DRAMA,K-MOVIE,KOREA TRAVEL, 링크사이트 등 다양한 무료 컨텐츠 모음. MYWAY.KR에서 최신 정보 확인하세요!" />
+<meta property="og:url" content="https://myway.kr" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://myway.kr/mywaylogo.png" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="naver-site-verification" content="4e88b51e170829dfb01ce587eaf5575804dd5a2" />
   <style>
-    body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
-    .dashboard { max-width: 1200px; margin: 0 auto; padding: 34px 0 60px 0;}
-    .gallery-label {
-      font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
-      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
-    }
-    .gallery-row {
-      width: 100%; max-width: 1080px; margin: 0 auto;
-      text-align: center;
-    }
-    .list-row {
-      display: inline-block;
-      vertical-align: top;
-      box-sizing: border-box;
-      position: relative;
-      transition: width 0.2s, height 0.2s;
-      background: #fff;
-    }
-    .list-row:last-child { margin-right: 0; }
-    .imgframe {
-      width: 100%; height: 100%;
-      background: #fff;
-      position: relative;
-      box-sizing: border-box;
-      z-index: 0;
-      border-radius: 0;
-      box-shadow: 0 6px 6px 0 rgba(90,90,130,0.11);
-      overflow: hidden;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-    }
-    .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
-    .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
-    .img-item img {
-      display: block; width: 100%; height: 100%;
-      object-fit: contain;
-      background: #fff;
+    body {
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+       background: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
       margin: 0;
-      border: none;
       padding: 0;
+      min-height: 100vh;
+      overflow: hidden;
     }
-    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
-    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
-    /* 매거진 공통 스타일 (갤4 + 갤1~3 전부 적용) */
-    .list-row.magazine {
-      width: 150px;
-      height: 213px;
-      margin: 0 12px 36px 0;
-    }
-    .img-wrap.magazine { height: 100%; }
-    .img-item.magazine { height: 100%; }
-    @media (max-width: 1080px) {
-      .list-row.magazine { width: 28vw; height: 40vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
-    }
-    @media (max-width: 700px) {
-      .list-row.magazine { width: 44vw; height: 62vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
-    }
-  </style>
-</head>
-<body>
-  <div class="dashboard">
-    <span class="gallery-label">USEFUL</span>
-    <div class="gallery-row" id="gallery1"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery2"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery3"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery4"></div>
-    <span class="gallery-label"> </span>
-    <div class="gallery-row" id="gallery5"></div>
-    <span class="gallery-label"> </span>
-    <div class="gallery-row" id="gallery6"></div>
-    <span class="gallery-label"> </span>
-    <div class="gallery-row" id="gallery7"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery8"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery9"></div>
-    <span class="gallery-label"> </span>
-    <div class="gallery-row" id="gallery10"></div>
-  </div>
-  <script>
-    // 갤러리1~10 예시 데이터(갤5~10은 샘플 1개만 입력, 필요시 채우세요)
-    const gallery1Data = [
-
-{ url: "https://www.youtube.com/@wisdom_of_bitcoin", img: "https://img.youtube.com/vi/pA7dTXCBGcE/sddefault.jpg" },
-       
-{ url: "https://www.youtube.com/@%EC%96%B4%EC%8A%B4%EC%83%88%EB%B2%BD/videos", img: "https://img.youtube.com/vi/op8-S1qTv8Q/sddefault.jpg" },
-
-
-      { url: "https://www.youtube.com/@DooriDoori/videos", img: "https://img.youtube.com/vi/SGSZ_8FAc7c/sddefault.jpg" },
-       
-{ url: "https://www.youtube.com/@dogepa/videos", img: "https://img.youtube.com/vi/lGsBCG3ieVo/sddefault.jpg" },       
-    { url: "https://www.youtube.com/@ppause/videos", img: "https://img.youtube.com/vi/lN45SJvo1xA/sddefault.jpg" },
-
-{ url: "https://www.youtube.com/@TV-zy9oi/videos", img: "https://img.youtube.com/vi/-5enRE5RogA/sddefault.jpg" },
-
-
-
-
-      
-       
-    ];
-    const gallery2Data = [
-
-  
-      
-    ];
-    const gallery3Data = [
-
-     
-      
-    ];
-    const gallery4Data = [
-     
-    ];
-    const gallery5Data = [
-   
-    ];
-    const gallery6Data = [
-    
-    ];
-    const gallery7Data = [
-     
-    ];
-    const gallery8Data = [
-    
-    ];
-    const gallery9Data = [
-      
-    ];
-    const gallery10Data = [
-     
-    ];
-
-    // 그림자 png
-    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
-    // 모든 갤러리를 매거진 타입으로!
-    function renderGallery(data, targetId) {
-      const el = document.getElementById(targetId);
-      el.innerHTML = data.map(item => `
-        <div class="list-row magazine">
-          <div class="imgframe">
-            <div class="img-wrap magazine">
-              <div class="img-item magazine">
-                <a href="${item.url}" target="_blank" rel="noopener">
-                  <img src="${item.img}">
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="shadow-line">
-            <img src="${shadowUrl}">
-          </div>
-        </div>
-      `).join('');
-    }
-    renderGallery(gallery1Data, 'gallery1');
-    renderGallery(gallery2Data, 'gallery2');
-    renderGallery(gallery3Data, 'gallery3');
-    renderGallery(gallery4Data, 'gallery4');
-    renderGallery(gallery5Data, 'gallery5');
-    renderGallery(gallery6Data, 'gallery6');
-    renderGallery(gallery7Data, 'gallery7');
-    renderGallery(gallery8Data, 'gallery8');
-    renderGallery(gallery9Data, 'gallery9');
-    renderGallery(gallery10Data, 'gallery10');
-  </script>
-</body>
-</html>
