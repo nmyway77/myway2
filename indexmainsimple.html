@@ -1,0 +1,352 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>MYWAY.KR HOME</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html,  body {
+      min-height: 100vh; margin: 0; padding: 0;
+      background: #fff; font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      width: 100%;
+    }
+   
+    body { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .main-title { 
+     
+      margin-top: 0px;
+     
+      font-size: 1.1rem; font-weight: 700; color: #333862;
+      text-shadow: 0 2px 12px #ffffff99; margin-bottom: 8px;
+      text-align: center; user-select: none;
+    }
+    .main-subtitle { font-size: 0.9rem; color: #6a739c; margin-bottom: 5px; text-align: center; user-select: none; }
+    .container { width: 100%; max-width: 560px; display: flex; flex-direction: column; align-items: center;
+
+                
+      margin-top: 0px; margin-bottom: 0px;              min-height: 180vh;    padding-left: 6px; padding-right: 6px;}
+
+   
+    .logo-row {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 32px;
+      width: 100%;
+      flex-wrap: nowrap;
+      transition: max-width 0.1s;
+    }
+    .ai-logo-wrap {
+      width: 74px; height: 74px; border-radius: 50%; background: #fff;
+      box-shadow: 0 3px 24px 0 #b1c7e866; border: 3px solid #e5e8f6;
+      display: flex; justify-content: center; align-items: center;
+      transition: box-shadow 0.15s, border-color 0.15s;
+      cursor: pointer; overflow: hidden; margin: 0;
+      flex: 0 0 auto;
+    }
+    .ai-logo-wrap:hover { box-shadow: 0 8px 32px 0 #7e94ff99; border-color: #94a2ff; background: #f7faff;}
+    .ai-logo-img { width: 54px; height: 54px; object-fit: contain; background: transparent;
+      border-radius: 50%; transition: transform 0.12s;}
+    .ai-logo-wrap:hover .ai-logo-img { transform: scale(1.08) rotate(-3deg);}
+    .group-title {
+      width: 100%; max-width: 500px;
+      font-size: 1.07rem; font-weight: 600;
+      margin: 34px 0 10px 0;
+      letter-spacing: -0.5px;
+      color: #244;
+      text-align: left;
+      padding-left: 8px;
+      user-select: none;
+    }
+    @media (max-width: 1100px) {
+      .container { max-width: 98vw; }
+      .logo-row { gap: 14px;}
+      .ai-logo-wrap { width: 60px; height: 60px;}
+      .ai-logo-img { width: 40px; height: 40px;}
+    }
+    @media (max-width: 900px) {
+      .container { max-width: 99vw;}
+      .main-title { font-size: 1.35rem; margin-top: 64px;}
+      .main-subtitle { font-size: 1.07rem; }
+      .logo-row { gap: 10px; }
+      .ai-logo-wrap { width: 52px; height: 52px;}
+      .ai-logo-img { width: 34px; height: 34px;}
+    }
+    @media (max-width: 700px) {
+      .ai-logo-wrap { width: 78px !important; height: 78px !important; }
+      .ai-logo-img  { width: 60px !important; height: 60px !important; }
+      .logo-row     { gap: 7vw !important; }
+    }
+    @media (max-width: 480px) {
+      .main-title { font-size: 1rem; }
+      .main-subtitle { font-size: 0.95rem; }
+      .container { margin-top: 6px; margin-bottom: 9px;}
+    }
+   .group-title { text-align: center; }
+   margin-bottom: 10.0em;
+  </style>
+</head>
+<body>
+  <div class="main-title"></div>
+  <div class="main-subtitle"></div>
+  <div class="container" id="aiLogoContainer"></div>
+  <script>
+    // 1번 그룹 (예: AI/생성형)
+    const group1 = [
+     
+  { url: "newsitesbar2.html", img: "0000news2.jpg", alt: "news" },
+
+ { url: "bbssitesbar2.html", img: "00000mb.svg", alt: "bbs" },
+     
+      { url: "livesitesbar2.html", img: "002TV.jpg", alt: "tv" },
+ { url: "00mainmovieinner2.html", img: "https://img.freepik.com/premium-vector/click-movie-logo-vector_18099-258.jpg", alt: "tv" },
+     
+ { url: "00maindramainner2.html", img: "https://img.freepik.com/vector-premium/vod-video-on-demand-monetizacion-video-ilustracion-stock-vectorial_100456-8327.jpg", alt: "vod" },
+
+{ url: "00mainmusicinner.html", img: "https://www.urbanbrush.net/web/wp-content/uploads/edd/2018/02/web-20180206111013459746.png", alt: "radio"  },
+     
+{ url: "00barcctv.html", img: "00000mc.jpg", alt: "cctv" },
+     { url: "radiositesbar2.html", img: "001radio.jpg", alt: "radio"  },
+
+  { url: "00barmagazine.html", img: "002magazine.jpg", alt: "magazine"  },   
+
+
+
+
+{ url: "https://myway.kr/00barmp.html", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2oGuqRTg-9duioSpiKYQQmNXfEf2jON1SIw&s", alt: "radio"  },
+
+
+{ url: "https://www.weather.go.kr/w/index.do", img: "https://file.alphawiki.org/03/03c4a59c21fa25ef8924e9b23fc1f267e71826ec7ed7e4c9b1dba107a724f719.svg", alt: "radio"  },
+
+{ url: "00mainfortune.html", img: "https://cdn.newstnt.com/news/photo/202504/477706_498504_4723.jpg", alt: "radio"  },
+
+ { url: "https://www.bithumb.com/react/trade/order/BTC-KRW", img: "https://cdn.sisamagazine.co.kr/news/photo/202209/466560_473000_131.png", alt: "bbs" },
+
+ { url: "https://kr.tradingview.com/markets/korea/#stocks", img: "00stock.jpg", alt: "bbs" },
+
+ { url: "https://korean.visitkorea.or.kr/kfes/list/wntyFstvlList.do", img: "00fest.jpg", alt: "bbs" },
+
+
+ { url: "https://myway.kr/temp2.html", img: "https://images.icon-icons.com/70/PNG/512/calculator_14103.png", alt: "bbs" },
+
+{ url: "https://myway.kr/00barwatch.html", img: "https://cdn-icons-png.flaticon.com/512/9747/9747239.png", alt: "bbs" },
+
+     { url: "https://sightmap.co.kr/%ec%9d%b8%ed%84%b0%eb%84%b7-%ec%86%8d%eb%8f%84-%ec%b8%a1%ec%a0%95-%ec%82%ac%ec%9d%b4%ed%8a%b8-%eb%aa%a8%ec%9d%8c-top-7/", img: "https://play-lh.googleusercontent.com/EMiYo4pFOaFQ5fnt7oJg-k8DSuk2BM7rnZqFcWvqdRehrBkBysv5aO61RT1dobRGVj4U=w240-h480-rw", alt: "bbs" },
+     
+
+{ url: "00mainmovieday.html", img: "00mmm.jpg", alt: "bbs" },
+
+
+{ url: "00mainmakinginner.html", img: "https://cdn-icons-png.flaticon.com/512/17101/17101525.png", alt: "bbs" },
+
+
+
+
+     
+     
+    ];
+    // 2번 그룹 (예: 검색/포털)
+    const group2 = [
+
+
+
+
+
+     
+    { url: "https://chat.openai.com/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMdM9MEQ0ExL1PmInT3U5I8v63YXBEdoIT0Q&s", alt: "ChatGPT" },
+      { url: "https://grok.x.ai/", img: "https://images.seeklogo.com/logo-png/61/2/grok-logo-png_seeklogo-613403.png", alt: "Grok" },
+      { url: "https://gemini.google.com/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSm5xNOdkOwTDL9cxAWHDDyjK-6HcM-qHCxhw&s", alt: "Gemini" },
+      { url: "https://www.perplexity.ai/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpPv1KMnK1H9jPpIRzMvNRjyGSauDIOsOONQ&s", alt: "Perplexity" },
+      { url: "https://copilot.microsoft.com/", img: "https://www.shutterstock.com/image-vector/colorful-logo-design-on-white-600nw-2504051213.jpg", alt: "Copilot" },
+      { url: "https://openai.com/sora", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2OVrKb0J0mELcaCuOnUmBnFhu1DFIb_XmPg&s", alt: "Sora" },
+      { url: "https://hailuoai.video/", img: "https://images.seeklogo.com/logo-png/61/2/hailuo-icon-logo-png_seeklogo-611637.png", alt: "HailuoAI" },
+      { url: "https://www.klingai.com/", img: "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/kling-color.png", alt: "KlingAI" },
+
+      { url: "https://www.google.com/webhp?hl=en&gl=au", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYMMskKN9Ql1Ep4wG_vEW01t98DUBVXeXE8A&s", alt: "google" },
+      { url: "https://www.youtube.com/", img: "https://img.freepik.com/premium-vector/youtube-app-icon_676644-281.jpg?w=360", alt: "youtube" },
+
+{ url: "https://www.youtube.com/channel/UC4R8DWoMoI7CAwX8_LjQHig", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_gzn6qNSlITI312FAL8_qQFD2SuVkeeUrJA&s" },
+       
+     
+      { url: "https://soundcloud.com/search?q=%EC%9E%84%EC%9E%AC%EB%B2%94", img: "https://cdn.iconsumer.or.kr/news/photo/202103/15608_20188_542.jpg", alt: "soundcloud" },
+      { url: "https://www.naver.com/", img: "https://play-lh.googleusercontent.com/jYtnK__ibJh9emODIgTyjZdbKym1iAj4RfoVhQZcfbG-DuTSHR5moHVx9CQnqg1yoco9", alt: "naver" },
+      { url: "https://www.daum.net/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTm-uCPPoWEDsQjRWs3MrM1nkrcqxygYAXbvg&s", alt: "daum" },
+ { url: "https://www.nate.com/", img: "https://m1.nateimg.co.kr/n3main/newBI/nate_ogt.png", alt: "nate" },
+     
+      { url: "https://www.bing.com/", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Bing_Fluent_Logo.svg/1356px-Bing_Fluent_Logo.svg.png", alt: "bing" },
+      { url: "https://www.msn.com/", img: "https://images.icon-icons.com/1488/PNG/512/5307-msn_102525.png", alt: "msn" },
+
+      { url: "https://www.nexon.com/", img: "https://i0.wp.com/data.infowos.com/wp-content/uploads/2023/10/image-80.png?fit=379%2C280&ssl=1", alt: "nexon" },
+{ url: "https://thetvapp.to/", img: "https://www.wirelesshack.org/wp-content/uploads/2023/08/How-To-Install-The-TV-App-Kodi-Addon.jpg" },
+       { url: "https://href.li/?https://www.netflix.com/", img: "https://img1.daumcdn.net/thumb/R720x0.q80/?scode=mtistory2&fname=https%3A%2F%2Ft1.daumcdn.net%2Fcfile%2Ftistory%2F9945E24D5EDF7C1110", alt: "넷플릭스" },
+      { url: "https://href.li/?https://www.disneyplus.com/ko-kr", img: "https://s.yimg.com/ny/api/res/1.2/wc7n7lj8OYExtHptEqaMOg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTY0MDtoPTY0MA--/https://media.zenfs.com/en/evening_standard_239/be0710aaaf5abfdcfe63e97dda34ea9a", alt: "디즈니+" },
+      { url: "https://www.coupangplay.com/catalog", img: "https://d2juy7qzamcf56.cloudfront.net/2024-11-26/09738456-1277-4953-80fb-fc9c9d2df777.png", alt: "쿠팡플레이" },
+   
+        { url: "https://kr.pinterest.com/ideas/", img: "https://upload.wikimedia.org/wikipedia/commons/0/08/Pinterest-logo.png", alt: "핀터리스" },
+      { url: "https://x.com/", img: "https://freepnglogo.com/images/all_img/1725374683twitter-x-logo.png", alt: "x" },
+      { url: "https://www.instagram.com/", img: "https://img.freepik.com/free-vector/instagram-logo_1199-122.jpg?semt=ais_hybrid&w=740", alt: "인스타그램" },
+      { url: "https://m.naver.com/", img: "https://www.navercorp.com/img/pc/service-contents-app-4.png", alt: "네이버클립" },
+     { url: "https://shoppinglive.naver.com/home", img: "https://i.namu.wiki/i/YwP9aFZZ0JfkT02FGPYevQJ8phT6c6_yQp-qg_E-AoXKyTEDJr3b-RK43VnzQc7-cUtAlLEz_Uisr912xx_UUw.webp", alt: "네이버live 쇼핑" },
+      { url: "https://www.tiktok.com/explore", img: "https://image.zdnet.co.kr/2021/10/14/5cc59f54b5f3bffe52c47c3ba645d514.png", alt: "틱톡" },
+{ url: "https://www.youtube.com/shorts", img: "https://static.vecteezy.com/system/resources/previews/042/127/237/non_2x/app-style-red-and-white-youtube-shorts-outline-logo-with-long-shadow-on-transparent-background-icons-free-png.png", alt: "유튜브쇼츠" },
+      { url: "https://chzzk.naver.com/", img: "https://menu.moneys.co.kr/moneyweek/thumb/2024/01/08/06/2024010809502589502_1.jpg", alt: "네이버치지직" },
+      { url: "https://www.sooplive.co.kr/", img: "https://static.sooplive.com/image/channel/profile/soopcuration.png", alt: "soop" },
+      { url: "https://www.twitch.tv/", img: "https://img.freepik.com/premium-vector/twitch-logo_578229-259.jpg?semt=ais_hybrid&w=740", alt: "트위" },
+
+{ url: "https://vk.com/", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/VK_Compact_Logo_%282021-present%29.svg/800px-VK_Compact_Logo_%282021-present%29.svg.png" },
+
+{ url: "https://podcasts.apple.com/kr/browse", img: "https://www.apple.com/v/apple-podcasts/e/images/meta/apple-podcasts_wechat__cq3l3kjucay6_og.png" },
+{ url: "https://www.podbbang.com/", img: "https://play-lh.googleusercontent.com/C8CSI1OOtB5EJmvT9lk0PbGLNZ711b3C9MKDLvg7HuG7K3U4rLbxO71_ROg-jFI6BpU=w240-h480-rw" },
+
+
+{ url: "https://yandex.com/", img: "https://t1.daumcdn.net/cfile/tistory/990BCE395CE0EC3C0F" },
+{ url: "https://duckduckgo.com/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZ-fUvmlb3OfTB1-j7vue_x64nVIGNd0oE8w&s" },
+
+{ url: "https://discord.com/", img: "https://images-eds-ssl.xboxlive.com/image?url=4rt9.lXDC4H_93laV1_eHHFT949fUipzkiFOBH3fAiZZUCdYojwUyX2aTonS1aIwMrx6NUIsHfUHSLzjGJFxxsG72wAo9EWJR4yQWyJJaDaK1XdUso6cUMpI9hAdPUU_FNs11cY1X284vsHrnWtRw7oqRpN1m9YAg21d_aNKnIo-&format=source" },
+
+{ url: "https://www.reddit.com/", img: "https://redditinc.com/hs-fs/hubfs/Reddit%20Inc/Content/Brand%20Page/Reddit_Logo.png" },
+{ url: "https://www.tumblr.com/", img: "https://pbs.twimg.com/profile_images/1861117974779764736/lfXqzhlK_400x400.jpg" },
+{ url: "https://audioclip.naver.com/panels/rank#26", img: "https://i.namu.wiki/i/J1RZKXmbFQ2MNpX86gwVp6hLa4wHXJmfo5O1o1SeFF_Qw_HSMfLn4IEO9JWEj6SR6BF-f2UyTYqjLUgA2Stx0g.svg" },
+
+{ url: "https://thetvapp.to/", img: "https://www.wirelesshack.org/wp-content/uploads/2023/08/How-To-Install-The-TV-App-Kodi-Addon.jpg" },
+
+    { url: "https://fstv.us/live-tv.html", img: "https://play-lh.googleusercontent.com/p0r-rN4RqXd-RBiIll5XfBjWbsIu_OoC4DyYsiYFe4ATeVsR87KDqFCy7ygZTT8AhHw" },
+
+    { url: "https://livematches.net/", img: "https://liveboxpro.com/assets/img/background.png" },
+
+   { url: "https://timstreams.site/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4ptGPGWnNw2zz9tCNFYpHrC7ctJaRb0dJDw&s" },
+
+
+
+     { url: "https://tv.garden/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSO4ugRWs3W6IUah-4MemTmnbbBT1DvWceOLe07B5Q8RUNSkMNjKtYHX0YKrb942EdX9Ik&usqp=CAU" },
+
+  { url: "https://mlblive.net/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIhHBIyuF0074F5O8w2rUS4-kGDub2-BtJ9Q&s" },
+
+
+     
+{ url: "https://github.com/", img: "https://images.icon-icons.com/3685/PNG/512/github_logo_icon_229278.png" },
+
+{ url: "https://www.safevisit.org/", img: "https://cdn6.aptoide.com/imgs/e/a/8/ea81ef0732f97269e9bd21a81ac68d31_icon.png" },
+
+     
+{ url: "https://getunicorn.app/ko/product/unicorn-https/windows", img: "https://play-lh.googleusercontent.com/MBxbMGKKsNBbswAVWydz4Xy3ccEvDACHG8x_iun0nhUCe8H5NRdZgbw_A0kCHNBEuw" },
+     
+{ url: "https://kr.noxinfluencer.com/youtube-channel-rank/top-100-all-all-youtuber-sorted-by-subs-weekly", img: "https://cdn.shopify.com/app-store/listing_images/f98a4fd90e4dd3a77daf9eb09a443698/icon/CLzJ98-74YwDEAE=.png" },
+
+
+{ url: "https://ko.semrush.com/trending-websites/kr/all", img: "https://cdn.brandfetch.io/idt3n8W3ef/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1667587193513" },
+
+{ url: "https://www.scribd.com/", img: "https://images.seeklogo.com/logo-png/28/1/scribe-logo-png_seeklogo-287530.png" },
+
+
+
+     
+    ];
+
+    // 3번 그룹 (예: AI툴 모음)
+    const group3 = [
+  { url: "https://nol.yanolja.com/", img: "https://daoift3qrrnil.cloudfront.net/employment_companies/images/000/091/619/original/_EC_95_BC_EB_86_80_EC_9E_90__ED_94_84_EB_A1_9C_ED_95_84.png?1710895583", alt: "news" },
+      { url: "https://www.yeogi.com/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS88aetVrpNsIbP_8dhK-cgLSQ1WPk-a4xoRg&s", alt: "tv" },
+
+{ url: "https://www.tripadvisor.co.kr/", img: "https://t1.daumcdn.net/brunch/service/user/1gS0/image/H0PsCQRo9izkTP0egmhcxbxuaUg.jpg", alt: "tv" },
+     
+     { url: "https://korean.visitkorea.or.kr/main/main.do", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMf_iHOibDzBAxKLEtNDG3wklLfTKCDB75ViHZb9M700pbTQO8QwYb-RRZLd1L3mWN0mc&usqp=CAU", alt: "tv" },
+     
+    ];
+
+    // 4번 그룹 (예: 이미지 생성/AI/기타)
+    const group4 = [
+     
+
+
+
+
+
+
+
+     
+    ];
+
+function getLayout() {
+  let iconsPerRow = 10, gap = 24, size = 74, imgSize = 54;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  if (w <= 1100) { iconsPerRow = 7; }
+  if (w <= 900)  { iconsPerRow = 5; }
+  if (w <= 700)  { iconsPerRow = 4; }
+  if (w <= 500)  { iconsPerRow = 3; }
+  return { iconsPerRow, gap, size, imgSize };
+}
+
+
+
+
+    
+    function renderGroup(arr) {
+      const { iconsPerRow, gap, size, imgSize } = getLayout();
+      let idx = 0;
+      const rows = [];
+      while (idx < arr.length) {
+        const count = Math.min(iconsPerRow, arr.length - idx);
+        const row = document.createElement('div');
+        row.className = "logo-row";
+        row.style.maxWidth = (size * count + gap * (count - 1)) + "px";
+        row.style.gap = gap + "px";
+        for (let i = 0; i < count; i++, idx++) {
+          const l = arr[idx];
+          const a = document.createElement('a');
+          a.className = "ai-logo-wrap";
+          a.href = l.url;
+          a.target = "_blank";
+          a.style.width = a.style.height = size + "px";
+          const img = document.createElement('img');
+          img.className = "ai-logo-img";
+          img.src = l.img;
+          img.alt = l.alt;
+          img.style.width = img.style.height = imgSize + "px";
+          a.appendChild(img);
+          row.appendChild(a);
+        }
+        rows.push(row);
+      }
+      return rows;
+    }
+
+    function renderAll() {
+      const container = document.getElementById('aiLogoContainer');
+      container.innerHTML = "";
+
+      // 1단 제목
+      const g1Title = document.createElement("div");
+      g1Title.className = "group-title";
+      g1Title.textContent = "";
+      container.appendChild(g1Title);
+      renderGroup(group1).forEach(row => container.appendChild(row));
+
+      // 2단 제목
+      const g2Title = document.createElement("div");
+      g2Title.className = "group-title";
+      g2Title.textContent = "";
+      container.appendChild(g2Title);
+      renderGroup(group2).forEach(row => container.appendChild(row));
+
+      // 3단 제목
+      const g3Title = document.createElement("div");
+      g3Title.className = "group-title";
+      g3Title.textContent = "";
+      container.appendChild(g3Title);
+      renderGroup(group3).forEach(row => container.appendChild(row));
+
+      // 4단 제목
+      const g4Title = document.createElement("div");
+      g4Title.className = "group-title";
+     g4Title.innerHTML = `<a href="00makingcircletext.html" target="_blank" style="color:inherit; text-decoration:none;">myway.kr</a>`;
+      container.appendChild(g4Title);
+      renderGroup(group4).forEach(row => container.appendChild(row));
+    }
+
+    renderAll();
+    window.addEventListener('resize', renderAll);
+  </script>
+</body>
+</html>
