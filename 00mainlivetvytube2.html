@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>유튜브 채널 디렉토리 뷰어 - 자동 변환</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {margin:0; font-family:'Montserrat','Apple SD Gothic Neo',sans-serif; background:linear-gradient(135deg,#23243a 0%,#314a6a 100%); color:#fff; min-height:100vh;}
+    .container {display: flex; min-height: 100vh;}
+    .sidebar {width: 240px; min-width: 140px; background:rgba(27,35,52,0.98); padding:22px 10px 14px 15px; box-sizing: border-box; display: flex; flex-direction: column; border-top-right-radius:26px; border-bottom-right-radius:26px; box-shadow:4px 0 26px #0006; border-right:1.5px solid #3e5c8888; z-index:3;}
+    .sidebar-title {font-size:1.2rem; font-weight:700; margin-bottom:22px; letter-spacing:0.5px; text-shadow:0 2px 12px #0005; text-align:left; padding-left:7px;}
+    .directory-list {
+      display:flex; flex-direction:column; gap:11px; flex:1; overflow-y:auto;
+      scrollbar-width: none !important; /* Firefox 완전숨김 */
+      max-height:84vh; padding-right:2px;
+    }
+    .directory-list::-webkit-scrollbar {
+      width: 0 !important;       /* 크롬/엣지/사파리 완전숨김 */
+      background: transparent !important;
+      display: none !important;
+    }
+    .directory-list::-webkit-scrollbar-thumb { background: transparent !important; }
+    .directory-list::-webkit-scrollbar-track { background: transparent !important; }
+    .directory-item {display:flex; align-items:center; gap:10px; padding:13px 10px; border-radius:12px; cursor:pointer; font-size:1.02rem; background:rgba(37,55,90,0.82); box-shadow:0 2px 9px #0002; transition:background 0.16s, box-shadow 0.16s, color 0.13s; border:1px solid transparent; font-weight:600; user-select:none; min-height:28px; white-space:nowrap;}
+    .directory-item.selected, .directory-item:hover {background:linear-gradient(90deg,#3576ed 10%,#65e0f6 95%); color:#222e4c; border:1.2px solid #63c6ff; box-shadow:0 4px 16px #1588c844, 0 1px 5px #63e0ff11; z-index:2;}
+    .directory-label {flex:1; letter-spacing:0.01em; font-size:1.06em; font-weight:600; overflow:hidden; text-overflow:ellipsis;}
+    .main {flex: 1 1 auto; min-width: 0; background: linear-gradient(120deg,#242a39 0%,#3a5975 90%); position: relative; overflow-y: auto;}
+    .yt-container {min-height:100vh; width:100%; display:flex; align-items:flex-start; justify-content:center; background:none; padding-bottom:190px; box-sizing:border-box;}
+    .yt-inner {width:92vw; max-width:980px; display:flex; flex-direction:column; align-items:center; gap:18px; margin-top:48px;}
+    .yt-frame-box {width:100%; aspect-ratio:16/9; background:#000; border-radius:18px; box-shadow:0 4px 40px #2232ab55; overflow:hidden; display:flex; align-items:center; justify-content:center;}
+    .video-frame {width:100%; height:100%; border:0; border-radius:18px; background:#000; display:block; min-height:180px;}
+    @media (max-width:900px) {
+      .container { flex-direction:column;}
+      .sidebar { width:100vw; min-width:0; border-radius:0 0 20px 20px; border-right:none; box-shadow:none; padding:8px 0 7px 0; position:relative;}
+      .sidebar-title { font-size:1.1rem; padding-left:17px; margin-bottom:9px;}
+      .directory-list { flex-direction:row; gap:6px; overflow-x:auto; overflow-y:hidden; max-height:none; height:46px; padding:0 8px 0 8px; align-items:center;}
+      .directory-item { font-size:0.93rem; padding:10px 11px; min-width:120px; min-height:30px; border-radius:11px; white-space:nowrap; margin-bottom:0;}
+      .main { padding:0;}
+      .yt-container { min-height:90vh; padding-bottom:120px;}
+      .yt-inner { width:99vw; max-width:99vw; margin-top:16px;}
+      .yt-frame-box { border-radius:12px;}
+      .video-frame { border-radius:12px; min-height:100px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="sidebar-title">채널 디렉토리</div>
+      <div class="directory-list" id="dirList">
+        <div class="directory-item selected" data-url="https://www.youtube.com/watch?v=1bROU5AqM8w&ab_channel=KBSDramaClassic">
+          <span class="directory-label">KBS클래식드라마</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=Cvuip6DvACs&ab_channel=KBSDrama">
+          <span class="directory-label">KBS드라마</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=Po84TcoVjNo&ab_channel=KBSJoy">
+          <span class="directory-label">KBS JOY</span>
+        </div>
+        
+    <div class="directory-item" data-url="https://www.youtube.com/watch?v=lDcWeklf6DI&ab_channel=%EB%9F%B0%EB%8B%9D%EB%A7%A8-%EC%8A%A4%EB%B8%8C%EC%8A%A4%EA%B3%B5%EC%8B%9D%EC%B1%84%EB%84%90">
+          <span class="directory-label">SBS런닝맨</span>
+        </div>
+
+     <div class="directory-item" data-url="https://www.youtube.com/watch?v=Wsz_If9wZ7g&ab_channel=%EC%83%BE%EC%9E%89%23ing">
+          <span class="directory-label">샆잉</span>
+        </div>
+
+
+        
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=P8QordVAUyU&ab_channel=KBSEntertain%3A%EA%B9%94%EA%B9%94%ED%8B%B0%EB%B9%84">
+          <span class="directory-label">SBS깔깔</span>
+        </div>
+
+        
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=OYFlcCS4CUk&ab_channel=SBS%EC%98%9B%EB%82%A0%EC%98%88%EB%8A%A5-%EB%B9%BD%EB%8A%A5">
+          <span class="directory-label">SBS 빽능</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=Y2DwnBQlbmE&ab_channel=SBS%EC%98%9B%EB%82%A0%EB%93%9C%EB%9D%BC%EB%A7%88-%EB%B9%BD%EB%93%9C">
+          <span class="directory-label">SBS 빽드</span>
+        </div>
+
+        
+    
+        
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=RL2pFHjPaUI&ab_channel=JTBCVoyage">
+          <span class="directory-label">JTBC 젭티</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=LK3CXlk4qVo&ab_channel=JTBCDrama">
+          <span class="directory-label">JTBC 드라마</span>
+        </div>
+
+
+        
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=xOXG2HwypaM&ab_channel=iMBC%EC%97%B0%EC%98%88">
+          <span class="directory-label">IMBC 연예</span>
+           </div>
+
+    <div class="directory-item" data-url="https://www.youtube.com/watch?v=tMY29REhxoo&ab_channel=%EC%98%AC%EB%81%8C%28AllofMBClassic%29">
+          <span class="directory-label">올끌mbc</span>
+           </div>
+
+        
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=uCkYz-TQCrc&ab_channel=%EB%94%94%EA%B8%80%ED%81%B4%EB%9E%98%EC%8B%9D%3ADiggleClassic">
+          <span class="directory-label">디글</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=s9xL1DpBsfQ&ab_channel=%EB%A7%A4%EC%9D%BC%EA%B2%BD%EC%A0%9CTV">
+          <span class="directory-label">매경</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=NJUjU9ALj4A&ab_channel=%ED%95%9C%EA%B5%AD%EA%B2%BD%EC%A0%9CTV">
+          <span class="directory-label">한국경제</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=lb1oB2feqkQ">
+          <span class="directory-label">머니투데이</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=Y4JYZO0Ad7o">
+          <span class="directory-label">서울경제</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=5cFoz90FUMk">
+          <span class="directory-label">이데일리</span>
+        </div>
+        <div class="directory-item" data-url="https://www.youtube.com/watch?v=hfyG1tc_BRk&ab_channel=%ED%86%A0%EB%A7%88%ED%86%A0%EC%A6%9D%EA%B6%8C%ED%86%B5">
+          <span class="directory-label">토마토증권</span>
+        </div>
+      </div>
+    </div>
+    <div class="main">
+      <div class="yt-container">
+        <div class="yt-inner">
+          <div class="yt-frame-box">
+            <iframe class="video-frame" id="videoFrame"
+              src="https://www.youtube.com/watch?v=1bROU5AqM8w&ab_channel=KBSDramaClassic?autoplay=1"
+              allow="autoplay; encrypted-media"
+              allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // 주소 변환 함수: watch, youtu.be, embed 전부 처리
+    function toYouTubeEmbed(url) {
+      if(!url) return "";
+      if (url.includes('/embed/')) return url;
+      let match = url.match(/(?:v=|embed\/|\.be\/)([a-zA-Z0-9_-]{11})/);
+      if (match) return 'https://www.youtube.com/embed/' + match[1];
+      return url;
+    }
+    function getAutoPlayUrl(url) {
+      if (!url) return "";
+      url = toYouTubeEmbed(url);
+      return url.includes('?') ? url + '&autoplay=1' : url + '?autoplay=1';
+    }
+    // 핵심: 클릭한 네비바 항목이 네비바 중간(혹은 최상단)에 오도록 자동 스크롤
+    const items = document.querySelectorAll('.directory-item');
+    const frame = document.getElementById('videoFrame');
+    const list = document.getElementById('dirList');
+    items.forEach(item => {
+      item.addEventListener('click', function() {
+        items.forEach(i => i.classList.remove('selected'));
+        this.classList.add('selected');
+        frame.src = getAutoPlayUrl(this.dataset.url);
+
+        // 아래 코드로 클릭한 항목이 항상 네비바의 '중간'에 오도록 부드럽게 스크롤
+        const listRect = list.getBoundingClientRect();
+        const itemRect = this.getBoundingClientRect();
+        // 현재 스크롤 위치 + (항목의 top 위치 - 리스트의 top 위치) - (리스트 높이/2 - 항목 높이/2)
+        const offset = (itemRect.top - listRect.top) + list.scrollTop - (listRect.height / 2) + (itemRect.height / 2);
+        list.scrollTo({
+          top: offset,
+          behavior: 'smooth'
+        });
+      });
+    });
+    // 페이지 진입 시 첫 번째 주소 변환
+    window.addEventListener('DOMContentLoaded', function(){
+      const first = document.querySelector('.directory-item.selected');
+      if(first) frame.src = getAutoPlayUrl(first.dataset.url);
+    });
+  </script>
+</body>
+</html>
