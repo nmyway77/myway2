@@ -121,7 +121,42 @@
     .video-item-wrap.drag-over {
       background: #25336c !important;
     }
-    /* 전체화면일 때 네비 숨기기 */
+    /* 전체화면 스타일 추가! */
+    .yt-container:fullscreen,
+    .yt-container:-webkit-full-screen,
+    .yt-container:-ms-fullscreen {
+      position: fixed !important;
+      top:0; left:0; width:100vw !important; height:100vh !important; margin:0 !important; padding:0 !important; z-index:9999 !important;
+      background: #000 !important;
+    }
+    .yt-container:fullscreen .yt-inner,
+    .yt-container:-webkit-full-screen .yt-inner,
+    .yt-container:-ms-fullscreen .yt-inner {
+      width:100vw !important; max-width:100vw !important; height:100vh !important; gap:0 !important; margin:0 !important; padding:0 !important; background:#000 !important; border-radius:0 !important;
+      display: flex; flex-direction:column; align-items: stretch; justify-content: stretch;
+    }
+    .yt-container:fullscreen .yt-frame-box,
+    .yt-container:-webkit-full-screen .yt-frame-box,
+    .yt-container:-ms-fullscreen .yt-frame-box {
+      width:100vw !important; height:100vh !important; min-height:0 !important; min-width:0 !important;
+      aspect-ratio:auto !important; background:#000 !important; border-radius:0 !important; box-shadow:none !important;
+    }
+    .yt-container:fullscreen iframe,
+    .yt-container:-webkit-full-screen iframe,
+    .yt-container:-ms-fullscreen iframe {
+      width:100vw !important; height:100vh !important; min-height:0 !important; min-width:0 !important; border-radius:0 !important;
+      background:#000 !important;
+    }
+    .yt-container:fullscreen .yt-title,
+    .yt-container:-webkit-full-screen .yt-title,
+    .yt-container:-ms-fullscreen .yt-title {
+      display: none !important;
+    }
+    .yt-container:fullscreen .fullscreen-btn,
+    .yt-container:-webkit-full-screen .fullscreen-btn,
+    .yt-container:-ms-fullscreen .fullscreen-btn {
+      display: none !important;
+    }
     .yt-container:fullscreen ~ .side-nav,
     .yt-container:fullscreen + .side-nav {
       display: none !important;
@@ -363,8 +398,7 @@
     function saveVideo() {
       let url = document.getElementById('addUrl').value.trim();
       let title = document.getElementById('addTitle').value.trim();
-    
-  if (!url || !title) { 
+      if (!url || !title) { 
         alert('영상 주소와 제목을 입력하세요.'); 
         return; 
       }
