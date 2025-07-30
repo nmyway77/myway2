@@ -2,318 +2,237 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>유튜브 채널 디렉토리 뷰어 - 자동 변환</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <title>유튜브/비메오/MP4 자동 변환 썸네일 디렉토리</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      margin: 0;
-      font-family: 'Montserrat','Apple SD Gothic Neo',sans-serif;
-      background: linear-gradient(135deg,#23243a 0%,#314a6a 100%);
-      color: #fff;
-      min-height: 100vh;
+    html, body { margin:0; padding:0; height:100%; background:#21253a; }
+    body { min-height:100vh; min-width:100vw; }
+    .container { display: flex; min-height: 100vh; width: 100vw; }
+    .side-nav {
+      width: 120px; min-width: 90px; background: #202242;
+      border-right:1.5px solid #18192f;
+      box-shadow:0 4px 20px #23243c22;
+      display: flex; flex-direction: column; align-items: stretch;
+      z-index: 50; padding: 0;
     }
-    .container {
-      display: flex;
-      min-height: 100vh;
-      width: 100vw;
-    }
-    .sidebar {
-      width: 120px;
-      min-width: 90px;
-      background: rgba(27,35,52,0.98);
-      padding: 22px 5px 14px 5px;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      border-top-right-radius: 26px;
-      border-bottom-right-radius: 26px;
-      box-shadow: 4px 0 26px #0006;
-      border-right: 1.5px solid #3e5c8888;
-      z-index: 3;
-    }
-    .sidebar-title {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 14px;
-      letter-spacing: 0.5px;
-      text-shadow: 0 2px 12px #0005;
-      text-align: center;
-      width: 100%;
-      padding-left: 0;
-    }
-    .directory-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      width: 100%;
+    .video-list {
       flex: 1;
-      align-items: center;
-      overflow-y: auto;
-      max-height: 86vh;
-      scrollbar-width: none !important;
-      padding-right: 0;
-    }
-    .directory-list::-webkit-scrollbar { width: 0 !important; background: transparent !important; display: none !important; }
-    .directory-item {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      padding: 7px 4px;
-      border-radius: 16px;
-      cursor: pointer;
-      background: rgba(37,55,90,0.82);
-      box-shadow: 0 2px 9px #0002;
-      border: 1px solid transparent;
-      font-weight: 600;
-      user-select: none;
-      min-height: 60px;
-      width: 62px;
-      transition: background 0.16s, box-shadow 0.16s, border 0.13s;
+      align-items: stretch;
+      gap: 8px;
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      overflow-y: auto;
+      background: none;
+      scroll-behavior: smooth;
     }
-    .directory-item.selected, .directory-item:hover {
-      background: linear-gradient(180deg,#3576ed 10%,#65e0f6 95%);
-      border: 1.7px solid #63c6ff;
-      box-shadow: 0 4px 16px #1588c844, 0 1px 5px #63e0ff11;
+    .video-item {
+      padding: 0; margin: 0;
+      border: none; border-radius: 0;
+      background: none; box-shadow: none;
+      width: 100%; aspect-ratio: 4/3;
+      cursor: pointer; overflow: hidden;
+      transition: filter 0.14s, outline 0.15s;
+      display: flex; align-items: stretch; justify-content: stretch;
+      outline: none;
+      position: relative;
+    }
+    .video-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      aspect-ratio: 4/3;
+      display: block;
+      border: none;
+      background: #111;
+      pointer-events: none;
+      user-select: none;
+    }
+    .video-item.active,
+    .video-item:hover {
+      filter: brightness(1.1) contrast(1.12) saturate(1.09);
+      outline: 2.5px solid #5efcff;
       z-index: 2;
     }
-    .directory-icon {
-      width: 36px; height: 36px;
-      border-radius: 8px;
-      object-fit: contain;
-      background: #fff;
-      box-shadow: 0 2px 6px #0023;
-      margin-bottom: 3px;
-    }
-    .directory-label {
-      font-size: 0.72em;
-      color: #e0f4ff;
-      text-align: center;
-      width: 100%;
-      font-weight: 500;
-      letter-spacing: 0.01em;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      line-height: 1.1;
+    .video-item.drag-over {
+      outline: 2.5px solid #fcfa5e;
+      z-index: 9;
     }
     .main {
-      flex: 1 1 auto;
-      min-width: 0;
-      min-height: 100vh;
-      /* 오른쪽 전체 꽉 채우기! */
-      width: 100%;
+      flex: 1 1 auto; min-width: 0; min-height: 100vh; width: 100%;
       background: linear-gradient(120deg,#242a39 0%,#3a5975 90%);
-      position: relative;
-      display: flex;
-      align-items: stretch;
-      justify-content: stretch;
-      padding: 0;
-      margin: 0;
+      position: relative; display: flex; align-items: stretch; justify-content: stretch;
+      padding: 0; margin: 0;
     }
     .yt-container {
-      width: 100%;
-      height: 100vh;
-      display: flex;
-      align-items: stretch;
-      justify-content: stretch;
-      background: none;
-      padding: 0;
-      margin: 0;
-      box-sizing: border-box;
+      width: 100%; height: 100vh;
+      display: flex; align-items: stretch; justify-content: stretch;
+      background: none; padding: 0; margin: 0; box-sizing: border-box;
     }
     .yt-inner {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      display: flex;
-      align-items: stretch;
+      width: 100%; height: 100%; margin: 0;
+      display: flex; flex-direction: column; align-items: stretch; gap: 0;
       justify-content: stretch;
-      flex-direction: column;
-      gap: 0;
+    }
+    .yt-title {
+      color:#fff; font-size:1.22rem; font-weight:600;
+      letter-spacing:0.02em; margin:0; text-shadow:0 2px 12px #0019;
+      text-align:center; line-height:1.3; word-break:keep-all;
+      background:rgba(36,42,82,0.7); border-radius:0; padding:10px 0 9px 0;
+      box-shadow:none; width:100%;
     }
     .yt-frame-box {
-      width: 100%;
-      height: 100%;
-      background: #000;
-      border-radius: 0;
-      box-shadow: none;
-      overflow: hidden;
-      display: flex;
-      align-items: stretch;
-      justify-content: stretch;
-      margin: 0;
+      width:100%; height: 100%; flex:1;
+      background:#000; border-radius:0; box-shadow: none;
+      overflow:hidden; display:flex; align-items:stretch; justify-content:stretch;
+      margin:0;
     }
-    .video-frame {
-      width: 100%;
-      height: 100%;
-      min-height: 100%;
-      min-width: 100%;
-      border: 0;
-      border-radius: 0;
-      background: #000;
-      display: block;
-    }
-    @media (max-width:900px) {
-      .container { flex-direction: column; }
-      .sidebar {
-        width: 100vw; min-width: 0; border-radius: 0 0 20px 20px;
-        border-right: none; box-shadow: none; padding: 8px 0 7px 0; position: relative;
-        flex-direction: row; align-items: flex-start; gap: 8px;
-        justify-content: center; height: auto; max-height: none;
-      }
-      .sidebar-title { font-size: 1.0rem; margin-bottom: 0; text-align: left; }
-      .directory-list {
-        flex-direction: row; gap: 8px; overflow-x: auto; overflow-y: hidden;
-        max-height: none; height: 74px; padding: 0 8px 0 8px; align-items: center; width: 100vw;
-      }
-      .directory-item {
-        min-width: 62px; min-height: 62px; border-radius: 11px; margin-bottom: 0;
-      }
-      .main, .yt-container, .yt-inner, .yt-frame-box, .video-frame {
-        border-radius: 0 !important; width: 100vw !important; min-width: 0 !important;
-        min-height: 50vw !important; height: 60vw !important;
-      }
+    iframe, video {
+      width:100%; height:100%; border:0; border-radius:0;
+      background:#000; display:block; min-height:180px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="sidebar">
-      <div class="sidebar-title">채널 디렉토리</div>
-      <div class="directory-list" id="dirList">
-        <!-- 예시: 아이콘 주소와 label로 만듦 (icon img는 직접 바꿔주세요) -->
-        <div class="directory-item selected" data-url="https://onair.imbc.com/MbicPlay?channelId=123">
-          <img class="directory-icon" src="https://i.namu.wiki/i/QXSuFrG3ORN0qmiEbSTogI7pguF_Ey3k5FUXpEraukVW3v2Tk3E6vggUFrJr3FOx52qoL6iB5fOwLDQRKslLvA.webp" alt="기황후">
-          <span class="directory-label">기황후</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=Cvuip6DvACs&ab_channel=KBSDrama">
-          <img class="directory-icon" src="https://upload.wikimedia.org/wikipedia/commons/1/1e/KBS_logo_2017.svg" alt="KBS드라마">
-          <span class="directory-label">KBS드라마</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=Po84TcoVjNo&ab_channel=KBSJoy">
-          <img class="directory-icon" src="https://yt3.googleusercontent.com/ytc/AL5GRJW8n7egGfB-Edb2MoZa0qAp20ZglzEeqXjlK8Hvuw=s176-c-k-c0x00ffffff-no-rj" alt="KBS JOY">
-          <span class="directory-label">KBS JOY</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=lDcWeklf6DI&ab_channel=%EB%9F%B0%EB%8B%9D%EB%A7%A8-%EC%8A%A4%EB%B8%8C%EC%8A%A4%EA%B3%B5%EC%8B%9D%EC%B1%84%EB%84%90">
-          <img class="directory-icon" src="https://upload.wikimedia.org/wikipedia/commons/3/32/SBS_logo.svg" alt="SBS런닝맨">
-          <span class="directory-label">런닝맨</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=Wsz_If9wZ7g&ab_channel=%EC%83%BE%EC%9E%89%23ing">
-          <img class="directory-icon" src="https://yt3.googleusercontent.com/ytc/AL5GRJWKkHtBLPmu5PIvGuTWSVpBfA1lApAjxtbzG0mtzg=s176-c-k-c0x00ffffff-no-rj" alt="샆잉">
-          <span class="directory-label">샆잉</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=P8QordVAUyU&ab_channel=KBSEntertain%3A%EA%B9%94%EA%B9%94%ED%8B%B0%EB%B9%84">
-          <img class="directory-icon" src="https://upload.wikimedia.org/wikipedia/commons/1/1e/KBS_logo_2017.svg" alt="SBS깔깔">
-          <span class="directory-label">SBS깔깔</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=OYFlcCS4CUk&ab_channel=SBS%EC%98%9B%EB%82%A0%EC%98%88%EB%8A%A5-%EB%B9%BD%EB%8A%A5">
-          <img class="directory-icon" src="https://upload.wikimedia.org/wikipedia/commons/3/32/SBS_logo.svg" alt="SBS빽능">
-          <span class="directory-label">SBS빽능</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=Y2DwnBQlbmE&ab_channel=SBS%EC%98%9B%EB%82%A0%EB%93%9C%EB%9D%BC%EB%A7%88-%EB%B9%BD%EB%93%9C">
-          <img class="directory-icon" src="https://upload.wikimedia.org/wikipedia/commons/3/32/SBS_logo.svg" alt="SBS빽드">
-          <span class="directory-label">SBS빽드</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=RL2pFHjPaUI&ab_channel=JTBCVoyage">
-          <img class="directory-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/5a/JTBC_CI_2023.svg" alt="JTBC 젭티">
-          <span class="directory-label">JTBC젭티</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=LK3CXlk4qVo&ab_channel=JTBCDrama">
-          <img class="directory-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/5a/JTBC_CI_2023.svg" alt="JTBC 드라마">
-          <span class="directory-label">JTBC드라마</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=xOXG2HwypaM&ab_channel=iMBC%EC%97%B0%EC%98%88">
-          <img class="directory-icon" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/MBC_logo.svg" alt="IMBC 연예">
-          <span class="directory-label">IMBC연예</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=tMY29REhxoo&ab_channel=%EC%98%AC%EB%81%8C%28AllofMBClassic%29">
-          <img class="directory-icon" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/MBC_logo.svg" alt="올끌mbc">
-          <span class="directory-label">올끌mbc</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=uCkYz-TQCrc&ab_channel=%EB%94%94%EA%B8%80%ED%81%B4%EB%9E%98%EC%8B%9D%3ADiggleClassic">
-          <img class="directory-icon" src="https://yt3.googleusercontent.com/ytc/AL5GRJUzU2kOLq0h2EnJhWQMTKl2SQ3-UfKdbnVtBDgu=s176-c-k-c0x00ffffff-no-rj" alt="디글">
-          <span class="directory-label">디글</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=s9xL1DpBsfQ&ab_channel=%EB%A7%A4%EC%9D%BC%EA%B2%BD%EC%A0%9CTV">
-          <img class="directory-icon" src="https://yt3.ggpht.com/ytc/AKedOLSyI-vjH1XvGHEVoaWXWvN6PQQkLx9A4EZOkm7-=s88-c-k-c0xffffffff-no-rj-mo" alt="매경">
-          <span class="directory-label">매경</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=NJUjU9ALj4A&ab_channel=%ED%95%9C%EA%B5%AD%EA%B2%BD%EC%A0%9CTV">
-          <img class="directory-icon" src="https://yt3.ggpht.com/ytc/AKedOLTIq-Tg_7hSWwFknznmff3vQ5c6awhkN-KWfVDO=s88-c-k-c0xffffffff-no-rj-mo" alt="한국경제">
-          <span class="directory-label">한국경제</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=lb1oB2feqkQ">
-          <img class="directory-icon" src="https://yt3.ggpht.com/ytc/AKedOLQ9vdTfQWdfC2sbGuQVm1xgQ81LxT91Ck5chv4s=s88-c-k-c0xffffffff-no-rj-mo" alt="머니투데이">
-          <span class="directory-label">머니투데이</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=Y4JYZO0Ad7o">
-          <img class="directory-icon" src="https://yt3.ggpht.com/ytc/AKedOLQFKwTLMQMyjkprwZQzU-VcsJvTx9rT1JG9cfBt=s88-c-k-c0xffffffff-no-rj-mo" alt="서울경제">
-          <span class="directory-label">서울경제</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=5cFoz90FUMk">
-          <img class="directory-icon" src="https://yt3.ggpht.com/ytc/AKedOLQGZQqjE0sYJzZhmn7nIXZdhQxldlhEtk8jvK8k=s88-c-k-c0xffffffff-no-rj-mo" alt="이데일리">
-          <span class="directory-label">이데일리</span>
-        </div>
-        <div class="directory-item" data-url="https://www.youtube.com/watch?v=hfyG1tc_BRk&ab_channel=%ED%86%A0%EB%A7%88%ED%86%A0%EC%A6%9D%EA%B6%8C%ED%86%B5">
-          <img class="directory-icon" src="https://yt3.ggpht.com/ytc/AKedOLQPPxFo3heqU6HbQXhDPAEStw8SbJZ7wJG9EBYf=s88-c-k-c0xffffffff-no-rj-mo" alt="토마토증권">
-          <span class="directory-label">토마토증권</span>
-        </div>
-      </div>
-    </div>
-    <div class="main">
-      <div class="yt-container">
-        <div class="yt-inner">
-          <div class="yt-frame-box">
-            <iframe class="video-frame" id="videoFrame"
-              src="https://www.youtube.com/embed/1bROU5AqM8w?autoplay=1"
-              allow="autoplay; encrypted-media"
-              allowfullscreen></iframe>
-          </div>
-        </div>
+<div class="container">
+  <div class="side-nav">
+    <div class="video-list" id="videoList"></div>
+  </div>
+  <div class="main">
+    <div class="yt-container">
+      <div class="yt-inner">
+        <div class="yt-title" id="ytTitle"></div>
+        <div class="yt-frame-box" id="ytFrameBox"></div>
       </div>
     </div>
   </div>
-  <script>
-    // 주소 변환 함수: watch, youtu.be, embed 전부 처리
-    function toYouTubeEmbed(url) {
-      if(!url) return "";
-      if (url.includes('/embed/')) return url.split('?')[0];
-      let match = url.match(/(?:v=|embed\/|\.be\/)([a-zA-Z0-9_-]{11})/);
-      if (match) return 'https://www.youtube.com/embed/' + match[1];
-      return url;
-    }
-    function getAutoPlayUrl(url) {
-      if (!url) return "";
-      url = toYouTubeEmbed(url);
-      return url.includes('?') ? url + '&autoplay=1' : url + '?autoplay=1';
-    }
-    // 클릭시
-    const items = document.querySelectorAll('.directory-item');
-    const frame = document.getElementById('videoFrame');
-    const list = document.getElementById('dirList');
-    items.forEach(item => {
-      item.addEventListener('click', function() {
-        items.forEach(i => i.classList.remove('selected'));
-        this.classList.add('selected');
-        frame.src = getAutoPlayUrl(this.dataset.url);
+</div>
+<script>
+  // 영상 목록
+  let videos = [
+     {
+      title: "기황후",
+      url: "https://onair.imbc.com/MbicPlay?channelId=123",
+      thumb: "https://i.namu.wiki/i/QXSuFrG3ORN0qmiEbSTogI7pguF_Ey3k5FUXpEraukVW3v2Tk3E6vggUFrJr3FOx52qoL6iB5fOwLDQRKslLvA.webp"
+    },
 
-        // 클릭한 항목이 항상 리스트 중간에 오도록 스크롤
+
+
+
+    {
+      title: "테스트 Vimeo",
+      url: "https://vimeo.com/76979871",
+      thumb: "https://i.vimeocdn.com/video/452001751_640.jpg"
+    },
+    {
+      title: "MP4 샘플",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
+      thumb: "https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217"
+    }
+    // ... 필요한 만큼
+  ];
+
+  // 자동 임베드 변환
+  function parseToEmbed(input) {
+    input = (input||"").trim();
+    // 유튜브
+    const ytMatch = input.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+    if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1`;
+    if (input.match(/^https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]{11}/))
+      return input.includes('autoplay=1') ? input : input + (input.includes('?') ? '&autoplay=1' : '?autoplay=1');
+    // Vimeo
+    const vimeoMatch = input.match(/vimeo\.com\/(\d+)/);
+    if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`;
+    // MP4/WebM/Ogg
+    if (input.match(/\.(mp4|webm|ogg)(\?|$)/i)) return input;
+    // 이미 임베드/iframe 코드면 그대로
+    if (input.startsWith('<iframe')) return input;
+    // 기타 주소
+    return input;
+  }
+
+  // 현재 선택
+  let selectedIdx = 0;
+
+  function renderList() {
+    const list = document.getElementById('videoList');
+    list.innerHTML = '';
+    videos.forEach((v, i) => {
+      const div = document.createElement('div');
+      div.className = 'video-item';
+      if(i === selectedIdx) div.classList.add('active');
+      div.tabIndex = 0;
+      div.draggable = true;
+      div.innerHTML = `<img src="${v.thumb}" alt="${v.title}">`;
+      // 클릭
+      div.onclick = () => selectVideo(i, true);
+      // 드래그
+      div.ondragstart = e => {
+        e.dataTransfer.setData('from', i);
+        setTimeout(()=>div.classList.add('dragging'), 0);
+      };
+      div.ondragend = e => {
+        div.classList.remove('dragging','drag-over');
+        document.querySelectorAll('.video-item').forEach(d=>d.classList.remove('drag-over'));
+      };
+      div.ondragover = e => {
+        e.preventDefault();
+        div.classList.add('drag-over');
+      };
+      div.ondragleave = e => div.classList.remove('drag-over');
+      div.ondrop = e => {
+        e.preventDefault();
+        div.classList.remove('drag-over');
+        let from = +e.dataTransfer.getData('from');
+        if(from!==i) {
+          videos.splice(i,0,videos.splice(from,1)[0]);
+          if(selectedIdx===from) selectedIdx=i;
+          else if(selectedIdx>from && selectedIdx<=i) selectedIdx--;
+          else if(selectedIdx<from && selectedIdx>=i) selectedIdx++;
+          renderList();
+          renderMain();
+        }
+      };
+      list.appendChild(div);
+    });
+  }
+
+  function selectVideo(idx, scrollTo) {
+    selectedIdx = idx;
+    renderList();
+    renderMain();
+    if(scrollTo) {
+      const list = document.getElementById('videoList');
+      const items = list.querySelectorAll('.video-item');
+      const el = items[idx];
+      if(el) {
         const listRect = list.getBoundingClientRect();
-        const itemRect = this.getBoundingClientRect();
-        const offset = (itemRect.top - listRect.top) + list.scrollTop - (listRect.height / 2) + (itemRect.height / 2);
-        list.scrollTo({
-          top: offset,
-          behavior: 'smooth'
-        });
-      });
-    });
-    // 첫 진입시
-    window.addEventListener('DOMContentLoaded', function(){
-      const first = document.querySelector('.directory-item.selected');
-      if(first) frame.src = getAutoPlayUrl(first.dataset.url);
-    });
-  </script>
+        const itemRect = el.getBoundingClientRect();
+        const offset = (itemRect.top - listRect.top) + list.scrollTop - (listRect.height/2) + (itemRect.height/2);
+        list.scrollTo({ top: offset, behavior: 'smooth' });
+      }
+    }
+  }
+
+  function renderMain() {
+    document.getElementById('ytTitle').textContent = videos[selectedIdx].title;
+    const src = parseToEmbed(videos[selectedIdx].url);
+    if(src.endsWith('.mp4') || src.endsWith('.webm') || src.endsWith('.ogg')) {
+      document.getElementById('ytFrameBox').innerHTML =
+        `<video src="${src}" controls autoplay style="width:100%;height:100%;"></video>`;
+    } else if(src.startsWith('<iframe')) {
+      document.getElementById('ytFrameBox').innerHTML = src;
+    } else {
+      document.getElementById('ytFrameBox').innerHTML =
+        `<iframe src="${src}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+    }
+  }
+
+  // 초기화
+  renderList();
+  renderMain();
+</script>
 </body>
 </html>
+
