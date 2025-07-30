@@ -1,0 +1,332 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>썸네일만 보이는 동영상 디렉토리</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body { margin:0; padding:0; height:100%; background:#21253a; }
+    body { min-height:100vh; min-width:100vw; }
+    .container { display: flex; min-height: 100vh; width: 100vw; }
+    .side-nav {
+      width: 120px; min-width:90px; background:#202242;
+      border-right:1.5px solid #18192f;
+      box-shadow:0 4px 20px #23243c22;
+      display: flex; flex-direction: column; align-items: center;
+      z-index:50;
+    }
+    .nav-btns { margin-top: 18px; width: 92%; }
+    .nav-btns button {
+      width: 100%; margin-bottom: 7px; padding: 10px 0;
+      background:#243468; color:#fff; border:none; border-radius:8px;
+      font-size:1rem; font-weight:500; cursor:pointer; transition:background 0.18s;
+    }
+    .nav-btns button:hover { background: #3a4991; }
+    .video-list {
+      flex:1; overflow-y:auto; margin-top:8px;
+      display:flex; flex-direction:column; gap:0; align-items: center;
+      width: 100%;
+      scrollbar-width: thin;
+      scrollbar-color: transparent transparent;
+    }
+    .video-list::-webkit-scrollbar { width: 8px; background: transparent; }
+    .video-list::-webkit-scrollbar-thumb { background: transparent; }
+    .video-list::-webkit-scrollbar-track { background: transparent; }
+    .video-item-wrap {
+      width: 100%;
+      display: flex; justify-content: center;
+      margin-bottom: 6px;
+    }
+    .video-item {
+      display: flex; flex-direction: column; align-items: center; gap:2px;
+      padding: 8px 4px;
+      background:rgba(37,55,90,0.82);
+      border-radius:16px; border:1px solid transparent;
+      box-shadow: 0 2px 8px #0002;
+      width: 60px; min-height:60px;
+      cursor: pointer;
+      transition: background 0.14s, border 0.13s;
+      user-select: none;
+      position: relative;
+    }
+    .video-item.active, .video-item:hover {
+      background: linear-gradient(180deg,#3576ed 10%,#65e0f6 95%);
+      border: 1.5px solid #63c6ff;
+      color: #233257;
+      z-index: 2;
+    }
+    .video-img-thumb {
+      width: 60px;
+      aspect-ratio: 4/3;
+      height: auto;
+      border-radius: 7px;
+      background: #fff;
+      object-fit: cover;
+      box-shadow:0 2px 6px #0023;
+      display: block;
+    }
+    .edit-btn {
+      margin-top: 2px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.7;
+      transition: opacity 0.13s;
+    }
+    .edit-btn:hover { opacity: 1; }
+    .edit-icon {
+      width: 17px; height: 17px;
+      fill: #a8c8ff;
+      filter: drop-shadow(0 1px 2px #0018);
+      pointer-events: none;
+    }
+    .main {
+      flex: 1 1 auto; min-width: 0; min-height: 100vh; width: 100%;
+      background: linear-gradient(120deg,#242a39 0%,#3a5975 90%);
+      position: relative; display: flex; align-items: stretch; justify-content: stretch;
+      padding: 0; margin: 0;
+    }
+    .yt-container {
+      width: 100%; height: 100vh;
+      display: flex; align-items: stretch; justify-content: stretch;
+      background: none; padding: 0; margin: 0; box-sizing: border-box;
+    }
+    .yt-inner {
+      width: 100%; height: 100%; margin: 0;
+      display: flex; flex-direction: column; align-items: stretch; gap: 0;
+      justify-content: stretch;
+    }
+    .yt-title { display:none; }
+    .yt-frame-box {
+      width:100%; height: 100%; flex:1;
+      background:#000; border-radius:0; box-shadow: none;
+      overflow:hidden; display:flex; align-items:stretch; justify-content:stretch;
+      margin:0;
+    }
+    iframe, video {
+      width:100%; height:100%; border:0; border-radius:0;
+      background:#000; display:block; min-height:180px;
+    }
+    @media (max-width:900px) {
+      .container { flex-direction: column; }
+      .side-nav { width:100vw; min-width:0; border-radius:0 0 20px 20px;
+        border-right:none; box-shadow:none; flex-direction: row; align-items: flex-start; gap:8px;
+        justify-content: center; height:auto; max-height:none;
+      }
+      .nav-btns { flex-direction:row; gap:7px; width: 98%; }
+      .video-list {
+        flex-direction: row; gap:8px; overflow-x:auto; overflow-y:hidden;
+        max-height:none; height:74px; padding:0 6px 0 6px; align-items:center; width:100vw;
+      }
+      .video-item { min-width: 62px; min-height: 62px; border-radius: 11px; margin-bottom: 0; }
+      .video-img-thumb { width: 62px; }
+      .main, .yt-container, .yt-inner, .yt-frame-box, iframe, video {
+        border-radius:0!important; width:100vw!important; min-width:0!important;
+        min-height: 50vw!important; height: 60vw!important;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="side-nav">
+    <div class="nav-btns">
+      <button onclick="openAddModal()">추가</button>
+      <button onclick="importData()">가져오기</button>
+      <button onclick="exportData()">내보내기</button>
+    </div>
+    <div class="video-list" id="videoList"></div>
+  </div>
+  <div class="main">
+    <div class="yt-container">
+      <div class="yt-inner">
+        <div class="yt-title" id="ytTitle"></div>
+        <div class="yt-frame-box" id="ytFrameBox">
+          <iframe id="mainFrame" src="https://www.youtube.com/embed/5w__FG2fGa4?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 모달 (추가/수정) -->
+<div id="addModal" class="modal-bg" style="display:none; position:fixed; left:0;top:0;right:0;bottom:0; z-index:200; background:rgba(15,20,40,0.38); align-items:center; justify-content:center;">
+  <div class="modal-inner" style="background:#2e3259; color:#fff; border-radius:15px; padding:28px 32px 18px 32px; box-shadow:0 6px 44px #0005; min-width:320px; display:flex; flex-direction:column; gap:17px;">
+    <label>영상 주소 (유튜브/Vimeo/MP4)</label>
+    <input id="addUrl" type="text" placeholder="영상 주소" autocomplete="off" style="padding:10px 15px; border-radius:7px; border:none; margin-bottom:7px; font-size:1rem; width:100%;">
+    <label>썸네일 주소 (이미지 URL)</label>
+    <input id="addIcon" type="text" placeholder="썸네일 이미지 URL" autocomplete="off" style="padding:10px 15px; border-radius:7px; border:none; margin-bottom:7px; font-size:1rem; width:100%;">
+    <button id="addSaveBtn" onclick="saveVideo()" style="padding:10px 0; border-radius:8px; border:none; background:#4b67ff; color:#fff; font-size:1.07rem; font-weight:700; cursor:pointer; margin-top:8px;">저장</button>
+    <button onclick="closeAddModal()" style="background:#2e3259;font-weight:400; padding:10px 0; border-radius:8px; border:none; color:#fff; font-size:1.07rem; margin-top:4px;">취소</button>
+  </div>
+</div>
+
+<script>
+  // 상태
+  let videos = JSON.parse(localStorage.getItem('ytNaviList5') || '[]');
+  let selectedIdx = (videos.length>0) ? 0 : null;
+  let editIdx = null;
+
+  const defaultIcons = [
+    "https://upload.wikimedia.org/wikipedia/commons/1/1e/KBS_logo_2017.svg",
+    "https://upload.wikimedia.org/wikipedia/commons/3/32/SBS_logo.svg",
+    "https://upload.wikimedia.org/wikipedia/commons/7/7c/MBC_logo.svg"
+  ];
+
+  // 유튜브/Vimeo 임베드 변환
+  function parseToEmbed(input) {
+    input = (input||"").trim();
+    // 유튜브
+    const ytMatch = input.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+    if (ytMatch) return {type: 'youtube', code: `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1`};
+    if (input.match(/^https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]{11}/))
+      return {type: 'youtube', code: input.includes('autoplay=1') ? input : input + (input.includes('?') ? '&autoplay=1' : '?autoplay=1')};
+    // Vimeo
+    const vimeoMatch = input.match(/vimeo\.com\/(\d+)/);
+    if (vimeoMatch) return {type: 'vimeo', code: `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`};
+    // MP4/WebM/Ogg
+    if (input.match(/\.(mp4|webm|ogg)(\?|$)/i)) return {type: 'video', code: input};
+    // embed/iframe
+    if (input.startsWith('<iframe')) return {type: 'embed', code: input};
+    // 그냥 링크
+    return {type: 'link', code: input};
+  }
+
+  // 리스트 렌더링 (썸네일만)
+  function renderList() {
+    const list = document.getElementById('videoList');
+    list.innerHTML = '';
+    videos.forEach((v, i) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'video-item-wrap';
+      const btn = document.createElement('div');
+      btn.className = 'video-item' + (i===selectedIdx ? ' active':'');
+
+      const iconUrl = v.icon || defaultIcons[i%defaultIcons.length];
+      const img = document.createElement('img');
+      img.className = 'video-img-thumb';
+      img.src = iconUrl;
+      img.alt = '';
+      btn.appendChild(img);
+
+      // 수정 버튼
+      const editBtn = document.createElement('button');
+      editBtn.className = 'edit-btn';
+      editBtn.title = '수정';
+      editBtn.onclick = (e) => {
+        e.stopPropagation();
+        openEditModal(i);
+      };
+      editBtn.innerHTML = `<svg class="edit-icon" viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 0 1 2.828 2.828l-8.586 8.586-3.536.707.707-3.536 8.587-8.585zm2.121-2.121a4 4 0 0 0-5.657 0l-8.586 8.586A2 2 0 0 0 1 12.414V17a1 1 0 0 0 1 1h4.586a2 2 0 0 0 1.414-.586l8.586-8.586a4 4 0 0 0 0-5.657z"/></svg>`;
+      btn.appendChild(editBtn);
+
+      btn.onclick = () => { selectedIdx = i; renderList(); renderMain(); };
+      wrap.appendChild(btn);
+      list.appendChild(wrap);
+    });
+  }
+
+  // 영상 표시 (메인)
+  function renderMain() {
+    let v = (selectedIdx!=null && videos[selectedIdx]) ? videos[selectedIdx] : null;
+    if (v) {
+      const parsed = parseToEmbed(v.url);
+      if (parsed.type === 'youtube' || parsed.type === 'vimeo' || parsed.type === 'link') {
+        document.getElementById('ytFrameBox').innerHTML = `<iframe src="${parsed.code}" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+      } else if (parsed.type === 'video') {
+        document.getElementById('ytFrameBox').innerHTML = `<video src="${parsed.code}" controls autoplay></video>`;
+      } else if (parsed.type === 'embed') {
+        document.getElementById('ytFrameBox').innerHTML = parsed.code;
+      } else {
+        document.getElementById('ytFrameBox').innerHTML = `<div style="color:#fff;text-align:center;">알 수 없는 주소입니다.</div>`;
+      }
+    } else {
+      document.getElementById('ytFrameBox').innerHTML = `<iframe src="https://www.youtube.com/embed/5w__FG2fGa4?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+    }
+  }
+
+  // 추가/수정 모달
+  function openAddModal() {
+    editIdx = null;
+    document.getElementById('addModal').style.display = 'flex';
+    document.getElementById('addUrl').value = '';
+    document.getElementById('addIcon').value = '';
+    setTimeout(()=>{ document.getElementById('addUrl').focus(); }, 180);
+  }
+  function openEditModal(idx) {
+    editIdx = idx;
+    document.getElementById('addModal').style.display = 'flex';
+    document.getElementById('addUrl').value = videos[idx].url || '';
+    document.getElementById('addIcon').value = videos[idx].icon || '';
+    setTimeout(()=>{ document.getElementById('addUrl').focus(); }, 180);
+  }
+  function closeAddModal() {
+    document.getElementById('addModal').style.display = 'none';
+    document.getElementById('addUrl').value = '';
+    document.getElementById('addIcon').value = '';
+    editIdx = null;
+  }
+  function saveVideo() {
+    let url = document.getElementById('addUrl').value.trim();
+    let icon = document.getElementById('addIcon').value.trim();
+    if (!url || !icon) { alert('영상 주소와 썸네일 주소를 입력하세요.'); return; }
+    if(editIdx===null) {
+      videos.push({ url, icon });
+      selectedIdx = videos.length-1;
+    } else {
+      videos[editIdx].url = url;
+      videos[editIdx].icon = icon;
+    }
+    localStorage.setItem('ytNaviList5', JSON.stringify(videos));
+    closeAddModal();
+    renderList();
+    renderMain();
+  }
+  function exportData() {
+    const data = JSON.stringify(videos, null, 2);
+    const blob = new Blob([data], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "myway_videos.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+  function importData() {
+    const input = document.createElement('input');
+    input.type = "file";
+    input.accept = ".json,application/json";
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const json = JSON.parse(evt.target.result);
+          if (Array.isArray(json) && json[0]?.url && json[0]?.icon) {
+            videos = json;
+            selectedIdx = videos.length>0 ? 0 : null;
+            localStorage.setItem('ytNaviList5', JSON.stringify(videos));
+            renderList();
+            renderMain();
+          } else {
+            alert('올바른 데이터가 아닙니다.');
+          }
+        } catch {
+          alert('가져오기 실패: JSON 파싱 에러');
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  }
+  // 최초 렌더
+  renderList();
+  renderMain();
+</script>
+</body>
+</html>
