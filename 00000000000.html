@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="ko">
 <head>
 <script type="application/ld+json">
@@ -10,7 +10,7 @@
   "logo": "https://myway.kr/mywaylogo.png"
 }
 </script>
-<meta charset="UTF-8">
+  <meta charset="UTF-8">
 <title>Myway.kr,myway,kpop,KOREA TRAVEL,무료만화, 무료영화,KPOP,KDRAMA,K-POP,KMOVIE,K-DRAMA,K-MOVIE,  링크사이트 총정리 - MYWAY.KR</title>
 
 <link rel="icon" href="/mywaylogo.png" type="image/png">
@@ -28,416 +28,418 @@
 <meta property="og:image" content="https://myway.kr/mywaylogo.png" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="naver-site-verification" content="4e88b51e170829dfb01ce587eaf5575804dd5a2" />
+ <style>
+    /* 1) 페이지 배경을 흰색으로 */
+    body {
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      background: #ffffff;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow: hidden;
+    }
 
-<style>
-  :root{
-    --grad: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
-    --ink: #1f2547;
-    --glass: rgba(255,255,255,0.55);
-    --glass-stroke: rgba(255,255,255,0.65);
-    --glass-shadow: 0 10px 30px rgba(39,46,89,0.12);
-  }
+    .searchbar-outer {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      width: 100vw;
+      margin-top: 36px;
+      margin-bottom: 22px;
+      position: relative;
+      z-index: 10;
+    }
+    .searchbar-wrap {
+      position: relative;
+      width: 650px;
+      max-width: 97vw;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 11;
+    }
+    .searchbar-form {
+      width: 100%; height: 100%;
+      display: flex; align-items: center;
+      position: relative;
+      z-index: 2;
+    }
 
-  /* base */
-  html, body { height:100%; }
-  body {
-    font-family: 'Segoe UI','맑은 고딕', Arial, sans-serif;
-    background:#ffffff;
-    margin:0; padding:0;
-    color: var(--ink);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow: hidden; /* iframe을 fixed로 쓸 때 화면 흔들림 방지 */
-  }
+    /* 2) 검색바 박스: 기존 바탕 그라데이션 적용 */
+    .searchbar-box {
+      position: relative;
+      display: flex; align-items: center;
+      background: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
+      border-radius: 38px;
+      width: 100%;
+      height: 100%;
+      box-shadow: 0 6px 32px 0 rgba(90,100,180,0.13), 0 2px 8px 0 rgba(255,255,255,0.14) inset;
+      padding: 0 24px 0 18px;
+      overflow: hidden;
+    }
 
-  /* 고정 헤더(검색+네비) */
-  .app-header{
-    position: fixed;
-    inset: 0 0 auto 0;
-    z-index: 100;
-    display: grid;
-    grid-template-rows: auto auto;
-    gap: 10px;
-    padding: 18px 14px 12px;
-    background: linear-gradient(180deg, rgba(250,250,255,0.9) 0%, rgba(250,250,255,0.52) 100%);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 2px 0 rgba(44,52,95,0.04);
-  }
+    /* 4) 검색엔진 셀렉트 */
+    .searchbar-select {
+      background: transparent;
+      border: none;
+      padding: 0 15px 0 3px;
+      font-size: 1.13rem;
+      color: #ffffff; /* 셀렉트 표시 텍스트 */
+      font-weight: bold;
+      outline: none;
+      cursor: pointer;
+      min-width: 100px;
+      z-index: 4;
+      height: 44px;
+      border-radius: 16px;
+      margin-right: 7px;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
+    .searchbar-select option {
+      color: #4b2dbd;        /* 진한 보라톤 */
+      background: #ffffff;   /* 흰 배경 */
+    }
 
-  /* 검색바 영역 */
-  .searchbar-outer {
-    display:flex; justify-content:center; align-items:center;
-    width:100%;
-  }
-  .searchbar-wrap {
-    position: relative; width: min(920px, 95vw); height: 72px;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .searchbar-form { width:100%; height:100%; display:flex; align-items:center; }
-  .searchbar-box {
-    position: relative; display:flex; align-items:center; gap:10px;
-    width:100%; height:100%;
-    border-radius: 38px;
-    background: var(--grad);
-    box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,0.4);
-    padding: 0 10px 0 12px;
-    overflow:hidden;
-    /* 은은한 애니메이션 */
-    background-size: 200% 200%;
-    animation: gradShift 12s ease infinite;
-  }
-  @keyframes gradShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
+    .searchbar-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: #ffffff; /* 입력 텍스트 흰색 */
+      outline: none;
+      font-size: 1.14rem;
+      padding: 0 13px;
+      height: 44px;
+      z-index: 4;
+      font-family: inherit;
+    }
+    .searchbar-input::placeholder {
+      color: rgba(255,255,255,0.75);
+      opacity: 1;
+      letter-spacing: 0.01em;
+    }
 
-  /* 셀렉트 커스텀 */
-  .select-wrap{
-    position:relative; display:flex; align-items:center;
-    background: rgba(255,255,255,0.16);
-    border: 1px solid rgba(255,255,255,0.35);
-    border-radius: 16px; height: 46px; padding: 0 34px 0 10px;
-  }
-  .select-wrap::after{
-    content:"";
-    position:absolute; right:10px; top:50%; transform:translateY(-50%);
-    width: 18px; height: 18px;
-    background:
-      radial-gradient(circle at 50% 60%, #fff 30%, transparent 31%) center/100% 100% no-repeat,
-      conic-gradient(from 45deg at 50% 50%, #fff 0 25%, transparent 0 100%);
-    opacity: .9;
-    mask: none;
-  }
-  .searchbar-select {
-    appearance:none; -webkit-appearance:none; -moz-appearance:none;
-    border:none; outline:none; background:transparent;
-    padding: 0 4px; min-width: 120px; height: 100%;
-    font-size: 1.06rem; font-weight: 700; color: #fff; cursor:pointer;
-  }
-  .searchbar-select option { color:#432aa8; background:#fff; }
+    .searchbar-btn {
+      background: none;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      min-width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      margin-left: 2px;
+      margin-right: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 4;
+      transition: background 0.17s;
+    }
+    .searchbar-btn svg {
+      width: 28px; height: 28px;
+      stroke: #ffffff;
+      stroke-width: 2.6;
+      fill: none;
+      transition: stroke 0.12s;
+    }
 
-  .searchbar-input {
-    flex:1; height: 46px; border:none; outline:none; background:transparent;
-    color:#fff; font-size:1.14rem; padding:0 12px;
-  }
-  .searchbar-input::placeholder{ color:rgba(255,255,255,0.75); }
+    /* ===== 네비바 영역 (디자인 업그레이드) ===== */
+    .screen-links-wrap {
+      width: 100vw;
+      position: relative;
+      margin: 0 auto;
+      padding: 0 8px;                 /* 살짝 패딩 */
+      box-sizing: border-box;
+      z-index: 9;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+    }
+    .screen-links {
+      display: flex;
+      gap: 10px;                      /* 간격 약간 축소, 더 촘촘하게 */
+      font-size: 0.96rem;
+      font-weight: 700;               /* 살짝 굵게 */
+      white-space: nowrap;
+      padding: 6px 8px;               /* 컨테이너 안쪽 여백 */
+      user-select: none;
+      align-items: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      margin: 0 auto;
+      max-width: 1200px;              /* 중앙 집중폭 */
+      min-width: 220px;
+      cursor: grab;
 
-  .searchbar-btn {
-    width: 56px; height: 56px; border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.55);
-    background: rgba(255,255,255,0.18);
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer; outline:none;
-    transition: transform .08s ease, background .18s ease, box-shadow .18s ease;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 6px 18px rgba(0,0,0,0.08);
-  }
-  .searchbar-btn:hover { background: rgba(255,255,255,0.26); }
-  .searchbar-btn:active { transform: scale(0.98); }
-  .searchbar-btn svg{ width:28px; height:28px; stroke:#fff; stroke-width:2.6; fill:none; }
+      /* 글래스 룩 */
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(34,40,72,0.08);
+    }
+    .screen-links::-webkit-scrollbar { display: none; }
 
-  /* 네비 */
-  .screen-links-wrap{
-    width:100%; display:flex; justify-content:center; align-items:center;
-    padding: 0 4px;
-  }
-  .screen-links{
-    width:min(1200px, 96vw);
-    display:flex; align-items:center; gap: 10px;
-    overflow-x:auto; overflow-y:hidden; white-space:nowrap;
-    scrollbar-width:none; -ms-overflow-style:none; user-select:none; cursor:grab;
-    position:relative; padding: 4px 6px;
-    border-radius: 14px;
-    background: rgba(255,255,255,0.6);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border: 1px solid rgba(0,0,0,0.06);
-  }
-  .screen-links::-webkit-scrollbar{ display:none; }
+    /* 텍스트 그라데이션 + 활성 언더라인 */
+    .screen-links a {
+      text-decoration: none;
+      padding: 7px 12px;              /* 클릭 타깃 확대 */
+      border-radius: 10px;
+      font-weight: inherit;
+      font-size: 1em;
+      margin: 0 2px;
+      background: none;
+      border: none;
+      outline: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.01em;
+      transition: background 0.14s, transform 0.08s, box-shadow 0.14s;
+      cursor: pointer;
+      white-space: nowrap;
 
-  .screen-links a{
-    text-decoration:none; display:inline-flex; align-items:center; justify-content:center;
-    padding: 7px 12px; border-radius: 10px;
-    font-weight: 700; font-size: .98rem; letter-spacing:.01em;
-    background-image: var(--grad);
-    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;
-    transition: background .14s ease, transform .08s ease, box-shadow .14s ease;
-    position:relative;
-  }
-  .screen-links a::after{
-    content:""; position:absolute; left:8px; right:8px; bottom:4px; height:3px;
-    background: transparent; border-radius: 2px; transition: background .2s ease, transform .2s ease;
-  }
-  .screen-links a:hover{
-    box-shadow: inset 0 0 0 999px rgba(255,255,255,0.18);
-  }
-  .screen-links a.active::after{
-    background: linear-gradient(90deg,#48b6e0, #b176f3);
-    transform: translateY(1px);
-  }
+      /* 그라데이션 텍스트 */
+      background-image: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
 
-  /* iframe (JS로 top/height 자동 계산) */
-  #main-frame{
-    position: fixed; left:0; top:160px; /* 초기값, 이후 JS로 정확히 보정 */
-    width:100vw; height: calc(100vh - 160px);
-    border:none; margin:0; background:#f5f7fa; z-index:10; display:block;
-  }
+      position: relative;
+    }
+    .screen-links a::after{
+      content:"";
+      position:absolute; left:10px; right:10px; bottom:4px; height:3px;
+      background: transparent; border-radius: 2px;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
 
-  /* 모바일 */
-  @media (max-width: 860px){
-    .searchbar-wrap{ height: 66px; }
-    .searchbar-input{ font-size:1.02rem; }
-    .searchbar-select{ min-width: 112px; font-size:1rem; }
-    .screen-links{ gap:8px; }
-    .screen-links a{ padding:6px 10px; font-size:.94rem; }
-  }
-  @media (max-width: 520px){
-    .app-header{ padding: 14px 10px 10px; }
-    .searchbar-wrap{ height: 60px; }
-    .searchbar-box{ padding-right: 6px; }
-    .select-wrap{ height: 42px; padding: 0 30px 0 8px; }
-    .searchbar-input{ height: 42px; padding:0 10px; }
-    .searchbar-btn{ width:52px; height:52px; }
-  }
+    .screen-links a:hover,
+    .screen-links a:focus {
+      box-shadow: inset 0 0 0 999px rgba(255,255,255,0.18);
+    }
+    .screen-links a:active { transform: scale(0.98); }
 
-  /* 포커스 접근성 */
-  .searchbar-select:focus-visible,
-  .searchbar-input:focus-visible,
-  .searchbar-btn:focus-visible,
-  .screen-links a:focus-visible{
-    outline: 2px solid rgba(72,182,224,.65);
-    outline-offset: 2px;
-    border-radius: 12px;
-  }
+    .screen-links a.active::after{
+      background: linear-gradient(90deg,#48b6e0, #b176f3); /* 활성 탭 하이라이트 바 */
+      transform: translateY(1px);
+    }
+
+    @media (max-width: 700px) {
+      .screen-links { font-size: 0.88rem; gap: 8px; padding: 4px 6px; max-width: 96vw; }
+      .screen-links-wrap { padding: 0 6px; }
+      .searchbar-outer { margin-bottom: 10px !important; }
+    }
 </style>
+
 </head>
 <body>
-  <!-- 고정 헤더: 검색 + 네비 -->
-  <header class="app-header" id="appHeader">
-    <!-- 검색바 -->
-    <div class="searchbar-outer">
-      <div class="searchbar-wrap">
-        <form class="searchbar-form" id="searchFormParent" autocomplete="off">
-          <div class="searchbar-box">
-            <div class="select-wrap">
-              <select class="searchbar-select" id="engineParent">
-                <option value="naver">네이버 ▼</option>
-                <option value="google">Google</option>
-                <option value="Reddit">Reddit</option>
-                <option value="youtube">Youtube</option>
-                <option value="soundcloud">SoundCloud</option>
-                <option value="daum">다음</option>
-                <option value="duckduckgo">DuckDuckGo</option>
-                <option value="msn">MSN</option>
-                <option value="yahoo">Yahoo</option>
-                <option value="yandex">Yandex</option>
-                <option value="naver_shopping">네이버 쇼핑</option>
-                <option value="joonggonara">중고나라</option>
-                <option value="naver_cafe">네이버카페 중고</option>
-                <option value="daangn">당근마켓</option>
-                <option value="bunjang">번개장터</option>
-                <option value="danawa">다나와</option>
-                <option value="coupang">쿠팡</option>
-                <option value="aliexpress">알리 (한글/영어)</option>
-                <option value="amazon">아마존 (한글/영어)</option>
-                <option value="ebay">이베이 (한글/영어)</option>
-                <option value="romanize">한글이름 → 영어</option>
-                <option value="jusoen">한글주소 → 영어</option>
-                <option value="postcode">우편번호 검색</option>
-                <option value="phone_114">114 전화번호 검색</option>
-                <option value="hanja_naver">네이버 한자검색</option>
-                <option value="afreecatv">AfreecaTV</option>
-                <option value="tvcast">TVCAST</option>
-                <option value="kakaotv">KakaoTV</option>
-                <option value="vimeo">Vimeo</option>
-                <option value="ms_edgestore">MS EDGE 스토어</option>
-                <option value="chrome_webstore">크롬 웹스토어</option>
-                <option value="naver_software">네이버 자료실</option>
-                <option value="kyobo">교보문고</option>
-                <option value="aladin">알라딘</option>
-                <option value="twitter">Twitter</option>
-                <option value="instagram">Instagram</option>
-                <option value="kakao_story">kakao.com</option>
-                <option value="tumblr">Tumblr</option>
-                <option value="tiktok">TikTok</option>
-                <option value="pinterest">Pinterest</option>
-                <option value="naver_music">네이버 음악</option>
-                <option value="melon">멜론</option>
-                <option value="bugs">벅스</option>
-              </select>
-            </div>
-            <input class="searchbar-input" id="queryParent" type="text" placeholder="검색어를 입력하세요  Myway.kr" autocomplete="off" />
-            <button class="searchbar-btn" type="submit" title="검색" aria-label="검색">
-              <svg viewBox="0 0 32 32" aria-hidden="true">
-                <circle cx="15" cy="15" r="10"/>
-                <line x1="23" y1="23" x2="30" y2="30"/>
-              </svg>
-            </button>
-          </div>
-        </form>
-      </div>
+  <!-- 검색바 (절대 수정 없음) -->
+  <div class="searchbar-outer">
+    <div class="searchbar-wrap">
+      <form class="searchbar-form" id="searchFormParent" autocomplete="off">
+        <div class="searchbar-box">
+          <select class="searchbar-select" id="engineParent">
+            <option value="naver">네이버 ▼</option>
+            <option value="google">Google </option>
+            <option value="Reddit">Reddit</option>
+            <option value="youtube">Youtube </option>
+            <option value="soundcloud">SoundCloud </option>
+            <option value="daum">다음 </option>
+            <option value="duckduckgo">DuckDuckGo </option>
+            <option value="msn">MSN </option>
+            <option value="yahoo">Yahoo </option>
+            <option value="yandex">Yandex </option>
+            <option value="naver_shopping">네이버 쇼핑 </option>
+            <option value="joonggonara">중고나라 </option>
+            <option value="naver_cafe">네이버카페 중고 </option>
+            <option value="daangn">당근마켓 </option>
+            <option value="bunjang">번개장터</option>
+            <option value="danawa">다나와 </option>
+            <option value="coupang">쿠팡 </option>
+            <option value="aliexpress">알리 (한글/영어) </option>
+            <option value="amazon">아마존 (한글/영어) </option>
+            <option value="ebay">이베이 (한글/영어) </option>
+            <option value="romanize">한글이름 → 영어 </option>
+            <option value="jusoen">한글주소 → 영어 </option>
+            <option value="postcode">우편번호 검색 </option>
+            <option value="phone_114">114 전화번호 검색 </option>
+            <option value="hanja_naver">네이버 한자검색 </option>
+            <option value="afreecatv">AfreecaTV </option>
+            <option value="tvcast">TVCAST </option>
+            <option value="kakaotv">KakaoTV </option>
+            <option value="vimeo">Vimeo </option>
+            <option value="ms_edgestore">MS EDGE 스토어 </option>
+            <option value="chrome_webstore">크롬 웹스토어 </option>
+            <option value="naver_software">네이버 자료실 </option>
+            <option value="kyobo">교보문고 </option>
+            <option value="aladin">알라딘 </option>
+            <option value="twitter">Twitter </option>
+            <option value="instagram">Instagram </option>
+            <option value="kakao_story">kakao.com </option>
+            <option value="tumblr">Tumblr </option>
+            <option value="tiktok">TikTok </option>
+            <option value="pinterest">Pinterest </option>
+            <option value="naver_music">네이버 음악 </option>
+            <option value="melon">멜론 </option>
+            <option value="bugs">벅스 </option>
+          </select>
+          <input class="searchbar-input" id="queryParent" type="text" placeholder="검색어를 입력하세요  Myway.kr" autocomplete="off" />
+          <button class="searchbar-btn" type="submit" title="검색">
+            <svg viewBox="0 0 32 32">
+              <circle cx="15" cy="15" r="10"/>
+              <line x1="23" y1="23" x2="30" y2="30"/>
+            </svg>
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
 
-    <!-- 네비게이션 -->
-    <div class="screen-links-wrap">
-      <div class="screen-links" id="parent-links">
-        <a href="#" onclick="showScreenParent(event, 'indexmainunder2.html')">A</a>
-        <a href="#" onclick="showScreenParent(event, 'indexmain.html')">H</a>
-        <a href="#" onclick="showScreenParent(event, '00maincoininner.html')">C&S</a>
-        <a href="#" onclick="showScreenParent(event, '00mainradioinner.html')">RADIO</a>
-        <a href="#" onclick="window.open('bbssitesbar2.html', '_blank'); return false;">BBS</a>
-        <a href="#" onclick="window.open('newsitesbar2.html', '_blank'); return false;">NEWS</a>
-        <a href="#" onclick="window.open('livesitesbar2.html', '_blank'); return false;">LIVE TV</a>
-        <a href="#" onclick="window.open('00mainmovieinner.html', '_blank'); return false;">MOVIE</a>
-        <a href="#" onclick="window.open('00maincctvinner2.html', '_blank'); return false;">CCTV</a>
-        <a href="#" onclick="window.open('00barmagazine.html', '_blank'); return false;">MAGAZINE</a>
-        <a href="#" onclick="showScreenParent(event, '00maintvinner2.html')">VOD</a>
-        <a href="#" onclick="showScreenParent(event, '00mainmusicinner.html')">MUSIC</a>
-        <a href="#" onclick="showScreenParent(event, '00mainmakinginner.html')">MAKING</a>
-        <a href="#" onclick="showScreenParent(event, 'indexmainpeople.html')">PEOPLE</a>
-        <a href="#" onclick="showScreenParent(event, '00maincomics.html')">COMICS</a>
-        <a href="#" onclick="showScreenParent(event, '00mainshopping.html')">MALL</a>
-        <a href="#" onclick="showScreenParent(event, '00mainuseful.html')">U</a>
-      </div>
+  <!-- 네비게이션 텍스트 (가운데정렬+좌우이동) -->
+  <div class="screen-links-wrap">
+    <div class="screen-links" id="parent-links">
+      <a href="#" onclick="showScreenParent(event, 'indexmainunder2.html')">A</a>
+      <a href="#" onclick="showScreenParent(event, 'indexmain.html')">H</a>
+      <a href="#" onclick="showScreenParent(event, '00maincoininner.html')">C&S</a>
+      <a href="#" onclick="showScreenParent(event, '00mainradioinner.html')">RADIO</a>
+      <a href="#" onclick="window.open('bbssitesbar2.html', '_blank'); return false;">BBS</a>
+      <a href="#" onclick="window.open('newsitesbar2.html', '_blank'); return false;">NEWS</a>
+      <a href="#" onclick="window.open('livesitesbar2.html', '_blank'); return false;">LIVE TV</a>
+      <a href="#" onclick="window.open('00mainmovieinner.html', '_blank'); return false;">MOVIE</a>
+      <a href="#" onclick="window.open('00maincctvinner2.html', '_blank'); return false;">CCTV</a>
+      <a href="#" onclick="window.open('00barmagazine.html', '_blank'); return false;">MAGAZINE</a>
+      <a href="#" onclick="showScreenParent(event, '00maintvinner2.html')">VOD</a>
+      <a href="#" onclick="showScreenParent(event, '00mainmusicinner.html')">MUSIC</a>
+      <a href="#" onclick="showScreenParent(event, '00mainmakinginner.html')">MAKING</a>
+      <a href="#" onclick="showScreenParent(event, 'indexmainpeople.html')">PEOPLE</a>
+      <a href="#" onclick="showScreenParent(event, '00maincomics.html')">COMICS</a>
+      <a href="#" onclick="showScreenParent(event, '00mainshopping.html')">MALL</a>
+      <a href="#" onclick="showScreenParent(event, '00mainuseful.html')">U</a>
     </div>
-  </header>
+  </div>
 
-  <!-- 콘텐츠 프레임 -->
-  <iframe id="main-frame" src="indexmainunder2.html" allowfullscreen></iframe>
+  <iframe id="main-frame" src="indexmainunder2.html" allowfullscreen style="position:fixed;left:0;top:158px;width:100vw;height:calc(100vh - 160px);border:none;margin:0;background:#f5f7fa;z-index:10;border-radius:0;display:block;"></iframe>
 
-<script>
-  // 검색엔진 데이터(그대로 유지)
-  var snarkEnginesParent = [
-    { key: "naver",  home: "https://www.naver.com/", search: "https://search.naver.com/search.naver?query=" },
-    { key: "google", home: "https://www.google.com/webhp?hl=en&gl=au", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=" },
-    { key: "Reddit", home: "https://www.reddit.com/", search: "https://www.reddit.com/search/?q=" },
-    { key: "youtube", home: "https://www.youtube.com/", search: "https://www.youtube.com/results?search_query=" },
-    { key: "soundcloud", home: "https://soundcloud.com/", search: "https://soundcloud.com/search?q=" },
-    { key: "daum", home: "https://www.daum.net/", search: "https://search.daum.net/search?q=" },
-    { key: "duckduckgo", home: "https://duckduckgo.com", search: "https://duckduckgo.com/?q=" },
-    { key: "msn", home: "https://www.msn.com/ko-kr/news", search: "https://www.bing.com/search?q=" },
-    { key: "yahoo", home: "https://www.yahoo.com", search: "https://search.yahoo.com/search?p=" },
-    { key: "yandex", home: "https://yandex.ru", search: "https://yandex.ru/search/?lr=10635&text=" },
-    { key: "naver_shopping", home: "https://shopping.naver.com/", search: "https://search.shopping.naver.com/ns/search?query=" },
-    { key: "joonggonara", home: "https://cafe.naver.com/joonggonara", search: "https://web.joongna.com/search/" },
-    { key: "naver_cafe", home: "https://cafe.naver.com", search: "https://cafe.naver.com/ca-fe/home/search/c-articles?q=" },
-    { key: "daangn", home: "https://www.daangn.com", search: "https://www.daangn.com/search/" },
-    { key: "bunjang", home: "https://m.bunjang.co.kr", search: "https://m.bunjang.co.kr/search/products?q=" },
-    { key: "danawa", home: "https://www.danawa.com/", search: "https://search.danawa.com/dsearch.php?k1=" },
-    { key: "coupang", home: "https://www.coupang.com", search: "https://www.coupang.com/np/search?q=" },
-    { key: "aliexpress", home: "https://ko.aliexpress.com/", search: "https://ko.aliexpress.com/w/wholesale-", searchPostfix: ".html" },
-    { key: "amazon", home: "https://www.amazon.com/", search: "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=" },
-    { key: "ebay", home: "https://www.ebay.com/", search: "https://www.ebay.com/sch/i.html?_from=R40&_trksid=p2050601.m570.l1313&_nkw=" },
-    { key: "romanize", home: "https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38", search: "https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38&idx=&act=&searchKeyword=" },
-    { key: "jusoen", home: "https://www.jusoen.com/", search: "https://www.jusoen.com/addreng.asp?p1=" },
-    { key: "postcode", home: "https://search.naver.com/search.naver?sm=tab_hty.top&where=nexearch&ie=utf8&query=%EC%9A%B0%EC%B2%B4%EA%B5%AD+%EC%9A%B0%ED%8E%B8%EB%B2%88%ED%98%B8&where=nexearch", search: "https://www.juso.go.kr/support/AddressMainSearch.do?searchKeyword=" },
-    { key: "phone_114", home: "https://www.114.co.kr", search: "https://www.114.co.kr/search/result/all?query=" },
-    { key: "hanja_naver", home: "http://hanja.naver.com", search: "http://hanja.naver.com/search?query=" },
-    { key: "afreecatv", home: "https://www.afreecatv.com/", search: "https://www.afreecatv.com/total_search.html?szKeyword=" },
-    { key: "tvcast", home: "https://tvcast.naver.com/", search: "https://tv.naver.com/search?query=" },
-    { key: "kakaotv", home: "https://tv.kakao.com/", search: "https://tv.kakao.com/search?q=" },
-    { key: "vimeo", home: "https://www.vimeo.com", search: "https://vimeo.com/search?q=" },
-    { key: "ms_edgestore", home: "https://microsoftedge.microsoft.com", search: "https://microsoftedge.microsoft.com/addons/search/" },
-    { key: "chrome_webstore", home: "https://chrome.google.com/webstore/category/extensions?hl=ko", search: "https://chrome.google.com/webstore/search/" },
-    { key: "naver_software", home: "https://software.naver.com", search: "https://software.naver.com/search.nhn?query=" },
-    { key: "kyobo", home: "https://search.kyobobook.co.kr", search: "https://search.kyobobook.co.kr/web/search?vPstrKeyWord=" },
-    { key: "aladin", home: "https://search.kyobobook.co.kr", search: "https://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=All&SearchWord=" },
-    { key: "twitter", home: "https://twitter.com", search: "https://twitter.com/search?q=" },
-    { key: "instagram", home: "https://www.instagram.com", search: "https://www.instagram.com/explore/tags/" },
-    { key: "kakao_story", home: "https://story.kakao.com", search: "https://story.kakao.com/hashtag/" },
-    { key: "tumblr", home: "https://www.tumblr.com", search: "https://www.tumblr.com/search/" },
-    { key: "tiktok", home: "https://www.tiktok.com", search: "https://www.tiktok.com/search?q=" },
-    { key: "pinterest", home: "https://pinterest.com", search: "https://pinterest.com/search/?q=" },
-    { key: "naver_music", home: "https://music.naver.com", search: "https://music.naver.com/search/search.nhn?query=" },
-    { key: "melon", home: "https://www.melon.com", search: "https://www.melon.com/search/total/index.htm?q=" },
-    { key: "bugs", home: "https://bugs.co.kr", search: "https://music.bugs.co.kr/search/integrated?q=" }
-  ];
-
-  document.getElementById('searchFormParent').onsubmit = function(e) {
-    e.preventDefault();
-    const engineKey = document.getElementById('engineParent').value;
-    const query = document.getElementById('queryParent').value.trim();
-    const engineObj = snarkEnginesParent.find(e => e.key === engineKey);
-    if (engineObj) {
-      let url = query
-        ? (engineObj.search + encodeURIComponent(query) + (engineObj.searchPostfix || ''))
-        : engineObj.home;
-      window.open(url, "_blank");
+  <script>
+    // 검색엔진 기능(기존 그대로)
+    var snarkEnginesParent = [
+      { key: "naver",  home: "https://www.naver.com/", search: "https://search.naver.com/search.naver?query=" },
+      { key: "google", home: "https://www.google.com/webhp?hl=en&gl=au", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=" },
+      { key: "Reddit", home: "https://www.reddit.com/", search: "https://www.reddit.com/search/?q=" },
+      { key: "youtube", home: "https://www.youtube.com/", search: "https://www.youtube.com/results?search_query=" },
+      { key: "soundcloud", home: "https://soundcloud.com/", search: "https://soundcloud.com/search?q=" },
+      { key: "daum", home: "https://www.daum.net/", search: "https://search.daum.net/search?q=" },
+      { key: "duckduckgo", home: "https://duckduckgo.com", search: "https://duckduckgo.com/?q=" },
+      { key: "msn", home: "https://www.msn.com/ko-kr/news", search: "https://www.bing.com/search?q=" },
+      { key: "yahoo", home: "https://www.yahoo.com", search: "https://search.yahoo.com/search?p=" },
+      { key: "yandex", home: "https://yandex.ru", search: "https://yandex.ru/search/?lr=10635&text=" },
+      { key: "naver_shopping", home: "https://shopping.naver.com/", search: "https://search.shopping.naver.com/ns/search?query=" },
+      { key: "joonggonara", home: "https://cafe.naver.com/joonggonara", search: "https://web.joongna.com/search/" },
+      { key: "naver_cafe", home: "https://cafe.naver.com", search: "https://cafe.naver.com/ca-fe/home/search/c-articles?q=" },
+      { key: "daangn", home: "https://www.daangn.com", search: "https://www.daangn.com/search/" },
+      { key: "bunjang", home: "https://m.bunjang.co.kr", search: "https://m.bunjang.co.kr/search/products?q=" },
+      { key: "danawa", home: "https://www.danawa.com/", search: "https://search.danawa.com/dsearch.php?k1=" },
+      { key: "coupang", home: "https://www.coupang.com", search: "https://www.coupang.com/np/search?q=" },
+      { key: "aliexpress", home: "https://ko.aliexpress.com/", search: "https://ko.aliexpress.com/w/wholesale-", searchPostfix: ".html" },
+      { key: "amazon", home: "https://www.amazon.com/", search: "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=" },
+      { key: "ebay", home: "https://www.ebay.com/", search: "https://www.ebay.com/sch/i.html?_from=R40&_trksid=p2050601.m570.l1313&_nkw=" },
+      { key: "romanize", home: "https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38", search: "https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38&idx=&act=&searchKeyword=" },
+      { key: "jusoen", home: "https://www.jusoen.com/", search: "https://www.jusoen.com/addreng.asp?p1=" },
+      { key: "postcode", home: "https://search.naver.com/search.naver?sm=tab_hty.top&where=nexearch&ie=utf8&query=%EC%9A%B0%EC%B2%B4%EA%B5%AD+%EC%9A%B0%ED%8E%B8%EB%B2%88%ED%98%B8&where=nexearch", search: "https://www.juso.go.kr/support/AddressMainSearch.do?searchKeyword=" },
+      { key: "phone_114", home: "https://www.114.co.kr", search: "https://www.114.co.kr/search/result/all?query=" },
+      { key: "hanja_naver", home: "http://hanja.naver.com", search: "http://hanja.naver.com/search?query=" },
+      { key: "afreecatv", home: "https://www.afreecatv.com/", search: "https://www.afreecatv.com/total_search.html?szKeyword=" },
+      { key: "tvcast", home: "https://tvcast.naver.com/", search: "https://tv.naver.com/search?query=" },
+      { key: "kakaotv", home: "https://tv.kakao.com/", search: "https://tv.kakao.com/search?q=" },
+      { key: "vimeo", home: "https://www.vimeo.com", search: "https://vimeo.com/search?q=" },
+      { key: "ms_edgestore", home: "https://microsoftedge.microsoft.com", search: "https://microsoftedge.microsoft.com/addons/search/" },
+      { key: "chrome_webstore", home: "https://chrome.google.com/webstore/category/extensions?hl=ko", search: "https://chrome.google.com/webstore/search/" },
+      { key: "naver_software", home: "https://software.naver.com", search: "https://software.naver.com/search.nhn?query=" },
+      { key: "kyobo", home: "https://search.kyobobook.co.kr", search: "https://search.kyobobook.co.kr/web/search?vPstrKeyWord=" },
+      { key: "aladin", home: "https://search.kyobobook.co.kr", search: "https://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=All&SearchWord=" },
+      { key: "twitter", home: "https://twitter.com", search: "https://twitter.com/search?q=" },
+      { key: "instagram", home: "https://www.instagram.com", search: "https://www.instagram.com/explore/tags/" },
+      { key: "kakao_story", home: "https://story.kakao.com", search: "https://story.kakao.com/hashtag/" },
+      { key: "tumblr", home: "https://www.tumblr.com", search: "https://www.tumblr.com/search/" },
+      { key: "tiktok", home: "https://www.tiktok.com", search: "https://www.tiktok.com/search?q=" },
+      { key: "pinterest", home: "https://pinterest.com", search: "https://pinterest.com/search/?q=" },
+      { key: "naver_music", home: "https://music.naver.com", search: "https://music.naver.com/search/search.nhn?query=" },
+      { key: "melon", home: "https://www.melon.com", search: "https://www.melon.com/search/total/index.htm?q=" },
+      { key: "bugs", home: "https://bugs.co.kr", search: "https://music.bugs.co.kr/search/integrated?q=" }
+    ];
+    document.getElementById('searchFormParent').onsubmit = function(e) {
+      e.preventDefault();
+      const engineKey = document.getElementById('engineParent').value;
+      const query = document.getElementById('queryParent').value.trim();
+      const engineObj = snarkEnginesParent.find(e => e.key === engineKey);
+      if (engineObj) {
+        let url = query
+          ? (engineObj.search + encodeURIComponent(query) + (engineObj.searchPostfix || ''))
+          : engineObj.home;
+        window.open(url, "_blank");
+      }
+    };
+    function showScreenParent(e, url) {
+      e.preventDefault();
+      document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
+      e.target.classList.add('active');
+      var frame = document.getElementById('main-frame');
+      frame.src = url;
+      // ▼ 추가된 부분(네비바 중앙 이동)
+      const parent = document.getElementById('parent-links');
+      const el = e.target;
+      if (parent && el) {
+        const offset = el.offsetLeft - parent.offsetLeft
+          - parent.clientWidth / 2
+          + el.clientWidth / 2;
+        parent.scrollTo({ left: offset, behavior: 'smooth' });
+      }
     }
-  };
-
-  function showScreenParent(e, url) {
-    e.preventDefault();
-    document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
-    e.target.classList.add('active');
-    var frame = document.getElementById('main-frame');
-    frame.src = url;
-    // 네비바 중앙 이동
-    const parent = document.getElementById('parent-links');
-    const el = e.target;
-    if (parent && el) {
-      const offset = el.offsetLeft - parent.offsetLeft - parent.clientWidth/2 + el.clientWidth/2;
-      parent.scrollTo({ left: offset, behavior: 'smooth' });
-    }
-  }
-
-  // 네비 드래그/터치 스크롤
-  (function(){
-    const nav = document.querySelector('.screen-links');
-    let isDown = false, startX = 0, scrollLeft = 0;
-    nav.addEventListener('mousedown', (e) => {
-      isDown = true;
-      startX = e.pageX - nav.offsetLeft;
-      scrollLeft = nav.scrollLeft;
-      nav.style.cursor = 'grabbing';
-    });
-    nav.addEventListener('mouseleave', () => {
-      isDown = false; nav.style.cursor='';
-    });
-    nav.addEventListener('mouseup', () => {
-      isDown = false; nav.style.cursor='';
-    });
-    nav.addEventListener('mousemove', (e) => {
-      if (!isDown) return;
-      const x = e.pageX - nav.offsetLeft;
-      nav.scrollLeft = scrollLeft - (x - startX);
-    });
-    // 모바일
-    let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
-    nav.addEventListener('touchstart', function(e){
-      touchDragging = true;
-      touchStartX = e.touches[0].pageX - nav.offsetLeft;
-      touchScrollLeft = nav.scrollLeft;
-    });
-    nav.addEventListener('touchend', ()=>{ touchDragging=false; });
-    nav.addEventListener('touchmove', function(e){
-      if(!touchDragging) return;
-      const x = e.touches[0].pageX - nav.offsetLeft;
-      nav.scrollLeft = touchScrollLeft - (x - touchStartX);
-    });
-  })();
-
-  // 헤더 실제 높이에 맞춰 iframe 자동 조정
-  function adjustFrame(){
-    const header = document.getElementById('appHeader');
-    const frame = document.getElementById('main-frame');
-    if(!header || !frame) return;
-    const h = header.getBoundingClientRect().height;
-    frame.style.top = h + 'px';
-    frame.style.height = `calc(100vh - ${h}px)`;
-  }
-  window.addEventListener('load', adjustFrame);
-  window.addEventListener('resize', adjustFrame);
-  // 폰트/이미지 로딩 후에도 한 번 더
-  document.fonts && document.fonts.ready && document.fonts.ready.then(adjustFrame);
-  // 초기 활성 탭 표시
-  window.addEventListener('DOMContentLoaded', ()=>{
-    const first = document.querySelector('#parent-links a[href="#"]');
-    const aTags = document.querySelectorAll('#parent-links a');
-    // 기본으로 첫번째(A) 활성화
-    if(aTags.length) aTags[0].classList.add('active');
-  });
-</script>
+    // 네비바 드래그/터치로 좌우 스크롤 (순서 바꾸기 아님)
+    (function(){
+      const nav = document.querySelector('.screen-links');
+      let isDown = false, startX = 0, scrollLeft = 0;
+      nav.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - nav.offsetLeft;
+        scrollLeft = nav.scrollLeft;
+        nav.style.cursor = 'grabbing';
+      });
+      nav.addEventListener('mouseleave', () => {
+        isDown = false;
+        nav.style.cursor = '';
+      });
+      nav.addEventListener('mouseup', () => {
+        isDown = false;
+        nav.style.cursor = '';
+      });
+      nav.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        const x = e.pageX - nav.offsetLeft;
+        nav.scrollLeft = scrollLeft - (x - startX);
+      });
+      // 모바일 터치
+      let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
+      nav.addEventListener('touchstart', function(e){
+        touchDragging = true;
+        touchStartX = e.touches[0].pageX - nav.offsetLeft;
+        touchScrollLeft = nav.scrollLeft;
+      });
+      nav.addEventListener('touchend', ()=>{ touchDragging=false; });
+      nav.addEventListener('touchmove', function(e){
+        if(!touchDragging) return;
+        const x = e.touches[0].pageX - nav.offsetLeft;
+        nav.scrollLeft = touchScrollLeft - (x - touchStartX);
+      });
+    })();
+  </script>
 </body>
 </html>
