@@ -28,7 +28,7 @@
 <meta property="og:image" content="https://myway.kr/mywaylogo.png" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="naver-site-verification" content="4e88b51e170829dfb01ce587eaf5575804dd5a2" />
-  <style>
+ <style>
     /* 1) 페이지 배경을 흰색으로 */
     body {
       font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
@@ -79,13 +79,13 @@
       overflow: hidden;
     }
 
-    /* 4) 검색엔진 셀렉트: 표시 텍스트는 흰색, 드롭다운 옵션은 흰 배경 + 진한 보라 텍스트로 가독성 확보 */
+    /* 4) 검색엔진 셀렉트 */
     .searchbar-select {
       background: transparent;
       border: none;
       padding: 0 15px 0 3px;
       font-size: 1.13rem;
-      color: #ffffff; /* 셀렉트 박스 안 표시 텍스트 */
+      color: #ffffff; /* 셀렉트 표시 텍스트 */
       font-weight: bold;
       outline: none;
       cursor: pointer;
@@ -98,17 +98,16 @@
       -webkit-appearance: none;
       -moz-appearance: none;
     }
-    /* 드롭다운 목록 항목 가독성 (브라우저 기본 드롭다운 배경에 맞춤) */
     .searchbar-select option {
-      color: #4b2dbd;        /* 진한 보라톤 텍스트 */
-      background: #ffffff;   /* 흰 배경으로 대비 */
+      color: #4b2dbd;        /* 진한 보라톤 */
+      background: #ffffff;   /* 흰 배경 */
     }
 
     .searchbar-input {
       flex: 1;
       border: none;
       background: transparent;
-      color: #ffffff; /* 검색어 입력 텍스트 흰색 */
+      color: #ffffff; /* 입력 텍스트 흰색 */
       outline: none;
       font-size: 1.14rem;
       padding: 0 13px;
@@ -117,7 +116,7 @@
       font-family: inherit;
     }
     .searchbar-input::placeholder {
-      color: rgba(255,255,255,0.75); /* 흰색 반투명 */
+      color: rgba(255,255,255,0.75);
       opacity: 1;
       letter-spacing: 0.01em;
     }
@@ -141,13 +140,13 @@
     }
     .searchbar-btn svg {
       width: 28px; height: 28px;
-      stroke: #ffffff; /* 검색 아이콘 흰색 */
+      stroke: #ffffff;
       stroke-width: 2.6;
       fill: none;
       transition: stroke 0.12s;
     }
 
-    /* 네비바 영역 (드래그로 스크롤) */
+    /* 네비바 영역 */
     .screen-links-wrap {
       width: 100vw;
       position: relative;
@@ -155,7 +154,7 @@
       padding: 0;
       box-sizing: border-box;
       z-index: 9;
-      overflow: hidden; /* 스크롤바 숨김 */
+      overflow: hidden;
       display: flex;
       justify-content: center;
     }
@@ -164,7 +163,6 @@
       gap: 15px;
       font-size: 0.96rem;
       font-weight: 500;
-      color: #fff; /* 미사용(gradient 텍스트로 대체) */
       white-space: nowrap;
       background: none;
       padding: 0 12px;
@@ -200,18 +198,23 @@
       transition: background 0.12s, color 0.14s;
       cursor: pointer;
       white-space: nowrap;
-
-      /* 그라데이션 텍스트 */
       background-image: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      color: transparent; /* 표준 속성 */
+      color: transparent;
     }
-    /* hover/active 동작(구조 동일, 디자인 변경 없음) */
-    .screen-links a:hover, .screen-links a.active {
-      background: rgba(255,255,255,0.14); /* 원래 값 유지 */
-      /* 텍스트 그라데이션 유지 */
+
+    /* hover/active에서도 그라데이션 유지 */
+    .screen-links a:hover,
+    .screen-links a:focus,
+    .screen-links a.active {
+      background: rgba(255,255,255,0.14);
+      background-image: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%) !important;
+      -webkit-background-clip: text !important;
+      background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      color: transparent !important;
     }
 
     @media (max-width: 700px) {
@@ -219,7 +222,8 @@
       .screen-links-wrap { padding: 0;}
       .searchbar-outer { margin-bottom: 10px !important; }
     }
-  </style>
+</style>
+
 </head>
 <body>
   <!-- 검색바 -->
