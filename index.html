@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -29,15 +28,17 @@
 <meta property="og:image" content="https://myway.kr/mywaylogo.png" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="naver-site-verification" content="4e88b51e170829dfb01ce587eaf5575804dd5a2" />
-  <style>
+ <style>
+    /* 1) 페이지 배경을 흰색으로 */
     body {
       font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
-       background: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
+      background: #ffffff;
       margin: 0;
       padding: 0;
       min-height: 100vh;
       overflow: hidden;
     }
+
     .searchbar-outer {
       display: flex;
       justify-content: center;
@@ -64,10 +65,12 @@
       position: relative;
       z-index: 2;
     }
+
+    /* 2) 검색바 박스: 기존 바탕 그라데이션 적용 */
     .searchbar-box {
       position: relative;
       display: flex; align-items: center;
-      background: linear-gradient(180deg, #fafdff 70%, #e6f0ff 100%);
+      background: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
       border-radius: 38px;
       width: 100%;
       height: 100%;
@@ -75,12 +78,14 @@
       padding: 0 24px 0 18px;
       overflow: hidden;
     }
+
+    /* 4) 검색엔진 셀렉트 */
     .searchbar-select {
       background: transparent;
       border: none;
       padding: 0 15px 0 3px;
       font-size: 1.13rem;
-      color: #483ca3;
+      color: #ffffff; /* 셀렉트 표시 텍스트 */
       font-weight: bold;
       outline: none;
       cursor: pointer;
@@ -89,12 +94,20 @@
       height: 44px;
       border-radius: 16px;
       margin-right: 7px;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
     }
+    .searchbar-select option {
+      color: #4b2dbd;        /* 진한 보라톤 */
+      background: #ffffff;   /* 흰 배경 */
+    }
+
     .searchbar-input {
       flex: 1;
       border: none;
       background: transparent;
-      color: #6e4ac3;
+      color: #ffffff; /* 입력 텍스트 흰색 */
       outline: none;
       font-size: 1.14rem;
       padding: 0 13px;
@@ -103,10 +116,11 @@
       font-family: inherit;
     }
     .searchbar-input::placeholder {
-      color: #b8aee8;
+      color: rgba(255,255,255,0.75);
       opacity: 1;
       letter-spacing: 0.01em;
     }
+
     .searchbar-btn {
       background: none;
       border: none;
@@ -126,12 +140,13 @@
     }
     .searchbar-btn svg {
       width: 28px; height: 28px;
-      stroke: #856ad3;
+      stroke: #ffffff;
       stroke-width: 2.6;
       fill: none;
       transition: stroke 0.12s;
     }
-    /* 네비바 영역 (드래그로 스크롤) */
+
+    /* 네비바 영역 */
     .screen-links-wrap {
       width: 100vw;
       position: relative;
@@ -139,16 +154,15 @@
       padding: 0;
       box-sizing: border-box;
       z-index: 9;
-      overflow: hidden; /* 스크롤바 숨김 */
+      overflow: hidden;
       display: flex;
       justify-content: center;
     }
     .screen-links {
       display: flex;
       gap: 15px;
-     font-size: 0.96rem;
+      font-size: 0.96rem;
       font-weight: 500;
-      color: #fff;
       white-space: nowrap;
       background: none;
       padding: 0 12px;
@@ -166,8 +180,9 @@
       transition: none;
     }
     .screen-links::-webkit-scrollbar { display: none; }
+
+    /* 3) 네비바 텍스트 그라데이션 */
     .screen-links a {
-      color: rgba(255,255,255,0.76) !important;
       text-decoration: none;
       padding: 2px 8px;
       border-radius: 8px;
@@ -183,18 +198,32 @@
       transition: background 0.12s, color 0.14s;
       cursor: pointer;
       white-space: nowrap;
+      background-image: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
     }
-    .screen-links a:hover, .screen-links a.active {
+
+    /* hover/active에서도 그라데이션 유지 */
+    .screen-links a:hover,
+    .screen-links a:focus,
+    .screen-links a.active {
       background: rgba(255,255,255,0.14);
-      color: #ffe8ff !important;
-      font-weight: 500;
+      background-image: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%) !important;
+      -webkit-background-clip: text !important;
+      background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      color: transparent !important;
     }
+
     @media (max-width: 700px) {
       .screen-links { font-size: 0.88rem; gap: 8px; padding: 0 4px;}
       .screen-links-wrap { padding: 0;}
       .searchbar-outer { margin-bottom: 10px !important; }
     }
-  </style>
+</style>
+
 </head>
 <body>
   <!-- 검색바 -->
@@ -258,64 +287,34 @@
       </form>
     </div>
   </div>
+
   <!-- 네비게이션 텍스트 (가운데정렬+좌우이동) -->
   <div class="screen-links-wrap">
     <div class="screen-links" id="parent-links">
- 
-
- <a href="#" onclick="showScreenParent(event, 'indexmainunder.html')">A</a>
-       <a href="#" onclick="showScreenParent(event, 'indexmain.html')">H</a>
+      <a href="#" onclick="showScreenParent(event, 'indexmainunder2.html')">A</a>
+      <a href="#" onclick="showScreenParent(event, 'indexmain.html')">H</a>
       <a href="#" onclick="showScreenParent(event, '00maincoininner.html')">C&S</a>
-
-       <a href="#" onclick="showScreenParent(event, '00mainradioinner.html')">RADIO</a>
-        <a href="#" onclick="window.open('bbssitesbar2.html', '_blank'); return false;">BBS</a>
-     <a href="#" onclick="window.open('newsitesbar2.html', '_blank'); return false;">NEWS</a>
-          <a href="#" onclick="window.open('livesitesbar2.html', '_blank'); return false;">LIVE TV</a>
-     <a href="#" onclick="window.open('00mainmovieinner.html', '_blank'); return false;">MOVIE</a>
-    <a href="#" onclick="window.open('00maincctvinner2.html', '_blank'); return false;">CCTV</a>
- <a href="#" onclick="window.open('00barmagazine.html', '_blank'); return false;">MAGAZINE</a>
-
- <a href="#" onclick="showScreenParent(event, '00maintvinner2.html')">VOD</a>
-
- 
- 
-
- <a href="#" onclick="showScreenParent(event, '00mainmusicinner.html')">MUSIC</a>
-      
-
-
-
-  <a href="#" onclick="showScreenParent(event, '00mainmakinginner.html')">MAKING</a>
-
-      
-   
-          
-
-<a href="#" onclick="showScreenParent(event, 'indexmainpeople.html')">PEOPLE</a>
-   <a href="#" onclick="showScreenParent(event, '00maincomics.html')">COMICS</a>
-   
-  <a href="#" onclick="showScreenParent(event, '00mainshopping.html')">MALL</a>
-
-
-  <a href="#" onclick="showScreenParent(event, '00mainuseful.html')">U</a>
-
-
-      
-  
+      <a href="#" onclick="showScreenParent(event, '00mainradioinner.html')">RADIO</a>
+      <a href="#" onclick="window.open('bbssitesbar2.html', '_blank'); return false;">BBS</a>
+      <a href="#" onclick="window.open('newsitesbar2.html', '_blank'); return false;">NEWS</a>
+      <a href="#" onclick="window.open('livesitesbar2.html', '_blank'); return false;">LIVE TV</a>
+      <a href="#" onclick="window.open('00mainmovieinner.html', '_blank'); return false;">MOVIE</a>
+      <a href="#" onclick="window.open('00maincctvinner2.html', '_blank'); return false;">CCTV</a>
+      <a href="#" onclick="window.open('00barmagazine.html', '_blank'); return false;">MAGAZINE</a>
+      <a href="#" onclick="showScreenParent(event, '00maintvinner2.html')">VOD</a>
+      <a href="#" onclick="showScreenParent(event, '00mainmusicinner.html')">MUSIC</a>
+      <a href="#" onclick="showScreenParent(event, '00mainmakinginner.html')">MAKING</a>
+      <a href="#" onclick="showScreenParent(event, 'indexmainpeople.html')">PEOPLE</a>
+      <a href="#" onclick="showScreenParent(event, '00maincomics.html')">COMICS</a>
+      <a href="#" onclick="showScreenParent(event, '00mainshopping.html')">MALL</a>
+      <a href="#" onclick="showScreenParent(event, '00mainuseful.html')">U</a>
     </div>
   </div>
 
+  <iframe id="main-frame" src="indexmainunder2.html" allowfullscreen style="position:fixed;left:0;top:158px;width:100vw;height:calc(100vh - 160px);border:none;margin:0;background:#f5f7fa;z-index:10;border-radius:0;display:block;"></iframe>
 
-  
-  <iframe id="main-frame" src="indexmainunder.html" allowfullscreen style="position:fixed;left:0;top:158px;width:100vw;height:calc(100vh - 160px);border:none;margin:0;background:#f5f7fa;z-index:10;border-radius:0;display:block;"></iframe>
- 
-  
-  
-  
-  
-  
   <script>
-    // 검색엔진 기능(기존 그대로, 필요하면 추가)
+    // 검색엔진 기능(기존 그대로)
     var snarkEnginesParent = [
       { key: "naver",  home: "https://www.naver.com/", search: "https://search.naver.com/search.naver?query=" },
       { key: "google", home: "https://www.google.com/webhp?hl=en&gl=au", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=" },
