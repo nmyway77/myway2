@@ -1,4 +1,4 @@
-  <html lang="ko">
+<html lang="ko">
 <head>
   <base target="_blank76">
   <meta charset="UTF-8">
@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
-    .dashboard { max-width: 1200px; margin: 0 auto; padding: 34px 0 60px 0;}
+    .dashboard { max-width: 1200px; margin: 0 auto; padding: 0 0 60px 0;} /* 상단 여백 제거 */
     .gallery-label {
-      font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
+      font-weight: bold; font-size: 1.15rem; margin: 0 0 18px 0; /* 상단 여백 제거 */
       color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
     }
     .gallery-row {
@@ -67,7 +67,7 @@
 </head>
 <body>
   <div class="dashboard">
-    <span class="gallery-label">COIN&STOCK</span>
+    <span class="gallery-label"></span>
     <div class="gallery-row" id="gallery1"></div>
     <span class="gallery-label"> </span>
     <div class="gallery-row" id="gallery2"></div>
@@ -89,41 +89,25 @@
     <div class="gallery-row" id="gallery10"></div>
   </div>
   <script>
-    // 갤러리1~10 예시 데이터(갤5~10은 샘플 1개만 입력, 필요시 채우세요)
     const gallery1Data = [
-
-
-
-{ url: "https://coinone.co.kr/chart?site=coinone", img: "https://news.einfomax.co.kr/news/photo/202301/4250201_137252_402.jpg" },
-
-{ url: "https://coinone.co.kr/chart?site=coinonexrp", img: "https://i3n.news1.kr/system/photos/2025/2/7/7120009/high.jpg" },
-       
-{ url: "https://coinone.co.kr/chart?site=coinonedoge", img: "https://cdn.topstarnews.net/news/photo/202507/15740847_1649458_1429.jpg" },
-{ url: "https://coinone.co.kr/chart?site=coinonetrx", img: "https://thumbs.dreamstime.com/b/crypto-currency-golden-coin-black-lackered-tron-symbol-obverse-surrounded-realistic-flame-isolated-black-110481236.jpg" },
-
-{ url: "https://www.tradingview.com/symbols/BTC.D/?timeframe=12M", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSj51kscLe9xZHWvnjSJFcPEt8wLVuXe60vQA&s" },
-
-
-
-{ url: "https://kimpga.com/", img: "https://play-lh.googleusercontent.com/MJfHMbnDFrD13-I6XISklLKE2WzcxSTh_hPLT2LcyTbRCOCLurRhZ8Buug7dZs-9UIrW=w240-h480-rw" },
-
-      
- ];
+      { url: "https://coinone.co.kr/chart?site=coinone", img: "https://news.einfomax.co.kr/news/photo/202301/4250201_137252_402.jpg" },
+      { url: "https://coinone.co.kr/chart?site=coinonexrp", img: "https://i3n.news1.kr/system/photos/2025/2/7/7120009/high.jpg" },
+      { url: "https://coinone.co.kr/chart?site=coinonedoge", img: "https://cdn.topstarnews.net/news/photo/202507/15740847_1649458_1429.jpg" },
+      { url: "https://coinone.co.kr/chart?site=coinonetrx", img: "https://thumbs.dreamstime.com/b/crypto-currency-golden-coin-black-lackered-tron-symbol-obverse-surrounded-realistic-flame-isolated-black-110481236.jpg" },
+      { url: "https://www.tradingview.com/symbols/BTC.D/?timeframe=12M", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSj51kscLe9xZHWvnjSJFcPEt8wLVuXe60vQA&s" },
+      { url: "https://kimpga.com/", img: "https://play-lh.googleusercontent.com/MJfHMbnDFrD13-I6XISklLKE2WzcxSTh_hPLT2LcyTbRCOCLurRhZ8Buug7dZs-9UIrW=w240-h480-rw" }
+    ];
     const gallery2Data = [
-
-
+  
 { url: "https://cfgi.io/bitcoin-fear-greed-index/", img: "00maincoinbtc.jpg" },
 
 { url: "https://cfgi.io/ripple-fear-greed-index/", img: "00maincoinxrp.jpg" },
       { url: "https://cfgi.io/doge-fear-greed-index/", img: "00maincoindoge.jpg" },
 
 { url: "https://cfgi.io/tron-fear-greed-index/", img: "00maincointrx.jpg" },
-
-      
     ];
     const gallery3Data = [
-
-           { url: "https://upbit.com/exchange?code=CRIX.UPBIT.KRW-DOGE", img: "https://myway.kr/up.jpg" },
+               { url: "https://upbit.com/exchange?code=CRIX.UPBIT.KRW-DOGE", img: "https://myway.kr/up.jpg" },
  { url: "https://www.bithumb.com/react/trade/order/BTC-KRW", img: "00coinbit.jpg" },
       
      { url: "https://www.binance.com/en/markets/overview", img: "https://myway.kr/bi.jpg" },
@@ -177,44 +161,14 @@
 { url: "https://href.li/?http://mbnmoney.mbn.co.kr/tv/onair", img: "https://64.media.tumblr.com/f6d709d23fe41d9b9704bb129599163b/tumblr_inline_qr6ijt9Seg1r45nlo_500.jpg" },
 { url: "https://www.youtube.com/results?search_query=%EC%A6%9D%EA%B6%8C%EB%B0%A9%EC%86%A1", img: "https://myway.kr/hk.jpg" },
  
-   
-
-    ];
-    const gallery4Data = [
-
-
-
-
 
 
 
 
 
       
-     
     ];
-    const gallery5Data = [
-   
-    ];
-    const gallery6Data = [
-    
-    ];
-    const gallery7Data = [
-     
-    ];
-    const gallery8Data = [
-    
-    ];
-    const gallery9Data = [
-      
-    ];
-    const gallery10Data = [
-     
-    ];
-
-    // 그림자 png
     const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
-    // 모든 갤러리를 매거진 타입으로!
     function renderGallery(data, targetId) {
       const el = document.getElementById(targetId);
       el.innerHTML = data.map(item => `
@@ -237,13 +191,6 @@
     renderGallery(gallery1Data, 'gallery1');
     renderGallery(gallery2Data, 'gallery2');
     renderGallery(gallery3Data, 'gallery3');
-    renderGallery(gallery4Data, 'gallery4');
-    renderGallery(gallery5Data, 'gallery5');
-    renderGallery(gallery6Data, 'gallery6');
-    renderGallery(gallery7Data, 'gallery7');
-    renderGallery(gallery8Data, 'gallery8');
-    renderGallery(gallery9Data, 'gallery9');
-    renderGallery(gallery10Data, 'gallery10');
   </script>
 </body>
 </html>
