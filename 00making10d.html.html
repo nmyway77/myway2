@@ -37,13 +37,15 @@
       font-family: inherit;
     }
 
+    /* ↓↓↓ 여기만 핵심 변경 */
+    .dashboard {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 64px 0 60px 0;
+      margin-top: 1200px !important; /* 화면 아래에서 시작하도록 강제 */
+    }
+    /* ↑↑↑ */
 
-
-    
-    .dashboard { max-width: 1200px; margin: 0 auto; padding: 64px 0 60px 0;   margin-top: 900px;     }
-
-
-    
     .gallery-label {
       font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
       color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
@@ -143,7 +145,9 @@
       <option value="00making10d.html.html">PIC2 ▼</option>
     </select>
   </nav>
-  <div class="dashboard" style="margin-top:50px;">
+
+  <!-- 인라인 margin-top 제거 (중요) -->
+  <div class="dashboard">
     <span class="gallery-label">A</span>
     <div class="gallery-row" id="gallery1"></div>
     <span class="gallery-label">B</span>
@@ -165,6 +169,7 @@
     <span class="gallery-label">J</span>
     <div class="gallery-row" id="gallery10"></div>
   </div>
+
   <!-- 입력 모달 -->
   <div id="modal-overlay">
     <div id="modal">
@@ -192,6 +197,7 @@
       </div>
     </div>
   </div>
+
   <script>
     // 페이지 이동 콤보박스
     document.getElementById('page-switch').addEventListener('change', function() {
@@ -357,4 +363,3 @@
   </script>
 </body>
 </html>
-
