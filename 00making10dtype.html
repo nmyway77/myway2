@@ -8,127 +8,93 @@
     body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
     .topbar {
       position: fixed; top: 0; left: 0; width: 100vw; z-index: 1001;
-      background: #2e2e54;
-      color: #fff;
+      background: #2e2e54; color: #fff;
       display: flex; align-items: center; justify-content: flex-start;
       box-shadow: 0 4px 18px #29317018;
-      padding: 0 14px; height: 54px;
-      min-width: 360px;
-      font-size: 16px;
+      padding: 0 14px; height: 54px; min-width: 360px; font-size: 16px;
     }
     .topbar button {
-      padding: 8px 18px;
-      margin-right: 8px;
-      background: #436cff;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-size: 15px;
-      cursor: pointer;
-      font-family: inherit;
-      transition: background .2s;
+      padding: 8px 18px; margin-right: 8px; background: #436cff; color: #fff;
+      border: none; border-radius: 6px; font-size: 15px; cursor: pointer;
+      font-family: inherit; transition: background .2s;
     }
     .topbar button#export-btn { background: #30bc8a; }
     .topbar button#import-btn { background: #ffc94a; color: #232356; }
     .topbar select {
-      margin-left: 8px; padding: 7px 11px;
-      font-size: 15px; border-radius: 5px; border: 1px solid #ccd;
-      background: #fff; color: #232373; min-width: 110px;
-      font-family: inherit;
+      margin-left: 8px; padding: 7px 11px; font-size: 15px; border-radius: 5px; border: 1px solid #ccd;
+      background: #fff; color: #232373; min-width: 110px; font-family: inherit;
     }
-    .dashboard { max-width: 1200px; margin: 0 auto; padding: 64px 0 60px 0;}
+
+    /* 대시보드: 처음 화면에서 한참 아래에서 시작 */
+    .dashboard {
+      max-width: 1200px; margin: 0 auto; padding: 64px 0 60px 0;
+      margin-top: 1200px !important;
+    }
+
     .gallery-label {
       font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
       color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
     }
-    .gallery-row {
-      width: 100%; max-width: 1080px; margin: 0 auto;
-      text-align: center;
-    }
+    .gallery-row { width: 100%; max-width: 1080px; margin: 0 auto; text-align: center; }
+
     .list-row {
-      display: inline-block;
-      vertical-align: top;
-      box-sizing: border-box;
-      position: relative;
-      transition: width 0.2s, height 0.2s;
-      background: #fff;
-      /* 기본값 지우고 JS로 조절 */
+      display: inline-block; vertical-align: top; box-sizing: border-box;
+      position: relative; transition: width 0.2s, height 0.2s; background: #fff;
     }
-    .list-row.magazine {
-      width: 200px;
-      height: 283px;
-      margin: 0 12px 36px 0;
-      /* 기본 세로형 */
-    }
-    .list-row.magazine.wide-box {
-      width: 283px !important;
-      height: 200px !important;
-    }
-    .list-row.magazine.tall-box {
-      width: 200px !important;
-      height: 283px !important;
-    }
+    .list-row:last-child { margin-right: 0; }
+
     .imgframe {
-      width: 100%; height: 100%;
-      background: #fff;
-      position: relative;
-      box-sizing: border-box;
-      z-index: 0;
-      border-radius: 0;
+      width: 100%; height: 100%; background: #fff; position: relative;
+      box-sizing: border-box; z-index: 0; border-radius: 0;
       box-shadow: 0 6px 6px 0 rgba(90,90,130,0.11);
-      overflow: hidden;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
+      overflow: hidden; display: flex; align-items: flex-start; justify-content: center;
     }
     .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
     .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
-    .img-item img {
-      display: block;
-      background: #fff;
-      margin: 0;
-      border: none;
-      padding: 0;
-      object-fit: contain;
-      width: 100%; height: 100%;
-      transition: all .17s;
-    }
-    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
-    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
-    /* 반응형 wide-box, tall-box */
-    @media (max-width: 1080px) {
-      .list-row.magazine { width: 28vw; height: 40vw; min-width: 80px; min-height: 100px; margin: 0 2vw 28px 0; }
-      .list-row.magazine.wide-box { width: 40vw !important; height: 28vw !important; }
-      .list-row.magazine.tall-box { width: 28vw !important; height: 40vw !important; }
-    }
-    @media (max-width: 700px) {
-      .list-row.magazine { width: 44vw; height: 62vw; min-width: 65px; min-height: 85px; margin: 0 2vw 22px 0; }
-      .list-row.magazine.wide-box { width: 62vw !important; height: 44vw !important; }
-      .list-row.magazine.tall-box { width: 44vw !important; height: 62vw !important; }
-    }
+    .img-item img { display: block; width: 100%; height: 100%; object-fit: contain; background: #fff; margin: 0; border: none; padding: 0; }
+
     .edit-btn {
-      position: absolute;
-      top: 7px; right: 9px;
-      padding: 4px 12px;
-      font-size: 14px;
-      background: #2e2e54c0;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      z-index: 4;
-      transition: background .15s;
+      position: absolute; top: 7px; right: 9px; padding: 4px 12px; font-size: 14px;
+      background: #2e2e54c0; color: #fff; border: none; border-radius: 6px; cursor: pointer;
+      z-index: 4; transition: background .15s;
     }
     .edit-btn:hover { background: #436cff; }
+
+    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
+    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
+
+    /* ★ 사진 카드 30% 확대 */
+    .list-row.magazine { width: 195px; height: 277px; margin: 0 12px 36px 0; } /* 150x213 → 195x277 (≈+30%) */
+    .img-wrap.magazine { height: 100%; }
+    .img-item.magazine { height: 100%; }
+
+    /* 반응형 크기도 +30% 반영 */
+    @media (max-width: 1080px) {
+      .list-row.magazine {
+        width: 36.4vw;  /* 28vw * 1.3 */
+        height: 52vw;   /* 40vw * 1.3 */
+        min-width: 104px;   /* 80 * 1.3 */
+        min-height: 130px;  /* 100 * 1.3 */
+        margin: 0 2vw 28px 0;
+      }
+    }
+    @media (max-width: 700px) {
+      .list-row.magazine {
+        width: 57.2vw;  /* 44vw * 1.3 */
+        height: 80.6vw; /* 62vw * 1.3 */
+        min-width: 84.5px;  /* 65 * 1.3 */
+        min-height: 110.5px;/* 85 * 1.3 */
+        margin: 0 2vw 22px 0;
+      }
+    }
+
     #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.57); display: none; align-items: center; justify-content: center; z-index: 2002;}
     #modal { background: #fff; padding: 28px 22px 22px 22px; border-radius: 7px; width: 320px; box-shadow: 0 2px 16px #24248238;}
     #modal h3 { margin-bottom: 16px; font-size: 20px; color:#313181;}
     #modal label { display:block; margin-bottom:6px; color:#232356; font-weight:600;}
     #modal input, #modal select { width: 100%; margin-bottom: 14px; padding: 8px; border: 1px solid #b2c1e6; border-radius: 5px; font-size: 14px;}
     #modal .actions { text-align: right; }
-    #modal .actions button {
-      padding: 8px 14px; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px; font-size: 15px;
-    }
+    #modal .actions button { padding: 8px 14px; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px; font-size: 15px; }
     #modal .save-btn { background: #4067d1; color: #fff; }
     #modal .cancel-btn { background: #dc3545; color: #fff; }
   </style>
@@ -149,7 +115,9 @@
       <option value="00making10d.html.html">PIC2 ▼</option>
     </select>
   </nav>
-  <div class="dashboard" style="margin-top:50px;">
+
+  <!-- 인라인 margin 제거 -->
+  <div class="dashboard">
     <span class="gallery-label">A</span>
     <div class="gallery-row" id="gallery1"></div>
     <span class="gallery-label">B</span>
@@ -171,6 +139,7 @@
     <span class="gallery-label">J</span>
     <div class="gallery-row" id="gallery10"></div>
   </div>
+
   <!-- 입력 모달 -->
   <div id="modal-overlay">
     <div id="modal">
@@ -198,44 +167,38 @@
       </div>
     </div>
   </div>
+
   <script>
+    // 페이지 이동 콤보박스
     document.getElementById('page-switch').addEventListener('change', function() {
       if (this.value) location.href = this.value;
     });
 
-    const STORAGE_KEY = "influencer_gallery_v2";
+    // ===== Storage Key 네임스페이스 (페이지별로 분리) =====
+    const STORAGE_NAMESPACE = "MW_INFLUENCER_GALLERY_v3";
+    const PAGE_ID = (location.pathname.split('/').pop() || 'index').toLowerCase();
+    const STORAGE_KEY = `${STORAGE_NAMESPACE}:${PAGE_ID}`;
+    // ================================================
+
     const defaultData = {
       gallery1: [
         { url: "https://www.youtube.com/@popcorncokemovie/videos", img: "https://yt3.googleusercontent.com/4vsl0dMmf2_zJh9hNMoFP7KPnfxEKCeWSn5iYdQvuJUVUkBf9eFu3qqdHWIN1DDULygUcGDmww=s900-c-k-c0x00ffffff-no-rj" },
       ],
-      gallery2: [],
-      gallery3: [],
-      gallery4: [],
-      gallery5: [],
-      gallery6: [],
-      gallery7: [],
-      gallery8: [],
-      gallery9: [],
-      gallery10: []
+      gallery2: [], gallery3: [], gallery4: [], gallery5: [],
+      gallery6: [], gallery7: [], gallery8: [], gallery9: [], gallery10: []
     };
     const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
 
     function getData() {
       let data = localStorage.getItem(STORAGE_KEY);
       if (!data) return JSON.parse(JSON.stringify(defaultData));
-      try {
-        return JSON.parse(data);
-      } catch (e) {
-        return JSON.parse(JSON.stringify(defaultData));
-      }
+      try { return JSON.parse(data); }
+      catch { return JSON.parse(JSON.stringify(defaultData)); }
     }
-    function setData(data) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
+    function setData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
 
     let editing = { gallery: null, index: null };
 
-    // renderGallery: 박스 비율 동적으로
     function renderGallery(data, targetId) {
       const el = document.getElementById(targetId);
       el.innerHTML = data.map((item, idx) => `
@@ -245,7 +208,7 @@
             <div class="img-wrap magazine">
               <div class="img-item magazine">
                 <a href="${item.url}" target="_blank" rel="noopener">
-                  <img src="${item.img}" data-idx="${idx}">
+                  <img src="${item.img}">
                 </a>
               </div>
             </div>
@@ -255,33 +218,6 @@
           </div>
         </div>
       `).join('');
-
-      // 이미지 비율에 따라 박스 모양을 조절
-      Array.from(el.querySelectorAll('.img-item img')).forEach(img => {
-        img.onload = function() {
-          const box = img.closest('.list-row.magazine');
-          if (img.naturalWidth > img.naturalHeight) {
-            box.classList.add('wide-box');
-            box.classList.remove('tall-box');
-          } else {
-            box.classList.add('tall-box');
-            box.classList.remove('wide-box');
-          }
-        };
-        // 캐시된 경우도 적용
-        if (img.complete) {
-          setTimeout(() => {
-            const box = img.closest('.list-row.magazine');
-            if (img.naturalWidth > img.naturalHeight) {
-              box.classList.add('wide-box');
-              box.classList.remove('tall-box');
-            } else {
-              box.classList.add('tall-box');
-              box.classList.remove('wide-box');
-            }
-          }, 10);
-        }
-      });
 
       Array.from(el.querySelectorAll('.edit-btn')).forEach((btn, idx) => {
         btn.onclick = function(e) {
