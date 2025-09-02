@@ -25,7 +25,7 @@
       background: #fff; color: #232373; min-width: 110px; font-family: inherit;
     }
 
-    /* 대시보드: 처음 화면에서 한참 아래에서 시작 */
+    /* 원본 유지: 대시보드 아래쪽 시작 */
     .dashboard {
       max-width: 1200px; margin: 0 auto; padding: 64px 0 60px 0;
       margin-top: 1200px !important;
@@ -63,27 +63,28 @@
     .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
     .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
 
-    /* ★ 사진 카드 30% 확대 */
-    .list-row.magazine { width: 195px; height: 277px; margin: 0 12px 36px 0; } /* 150x213 → 195x277 (≈+30%) */
-    .img-wrap.magazine { height: 100%; }
-    .img-item.magazine { height: 100%; }
+    /* === 카드(그림) 크기: 현재 대비 +30% === */
+    /* 데스크탑 */
+    .list-row.magazine { width: 254px; height: 360px; margin: 0 12px 36px 0; }
 
-    /* 반응형 크기도 +30% 반영 */
+    /* 1080px 이하 */
     @media (max-width: 1080px) {
       .list-row.magazine {
-        width: 36.4vw;  /* 28vw * 1.3 */
-        height: 52vw;   /* 40vw * 1.3 */
-        min-width: 104px;   /* 80 * 1.3 */
-        min-height: 130px;  /* 100 * 1.3 */
+        width: 47.3vw;   /* 36.4 * 1.3 */
+        height: 67.6vw;  /* 52   * 1.3 */
+        min-width: 135px;/* 104  * 1.3 */
+        min-height: 169px;/*130  * 1.3 */
         margin: 0 2vw 28px 0;
       }
     }
+
+    /* 700px 이하 */
     @media (max-width: 700px) {
       .list-row.magazine {
-        width: 57.2vw;  /* 44vw * 1.3 */
-        height: 80.6vw; /* 62vw * 1.3 */
-        min-width: 84.5px;  /* 65 * 1.3 */
-        min-height: 110.5px;/* 85 * 1.3 */
+        width: 74.4vw;     /* 57.2 * 1.3 */
+        height: 104.8vw;   /* 80.6 * 1.3 */
+        min-width: 110px;  /* 84.5 * 1.3 ≈ 110 */
+        min-height: 144px; /* 110.5 * 1.3 ≈ 144 */
         margin: 0 2vw 22px 0;
       }
     }
@@ -97,11 +98,42 @@
     #modal .actions button { padding: 8px 14px; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px; font-size: 15px; }
     #modal .save-btn { background: #4067d1; color: #fff; }
     #modal .cancel-btn { background: #dc3545; color: #fff; }
+
+    /* === 왼쪽(별도) 디렉토리 패널: 중앙 레이아웃에 영향 없음 === */
+    .leftdir-panel {
+      position: fixed; top: 54px; left: 0; z-index: 1003;
+      width: 220px; height: calc(100vh - 54px);
+      background: rgba(46,46,84,0.96);
+      box-shadow: 3px 0 16px rgba(0,0,0,.18);
+      color: #fff;
+    }
+    .leftdir-panel .inner { padding: 12px; }
+    .leftdir-title { font-weight:700; font-size:15px; margin: 4px 0 10px 0; color:#ffd777; }
+    .leftdir-add { display:flex; gap:6px; margin-bottom:10px; }
+    .leftdir-add input {
+      flex:1; padding:7px 8px; border-radius:6px; border:1px solid #5a66a8; font-size:13px; outline:none;
+      background:#fff; color:#222;
+    }
+    .leftdir-add button {
+      padding:7px 10px; border:none; border-radius:6px; background:#4067d1; color:#fff; font-size:13px; cursor:pointer;
+    }
+    .leftdir-list { max-height: calc(100vh - 54px - 110px); overflow:auto; padding-right:4px; }
+    .leftdir-item {
+      padding:7px 8px; border-radius:6px; background: #3a3a74; margin-bottom:6px;
+      cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:space-between;
+      transition: background .15s;
+    }
+    .leftdir-item:hover { background:#51519c; }
+    .leftdir-item.active { outline: 2px solid #ffd777; }
+    .leftdir-item span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px; }
+    /* 본문을 가리는 걸 원치 않으면 다음 한 줄을 주석 해제해 좌측 여백 확보
+       body { padding-left: 220px; }  */
+
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 </head>
 <body>
-  <!-- 상단바 -->
+  <!-- 상단바 (원본) -->
   <nav class="topbar">
     <button id="add-btn">추가</button>
     <button id="export-btn">내보내기</button>
@@ -116,31 +148,43 @@
     </select>
   </nav>
 
-  <!-- 인라인 margin 제거 -->
-  <div class="dashboard">
-    <span class="gallery-label">A</span>
+  <!-- 왼쪽 ‘별도’ 디렉토리 패널 -->
+  <aside class="leftdir-panel" id="leftdir-panel" aria-label="left directories">
+    <div class="inner">
+      <div class="leftdir-title">왼쪽 디렉토리</div>
+      <div class="leftdir-add">
+        <input type="text" id="leftdir-input" placeholder="새 디렉토리 이름">
+        <button id="leftdir-add-btn" type="button">추가</button>
+      </div>
+      <div class="leftdir-list" id="leftdir-list"></div>
+    </div>
+  </aside>
+
+  <!-- 본문 (원본: 중앙 디렉토리 A~J 유지) -->
+  <div class="dashboard" id="dashboard">
+    <span class="gallery-label" id="label-gallery1">A</span>
     <div class="gallery-row" id="gallery1"></div>
-    <span class="gallery-label">B</span>
+    <span class="gallery-label" id="label-gallery2">B</span>
     <div class="gallery-row" id="gallery2"></div>
-    <span class="gallery-label">C</span>
+    <span class="gallery-label" id="label-gallery3">C</span>
     <div class="gallery-row" id="gallery3"></div>
-    <span class="gallery-label">D</span>
+    <span class="gallery-label" id="label-gallery4">D</span>
     <div class="gallery-row" id="gallery4"></div>
-    <span class="gallery-label">E</span>
+    <span class="gallery-label" id="label-gallery5">E</span>
     <div class="gallery-row" id="gallery5"></div>
-    <span class="gallery-label">F</span>
+    <span class="gallery-label" id="label-gallery6">F</span>
     <div class="gallery-row" id="gallery6"></div>
-    <span class="gallery-label">G</span>
+    <span class="gallery-label" id="label-gallery7">G</span>
     <div class="gallery-row" id="gallery7"></div>
-    <span class="gallery-label">H</span>
+    <span class="gallery-label" id="label-gallery8">H</span>
     <div class="gallery-row" id="gallery8"></div>
-    <span class="gallery-label">I</span>
+    <span class="gallery-label" id="label-gallery9">I</span>
     <div class="gallery-row" id="gallery9"></div>
-    <span class="gallery-label">J</span>
+    <span class="gallery-label" id="label-gallery10">J</span>
     <div class="gallery-row" id="gallery10"></div>
   </div>
 
-  <!-- 입력 모달 -->
+  <!-- 입력 모달 (중앙+왼쪽 선택) -->
   <div id="modal-overlay">
     <div id="modal">
       <h3>이미지 추가</h3>
@@ -148,7 +192,8 @@
       <input type="text" id="modal-img" placeholder="이미지 주소">
       <label>링크 URL</label>
       <input type="text" id="modal-link" placeholder="연결될 링크 주소">
-      <label>분류(디렉토리)</label>
+
+      <label>중앙 디렉토리(기존)</label>
       <select id="modal-dir">
         <option value="gallery1">A</option>
         <option value="gallery2">B</option>
@@ -161,6 +206,13 @@
         <option value="gallery9">I</option>
         <option value="gallery10">J</option>
       </select>
+
+      <label>왼쪽 디렉토리(별도)</label>
+      <select id="modal-leftdir">
+        <option value="">(선택 없음)</option>
+        <!-- 동적으로 왼쪽 디렉토리 목록이 추가됩니다 -->
+      </select>
+
       <div class="actions">
         <button class="cancel-btn" type="button">취소</button>
         <button class="save-btn" type="button">저장</button>
@@ -169,26 +221,30 @@
   </div>
 
   <script>
-    // 페이지 이동 콤보박스
+    // 페이지 이동 콤보박스 (원본)
     document.getElementById('page-switch').addEventListener('change', function() {
       if (this.value) location.href = this.value;
     });
 
-    // ===== Storage Key 네임스페이스 (페이지별로 분리) =====
+    // ===== Storage 키 =====
     const STORAGE_NAMESPACE = "MW_INFLUENCER_GALLERY_v3";
     const PAGE_ID = (location.pathname.split('/').pop() || 'index').toLowerCase();
-    const STORAGE_KEY = `${STORAGE_NAMESPACE}:${PAGE_ID}`;
-    // ================================================
+    const STORAGE_KEY = `${STORAGE_NAMESPACE}:${PAGE_ID}`;         // 중앙 디렉토리 데이터
+    const LEFTDIRS_KEY = `${STORAGE_KEY}:left_dirs`;               // 왼쪽 디렉토리 목록
 
+    // 기본 데이터(원본 유지)
     const defaultData = {
       gallery1: [
-        { url: "https://www.youtube.com/@popcorncokemovie/videos", img: "https://yt3.googleusercontent.com/4vsl0dMmf2_zJh9hNMoFP7KPnfxEKCeWSn5iYdQvuJUVUkBf9eFu3qqdHWIN1DDULygUcGDmww=s900-c-k-c0x00ffffff-no-rj" },
+        { url: "https://www.youtube.com/@popcorncokemovie/videos",
+          img: "https://yt3.googleusercontent.com/4vsl0dMmf2_zJh9hNMoFP7KPnfxEKCeWSn5iYdQvuJUVUkBf9eFu3qqdHWIN1DDULygUcGDmww=s900-c-k-c0x00ffffff-no-rj"
+        },
       ],
       gallery2: [], gallery3: [], gallery4: [], gallery5: [],
       gallery6: [], gallery7: [], gallery8: [], gallery9: [], gallery10: []
     };
     const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
 
+    // 중앙 데이터 helpers
     function getData() {
       let data = localStorage.getItem(STORAGE_KEY);
       if (!data) return JSON.parse(JSON.stringify(defaultData));
@@ -197,10 +253,21 @@
     }
     function setData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
 
+    // 왼쪽 디렉토리 helpers
+    function getLeftDirs() {
+      try { return JSON.parse(localStorage.getItem(LEFTDIRS_KEY) || "[]"); }
+      catch { return []; }
+    }
+    function setLeftDirs(list) { localStorage.setItem(LEFTDIRS_KEY, JSON.stringify(list)); }
+
+    // 현재 선택된 왼쪽 디렉토리(모달 기본값 세팅용)
+    let currentLeftDirId = "";
+
     let editing = { gallery: null, index: null };
 
     function renderGallery(data, targetId) {
       const el = document.getElementById(targetId);
+      if (!el) return;
       el.innerHTML = data.map((item, idx) => `
         <div class="list-row magazine" data-idx="${idx}">
           <div class="imgframe">
@@ -226,9 +293,13 @@
           editing.index = idx;
           const data = getData();
           const item = data[targetId][idx];
-          document.getElementById('modal-img').value = item.img;
-          document.getElementById('modal-link').value = item.url;
+          document.getElementById('modal-img').value = item.img || "";
+          document.getElementById('modal-link').value = item.url || "";
           document.getElementById('modal-dir').value = targetId;
+
+          refreshLeftDirOptions();
+          document.getElementById('modal-leftdir').value = item.leftDir || "";
+
           document.getElementById('modal-overlay').style.display = 'flex';
         };
       });
@@ -253,14 +324,68 @@
       for (let i = 1; i <= 10; i++) {
         renderGallery(data[`gallery${i}`] || [], `gallery${i}`);
       }
+      renderLeftDirPanel();
     }
 
+    // ====== 왼쪽 패널 ======
+    function renderLeftDirPanel() {
+      const listEl = document.getElementById('leftdir-list');
+      listEl.innerHTML = '';
+
+      const leftDirs = getLeftDirs();
+
+      // 없으면 비어있는 상태 안내
+      if (leftDirs.length === 0) {
+        const empty = document.createElement('div');
+        empty.style.opacity = .9;
+        empty.style.fontSize = '13px';
+        empty.textContent = '왼쪽 디렉토리를 추가하세요.';
+        listEl.appendChild(empty);
+        return;
+      }
+
+      leftDirs.forEach(dir => {
+        const item = document.createElement('div');
+        item.className = 'leftdir-item' + (currentLeftDirId === dir.id ? ' active' : '');
+        item.innerHTML = `<span>${dir.name}</span>`;
+        item.onclick = () => {
+          currentLeftDirId = dir.id;
+          Array.from(listEl.children).forEach(ch => ch.classList.remove('active'));
+          item.classList.add('active');
+        };
+        listEl.appendChild(item);
+      });
+    }
+
+    // 모달 열릴 때 왼쪽 디렉토리 셀렉트 채우기
+    function refreshLeftDirOptions() {
+      const sel = document.getElementById('modal-leftdir');
+      const prev = sel.value;
+      sel.innerHTML = '';
+      const none = document.createElement('option');
+      none.value = '';
+      none.textContent = '(선택 없음)';
+      sel.appendChild(none);
+
+      const leftDirs = getLeftDirs();
+      leftDirs.forEach(dir => {
+        const opt = document.createElement('option');
+        opt.value = dir.id;
+        opt.textContent = dir.name;
+        sel.appendChild(opt);
+      });
+
+      sel.value = currentLeftDirId || prev || '';
+    }
+
+    // ====== 모달 동작 ======
     document.getElementById('add-btn').onclick = () => {
       editing.gallery = null;
       editing.index = null;
       document.getElementById('modal-img').value = "";
       document.getElementById('modal-link').value = "";
       document.getElementById('modal-dir').value = "gallery1";
+      refreshLeftDirOptions(); // 왼쪽 디렉토리 목록 반영
       document.getElementById('modal-overlay').style.display = 'flex';
       document.getElementById('modal-img').focus();
     };
@@ -271,29 +396,52 @@
       const img = document.getElementById('modal-img').value.trim();
       const link = document.getElementById('modal-link').value.trim();
       const dir = document.getElementById('modal-dir').value;
+      const leftDir = document.getElementById('modal-leftdir').value; // ← 왼쪽 디렉토리
+
       if (!img) { alert("이미지 주소를 입력하세요."); return; }
       if (!link) { alert("링크 주소를 입력하세요."); return; }
+
       let data = getData();
+      if (!data[dir]) data[dir] = [];
+
+      const payload = { url: link, img, leftDir: leftDir || "" };
+
       if (editing.gallery !== null && editing.index !== null) {
         if (editing.gallery === dir) {
-          data[dir][editing.index] = { url: link, img };
+          data[dir][editing.index] = payload;
         } else {
+          // 다른 중앙 디렉토리로 이동
           data[editing.gallery].splice(editing.index, 1);
-          if (!data[dir]) data[dir] = [];
-          data[dir].push({ url: link, img });
+          data[dir].push(payload);
         }
       } else {
-        if (!data[dir]) data[dir] = [];
-        data[dir].push({ url: link, img });
+        data[dir].push(payload);
       }
+
       setData(data);
       document.getElementById('modal-overlay').style.display = 'none';
       renderAll();
     };
 
+    // ====== 왼쪽 디렉토리 추가 ======
+    document.getElementById('leftdir-add-btn').onclick = () => {
+      const inp = document.getElementById('leftdir-input');
+      const name = (inp.value || '').trim();
+      if (!name) { inp.focus(); return; }
+      const id = `leftdir_${Date.now().toString(36)}`;
+      const dirs = getLeftDirs();
+      dirs.push({ id, name });
+      setLeftDirs(dirs);
+      currentLeftDirId = id; // 방금 추가한 디렉토리를 선택 상태로
+      inp.value = '';
+      renderLeftDirPanel();
+    };
+
+    // ====== 내보내기/가져오기 (왼쪽 디렉토리 포함) ======
     document.getElementById('export-btn').onclick = () => {
       const data = getData();
-      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      const payload = { data, leftDirs: getLeftDirs() };
+      const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -310,8 +458,15 @@
       const reader = new FileReader();
       reader.onload = evt => {
         try {
-          const data = JSON.parse(evt.target.result);
-          setData(data);
+          const parsed = JSON.parse(evt.target.result);
+          // 새 포맷 { data, leftDirs } / 구포맷 data 만
+          if (parsed && parsed.data && parsed.leftDirs) {
+            setData(parsed.data);
+            setLeftDirs(parsed.leftDirs);
+          } else {
+            setData(parsed);
+            // leftDirs는 유지
+          }
           renderAll();
           alert('가져오기가 완료되었습니다.');
         } catch {
@@ -322,6 +477,7 @@
       e.target.value = null;
     };
 
+    // 초기 렌더
     renderAll();
   </script>
 </body>
