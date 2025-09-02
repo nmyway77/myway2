@@ -94,42 +94,36 @@
     #modal .save-btn { background: #4067d1; color: #fff; }
     #modal .cancel-btn { background: #dc3545; color: #fff; }
 
-    /* === 좌측 디렉토리 패널(오버레이) : 기존 레이아웃 영향 없음 === */
-    .dir-panel {
+    /* === 왼쪽(별도) 디렉토리 패널: 중앙 레이아웃에 영향 없음 === */
+    .leftdir-panel {
       position: fixed; top: 54px; left: 0; z-index: 1003;
-      width: 0; /* 닫힘 상태 */
-      height: calc(100vh - 54px);
-      overflow: visible; /* 핸들 보이도록 */
+      width: 220px; height: calc(100vh - 54px);
       background: rgba(46,46,84,0.96);
       box-shadow: 3px 0 16px rgba(0,0,0,.18);
-      color: #fff; transition: width .18s ease;
+      color: #fff;
     }
-    .dir-panel.open { width: 220px; }
-    .dir-panel .handle {
-      position: absolute; top: 12px; right: -34px;
-      width: 34px; height: 34px; border-radius: 0 6px 6px 0;
-      background: #2e2e54; color:#fff; display:flex; align-items:center; justify-content:center;
-      font-weight:700; cursor:pointer; box-shadow: 3px 3px 10px rgba(0,0,0,.15);
-      user-select:none;
-    }
-    .dir-panel .inner { padding: 12px; }
-    .dir-title { font-weight:700; font-size:15px; margin: 4px 0 10px 0; color:#ffd777; }
-    .dir-add { display:flex; gap:6px; margin-bottom:10px; }
-    .dir-add input {
+    .leftdir-panel .inner { padding: 12px; }
+    .leftdir-title { font-weight:700; font-size:15px; margin: 4px 0 10px 0; color:#ffd777; }
+    .leftdir-add { display:flex; gap:6px; margin-bottom:10px; }
+    .leftdir-add input {
       flex:1; padding:7px 8px; border-radius:6px; border:1px solid #5a66a8; font-size:13px; outline:none;
       background:#fff; color:#222;
     }
-    .dir-add button {
+    .leftdir-add button {
       padding:7px 10px; border:none; border-radius:6px; background:#4067d1; color:#fff; font-size:13px; cursor:pointer;
     }
-    .dir-list { max-height: calc(100vh - 54px - 100px); overflow:auto; padding-right:4px; }
-    .dir-item {
+    .leftdir-list { max-height: calc(100vh - 54px - 110px); overflow:auto; padding-right:4px; }
+    .leftdir-item {
       padding:7px 8px; border-radius:6px; background: #3a3a74; margin-bottom:6px;
       cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:space-between;
       transition: background .15s;
     }
-    .dir-item:hover { background:#51519c; }
-    .dir-item span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px; }
+    .leftdir-item:hover { background:#51519c; }
+    .leftdir-item.active { outline: 2px solid #ffd777; }
+    .leftdir-item span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px; }
+    /* 본문을 가리는 걸 원치 않으면 다음 한 줄을 주석 해제해 좌측 여백 확보
+       body { padding-left: 220px; }  */
+
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 </head>
@@ -149,20 +143,19 @@
     </select>
   </nav>
 
-  <!-- 좌측 디렉토리 패널 (기본 열림: open) -->
-  <aside class="dir-panel open" id="dir-panel" aria-label="directories">
-    <div class="handle" id="dir-handle">☰</div>
+  <!-- 왼쪽 ‘별도’ 디렉토리 패널 -->
+  <aside class="leftdir-panel" id="leftdir-panel" aria-label="left directories">
     <div class="inner">
-      <div class="dir-title">디렉토리</div>
-      <div class="dir-add">
-        <input type="text" id="dir-input" placeholder="새 디렉토리 이름">
-        <button id="dir-add-btn" type="button">추가</button>
+      <div class="leftdir-title">왼쪽 디렉토리</div>
+      <div class="leftdir-add">
+        <input type="text" id="leftdir-input" placeholder="새 디렉토리 이름">
+        <button id="leftdir-add-btn" type="button">추가</button>
       </div>
-      <div class="dir-list" id="dir-list"></div>
+      <div class="leftdir-list" id="leftdir-list"></div>
     </div>
   </aside>
 
-  <!-- 본문 (원본) -->
+  <!-- 본문 (원본: 중앙 디렉토리 A~J 유지) -->
   <div class="dashboard" id="dashboard">
     <span class="gallery-label" id="label-gallery1">A</span>
     <div class="gallery-row" id="gallery1"></div>
@@ -184,12 +177,9 @@
     <div class="gallery-row" id="gallery9"></div>
     <span class="gallery-label" id="label-gallery10">J</span>
     <div class="gallery-row" id="gallery10"></div>
-
-    <!-- 동적 디렉토리들이 J 뒤에 순차 추가 -->
-    <div id="extra-galleries-anchor"></div>
   </div>
 
-  <!-- 입력 모달 (원본) -->
+  <!-- 입력 모달 (중앙+왼쪽 선택) -->
   <div id="modal-overlay">
     <div id="modal">
       <h3>이미지 추가</h3>
@@ -197,7 +187,8 @@
       <input type="text" id="modal-img" placeholder="이미지 주소">
       <label>링크 URL</label>
       <input type="text" id="modal-link" placeholder="연결될 링크 주소">
-      <label>분류(디렉토리)</label>
+
+      <label>중앙 디렉토리(기존)</label>
       <select id="modal-dir">
         <option value="gallery1">A</option>
         <option value="gallery2">B</option>
@@ -210,6 +201,13 @@
         <option value="gallery9">I</option>
         <option value="gallery10">J</option>
       </select>
+
+      <label>왼쪽 디렉토리(별도)</label>
+      <select id="modal-leftdir">
+        <option value="">(선택 없음)</option>
+        <!-- 동적으로 왼쪽 디렉토리 목록이 추가됩니다 -->
+      </select>
+
       <div class="actions">
         <button class="cancel-btn" type="button">취소</button>
         <button class="save-btn" type="button">저장</button>
@@ -223,21 +221,25 @@
       if (this.value) location.href = this.value;
     });
 
-    // Storage 키
+    // ===== Storage 키 =====
     const STORAGE_NAMESPACE = "MW_INFLUENCER_GALLERY_v3";
     const PAGE_ID = (location.pathname.split('/').pop() || 'index').toLowerCase();
-    const STORAGE_KEY = `${STORAGE_NAMESPACE}:${PAGE_ID}`;
-    const EXTRA_DIRS_KEY = `${STORAGE_KEY}:extra_dirs`; // 동적 디렉토리 목록
+    const STORAGE_KEY = `${STORAGE_NAMESPACE}:${PAGE_ID}`;         // 중앙 디렉토리 데이터
+    const LEFTDIRS_KEY = `${STORAGE_KEY}:left_dirs`;               // 왼쪽 디렉토리 목록
 
+    // 기본 데이터(원본 유지)
     const defaultData = {
       gallery1: [
-        { url: "https://www.youtube.com/@popcorncokemovie/videos", img: "https://yt3.googleusercontent.com/4vsl0dMmf2_zJh9hNMoFP7KPnfxEKCeWSn5iYdQvuJUVUkBf9eFu3qqdHWIN1DDULygUcGDmww=s900-c-k-c0x00ffffff-no-rj" },
+        { url: "https://www.youtube.com/@popcorncokemovie/videos",
+          img: "https://yt3.googleusercontent.com/4vsl0dMmf2_zJh9hNMoFP7KPnfxEKCeWSn5iYdQvuJUVUkBf9eFu3qqdHWIN1DDULygUcGDmww=s900-c-k-c0x00ffffff-no-rj"
+        },
       ],
       gallery2: [], gallery3: [], gallery4: [], gallery5: [],
       gallery6: [], gallery7: [], gallery8: [], gallery9: [], gallery10: []
     };
     const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
 
+    // 중앙 데이터 helpers
     function getData() {
       let data = localStorage.getItem(STORAGE_KEY);
       if (!data) return JSON.parse(JSON.stringify(defaultData));
@@ -246,11 +248,15 @@
     }
     function setData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
 
-    function getExtraDirs() {
-      try { return JSON.parse(localStorage.getItem(EXTRA_DIRS_KEY) || "[]"); }
+    // 왼쪽 디렉토리 helpers
+    function getLeftDirs() {
+      try { return JSON.parse(localStorage.getItem(LEFTDIRS_KEY) || "[]"); }
       catch { return []; }
     }
-    function setExtraDirs(list) { localStorage.setItem(EXTRA_DIRS_KEY, JSON.stringify(list)); }
+    function setLeftDirs(list) { localStorage.setItem(LEFTDIRS_KEY, JSON.stringify(list)); }
+
+    // 현재 선택된 왼쪽 디렉토리(모달 기본값 세팅용)
+    let currentLeftDirId = "";
 
     let editing = { gallery: null, index: null };
 
@@ -282,9 +288,13 @@
           editing.index = idx;
           const data = getData();
           const item = data[targetId][idx];
-          document.getElementById('modal-img').value = item.img;
-          document.getElementById('modal-link').value = item.url;
+          document.getElementById('modal-img').value = item.img || "";
+          document.getElementById('modal-link').value = item.url || "";
           document.getElementById('modal-dir').value = targetId;
+
+          refreshLeftDirOptions();
+          document.getElementById('modal-leftdir').value = item.leftDir || "";
+
           document.getElementById('modal-overlay').style.display = 'flex';
         };
       });
@@ -304,95 +314,73 @@
       });
     }
 
-    function createExtraSection(id, labelText) {
-      const anchor = document.getElementById('extra-galleries-anchor');
-      const label = document.createElement('span');
-      label.className = 'gallery-label';
-      label.id = `label-${id}`;
-      label.textContent = labelText;
-
-      const row = document.createElement('div');
-      row.className = 'gallery-row';
-      row.id = id;
-
-      const dashboard = document.getElementById('dashboard');
-      dashboard.insertBefore(label, anchor);
-      dashboard.insertBefore(row, anchor);
-    }
-
-    function renderExtraGalleries() {
-      const dashboard = document.getElementById('dashboard');
-      Array.from(dashboard.querySelectorAll('[id^="label-gallery_custom_"]')).forEach(n => n.remove());
-      Array.from(dashboard.querySelectorAll('[id^="gallery_custom_"]')).forEach(n => n.remove());
-
-      const extra = getExtraDirs();
-      const data = getData();
-      extra.forEach(dir => {
-        if (!data[dir.id]) data[dir.id] = [];
-        createExtraSection(dir.id, dir.name);
-        renderGallery(data[dir.id], dir.id);
-      });
-      setData(data);
-    }
-
-    function renderDirPanelList() {
-      const listEl = document.getElementById('dir-list');
-      listEl.innerHTML = '';
-
-      // 기본 A~J
-      for (let i = 1; i <= 10; i++) {
-        const name = String.fromCharCode(64 + i); // A~J
-        const id = `gallery${i}`;
-        const item = document.createElement('div');
-        item.className = 'dir-item';
-        item.innerHTML = `<span>${name}</span>`;
-        item.onclick = () => document.getElementById(`label-${id}`)?.scrollIntoView({behavior:'smooth', block:'start'});
-        listEl.appendChild(item);
-      }
-
-      // 추가 디렉토리
-      const extra = getExtraDirs();
-      extra.forEach(dir => {
-        const item = document.createElement('div');
-        item.className = 'dir-item';
-        item.innerHTML = `<span>${dir.name}</span>`;
-        item.onclick = () => document.getElementById(`label-${dir.id}`)?.scrollIntoView({behavior:'smooth', block:'start'});
-        listEl.appendChild(item);
-      });
-    }
-
-    function refreshModalDirOptions() {
-      const sel = document.getElementById('modal-dir');
-      const have = new Set(Array.from(sel.options).map(o=>o.value));
-      const extra = getExtraDirs();
-      extra.forEach(dir => {
-        if (!have.has(dir.id)) {
-          const opt = document.createElement('option');
-          opt.value = dir.id;
-          opt.textContent = dir.name;
-          sel.appendChild(opt);
-          have.add(dir.id);
-        }
-      });
-    }
-
     function renderAll() {
       const data = getData();
       for (let i = 1; i <= 10; i++) {
         renderGallery(data[`gallery${i}`] || [], `gallery${i}`);
       }
-      renderExtraGalleries();
-      renderDirPanelList();
-      refreshModalDirOptions();
+      renderLeftDirPanel();
     }
 
-    // 모달 동작 (원본 + 동적 디렉토리 지원)
+    // ====== 왼쪽 패널 ======
+    function renderLeftDirPanel() {
+      const listEl = document.getElementById('leftdir-list');
+      listEl.innerHTML = '';
+
+      const leftDirs = getLeftDirs();
+
+      // 없으면 비어있는 상태 안내
+      if (leftDirs.length === 0) {
+        const empty = document.createElement('div');
+        empty.style.opacity = .9;
+        empty.style.fontSize = '13px';
+        empty.textContent = '왼쪽 디렉토리를 추가하세요.';
+        listEl.appendChild(empty);
+        return;
+      }
+
+      leftDirs.forEach(dir => {
+        const item = document.createElement('div');
+        item.className = 'leftdir-item' + (currentLeftDirId === dir.id ? ' active' : '');
+        item.innerHTML = `<span>${dir.name}</span>`;
+        item.onclick = () => {
+          currentLeftDirId = dir.id;
+          Array.from(listEl.children).forEach(ch => ch.classList.remove('active'));
+          item.classList.add('active');
+        };
+        listEl.appendChild(item);
+      });
+    }
+
+    // 모달 열릴 때 왼쪽 디렉토리 셀렉트 채우기
+    function refreshLeftDirOptions() {
+      const sel = document.getElementById('modal-leftdir');
+      const prev = sel.value;
+      sel.innerHTML = '';
+      const none = document.createElement('option');
+      none.value = '';
+      none.textContent = '(선택 없음)';
+      sel.appendChild(none);
+
+      const leftDirs = getLeftDirs();
+      leftDirs.forEach(dir => {
+        const opt = document.createElement('option');
+        opt.value = dir.id;
+        opt.textContent = dir.name;
+        sel.appendChild(opt);
+      });
+
+      sel.value = currentLeftDirId || prev || '';
+    }
+
+    // ====== 모달 동작 ======
     document.getElementById('add-btn').onclick = () => {
       editing.gallery = null;
       editing.index = null;
       document.getElementById('modal-img').value = "";
       document.getElementById('modal-link').value = "";
       document.getElementById('modal-dir').value = "gallery1";
+      refreshLeftDirOptions(); // 왼쪽 디렉토리 목록 반영
       document.getElementById('modal-overlay').style.display = 'flex';
       document.getElementById('modal-img').focus();
     };
@@ -403,28 +391,51 @@
       const img = document.getElementById('modal-img').value.trim();
       const link = document.getElementById('modal-link').value.trim();
       const dir = document.getElementById('modal-dir').value;
+      const leftDir = document.getElementById('modal-leftdir').value; // ← 왼쪽 디렉토리
+
       if (!img) { alert("이미지 주소를 입력하세요."); return; }
       if (!link) { alert("링크 주소를 입력하세요."); return; }
+
       let data = getData();
       if (!data[dir]) data[dir] = [];
+
+      const payload = { url: link, img, leftDir: leftDir || "" };
+
       if (editing.gallery !== null && editing.index !== null) {
-        if (editing.gallery === dir) data[dir][editing.index] = { url: link, img };
-        else {
+        if (editing.gallery === dir) {
+          data[dir][editing.index] = payload;
+        } else {
+          // 다른 중앙 디렉토리로 이동
           data[editing.gallery].splice(editing.index, 1);
-          data[dir].push({ url: link, img });
+          data[dir].push(payload);
         }
       } else {
-        data[dir].push({ url: link, img });
+        data[dir].push(payload);
       }
+
       setData(data);
       document.getElementById('modal-overlay').style.display = 'none';
       renderAll();
     };
 
-    // 내보내기/가져오기 (동적 디렉토리 포함)
+    // ====== 왼쪽 디렉토리 추가 ======
+    document.getElementById('leftdir-add-btn').onclick = () => {
+      const inp = document.getElementById('leftdir-input');
+      const name = (inp.value || '').trim();
+      if (!name) { inp.focus(); return; }
+      const id = `leftdir_${Date.now().toString(36)}`;
+      const dirs = getLeftDirs();
+      dirs.push({ id, name });
+      setLeftDirs(dirs);
+      currentLeftDirId = id; // 방금 추가한 디렉토리를 선택 상태로
+      inp.value = '';
+      renderLeftDirPanel();
+    };
+
+    // ====== 내보내기/가져오기 (왼쪽 디렉토리 포함) ======
     document.getElementById('export-btn').onclick = () => {
       const data = getData();
-      const payload = { data, extraDirs: getExtraDirs() };
+      const payload = { data, leftDirs: getLeftDirs() };
       const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -443,13 +454,13 @@
       reader.onload = evt => {
         try {
           const parsed = JSON.parse(evt.target.result);
-          if (parsed && parsed.data && parsed.extraDirs) {
+          // 새 포맷 { data, leftDirs } / 구포맷 data 만
+          if (parsed && parsed.data && parsed.leftDirs) {
             setData(parsed.data);
-            setExtraDirs(parsed.extraDirs);
+            setLeftDirs(parsed.leftDirs);
           } else {
             setData(parsed);
-            // 구형 파일 호환: extraDirs 없음
-            setExtraDirs(getExtraDirs());
+            // leftDirs는 유지
           }
           renderAll();
           alert('가져오기가 완료되었습니다.');
@@ -461,30 +472,9 @@
       e.target.value = null;
     };
 
-    // 좌측 패널 동작
-    const dirPanel = document.getElementById('dir-panel');
-    const dirHandle = document.getElementById('dir-handle');
-    dirHandle.onclick = () => dirPanel.classList.toggle('open');
-
-    // 디렉토리 추가
-    document.getElementById('dir-add-btn').onclick = () => {
-      const inp = document.getElementById('dir-input');
-      const name = (inp.value || '').trim();
-      if (!name) { inp.focus(); return; }
-      const id = `gallery_custom_${Date.now().toString(36)}`;
-      const extra = getExtraDirs();
-      extra.push({ id, name });
-      setExtraDirs(extra);
-      const data = getData();
-      data[id] = [];
-      setData(data);
-      inp.value = '';
-      renderAll();
-      document.getElementById(`label-${id}`)?.scrollIntoView({behavior:'smooth', block:'start'});
-    };
-
     // 초기 렌더
     renderAll();
   </script>
 </body>
 </html>
+
