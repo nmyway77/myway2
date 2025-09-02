@@ -44,18 +44,11 @@
     .topbar-folders {
       display: flex; align-items: center; gap: 0;
       margin-left: 20px; overflow-x: auto; white-space: nowrap;
-
-
-      
       flex: 1 1 auto; justify-content: flex-start;
-
-
-
-
-      
     }
     .folder-tab {
-      display: inline-block; padding: 8px 18px; margin: 0 2px;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 18px; margin: 0 2px;
       background: #ecedfa;
       color: #3C3C8C; font-weight: 600; font-size: 15px;
       border-radius: 50px;
@@ -68,6 +61,19 @@
       color: #fff;
       border: 1.5px solid #2e307c;
     }
+    /* 폴더 수정(연필) 버튼: 아주 작게, 디자인 영향 최소화 */
+    .folder-edit-btn {
+      font-size: 12px; line-height: 1;
+      padding: 2px 6px;
+      border: none; border-radius: 999px;
+      background: rgba(255,255,255,0.18);
+      color: inherit;
+      cursor: pointer;
+      opacity: .85;
+    }
+    .folder-tab:hover .folder-edit-btn { opacity: 1; }
+    .folder-edit-btn:focus { outline: none; }
+
     #controls { display:none; } /* 기존 컨트롤 숨김 */
 
     /* 그 외 기존 스타일 동일 */
@@ -83,7 +89,6 @@
     
     #media-grid { column-count: 5; column-gap: 10px;       margin: 1506px       auto 20px; width: 100%; max-width: 1400px;}
 
-    
     .grid-item { break-inside: avoid; margin-bottom: 10px; position: relative; background: #fff; box-shadow: 0 1px 6px #d0d0ff44;}
     .grid-item img { width: 100%; height: auto; display: block; border-radius: 8px; cursor: pointer;}
     .edit-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); border: none; color: #fff; padding: 4px 6px; border-radius: 4px; cursor: pointer; font-size: 12px;}
@@ -258,6 +263,28 @@
       importFile.value = null;
     };
 
+    /* 폴더명 변경(리네임) 유틸 */
+    function renameFolder(oldName, newName) {
+      newName = (newName || '').trim();
+      if (!newName || newName === oldName) return; // 빈값/동일명 무시
+      let list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      let changed = false;
+      // 이미 존재하는 폴더명으로 바꾸면 병합
+      list = list.map(item => {
+        if ((item.folder || '') === oldName) {
+          changed = true;
+          return { ...item, folder: newName };
+        }
+        return item;
+      });
+      if (changed) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        // 현재 보고 있던 폴더가 oldName이면 새 이름으로 선택 유지
+        if (folderSelect.value === oldName) folderSelect.value = newName;
+        renderGrid();
+      }
+    }
+
     function updateFolderSelect(folders) {
       folderSelect.innerHTML = `<option value="">전체 폴더</option>`;
       folders.forEach(f=>{
@@ -268,22 +295,44 @@
 
       // 폴더 탭 동기화
       folderTabs.innerHTML = '';
-      const makeTab = (name, isAll) => {
+      const makeTabAll = () => {
         const tab = document.createElement('span');
-        tab.className = 'folder-tab' + (isAll ? ' active' : '');
-        tab.textContent = isAll ? '전체 폴더' : name;
+        tab.className = 'folder-tab' + ((folderSelect.value === "" || !folders.includes(folderSelect.value)) ? ' active' : '');
+        tab.textContent = '전체 폴더';
         tab.onclick = () => {
-          folderSelect.value = isAll ? '' : name;
+          folderSelect.value = '';
           renderGrid();
         };
-        if(isAll) tab.id = 'all-folder-tab';
+        tab.id = 'all-folder-tab';
         folderTabs.appendChild(tab);
       };
-      makeTab('', folderSelect.value === "" || !folders.includes(folderSelect.value));
+      makeTabAll();
+
       folders.forEach(f=>{
         const tab = document.createElement('span');
         tab.className = 'folder-tab' + (folderSelect.value === f ? ' active' : '');
-        tab.textContent = f;
+        tab.setAttribute('data-folder', f);
+
+        const label = document.createElement('span');
+        label.textContent = f;
+
+        // 🔧 아주 작은 수정 버튼 추가
+        const editBtn = document.createElement('button');
+        editBtn.className = 'folder-edit-btn';
+        editBtn.type = 'button';
+        editBtn.title = '폴더 이름 수정';
+        editBtn.textContent = '✎';
+        editBtn.addEventListener('click', (e) => {
+          e.stopPropagation(); // 탭 전환 방지
+          const current = f;
+          const next = prompt('새 폴더 이름을 입력하세요.', current);
+          if (next === null) return; // 취소
+          renameFolder(current, next);
+        });
+
+        tab.appendChild(label);
+        tab.appendChild(editBtn);
+
         tab.onclick = () => {
           folderSelect.value = f;
           renderGrid();
@@ -348,8 +397,8 @@
       // 탭 강조 동기화
       Array.from(document.querySelectorAll('.folder-tab')).forEach(tab=>{
         tab.classList.remove('active');
-        if((folderSelect.value === "" && tab.textContent === "전체 폴더") ||
-           (tab.textContent === folderSelect.value)) {
+        if((folderSelect.value === "" && tab.textContent.trim().startsWith("전체 폴더")) ||
+           (tab.getAttribute('data-folder') === folderSelect.value)) {
           tab.classList.add('active');
         }
       });
