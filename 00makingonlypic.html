@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Masonry 갤러리 + 보정 프리셋</title>
+<style>
+  :root{
+    --gap:15px;
+    --radius:12px;
+    --shadow:0 8px 22px rgba(0,0,0,.12);
+  }
+  body{margin:0;background:#f4f6fa;font-family:system-ui,Segoe UI,Apple SD Gothic Neo,Malgun Gothic,Arial,sans-serif;color:#111}
+  .wrap{max-width:1200px;margin:0 auto;padding:22px}
+  header{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}
+  h1{font-size:18px;margin:0}
+  .controls{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{
+    border:1px solid #e4e8ef;background:#fff;padding:8px 12px;border-radius:10px;cursor:pointer
+  }
+  .btn.active{background:#2947ff;color:#fff;border-color:#2947ff}
+
+  /* Masonry */
+  .gallery{column-count:3; column-gap:var(--gap)}
+  @media (max-width:900px){ .gallery{column-count:2} }
+  @media (max-width:600px){ .gallery{column-count:1} }
+
+  /* 카드(anchor 자체를 카드처럼) */
+  .gallery a{
+    position:relative; display:inline-block; width:100%;
+    margin:0 0 var(--gap); break-inside:avoid;
+    border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow);
+    text-decoration:none;
+  }
+  .gallery img{
+    width:100%; height:auto; display:block; transition:transform .25s ease, filter .25s ease;
+  }
+  .gallery a:hover img{ transform:scale(1.02) }
+
+  /* ===== 보정 프리셋 =====
+     아래 프리셋들은 body 클래스에 따라 전체 갤러리에 일괄 적용됩니다.
+     필요하면 개별 앵커에 클래스(.fx-punch 등)를 붙여 부분 적용도 가능 */
+  /* 공통: 오버레이 레이어(필요 프리셋에서만 활성) */
+  .gallery a::after{
+    content:""; position:absolute; inset:0; opacity:0; pointer-events:none; transition:opacity .25s ease;
+  }
+
+  /* 0) 기본 */
+  body.fx-none .gallery img{ filter:none }
+  body.fx-none .gallery a::after{ opacity:0 }
+
+  /* 1) Punch: 선명/강렬 (살짝 따뜻) */
+  body.fx-punch .gallery img{
+    filter: contrast(1.28) saturate(1.35) brightness(.98) hue-rotate(-4deg);
+  }
+  body.fx-punch .gallery a::after{
+    background: radial-gradient(120% 120% at 50% 20%, rgba(255,240,210,.08), rgba(0,0,0,.18));
+    mix-blend-mode:multiply; opacity:1;
+  }
+
+  /* 2) Moody: 짙고 영화같이 */
+  body.fx-moody .gallery img{
+    filter: contrast(1.22) saturate(1.05) brightness(.92);
+  }
+  body.fx-moody .gallery a::after{
+    background: linear-gradient(to bottom, rgba(12,18,26,.15), rgba(0,0,0,.35));
+    mix-blend-mode:multiply; opacity:1;
+  }
+
+  /* 3) Noir: 하이콘트라스트 모노톤 */
+  body.fx-noir .gallery img{
+    filter: grayscale(.92) contrast(1.28) brightness(.95);
+  }
+  body.fx-noir .gallery a::after{
+    background: radial-gradient(140% 120% at 50% 0%, rgba(255,255,255,.07), rgba(0,0,0,.30));
+    mix-blend-mode:multiply; opacity:1;
+  }
+
+  /* 4) TealOrange: 시네룩(틸&오렌지) */
+  body.fx-teal .gallery img{
+    /* 약간의 색조 회전 + 따뜻/차가움 대비 */
+    filter: contrast(1.22) saturate(1.25) brightness(.97) hue-rotate(-8deg);
+  }
+  body.fx-teal .gallery a::after{
+    background:
+      linear-gradient( to bottom, rgba(1,120,150,.18), rgba(0,0,0,.22)),
+      radial-gradient(120% 120% at 70% 10%, rgba(255,140,40,.10), transparent 60%);
+    mix-blend-mode:multiply; opacity:1;
+  }
+
+  /* 5) Film: 빈티지 영화 감성 */
+  body.fx-film .gallery img{
+    filter: contrast(1.12) saturate(1.05) brightness(.98) sepia(.18);
+  }
+  body.fx-film .gallery a::after{
+    background:
+      linear-gradient( to bottom, rgba(46,34,20,.14), rgba(0,0,0,.22)),
+      repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, rgba(0,0,0,0) 1px 2px); /* 아주 미세한 필름결 */
+    mix-blend-mode:multiply; opacity:1;
+  }
+
+  /* Hover 시 살짝 더 드라마틱하게 */
+  body[class^="fx-"] .gallery a:hover img{
+    filter: contrast(1.03) saturate(1.02) brightness(.995);
+  }
+</style>
+</head>
+<body class="fx-punch"> <!-- 기본 프리셋: Punch -->
+  <div class="wrap">
+    <header>
+      <h1>🍣 Masonry 갤러리</h1>
+      <div class="controls">
+        <button class="btn active" data-fx="fx-punch">Punch</button>
+        <button class="btn" data-fx="fx-moody">Moody</button>
+        <button class="btn" data-fx="fx-noir">Noir</button>
+        <button class="btn" data-fx="fx-teal">Teal&Orange</button>
+        <button class="btn" data-fx="fx-film">Film</button>
+        <button class="btn" data-fx="fx-none">기본</button>
+      </div>
+    </header>
+
+    <div class="gallery">
+      <!-- 각 사진은 “이미지+링크”만. 가로는 열 너비에 맞추고, 세로는 원본비율 유지 -->
+      <a href="https://example.com/post/1" target="_blank" rel="noopener">
+        <img src="https://picsum.photos/id/1080/900/650" alt="">
+      </a>
+      <a href="https://example.com/post/2" target="_blank" rel="noopener">
+        <img src="https://picsum.photos/id/1062/900/1200" alt="">
+      </a>
+      <a href="https://example.com/post/3" target="_blank" rel="noopener">
+        <img src="https://picsum.photos/id/102/900/900" alt="">
+      </a>
+      <a href="https://example.com/post/4" target="_blank" rel="noopener">
+        <img src="https://picsum.photos/id/1081/900/650" alt="">
+      </a>
+      <a href="https://example.com/post/5" target="_blank" rel="noopener">
+        <img src="https://picsum.photos/id/292/950/700" alt="">
+      </a>
+      <a href="https://example.com/post/6" target="_blank" rel="noopener">
+        <img src="https://picsum.photos/id/100/900/600" alt="">
+      </a>
+      <a href="https://example.com/post/7" target="_blank" rel="noopener">
+        <img src="https://picsum.photos/id/1068/900/700" alt="">
+      </a>
+      <a href="https://example.com/post/8" target="_blank" rel="noopener">
+        <img src="https://picsum.photos/id/1040/900/700" alt="">
+      </a>
+    </div>
+  </div>
+
+<script>
+  // 프리셋 토글
+  const buttons = document.querySelectorAll('.btn');
+  function setFx(cls){
+    document.body.className = cls;
+    buttons.forEach(b=>b.classList.toggle('active', b.dataset.fx===cls));
+  }
+  buttons.forEach(b=> b.addEventListener('click', ()=> setFx(b.dataset.fx)));
+</script>
+</body>
+</html>
