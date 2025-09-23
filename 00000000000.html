@@ -25,17 +25,26 @@
       background: #fff; color: #232373; min-width: 110px; font-family: inherit;
     }
 
-    /* 대시보드: 처음 화면에서 한참 아래에서 시작 */
+    /* 대시보드: 처음 화면에서 한참 아래에서 시작 (기존 유지) */
     .dashboard {
-      max-width: 1200px; margin: 0 auto; padding: 64px 0 60px 0;
+      /* 폭을 화면 전체로 */
+      width: 100vw; max-width: none; margin: 0; padding: 64px 0 60px 0;
       margin-top: 1200px !important;
+      box-sizing: border-box;
     }
 
     .gallery-label {
       font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
       color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
     }
-    .gallery-row { width: 100%; max-width: 1080px; margin: 0 auto; text-align: center; }
+
+    /* 행 자체를 화면 가로 전체로 (가운데 정렬, 최대폭 제한 제거) */
+    .gallery-row {
+      width: 100vw; margin: 0; padding: 0;
+      text-align: left;
+      box-sizing: border-box;
+      display: flex; flex-wrap: wrap; align-items: stretch;
+    }
 
     .list-row {
       display: inline-block; vertical-align: top; box-sizing: border-box;
@@ -51,7 +60,8 @@
     }
     .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
     .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
-    .img-item img { display: block; width: 100%; height: 100%; object-fit: contain; background: #fff; margin: 0; border: none; padding: 0; }
+    /* 이미지: 좌우 여백 없이 가득 차게. 높이는 비율대로 자동 */
+    .img-item img { display: block; width: 100%; height: auto; object-fit: contain; background: #fff; margin: 0; border: none; padding: 0; }
 
     .edit-btn {
       position: absolute; top: 7px; right: 9px; padding: 4px 12px; font-size: 14px;
@@ -63,29 +73,55 @@
     .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
     .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
 
-    /* ★ 사진 카드: 현재보다 추가 +30% 확대 */
-    .list-row.magazine { width: 254px; height: 360px; margin: 0 12px 36px 0; } /* 195x277 → 254x360 (+30%) */
+    /* 기본(모바일/태블릿) 크기 규칙 (기존 유지) */
+    .list-row.magazine { width: 254px; height: 360px; margin: 0 12px 36px 0; }
     .img-wrap.magazine { height: 100%; }
     .img-item.magazine { height: 100%; }
 
-    /* 반응형도 +30% 반영 */
     @media (max-width: 1080px) {
       .list-row.magazine {
-        width: 47.3vw;   /* 36.4 * 1.3 */
-        height: 67.6vw;  /* 52   * 1.3 */
-        min-width: 135px;/* 104  * 1.3 */
-        min-height: 169px;/*130  * 1.3 */
+        width: 47.3vw;
+        height: 67.6vw;
+        min-width: 135px;
+        min-height: 169px;
         margin: 0 2vw 28px 0;
       }
     }
     @media (max-width: 700px) {
       .list-row.magazine {
-        width: 74.4vw;     /* 57.2 * 1.3 */
-        height: 104.8vw;   /* 80.6 * 1.3 */
-        min-width: 110px;  /* 84.5 * 1.3 ≈ 110 */
-        min-height: 144px; /* 110.5 * 1.3 ≈ 144 */
+        width: 74.4vw;
+        height: 104.8vw;
+        min-width: 110px;
+        min-height: 144px;
         margin: 0 2vw 22px 0;
       }
+    }
+
+    /* === PC: 가로 3개, 좌우 여백 0, 풀사이즈 === */
+    @media (min-width: 1100px) {
+      .gallery-row {
+        width: 100vw;
+        padding: 0;
+        margin: 0;
+      }
+      .list-row.magazine {
+        width: calc(100vw / 3);   /* 3열 꽉 채움 */
+        height: auto;             /* 높이 자동 */
+        margin: 0;                /* 좌우 여백 제거 */
+        border: 0;
+      }
+      .img-wrap.magazine,
+      .img-item.magazine,
+      .imgframe {
+        height: auto;             /* 이미지 높이 자동 */
+      }
+      .img-item img {
+        width: 100%;
+        height: auto;             /* 비율 유지 */
+        object-fit: contain;      /* 원본 비율 유지, 잘림 없음. 꽉 채우려면 cover로 변경 가능 */
+      }
+      /* 그림자 라인도 좌우 여백 없이 맞춤 */
+      .shadow-line img { width: 100%; }
     }
 
     #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.57); display: none; align-items: center; justify-content: center; z-index: 2002;}
@@ -116,7 +152,6 @@
     </select>
   </nav>
 
-  <!-- 인라인 margin 제거 -->
   <div class="dashboard">
     <span class="gallery-label">A</span>
     <div class="gallery-row" id="gallery1"></div>
