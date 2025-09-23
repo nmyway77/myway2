@@ -1,122 +1,96 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>MYWAY 인플루언서 influencer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>MYWAY 인플루언서 influencer (Masonry, order-preserved)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root{
-      --gap:15px;           /* 카드 간격 */
-      --side-pad:12px;      /* 좌우 여백(살짝) */
-      --row-unit:6px;       /* Masonry 계산 단위(작을수록 정밀) */
+      --gap:15px;          /* 카드 간격 */
+      --side-pad:12px;     /* 좌우 살짝 여백 */
+      --row-unit:8px;      /* Masonry 단위행 높이(px) – 작을수록 촘촘 */
       --radius:12px;
       --shadow:0 8px 22px rgba(0,0,0,.12);
     }
 
-    body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
-    .topbar {
-      position: fixed; top: 0; left: 0; width: 100vw; z-index: 1001;
-      background: #2e2e54; color: #fff;
-      display: flex; align-items: center; justify-content: flex-start;
-      box-shadow: 0 4px 18px #29317018;
-      padding: 0 14px; height: 54px; min-width: 360px; font-size: 16px;
+    body{ background:#fff; font-family:'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
+    .topbar{
+      position: fixed; top:0; left:0; width:100vw; z-index:1001;
+      background:#2e2e54; color:#fff; display:flex; align-items:center; justify-content:flex-start;
+      box-shadow:0 4px 18px #29317018; padding:0 14px; height:54px; min-width:360px; font-size:16px;
     }
-    .topbar button {
-      padding: 8px 18px; margin-right: 8px; background: #436cff; color: #fff;
-      border: none; border-radius: 6px; font-size: 15px; cursor: pointer;
-      font-family: inherit; transition: background .2s;
+    .topbar button{
+      padding:8px 18px; margin-right:8px; background:#436cff; color:#fff;
+      border:none; border-radius:6px; font-size:15px; cursor:pointer; transition:background .2s;
     }
-    .topbar button#export-btn { background: #30bc8a; }
-    .topbar button#import-btn { background: #ffc94a; color: #232356; }
-    .topbar select {
-      margin-left: 8px; padding: 7px 11px; font-size: 15px; border-radius: 5px; border: 1px solid #ccd;
-      background: #fff; color: #232373; min-width: 110px; font-family: inherit;
+    .topbar #export-btn{ background:#30bc8a; }
+    .topbar #import-btn{ background:#ffc94a; color:#232356; }
+    .topbar select{
+      margin-left:8px; padding:7px 11px; font-size:15px; border-radius:5px; border:1px solid #ccd;
+      background:#fff; color:#232373; min-width:110px;
     }
 
-    /* 대시보드: 시작 위치는 원본 유지 */
-    .dashboard {
-      width: 100vw; max-width: none; margin: 0; padding: 64px 0 60px 0;
-      margin-top: 1200px !important;
-      box-sizing: border-box;
+    /* 시작 위치는 원본 유지 */
+    .dashboard{
+      width:100vw; max-width:none; margin:0; padding:64px 0 60px 0;
+      margin-top:1200px !important; box-sizing:border-box;
     }
 
-    .gallery-label {
-      font-weight: bold; font-size: 1.15rem; margin: 34px 0 18px 0;
-      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
+    .gallery-label{
+      font-weight:700; font-size:1.1rem; margin:34px 0 18px; color:#232356; text-align:center; letter-spacing:.3px; display:block;
     }
 
-    /* ===== Masonry(Grid 기반) ===== */
+    /* ===== Masonry(Grid) =====
+       grid-auto-flow: row (dense 금지) → DOM 순서 = 시각 순서 보존 */
     .gallery-row{
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);   /* PC: 3열 */
-      grid-auto-rows: var(--row-unit);         /* Masonry 단위 행 높이 */
-      gap: var(--gap);
-      padding: 0 var(--side-pad);              /* 좌우 살짝 여백 */
-      box-sizing: border-box;
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);   /* PC 3열 */
+      grid-auto-rows: var(--row-unit);
+      grid-auto-flow: row;                    /* 순서 보존 */
+      gap:var(--gap);
+      padding:0 var(--side-pad);
+      box-sizing:border-box;
     }
-    @media (max-width: 1100px){
-      .gallery-row{ grid-template-columns: repeat(2, 1fr); }
+    @media (max-width:1100px){
+      .gallery-row{ grid-template-columns:repeat(2, 1fr); }
     }
-    @media (max-width: 700px){
-      .gallery-row{ grid-template-columns: 1fr; }
+    @media (max-width:700px){
+      .gallery-row{ grid-template-columns:1fr; }
     }
 
-    /* 카드(원래 .list-row.magazine 사용) */
+    /* 카드 */
     .list-row{
-      position: relative;
-      display: block;
-      width: 100%;
-      margin: 0;                  /* gap으로 간격 관리 */
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      background: #fff;
-      /* Masonry: JS가 grid-row-end를 계산해 설정 */
+      position:relative; display:block; width:100%;
+      border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); background:#fff;
+      /* grid-row-end는 JS가 계산해서 넣어줌 */
+      will-change: grid-row-end;
     }
-    .imgframe{
-      width: 100%;
-      height: auto;
-      background: #fff;
-      position: relative;
-      box-sizing: border-box;
-      z-index: 0;
-      border-radius: 0;
-      overflow: hidden;
-      display: block;
-    }
-    .img-wrap{ position: relative; width: 100%; height: auto; overflow: hidden; margin:0; padding:0;}
-    .img-item{ position: relative; width: 100%; height: auto; overflow: hidden; }
-    .img-item a{ display:block; width:100%; height:auto; }
+    .imgframe{ width:100%; position:relative; }
+    .img-wrap{ position:relative; width:100%; }
+    .img-item{ position:relative; width:100%; }
+    .img-item a{ display:block; width:100%; }
     .img-item img{
-      display: block;
-      width: 100%;
-      height: auto;              /* 비율 유지 */
-      object-fit: contain;
-      background: #fff;
-      margin: 0; border: none; padding: 0;
-      transition: transform .25s ease;
+      display:block; width:100%; height:auto; object-fit:contain;   /* 꽉 채우려면 cover */
+      transition:transform .25s ease;
     }
-    .list-row:hover .img-item img{ transform: scale(1.02); }
+    .list-row:hover .img-item img{ transform:scale(1.02); }
 
-    .edit-btn {
-      position: absolute; top: 7px; right: 9px; padding: 4px 12px; font-size: 14px;
-      background: #2e2e54c0; color: #fff; border: none; border-radius: 6px; cursor: pointer;
-      z-index: 4; transition: background .15s;
+    .edit-btn{
+      position:absolute; top:7px; right:9px; padding:4px 12px; font-size:14px;
+      background:#2e2e54c0; color:#fff; border:none; border-radius:6px; cursor:pointer; z-index:4;
     }
-    .edit-btn:hover { background: #436cff; }
+    .edit-btn:hover{ background:#436cff; }
 
-    /* 하단 그림자 라인은 폭 100%로 */
-    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important;}
-    .shadow-line img { display: block; margin: 0; width: 100%; height: 20px; pointer-events: none; user-select: none; }
+    .shadow-line{ margin:0; padding:0; max-width:100%; overflow:hidden; }
+    .shadow-line img{ display:block; width:100%; height:20px; pointer-events:none; user-select:none; }
 
-    /* 기존 고정 크기 규칙 제거(그리드 Masonry에서 auto) */
-    .list-row.magazine{ /* height/width 고정값 제거 */ }
-    .img-wrap.magazine, .img-item.magazine, .imgframe{ height: auto; }
+    /* 사용 안 하는 고정 크기 규칙 제거(그리드에서 자동 높이) */
+    .list-row.magazine{}
+    .img-wrap.magazine, .img-item.magazine, .imgframe{ height:auto; }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 </head>
 <body>
-  <!-- 상단바 -->
   <nav class="topbar">
     <button id="add-btn">추가</button>
     <button id="export-btn">내보내기</button>
@@ -155,8 +129,8 @@
   </div>
 
   <!-- 입력 모달 -->
-  <div id="modal-overlay" style="display:none">
-    <div id="modal" style="background:#fff; padding: 28px 22px 22px 22px; border-radius:7px; width:320px; box-shadow:0 2px 16px #24248238;">
+  <div id="modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.57); align-items:center; justify-content:center; z-index:2002;">
+    <div id="modal" style="background:#fff; padding:28px 22px 22px; border-radius:7px; width:320px; box-shadow:0 2px 16px #24248238;">
       <h3 style="margin-bottom:16px; font-size:20px; color:#313181;">이미지 추가</h3>
       <label style="display:block; margin-bottom:6px; color:#232356; font-weight:600;">이미지 URL</label>
       <input type="text" id="modal-img" placeholder="이미지 주소" style="width:100%; margin-bottom:14px; padding:8px; border:1px solid #b2c1e6; border-radius:5px; font-size:14px;">
@@ -184,15 +158,15 @@
 
   <script>
     // 페이지 이동
-    document.getElementById('page-switch').addEventListener('change', function() {
-      if (this.value) location.href = this.value;
+    document.getElementById('page-switch').addEventListener('change', function(){
+      if(this.value) location.href = this.value;
     });
 
-    // ===== Storage Key 네임스페이스 (페이지별 분리) =====
+    // ===== Storage Key (페이지별 분리) =====
     const STORAGE_NAMESPACE = "MW_INFLUENCER_GALLERY_v3";
     const PAGE_ID = (location.pathname.split('/').pop() || 'index').toLowerCase();
     const STORAGE_KEY = `${STORAGE_NAMESPACE}:${PAGE_ID}`;
-    // ================================================
+    // ======================================
 
     const defaultData = {
       gallery1: [
@@ -203,56 +177,56 @@
     };
     const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
 
-    const $ = (sel,root=document)=>root.querySelector(sel);
-    const $$ = (sel,root=document)=>Array.from(root.querySelectorAll(sel));
+    const $ = (s, r=document) => r.querySelector(s);
+    const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
 
-    function getData() {
-      let data = localStorage.getItem(STORAGE_KEY);
-      if (!data) return JSON.parse(JSON.stringify(defaultData));
-      try { return JSON.parse(data); }
-      catch { return JSON.parse(JSON.stringify(defaultData)); }
+    function getData(){
+      let raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return JSON.parse(JSON.stringify(defaultData));
+      try{ return JSON.parse(raw); } catch{ return JSON.parse(JSON.stringify(defaultData)); }
     }
-    function setData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+    function setData(d){ localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
 
-    let editing = { gallery: null, index: null };
+    let editing = { gallery:null, index:null };
 
-    // Masonry 높이 계산: 각 카드 실제 높이 기준으로 grid-row span 지정
+    /* ===== Masonry sizing: 각 카드 실높이 → span 계산 ===== */
     function sizeMasonry(container){
-      const rowUnit = parseInt(getComputedStyle(container).getPropertyValue('--row-unit')) || 6;
-      const gap = parseInt(getComputedStyle(container).gap) || 0;
+      if(!container) return;
+      const styles = getComputedStyle(container);
+      const rowUnit = parseInt(styles.gridAutoRows) || parseInt(getComputedStyle(document.documentElement).getPropertyValue('--row-unit')) || 8;
+      const gap = parseInt(styles.gap) || 0;
 
       $$('.list-row', container).forEach(card=>{
-        // 카드의 실제 총 높이(그림자 라인 포함)
+        // 초기화(연속 렌더/리사이즈 시 정확도 보정)
+        card.style.gridRowEnd = 'auto';
+        // 카드 총 높이(이미지 박스 + 하단 그림자선 + 내부 gap 일부)
         const imgBox = $('.imgframe', card);
         const shadow = $('.shadow-line', card);
         const total = (imgBox?.offsetHeight || 0) + (shadow?.offsetHeight || 0) + gap;
-        const span = Math.ceil(total / rowUnit);
+        const span = Math.max(1, Math.ceil(total / rowUnit));
         card.style.gridRowEnd = `span ${span}`;
       });
     }
     function sizeAllMasonry(){
       for(let i=1;i<=10;i++){
-        const container = $(`#gallery${i}`);
-        if(container) sizeMasonry(container);
+        sizeMasonry(document.getElementById(`gallery${i}`));
       }
     }
-
-    // 이미지 로드 이벤트로 Masonry 재계산
+    // 이미지 로드 시마다 해당 row만 재계산
     function bindImgLoadReflow(scope=document){
       $$('img', scope).forEach(img=>{
-        if (img.complete) return; // 이미 로드됨
-        img.addEventListener('load', ()=> {
+        if(img.complete) return;
+        img.addEventListener('load', ()=>{
           const row = img.closest('.gallery-row');
           if(row) sizeMasonry(row);
-        });
+        }, { once:true });
       });
     }
 
-    function renderGallery(data, targetId) {
+    function renderGallery(data, targetId){
       const el = document.getElementById(targetId);
-
-      // 저장 순서대로 DOM 생성 (순서 유지)
-      el.innerHTML = data.map((item, idx) => `
+      // 저장된 순서대로 DOM 생성 (순서 유지)
+      el.innerHTML = data.map((item, idx)=>`
         <div class="list-row magazine" data-idx="${idx}">
           <div class="imgframe">
             <button class="edit-btn" type="button" title="수정">수정</button>
@@ -264,33 +238,30 @@
               </div>
             </div>
           </div>
-          <div class="shadow-line">
-            <img src="${shadowUrl}" alt="">
-          </div>
+          <div class="shadow-line"><img src="${shadowUrl}" alt=""></div>
         </div>
       `).join('');
 
-      // 수정 버튼 동작
-      Array.from(el.querySelectorAll('.edit-btn')).forEach((btn, idx) => {
-        btn.onclick = function(e) {
+      // 수정 버튼
+      $$('.edit-btn', el).forEach((btn, idx)=>{
+        btn.onclick = (e)=>{
           e.stopPropagation();
           editing.gallery = targetId;
           editing.index = idx;
           const data = getData();
           const item = data[targetId][idx];
-          document.getElementById('modal-img').value = item.img;
-          document.getElementById('modal-link').value = item.url;
-          document.getElementById('modal-dir').value = targetId;
-          document.getElementById('modal-overlay').style.display = 'flex';
+          $('#modal-img').value = item.img;
+          $('#modal-link').value = item.url;
+          $('#modal-dir').value = targetId;
+          $('#modal-overlay').style.display = 'flex';
         };
       });
 
-      // 드래그로 재정렬 (수동으로 순서 바꾸면 저장 및 재렌더 시 그 순서 유지)
+      // 드래그 정렬(순서 바꾸면 저장 & 다시 그려도 그대로)
       Sortable.create(el, {
-        animation: 160,
-        handle: ".imgframe",
-        ghostClass: "drag-ghost",
-        onEnd: function (evt) {
+        animation:160,
+        handle:".imgframe",
+        onEnd:(evt)=>{
           let galleryKey = targetId;
           let galleryData = getData();
           const moved = galleryData[galleryKey].splice(evt.oldIndex, 1)[0];
@@ -305,89 +276,71 @@
       sizeMasonry(el);
     }
 
-    function renderAll() {
+    function renderAll(){
       const data = getData();
-      for (let i = 1; i <= 10; i++) {
+      for(let i=1;i<=10;i++){
         renderGallery(data[`gallery${i}`] || [], `gallery${i}`);
       }
     }
 
     // 모달
-    document.getElementById('add-btn').onclick = () => {
-      editing.gallery = null;
-      editing.index = null;
-      document.getElementById('modal-img').value = "";
-      document.getElementById('modal-link').value = "";
-      document.getElementById('modal-dir').value = "gallery1";
-      document.getElementById('modal-overlay').style.display = 'flex';
-      document.getElementById('modal-img').focus();
+    $('#add-btn').onclick = ()=>{
+      editing.gallery = null; editing.index = null;
+      $('#modal-img').value = ""; $('#modal-link').value = ""; $('#modal-dir').value = "gallery1";
+      $('#modal-overlay').style.display = 'flex';
+      $('#modal-img').focus();
     };
-    document.querySelector('#modal .cancel-btn').onclick = () => {
-      document.getElementById('modal-overlay').style.display = 'none';
-    };
-    document.querySelector('#modal .save-btn').onclick = () => {
-      const img = document.getElementById('modal-img').value.trim();
-      const link = document.getElementById('modal-link').value.trim();
-      const dir = document.getElementById('modal-dir').value;
-      if (!img) { alert("이미지 주소를 입력하세요."); return; }
-      if (!link) { alert("링크 주소를 입력하세요."); return; }
+    $('.cancel-btn').onclick = ()=>{ $('#modal-overlay').style.display = 'none'; };
+    $('.save-btn').onclick = ()=>{
+      const img = $('#modal-img').value.trim();
+      const link = $('#modal-link').value.trim();
+      const dir = $('#modal-dir').value;
+      if(!img){ alert("이미지 주소를 입력하세요."); return; }
+      if(!link){ alert("링크 주소를 입력하세요."); return; }
 
       let data = getData();
-      if (editing.gallery !== null && editing.index !== null) {
-        if (editing.gallery === dir) {
+      if(editing.gallery !== null && editing.index !== null){
+        if(editing.gallery === dir){
           data[dir][editing.index] = { url: link, img };
-        } else {
+        }else{
           data[editing.gallery].splice(editing.index, 1);
-          if (!data[dir]) data[dir] = [];
+          if(!data[dir]) data[dir] = [];
           data[dir].push({ url: link, img });
         }
-      } else {
-        if (!data[dir]) data[dir] = [];
-        data[dir].push({ url: link, img }); // 맨 뒤에 추가 => 저장 순서 유지
+      }else{
+        if(!data[dir]) data[dir] = [];
+        data[dir].push({ url: link, img });      // 맨 뒤에 추가 → 저장 순서 보존
       }
       setData(data);
-      document.getElementById('modal-overlay').style.display = 'none';
+      $('#modal-overlay').style.display = 'none';
       renderAll();
     };
 
     // 내보내기/가져오기
-    document.getElementById('export-btn').onclick = () => {
+    $('#export-btn').onclick = ()=>{
       const data = getData();
-      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(data)], { type:'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
-      a.download = 'influencer_gallery.json';
-      a.click();
+      a.href = url; a.download = 'influencer_gallery.json'; a.click();
       URL.revokeObjectURL(url);
     };
-    document.getElementById('import-btn').onclick = () => {
-      document.getElementById('import-file').click();
-    };
-    document.getElementById('import-file').onchange = e => {
-      const file = e.target.files[0];
-      if (!file) return;
+    $('#import-btn').onclick = ()=> $('#import-file').click();
+    $('#import-file').onchange = e=>{
+      const file = e.target.files[0]; if(!file) return;
       const reader = new FileReader();
-      reader.onload = evt => {
-        try {
+      reader.onload = evt=>{
+        try{
           const data = JSON.parse(evt.target.result);
-          setData(data);
-          renderAll();
-          alert('가져오기가 완료되었습니다.');
-        } catch {
-          alert('불러오기 실패(잘못된 파일)');
-        }
+          setData(data); renderAll(); alert('가져오기가 완료되었습니다.');
+        }catch{ alert('불러오기 실패(잘못된 파일)'); }
       };
-      reader.readAsText(file);
-      e.target.value = null;
+      reader.readAsText(file); e.target.value = null;
     };
 
-    // 초기 렌더 + 리사이즈 대응
+    // 초기 렌더 & 리사이즈 시 재계산
     renderAll();
-    window.addEventListener('resize', () => {
-      // 레이아웃만 다시 계산
-      sizeAllMasonry();
-    });
+    window.addEventListener('resize', sizeAllMasonry);
   </script>
 </body>
 </html>
