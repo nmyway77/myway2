@@ -1,346 +1,439 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>MYWAY 인플루언서 influencer (Masonry, order-preserved)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <base target="_blank">
+  <meta charset="UTF-8">
+  <title>그림 그리드 - 미디어 저장 영구 유지+드래그+폴더 (순서보존 Masonry)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    :root{
-      --gap:15px;          /* 카드 간격 */
-      --side-pad:12px;     /* 좌우 살짝 여백 */
-      --row-unit:8px;      /* Masonry 단위행 높이(px) – 작을수록 촘촘 */
-      --radius:12px;
-      --shadow:0 8px 22px rgba(0,0,0,.12);
+    body {margin:0; padding:0; background:#fff; font-family:'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif;}
+    .topbar {
+      position: fixed; top: 0; left: 0; width: 100vw; z-index: 1100;
+      background: rgba(54,56,110,0.98); color: #fff;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 4px 18px #29317020; padding: 0 16px; height: 58px; min-width: 360px;
+      backdrop-filter: blur(6px);
     }
+    .topbar-left { display: flex; align-items: center; gap: 9px; }
+    .topbar button {
+      padding: 7px 14px; background: #313181; color: #fff; border: none; border-radius: 5px;
+      font-size: 15px; font-family: inherit; cursor: pointer; transition: background .2s;
+    }
+    .topbar button#save-media-btn { background: #4067d1; }
+    .topbar button#export-btn { background: #21b781; }
+    .topbar button#import-btn { background: #ffe178; color: #222; }
+    .topbar select {
+      margin-left: 8px; padding: 7px 11px; font-size: 15px; border-radius: 5px; border: 1px solid #ccd;
+      background: #fff; color: #232373; min-width: 110px; font-family: inherit;
+    }
+    .topbar-folders {
+      display: flex; align-items: center; gap: 0; margin-left: 20px; overflow-x: auto; white-space: nowrap;
+      flex: 1 1 auto; justify-content: flex-start;
+    }
+    .folder-tab {
+      display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; margin: 0 2px;
+      background: #ecedfa; color: #3C3C8C; font-weight: 600; font-size: 15px;
+      border-radius: 50px; border: 1.5px solid #dadfff; cursor: pointer; user-select: none;
+      transition: background .18s, color .18s, border .18s;
+    }
+    .folder-tab.active, .folder-tab:hover { background: #4e52ba; color: #fff; border: 1.5px solid #2e307c; }
+    .folder-edit-btn {
+      font-size: 12px; line-height: 1; padding: 2px 6px; border: none; border-radius: 999px;
+      background: rgba(255,255,255,0.18); color: inherit; cursor: pointer; opacity: .85;
+    }
+    .folder-tab:hover .folder-edit-btn { opacity: 1; }
+    .folder-edit-btn:focus { outline: none; }
 
-    body{ background:#fff; font-family:'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
-    .topbar{
-      position: fixed; top:0; left:0; width:100vw; z-index:1001;
-      background:#2e2e54; color:#fff; display:flex; align-items:center; justify-content:flex-start;
-      box-shadow:0 4px 18px #29317018; padding:0 14px; height:54px; min-width:360px; font-size:16px;
-    }
-    .topbar button{
-      padding:8px 18px; margin-right:8px; background:#436cff; color:#fff;
-      border:none; border-radius:6px; font-size:15px; cursor:pointer; transition:background .2s;
-    }
-    .topbar #export-btn{ background:#30bc8a; }
-    .topbar #import-btn{ background:#ffc94a; color:#232356; }
-    .topbar select{
-      margin-left:8px; padding:7px 11px; font-size:15px; border-radius:5px; border:1px solid #ccd;
-      background:#fff; color:#232373; min-width:110px;
-    }
+    #controls { display:none; }
 
-    /* 시작 위치는 원본 유지 */
-    .dashboard{
-      width:100vw; max-width:none; margin:0; padding:64px 0 60px 0;
-      margin-top:1200px !important; box-sizing:border-box;
-    }
+    #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 200;}
+    #modal { background: #fff; padding: 20px; border-radius: 6px; width: 320px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);}
+    #modal h3 { margin-bottom: 10px; font-size: 18px; }
+    #modal input { width: 100%; margin-bottom: 10px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;}
+    .auto-thumb-btn { background: #eee; color: #333; border: 1px solid #aaa; border-radius: 4px; padding: 6px 10px; font-size: 13px; margin-bottom: 10px; margin-right: 5px; cursor: pointer; display: inline-block;}
+    .actions { text-align: right; }
+    .actions button { padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; margin-left: 8px; font-size: 14px;}
+    .save-btn { background: #28a745; color: #fff; }
+    .cancel-btn { background: #dc3545; color: #fff; }
 
-    .gallery-label{
-      font-weight:700; font-size:1.1rem; margin:34px 0 18px; color:#232356; text-align:center; letter-spacing:.3px; display:block;
+    /* ===== 순서 보존 Masonry: CSS Grid 방식 ===== */
+    #media-grid{
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);   /* PC 3열 */
+      grid-auto-rows: 8px;                     /* Masonry 단위행 */
+      grid-auto-flow: row;                     /* 순서 보존 (dense 금지) */
+      gap: 15px;
+      margin: 1250px auto 20px;
+      width: 100%;
+      max-width: 1400px;
+      padding: 0 12px;                         /* 좌우 살짝 여백 */
+      box-sizing: border-box;
     }
+    .grid-item {
+      position: relative; border-radius: 10px; overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12); background: #fff;
+      /* grid-row-end: span N 은 JS가 계산해서 넣어줌 */
+    }
+    .grid-item img {
+      width: 100%; height: auto; display: block; border-radius: 10px;
+      cursor: pointer; transition: transform 0.25s ease;
+    }
+    .grid-item:hover img { transform: scale(1.03); }
+    .edit-btn {
+      position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6);
+      border: none; color: #fff; padding: 4px 6px; border-radius: 4px; cursor: pointer; font-size: 12px;
+    }
+    #html-editor, #html-preview { border-color: white;}
+    #html-edit-btn { display: block; margin: 0; padding: 8px 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; position: relative; top: 20px;}
+    #html-editor { display: none; width: 100%; height: 300px; font-family: monospace; font-size: 14px; border: 1px solid #ccc; padding: 10px; box-sizing: border-box; background: #f0f8ff; border-color: #007bff;}
+    #html-preview { width: 100%; padding: 10px; border: 1px solid #ddd; background: white;}
+    .editor-space { height: 80px;}
 
-    /* ===== Masonry(Grid) =====
-       grid-auto-flow: row (dense 금지) → DOM 순서 = 시각 순서 보존 */
-    .gallery-row{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);   /* PC 3열 */
-      grid-auto-rows: var(--row-unit);
-      grid-auto-flow: row;                    /* 순서 보존 */
-      gap:var(--gap);
-      padding:0 var(--side-pad);
-      box-sizing:border-box;
+    /* 반응형 */
+    @media (max-width:1100px) {#media-grid{grid-template-columns: repeat(2,1fr);}}
+    @media (max-width:800px)  {#media-grid{grid-template-columns: repeat(2,1fr);}}
+    @media (max-width:600px)  {#media-grid{grid-template-columns: 1fr;}}
+    @media (max-width:650px)  {
+      .topbar { flex-wrap: wrap; height: auto; padding: 8px 2vw; }
+      .topbar-left { flex-wrap: wrap; gap: 6px; }
+      .topbar-folders { margin-left: 7px; }
     }
-    @media (max-width:1100px){
-      .gallery-row{ grid-template-columns:repeat(2, 1fr); }
-    }
-    @media (max-width:700px){
-      .gallery-row{ grid-template-columns:1fr; }
-    }
-
-    /* 카드 */
-    .list-row{
-      position:relative; display:block; width:100%;
-      border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); background:#fff;
-      /* grid-row-end는 JS가 계산해서 넣어줌 */
-      will-change: grid-row-end;
-    }
-    .imgframe{ width:100%; position:relative; }
-    .img-wrap{ position:relative; width:100%; }
-    .img-item{ position:relative; width:100%; }
-    .img-item a{ display:block; width:100%; }
-    .img-item img{
-      display:block; width:100%; height:auto; object-fit:contain;   /* 꽉 채우려면 cover */
-      transition:transform .25s ease;
-    }
-    .list-row:hover .img-item img{ transform:scale(1.02); }
-
-    .edit-btn{
-      position:absolute; top:7px; right:9px; padding:4px 12px; font-size:14px;
-      background:#2e2e54c0; color:#fff; border:none; border-radius:6px; cursor:pointer; z-index:4;
-    }
-    .edit-btn:hover{ background:#436cff; }
-
-    .shadow-line{ margin:0; padding:0; max-width:100%; overflow:hidden; }
-    .shadow-line img{ display:block; width:100%; height:20px; pointer-events:none; user-select:none; }
-
-    /* 사용 안 하는 고정 크기 규칙 제거(그리드에서 자동 높이) */
-    .list-row.magazine{}
-    .img-wrap.magazine, .img-item.magazine, .imgframe{ height:auto; }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 </head>
 <body>
+  <!-- 상단바 -->
   <nav class="topbar">
-    <button id="add-btn">추가</button>
-    <button id="export-btn">내보내기</button>
-    <button id="import-btn">가져오기</button>
-    <input type="file" id="import-file" accept="application/json" style="display:none">
-    <select id="page-switch">
-      <option value="">Type</option>
-      <option value="making001.html">BAR ▼</option>
-      <option value="00making77typeshort.html">PIC1 ▼</option>
-      <option value="00makingcircletext.html">CIRCLE▼</option>
-      <option value="00making10d.html.html">PIC2 ▼</option>
-    </select>
+    <div class="topbar-left">
+      <button id="save-media-btn">미디어 저장</button>
+      <button id="export-btn">내보내기</button>
+      <button id="import-btn">가져오기</button>
+      <input type="file" id="import-file" accept="application/json" style="display:none">
+      <select id="folder-select"><option value="">전체 폴더</option></select>
+    </div>
+    <div class="topbar-folders" id="folder-tabs"></div>
   </nav>
 
-  <div class="dashboard">
-    <span class="gallery-label">A</span>
-    <div class="gallery-row" id="gallery1"></div>
-    <span class="gallery-label">B</span>
-    <div class="gallery-row" id="gallery2"></div>
-    <span class="gallery-label">C</span>
-    <div class="gallery-row" id="gallery3"></div>
-    <span class="gallery-label">D</span>
-    <div class="gallery-row" id="gallery4"></div>
-    <span class="gallery-label">E</span>
-    <div class="gallery-row" id="gallery5"></div>
-    <span class="gallery-label">F</span>
-    <div class="gallery-row" id="gallery6"></div>
-    <span class="gallery-label">G</span>
-    <div class="gallery-row" id="gallery7"></div>
-    <span class="gallery-label">H</span>
-    <div class="gallery-row" id="gallery8"></div>
-    <span class="gallery-label">I</span>
-    <div class="gallery-row" id="gallery9"></div>
-    <span class="gallery-label">J</span>
-    <div class="gallery-row" id="gallery10"></div>
-  </div>
+  <h2 style="text-align: center; margin-top: 74px;">디스플레이형 즐겨찾기 만들기</h2>
+  <p style="text-align: center;"><a href="https://myway.kr/howtouse.html">이용방법안내&nbsp;</a> &nbsp; &nbsp; <a href="https://html5-editor.net/">웹에디터&nbsp;</a></p>
+
+  <div id="media-grid"></div>
+  <div class="editor-space"></div>
+  <button id="html-edit-btn">편집</button>
+  <textarea id="html-editor" placeholder="HTML 코드 편집"></textarea>
+  <div id="html-preview"></div>
 
   <!-- 입력 모달 -->
-  <div id="modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.57); align-items:center; justify-content:center; z-index:2002;">
-    <div id="modal" style="background:#fff; padding:28px 22px 22px; border-radius:7px; width:320px; box-shadow:0 2px 16px #24248238;">
-      <h3 style="margin-bottom:16px; font-size:20px; color:#313181;">이미지 추가</h3>
-      <label style="display:block; margin-bottom:6px; color:#232356; font-weight:600;">이미지 URL</label>
-      <input type="text" id="modal-img" placeholder="이미지 주소" style="width:100%; margin-bottom:14px; padding:8px; border:1px solid #b2c1e6; border-radius:5px; font-size:14px;">
-      <label style="display:block; margin-bottom:6px; color:#232356; font-weight:600;">링크 URL</label>
-      <input type="text" id="modal-link" placeholder="연결될 링크 주소" style="width:100%; margin-bottom:14px; padding:8px; border:1px solid #b2c1e6; border-radius:5px; font-size:14px;">
-      <label style="display:block; margin-bottom:6px; color:#232356; font-weight:600;">분류(디렉토리)</label>
-      <select id="modal-dir" style="width:100%; margin-bottom:14px; padding:8px; border:1px solid #b2c1e6; border-radius:5px; font-size:14px;">
-        <option value="gallery1">A</option>
-        <option value="gallery2">B</option>
-        <option value="gallery3">C</option>
-        <option value="gallery4">D</option>
-        <option value="gallery5">E</option>
-        <option value="gallery6">F</option>
-        <option value="gallery7">G</option>
-        <option value="gallery8">H</option>
-        <option value="gallery9">I</option>
-        <option value="gallery10">J</option>
-      </select>
-      <div class="actions" style="text-align:right;">
-        <button class="cancel-btn" type="button" style="padding:8px 14px; border:none; border-radius:4px; cursor:pointer; margin-left:8px; font-size:15px; background:#dc3545; color:#fff;">취소</button>
-        <button class="save-btn" type="button" style="padding:8px 14px; border:none; border-radius:4px; cursor:pointer; margin-left:8px; font-size:15px; background:#4067d1; color:#fff;">저장</button>
+  <div id="modal-overlay">
+    <div id="modal">
+      <h3>미디어 저장</h3>
+      <input type="text" id="img-url" placeholder="사진 URL 입력" autofocus>
+      <button type="button" class="auto-thumb-btn" id="auto-thumb-btn">썸네일 자동찾기</button>
+      <input type="text" id="link-url" placeholder="연결 링크 입력">
+      <input type="text" id="media-folder" placeholder="폴더/디렉토리 (예: 여행)">
+      <div class="actions">
+        <button class="cancel-btn">취소</button>
+        <button class="save-btn">저장</button>
       </div>
     </div>
   </div>
 
   <script>
-    // 페이지 이동
-    document.getElementById('page-switch').addEventListener('change', function(){
-      if(this.value) location.href = this.value;
-    });
+    /* === 기존 키 그대로 유지 === */
+    const STORAGE_KEY = 'mediaList_uniquegrid901';
+    const HTML_KEY = 'mediaHtmlContent_uniquegrid901';
 
-    // ===== Storage Key (페이지별 분리) =====
-    const STORAGE_NAMESPACE = "MW_INFLUENCER_GALLERY_v3";
-    const PAGE_ID = (location.pathname.split('/').pop() || 'index').toLowerCase();
-    const STORAGE_KEY = `${STORAGE_NAMESPACE}:${PAGE_ID}`;
-    // ======================================
-
-    const defaultData = {
-      gallery1: [
-        { url: "https://www.youtube.com/@popcorncokemovie/videos", img: "https://yt3.googleusercontent.com/4vsl0dMmf2_zJh9hNMoFP7KPnfxEKCeWSn5iYdQvuJUVUkBf9eFu3qqdHWIN1DDULygUcGDmww=s900-c-k-c0x00ffffff-no-rj" },
-      ],
-      gallery2: [], gallery3: [], gallery4: [], gallery5: [],
-      gallery6: [], gallery7: [], gallery8: [], gallery9: [], gallery10: []
-    };
-    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
-
-    const $ = (s, r=document) => r.querySelector(s);
-    const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
-
-    function getData(){
-      let raw = localStorage.getItem(STORAGE_KEY);
-      if(!raw) return JSON.parse(JSON.stringify(defaultData));
-      try{ return JSON.parse(raw); } catch{ return JSON.parse(JSON.stringify(defaultData)); }
+    function extractYouTubeId(url) {
+      const regex = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([a-zA-Z0-9_-]{11})/;
+      const match = url.match(regex);
+      return match ? match[1] : null;
     }
-    function setData(d){ localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
 
-    let editing = { gallery:null, index:null };
+    const saveBtn = document.getElementById('save-media-btn'),
+      exportBtn = document.getElementById('export-btn'),
+      importBtn = document.getElementById('import-btn'),
+      importFile = document.getElementById('import-file'),
+      overlay = document.getElementById('modal-overlay'),
+      cancelBtn = document.querySelector('.cancel-btn'),
+      confirmBtn = document.querySelector('.save-btn'),
+      imgInput = document.getElementById('img-url'),
+      linkInput = document.getElementById('link-url'),
+      folderInput = document.getElementById('media-folder'),
+      folderSelect = document.getElementById('folder-select'),
+      folderTabs = document.getElementById('folder-tabs'),
+      gridContainer = document.getElementById('media-grid'),
+      autoThumbBtn = document.getElementById('auto-thumb-btn'),
+      htmlEditBtn = document.getElementById('html-edit-btn'),
+      htmlEditor = document.getElementById('html-editor'),
+      htmlPreview = document.getElementById('html-preview');
 
-    /* ===== Masonry sizing: 각 카드 실높이 → span 계산 ===== */
+    let editingIndex = null;
+    let htmlEditing = false;
+
+    /* ===== Masonry 계산 (Grid) ===== */
     function sizeMasonry(container){
       if(!container) return;
       const styles = getComputedStyle(container);
-      const rowUnit = parseInt(styles.gridAutoRows) || parseInt(getComputedStyle(document.documentElement).getPropertyValue('--row-unit')) || 8;
+      const rowUnit = parseInt(styles.gridAutoRows) || 8;
       const gap = parseInt(styles.gap) || 0;
-
-      $$('.list-row', container).forEach(card=>{
-        // 초기화(연속 렌더/리사이즈 시 정확도 보정)
+      container.querySelectorAll('.grid-item').forEach(card=>{
         card.style.gridRowEnd = 'auto';
-        // 카드 총 높이(이미지 박스 + 하단 그림자선 + 내부 gap 일부)
-        const imgBox = $('.imgframe', card);
-        const shadow = $('.shadow-line', card);
-        const total = (imgBox?.offsetHeight || 0) + (shadow?.offsetHeight || 0) + gap;
+        const total = card.offsetHeight + gap; // 이미지+버튼 포함 실제 높이
         const span = Math.max(1, Math.ceil(total / rowUnit));
         card.style.gridRowEnd = `span ${span}`;
       });
     }
-    function sizeAllMasonry(){
-      for(let i=1;i<=10;i++){
-        sizeMasonry(document.getElementById(`gallery${i}`));
+    function sizeAll(){ sizeMasonry(gridContainer); }
+
+    function bindImgLoadReflow(scope=document){
+      scope.querySelectorAll('img').forEach(img=>{
+        if(img.complete) return;
+        img.addEventListener('load', ()=> sizeAll(), { once:true });
+      });
+    }
+
+    /* ===== UI 동작 ===== */
+    saveBtn.onclick = () => openModal();
+    function openModal(item, idx) {
+      if (item) {
+        imgInput.value = item.imgUrl;
+        linkInput.value = item.linkUrl;
+        folderInput.value = item.folder || '';
+        confirmBtn.textContent = '수정';
+        editingIndex = idx;
+      } else {
+        imgInput.value = ''; linkInput.value = ''; folderInput.value = '';
+        confirmBtn.textContent = '저장'; editingIndex = null;
+      }
+      overlay.style.display = 'flex'; imgInput.focus();
+    }
+    cancelBtn.onclick = () => { overlay.style.display = 'none'; editingIndex = null; };
+
+    autoThumbBtn.onclick = function() {
+      const linkVal = linkInput.value.trim() || imgInput.value.trim();
+      const youtubeId = extractYouTubeId(linkVal);
+      if (youtubeId) {
+        imgInput.value = `https://img.youtube.com/vi/${youtubeId}/0.jpg`;
+        alert('유튜브 썸네일이 자동으로 입력되었습니다!');
+      } else {
+        alert('유튜브 영상 링크를 입력해 주세요.');
+      }
+    };
+
+    confirmBtn.onclick = () => {
+      const iurl = imgInput.value.trim();
+      if (!iurl) { alert('사진 URL을 입력해주세요.'); imgInput.focus(); return; }
+      let lurl = linkInput.value.trim();
+      if (!lurl) { alert('연결 링크를 입력해주세요.'); linkInput.focus(); return; }
+      if (!/^https?:\/\//i.test(lurl)) lurl = 'https://' + lurl;
+      const folder = folderInput.value.trim();
+      let list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      const data = { imgUrl: iurl, linkUrl: lurl, folder };
+      if (editingIndex !== null) list[editingIndex] = data;
+      else list.push(data);                           // 맨 뒤에 추가 => 저장 순서 보존
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+      overlay.style.display = 'none';
+      folderSelect.value = "";
+      renderGrid();
+      editingIndex = null;
+    };
+
+    exportBtn.onclick = () => {
+      const mediaList = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      const htmlContent = htmlPreview.innerHTML;
+      const data = { mediaList, htmlContent };
+      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'mediaList_and_html.json'; a.click();
+      URL.revokeObjectURL(url);
+    };
+
+    importBtn.onclick = () => importFile.click();
+    importFile.onchange = e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = evt => {
+        try {
+          const data = JSON.parse(evt.target.result);
+          if (Array.isArray(data.mediaList)) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data.mediaList));
+            folderSelect.value = "";
+            renderGrid();
+          }
+          if (typeof data.htmlContent === 'string') {
+            htmlPreview.innerHTML = data.htmlContent;
+            htmlEditor.value = data.htmlContent;
+            localStorage.setItem(HTML_KEY, data.htmlContent);
+          }
+          alert('데이터가 복원되었습니다.');
+        } catch {
+          alert('파일 읽기 중 오류가 발생했습니다.');
+        }
+      };
+      reader.readAsText(file);
+      importFile.value = null;
+    };
+
+    function renameFolder(oldName, newName) {
+      newName = (newName || '').trim();
+      if (!newName || newName === oldName) return;
+      let list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      let changed = false;
+      list = list.map(item => {
+        if ((item.folder || '') === oldName) {
+          changed = true;
+          return { ...item, folder: newName };
+        }
+        return item;
+      });
+      if (changed) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+        if (folderSelect.value === oldName) folderSelect.value = newName;
+        renderGrid();
       }
     }
-    // 이미지 로드 시마다 해당 row만 재계산
-    function bindImgLoadReflow(scope=document){
-      $$('img', scope).forEach(img=>{
-        if(img.complete) return;
-        img.addEventListener('load', ()=>{
-          const row = img.closest('.gallery-row');
-          if(row) sizeMasonry(row);
-        }, { once:true });
+
+    function updateFolderSelect(folders) {
+      folderSelect.innerHTML = `<option value="">전체 폴더</option>`;
+      folders.forEach(f=>{
+        const opt = document.createElement('option');
+        opt.value = f; opt.innerText = f;
+        folderSelect.appendChild(opt);
+      });
+      folderTabs.innerHTML = '';
+      const makeTabAll = () => {
+        const tab = document.createElement('span');
+        tab.className = 'folder-tab' + ((folderSelect.value === "" || !folders.includes(folderSelect.value)) ? ' active' : '');
+        tab.textContent = '전체 폴더';
+        tab.onclick = () => { folderSelect.value = ''; renderGrid(); };
+        tab.id = 'all-folder-tab';
+        folderTabs.appendChild(tab);
+      };
+      makeTabAll();
+      folders.forEach(f=>{
+        const tab = document.createElement('span');
+        tab.className = 'folder-tab' + (folderSelect.value === f ? ' active' : '');
+        tab.setAttribute('data-folder', f);
+        const label = document.createElement('span');
+        label.textContent = f;
+        const editBtn = document.createElement('button');
+        editBtn.className = 'folder-edit-btn';
+        editBtn.type = 'button';
+        editBtn.title = '폴더 이름 수정';
+        editBtn.textContent = '✎';
+        editBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const current = f;
+          const next = prompt('새 폴더 이름을 입력하세요.', current);
+          if (next === null) return;
+          renameFolder(current, next);
+        });
+        tab.appendChild(label);
+        tab.appendChild(editBtn);
+        tab.onclick = () => { folderSelect.value = f; renderGrid(); };
+        folderTabs.appendChild(tab);
       });
     }
 
-    function renderGallery(data, targetId){
-      const el = document.getElementById(targetId);
-      // 저장된 순서대로 DOM 생성 (순서 유지)
-      el.innerHTML = data.map((item, idx)=>`
-        <div class="list-row magazine" data-idx="${idx}">
-          <div class="imgframe">
-            <button class="edit-btn" type="button" title="수정">수정</button>
-            <div class="img-wrap magazine">
-              <div class="img-item magazine">
-                <a href="${item.url}" target="_blank" rel="noopener">
-                  <img src="${item.img}" alt="">
-                </a>
-              </div>
-            </div>
-          </div>
-          <div class="shadow-line"><img src="${shadowUrl}" alt=""></div>
-        </div>
-      `).join('');
+    function renderGrid() {
+      let list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      const curFolder = folderSelect.value;
+      if (curFolder) list = list.filter(x=>x.folder===curFolder);
 
-      // 수정 버튼
-      $$('.edit-btn', el).forEach((btn, idx)=>{
-        btn.onclick = (e)=>{
-          e.stopPropagation();
-          editing.gallery = targetId;
-          editing.index = idx;
-          const data = getData();
-          const item = data[targetId][idx];
-          $('#modal-img').value = item.img;
-          $('#modal-link').value = item.url;
-          $('#modal-dir').value = targetId;
-          $('#modal-overlay').style.display = 'flex';
+      gridContainer.innerHTML = '';
+
+      list.slice(0, 500).forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'grid-item';
+
+        const img = document.createElement('img');
+        img.src = item.imgUrl; img.alt = '';
+        img.onerror = function() {
+          this.src = 'https://via.placeholder.com/300x180/ccc/fff?text=Image+Not+Found';
         };
+        img.addEventListener('click', () => window.open(item.linkUrl, '_blank'));
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'edit-btn';
+        editBtn.textContent = '수정';
+        editBtn.addEventListener('click', e => { e.stopPropagation(); openModal(item, idx); });
+
+        card.append(img, editBtn);
+        gridContainer.append(card);
       });
 
-      // 드래그 정렬(순서 바꾸면 저장 & 다시 그려도 그대로)
-      Sortable.create(el, {
-        animation:160,
-        handle:".imgframe",
-        onEnd:(evt)=>{
-          let galleryKey = targetId;
-          let galleryData = getData();
-          const moved = galleryData[galleryKey].splice(evt.oldIndex, 1)[0];
-          galleryData[galleryKey].splice(evt.newIndex, 0, moved);
-          setData(galleryData);
-          renderGallery(galleryData[galleryKey], galleryKey);
+      // 드래그 재정렬(순서 저장)
+      Sortable.create(gridContainer, {
+        animation: 150,
+        onEnd: function (evt) {
+          let allList = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+          const curFolder = folderSelect.value;
+          if(curFolder) {
+            const indices = [];
+            allList.forEach((x,i)=>{ if(x.folder===curFolder) indices.push(i); });
+            const [movedIdx] = indices.splice(evt.oldIndex,1);
+            indices.splice(evt.newIndex,0,movedIdx);
+            const reordered = indices.map(i=>allList[i]);
+            let cnt=0;
+            allList = allList.map(x => x.folder===curFolder ? reordered[cnt++] : x);
+          } else {
+            const [moved] = allList.splice(evt.oldIndex, 1);
+            allList.splice(evt.newIndex, 0, moved);
+          }
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(allList));
+          renderGrid();
+        }
+      });
+
+      // 폴더 목록/탭 갱신
+      const folders = Array.from(new Set((JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')).map(x=>x.folder).filter(Boolean)));
+      updateFolderSelect(folders);
+      Array.from(document.querySelectorAll('.folder-tab')).forEach(tab=>{
+        tab.classList.remove('active');
+        if((folderSelect.value === "" && tab.textContent.trim().startsWith("전체 폴더")) ||
+           (tab.getAttribute('data-folder') === folderSelect.value)) {
+          tab.classList.add('active');
         }
       });
 
       // Masonry 계산
-      bindImgLoadReflow(el);
-      sizeMasonry(el);
+      bindImgLoadReflow(gridContainer);
+      sizeAll();
     }
 
-    function renderAll(){
-      const data = getData();
-      for(let i=1;i<=10;i++){
-        renderGallery(data[`gallery${i}`] || [], `gallery${i}`);
+    folderSelect.onchange = renderGrid;
+
+    // HTML 편집(원본 기능 유지)
+    htmlEditBtn.onclick = () => {
+      htmlEditing = !htmlEditing;
+      if (htmlEditing) {
+        htmlEditor.style.display = 'block';
+        htmlPreview.style.display = 'none';
+        htmlEditBtn.textContent = '마침';
+        htmlEditor.value = htmlPreview.innerHTML;
+      } else {
+        htmlPreview.innerHTML = htmlEditor.value;
+        htmlEditor.style.display = 'none';
+        htmlPreview.style.display = 'block';
+        htmlEditBtn.textContent = '편집';
+        localStorage.setItem(HTML_KEY, htmlPreview.innerHTML);
       }
-    }
-
-    // 모달
-    $('#add-btn').onclick = ()=>{
-      editing.gallery = null; editing.index = null;
-      $('#modal-img').value = ""; $('#modal-link').value = ""; $('#modal-dir').value = "gallery1";
-      $('#modal-overlay').style.display = 'flex';
-      $('#modal-img').focus();
     };
-    $('.cancel-btn').onclick = ()=>{ $('#modal-overlay').style.display = 'none'; };
-    $('.save-btn').onclick = ()=>{
-      const img = $('#modal-img').value.trim();
-      const link = $('#modal-link').value.trim();
-      const dir = $('#modal-dir').value;
-      if(!img){ alert("이미지 주소를 입력하세요."); return; }
-      if(!link){ alert("링크 주소를 입력하세요."); return; }
 
-      let data = getData();
-      if(editing.gallery !== null && editing.index !== null){
-        if(editing.gallery === dir){
-          data[dir][editing.index] = { url: link, img };
-        }else{
-          data[editing.gallery].splice(editing.index, 1);
-          if(!data[dir]) data[dir] = [];
-          data[dir].push({ url: link, img });
-        }
-      }else{
-        if(!data[dir]) data[dir] = [];
-        data[dir].push({ url: link, img });      // 맨 뒤에 추가 → 저장 순서 보존
+    // 초기 로드
+    document.addEventListener('DOMContentLoaded', () => {
+      renderGrid();
+      const savedHtml = localStorage.getItem(HTML_KEY);
+      if (savedHtml) {
+        htmlPreview.innerHTML = savedHtml;
+        htmlEditor.value = savedHtml;
       }
-      setData(data);
-      $('#modal-overlay').style.display = 'none';
-      renderAll();
-    };
+    });
 
-    // 내보내기/가져오기
-    $('#export-btn').onclick = ()=>{
-      const data = getData();
-      const blob = new Blob([JSON.stringify(data)], { type:'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'influencer_gallery.json'; a.click();
-      URL.revokeObjectURL(url);
-    };
-    $('#import-btn').onclick = ()=> $('#import-file').click();
-    $('#import-file').onchange = e=>{
-      const file = e.target.files[0]; if(!file) return;
-      const reader = new FileReader();
-      reader.onload = evt=>{
-        try{
-          const data = JSON.parse(evt.target.result);
-          setData(data); renderAll(); alert('가져오기가 완료되었습니다.');
-        }catch{ alert('불러오기 실패(잘못된 파일)'); }
-      };
-      reader.readAsText(file); e.target.value = null;
-    };
-
-    // 초기 렌더 & 리사이즈 시 재계산
-    renderAll();
-    window.addEventListener('resize', sizeAllMasonry);
+    // 창 크기 변경 시 Masonry 재계산
+    window.addEventListener('resize', sizeAll);
   </script>
 </body>
 </html>
