@@ -147,6 +147,15 @@ body{background:var(--bg);background-image:radial-gradient(ellipse at 10% 0%,rgb
 .word-chip:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(46,117,182,0.25);}
 .word-chip.dragging{opacity:0.35;transform:scale(0.93);cursor:grabbing;}
 .word-chip.ok-chip{background:#E8F5E9;border-color:#2E7D32;color:#1B5E20;}
+/* 터치 힌트 */
+.touch-hint{
+  text-align:center;font-size:11px;
+  font-family:'JetBrains Mono',monospace;
+  color:rgba(0,0,0,0.3);letter-spacing:1px;
+  margin-bottom:14px;
+  padding:7px;background:rgba(0,0,0,0.03);
+  border-radius:6px;
+}
 .arr-result{display:none;padding:9px 13px;border-radius:7px;font-size:13px;font-weight:600;margin-bottom:10px;align-items:center;gap:8px;}
 .arr-result.show{display:flex;}
 .arr-result.ok{background:#E8F5E9;color:#1B5E20;border:1px solid #A5D6A7;}
@@ -1011,6 +1020,12 @@ let scores={}, dragSrc=null;
 function buildArrangeCards(){
   const box=document.getElementById('arrCards');
   box.innerHTML='';
+
+  const hint=document.createElement('div');
+  hint.className='touch-hint';
+  hint.innerHTML='💡 단어 클릭 → 즉시 이동 &nbsp;|&nbsp; 드래그도 가능';
+  box.appendChild(hint);
+
   ARRANGE.forEach((item,idx)=>{
     const words=item.ans.split(' ');
     const shuffled=[...words].sort(()=>Math.random()-0.5);
@@ -1025,7 +1040,7 @@ function buildArrangeCards(){
       <div class="arr-body">
         <div class="answer-zone" id="zone-${idx}"></div>
         <div class="word-pool" id="pool-${idx}">
-          ${shuffled.map(w=>`<div class="word-chip" draggable="true" data-word="${w}">${w}</div>`).join('')}
+          ${shuffled.map(w=>`<div class="word-chip" draggable="true" data-word="${w}" data-idx="${idx}">${w}</div>`).join('')}
         </div>
         <div class="arr-result" id="res-${idx}"></div>
         <div class="ans-reveal" id="ans-${idx}"><strong>정답:</strong> ${item.ans}.</div>
@@ -1037,7 +1052,7 @@ function buildArrangeCards(){
       </div>`;
     box.appendChild(card);
 
-    // 드롭존 이벤트
+    // 드래그
     ['zone-'+idx,'pool-'+idx].forEach(zid=>{
       const z=document.getElementById(zid);
       z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('drag-over');});
@@ -1051,9 +1066,19 @@ function buildArrangeCards(){
         dragSrc=null;
       });
     });
+
+    // 클릭: pool 칩 → zone으로, zone 칩 → pool로 즉시 이동
+    setTimeout(()=>{
+      document.getElementById('pool-'+idx).querySelectorAll('.word-chip').forEach(chip=>{
+        chip.addEventListener('click', ()=>chipClick(chip, idx));
+      });
+      document.getElementById('zone-'+idx).querySelectorAll('.word-chip').forEach(chip=>{
+        chip.addEventListener('click', ()=>chipClick(chip, idx));
+      });
+    },0);
   });
 
-  // 칩 드래그 (이벤트 위임)
+  // 드래그 위임
   box.addEventListener('dragstart',e=>{
     if(!e.target.classList.contains('word-chip'))return;
     dragSrc=e.target;
@@ -1064,7 +1089,20 @@ function buildArrangeCards(){
     if(e.target.classList.contains('word-chip'))e.target.classList.remove('dragging');
     dragSrc=null;
   });
+
   updateScore();
+}
+
+function chipClick(chip, idx) {
+  const inZone = chip.parentElement.id === 'zone-'+idx;
+  // pool → zone / zone → pool 즉시 이동
+  const target = document.getElementById(inZone ? 'pool-'+idx : 'zone-'+idx);
+  chip.classList.remove('ok-chip');
+  target.appendChild(chip);
+  // 클릭 이벤트 재등록 (부모가 바뀌었으므로)
+  chip.onclick = null;
+  chip.addEventListener('click', ()=>chipClick(chip, idx), {once:true});
+  document.getElementById('res-'+idx).className='arr-result';
 }
 
 function checkAns(idx){
