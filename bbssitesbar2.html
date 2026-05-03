@@ -35,19 +35,64 @@
       height: 44px;
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 8px;
       padding: 6px 8px;
       background: #fff;
       z-index: 100;
       filter: drop-shadow(0 4px 14px rgba(177, 118, 243, 0.22));
     }
 
+    /* === 홈 버튼 === */
+    .home-btn {
+      flex: 0 0 auto;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #b176f3 0%, #7ed6fb 100%);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      padding: 0;
+      box-shadow: 0 4px 12px rgba(177, 118, 243, 0.35), 0 1px 3px rgba(126, 214, 251, 0.25);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .home-btn::before {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 60%);
+      pointer-events: none;
+    }
+    .home-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(177, 118, 243, 0.45), 0 2px 4px rgba(126, 214, 251, 0.3);
+    }
+    .home-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(177, 118, 243, 0.3);
+    }
+    .home-btn svg {
+      width: 17px;
+      height: 17px;
+      display: block;
+      filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
+      position: relative;
+      z-index: 1;
+    }
+
     .nav-bar-inner {
       position: relative;
       display: flex;
       align-items: center;
-      width: 100%;
-      max-width: 100%;
+      flex: 1 1 auto;
+      min-width: 0;
       height: 100%;
     }
 
@@ -59,7 +104,7 @@
       color: #fff;
       white-space: nowrap;
       background: linear-gradient(95deg, #7ed6fb 10%, #b176f3 90%);
-      padding: 0 36px; /* 좌우 화살표 자리 확보 */
+      padding: 0 36px;
       align-items: center;
       border-radius: 14px;
       box-shadow: 0 4px 18px rgba(90,100,180,0.13), 0 2px 8px rgba(255,255,255,0.10) inset;
@@ -152,7 +197,9 @@
 
     /* === 모바일 === */
     @media (max-width: 700px) {
-      .nav-wrap { height: 42px; padding: 5px 6px; }
+      .nav-wrap { height: 42px; padding: 5px 6px; gap: 6px; }
+      .home-btn { width: 30px; height: 30px; border-radius: 9px; }
+      .home-btn svg { width: 15px; height: 15px; }
       .screen-links {
         font-size: 0.88rem;
         padding: 0 32px;
@@ -174,6 +221,14 @@
 
   <!-- 네비게이션 바 -->
   <div class="nav-wrap">
+    <!-- 홈 버튼 -->
+    <a href="https://myway.kr/" class="home-btn" aria-label="MYWAY.KR 홈으로" title="MYWAY.KR 홈">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3.2 3 10.4V20a1 1 0 0 0 1 1h5v-6h6v6h5a1 1 0 0 0 1-1v-9.6L12 3.2z"
+              fill="#fff" stroke="#fff" stroke-width="0.5" stroke-linejoin="round"/>
+      </svg>
+    </a>
+
     <div class="nav-bar-inner">
       <button class="nav-arrow left" id="nav-arrow-left" aria-label="왼쪽 이동" hidden>
         <svg viewBox="0 0 13 20"><polygon points="9,3 2,10 9,17" fill="#fff" opacity="0.9"/></svg>
@@ -216,24 +271,20 @@
     const rightArrow = document.getElementById('nav-arrow-right');
     const mainFrame = document.getElementById('main-frame');
 
-    // === 메뉴 클릭 ===
     function showScreenParent(e, url) {
       e.preventDefault();
-      // 드래그 직후 클릭이면 무시
       if (justDragged) { justDragged = false; return; }
 
       document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
       e.currentTarget.classList.add('active');
       mainFrame.src = url;
 
-      // 클릭한 메뉴를 중앙으로 스크롤
       const el = e.currentTarget;
       const offset = el.offsetLeft - nav.clientWidth / 2 + el.clientWidth / 2;
       nav.scrollTo({ left: offset, behavior: 'smooth' });
       setTimeout(checkNavOverflow, 250);
     }
 
-    // === 드래그 스크롤 (마우스 + 터치 통합) ===
     let isDown = false;
     let startX = 0;
     let scrollStart = 0;
@@ -257,7 +308,6 @@
       if (!isDown) return;
       isDown = false;
       nav.classList.remove('dragging');
-      // 일정 거리 이상 끌었으면 클릭 무효화
       if (dragDistance > 8) {
         justDragged = true;
         setTimeout(() => { justDragged = false; }, 50);
@@ -265,13 +315,11 @@
       checkNavOverflow();
     }
 
-    // 마우스
     nav.addEventListener('mousedown', e => dragStart(e.pageX));
     nav.addEventListener('mousemove', e => { if (isDown) { e.preventDefault(); dragMove(e.pageX); } });
     nav.addEventListener('mouseup', dragEnd);
     nav.addEventListener('mouseleave', dragEnd);
 
-    // 터치 (passive로 두어 네이티브 스크롤 활용)
     nav.addEventListener('touchstart', e => {
       dragDistance = 0;
       startX = e.touches[0].pageX;
@@ -287,7 +335,6 @@
       setTimeout(checkNavOverflow, 80);
     });
 
-    // === 좌/우 화살표 ===
     function checkNavOverflow() {
       if (nav.scrollWidth > nav.clientWidth + 2) {
         leftArrow.hidden = nav.scrollLeft < 5;
@@ -310,7 +357,6 @@
       setTimeout(checkNavOverflow, 250);
     });
 
-    // === 초기화 ===
     window.addEventListener('DOMContentLoaded', checkNavOverflow);
     window.addEventListener('load', checkNavOverflow);
     setTimeout(checkNavOverflow, 200);
