@@ -1,561 +1,1003 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>화면5 - 시계 + 3개 도시 날씨 + 계산기</title>
-
-
+<meta charset="UTF-8">
+<title>시계 · 날씨 · 공학용 계산기</title>
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="manifest" href="/site.webmanifest">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#4a5bd8">
 
+<style>
+/* ===== 기본 ===== */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  margin: 0; padding: 0;
+  background: linear-gradient(135deg, #eef2fb 0%, #f4f6fb 50%, #e8edf8 100%);
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, '맑은 고딕', Arial, sans-serif;
+  color: #233;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+button { font-family: inherit; }
 
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    html, body {
-      margin: 0; padding: 0;
-      background: #f4f6fb;
-      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
-      color: #233;
-      min-height: 100vh;
-    }
-    .main-wrap {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 50px 0 50px 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 64px;
-    }
-    .widget-title {
-      font-size: 2.8rem;
-      font-weight: 900;
-      color: #4a5bd8;
-      margin-bottom: 34px;
-      letter-spacing: 2.5px;
-      text-align: center;
-      text-shadow: 0 2px 14px #e4eafd;
-    }
-    /* 시계 */
-    .clock-container {
-      width: 100%;
-      display: flex;
-      gap: 48px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .clock-card {
-      background: linear-gradient(110deg, #f4f7fa 80%, #eaf0fd 100%);
-      border-radius: 34px;
-      box-shadow: 0 8px 38px rgba(96,115,186,0.14);
-      padding: 54px 32px 38px 32px;
-      min-width: 410px; max-width: 520px;
-      display: flex; flex-direction: column; align-items: center;
-      margin-bottom: 10px;
-    }
-    .city-select {
-      margin-bottom: 22px;
-      font-size: 2rem;
-      border: none;
-      border-radius: 18px;
-      background: #eef2fa;
-      padding: 15px 38px;
-      font-weight: bold;
-      color: #3b4263;
-      box-shadow: 0 3px 13px rgba(96,115,186,0.09);
-    }
-    .clock-time {
-      font-size: 4.1rem;
-      font-weight: 900;
-      letter-spacing: 2.5px;
-      color: #30409a;
-      margin-bottom: 15px;
-    }
-    .clock-date {
-      font-size: 1.9rem;
-      color: #7b85ab;
-      letter-spacing: 1.3px;
-      margin-bottom: 13px;
-      text-align: center;
-    }
-    .clock-label {
-      font-size: 1.42rem;
-      color: #6671a6;
-      font-weight: 700;
-    }
-    /* 날씨 */
-    .weather-dashboard {
-      width: 100%;
-      display: flex;
-      gap: 42px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .weather-card {
-      background: #fff;
-      border-radius: 28px;
-      box-shadow: 0 8px 38px 0 rgba(90,110,185,0.13);
-      padding: 38px 32px 30px 32px;
-      width: 370px; max-width: 98vw;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 18px;
-      transition: box-shadow 0.17s;
-      position: relative;
-    }
-    .weather-card .refresh-btn {
-      position: absolute;
-      top: 24px;
-      right: 24px;
-      background: #e8ecf9;
-      border: none;
-      border-radius: 50%;
-      width: 36px; height: 36px;
-      font-size: 1.4rem;
-      color: #4262d1;
-      cursor: pointer;
-      box-shadow: 0 2px 10px #b8c8f840;
-      transition: background 0.13s;
-    }
-    .weather-card .refresh-btn:hover { background: #dbe6ff; }
-    .weather-icon {
-      font-size: 3.5rem;
-      margin-bottom: 7px;
-    }
-    .weather-main {
-      font-size: 1.45rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #446add;
-    }
-    .weather-temp {
-      font-size: 2.3rem;
-      font-weight: 800;
-      color: #25398e;
-      margin-bottom: 5px;
-    }
-    .weather-humid {
-      font-size: 1.2rem;
-      color: #288aad;
-      margin-bottom: 2px;
-    }
-    .weather-status {
-      font-size: 1.13rem;
-      font-weight: 700;
-      margin-bottom: 7px;
-      color: #4c5e7a;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    /* 계산기 */
-    .calc-card {
-      width: 100%; max-width: 640px;
-      margin: 0 auto;
-      background: #fff;
-      border-radius: 28px;
-      box-shadow: 0 8px 38px rgba(49,64,112,0.12);
-      padding: 40px 28px 26px 28px;
-      display: flex; flex-direction: column; align-items: center;
-    }
-    .calc-title {
-      font-size: 2.2rem;
-      font-weight: 900;
-      color: #5c67ef;
-      margin-bottom: 30px;
-      text-shadow: 0 3px 12px #e3eafd;
-    }
-    .calc-screen {
-      width: 100%;
-      height: 110px;
-      font-size: 3.1rem;
-      border: none;
-      background: linear-gradient(90deg, #f2f5ff 0%, #f7f8fc 100%);
-      border-radius: 20px;
-      text-align: right;
-      padding: 28px 30px;
-      color: #2c3666;
-      font-weight: 800;
-      margin-bottom: 28px;
-      letter-spacing: 1.7px;
-      box-shadow: 0 4px 20px rgba(90,108,180,0.09);
-    }
-    .calc-buttons {
-      width: 100%;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 19px;
-    }
-    .calc-btn {
-      font-size: 2rem;
-      padding: 27px 0;
-      border: none;
-      border-radius: 18px;
-      background: #f0f3fa;
-      color: #365178;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background 0.17s, color 0.17s;
-      box-shadow: 0 2px 16px rgba(88,112,174,0.10);
-      outline: none;
-    }
-    .calc-btn:active { background: #dde4ff; color: #4359a5; }
-    .calc-btn.op {
-      background: linear-gradient(90deg,#b6cafd 0%,#637dee 100%);
-      color: #fff;
-      font-weight: 900;
-    }
-    .calc-btn.op:active { background: linear-gradient(90deg,#637dee 0%,#b6cafd 100%);}
-    .calc-btn.equal {
-      background: linear-gradient(90deg, #6de0ca 0%, #32b896 100%);
-      color: #fff;
-      grid-column: 4/6;
-      font-weight: 900;
-      font-size: 2.22rem;
-    }
-    .calc-btn.equal:active { background: linear-gradient(90deg, #32b896 0%, #6de0ca 100%);}
-    .calc-btn.clear {
-      background: linear-gradient(90deg,#f7b7b7 0%,#ff5858 100%);
-      color: #fff;
-      font-weight: 900;
-      font-size: 1.86rem;
-    }
-    .calc-btn.clear:active { background: linear-gradient(90deg,#ff5858 0%,#f7b7b7 100%);}
-    .calc-btn.fn {
-      background: linear-gradient(90deg,#a9e2fa 0%,#79b6fa 100%);
-      color: #225681;
-      font-weight: 900;
-      font-size: 1.85rem;
-    }
-    .calc-btn.fn:active { background: linear-gradient(90deg,#79b6fa 0%,#a9e2fa 100%);}
-    .calc-btn.small { font-size: 1.35rem; }
-    /* 모바일 반응형 */
-    @media (max-width: 1100px) {
-      .main-wrap { max-width: 99vw; }
-      .clock-card, .weather-card { min-width: 97vw; max-width: 99vw; }
-      .calc-card { max-width: 99vw; }
-    }
-    @media (max-width: 700px) {
-      .widget-title, .calc-title { font-size: 1.15rem; }
-      .clock-container, .weather-dashboard { gap: 15px;}
-      .clock-card, .weather-card { min-width: 99vw; max-width: 99vw; padding: 14px 1vw 9px 1vw;}
-      .weather-card { padding: 18px 1vw 9px 1vw;}
-      .clock-time { font-size: 1.6rem; }
-      .clock-date { font-size: 0.95rem; }
-      .meter-value { font-size: 1.6rem; }
-      .calc-screen { font-size: 1.05rem; height: 40px; padding: 13px 2vw; }
-      .calc-btn { font-size: 0.94rem; padding: 7px 0;}
-    }
-  </style>
+.main-wrap {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-top: clamp(16px, 3vw, 50px);
+  padding-left: clamp(8px, 2vw, 24px);
+  padding-right: clamp(8px, 2vw, 24px);
+  /* 모바일 하단 바(주소창/홈바)가 가리는 영역까지 여유 확보 */
+  padding-bottom: calc(clamp(40px, 6vw, 60px) + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(28px, 5vw, 64px);
+}
+.widget-title {
+  font-size: clamp(1.25rem, 3.5vw, 2.6rem);
+  font-weight: 900;
+  color: #4a5bd8;
+  margin: 0 0 clamp(14px, 2.5vw, 30px) 0;
+  letter-spacing: 1.5px;
+  text-align: center;
+  text-shadow: 0 2px 14px #e4eafd;
+}
+.section { width: 100%; }
+
+/* ===== 시계 ===== */
+.clock-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(14px, 2.5vw, 36px);
+}
+.clock-card {
+  background: linear-gradient(110deg, #f7f9fc 80%, #eaf0fd 100%);
+  border-radius: clamp(18px, 2vw, 28px);
+  box-shadow: 0 8px 38px rgba(96,115,186,0.14);
+  padding: clamp(20px, 3vw, 44px) clamp(14px, 2vw, 28px);
+  display: flex; flex-direction: column; align-items: center;
+}
+.city-select {
+  margin-bottom: clamp(12px, 2vw, 22px);
+  font-size: clamp(0.95rem, 2vw, 1.4rem);
+  border: none;
+  border-radius: clamp(10px, 1.5vw, 16px);
+  background: #eef2fa;
+  padding: clamp(8px, 1.5vw, 14px) clamp(14px, 2.5vw, 28px);
+  font-weight: bold;
+  color: #3b4263;
+  box-shadow: 0 3px 13px rgba(96,115,186,0.09);
+  max-width: 100%;
+  cursor: pointer;
+}
+.clock-time {
+  font-size: clamp(2rem, 6vw, 3.8rem);
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: #30409a;
+  margin-bottom: clamp(6px, 1vw, 12px);
+  font-variant-numeric: tabular-nums;
+}
+.clock-date {
+  font-size: clamp(0.85rem, 1.6vw, 1.4rem);
+  color: #7b85ab;
+  letter-spacing: 0.8px;
+  margin-bottom: clamp(6px, 1vw, 10px);
+  text-align: center;
+}
+.clock-label {
+  font-size: clamp(0.9rem, 1.6vw, 1.3rem);
+  color: #6671a6;
+  font-weight: 700;
+}
+
+/* ===== 날씨 ===== */
+.weather-dashboard {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: clamp(14px, 2.5vw, 32px);
+}
+.weather-card {
+  background: #fff;
+  border-radius: clamp(18px, 2vw, 26px);
+  box-shadow: 0 8px 38px rgba(90,110,185,0.13);
+  padding: clamp(18px, 2.5vw, 34px) clamp(14px, 2vw, 28px);
+  display: flex; flex-direction: column; align-items: center;
+  position: relative;
+}
+.refresh-btn {
+  position: absolute;
+  top: clamp(10px, 1.5vw, 22px);
+  right: clamp(10px, 1.5vw, 22px);
+  background: #e8ecf9;
+  border: none;
+  border-radius: 50%;
+  width: clamp(30px, 4vw, 36px); height: clamp(30px, 4vw, 36px);
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  color: #4262d1;
+  cursor: pointer;
+  box-shadow: 0 2px 10px #b8c8f840;
+}
+.refresh-btn:active { background: #dbe6ff; }
+.weather-icon { font-size: clamp(2.2rem, 5vw, 3.5rem); margin-bottom: 6px; }
+.weather-main { font-size: clamp(1rem, 2vw, 1.4rem); font-weight: 700; margin-bottom: 6px; color: #446add; }
+.weather-temp { font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 800; color: #25398e; margin-bottom: 4px; font-variant-numeric: tabular-nums; }
+.weather-humid { font-size: clamp(0.85rem, 1.5vw, 1.15rem); color: #288aad; margin-bottom: 2px; }
+.weather-status { font-size: clamp(0.8rem, 1.4vw, 1.05rem); font-weight: 700; color: #4c5e7a; }
+
+/* ===== 계산기 ===== */
+.calc-card {
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  border-radius: clamp(18px, 2vw, 26px);
+  box-shadow: 0 12px 44px rgba(49,64,112,0.14);
+  padding: clamp(16px, 2.5vw, 28px);
+  display: flex; flex-direction: column;
+}
+.calc-title {
+  font-size: clamp(1.1rem, 2.5vw, 1.7rem);
+  font-weight: 900;
+  color: #5c67ef;
+  margin: 0 0 clamp(10px, 1.5vw, 18px) 0;
+  text-align: center;
+  text-shadow: 0 2px 10px #e3eafd;
+}
+.calc-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.calc-mode-group {
+  display: inline-flex;
+  background: #eef2fa;
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+.calc-mode-btn {
+  padding: 6px 14px;
+  border: none;
+  background: transparent;
+  color: #6671a6;
+  font-weight: 700;
+  font-size: clamp(0.75rem, 1.4vw, 0.9rem);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.calc-mode-btn.active { background: #4a5bd8; color: #fff; box-shadow: 0 2px 8px rgba(74,91,216,0.3); }
+.mem-indicator {
+  font-size: 0.78rem;
+  color: #4a5bd8;
+  font-weight: 800;
+  padding: 4px 10px;
+  background: #eef2fa;
+  border-radius: 8px;
+  visibility: hidden;
+}
+.mem-indicator.active { visibility: visible; }
+.calc-icon-btn {
+  background: #eef2fa;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: #4a5bd8;
+  font-size: 1rem;
+  transition: background 0.15s;
+}
+.calc-icon-btn:active { background: #dbe6ff; }
+
+.calc-screen-wrap {
+  background: linear-gradient(135deg, #f2f5ff 0%, #f7f8fc 100%);
+  border-radius: clamp(14px, 1.8vw, 18px);
+  padding: clamp(10px, 2vw, 16px) clamp(12px, 2.5vw, 22px);
+  margin-bottom: clamp(10px, 1.5vw, 16px);
+  box-shadow: inset 0 2px 8px rgba(90,108,180,0.08);
+  text-align: right;
+  min-height: 88px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+}
+.calc-expr {
+  font-size: clamp(0.85rem, 1.8vw, 1.05rem);
+  color: #7b85ab;
+  font-weight: 600;
+  min-height: 1.3em;
+  word-break: break-all;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+}
+.calc-result {
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+  font-weight: 900;
+  color: #2c3666;
+  word-break: break-all;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
+  line-height: 1.1;
+  margin-top: 4px;
+}
+
+.calc-buttons {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: clamp(5px, 1vw, 9px);
+}
+.calc-btn {
+  font-size: clamp(0.95rem, 2vw, 1.25rem);
+  padding: clamp(12px, 2.5vw, 18px) 0;
+  border: none;
+  border-radius: clamp(10px, 1.5vw, 14px);
+  background: #f0f3fa;
+  color: #365178;
+  cursor: pointer;
+  font-weight: 700;
+  transition: transform 0.08s, background 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 10px rgba(88,112,174,0.08);
+  outline: none;
+  user-select: none;
+  min-height: 44px;  /* 터치 영역 */
+}
+.calc-btn:active { transform: scale(0.96); background: #dde4ff; }
+.calc-btn.op {
+  background: linear-gradient(135deg, #b6cafd 0%, #637dee 100%);
+  color: #fff;
+}
+.calc-btn.op:active { background: linear-gradient(135deg, #4f6cdf 0%, #a8bdfb 100%); }
+.calc-btn.equal {
+  background: linear-gradient(135deg, #6de0ca 0%, #32b896 100%);
+  color: #fff;
+  font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+}
+.calc-btn.equal:active { background: linear-gradient(135deg, #28a684 0%, #5ad4be 100%); }
+.calc-btn.clear {
+  background: linear-gradient(135deg, #ffb1b1 0%, #ff5858 100%);
+  color: #fff;
+}
+.calc-btn.clear:active { background: linear-gradient(135deg, #f33d3d 0%, #ffa1a1 100%); }
+.calc-btn.fn {
+  background: linear-gradient(135deg, #c6e6fc 0%, #79b6fa 100%);
+  color: #1d4d77;
+  font-size: clamp(0.82rem, 1.7vw, 1rem);
+}
+.calc-btn.fn:active { background: linear-gradient(135deg, #5fa0e8 0%, #b3dafa 100%); }
+.calc-btn.mem {
+  background: linear-gradient(135deg, #ffe0a3 0%, #f5b449 100%);
+  color: #7a4d09;
+  font-size: clamp(0.78rem, 1.6vw, 0.95rem);
+}
+.calc-btn.mem:active { background: linear-gradient(135deg, #e69b2c 0%, #ffd58a 100%); }
+
+/* 히스토리 */
+.history-panel {
+  margin-top: clamp(10px, 1.5vw, 16px);
+  background: #f7f9fc;
+  border-radius: 14px;
+  padding: 12px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+.history-panel.open { max-height: 280px; padding: 14px; }
+.history-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 8px;
+}
+.history-title { font-weight: 800; color: #4a5bd8; font-size: 0.95rem; }
+.history-clear {
+  background: none; border: none;
+  color: #ff5858; font-weight: 700; font-size: 0.85rem;
+  cursor: pointer; padding: 4px 8px; border-radius: 6px;
+}
+.history-clear:hover { background: #ffe5e5; }
+.history-list {
+  max-height: 200px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.history-item {
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  border-left: 3px solid #4a5bd8;
+  transition: background 0.15s;
+}
+.history-item:hover { background: #eef2fa; }
+.history-expr { font-size: 0.85rem; color: #7b85ab; font-variant-numeric: tabular-nums; }
+.history-val { font-size: 1.05rem; color: #2c3666; font-weight: 800; font-variant-numeric: tabular-nums; }
+.history-empty { color: #aab; font-size: 0.88rem; text-align: center; padding: 12px; }
+
+.toast {
+  position: fixed;
+  bottom: 30px; left: 50%; transform: translateX(-50%);
+  background: #2c3666; color: #fff;
+  padding: 10px 20px; border-radius: 24px;
+  font-size: 0.92rem; font-weight: 700;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s;
+  z-index: 1000;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+.toast.show { opacity: 1; }
+
+/* ===== 좁은 화면(폰) 추가 조정 ===== */
+@media (max-width: 480px) {
+  .calc-buttons { gap: 5px; }
+  .calc-btn { padding: 11px 0; min-height: 42px; }
+  .clock-time { letter-spacing: 0.5px; }
+  .city-select { width: 100%; }
+}
+@media (max-width: 360px) {
+  .calc-btn { font-size: 0.85rem; padding: 9px 0; }
+  .calc-result { font-size: 1.6rem; }
+}
+
+/* 가로 모드 폰 */
+@media (max-height: 500px) and (orientation: landscape) {
+  .main-wrap { gap: 20px; padding: 12px; }
+  .calc-card { max-width: 600px; }
+}
+</style>
 </head>
 <body>
 
-    <!-- 계산기 -->
+<div class="main-wrap">
+
+  <!-- 계산기 -->
+  <section class="section" style="display:flex; justify-content:center;">
     <div class="calc-card">
-      <div class="calc-title">📐 공학용 계산기</div>
-      <input type="text" class="calc-screen" id="screen" value="0" readonly>
+      <h2 class="calc-title">📐 공학용 계산기</h2>
+
+      <div class="calc-toolbar">
+        <div class="calc-mode-group" role="group" aria-label="각도 모드">
+          <button class="calc-mode-btn active" id="modeDeg" onclick="setAngleMode('DEG')">DEG</button>
+          <button class="calc-mode-btn" id="modeRad" onclick="setAngleMode('RAD')">RAD</button>
+        </div>
+        <span class="mem-indicator" id="memIndicator">M</span>
+        <div style="display:flex; gap:6px;">
+          <button class="calc-icon-btn" onclick="copyResult()" title="결과 복사">📋</button>
+          <button class="calc-icon-btn" onclick="toggleHistory()" title="기록">🕘</button>
+        </div>
+      </div>
+
+      <div class="calc-screen-wrap">
+        <div class="calc-expr" id="exprDisplay">&nbsp;</div>
+        <div class="calc-result" id="resultDisplay">0</div>
+      </div>
+
       <div class="calc-buttons">
-        <button class="calc-btn clear" onclick="clearScreen()">C</button>
-        <button class="calc-btn fn small" onclick="insert('Math.PI')">π</button>
-        <button class="calc-btn fn small" onclick="insert('Math.E')">e</button>
-        <button class="calc-btn fn small" onclick="insert('(')">(</button>
-        <button class="calc-btn fn small" onclick="insert(')')">)</button>
-        <button class="calc-btn fn" onclick="insert('Math.sin(')">sin</button>
-        <button class="calc-btn fn" onclick="insert('Math.cos(')">cos</button>
-        <button class="calc-btn fn" onclick="insert('Math.tan(')">tan</button>
-        <button class="calc-btn fn" onclick="insert('Math.log10(')">log</button>
-        <button class="calc-btn fn" onclick="insert('Math.log(')">ln</button>
+        <!-- 1행: 메모리 -->
+        <button class="calc-btn mem" onclick="memClear()">MC</button>
+        <button class="calc-btn mem" onclick="memRecall()">MR</button>
+        <button class="calc-btn mem" onclick="memAdd()">M+</button>
+        <button class="calc-btn mem" onclick="memSub()">M-</button>
+        <button class="calc-btn mem" onclick="memStore()">MS</button>
+
+        <!-- 2행: 함수 -->
+        <button class="calc-btn fn" onclick="insertFn('sin(')">sin</button>
+        <button class="calc-btn fn" onclick="insertFn('cos(')">cos</button>
+        <button class="calc-btn fn" onclick="insertFn('tan(')">tan</button>
+        <button class="calc-btn fn" onclick="insertFn('log(')">log</button>
+        <button class="calc-btn fn" onclick="insertFn('ln(')">ln</button>
+
+        <!-- 3행: 함수 -->
+        <button class="calc-btn fn" onclick="insertFn('√(')">√</button>
+        <button class="calc-btn fn" onclick="insert('^2')">x²</button>
+        <button class="calc-btn fn" onclick="insert('^3')">x³</button>
+        <button class="calc-btn fn" onclick="insert('^')">x^y</button>
+        <button class="calc-btn fn" onclick="insertFn('1/(')">1/x</button>
+
+        <!-- 4행 -->
+        <button class="calc-btn fn" onclick="insert('π')">π</button>
+        <button class="calc-btn fn" onclick="insert('e')">e</button>
+        <button class="calc-btn fn" onclick="insert('(')">(</button>
+        <button class="calc-btn fn" onclick="insert(')')">)</button>
+        <button class="calc-btn fn" onclick="insertFn('|')">|x|</button>
+
+        <!-- 5행 -->
+        <button class="calc-btn clear" onclick="clearAll()">AC</button>
+        <button class="calc-btn fn" onclick="backspace()">⌫</button>
+        <button class="calc-btn fn" onclick="insert('!')">n!</button>
+        <button class="calc-btn fn" onclick="insert('%')">%</button>
+        <button class="calc-btn op" onclick="insert('÷')">÷</button>
+
+        <!-- 6행 -->
         <button class="calc-btn" onclick="insert('7')">7</button>
         <button class="calc-btn" onclick="insert('8')">8</button>
         <button class="calc-btn" onclick="insert('9')">9</button>
-        <button class="calc-btn op" onclick="insert('/')">÷</button>
-        <button class="calc-btn fn" onclick="insert('**')">^</button>
+        <button class="calc-btn fn" onclick="insertAns()">Ans</button>
+        <button class="calc-btn op" onclick="insert('×')">×</button>
+
+        <!-- 7행 -->
         <button class="calc-btn" onclick="insert('4')">4</button>
         <button class="calc-btn" onclick="insert('5')">5</button>
         <button class="calc-btn" onclick="insert('6')">6</button>
-        <button class="calc-btn op" onclick="insert('*')">×</button>
-        <button class="calc-btn fn small" onclick="insert('Math.sqrt(')">√</button>
+        <button class="calc-btn fn" onclick="negate()">±</button>
+        <button class="calc-btn op" onclick="insert('-')">−</button>
+
+        <!-- 8행 -->
         <button class="calc-btn" onclick="insert('1')">1</button>
         <button class="calc-btn" onclick="insert('2')">2</button>
         <button class="calc-btn" onclick="insert('3')">3</button>
-        <button class="calc-btn op" onclick="insert('-')">-</button>
-        <button class="calc-btn fn small" onclick="backspace()">←</button>
-        <button class="calc-btn" onclick="insert('0')">0</button>
-        <button class="calc-btn" onclick="insert('.')">.</button>
         <button class="calc-btn op" onclick="insert('+')">+</button>
-        <button class="calc-btn equal" onclick="calculate()">=</button>
+        <button class="calc-btn fn" onclick="insert('E')">EXP</button>
+
+        <!-- 9행 -->
+        <button class="calc-btn" onclick="insert('0')" style="grid-column: span 2;">0</button>
+        <button class="calc-btn" onclick="insert('.')">.</button>
+        <button class="calc-btn equal" onclick="calculate()" style="grid-column: span 2;">=</button>
       </div>
-    </div>
-  </div>
- 
-  <div class="main-wrap">
-    <!-- 시계 -->
-    <div>
-      <div class="widget-title">🌏 듀얼 월드 시계</div>
-      <div class="clock-container">
-        <div class="clock-card">
-          <select class="city-select" id="city1"></select>
-          <div class="clock-time" id="time1"></div>
-          <div class="clock-date" id="date1"></div>
-          <div class="clock-label" id="label1"></div>
+
+      <div class="history-panel" id="historyPanel">
+        <div class="history-header">
+          <span class="history-title">📚 계산 기록</span>
+          <button class="history-clear" onclick="clearHistory()">전체 삭제</button>
         </div>
-        <div class="clock-card">
-          <select class="city-select" id="city2"></select>
-          <div class="clock-time" id="time2"></div>
-          <div class="clock-date" id="date2"></div>
-          <div class="clock-label" id="label2"></div>
+        <div class="history-list" id="historyList">
+          <div class="history-empty">아직 계산 기록이 없습니다</div>
         </div>
       </div>
     </div>
-    <!-- 날씨 -->
-    <div>
-      <div class="widget-title">🌦️ 3개 도시 날씨</div>
-      <div class="weather-dashboard">
-        <div class="weather-card" id="wcard1">
-          <button class="refresh-btn" onclick="fetchWeather(1)">⟳</button>
-          <select class="city-select" id="wcity1"></select>
-          <div class="weather-icon" id="wicon1">☁️</div>
-          <div class="weather-main" id="wmain1">--</div>
-          <div class="weather-temp" id="wtemp1">-- ℃</div>
-          <div class="weather-humid" id="whumid1">-- %</div>
-          <div class="weather-status" id="wstatus1"></div>
-        </div>
-        <div class="weather-card" id="wcard2">
-          <button class="refresh-btn" onclick="fetchWeather(2)">⟳</button>
-          <select class="city-select" id="wcity2"></select>
-          <div class="weather-icon" id="wicon2">☁️</div>
-          <div class="weather-main" id="wmain2">--</div>
-          <div class="weather-temp" id="wtemp2">-- ℃</div>
-          <div class="weather-humid" id="whumid2">-- %</div>
-          <div class="weather-status" id="wstatus2"></div>
-        </div>
-        <div class="weather-card" id="wcard3">
-          <button class="refresh-btn" onclick="fetchWeather(3)">⟳</button>
-          <select class="city-select" id="wcity3"></select>
-          <div class="weather-icon" id="wicon3">☁️</div>
-          <div class="weather-main" id="wmain3">--</div>
-          <div class="weather-temp" id="wtemp3">-- ℃</div>
-          <div class="weather-humid" id="whumid3">-- %</div>
-          <div class="weather-status" id="wstatus3"></div>
-        </div>
+  </section>
+
+  <!-- 시계 -->
+  <section class="section">
+    <h2 class="widget-title">🌏 듀얼 월드 시계</h2>
+    <div class="clock-container">
+      <div class="clock-card">
+        <select class="city-select" id="city1"></select>
+        <div class="clock-time" id="time1">--:--:--</div>
+        <div class="clock-date" id="date1">----</div>
+        <div class="clock-label" id="label1"></div>
+      </div>
+      <div class="clock-card">
+        <select class="city-select" id="city2"></select>
+        <div class="clock-time" id="time2">--:--:--</div>
+        <div class="clock-date" id="date2">----</div>
+        <div class="clock-label" id="label2"></div>
       </div>
     </div>
+  </section>
 
-  <script>
-    // ===== 시계 =====
-    const clockCities = [
-      { name: "서울", country: "대한민국", zone: "Asia/Seoul" },
-      { name: "뉴욕", country: "미국", zone: "America/New_York" },
-      { name: "도쿄", country: "일본", zone: "Asia/Tokyo" },
-      { name: "런던", country: "영국", zone: "Europe/London" },
-      { name: "파리", country: "프랑스", zone: "Europe/Paris" },
-      { name: "베이징", country: "중국", zone: "Asia/Shanghai" },
-      { name: "로스앤젤레스", country: "미국", zone: "America/Los_Angeles" },
-      { name: "시드니", country: "호주", zone: "Australia/Sydney" },
-      { name: "홍콩", country: "중국", zone: "Asia/Hong_Kong" },
-      { name: "베를린", country: "독일", zone: "Europe/Berlin" },
-      { name: "방콕", country: "태국", zone: "Asia/Bangkok" },
-      { name: "두바이", country: "아랍에미리트", zone: "Asia/Dubai" },
-      { name: "싱가포르", country: "싱가포르", zone: "Asia/Singapore" },
-      { name: "모스크바", country: "러시아", zone: "Europe/Moscow" },
-      { name: "토론토", country: "캐나다", zone: "America/Toronto" },
-      { name: "상파울루", country: "브라질", zone: "America/Sao_Paulo" },
-      { name: "델리", country: "인도", zone: "Asia/Kolkata" },
-      { name: "이스탄불", country: "터키", zone: "Europe/Istanbul" }
-    ];
-    function setupClockCitySelect(selectId, defaultIdx) {
-      const select = document.getElementById(selectId);
-      select.innerHTML = "";
-      clockCities.forEach((city, idx) => {
-        const option = document.createElement("option");
-        option.value = city.zone;
-        option.textContent = `${city.name} (${city.country})`;
-        select.appendChild(option);
-      });
-      select.selectedIndex = defaultIdx;
+  <!-- 날씨 -->
+  <section class="section">
+    <h2 class="widget-title">🌦️ 3개 도시 날씨</h2>
+    <div class="weather-dashboard">
+      <div class="weather-card">
+        <button class="refresh-btn" onclick="fetchWeather(1)" aria-label="새로고침">⟳</button>
+        <select class="city-select" id="wcity1"></select>
+        <div class="weather-icon" id="wicon1">☁️</div>
+        <div class="weather-main" id="wmain1">--</div>
+        <div class="weather-temp" id="wtemp1">-- ℃</div>
+        <div class="weather-humid" id="whumid1">-- %</div>
+        <div class="weather-status" id="wstatus1"></div>
+      </div>
+      <div class="weather-card">
+        <button class="refresh-btn" onclick="fetchWeather(2)" aria-label="새로고침">⟳</button>
+        <select class="city-select" id="wcity2"></select>
+        <div class="weather-icon" id="wicon2">☁️</div>
+        <div class="weather-main" id="wmain2">--</div>
+        <div class="weather-temp" id="wtemp2">-- ℃</div>
+        <div class="weather-humid" id="whumid2">-- %</div>
+        <div class="weather-status" id="wstatus2"></div>
+      </div>
+      <div class="weather-card">
+        <button class="refresh-btn" onclick="fetchWeather(3)" aria-label="새로고침">⟳</button>
+        <select class="city-select" id="wcity3"></select>
+        <div class="weather-icon" id="wicon3">☁️</div>
+        <div class="weather-main" id="wmain3">--</div>
+        <div class="weather-temp" id="wtemp3">-- ℃</div>
+        <div class="weather-humid" id="whumid3">-- %</div>
+        <div class="weather-status" id="wstatus3"></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="toast" id="toast">복사되었습니다</div>
+
+<script>
+/* ==========================================================
+   ============ 시계 ============
+   ========================================================== */
+const clockCities = [
+  { name: "서울", country: "대한민국", zone: "Asia/Seoul" },
+  { name: "뉴욕", country: "미국", zone: "America/New_York" },
+  { name: "도쿄", country: "일본", zone: "Asia/Tokyo" },
+  { name: "런던", country: "영국", zone: "Europe/London" },
+  { name: "파리", country: "프랑스", zone: "Europe/Paris" },
+  { name: "베이징", country: "중국", zone: "Asia/Shanghai" },
+  { name: "로스앤젤레스", country: "미국", zone: "America/Los_Angeles" },
+  { name: "시드니", country: "호주", zone: "Australia/Sydney" },
+  { name: "홍콩", country: "중국", zone: "Asia/Hong_Kong" },
+  { name: "베를린", country: "독일", zone: "Europe/Berlin" },
+  { name: "방콕", country: "태국", zone: "Asia/Bangkok" },
+  { name: "두바이", country: "아랍에미리트", zone: "Asia/Dubai" },
+  { name: "싱가포르", country: "싱가포르", zone: "Asia/Singapore" },
+  { name: "모스크바", country: "러시아", zone: "Europe/Moscow" },
+  { name: "토론토", country: "캐나다", zone: "America/Toronto" },
+  { name: "상파울루", country: "브라질", zone: "America/Sao_Paulo" },
+  { name: "델리", country: "인도", zone: "Asia/Kolkata" },
+  { name: "이스탄불", country: "터키", zone: "Europe/Istanbul" }
+];
+function setupClockSelect(id, defaultIdx) {
+  const sel = document.getElementById(id);
+  sel.innerHTML = "";
+  clockCities.forEach(c => {
+    const o = document.createElement("option");
+    o.value = c.zone;
+    o.textContent = `${c.name} (${c.country})`;
+    sel.appendChild(o);
+  });
+  sel.selectedIndex = defaultIdx;
+}
+setupClockSelect("city1", 0);
+setupClockSelect("city2", 1);
+function updateClock(idx) {
+  const sel = document.getElementById("city" + idx);
+  const tz = sel.value;
+  const cd = clockCities.find(c => c.zone === tz);
+  const now = new Date();
+  document.getElementById("time" + idx).textContent =
+    now.toLocaleTimeString('ko-KR', { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false, timeZone:tz });
+  document.getElementById("date" + idx).textContent =
+    now.toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric', weekday:'long', timeZone:tz });
+  document.getElementById("label" + idx).textContent = `${cd.name} (${cd.country})`;
+}
+function tick() { updateClock(1); updateClock(2); }
+setInterval(tick, 1000); tick();
+document.getElementById("city1").addEventListener("change", () => updateClock(1));
+document.getElementById("city2").addEventListener("change", () => updateClock(2));
+
+/* ==========================================================
+   ============ 날씨 ============
+   ========================================================== */
+const weatherCities = [
+  { name: "서울", country: "대한민국", lat:37.5665, lon:126.978 },
+  { name: "뉴욕", country: "미국", lat:40.7128, lon:-74.006 },
+  { name: "도쿄", country: "일본", lat:35.6895, lon:139.6917 },
+  { name: "런던", country: "영국", lat:51.5074, lon:-0.1278 },
+  { name: "파리", country: "프랑스", lat:48.8566, lon:2.3522 },
+  { name: "베이징", country: "중국", lat:39.9042, lon:116.4074 },
+  { name: "로스앤젤레스", country: "미국", lat:34.0522, lon:-118.2437 },
+  { name: "시드니", country: "호주", lat:-33.8688, lon:151.2093 },
+  { name: "홍콩", country: "중국", lat:22.3193, lon:114.1694 },
+  { name: "베를린", country: "독일", lat:52.52, lon:13.405 },
+  { name: "방콕", country: "태국", lat:13.7563, lon:100.5018 },
+  { name: "두바이", country: "아랍에미리트", lat:25.2048, lon:55.2708 },
+  { name: "싱가포르", country: "싱가포르", lat:1.3521, lon:103.8198 },
+  { name: "모스크바", country: "러시아", lat:55.7558, lon:37.6176 },
+  { name: "토론토", country: "캐나다", lat:43.6532, lon:-79.3832 },
+  { name: "상파울루", country: "브라질", lat:-23.5505, lon:-46.6333 },
+  { name: "델리", country: "인도", lat:28.6139, lon:77.209 },
+  { name: "이스탄불", country: "터키", lat:41.0082, lon:28.9784 }
+];
+function setupWSelect(id, idx) {
+  const sel = document.getElementById(id);
+  sel.innerHTML = "";
+  weatherCities.forEach((c, i) => {
+    const o = document.createElement("option");
+    o.value = i;
+    o.textContent = `${c.name} (${c.country})`;
+    sel.appendChild(o);
+  });
+  sel.selectedIndex = idx;
+}
+setupWSelect("wcity1", 0); setupWSelect("wcity2", 1); setupWSelect("wcity3", 2);
+
+async function fetchWeather(idx) {
+  const sel = document.getElementById("wcity" + idx);
+  const city = weatherCities[sel.value];
+  const $ = id => document.getElementById(id + idx);
+  $("wtemp").textContent = "로딩중..."; $("whumid").textContent = "";
+  $("wmain").textContent = ""; $("wicon").textContent = "⏳"; $("wstatus").textContent = "";
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,relative_humidity_2m,weather_code&timezone=auto`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.current) {
+      const wt = {
+        0:{i:"☀️",t:"맑음",s:"날씨가 아주 좋아요!"}, 1:{i:"🌤️",t:"대체로 맑음",s:"좋은 날씨입니다."},
+        2:{i:"⛅",t:"부분적으로 흐림",s:"가끔 구름이 있어요."}, 3:{i:"☁️",t:"흐림",s:"구름이 많아요."},
+        45:{i:"🌫️",t:"안개",s:"안개가 낍니다."}, 48:{i:"🌫️",t:"서리/안개",s:"안개/서리"},
+        51:{i:"🌦️",t:"약한 이슬비",s:"이슬비가 조금 내립니다."}, 53:{i:"🌦️",t:"이슬비",s:"이슬비가 내립니다."},
+        55:{i:"🌦️",t:"강한 이슬비",s:"이슬비가 많이 내립니다."}, 61:{i:"🌧️",t:"약한 비",s:"비가 조금 내립니다."},
+        63:{i:"🌧️",t:"비",s:"비가 내립니다."}, 65:{i:"🌧️",t:"강한 비",s:"비가 많이 내립니다."},
+        66:{i:"🌨️",t:"진눈깨비",s:"진눈깨비가 내려요."}, 67:{i:"🌨️",t:"진눈깨비",s:"진눈깨비가 내려요."},
+        71:{i:"🌨️",t:"약한 눈",s:"눈이 조금 내려요."}, 73:{i:"🌨️",t:"눈",s:"눈이 내려요."},
+        75:{i:"❄️",t:"강한 눈",s:"눈이 많이 내려요."}, 80:{i:"🌦️",t:"소나기",s:"소나기가 내립니다."},
+        81:{i:"🌦️",t:"소나기",s:"소나기가 내립니다."}, 82:{i:"🌦️",t:"강한 소나기",s:"소나기가 많이 내립니다."}
+      };
+      const w = wt[data.current.weather_code] || {i:"❔",t:"알 수 없음",s:"날씨 정보 없음"};
+      $("wicon").textContent = w.i;
+      $("wmain").textContent = w.t;
+      $("wtemp").textContent = `${data.current.temperature_2m} ℃`;
+      $("whumid").textContent = `습도: ${data.current.relative_humidity_2m} %`;
+      $("wstatus").textContent = w.s;
+    } else {
+      $("wicon").textContent = "❌"; $("wmain").textContent = "정보 없음";
+      $("wtemp").textContent = "-- ℃"; $("whumid").textContent = "-- %";
     }
-    setupClockCitySelect("city1", 0); // 서울
-    setupClockCitySelect("city2", 1); // 뉴욕
-    function updateClock(idx) {
-      const select = document.getElementById("city"+idx);
-      const tz = select.value;
-      const cityData = clockCities.find(c => c.zone === tz);
-      const now = new Date();
-      const time = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: tz });
-      const date = now.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long', timeZone: tz });
-      document.getElementById("time"+idx).textContent = time;
-      document.getElementById("date"+idx).textContent = date;
-      document.getElementById("label"+idx).textContent = `${cityData.name} (${cityData.country})`;
-    }
-    function tick() {
-      updateClock(1);
-      updateClock(2);
-    }
-    setInterval(tick, 1000);
-    tick();
-    document.getElementById("city1").addEventListener("change", () => updateClock(1));
-    document.getElementById("city2").addEventListener("change", () => updateClock(2));
+  } catch(e) {
+    $("wicon").textContent = "❌"; $("wmain").textContent = "오류";
+    $("wtemp").textContent = "-- ℃"; $("whumid").textContent = "-- %";
+  }
+}
+document.getElementById("wcity1").addEventListener("change", () => fetchWeather(1));
+document.getElementById("wcity2").addEventListener("change", () => fetchWeather(2));
+document.getElementById("wcity3").addEventListener("change", () => fetchWeather(3));
+fetchWeather(1); fetchWeather(2); fetchWeather(3);
 
-    // ===== 날씨 =====
-    const weatherCities = [
-      { name: "서울", country: "대한민국", lat: 37.5665, lon: 126.9780 },
-      { name: "뉴욕", country: "미국", lat: 40.7128, lon: -74.0060 },
-      { name: "도쿄", country: "일본", lat: 35.6895, lon: 139.6917 },
-      { name: "런던", country: "영국", lat: 51.5074, lon: -0.1278 },
-      { name: "파리", country: "프랑스", lat: 48.8566, lon: 2.3522 },
-      { name: "베이징", country: "중국", lat: 39.9042, lon: 116.4074 },
-      { name: "로스앤젤레스", country: "미국", lat: 34.0522, lon: -118.2437 },
-      { name: "시드니", country: "호주", lat: -33.8688, lon: 151.2093 },
-      { name: "홍콩", country: "중국", lat: 22.3193, lon: 114.1694 },
-      { name: "베를린", country: "독일", lat: 52.5200, lon: 13.4050 },
-      { name: "방콕", country: "태국", lat: 13.7563, lon: 100.5018 },
-      { name: "두바이", country: "아랍에미리트", lat: 25.2048, lon: 55.2708 },
-      { name: "싱가포르", country: "싱가포르", lat: 1.3521, lon: 103.8198 },
-      { name: "모스크바", country: "러시아", lat: 55.7558, lon: 37.6176 },
-      { name: "토론토", country: "캐나다", lat: 43.6532, lon: -79.3832 },
-      { name: "상파울루", country: "브라질", lat: -23.5505, lon: -46.6333 },
-      { name: "델리", country: "인도", lat: 28.6139, lon: 77.2090 },
-      { name: "이스탄불", country: "터키", lat: 41.0082, lon: 28.9784 }
-    ];
-    function setupWeatherCitySelect(selectId, defaultIdx) {
-      const select = document.getElementById(selectId);
-      select.innerHTML = "";
-      weatherCities.forEach((city, idx) => {
-        const option = document.createElement("option");
-        option.value = idx;
-        option.textContent = `${city.name} (${city.country})`;
-        select.appendChild(option);
-      });
-      select.selectedIndex = defaultIdx;
-    }
-    setupWeatherCitySelect("wcity1", 0);
-    setupWeatherCitySelect("wcity2", 1);
-    setupWeatherCitySelect("wcity3", 2);
+/* ==========================================================
+   ============ 계산기 ============
+   - 안전한 표현식 평가(파서)
+   - 메모리, 히스토리, DEG/RAD, Ans, 키보드, 복사
+   ========================================================== */
+let expr = '';                  // 사용자가 본 식
+let lastResult = 0;             // Ans
+let memory = 0;
+let memSet = false;
+let angleMode = 'DEG';          // 'DEG' | 'RAD'
+let history = [];               // {expr, val}
+const MAX_HISTORY = 30;
 
-    async function fetchWeather(idx) {
-      const select = document.getElementById("wcity"+idx);
-      const city = weatherCities[select.value];
-      const tempDiv = document.getElementById("wtemp"+idx);
-      const humidDiv = document.getElementById("whumid"+idx);
-      const iconDiv = document.getElementById("wicon"+idx);
-      const mainDiv = document.getElementById("wmain"+idx);
-      const statusDiv = document.getElementById("wstatus"+idx);
+const exprDisplay = document.getElementById('exprDisplay');
+const resultDisplay = document.getElementById('resultDisplay');
+const historyPanel = document.getElementById('historyPanel');
+const historyList = document.getElementById('historyList');
+const memIndicator = document.getElementById('memIndicator');
 
-      tempDiv.textContent = "로딩중...";
-      humidDiv.textContent = "";
-      mainDiv.textContent = "";
-      iconDiv.textContent = "⏳";
-      statusDiv.textContent = "";
+function refreshDisplay() {
+  exprDisplay.textContent = expr || '\u00a0';
+}
 
-      try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,relative_humidity_2m,weather_code&timezone=auto`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.current) {
-          const temp = data.current.temperature_2m;
-          const humid = data.current.relative_humidity_2m;
-          const code = data.current.weather_code;
-          const weatherTable = {
-            0:  {icon:"☀️", text:"맑음", status:"날씨가 아주 좋아요!"},
-            1:  {icon:"🌤️", text:"대체로 맑음", status:"좋은 날씨입니다."},
-            2:  {icon:"⛅", text:"부분적으로 흐림", status:"가끔 구름이 있어요."},
-            3:  {icon:"☁️", text:"흐림", status:"구름이 많아요."},
-            45: {icon:"🌫️", text:"안개", status:"안개가 낍니다."},
-            48: {icon:"🌫️", text:"서리/안개", status:"안개/서리"},
-            51: {icon:"🌦️", text:"약한 이슬비", status:"이슬비가 조금 내립니다."},
-            53: {icon:"🌦️", text:"이슬비", status:"이슬비가 내립니다."},
-            55: {icon:"🌦️", text:"강한 이슬비", status:"이슬비가 많이 내립니다."},
-            61: {icon:"🌧️", text:"약한 비", status:"비가 조금 내립니다."},
-            63: {icon:"🌧️", text:"비", status:"비가 내립니다."},
-            65: {icon:"🌧️", text:"강한 비", status:"비가 많이 내립니다."},
-            66: {icon:"🌨️", text:"진눈깨비", status:"진눈깨비가 내려요."},
-            67: {icon:"🌨️", text:"진눈깨비", status:"진눈깨비가 내려요."},
-            71: {icon:"🌨️", text:"약한 눈", status:"눈이 조금 내려요."},
-            73: {icon:"🌨️", text:"눈", status:"눈이 내려요."},
-            75: {icon:"❄️", text:"강한 눈", status:"눈이 많이 내려요."},
-            80: {icon:"🌦️", text:"소나기", status:"소나기가 내립니다."},
-            81: {icon:"🌦️", text:"소나기", status:"소나기가 내립니다."},
-            82: {icon:"🌦️", text:"강한 소나기", status:"소나기가 많이 내립니다."}
-          };
-          const weather = weatherTable[code] || {icon:"❔", text:"알 수 없음", status:"날씨 정보 없음"};
-          iconDiv.textContent = weather.icon;
-          mainDiv.textContent = weather.text;
-          tempDiv.textContent = `${temp} ℃`;
-          humidDiv.textContent = `습도: ${humid} %`;
-          statusDiv.innerHTML = `${weather.status}`;
-        } else {
-          iconDiv.textContent = "❌";
-          mainDiv.textContent = "정보 없음";
-          tempDiv.textContent = "-- ℃";
-          humidDiv.textContent = "-- %";
-          statusDiv.textContent = "";
+function insert(token) {
+  // = 직후 숫자 입력은 새 계산 시작
+  if (justCalculated && /[0-9.(πe√]/.test(token)) {
+    expr = '';
+    resultDisplay.textContent = '0';
+  }
+  justCalculated = false;
+  expr += token;
+  refreshDisplay();
+}
+function insertFn(token) {
+  if (justCalculated) { expr = ''; resultDisplay.textContent = '0'; }
+  justCalculated = false;
+  expr += token;
+  refreshDisplay();
+}
+function insertAns() {
+  if (justCalculated) { expr = ''; resultDisplay.textContent = '0'; }
+  justCalculated = false;
+  expr += 'Ans';
+  refreshDisplay();
+}
+function clearAll() {
+  expr = ''; resultDisplay.textContent = '0';
+  justCalculated = false;
+  refreshDisplay();
+}
+function backspace() {
+  if (justCalculated) { clearAll(); return; }
+  // 'Ans', 'sin(' 같은 토큰 단위로 지우기 시도
+  const tokens = ['Ans', 'sin(', 'cos(', 'tan(', 'log(', 'ln(', '√(', '1/('];
+  for (const t of tokens) {
+    if (expr.endsWith(t)) { expr = expr.slice(0, -t.length); refreshDisplay(); return; }
+  }
+  expr = expr.slice(0, -1);
+  refreshDisplay();
+}
+function negate() {
+  // 마지막 숫자에 부호 토글
+  const m = expr.match(/(-?\d+\.?\d*)$/);
+  if (m) {
+    const num = m[1];
+    const newNum = num.startsWith('-') ? num.slice(1) : '-' + num;
+    expr = expr.slice(0, -num.length) + newNum;
+  } else {
+    expr += '-';
+  }
+  refreshDisplay();
+}
+
+/* ===== 메모리 ===== */
+function memClear() { memory = 0; memSet = false; memIndicator.classList.remove('active'); showToast('메모리 삭제'); }
+function memRecall() {
+  if (justCalculated) { expr = ''; resultDisplay.textContent = '0'; }
+  justCalculated = false;
+  expr += String(memory);
+  refreshDisplay();
+}
+function memAdd() { const v = evalSafe(expr); if (v !== null) { memory += v; memSet = true; memIndicator.classList.add('active'); showToast(`M+ : ${memory}`); } }
+function memSub() { const v = evalSafe(expr); if (v !== null) { memory -= v; memSet = true; memIndicator.classList.add('active'); showToast(`M- : ${memory}`); } }
+function memStore() { const v = evalSafe(expr); if (v !== null) { memory = v; memSet = true; memIndicator.classList.add('active'); showToast(`MS : ${memory}`); } }
+
+/* ===== 각도 모드 ===== */
+function setAngleMode(m) {
+  angleMode = m;
+  document.getElementById('modeDeg').classList.toggle('active', m === 'DEG');
+  document.getElementById('modeRad').classList.toggle('active', m === 'RAD');
+}
+
+/* ===== 토스트 ===== */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => t.classList.remove('show'), 1500);
+}
+function copyResult() {
+  const txt = resultDisplay.textContent;
+  navigator.clipboard?.writeText(txt).then(
+    () => showToast('결과 복사: ' + txt),
+    () => showToast('복사 실패')
+  );
+}
+
+/* ===== 히스토리 ===== */
+function toggleHistory() { historyPanel.classList.toggle('open'); renderHistory(); }
+function clearHistory() { history = []; renderHistory(); showToast('기록 삭제'); }
+function pushHistory(e, v) {
+  history.unshift({ expr: e, val: v });
+  if (history.length > MAX_HISTORY) history.pop();
+  renderHistory();
+}
+function renderHistory() {
+  if (!historyPanel.classList.contains('open')) return;
+  if (history.length === 0) {
+    historyList.innerHTML = '<div class="history-empty">아직 계산 기록이 없습니다</div>';
+    return;
+  }
+  historyList.innerHTML = history.map((h, i) =>
+    `<div class="history-item" onclick="useHistory(${i})">
+       <div class="history-expr">${escapeHtml(h.expr)} =</div>
+       <div class="history-val">${escapeHtml(String(h.val))}</div>
+     </div>`).join('');
+}
+function useHistory(i) {
+  const h = history[i];
+  if (!h) return;
+  expr = String(h.val);
+  refreshDisplay();
+  resultDisplay.textContent = h.val;
+  justCalculated = true;
+}
+function escapeHtml(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ==========================================================
+   ===== 안전한 표현식 평가 (직접 파서) =====
+   문법:
+     expr   = term  (('+'|'-') term)*
+     term   = pow  (('×'|'÷'|'%') pow)*       // %는 modulo
+     pow    = unary ('^' pow)?                // 우결합
+     unary  = ('+'|'-') unary | postfix
+     postfix= factor ('!' | '%')*             // !는 팩토리얼, %는 백분율(0.01 곱)
+     factor = number | ident '(' expr ')' | '(' expr ')' | '|' expr '|' | 'Ans' | 'π' | 'e'
+   ========================================================== */
+let justCalculated = false;
+
+function calculate() {
+  const v = evalSafe(expr);
+  if (v === null) { resultDisplay.textContent = 'Error'; return; }
+  const shown = formatNumber(v);
+  resultDisplay.textContent = shown;
+  pushHistory(expr, shown);
+  lastResult = v;
+  justCalculated = true;
+}
+
+function formatNumber(v) {
+  if (!isFinite(v)) return 'Error';
+  if (Number.isInteger(v) && Math.abs(v) < 1e16) return String(v);
+  // 매우 작거나 매우 큰 수는 지수 표기
+  if (Math.abs(v) >= 1e15 || (Math.abs(v) < 1e-7 && v !== 0)) return v.toExponential(10).replace(/\.?0+e/, 'e');
+  // 부동소수점 오차 정리
+  const r = Math.round(v * 1e12) / 1e12;
+  return String(r);
+}
+
+function evalSafe(input) {
+  if (!input || input.trim() === '') return null;
+  try {
+    const tokens = tokenize(input);
+    const parser = new Parser(tokens);
+    const result = parser.parseExpr();
+    if (!parser.atEnd()) return null;
+    return result;
+  } catch (e) {
+    return null;
+  }
+}
+
+function tokenize(s) {
+  const tokens = [];
+  let i = 0;
+  while (i < s.length) {
+    const c = s[i];
+    if (c === ' ') { i++; continue; }
+    if (/\d/.test(c) || c === '.') {
+      let n = '';
+      while (i < s.length && /[\d.]/.test(s[i])) n += s[i++];
+      // 지수 표기 1.5E3
+      if (i < s.length && (s[i] === 'E' || s[i] === 'e' && /\d/.test(s[i-1] || ''))) {
+        // E만 명시적 지수로 받음(e는 상수와 혼동되므로 EXP 버튼이 E를 넣음)
+        if (s[i] === 'E') {
+          n += 'e'; i++;
+          if (s[i] === '+' || s[i] === '-') n += s[i++];
+          while (i < s.length && /\d/.test(s[i])) n += s[i++];
         }
-      } catch (e) {
-        iconDiv.textContent = "❌";
-        mainDiv.textContent = "오류";
-        tempDiv.textContent = "-- ℃";
-        humidDiv.textContent = "-- %";
-        statusDiv.textContent = "";
       }
+      tokens.push({ type: 'NUM', value: parseFloat(n) });
+      continue;
     }
-    document.getElementById("wcity1").addEventListener("change", ()=>fetchWeather(1));
-    document.getElementById("wcity2").addEventListener("change", ()=>fetchWeather(2));
-    document.getElementById("wcity3").addEventListener("change", ()=>fetchWeather(3));
-    fetchWeather(1); fetchWeather(2); fetchWeather(3);
+    // 식별자/함수명
+    if (/[a-zA-Z]/.test(c) || c === 'π' || c === '√') {
+      // 함수 이름들
+      const fns = ['sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'log', 'ln', '1/'];
+      let matched = null;
+      for (const f of fns) {
+        if (s.startsWith(f, i)) { matched = f; break; }
+      }
+      if (matched) { tokens.push({ type: 'FN', value: matched }); i += matched.length; continue; }
+      if (c === '√') { tokens.push({ type: 'FN', value: 'sqrt' }); i++; continue; }
+      if (s.startsWith('Ans', i)) { tokens.push({ type: 'CONST', value: lastResult }); i += 3; continue; }
+      if (c === 'π') { tokens.push({ type: 'CONST', value: Math.PI }); i++; continue; }
+      if (c === 'e') { tokens.push({ type: 'CONST', value: Math.E }); i++; continue; }
+      throw new Error('Unknown ident: ' + c);
+    }
+    if ('+-×÷*/^!%(),|'.indexOf(c) >= 0) {
+      // 표시는 ×÷지만 일반 */도 허용
+      const map = { '×':'*', '÷':'/' };
+      tokens.push({ type: 'OP', value: map[c] || c });
+      i++; continue;
+    }
+    throw new Error('Bad char: ' + c);
+  }
+  return tokens;
+}
 
-    // ===== 계산기 =====
-    let screen = document.getElementById('screen');
-    let expr = '';
-    function insert(val) {
-      if (screen.value === "Error") expr = '';
-      expr += val;
-      screen.value = expr.replace(/Math\.(PI|E|sin|cos|tan|log|log10|sqrt)\(/g, function(match) {
-        switch(match) {
-          case "Math.PI": return "π";
-          case "Math.E": return "e";
-          case "Math.sin(": return "sin(";
-          case "Math.cos(": return "cos(";
-          case "Math.tan(": return "tan(";
-          case "Math.log(": return "ln(";
-          case "Math.log10(": return "log(";
-          case "Math.sqrt(": return "√(";
-          default: return match;
-        }
-      });
+class Parser {
+  constructor(tokens) { this.t = tokens; this.p = 0; }
+  peek() { return this.t[this.p]; }
+  next() { return this.t[this.p++]; }
+  atEnd() { return this.p >= this.t.length; }
+  accept(type, value) {
+    const tk = this.peek();
+    if (tk && tk.type === type && (value === undefined || tk.value === value)) { this.p++; return tk; }
+    return null;
+  }
+  expect(type, value) {
+    const tk = this.accept(type, value);
+    if (!tk) throw new Error('Expected ' + type + ' ' + value);
+    return tk;
+  }
+  parseExpr() {
+    let v = this.parseTerm();
+    while (true) {
+      if (this.accept('OP', '+')) v += this.parseTerm();
+      else if (this.accept('OP', '-')) v -= this.parseTerm();
+      else break;
     }
-    function clearScreen() {
-      expr = '';
-      screen.value = '0';
+    return v;
+  }
+  parseTerm() {
+    let v = this.parsePow();
+    while (true) {
+      if (this.accept('OP', '*')) v *= this.parsePow();
+      else if (this.accept('OP', '/')) {
+        const d = this.parsePow();
+        if (d === 0) throw new Error('div0');
+        v /= d;
+      } else break;
     }
-    function calculate() {
-      try {
-        let calcExpr = expr.replace(/\^/g, '**');
-        calcExpr = calcExpr.replace(/Math\.(sin|cos|tan)\(([^)]+)\)/g, function(_, fn, arg) {
-          return `Math.${fn}((${arg})*Math.PI/180)`;
-        });
-        let result = eval(calcExpr);
-        if (typeof result === 'number' && isFinite(result)) {
-          screen.value = result;
-          expr = result.toString();
-        } else {
-          screen.value = 'Error';
-          expr = '';
-        }
-      } catch (e) {
-        screen.value = 'Error';
-        expr = '';
-      }
+    return v;
+  }
+  parsePow() {
+    let base = this.parseUnary();
+    if (this.accept('OP', '^')) {
+      const exp = this.parsePow();
+      return Math.pow(base, exp);
     }
-    function backspace() {
-      if (expr.length > 0) {
-        expr = expr.slice(0, -1);
-        screen.value = expr || '0';
-      }
+    return base;
+  }
+  parseUnary() {
+    if (this.accept('OP', '+')) return this.parseUnary();
+    if (this.accept('OP', '-')) return -this.parseUnary();
+    return this.parsePostfix();
+  }
+  parsePostfix() {
+    let v = this.parseFactor();
+    while (true) {
+      if (this.accept('OP', '!')) v = factorial(v);
+      else if (this.accept('OP', '%')) v = v / 100;
+      else break;
     }
-  </script>
+    return v;
+  }
+  parseFactor() {
+    const tk = this.peek();
+    if (!tk) throw new Error('Unexpected end');
+    if (tk.type === 'NUM') { this.next(); return tk.value; }
+    if (tk.type === 'CONST') { this.next(); return tk.value; }
+    if (tk.type === 'FN') {
+      this.next();
+      this.expect('OP', '(');
+      const arg = this.parseExpr();
+      this.expect('OP', ')');
+      return applyFn(tk.value, arg);
+    }
+    if (this.accept('OP', '(')) {
+      const v = this.parseExpr();
+      this.expect('OP', ')');
+      return v;
+    }
+    if (this.accept('OP', '|')) {
+      const v = this.parseExpr();
+      this.expect('OP', '|');
+      return Math.abs(v);
+    }
+    throw new Error('Bad factor');
+  }
+}
+
+function applyFn(name, x) {
+  switch (name) {
+    case 'sin': return Math.sin(angleMode === 'DEG' ? x * Math.PI / 180 : x);
+    case 'cos': return Math.cos(angleMode === 'DEG' ? x * Math.PI / 180 : x);
+    case 'tan': return Math.tan(angleMode === 'DEG' ? x * Math.PI / 180 : x);
+    case 'asin': { const r = Math.asin(x); return angleMode === 'DEG' ? r * 180 / Math.PI : r; }
+    case 'acos': { const r = Math.acos(x); return angleMode === 'DEG' ? r * 180 / Math.PI : r; }
+    case 'atan': { const r = Math.atan(x); return angleMode === 'DEG' ? r * 180 / Math.PI : r; }
+    case 'log': return Math.log10(x);
+    case 'ln':  return Math.log(x);
+    case 'sqrt':return Math.sqrt(x);
+    case '1/':  if (x === 0) throw new Error('div0'); return 1 / x;
+  }
+  throw new Error('Unknown fn: ' + name);
+}
+
+function factorial(n) {
+  if (n < 0 || !Number.isInteger(n)) throw new Error('factorial domain');
+  if (n > 170) return Infinity;
+  let r = 1;
+  for (let i = 2; i <= n; i++) r *= i;
+  return r;
+}
+
+/* ===== 키보드 입력 ===== */
+document.addEventListener('keydown', (e) => {
+  // 입력 요소에 포커스가 있으면 무시 (select 등)
+  const ae = document.activeElement;
+  if (ae && (ae.tagName === 'SELECT' || ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA')) return;
+
+  const k = e.key;
+  if (/^[0-9.]$/.test(k)) { insert(k); e.preventDefault(); return; }
+  if (k === '+' || k === '-') { insert(k); e.preventDefault(); return; }
+  if (k === '*') { insert('×'); e.preventDefault(); return; }
+  if (k === '/') { insert('÷'); e.preventDefault(); return; }
+  if (k === '(' || k === ')') { insert(k); e.preventDefault(); return; }
+  if (k === '^') { insert('^'); e.preventDefault(); return; }
+  if (k === '%') { insert('%'); e.preventDefault(); return; }
+  if (k === '!') { insert('!'); e.preventDefault(); return; }
+  if (k === 'Enter' || k === '=') { calculate(); e.preventDefault(); return; }
+  if (k === 'Backspace') { backspace(); e.preventDefault(); return; }
+  if (k === 'Escape' || k === 'Delete') { clearAll(); e.preventDefault(); return; }
+});
+
+refreshDisplay();
+</script>
 </body>
 </html>
