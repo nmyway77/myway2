@@ -303,13 +303,14 @@
       transform: translateY(0);
     }
 
-    /* ========== iframe 영역 ========== */
+    /* ========== iframe 영역 (펼치기/접기 토글) ========== */
     /* 헤더 높이를 CSS 변수로 관리 - 동적으로 조정 가능 */
     :root {
       --header-height: 158px;
     }
 
-    .main-frame {
+    /* iframe을 감싸는 wrapper - 펼치기/접기는 이걸로 제어 */
+    .main-frame-wrap {
       position: fixed;
       left: 0;
       top: var(--header-height);
@@ -317,14 +318,60 @@
       /* dvh로 모바일 주소창 변화 대응 */
       height: calc(100vh - var(--header-height));
       height: calc(100dvh - var(--header-height));
+      z-index: 10;
+      overflow: hidden;
+      transform: translateY(0);
+      opacity: 1;
+      transition: transform 0.38s cubic-bezier(0.22, 0.61, 0.36, 1),
+                  opacity 0.28s ease;
+      /* 노치 디바이스 하단 안전영역 */
+      padding-bottom: env(safe-area-inset-bottom);
+      will-change: transform;
+    }
+
+    /* 접힌 상태: 위로 슬라이드 아웃 */
+    .main-frame-wrap.collapsed {
+      transform: translateY(-12px);
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+      transition: transform 0.32s cubic-bezier(0.4, 0, 1, 1),
+                  opacity 0.22s ease,
+                  visibility 0s linear 0.32s;
+    }
+
+    .main-frame {
+      width: 100%;
+      height: 100%;
       border: none;
       margin: 0;
       background: #f5f7fa;
-      z-index: 10;
       border-radius: 0;
       display: block;
-      /* 노치 디바이스 하단 안전영역 */
-      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    /* 접힌 상태일 때 보여줄 안내 영역 (선택적, 빈 공간 안내) */
+    .collapsed-hint {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: var(--header-height);
+      bottom: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 5;
+      color: #9aa3c4;
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+      user-select: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    body.frame-collapsed .collapsed-hint {
+      display: flex;
     }
 
     /* ========== 반응형 ========== */
@@ -367,6 +414,62 @@
         --header-height: 120px;
       }
       .searchbar-select { min-width: 70px; padding: 0 8px 0 3px; }
+    }
+
+    /* ===== 핸드폰 가로 모드: 헤더 압축 =====
+       화면 높이가 짧을 때 헤더가 너무 큰 비중을 차지하면
+       iframe 영역이 좁아져 콘텐츠 보기 힘듦 → 컴팩트 모드 */
+    @media (orientation: landscape) and (max-height: 500px) {
+      :root {
+        --header-height: 96px;
+      }
+      .searchbar-outer {
+        margin-top: 6px;
+        margin-bottom: 4px !important;
+        padding: 0 6px;
+      }
+      .searchbar-wrap { height: 44px; max-width: 560px; }
+      .searchbar-box { padding: 0 14px 0 12px; border-radius: 28px; }
+      .searchbar-select {
+        font-size: 0.92rem;
+        min-width: 76px;
+        height: 32px;
+      }
+      .searchbar-input {
+        font-size: 0.95rem;
+        height: 32px;
+        padding: 0 8px;
+      }
+      .searchbar-btn {
+        min-width: 38px;
+        height: 38px;
+      }
+      .searchbar-btn svg {
+        width: 18px;
+        height: 18px;
+      }
+      .screen-links {
+        font-size: 0.82rem;
+        gap: 6px;
+        padding: 0 4px 4px 4px;
+      }
+      .screen-links a {
+        padding: 1px 6px;
+      }
+    }
+
+    /* 매우 짧은 높이 (예: 폴더블 / 작은 핸드폰 가로) */
+    @media (orientation: landscape) and (max-height: 380px) {
+      :root {
+        --header-height: 84px;
+      }
+      .searchbar-outer { margin-top: 4px; }
+      .searchbar-wrap { height: 38px; }
+      .searchbar-select { height: 28px; min-width: 64px; font-size: 0.85rem; }
+      .searchbar-input { height: 28px; font-size: 0.9rem; }
+      .searchbar-btn { min-width: 32px; height: 32px; }
+      .searchbar-btn svg { width: 16px; height: 16px; }
+      .screen-links { font-size: 0.78rem; gap: 4px; }
     }
 </style>
 
@@ -441,7 +544,7 @@
     <div class="screen-links-wrap">
       <div class="screen-links" id="parent-links">
         <a href="#" onclick="showScreenParent(event, 'indexmainunder2.html')">A</a>
-        <a href="#" onclick="showScreenParent(event, 'indexmain.html')">H</a>
+        <a href="#" class="active" onclick="showScreenParent(event, 'indexmain.html')">H</a>
         <a href="#" onclick="showScreenParent(event, '00maincoininner.html')">C&S</a>
         <a href="#" onclick="showScreenParent(event, '00mainradioinner.html')">RADIO</a>
         <a href="#" onclick="window.open('bbssitesbar2.html', '_blank'); return false;">BBS</a>
@@ -461,8 +564,15 @@
     </div>
   </div>
 
-  <!-- 메인 iframe -->
-  <iframe id="main-frame" class="main-frame" src="indexmain.html" allowfullscreen loading="eager"></iframe>
+  <!-- 메인 iframe wrapper (H 토글로 펼치기/접기) -->
+  <div class="main-frame-wrap" id="frameWrap">
+    <iframe id="main-frame" class="main-frame" src="indexmain.html" allowfullscreen loading="eager" data-current-url="indexmain.html"></iframe>
+  </div>
+
+  <!-- 접힌 상태일 때 가운데 안내 (선택적) -->
+  <div class="collapsed-hint" aria-hidden="true">
+    <span>H를 눌러 메인 화면을 펼치세요</span>
+  </div>
 
   <script>
     // ========== 검색엔진 데이터 (그대로 유지) ==========
@@ -526,19 +636,52 @@
       }
     };
 
+    /**
+     * 네비게이션 클릭 핸들러
+     *  - 처음 상태: indexmain.html 펼쳐져 있음, H가 active
+     *  - H를 다시 누름 (현재 H가 활성 + 펼침): 접힘 (토글)
+     *  - H를 누름 (다른 페이지 보고 있을 때): indexmain으로 변경 + 펼침
+     *  - H를 누름 (접힌 상태): indexmain으로 펼침
+     *  - 다른 메뉴 클릭: 펼쳐진 상태로 해당 URL 로드 (토글 X, 같은 메뉴 두 번 눌러도 닫히지 않음)
+     */
     function showScreenParent(e, url) {
       e.preventDefault();
+      const link = e.currentTarget || e.target;
+      const wrap = document.getElementById('frameWrap');
+      const frame = document.getElementById('main-frame');
+      const currentUrl = frame.getAttribute('data-current-url');
+      const isCollapsed = wrap.classList.contains('collapsed');
+      const isHome = (url === 'indexmain.html');
+      const sameUrl = (currentUrl === url);
+
+      // H 버튼 토글: H가 이미 펼쳐서 보고 있는 상태에서 H를 다시 누름 → 접기
+      if (isHome && sameUrl && !isCollapsed) {
+        wrap.classList.add('collapsed');
+        document.body.classList.add('frame-collapsed');
+        // active는 유지 (어떤 화면을 닫았는지 시각적으로 보여줌)
+        return;
+      }
+
+      // 그 외: 펼치기 + 필요시 URL 변경
       document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
-      e.target.classList.add('active');
-      var frame = document.getElementById('main-frame');
-      frame.src = url;
+      link.classList.add('active');
+
+      // URL이 다르면 새로 로드
+      if (!sameUrl) {
+        frame.src = url;
+        frame.setAttribute('data-current-url', url);
+      }
+
+      // 펼치기
+      wrap.classList.remove('collapsed');
+      document.body.classList.remove('frame-collapsed');
+
       // 네비바에서 클릭한 항목을 가운데로 스크롤
       const parent = document.getElementById('parent-links');
-      const el = e.target;
-      if (parent && el) {
-        const offset = el.offsetLeft - parent.offsetLeft
+      if (parent && link) {
+        const offset = link.offsetLeft - parent.offsetLeft
           - parent.clientWidth / 2
-          + el.clientWidth / 2;
+          + link.clientWidth / 2;
         parent.scrollTo({ left: offset, behavior: 'smooth' });
       }
     }
