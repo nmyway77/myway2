@@ -280,15 +280,21 @@ button { font-family: inherit; }
 
 /* 히스토리 */
 .history-panel {
-  margin-top: clamp(10px, 1.5vw, 16px);
+  margin-top: 0;
   background: #f7f9fc;
   border-radius: 14px;
-  padding: 12px;
+  padding: 0 14px;
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease, padding 0.3s ease;
+  opacity: 0;
+  transition: max-height 0.3s ease, padding 0.3s ease, margin-top 0.3s ease, opacity 0.25s ease;
 }
-.history-panel.open { max-height: 280px; padding: 14px; }
+.history-panel.open {
+  margin-top: clamp(10px, 1.5vw, 16px);
+  max-height: 300px;
+  padding: 14px;
+  opacity: 1;
+}
 .history-header {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 8px;
