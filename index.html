@@ -639,7 +639,7 @@
     <!-- 네비게이션 텍스트 -->
     <div class="screen-links-wrap">
       <div class="screen-links" id="parent-links">
-        <a href="#" class="active" onclick="showScreenParent(event, 'indexmain.html')">H</a>
+        <a href="#" class="active" onclick="showScreenParent(event, 'https://myway.kr/indexmain.html')">H</a>
         <a href="#" onclick="showScreenParent(event, '00maincoininner.html')">C&S</a>
         <a href="#" onclick="showScreenParent(event, 'https://myway.kr/multichart.html')">MULTICHART</a>
         <a href="#" onclick="showScreenParent(event, '00maincomics.html')">COMICS</a>
@@ -651,7 +651,7 @@
 
   <!-- 메인 iframe wrapper (H 토글로 펼치기/접기) -->
   <div class="main-frame-wrap" id="frameWrap">
-    <iframe id="main-frame" class="main-frame" src="https://myway.kr/multichart.html" allowfullscreen loading="eager" data-current-url="indexmain.html"></iframe>
+    <iframe id="main-frame" class="main-frame" src="indexmain.html" allowfullscreen loading="eager" data-current-url="indexmain.html"></iframe>
   </div>
 
   <!-- 접힌 상태일 때 가운데 안내 (선택적) -->
@@ -1650,10 +1650,9 @@
     /**
      * 네비게이션 클릭 핸들러
      *  - 처음 상태: indexmain.html 펼쳐져 있음, H가 active
-     *  - H를 다시 누름 (현재 H가 활성 + 펼침): 접힘 (토글)
-     *  - H를 누름 (다른 페이지 보고 있을 때): indexmain으로 변경 + 펼침
-     *  - H를 누름 (접힌 상태): indexmain으로 펼침
-     *  - 다른 메뉴 클릭: 펼쳐진 상태로 해당 URL 로드 (토글 X, 같은 메뉴 두 번 눌러도 닫히지 않음)
+     *  - 어떤 메뉴든 현재 활성 상태 + 펼쳐진 상태에서 다시 누름 → 접힘 (토글)
+     *  - 접힌 상태에서 메뉴 누름 → 펼치며 해당 URL 로드
+     *  - 다른 메뉴 누름 → 펼친 상태로 해당 URL 로드 + active 갱신
      */
     function showScreenParent(e, url) {
       e.preventDefault();
@@ -1662,11 +1661,10 @@
       const frame = document.getElementById('main-frame');
       const currentUrl = frame.getAttribute('data-current-url');
       const isCollapsed = wrap.classList.contains('collapsed');
-      const isHome = (url === 'indexmain.html');
       const sameUrl = (currentUrl === url);
 
-      // H 버튼 토글: H가 이미 펼쳐서 보고 있는 상태에서 H를 다시 누름 → 접기
-      if (isHome && sameUrl && !isCollapsed) {
+      // 같은 메뉴를 다시 누른 경우 + 펼쳐진 상태 → 접기 (토글)
+      if (sameUrl && !isCollapsed) {
         wrap.classList.add('collapsed');
         document.body.classList.add('frame-collapsed');
         // active는 유지 (어떤 화면을 닫았는지 시각적으로 보여줌)
