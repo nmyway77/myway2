@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>다중 차트 · 종목 선택 - MYWAY.KR</title>
+  <meta name="description" content="원하는 종목 3개를 골라 한 화면에서 실시간 차트로 비교.">
+  <meta name="theme-color" content="#0a3145">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #0a3145;
+      color: #e9eef3;
+      font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(10px);
+    }
+    .home-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      color: #e9eef3;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    .home-btn:hover { background: rgba(255,255,255,0.16); }
+    .top-bar h1 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 600;
+      flex: 1;
+    }
+    .reset-btn {
+      background: rgba(255,255,255,0.08);
+      color: #e9eef3;
+      border: none;
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .reset-btn:hover { background: rgba(255,255,255,0.16); }
+
+    .preset-bar {
+      display: flex;
+      gap: 6px;
+      padding: 10px 14px 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .preset-bar::-webkit-scrollbar { display: none; }
+    .preset-btn {
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #c8d4dd;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .preset-btn:hover {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      padding: 14px;
+    }
+    @media (min-width: 900px) {
+      .chart-grid { grid-template-columns: repeat(2, 1fr); }
+      .chart-card:nth-child(3) { grid-column: 1 / -1; }
+    }
+    @media (min-width: 1400px) {
+      .chart-grid { grid-template-columns: repeat(3, 1fr); }
+      .chart-card:nth-child(3) { grid-column: auto; }
+    }
+
+    .chart-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .chart-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding: 0 4px;
+    }
+    .slot-num {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
+      flex-shrink: 0;
+    }
+    .symbol-select {
+      flex: 1;
+      background: rgba(255,255,255,0.06);
+      color: #e9eef3;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      min-width: 0;
+    }
+    .symbol-select:hover { border-color: rgba(255,255,255,0.25); }
+    .symbol-select:focus {
+      outline: none;
+      border-color: #6fc8ff;
+      box-shadow: 0 0 0 2px rgba(111,200,255,0.2);
+    }
+    .symbol-select option,
+    .symbol-select optgroup {
+      background: #0a3145;
+      color: #e9eef3;
+    }
+
+    /* ── 확대 버튼 (각 차트 우측) ── */
+    .expand-btn {
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.1);
+      width: 30px; height: 30px;
+      border-radius: 7px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      font-family: inherit;
+      padding: 0;
+      transition: all 0.15s;
+    }
+    .expand-btn:hover {
+      background: rgba(111,200,255,0.18);
+      color: #fff;
+      border-color: rgba(111,200,255,0.4);
+    }
+
+    /* ── 모달 (풀스크린 차트) ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 18, 28, 0.94);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      padding: 14px;
+      animation: fadeIn 0.18s ease-out;
+    }
+    .modal-overlay.show { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 8px 12px;
+      flex-shrink: 0;
+    }
+    .modal-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 600;
+      flex: 1;
+      letter-spacing: -0.01em;
+    }
+    .modal-symbol {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      font-family: 'SF Mono', Menlo, monospace;
+    }
+    .modal-close {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: none;
+      width: 38px; height: 38px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-size: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.2); }
+    .modal-chart-host {
+      flex: 1;
+      background: #0a1a26;
+      border-radius: 12px;
+      overflow: hidden;
+      min-height: 0;
+    }
+    @media (max-width: 480px) {
+      .modal-overlay { padding: 10px; }
+      .modal-title { font-size: 14px; }
+      .modal-symbol { display: none; }
+    }
+    .chart-host {
+      width: 100%;
+      height: 360px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #0a1a26;
+    }
+    @media (max-width: 480px) {
+      .chart-host { height: 300px; }
+      .chart-grid { padding: 10px; gap: 10px; }
+    }
+    @media (orientation: landscape) and (max-height: 500px) {
+      .chart-host { height: 260px; }
+      .top-bar { padding: 8px 14px; }
+    }
+
+    /* ── 고정 차트 섹션 (나스닥 미선물 + 삼성전자) ── */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 18px 4px;
+      margin-top: 6px;
+    }
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+    }
+    .divider-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+    .fixed-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      padding: 10px 14px 14px;
+    }
+    @media (min-width: 900px) {
+      .fixed-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .fixed-title {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 600;
+      flex: 1;
+    }
+    .symbol-tag {
+      font-size: 10px;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.05em;
+      font-family: 'SF Mono', Menlo, monospace;
+    }
+    .ico-badge {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .ico-badge.nq { background: rgba(111,200,255,0.15); color: #6fc8ff; }
+    .ico-badge.ss { background: rgba(255,210,100,0.15); color: #ffd166; }
+    .ext-link {
+      font-size: 11px;
+      color: #6fc8ff;
+      background: rgba(111,200,255,0.1);
+      padding: 4px 8px;
+      border-radius: 6px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .ext-link:hover {
+      background: rgba(111,200,255,0.2);
+      color: #fff;
+    }
+    @media (max-width: 480px) {
+      .fixed-grid { padding: 8px 10px 14px; gap: 10px; }
+      .section-divider { padding: 6px 12px 2px; }
+      .divider-label { font-size: 10px; }
+    }
+
+    .tradingview-widget-copyright {
+      font-size: 10px;
+      color: rgba(255,255,255,0.35);
+      text-align: right;
+      padding: 6px 14px 14px;
+    }
+    .tradingview-widget-copyright a { color: inherit; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <a href="https://myway.kr/" class="home-btn" title="홈으로" aria-label="홈으로">🏠</a>
+    <h1>다중 차트</h1>
+    <button class="reset-btn" id="btnReset">기본값</button>
+  </div>
+
+  <div class="preset-bar">
+    <button class="preset-btn" data-preset="default">📊 다우·BTC·금</button>
+    <button class="preset-btn" data-preset="indices">📈 지수 모음</button>
+    <button class="preset-btn" data-preset="crypto">🪙 암호화폐</button>
+    <button class="preset-btn" data-preset="forex">💱 환율</button>
+    <button class="preset-btn" data-preset="usstock">🇺🇸 미국 빅테크</button>
+    <button class="preset-btn" data-preset="commodity">⛏️ 원자재</button>
+  </div>
+
+  <div class="chart-grid" id="chartGrid">
+    <div class="chart-card">
+      <div class="chart-head">
+        <span class="slot-num">1</span>
+        <select class="symbol-select" data-slot="0"></select>
+        <button class="expand-btn" data-action="expand-slot" data-slot="0" title="확대">⛶</button>
+      </div>
+      <div class="chart-host" id="chart-host-0"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head">
+        <span class="slot-num">2</span>
+        <select class="symbol-select" data-slot="1"></select>
+        <button class="expand-btn" data-action="expand-slot" data-slot="1" title="확대">⛶</button>
+      </div>
+      <div class="chart-host" id="chart-host-1"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head">
+        <span class="slot-num">3</span>
+        <select class="symbol-select" data-slot="2"></select>
+        <button class="expand-btn" data-action="expand-slot" data-slot="2" title="확대">⛶</button>
+      </div>
+      <div class="chart-host" id="chart-host-2"></div>
+    </div>
+  </div>
+
+  <!-- ━━━━ 고정 차트: 나스닥 미선물 + 삼성전자 (시장 선행 지표) ━━━━ -->
+  <div class="section-divider">
+    <span class="divider-line"></span>
+    <span class="divider-label">📌 야간 시장 선행 지표 · 나스닥 → 한국</span>
+    <span class="divider-line"></span>
+  </div>
+
+  <div class="fixed-grid">
+    <div class="chart-card">
+      <div class="chart-head">
+        <span class="ico-badge nq">NQ</span>
+        <h2 class="fixed-title">나스닥 100 (24시간 실시간)</h2>
+        <span class="symbol-tag">OANDA:NAS100USD</span>
+        <button class="expand-btn" data-action="expand-fixed" data-symbol="OANDA:NAS100USD" data-title="나스닥 100 (24시간 실시간)" title="확대">⛶</button>
+      </div>
+      <div class="chart-host" id="chart-host-nq"></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-head">
+        <span class="ico-badge ss">한</span>
+        <h2 class="fixed-title">한국 시장 (EWY · 야간 선행)</h2>
+        <a href="https://m.stock.naver.com/domestic/stock/005930/total" target="_blank" rel="noopener" class="ext-link" title="네이버 증권 삼성전자 실시간 (새창)">📊 네이버 ↗</a>
+        <span class="symbol-tag">AMEX:EWY</span>
+        <button class="expand-btn" data-action="expand-fixed" data-symbol="AMEX:EWY" data-title="한국 시장 (EWY)" title="확대">⛶</button>
+      </div>
+      <div class="chart-host" id="chart-host-ss"></div>
+    </div>
+  </div>
+
+  <!-- ━━━━ 풀스크린 모달 ━━━━ -->
+  <div class="modal-overlay" id="chartModal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2 class="modal-title">차트</h2>
+      <span class="modal-symbol"></span>
+      <button class="modal-close" id="modalCloseBtn" aria-label="닫기">✕</button>
+    </div>
+    <div class="modal-chart-host" id="modalChartHost"></div>
+  </div>
+
+  <div class="tradingview-widget-copyright">
+    <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">Charts by TradingView</a>
+  </div>
+
+  <script>
+    const SYMBOLS = {
+      '📊 지수 (24시간 CFD)': [
+        ['다우 30 (24h)', 'OANDA:US30USD'],
+        ['나스닥 100 (24h)', 'OANDA:NAS100USD'],
+        ['S&P 500 (24h)', 'OANDA:SPX500USD'],
+        ['나스닥 종합', 'NASDAQ:IXIC'],
+        ['러셀 2000 (IWM ETF)', 'AMEX:IWM'],
+        ['한국 (EWY ETF)', 'AMEX:EWY'],
+        ['닛케이 225 (24h)', 'OANDA:JP225USD'],
+        ['독일 DAX (24h)', 'OANDA:DE30EUR'],
+        ['홍콩 항셍 (24h)', 'OANDA:HK33HKD'],
+        ['VIX 변동성', 'CBOE:VIX'],
+      ],
+      '🪙 암호화폐 (USD)': [
+        ['비트코인 BTC', 'BITSTAMP:BTCUSD'],
+        ['이더리움 ETH', 'BITSTAMP:ETHUSD'],
+        ['리플 XRP', 'BITSTAMP:XRPUSD'],
+        ['솔라나 SOL', 'BINANCE:SOLUSDT'],
+        ['도지코인 DOGE', 'BINANCE:DOGEUSDT'],
+        ['에이다 ADA', 'BINANCE:ADAUSDT'],
+        ['트론 TRX', 'BINANCE:TRXUSDT'],
+        ['폴카닷 DOT', 'BINANCE:DOTUSDT'],
+        ['시바이누 SHIB', 'BINANCE:SHIBUSDT'],
+        ['바이낸스코인 BNB', 'BINANCE:BNBUSDT'],
+      ],
+      '🪙 암호화폐 (KRW)': [
+        ['비트코인 (원화)', 'UPBIT:BTCKRW'],
+        ['이더리움 (원화)', 'UPBIT:ETHKRW'],
+        ['리플 (원화)', 'UPBIT:XRPKRW'],
+        ['솔라나 (원화)', 'UPBIT:SOLKRW'],
+        ['도지코인 (원화)', 'UPBIT:DOGEKRW'],
+      ],
+      '⛏️ 원자재': [
+        ['금 (USD/oz)', 'OANDA:XAUUSD'],
+        ['은 (USD/oz)', 'OANDA:XAGUSD'],
+        ['백금', 'OANDA:XPTUSD'],
+        ['구리', 'CAPITALCOM:COPPER'],
+        ['WTI 원유', 'OANDA:WTICOUSD'],
+        ['브렌트 원유', 'OANDA:BCOUSD'],
+        ['천연가스', 'CAPITALCOM:NATURALGAS'],
+      ],
+      '💱 환율 / 통화': [
+        ['원/달러 USD/KRW', 'FX_IDC:USDKRW'],
+        ['엔/달러 USD/JPY', 'FX:USDJPY'],
+        ['유로/달러 EUR/USD', 'FX:EURUSD'],
+        ['파운드/달러 GBP/USD', 'FX:GBPUSD'],
+        ['달러 인덱스 DXY', 'CAPITALCOM:DXY'],
+        ['원/엔 JPY/KRW', 'FX_IDC:JPYKRW'],
+        ['원/유로 EUR/KRW', 'FX_IDC:EURKRW'],
+        ['원/위안 CNY/KRW', 'FX_IDC:CNYKRW'],
+      ],
+      '🇺🇸 미국 주식': [
+        ['엔비디아 NVDA', 'NASDAQ:NVDA'],
+        ['애플 AAPL', 'NASDAQ:AAPL'],
+        ['마이크로소프트 MSFT', 'NASDAQ:MSFT'],
+        ['구글 GOOGL', 'NASDAQ:GOOGL'],
+        ['아마존 AMZN', 'NASDAQ:AMZN'],
+        ['메타 META', 'NASDAQ:META'],
+        ['테슬라 TSLA', 'NASDAQ:TSLA'],
+        ['넷플릭스 NFLX', 'NASDAQ:NFLX'],
+        ['브로드컴 AVGO', 'NASDAQ:AVGO'],
+        ['TSMC TSM', 'NYSE:TSM'],
+        ['팔란티어 PLTR', 'NASDAQ:PLTR'],
+        ['AMD', 'NASDAQ:AMD'],
+      ],
+      '📈 ETF': [
+        ['SPY (S&P500)', 'AMEX:SPY'],
+        ['QQQ (나스닥100)', 'NASDAQ:QQQ'],
+        ['VOO', 'AMEX:VOO'],
+        ['GLD (금)', 'AMEX:GLD'],
+        ['TLT (장기채)', 'NASDAQ:TLT'],
+        ['SOXX (반도체)', 'NASDAQ:SOXX'],
+        ['SOXL (반도체 3X)', 'NASDAQ:SOXL'],
+        ['TQQQ (나스닥 3X)', 'NASDAQ:TQQQ'],
+      ],
+    };
+
+    const PRESETS = {
+      default:   ['OANDA:US30USD', 'BITSTAMP:BTCUSD', 'OANDA:XAUUSD'],
+      indices:   ['OANDA:US30USD', 'OANDA:NAS100USD', 'AMEX:EWY'],
+      crypto:    ['BITSTAMP:BTCUSD', 'BITSTAMP:ETHUSD', 'BINANCE:SOLUSDT'],
+      forex:     ['FX_IDC:USDKRW', 'FX:USDJPY', 'CAPITALCOM:DXY'],
+      usstock:   ['NASDAQ:NVDA', 'NASDAQ:AAPL', 'NASDAQ:TSLA'],
+      commodity: ['OANDA:XAUUSD', 'OANDA:XAGUSD', 'OANDA:WTICOUSD'],
+    };
+
+    const DEFAULTS = PRESETS.default;
+    const STORAGE_KEY = 'mywayMultiChartV2';
+
+    function loadSelections() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const arr = JSON.parse(raw);
+          if (Array.isArray(arr) && arr.length === 3) return arr;
+        }
+      } catch (e) {}
+      return [...DEFAULTS];
+    }
+    function saveSelections(sel) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(sel)); } catch (e) {}
+    }
+    let selections = loadSelections();
+
+    function buildDropdowns() {
+      document.querySelectorAll('.symbol-select').forEach((sel, slotIdx) => {
+        sel.innerHTML = '';
+        Object.entries(SYMBOLS).forEach(([groupName, items]) => {
+          const og = document.createElement('optgroup');
+          og.label = groupName;
+          items.forEach(([label, sym]) => {
+            const opt = document.createElement('option');
+            opt.value = sym;
+            opt.textContent = label;
+            og.appendChild(opt);
+          });
+          sel.appendChild(og);
+        });
+        sel.value = selections[slotIdx];
+        sel.addEventListener('change', (e) => {
+          selections[slotIdx] = e.target.value;
+          saveSelections(selections);
+          renderChart(slotIdx, e.target.value);
+        });
+      });
+    }
+
+    function renderChart(slotIdx, symbol) {
+      const host = document.getElementById('chart-host-' + slotIdx);
+      if (!host) return;
+      host.innerHTML = '';
+
+      const container = document.createElement('div');
+      container.className = 'tradingview-widget-container';
+      container.style.cssText = 'height:100%;width:100%';
+
+      const inner = document.createElement('div');
+      inner.className = 'tradingview-widget-container__widget';
+      inner.style.cssText = 'height:100%;width:100%';
+      container.appendChild(inner);
+
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.async = true;
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+      script.text = JSON.stringify({
+        autosize: true,
+        symbol: symbol,
+        interval: 'D',
+        timezone: 'Asia/Seoul',
+        theme: 'dark',
+        style: '1',
+        locale: 'kr',
+        backgroundColor: 'rgba(10, 26, 38, 1)',
+        gridColor: 'rgba(255, 255, 255, 0.06)',
+        allow_symbol_change: false,
+        hide_side_toolbar: true,
+        hide_top_toolbar: false,
+        save_image: false,
+        calendar: false,
+        support_host: 'https://www.tradingview.com'
+      });
+      container.appendChild(script);
+      host.appendChild(container);
+    }
+
+    function renderAll() {
+      selections.forEach((sym, i) => renderChart(i, sym));
+      document.querySelectorAll('.symbol-select').forEach((sel, i) => {
+        sel.value = selections[i];
+      });
+    }
+
+    function applyPreset(key) {
+      const preset = PRESETS[key];
+      if (!preset) return;
+      selections = [...preset];
+      saveSelections(selections);
+      renderAll();
+    }
+
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyPreset(btn.dataset.preset));
+    });
+
+    document.getElementById('btnReset').addEventListener('click', () => {
+      applyPreset('default');
+    });
+
+    function renderFixedChart(hostId, symbol) {
+      const host = document.getElementById(hostId);
+      if (!host) return;
+      host.innerHTML = '';
+
+      const container = document.createElement('div');
+      container.className = 'tradingview-widget-container';
+      container.style.cssText = 'height:100%;width:100%';
+
+      const inner = document.createElement('div');
+      inner.className = 'tradingview-widget-container__widget';
+      inner.style.cssText = 'height:100%;width:100%';
+      container.appendChild(inner);
+
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.async = true;
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+      script.text = JSON.stringify({
+        autosize: true,
+        symbol: symbol,
+        interval: 'D',
+        timezone: 'Asia/Seoul',
+        theme: 'dark',
+        style: '1',
+        locale: 'kr',
+        backgroundColor: 'rgba(10, 26, 38, 1)',
+        gridColor: 'rgba(255, 255, 255, 0.06)',
+        allow_symbol_change: false,
+        hide_side_toolbar: true,
+        hide_top_toolbar: false,
+        save_image: false,
+        calendar: false,
+        support_host: 'https://www.tradingview.com'
+      });
+      container.appendChild(script);
+      host.appendChild(container);
+    }
+
+    buildDropdowns();
+    renderAll();
+
+    // 고정 차트 (선택 불가, 항상 표시)
+    renderFixedChart('chart-host-nq', 'OANDA:NAS100USD');
+    renderFixedChart('chart-host-ss', 'AMEX:EWY');
+
+    // ───────────────────────────────────────────────
+    // 풀스크린 모달
+    // ───────────────────────────────────────────────
+    function renderModalChart(symbol) {
+      const host = document.getElementById('modalChartHost');
+      host.innerHTML = '';
+      const container = document.createElement('div');
+      container.className = 'tradingview-widget-container';
+      container.style.cssText = 'height:100%;width:100%';
+      const inner = document.createElement('div');
+      inner.className = 'tradingview-widget-container__widget';
+      inner.style.cssText = 'height:100%;width:100%';
+      container.appendChild(inner);
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.async = true;
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+      script.text = JSON.stringify({
+        autosize: true,
+        symbol: symbol,
+        interval: 'D',
+        timezone: 'Asia/Seoul',
+        theme: 'dark',
+        style: '1',
+        locale: 'kr',
+        backgroundColor: 'rgba(10, 26, 38, 1)',
+        gridColor: 'rgba(255, 255, 255, 0.06)',
+        allow_symbol_change: true,
+        hide_side_toolbar: false,
+        hide_top_toolbar: false,
+        withdateranges: true,
+        save_image: true,
+        calendar: true,
+        support_host: 'https://www.tradingview.com'
+      });
+      container.appendChild(script);
+      host.appendChild(container);
+    }
+
+    function openFullscreen(symbol, title) {
+      const modal = document.getElementById('chartModal');
+      modal.querySelector('.modal-title').textContent = title;
+      modal.querySelector('.modal-symbol').textContent = symbol;
+      renderModalChart(symbol);
+      modal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeFullscreen() {
+      const modal = document.getElementById('chartModal');
+      modal.classList.remove('show');
+      document.getElementById('modalChartHost').innerHTML = '';
+      document.body.style.overflow = '';
+    }
+
+    // 이벤트 위임 — 확대 버튼 클릭
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.expand-btn');
+      if (!btn) return;
+      if (btn.dataset.action === 'expand-slot') {
+        const slotIdx = parseInt(btn.dataset.slot, 10);
+        const symbol = selections[slotIdx];
+        const select = document.querySelector('.symbol-select[data-slot="' + slotIdx + '"]');
+        const label = (select && select.options[select.selectedIndex]) ? select.options[select.selectedIndex].text : symbol;
+        openFullscreen(symbol, label);
+      } else if (btn.dataset.action === 'expand-fixed') {
+        openFullscreen(btn.dataset.symbol, btn.dataset.title);
+      }
+    });
+
+    // ESC 닫기
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('chartModal');
+        if (modal.classList.contains('show')) closeFullscreen();
+      }
+    });
+
+    // 모달 바깥(어두운 영역) 클릭 시 닫기
+    document.getElementById('chartModal').addEventListener('click', (e) => {
+      if (e.target.id === 'chartModal') closeFullscreen();
+    });
+
+    // 닫기 버튼
+    document.getElementById('modalCloseBtn').addEventListener('click', closeFullscreen);
+  </script>
+
+</body>
+</html>
