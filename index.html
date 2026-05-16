@@ -175,6 +175,7 @@
     }
     .stock-suggestion-market.kr { background: #fef3e8; color: #d97706; }
     .stock-suggestion-market.us { background: #e8eefe; color: #4f46e5; }
+    .stock-suggestion-market.coin { background: #fef9e7; color: #b45309; }
 
     /* 모바일에서 컴팩트 */
     @media (max-width: 700px) {
@@ -575,6 +576,7 @@
             <select class="searchbar-select" id="engineParent">
               <option value="naver">네이버 ▼</option>
               <option value="stockchart">📈 주식차트</option>
+              <option value="coinone">🪙 코인원 차트</option>
               <option value="google">Google 우회검색 </option>
               <option value="Reddit">Reddit</option>
               <option value="youtube">Youtube </option>
@@ -918,6 +920,142 @@
       return m;
     })();
 
+    /**
+     * 코인원 코인 차트 데이터
+     *   형식: [티커, ...별칭들]
+     *   URL: https://coinone.co.kr/chart?site=coinone{ticker_lowercase}
+     */
+    const coinChartData = [
+      // ─── 메이저 ─────────────────────────────
+      ['BTC',   '비트코인',         'bitcoin',   'btc'],
+      ['ETH',   '이더리움',         'ethereum',  'eth'],
+      ['XRP',   '리플',             'ripple',    'xrp'],
+      ['SOL',   '솔라나',           'solana',    'sol'],
+      ['ADA',   '에이다',           'cardano',   '카르다노', 'ada'],
+      ['DOGE',  '도지코인',         '도지',       'dogecoin', 'doge'],
+      ['TRX',   '트론',             'tron',      'trx'],
+      ['DOT',   '폴카닷',           'polkadot',  'dot'],
+      ['AVAX',  '아발란체',         'avalanche', 'avax'],
+      ['POL',   '폴리곤',           'polygon',   'pol', 'matic'],
+      ['LINK',  '체인링크',         'chainlink', 'link'],
+      ['ATOM',  '코스모스',         'cosmos',    'atom'],
+      ['NEAR',  '니어',             '니어프로토콜', 'near'],
+      ['LTC',   '라이트코인',       'litecoin',  'ltc'],
+      ['BCH',   '비트코인캐시',     'bitcoincash', 'bch'],
+      ['ETC',   '이더리움클래식',   'ethereumclassic', 'etc'],
+      ['BNB',   '바이낸스코인',     'binance',   'bnb'],
+      ['TON',   '톤코인',           'toncoin',   'ton'],
+
+      // ─── 한국형 ─────────────────────────────
+      ['WEMIX', '위믹스',           'wemix'],
+      ['BORA',  '보라',             'bora'],
+      ['KAIA',  '카이아',           'kaia',      '클레이튼', 'klay'],
+      ['ICX',   '아이콘',           'icon',      'icx'],
+      ['MTL',   '메탈',             'metal',     'mtl'],
+      ['XEC',   '이캐시',           'ecash',     'xec'],
+
+      // ─── 알트 ──────────────────────────────
+      ['XLM',   '스텔라루멘',       '스텔라',     'stellar',   'xlm'],
+      ['ALGO',  '알고랜드',         'algorand',  'algo'],
+      ['EOS',   '이오스',           'eos'],
+      ['XTZ',   '테조스',           'tezos',     'xtz'],
+      ['VET',   '비체인',           'vechain',   'vet'],
+      ['QTUM',  '퀀텀',             'qtum'],
+      ['ZIL',   '질리카',           'zilliqa',   'zil'],
+      ['HBAR',  '헤데라',           'hedera',    'hbar'],
+      ['ICP',   '인터넷컴퓨터',     'icp'],
+      ['FLOW',  '플로우',           'flow'],
+      ['THETA', '쎄타',             'theta'],
+      ['EGLD',  '멀티버스x',        '엘론드',     'multiversx', 'egld'],
+      ['MINA',  '미나',             'mina'],
+      ['KAS',   '카스파',           'kaspa',     'kas'],
+      ['KSM',   '쿠사마',           'kusama',    'ksm'],
+      ['ASTR',  '아스타',           'astar',     'astr'],
+      ['STX',   '스택스',           'stacks',    'stx'],
+      ['ROSE',  '오아시스',         'oasis',     'rose'],
+      ['STRK',  '스타크넷',         'starknet',  'strk'],
+
+      // ─── L2 / DeFi ─────────────────────────
+      ['ARB',   '아비트럼',         'arbitrum',  'arb'],
+      ['OP',    '옵티미즘',         'optimism',  'op'],
+      ['SUI',   '수이',             'sui'],
+      ['APT',   '앱토스',           'aptos',     'apt'],
+      ['SEI',   '세이',             'sei'],
+      ['TIA',   '셀레스티아',       'celestia',  'tia'],
+      ['PYTH',  '피스',             'pyth'],
+      ['INJ',   '인젝티브',         'injective', 'inj'],
+      ['AAVE',  '아베',             'aave'],
+      ['UNI',   '유니스왑',         'uniswap',   'uni'],
+      ['SUSHI', '스시스왑',         'sushi'],
+      ['CRV',   '커브',             'curve',     'curvedao', 'crv'],
+      ['LDO',   '리도',             '리도파이낸스', 'lido', 'ldo'],
+      ['ENS',   '이더리움네임서비스', 'ens'],
+      ['JUP',   '주피터',           'jupiter',   'jup'],
+      ['JTO',   '지토',             'jito',      'jto'],
+
+      // ─── 밈 ────────────────────────────────
+      ['SHIB',  '시바이누',         '시바',       'shibainu',  'shib'],
+      ['PEPE',  '페페',             'pepe'],
+      ['WIF',   '도그위프햇',       '위프',       'dogwifhat', 'wif'],
+      ['BONK',  '봉크',             'bonk'],
+      ['FLOKI', '플로키',           'floki'],
+
+      // ─── AI / 신규 ──────────────────────────
+      ['FET',   '페치',             'fetch',     'fet'],
+      ['RNDR',  '렌더',             '렌더토큰',   'render',    'rndr'],
+      ['AGIX',  '싱귤래리티넷',     'singularitynet', 'agix'],
+      ['WLD',   '월드코인',         'worldcoin', 'wld'],
+      ['ONDO',  '온도파이낸스',     '온도',       'ondo'],
+      ['ORDI',  '오디',             'ordi'],
+      ['SATS',  '사츠',             'sats'],
+      ['CYBER', '사이버커넥트',     'cyberconnect', 'cyber'],
+
+      // ─── 게임/메타버스 ─────────────────────
+      ['SAND',  '샌드박스',         'sandbox',   'sand'],
+      ['MANA',  '디센트럴랜드',     '마나',       'decentraland', 'mana'],
+      ['AXS',   '엑시인피니티',     'axie',      'axs'],
+      ['GALA',  '갈라',             'gala'],
+      ['CHZ',   '칠리즈',           'chiliz',    'chz'],
+      ['ENJ',   '엔진코인',         'enjin',     'enj'],
+      ['IMX',   '이뮤터블',         'immutable', 'imx'],
+      ['APE',   '에이프코인',       'apecoin',   'ape'],
+      ['GMT',   '스테픈',           'stepn',     'gmt'],
+      ['JASMY', '제이스미코인',     'jasmy'],
+
+      // ─── 기타 ──────────────────────────────
+      ['BAT',   '베이직어텐션토큰', '베트',       'bat'],
+      ['BLUR',  '블러',             'blur'],
+      ['GRT',   '그래프',           'graph',     'grt'],
+      ['STORJ', '스토리지',         'storj'],
+      ['KAVA',  '카바',             'kava'],
+      ['RVN',   '레이븐코인',       'ravencoin', 'rvn'],
+      ['ANKR',  '앵커',             'ankr'],
+      ['CKB',   '너보스',           'nervos',    'ckb'],
+      ['OCEAN', '오션',             'oceanprotocol', 'ocean'],
+      ['IOTX',  '아이오텍스',       'iotex',     'iotx'],
+      ['ZRX',   '0x프로토콜',       'zrx',       '0x'],
+      ['CELR',  '셀러네트워크',     'celer',     'celr'],
+      ['WAVES', '웨이브',           'waves'],
+      ['MOVE',  '무브먼트',         'movement',  'move'],
+      ['PEAQ',  '피아크',           'peaq'],
+    ];
+
+    /** 코인 매핑 자동 생성 */
+    const coinChartShortcuts = (() => {
+      const m = {};
+      coinChartData.forEach(([ticker, ...aliases]) => {
+        const url = `https://coinone.co.kr/chart?site=coinone${ticker.toLowerCase()}`;
+        aliases.forEach(a => {
+          if (!a) return;
+          m[a] = url;
+          m[a.toLowerCase()] = url;
+        });
+        m[ticker] = url;
+        m[ticker.toLowerCase()] = url;
+      });
+      return m;
+    })();
+
     /* ================================================================
        네이버 증권 자동완성 API 시도 (실험적 - 현재 비활성화)
        - 2026-05 시점 테스트: CORS 정책으로 막힘 확인
@@ -1087,6 +1225,33 @@
       return results;
     }
 
+    /** 코인 prefix 검색 - 별칭 어디든 매칭 */
+    function searchCoinsLocal(query) {
+      if (!query) return [];
+      const q = query.toLowerCase().trim();
+      if (!q) return [];
+      const results = [];
+      const seen = new Set();
+
+      for (const row of coinChartData) {
+        const [ticker, ...aliases] = row;
+        const allKeys = [ticker, ...aliases];
+        const matched = allKeys.some(a => a && a.toLowerCase().startsWith(q));
+        if (matched && !seen.has(ticker)) {
+          seen.add(ticker);
+          results.push({
+            code: ticker,
+            market: 'COIN',
+            name: aliases[0] || ticker,
+            ticker: ticker,
+            url: `https://coinone.co.kr/chart?site=coinone${ticker.toLowerCase()}`
+          });
+          if (results.length >= 10) break;
+        }
+      }
+      return results;
+    }
+
     /** 드롭다운 렌더링 */
     function renderSuggestions() {
       if (currentSuggestions.length === 0) {
@@ -1096,12 +1261,18 @@
       }
       suggestionsBox.hidden = false;
       suggestionsBox.innerHTML = currentSuggestions.map((s, i) => {
-        const marketLabel = s.market === 'KR' ? 'KR' : 'US';
-        const marketClass = s.market === 'KR' ? 'kr' : 'us';
+        let marketLabel, marketClass, icon;
+        if (s.market === 'COIN') {
+          marketLabel = 'COIN'; marketClass = 'coin'; icon = '🪙';
+        } else if (s.market === 'KR') {
+          marketLabel = 'KR';   marketClass = 'kr';   icon = '📈';
+        } else {
+          marketLabel = 'US';   marketClass = 'us';   icon = '📈';
+        }
         return `
           <div class="stock-suggestion-item ${i === activeIndex ? 'active' : ''}"
                role="option" data-index="${i}">
-            <span class="stock-suggestion-icon">📈</span>
+            <span class="stock-suggestion-icon">${icon}</span>
             <span class="stock-suggestion-name">${s.name}</span>
             <span class="stock-suggestion-code">${s.ticker}</span>
             <span class="stock-suggestion-market ${marketClass}">${marketLabel}</span>
@@ -1140,23 +1311,26 @@
       suggestionsBox.innerHTML = '';
     }
 
-    /** 입력값이나 엔진 변경 시 호출 - 주식차트 모드에서만 표시 */
+    /** 입력값이나 엔진 변경 시 호출 - 주식차트/코인원 모드에서만 표시 */
     let apiDebounceTimer = null;
     function updateSuggestions() {
-      if (engineSelectEl.value !== 'stockchart') {
+      const mode = engineSelectEl.value;
+      if (mode !== 'stockchart' && mode !== 'coinone') {
         closeSuggestions();
         return;
       }
       const query = queryInputEl.value.trim();
 
-      // 1) 로컬 매핑 결과 즉시 표시 (0ms 지연, 항상 보장)
-      currentSuggestions = searchStocksLocal(query);
+      // 모드별 로컬 매핑 결과 즉시 표시
+      currentSuggestions = (mode === 'coinone')
+        ? searchCoinsLocal(query)
+        : searchStocksLocal(query);
       activeIndex = -1;
       renderSuggestions();
 
-      // 2) 자동완성 API는 비동기로 호출 (debounce 150ms - 매 키 입력마다 호출 방지)
+      // 자동완성 API는 주식차트에서만 시도 (코인원은 로컬만)
       clearTimeout(apiDebounceTimer);
-      if (!query) return;
+      if (!query || mode !== 'stockchart') return;
       apiDebounceTimer = setTimeout(() => callApiAndMerge(query), 150);
     }
 
@@ -1258,6 +1432,39 @@
                             encodeURIComponent(query) +
                             '&resultTab=stock%2Cindex%2Cmarketindicator%2Ccoin%2Cipo%2Cfund';
         window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
+        return;
+      }
+
+      // ── 코인원 차트 모드: 매핑 우선, 없으면 코인원 거래소로 ──
+      if (engineKey === 'coinone') {
+        if (!query) {
+          window.open('https://coinone.co.kr/exchange', '_blank', 'noopener,noreferrer');
+          return;
+        }
+        // 0) 자동완성 결과 있으면 첫 항목 (또는 활성 항목)
+        if (currentSuggestions.length > 0) {
+          const idx = activeIndex >= 0 ? activeIndex : 0;
+          selectSuggestion(idx);
+          return;
+        }
+        // 1) 정확 매핑 시도
+        const directUrl = coinChartShortcuts[query] || coinChartShortcuts[query.toLowerCase()];
+        if (directUrl) {
+          window.open(directUrl, '_blank', 'noopener,noreferrer');
+          return;
+        }
+        // 2) Fallback: 입력값을 그대로 티커로 시도 (영문/숫자만)
+        //    예: 매핑에 없는 신상 코인 "RAY" 입력 시 coinoneray로 시도
+        const cleanedTicker = query.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+        if (cleanedTicker && /^[a-z0-9]{2,10}$/.test(cleanedTicker)) {
+          window.open(
+            `https://coinone.co.kr/chart?site=coinone${cleanedTicker}`,
+            '_blank', 'noopener,noreferrer'
+          );
+          return;
+        }
+        // 3) 최종 fallback: 코인원 거래소 메인
+        window.open('https://coinone.co.kr/exchange', '_blank', 'noopener,noreferrer');
         return;
       }
 
