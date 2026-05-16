@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>교통정보 · 열차 · 항공 · 버스 - MYWAY.KR</title>
+  <meta name="description" content="코레일 열차조회, 대한항공·아시아나 항공편, 서울·경기 버스 정보를 한 곳에서.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#b176f3">
+
+  <meta property="og:title" content="교통정보 - 열차·항공·버스 | MYWAY.KR">
+  <meta property="og:description" content="코레일 + 대한항공·아시아나 + 서울/경기 버스 통합 정보. Train, Flight, Bus.">
+  <meta property="og:image" content="https://myway.kr/mywaylogo.png">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <style>
+    /* === RESET & BASE === */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      overscroll-behavior: none;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      background: #fff;
+      -webkit-text-size-adjust: 100%;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* === 헤더 높이 CSS 변수로 관리 === */
+    :root {
+      --nav-height: 44px;
+    }
+
+    /* === 네비바 영역 === */
+    .nav-wrap {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-height);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      padding-top: max(6px, env(safe-area-inset-top));
+      padding-left: max(8px, env(safe-area-inset-left));
+      padding-right: max(8px, env(safe-area-inset-right));
+      background: #fff;
+      z-index: 100;
+      filter: drop-shadow(0 4px 14px rgba(177, 118, 243, 0.22));
+    }
+
+    /* === 홈 버튼 === */
+    .home-btn {
+      flex: 0 0 auto;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #b176f3 0%, #7ed6fb 100%);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      padding: 0;
+      box-shadow: 0 4px 12px rgba(177, 118, 243, 0.35), 0 1px 3px rgba(126, 214, 251, 0.25);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .home-btn::before {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 60%);
+      pointer-events: none;
+    }
+    .home-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(177, 118, 243, 0.45), 0 2px 4px rgba(126, 214, 251, 0.3);
+    }
+    .home-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(177, 118, 243, 0.3);
+    }
+    .home-btn svg {
+      width: 17px;
+      height: 17px;
+      display: block;
+      filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
+      position: relative;
+      z-index: 1;
+    }
+
+    /* === 네비바 안쪽 (좌우 화살표 + 링크) === */
+    .nav-bar-inner {
+      flex: 1 1 auto;
+      min-width: 0;
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(95deg, #7ed6fb 10%, #b176f3 90%);
+      border-radius: 16px;
+      box-shadow: 0 6px 22px rgba(90,100,180,0.18), 0 2px 8px rgba(255,255,255,0.10) inset;
+      min-height: 30px;
+      overflow: hidden;
+    }
+
+    /* === 좌우 스크롤 화살표 === */
+    .nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 22px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      outline: none;
+      z-index: 11;
+      cursor: pointer;
+      opacity: 0.85;
+      transition: opacity 0.18s;
+      padding: 0;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-arrow.left {
+      left: 0;
+      background: linear-gradient(to right, #7ed6fb 44%, transparent 100%);
+      border-radius: 16px 0 0 16px;
+    }
+    .nav-arrow.right {
+      right: 0;
+      background: linear-gradient(to left, #b176f3 44%, transparent 100%);
+      border-radius: 0 16px 16px 0;
+    }
+    .nav-arrow svg {
+      width: 13px;
+      height: 18px;
+      display: block;
+    }
+    .nav-arrow:active { opacity: 1; }
+    .nav-arrow[hidden] { display: none; }
+
+    /* === 링크 영역 === */
+    .screen-links {
+      display: flex;
+      gap: 2px;
+      font-size: 0.93rem;
+      font-weight: 500;
+      color: #fff;
+      white-space: nowrap;
+      padding: 0 12px;
+      user-select: none;
+      align-items: center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      min-height: 30px;
+      width: 100%;
+      cursor: grab;
+      transition: box-shadow 0.2s;
+      -webkit-overflow-scrolling: touch;
+    }
+    .screen-links::-webkit-scrollbar { display: none; }
+    .screen-links a {
+      color: rgba(255,255,255,0.88);
+      text-decoration: none;
+      padding: 4px 11px;
+      border-radius: 10px;
+      font-weight: 500;
+      font-size: 0.97em;
+      background: none;
+      display: inline-block;
+      opacity: 0.95;
+      letter-spacing: 0.01em;
+      transition: background 0.15s, color 0.13s, box-shadow 0.12s;
+      cursor: pointer;
+      white-space: nowrap;
+      margin: 0 1px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .screen-links a:hover,
+    .screen-links a.active {
+      background: rgba(255,255,255,0.25);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 2px 12px rgba(177, 118, 243, 0.35);
+    }
+
+    /* === 메인 iframe === */
+    #main-frame {
+      position: fixed;
+      left: 0;
+      top: var(--nav-height);
+      width: 100%;
+      height: calc(100dvh - var(--nav-height));
+      border: none;
+      margin: 0;
+      background: #f5f7fa;
+      z-index: 10;
+      display: block;
+    }
+
+    /* ═════════ RESPONSIVE ═════════ */
+
+    /* 큰 PC (1400+) - 모든 메뉴가 잘 보임 */
+    @media (min-width: 1400px) {
+      :root { --nav-height: 50px; }
+      .nav-wrap { gap: 10px; padding: 8px 14px; }
+      .home-btn { width: 36px; height: 36px; }
+      .home-btn svg { width: 19px; height: 19px; }
+      .screen-links { font-size: 1rem; padding: 0 16px; gap: 4px; }
+      .screen-links a { padding: 5px 14px; font-size: 1em; }
+    }
+
+    /* PC ~ 태블릿 가로 (1024 - 1399) */
+    @media (max-width: 1399px) and (min-width: 1024px) {
+      :root { --nav-height: 46px; }
+      .screen-links { font-size: 0.95rem; }
+      .screen-links a { padding: 4px 12px; }
+    }
+
+    /* 태블릿 (700 - 1023) */
+    @media (max-width: 1023px) and (min-width: 701px) {
+      :root { --nav-height: 44px; }
+      .nav-wrap { gap: 8px; padding: 6px 10px; }
+      .home-btn { width: 32px; height: 32px; }
+      .screen-links { font-size: 0.92rem; padding: 0 10px; }
+      .screen-links a { padding: 4px 10px; }
+    }
+
+    /* 모바일 (~700) */
+    @media (max-width: 700px) {
+      :root { --nav-height: 40px; }
+      .nav-wrap {
+        gap: 6px;
+        padding: 4px 6px;
+        padding-top: max(4px, env(safe-area-inset-top));
+      }
+      .home-btn { width: 30px; height: 30px; border-radius: 9px; }
+      .home-btn svg { width: 15px; height: 15px; }
+      .nav-bar-inner { border-radius: 14px; }
+      .nav-arrow { width: 20px; }
+      .nav-arrow.left { border-radius: 14px 0 0 14px; }
+      .nav-arrow.right { border-radius: 0 14px 14px 0; }
+      .screen-links {
+        font-size: 0.85rem;
+        gap: 1px;
+        padding: 0 6px;
+      }
+      .screen-links a { padding: 3px 9px; font-size: 0.95em; }
+    }
+
+    /* 작은 모바일 (~420) */
+    @media (max-width: 420px) {
+      :root { --nav-height: 38px; }
+      .home-btn { width: 28px; height: 28px; border-radius: 8px; }
+      .home-btn svg { width: 14px; height: 14px; }
+      .nav-bar-inner { border-radius: 12px; }
+      .nav-arrow { width: 18px; }
+      .nav-arrow.left { border-radius: 12px 0 0 12px; }
+      .nav-arrow.right { border-radius: 0 12px 12px 0; }
+      .screen-links { font-size: 0.82rem; padding: 0 4px; }
+      .screen-links a { padding: 3px 8px; }
+    }
+
+    /* 아주 작은 폰 (~340) */
+    @media (max-width: 340px) {
+      .screen-links { font-size: 0.78rem; }
+      .screen-links a { padding: 3px 7px; }
+    }
+
+    /* 가로 모드 (작은 높이) */
+    @media (max-height: 500px) and (orientation: landscape) {
+      :root { --nav-height: 36px; }
+      .home-btn { width: 28px; height: 28px; border-radius: 8px; }
+      .home-btn svg { width: 14px; height: 14px; }
+      .nav-arrow { width: 18px; }
+      .screen-links { font-size: 0.82rem; padding: 0 6px; }
+      .screen-links a { padding: 2px 8px; }
+    }
+
+    /* 아주 낮은 가로화면 */
+    @media (max-height: 380px) and (orientation: landscape) {
+      :root { --nav-height: 32px; }
+      .home-btn { width: 24px; height: 24px; border-radius: 7px; }
+      .home-btn svg { width: 12px; height: 12px; }
+      .screen-links { font-size: 0.78rem; }
+      .screen-links a { padding: 2px 7px; }
+    }
+
+    /* 모션 줄이기 설정 사용자 */
+    @media (prefers-reduced-motion: reduce) {
+      .home-btn, .nav-arrow, .screen-links, .screen-links a {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 네비게이션 바 -->
+  <div class="nav-wrap">
+    <!-- 홈 버튼 -->
+    <a href="https://myway.kr/" class="home-btn" aria-label="MYWAY.KR 홈으로" title="MYWAY.KR 홈">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3.2 3 10.4V20a1 1 0 0 0 1 1h5v-6h6v6h5a1 1 0 0 0 1-1v-9.6L12 3.2z"
+              fill="#fff" stroke="#fff" stroke-width="0.5" stroke-linejoin="round"/>
+      </svg>
+    </a>
+
+    <div class="nav-bar-inner">
+      <button class="nav-arrow left" id="nav-arrow-left" aria-label="왼쪽 이동" hidden>
+        <svg viewBox="0 0 13 20"><polygon points="9,3 2,10 9,17" fill="#fff" opacity="0.9"/></svg>
+      </button>
+
+      <div class="screen-links" id="parent-links">
+        <a href="#" class="active" onclick="showScreenParent(event, 'https://www.korail.com/intro')">열차조회</a>
+        <a href="#" onclick="showScreenParent(event, 'https://topis.seoul.go.kr/map/openBusMap.do')">서울버스</a>
+        <a href="#" onclick="showScreenParent(event, 'https://bus.go.kr/app/#viewpage/1000001/main.nearbusinfo/1/title=Home%20%EB%B2%84%EC%8A%A4%EC%A0%95%EB%B3%B4')">서울버스2</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.gbis.go.kr/gbis2014/schBus.action')">경기버스</a>
+        <a href="https://www.google.com/travel/explore?tfs=CBwQAxoaEgoyMDI2LTA1LTIyagwIAhIIL20vMGhzcWYaGhIKMjAyNi0wNS0yOXIMCAISCC9tLzBoc3FmQAFIAXABggELCP___________wGYAQGyARgSCC9tLzA3ZGZrKgwIAhIIL20vMDZ3amY&tfu=GioaKAoSCZJWCjn_HEdAEYtQbAUpf2RAEhIJcsBSFG4KN0ARFqHYCsISXUA&hl=ko&tcfs=Ei8KCC9tLzA3ZGZrEgnrj4Tsv4Trj4QaGAoKMjAyNi0wNS0yMhIKMjAyNi0wNS0yOVIEYAF4AQ" target="_blank" rel="noopener noreferrer" title="구글 트래블 - 전세계 항공권 탐색 (새창)">항공권조회 ↗</a>
+        <a href="https://www.koreanair.com/booking/select-flight/departure" target="_blank" rel="noopener noreferrer" title="대한항공 예매 (새창)">대한항공 ↗</a>
+        <a href="https://flyasiana.com/C/KR/KO/index?site_preference=NORMAL" target="_blank" rel="noopener noreferrer" title="아시아나항공 (새창)">아시아나 ↗</a>
+      </div>
+
+      <button class="nav-arrow right" id="nav-arrow-right" aria-label="오른쪽 이동" hidden>
+        <svg viewBox="0 0 13 20"><polygon points="4,3 11,10 4,17" fill="#fff" opacity="0.9"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <iframe id="main-frame" src="https://www.korail.com/intro"
+          title="교통정보 콘텐츠"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allow="fullscreen; autoplay; encrypted-media"></iframe>
+
+  <script>
+    'use strict';
+
+    // ── URL 쿼리 ?src=... 로 들어왔으면 그 페이지를 로드 ──
+    function getParam(name) {
+      return new URLSearchParams(window.location.search).get(name);
+    }
+    window.addEventListener('DOMContentLoaded', function() {
+      var newSrc = getParam('src');
+      if (newSrc) {
+        document.getElementById('main-frame').src = newSrc;
+      }
+      checkNavOverflow();
+    });
+
+    // ── 네비 클릭 → iframe src 변경 + active 표시 + 중앙으로 스크롤 ──
+    function showScreenParent(e, url) {
+      e.preventDefault();
+      document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
+      e.target.classList.add('active');
+      document.getElementById('main-frame').src = url;
+
+      const parent = document.getElementById('parent-links');
+      const el = e.target;
+      if (parent && el) {
+        const offset = el.offsetLeft - parent.offsetLeft
+          - parent.clientWidth / 2
+          + el.clientWidth / 2;
+        parent.scrollTo({ left: offset, behavior: 'smooth' });
+      }
+      setTimeout(checkNavOverflow, 220);
+    }
+
+    // ── 네비바 드래그/터치 스크롤 ──
+    (function() {
+      const nav = document.querySelector('.screen-links');
+      let isDown = false, startX = 0, scrollLeft = 0;
+      nav.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - nav.offsetLeft;
+        scrollLeft = nav.scrollLeft;
+        nav.style.cursor = 'grabbing';
+      });
+      nav.addEventListener('mouseleave', () => { isDown = false; nav.style.cursor = ''; });
+      nav.addEventListener('mouseup', () => { isDown = false; nav.style.cursor = ''; });
+      nav.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        const x = e.pageX - nav.offsetLeft;
+        nav.scrollLeft = scrollLeft - (x - startX);
+      });
+
+      let touchStartX = 0, touchScrollLeft = 0, touchDragging = false;
+      nav.addEventListener('touchstart', function(e) {
+        touchDragging = true;
+        touchStartX = e.touches[0].pageX - nav.offsetLeft;
+        touchScrollLeft = nav.scrollLeft;
+      }, { passive: true });
+      nav.addEventListener('touchend', () => { touchDragging = false; }, { passive: true });
+      nav.addEventListener('touchmove', function(e) {
+        if (!touchDragging) return;
+        const x = e.touches[0].pageX - nav.offsetLeft;
+        nav.scrollLeft = touchScrollLeft - (x - touchStartX);
+      }, { passive: true });
+    })();
+
+    // ── 좌우 화살표 표시 토글 ──
+    const nav = document.querySelector('.screen-links');
+    const leftArrow = document.getElementById('nav-arrow-left');
+    const rightArrow = document.getElementById('nav-arrow-right');
+    function checkNavOverflow() {
+      if (!nav) return;
+      if (nav.scrollWidth > nav.clientWidth + 1) {
+        leftArrow.hidden = nav.scrollLeft < 5;
+        rightArrow.hidden = nav.scrollLeft + nav.clientWidth + 5 >= nav.scrollWidth;
+      } else {
+        leftArrow.hidden = true;
+        rightArrow.hidden = true;
+      }
+    }
+    nav.addEventListener('scroll', checkNavOverflow);
+    window.addEventListener('resize', checkNavOverflow);
+    window.addEventListener('orientationchange', () => setTimeout(checkNavOverflow, 200));
+    setTimeout(checkNavOverflow, 120);
+
+    leftArrow.addEventListener('click', function() {
+      nav.scrollBy({ left: -120, behavior: 'smooth' });
+      setTimeout(checkNavOverflow, 220);
+    });
+    rightArrow.addEventListener('click', function() {
+      nav.scrollBy({ left: 120, behavior: 'smooth' });
+      setTimeout(checkNavOverflow, 220);
+    });
+  </script>
+</body>
+</html>
