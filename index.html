@@ -99,6 +99,96 @@
       z-index: 11;
     }
 
+    /* ===== 주식차트 자동완성 드롭다운 ===== */
+    .stock-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92%;
+      max-width: 560px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 12px 36px rgba(50, 60, 120, 0.22),
+                  0 4px 12px rgba(177, 118, 243, 0.15);
+      z-index: 200;
+      max-height: 360px;
+      overflow-y: auto;
+      margin-top: 8px;
+      border: 1px solid rgba(177, 118, 243, 0.18);
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+    }
+    .stock-suggestions[hidden] { display: none; }
+    .stock-suggestions::-webkit-scrollbar { width: 6px; }
+    .stock-suggestions::-webkit-scrollbar-thumb {
+      background: rgba(177, 118, 243, 0.4);
+      border-radius: 3px;
+    }
+
+    .stock-suggestion-item {
+      display: flex;
+      align-items: center;
+      padding: 11px 16px;
+      cursor: pointer;
+      transition: background 0.12s;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      border-bottom: 1px solid #f3f4f8;
+    }
+    .stock-suggestion-item:last-child { border-bottom: none; }
+    .stock-suggestion-item:hover,
+    .stock-suggestion-item.active {
+      background: linear-gradient(95deg,
+        rgba(126, 214, 251, 0.18) 0%,
+        rgba(177, 118, 243, 0.18) 100%);
+    }
+    .stock-suggestion-icon {
+      margin-right: 10px;
+      font-size: 1.05em;
+      flex-shrink: 0;
+    }
+    .stock-suggestion-name {
+      flex: 1;
+      font-weight: 500;
+      color: #232356;
+      font-size: 0.96rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .stock-suggestion-code {
+      color: #8a8fb0;
+      font-size: 0.82em;
+      font-family: 'SF Mono', 'Courier New', Consolas, monospace;
+      margin-left: 10px;
+      flex-shrink: 0;
+    }
+    .stock-suggestion-market {
+      display: inline-block;
+      padding: 1px 6px;
+      margin-left: 8px;
+      font-size: 0.7em;
+      font-weight: 600;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .stock-suggestion-market.kr { background: #fef3e8; color: #d97706; }
+    .stock-suggestion-market.us { background: #e8eefe; color: #4f46e5; }
+
+    /* 모바일에서 컴팩트 */
+    @media (max-width: 700px) {
+      .stock-suggestions { max-height: 320px; margin-top: 6px; }
+      .stock-suggestion-item { padding: 10px 14px; }
+      .stock-suggestion-name { font-size: 0.9rem; }
+      .stock-suggestion-code { font-size: 0.78em; margin-left: 8px; }
+    }
+    @media (max-width: 420px) {
+      .stock-suggestions { width: 96%; }
+      .stock-suggestion-item { padding: 9px 12px; }
+      .stock-suggestion-market { padding: 1px 4px; font-size: 0.65em; }
+    }
+
     .searchbar-form {
       width: 100%;
       height: 100%;
@@ -484,6 +574,7 @@
           <div class="searchbar-box">
             <select class="searchbar-select" id="engineParent">
               <option value="naver">네이버 ▼</option>
+              <option value="stockchart">📈 주식차트</option>
               <option value="google">Google 우회검색 </option>
               <option value="Reddit">Reddit</option>
               <option value="youtube">Youtube </option>
@@ -537,6 +628,8 @@
             </button>
           </div>
         </form>
+        <!-- 주식차트 자동완성 드롭다운 -->
+        <div id="stockSuggestions" class="stock-suggestions" role="listbox" hidden></div>
       </div>
     </div>
 
@@ -611,10 +704,564 @@
       { key: "bugs", home: "https://bugs.co.kr", search: "https://music.bugs.co.kr/search/integrated?q=" }
     ];
 
+    /**
+     * 주식차트 종목 데이터
+     *   형식: [티커/코드, 시장구분, ...별칭들]
+     *     시장구분: 'O' = NASDAQ, 'N' = NYSE, 'KR' = 한국(KOSPI/KOSDAQ)
+     *   ▶ 종목 추가는 아래 배열에 한 줄 추가만 하면 됨
+     *     예) ['NVDA', 'O', '엔비디아', 'nvidia', 'nvda']
+     *     예) ['003230', 'KR', '삼양식품', 'samyang']
+     *   ▶ 검색은 별칭 어느 것으로도 매칭 (대소문자 무관)
+     *   ▶ 코드 자체도 키가 됨 ('005930' / 'TSLA' 입력해도 OK)
+     */
+    const stockChartData = [
+      // ─── 미국 NASDAQ (.O) ────────────────────────────
+      ['TSLA',  'O', '테슬라',          'tesla',     'tsla'],
+      ['AAPL',  'O', '애플',            'apple',     'aapl'],
+      ['NVDA',  'O', '엔비디아',        '엔디비아',  'nvidia',    'nvda'],
+      ['MSFT',  'O', '마이크로소프트',  '마소',      '엠에스',    'microsoft', 'msft', 'ms'],
+      ['GOOGL', 'O', '구글',            '알파벳',    'google', 'alphabet', 'googl', 'goog'],
+      ['META',  'O', '메타',            '페이스북',  'meta', 'facebook', 'fb'],
+      ['AMZN',  'O', '아마존',          'amazon',    'amzn'],
+      ['NFLX',  'O', '넷플릭스',        'netflix',   'nflx'],
+      ['AMD',   'O', '에이엠디',        'amd'],
+      ['INTC',  'O', '인텔',            'intel',     'intc'],
+      ['SBUX',  'O', '스타벅스',        'starbucks', 'sbux'],
+      ['PYPL',  'O', '페이팔',          'paypal',    'pypl'],
+      ['ABNB',  'O', '에어비앤비',      'airbnb',    'abnb'],
+      ['CSCO',  'O', '시스코',          'cisco',     'csco'],
+      ['ADBE',  'O', '어도비',          'adobe',     'adbe'],
+      ['PLTR',  'O', '팔란티어',        'palantir',  'pltr'],
+      ['COIN',  'O', '코인베이스',      'coinbase',  'coin'],
+      ['HOOD',  'O', '로빈후드',        'robinhood', 'hood'],
+      ['ASML',  'O', 'asml',           'asml홀딩'],
+      ['QCOM',  'O', '퀄컴',            'qualcomm',  'qcom'],
+      ['AVGO',  'O', '브로드컴',        'broadcom',  'avgo'],
+      ['MU',    'O', '마이크론',        'micron'],
+      ['MRNA',  'O', '모더나',          'moderna',   'mrna'],
+      ['BKNG',  'O', '부킹홀딩스',      'booking',   'bkng'],
+      ['LI',    'O', '리오토',          '리샹',      'liauto'],
+
+      // ─── 미국 NYSE (.N) ──────────────────────────────
+      ['DIS',   'N', '디즈니',          'disney'],
+      ['KO',    'N', '코카콜라',        '코카',      'cocacola', 'ko'],
+      ['V',     'N', '비자',            '비자카드',  'visa'],
+      ['JPM',   'N', '제이피모건',      'jp모건',    'jpmorgan', 'jpm'],
+      ['WMT',   'N', '월마트',          'walmart',   'wmt'],
+      ['MCD',   'N', '맥도날드',        'mcdonalds', 'mcd'],
+      ['NKE',   'N', '나이키',          'nike',      'nke'],
+      ['UBER',  'N', '우버',            'uber'],
+      ['BA',    'N', '보잉',            'boeing'],
+      ['CVX',   'N', '셰브론',          '쉐브론',    'chevron',  'cvx'],
+      ['ORCL',  'N', '오라클',          'oracle',    'orcl'],
+      ['IBM',   'N', '아이비엠',        'ibm'],
+      ['CRM',   'N', '세일즈포스',      'salesforce', 'crm'],
+      ['BABA',  'N', '알리바바',        'alibaba',   'baba'],
+      ['TSM',   'N', 'tsmc',           '대만반도체', '티에스엠씨', 'tsm'],
+      ['PFE',   'N', '화이자',          'pfizer',    'pfe'],
+      ['JNJ',   'N', '존슨앤존슨',      '존슨',      'johnson',  'jnj'],
+      ['LLY',   'N', '일라이릴리',      '릴리',      'lilly',    'lly'],
+      ['GS',    'N', '골드만삭스',      '골드만',    'goldman',  'goldmansachs'],
+      ['MRK',   'N', '머크',            'merck',     'mrk'],
+      ['LMT',   'N', '록히드마틴',      '록히드',    'lockheed', 'lmt'],
+      ['CAT',   'N', '캐터필러',        'caterpillar', 'cat'],
+      ['NIO',   'N', '니오',            'nio'],
+
+      // ─── 한국 KOSPI/KOSDAQ (KR) ──────────────────────
+      ['005930', 'KR', '삼성전자',          '삼전',      'samsung'],
+      ['000660', 'KR', 'sk하이닉스',        '하이닉스',  'skhynix', 'hynix'],
+      ['373220', 'KR', 'lg에너지솔루션',    'lg엔솔',    '엘지엔솔', 'lgensol'],
+      ['207940', 'KR', '삼성바이오로직스',  '삼바'],
+      ['005380', 'KR', '현대차',            '현대자동차', 'hyundai'],
+      ['035720', 'KR', '카카오',            'kakao'],
+      ['035420', 'KR', '네이버',            'naver'],
+      ['068270', 'KR', '셀트리온',          'celltrion'],
+      ['000270', 'KR', '기아',              '기아차',    'kia'],
+      ['005490', 'KR', '포스코홀딩스',      '포스코',    'posco'],
+      ['105560', 'KR', 'kb금융',            'kb',        'kb국민'],
+      ['055550', 'KR', '신한지주',          '신한금융',  '신한'],
+      ['006400', 'KR', '삼성sdi',           '삼성에스디아이'],
+      ['051910', 'KR', 'lg화학',            'lg케미칼'],
+      ['323410', 'KR', '카카오뱅크',        '카뱅',      'kakaobank'],
+      ['316140', 'KR', '우리금융',          '우리금융지주', 'woori'],
+      ['267250', 'KR', 'hd현대'],
+      ['012450', 'KR', '한화에어로스페이스', '한화에어로'],
+      ['034020', 'KR', '두산에너빌리티',    '두산에너빌'],
+      ['259960', 'KR', '크래프톤',          'krafton'],
+
+      // ── 추가 한국 종목 ──
+      ['047810', 'KR', '한국항공우주',      '한항우',    'kai'],
+      ['012330', 'KR', '현대모비스',        '모비스',    'mobis'],
+      ['066570', 'KR', 'lg전자',            'lg일렉트로닉스'],
+      ['011200', 'KR', 'hmm',              '현대상선'],
+      ['241560', 'KR', '두산밥캣',          'bobcat'],
+      ['079550', 'KR', 'lig넥스원',         '넥스원',    'lignex1'],
+      ['015760', 'KR', '한국전력',          '한전',      'kepco'],
+      ['036460', 'KR', '한국가스공사',      '가스공사',  'kogas'],
+      ['000880', 'KR', '한화'],
+      ['009830', 'KR', '한화솔루션',        '한화케미칼'],
+      ['034730', 'KR', 'sk',                'sk주식회사'],
+      ['096770', 'KR', 'sk이노베이션',      'sk이노',    'skinnovation'],
+      ['017670', 'KR', 'sk텔레콤',          'skt'],
+      ['326030', 'KR', 'sk바이오팜',        'skbiopharm'],
+      ['302440', 'KR', 'sk바이오사이언스',  'skbioscience'],
+      ['086280', 'KR', '현대글로비스',      'glovis'],
+      ['000720', 'KR', '현대건설'],
+      ['009540', 'KR', 'hd한국조선해양',    '한국조선해양'],
+      ['329180', 'KR', 'hd현대중공업',      '현대중공업'],
+      ['010140', 'KR', '삼성중공업'],
+      ['064350', 'KR', '현대로템',          'rotem'],
+      ['003490', 'KR', '대한항공',          'koreanair'],
+      ['032830', 'KR', '삼성생명'],
+      ['000810', 'KR', '삼성화재'],
+      ['377300', 'KR', '카카오페이',        'kakaopay'],
+      ['293490', 'KR', '카카오게임즈'],
+      ['036570', 'KR', '엔씨소프트',        '엔씨',      'ncsoft', 'nc'],
+      ['251270', 'KR', '넷마블',            'netmarble'],
+      ['263750', 'KR', '펄어비스',          'pearlabyss'],
+      ['462870', 'KR', '시프트업',          'shiftup'],
+      ['090430', 'KR', '아모레퍼시픽',      '아모레'],
+      ['051900', 'KR', 'lg생활건강',        'lg생건',    'lghnh'],
+      ['128940', 'KR', '한미약품',          'hanmi'],
+      ['091990', 'KR', '셀트리온헬스케어',  '셀헬'],
+      ['000100', 'KR', '유한양행',          'yuhan'],
+      ['086520', 'KR', '에코프로'],
+      ['247540', 'KR', '에코프로비엠'],
+      ['003670', 'KR', '포스코퓨처엠',      '포스코케미칼'],
+      ['122870', 'KR', 'yg엔터테인먼트',    'yg',        '와이지엔터'],
+      ['035900', 'KR', 'jyp엔터테인먼트',   'jyp',       '제이와이피'],
+      ['041510', 'KR', '에스엠',            'sm',        '에스엠엔터'],
+      ['352820', 'KR', '하이브',            'hybe'],
+      ['030200', 'KR', 'kt'],
+      ['032640', 'KR', 'lg유플러스',        'lgu+',      'lguplus'],
+      ['004170', 'KR', '신세계'],
+      ['139480', 'KR', '이마트',            'emart'],
+
+      // ── 추가 한국 종목 (2차 확장) ──
+      // 금융/증권
+      ['086790', 'KR', '하나금융지주',      '하나금융',  'hana'],
+      ['138040', 'KR', '메리츠금융지주',    '메리츠금융'],
+      ['138930', 'KR', 'bnk금융지주',       'bnk'],
+      ['139130', 'KR', 'dgb금융지주',       'dgb'],
+      ['175330', 'KR', 'jb금융지주',        'jb'],
+      ['071050', 'KR', '한국금융지주',      '한국투자증권', 'kib'],
+      ['006800', 'KR', '미래에셋증권',      '미래에셋'],
+      ['039490', 'KR', '키움증권',          '키움'],
+      ['016360', 'KR', '삼성증권'],
+      ['005940', 'KR', 'nh투자증권',        'nh증권'],
+      // 운송/조선/건설/철강
+      ['180640', 'KR', '한진칼'],
+      ['002320', 'KR', '한진'],
+      ['028670', 'KR', '팬오션'],
+      ['042660', 'KR', '한화오션',          '대우조선해양'],
+      ['010620', 'KR', 'hd현대미포'],
+      ['004020', 'KR', '현대제철'],
+      ['103140', 'KR', '풍산'],
+      ['002380', 'KR', 'kcc'],
+      ['047040', 'KR', '대우건설'],
+      ['375500', 'KR', 'dl이앤씨',          'dl건설'],
+      ['294870', 'KR', 'hdc현대산업개발',   'hdc'],
+      // 식음료/유통
+      ['097950', 'KR', 'cj제일제당'],
+      ['000120', 'KR', 'cj대한통운'],
+      ['035760', 'KR', 'cj enm',            'cjenm'],
+      ['001040', 'KR', 'cj'],
+      ['005180', 'KR', '빙그레'],
+      ['004370', 'KR', '농심'],
+      ['007310', 'KR', '오뚜기'],
+      ['003230', 'KR', '삼양식품',          'samyangfood'],
+      ['271560', 'KR', '오리온'],
+      ['023530', 'KR', '롯데쇼핑'],
+      ['005300', 'KR', '롯데칠성',          '롯데칠성음료'],
+      ['000080', 'KR', '하이트진로',        '하이트'],
+      ['069960', 'KR', '현대백화점'],
+      ['008770', 'KR', '호텔신라'],
+      ['007070', 'KR', 'gs리테일'],
+      ['282330', 'KR', 'bgf리테일'],
+      // 제약/바이오
+      ['008930', 'KR', '한미사이언스'],
+      ['196170', 'KR', '알테오젠',          'alteogen'],
+      ['145020', 'KR', '휴젤',              'hugel'],
+      ['086900', 'KR', '메디톡스',          'medytox'],
+      // 게임/엔터
+      ['063080', 'KR', '컴투스홀딩스'],
+      ['225570', 'KR', '넥슨게임즈',        '넥슨'],
+      ['095660', 'KR', '네오위즈',          'neowiz'],
+      ['069080', 'KR', '웹젠',              'webzen'],
+      ['192080', 'KR', '더블유게임즈'],
+      ['253450', 'KR', '스튜디오드래곤',    'studiodragon'],
+      // 기타 대형주
+      ['003550', 'KR', 'lg',                'lg주식회사'],
+      ['034220', 'KR', 'lg디스플레이',      'lgd'],
+      ['011070', 'KR', 'lg이노텍',          'lginnotek'],
+      ['018260', 'KR', '삼성에스디에스',    '삼성sds'],
+      ['272210', 'KR', '한화시스템'],
+    ];
+
+    /** 위 데이터에서 검색 매핑 객체를 자동 생성 (별칭 모두 + 코드 모두) */
+    const stockChartShortcuts = (() => {
+      const m = {};
+      stockChartData.forEach(([code, market, ...aliases]) => {
+        const url = market === 'KR'
+          ? `https://m.stock.naver.com/fchart/domestic/stock/${code}`
+          : `https://m.stock.naver.com/fchart/foreign/stock/${code}.${market}`;
+        // 별칭 모두 매핑 (원형 + 소문자)
+        aliases.forEach(a => {
+          if (!a) return;
+          m[a] = url;
+          m[a.toLowerCase()] = url;
+        });
+        // 종목코드 자체도 키
+        m[code] = url;
+        m[code.toLowerCase()] = url;
+      });
+      return m;
+    })();
+
+    /* ================================================================
+       네이버 증권 자동완성 API 시도 (실험적 - 현재 비활성화)
+       - 2026-05 시점 테스트: CORS 정책으로 막힘 확인
+       - 코드는 남겨두되 NAVER_API_ENABLED = false 로 비활성화
+       - 향후 endpoint나 정책 변경 시 true 로 바꾸면 재시도 가능
+       =================================================================*/
+    const NAVER_API_ENABLED = false;     // ← API 시도 활성화 스위치
+    let naverApiStatus = 'untested';     // 'untested' | 'working' | 'failed'
+    let naverApiBestUrl = null;          // 작동 확인된 endpoint 캐시
+
+    // 가능한 endpoint 후보 (자주 쓰이는 네이버 자동완성 URL 패턴)
+    const NAVER_AC_ENDPOINTS = [
+      'https://ac.stock.naver.com/ac?q={Q}&target=stock',
+      'https://ac.stock.naver.com/ac?q={Q}',
+      'https://m.stock.naver.com/api/json/search/searchListJson.nhn?keyword={Q}',
+      'https://api.stock.naver.com/search/searchListJson.nhn?keyword={Q}',
+    ];
+
+    /** JSONP 호출 (CORS 우회) - script 태그로 외부 스크립트 로드 */
+    function jsonpRequest(urlTemplate, query, timeoutMs) {
+      return new Promise((resolve, reject) => {
+        const cb = '__nsAc_' + Date.now() + Math.floor(Math.random() * 1e6);
+        const sep = urlTemplate.includes('?') ? '&' : '?';
+        const url = urlTemplate.replace('{Q}', encodeURIComponent(query))
+                   + sep + '_callback=' + cb;
+        const script = document.createElement('script');
+        let done = false;
+
+        const cleanup = () => {
+          done = true;
+          try { delete window[cb]; } catch (e) { window[cb] = undefined; }
+          if (script.parentNode) script.parentNode.removeChild(script);
+        };
+        const timer = setTimeout(() => {
+          if (!done) { cleanup(); reject(new Error('timeout')); }
+        }, timeoutMs);
+
+        window[cb] = (data) => {
+          clearTimeout(timer); cleanup(); resolve(data);
+        };
+        script.onerror = () => {
+          clearTimeout(timer); cleanup(); reject(new Error('load error'));
+        };
+        script.src = url;
+        document.body.appendChild(script);
+      });
+    }
+
+    /** 응답 형식이 제각각일 수 있어 여러 형식 시도하여 파싱 */
+    function parseNaverStockResponse(data) {
+      if (!data) return null;
+      const results = [];
+      const inferMarket = (code, hint) => {
+        if (hint) {
+          const h = String(hint).toLowerCase();
+          if (h.includes('nasdaq') || h === 'o') return 'O';
+          if (h.includes('nyse') || h === 'n') return 'N';
+          if (h.includes('kospi') || h.includes('kosdaq') || h === 'kr' || h === 'k') return 'KR';
+        }
+        if (/^\d{6}$/.test(code)) return 'KR';
+        if (code.endsWith && code.endsWith('.O')) return 'O';
+        if (code.endsWith && code.endsWith('.N')) return 'N';
+        return 'O';
+      };
+      const buildUrl = (code, market) => market === 'KR'
+        ? `https://m.stock.naver.com/fchart/domestic/stock/${code.replace(/\..*$/, '')}`
+        : `https://m.stock.naver.com/fchart/foreign/stock/${code}`;
+
+      // 형식 1: { items|list|result.items|searchResult: [...] }
+      const items = data.items || data.list || (data.result && data.result.items) || data.searchResult;
+      if (Array.isArray(items)) {
+        items.forEach(it => {
+          if (!it) return;
+          const code = it.code || it.stockCode || it.reutersCode || it.symbol || it.itemCode;
+          if (!code) return;
+          const name = it.name || it.stockName || it.korName || it.kor || it.cmpKor || code;
+          const market = inferMarket(code, it.market || it.marketCategory || it.nationType);
+          results.push({ code, name, market, url: buildUrl(code, market), source: 'api' });
+        });
+      }
+
+      // 형식 2: 네이버 일반 자동완성 형식 [query, [[item], ...]]
+      if (results.length === 0 && Array.isArray(data) && data.length >= 2 && Array.isArray(data[1])) {
+        data[1].forEach(item => {
+          if (Array.isArray(item)) {
+            const [name, code, market] = item;
+            if (code) {
+              const m = inferMarket(code, market);
+              results.push({ code, name, market: m, url: buildUrl(code, m), source: 'api' });
+            }
+          }
+        });
+      }
+
+      return results.slice(0, 10);
+    }
+
+    /** 가능한 endpoint들을 시도하여 자동완성 결과 받기 */
+    async function tryNaverStockAc(query) {
+      if (!NAVER_API_ENABLED) return null;     // ← API 비활성화 시 즉시 종료 (timeout 방지)
+      if (!query) return null;
+      if (naverApiStatus === 'failed') return null;
+
+      // 이미 작동하는 URL이 있으면 그것만 시도
+      const toTry = naverApiBestUrl ? [naverApiBestUrl] : NAVER_AC_ENDPOINTS;
+
+      for (const tpl of toTry) {
+        try {
+          const data = await jsonpRequest(tpl, query, 1500);
+          const parsed = parseNaverStockResponse(data);
+          if (parsed && parsed.length > 0) {
+            if (naverApiStatus !== 'working') {
+              console.log('[stockchart] ✅ 자동완성 API 작동 확인:', tpl);
+              naverApiStatus = 'working';
+              naverApiBestUrl = tpl;
+            }
+            return parsed;
+          }
+        } catch (e) { /* 다음 endpoint 시도 */ }
+      }
+
+      if (naverApiStatus === 'untested') {
+        console.log('[stockchart] ❌ 모든 자동완성 API 시도 실패 - 로컬 매핑만 사용');
+        console.log('[stockchart]   시도한 endpoint:', NAVER_AC_ENDPOINTS);
+        naverApiStatus = 'failed';
+      }
+      return null;
+    }
+
+    /* ================================================================
+       주식차트 자동완성 드롭다운
+       =================================================================*/
+    const queryInputEl = document.getElementById('queryParent');
+    const engineSelectEl = document.getElementById('engineParent');
+    const suggestionsBox = document.getElementById('stockSuggestions');
+    let currentSuggestions = [];
+    let activeIndex = -1;
+
+    /** 입력값에 매칭되는 종목을 prefix 일치로 검색 (별칭 어디든 매칭) */
+    function searchStocksLocal(query) {
+      if (!query) return [];
+      const q = query.toLowerCase().trim();
+      if (!q) return [];
+      const results = [];
+      const seen = new Set();
+
+      for (const row of stockChartData) {
+        const [code, market, ...aliases] = row;
+        const allKeys = [code, ...aliases];
+        // 별칭 중 하나라도 query로 시작하면 매칭
+        const matched = allKeys.some(a => a && a.toLowerCase().startsWith(q));
+        if (matched && !seen.has(code)) {
+          seen.add(code);
+          const url = market === 'KR'
+            ? `https://m.stock.naver.com/fchart/domestic/stock/${code}`
+            : `https://m.stock.naver.com/fchart/foreign/stock/${code}.${market}`;
+          results.push({
+            code,
+            market,
+            name: aliases[0] || code,      // 정식 한글명 (첫 번째 별칭)
+            ticker: market === 'KR' ? code : `${code}.${market}`,
+            url
+          });
+          if (results.length >= 10) break;  // 최대 10개
+        }
+      }
+      return results;
+    }
+
+    /** 드롭다운 렌더링 */
+    function renderSuggestions() {
+      if (currentSuggestions.length === 0) {
+        suggestionsBox.hidden = true;
+        suggestionsBox.innerHTML = '';
+        return;
+      }
+      suggestionsBox.hidden = false;
+      suggestionsBox.innerHTML = currentSuggestions.map((s, i) => {
+        const marketLabel = s.market === 'KR' ? 'KR' : 'US';
+        const marketClass = s.market === 'KR' ? 'kr' : 'us';
+        return `
+          <div class="stock-suggestion-item ${i === activeIndex ? 'active' : ''}"
+               role="option" data-index="${i}">
+            <span class="stock-suggestion-icon">📈</span>
+            <span class="stock-suggestion-name">${s.name}</span>
+            <span class="stock-suggestion-code">${s.ticker}</span>
+            <span class="stock-suggestion-market ${marketClass}">${marketLabel}</span>
+          </div>
+        `;
+      }).join('');
+
+      // 항목 클릭 (마우스 + 터치)
+      suggestionsBox.querySelectorAll('.stock-suggestion-item').forEach(el => {
+        el.addEventListener('mousedown', (e) => {
+          // mousedown으로 처리하여 input blur 전에 동작
+          e.preventDefault();
+          selectSuggestion(parseInt(el.dataset.index));
+        });
+      });
+
+      // 활성 항목이 보이도록 스크롤
+      if (activeIndex >= 0) {
+        const activeEl = suggestionsBox.children[activeIndex];
+        if (activeEl) activeEl.scrollIntoView({ block: 'nearest' });
+      }
+    }
+
+    /** 항목 선택 → 차트 새 창 + 드롭다운 닫기 */
+    function selectSuggestion(idx) {
+      const s = currentSuggestions[idx];
+      if (!s) return;
+      window.open(s.url, '_blank', 'noopener,noreferrer');
+      closeSuggestions();
+    }
+
+    function closeSuggestions() {
+      currentSuggestions = [];
+      activeIndex = -1;
+      suggestionsBox.hidden = true;
+      suggestionsBox.innerHTML = '';
+    }
+
+    /** 입력값이나 엔진 변경 시 호출 - 주식차트 모드에서만 표시 */
+    let apiDebounceTimer = null;
+    function updateSuggestions() {
+      if (engineSelectEl.value !== 'stockchart') {
+        closeSuggestions();
+        return;
+      }
+      const query = queryInputEl.value.trim();
+
+      // 1) 로컬 매핑 결과 즉시 표시 (0ms 지연, 항상 보장)
+      currentSuggestions = searchStocksLocal(query);
+      activeIndex = -1;
+      renderSuggestions();
+
+      // 2) 자동완성 API는 비동기로 호출 (debounce 150ms - 매 키 입력마다 호출 방지)
+      clearTimeout(apiDebounceTimer);
+      if (!query) return;
+      apiDebounceTimer = setTimeout(() => callApiAndMerge(query), 150);
+    }
+
+    /** 자동완성 API 결과를 받아 기존 로컬 결과에 병합 */
+    async function callApiAndMerge(query) {
+      // 사용자가 더 입력했거나 닫혔으면 무시
+      if (queryInputEl.value.trim() !== query) return;
+      if (engineSelectEl.value !== 'stockchart') return;
+
+      try {
+        const apiResults = await tryNaverStockAc(query);
+        if (!apiResults || apiResults.length === 0) return;
+        // race condition 방지: 응답 도착 시 현재 입력값과 다르면 무시
+        if (queryInputEl.value.trim() !== query) return;
+        if (engineSelectEl.value !== 'stockchart') return;
+
+        // 로컬 결과의 코드 집합 (중복 방지)
+        const localCodes = new Set(currentSuggestions.map(r => r.code));
+        const newOnes = apiResults.filter(r => {
+          const cleanCode = String(r.code).split('.')[0];
+          return !localCodes.has(cleanCode) && !localCodes.has(r.code);
+        });
+        if (newOnes.length === 0) return;
+
+        // 로컬 결과 + API 추가분 (최대 15개)
+        const merged = [
+          ...currentSuggestions,
+          ...newOnes.map(r => ({
+            code: String(r.code).split('.')[0],
+            market: r.market,
+            name: r.name,
+            ticker: r.market === 'KR' ? String(r.code).split('.')[0] : r.code,
+            url: r.url
+          }))
+        ].slice(0, 15);
+        currentSuggestions = merged;
+        renderSuggestions();
+      } catch (e) {
+        // API 실패 → 로컬만 사용 (이미 표시됨)
+      }
+    }
+
+    queryInputEl.addEventListener('input', updateSuggestions);
+    queryInputEl.addEventListener('focus', updateSuggestions);
+    engineSelectEl.addEventListener('change', updateSuggestions);
+
+    // 키보드 네비게이션 (↑↓ Enter Esc)
+    queryInputEl.addEventListener('keydown', (e) => {
+      if (suggestionsBox.hidden || currentSuggestions.length === 0) return;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        activeIndex = Math.min(activeIndex + 1, currentSuggestions.length - 1);
+        renderSuggestions();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        activeIndex = activeIndex <= 0 ? -1 : activeIndex - 1;
+        renderSuggestions();
+      } else if (e.key === 'Escape') {
+        closeSuggestions();
+      }
+      // Enter는 form submit이 처리 (아래 submit 핸들러에서 첫 항목 자동 선택)
+    });
+
+    // 검색바 밖 클릭 시 드롭다운 닫기
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.searchbar-wrap')) {
+        closeSuggestions();
+      }
+    });
+
     document.getElementById('searchFormParent').onsubmit = function(e) {
       e.preventDefault();
       const engineKey = document.getElementById('engineParent').value;
       const query = document.getElementById('queryParent').value.trim();
+
+      // ── 주식차트 모드: 매핑 우선, 없으면 네이버 검색 fallback ──
+      if (engineKey === 'stockchart') {
+        if (!query) {
+          // 빈 검색 → 네이버 증권 홈
+          window.open('https://m.stock.naver.com/', '_blank', 'noopener,noreferrer');
+          return;
+        }
+        // 0) 자동완성 드롭다운에 결과 있으면 첫 항목으로 (또는 활성 항목)
+        //    → 사용자가 "엔비"만 쳐도 첫 후보(엔비디아)로 자동 이동
+        if (currentSuggestions.length > 0) {
+          const idx = activeIndex >= 0 ? activeIndex : 0;
+          selectSuggestion(idx);
+          return;
+        }
+        // 1) 정확 매핑 시도 (원형 + 소문자)
+        const directUrl = stockChartShortcuts[query] || stockChartShortcuts[query.toLowerCase()];
+        if (directUrl) {
+          window.open(directUrl, '_blank', 'noopener,noreferrer');
+          return;
+        }
+        // 2) Fallback: 네이버 증권 통합 검색 (주식/지수/시장지표/코인/IPO/펀드 탭)
+        const fallbackUrl = 'https://m.stock.naver.com/search?q=' +
+                            encodeURIComponent(query) +
+                            '&resultTab=stock%2Cindex%2Cmarketindicator%2Ccoin%2Cipo%2Cfund';
+        window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
+        return;
+      }
+
+      // ── 일반 검색엔진 모드 (기존 동작) ──
       const engineObj = snarkEnginesParent.find(e => e.key === engineKey);
       if (engineObj) {
         let url = query
