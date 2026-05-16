@@ -1,241 +1,1771 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>심플 네비+풀사이트 뷰어+콤보박스</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>The World Clock · MYWAY</title>
+  <meta name="theme-color" content="#f4ede0" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%97%8B%3C/text%3E%3C/svg%3E" />
 
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..600,0..100;1,9..144,300..600,0..100&family=Space+Grotesk:wght@300;400;500;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
 
- 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    :root {
+      --paper:        #f4ede0;
+      --paper-deep:   #ebe1cb;
+      --paper-soft:   #fdfaf2;
+      --paper-card:   #ffffff;
+
+      --ink:          #1c1814;
+      --ink-2:        #3d3631;
+      --ink-3:        #6b625a;
+      --ink-4:        #a8a094;
+      --ink-5:        #d4ccb8;
+
+      --gold:         #a87a3a;
+      --gold-soft:    #c9a865;
+
+      --mood-midnight: #4a5570;
+      --mood-dawn:     #b88a7a;
+      --mood-morning:  #c9a865;
+      --mood-noon:     #a87a3a;
+      --mood-afternoon:#b88a3a;
+      --mood-golden:   #c47a4a;
+      --mood-dusk:     #9a6680;
+      --mood-evening:  #5d5577;
+
+      --radius: 10px;
+      --gap: 16px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; }
+
     html, body {
-      margin:0; padding:0;
-      width:100vw; height:100vh;
-      background:#fff;
-      font-family:'Montserrat','맑은 고딕',sans-serif;
-      overflow:hidden;
+      min-height: 100dvh;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Inter', 'Pretendard', 'Apple SD Gothic Neo', '맑은 고딕', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    .nav-bar-wrap {
-      width:100vw; max-width:100vw;
-      display:flex; align-items:center;
-      position:relative; z-index:2;
-      height:48px;
-      background: #fff;
-      border-radius: 0;
-     
-      margin-top:0px;
-     
-      margin-bottom:0;
-      overflow:visible;
-      /* border:1px solid #e7e7e7; */
-      border:none;
-      box-shadow: 0 2px 16px 0 #be6b9022;
+
+    body {
+      background-image:
+        radial-gradient(ellipse at top, rgba(255,255,255,0.5) 0%, transparent 60%),
+        radial-gradient(ellipse at bottom right, rgba(168,122,58,0.05) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.09 0 0 0 0 0.07 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+      padding: 48px clamp(20px, 5vw, 56px) 80px;
     }
-    .combo-wrap {
-      display:flex; align-items:center;
+
+    /* ─────────  HEADER  ───────── */
+    .masthead {
+      max-width: 1440px;
+      margin: 0 auto 36px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--ink);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: end;
+      gap: 24px;
+    }
+    .masthead-mark {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 0.78rem;
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+    .masthead-mark::before {
+      content: "◌";
+      margin-right: 10px;
+      color: var(--gold);
+    }
+    .masthead-title {
+      font-family: 'Fraunces', 'Times New Roman', serif;
+      font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+      font-weight: 300;
+      line-height: 0.92;
+      letter-spacing: -0.04em;
+      margin: 0;
+      color: var(--ink);
+    }
+    .masthead-title em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--gold);
+    }
+    .masthead-meta {
+      text-align: right;
+      font-size: 0.72rem;
+      color: var(--ink-3);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+    .masthead-meta .issue-num {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 1rem;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--ink);
+      display: block;
+      margin-bottom: 2px;
+    }
+    .masthead-meta .reset-link {
+      background: none;
+      border: 0;
+      padding: 0;
+      font: inherit;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      cursor: pointer;
+      border-bottom: 1px solid var(--ink-5);
+      padding-bottom: 1px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .masthead-meta .reset-link:hover {
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+
+    /* ─────────  GRID  ───────── */
+    .clock-grid {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--gap);
+    }
+
+    /* ─────────  CARD  ───────── */
+    .clock-card {
+      background: var(--paper-card);
+      border: 1px solid var(--ink-5);
+      border-radius: var(--radius);
+      padding: 26px 22px 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+                  box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+      min-height: 340px;
+    }
+    .clock-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 48px -16px rgba(28,24,20,0.18),
+                  0 4px 12px -2px rgba(28,24,20,0.06);
+    }
+
+    .clock-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(170deg,
+        var(--mood-color, var(--gold-soft)) 0%,
+        transparent 35%);
+      opacity: 0.08;
+      pointer-events: none;
+      transition: opacity 0.6s, background 0.6s;
+    }
+    .clock-card::after {
+      content: "";
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        var(--mood-color, var(--gold)) 50%,
+        transparent 100%);
+      opacity: 0.5;
+    }
+
+    .slot-num {
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 0.85rem;
+      color: var(--gold);
+      z-index: 2;
+    }
+
+    .card-name-wrap {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 4px;
+    }
+    .card-flag {
+      font-size: 1.05rem;
+      line-height: 1;
+    }
+    .card-name {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-2);
+    }
+    .card-phase {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 0.82rem;
+      color: var(--mood-color, var(--gold));
+      margin-bottom: 18px;
+    }
+    .card-phase::before {
+      content: "— ";
+    }
+
+    .card-time {
+      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: clamp(2.8rem, 4.4vw, 3.8rem);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: baseline;
+      gap: 0;
+      margin-bottom: 4px;
+      position: relative;
+      z-index: 1;
+    }
+    .card-time .colon {
+      color: var(--ink-4);
+      animation: blink 2s steps(2, end) infinite;
+      margin: 0 0.02em;
+      font-weight: 400;
+    }
+    @keyframes blink {
+      50% { opacity: 0.3; }
+    }
+    .card-time .ampm {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.24em;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      color: var(--ink-3);
+      margin-left: 0.6em;
+      align-self: flex-start;
+      margin-top: 0.3em;
+    }
+
+    .card-seconds {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 400;
+      color: var(--ink-4);
+      letter-spacing: 0.05em;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 14px;
+    }
+    .card-seconds .label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.66rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-4);
+      margin-right: 8px;
+    }
+
+    .card-hairline {
+      height: 1px;
+      background: var(--ink-5);
+      margin: 0 0 12px 0;
+      position: relative;
+    }
+    .card-hairline::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: -3px;
+      bottom: -3px;
+      width: 30%;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      opacity: 0.6;
+    }
+
+    .card-date {
+      font-size: 0.74rem;
+      color: var(--ink-2);
+      letter-spacing: 0.02em;
+      margin-bottom: 6px;
+      font-weight: 400;
+    }
+    .card-date .day-name {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--gold);
+      margin-left: 4px;
+    }
+
+    .card-diff {
+      font-size: 0.68rem;
+      color: var(--ink-3);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .card-diff .arrow {
+      color: var(--ink-4);
+      margin: 0 6px;
+    }
+    .card-diff .diff-val {
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    /* 하루 진행률 바 */
+    .day-progress {
+      position: relative;
+      height: 3px;
+      background: var(--paper-deep);
+      margin-bottom: 16px;
+      overflow: visible;
+    }
+    .day-progress .fill {
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 0%;
+      background: linear-gradient(90deg,
+        var(--mood-midnight) 0%,
+        var(--mood-dawn) 22%,
+        var(--mood-noon) 50%,
+        var(--mood-golden) 75%,
+        var(--mood-evening) 100%);
+      transition: width 0.5s;
+    }
+    .day-progress .marker {
+      position: absolute;
+      top: -3px;
+      width: 1px;
+      height: 9px;
+      background: var(--ink);
+      transition: left 0.5s;
+    }
+    .day-labels {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--ink-4);
+      margin-top: 6px;
+      margin-bottom: 14px;
+      letter-spacing: 0;
+    }
+
+    .card-select-wrap {
+      margin-top: auto;
+    }
+    .card-select {
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--ink-5);
+      color: var(--ink-2);
+      padding: 9px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 400;
+      font-family: inherit;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%236b625a' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 28px;
+      transition: all 0.2s;
+    }
+    .card-select:hover {
+      border-color: var(--ink-2);
+      color: var(--ink);
+    }
+    .card-select:focus {
+      outline: none;
+      border-color: var(--gold);
+      color: var(--ink);
+    }
+    .card-select option {
+      background: var(--paper-card);
+      color: var(--ink);
+      font-family: inherit;
+    }
+
+    /* ─────────  RESPONSIVE  ───────── */
+    @media (max-width: 1280px) {
+      .clock-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 880px) {
+      body { padding: 32px 20px 60px; }
+      .masthead {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        margin-bottom: 28px;
+        padding-bottom: 22px;
+      }
+      .masthead-meta { text-align: left; }
+      .clock-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .clock-card { min-height: 300px; padding: 22px 18px 18px; }
+    }
+    @media (max-width: 520px) {
+      body { padding: 24px 14px 50px; }
+      .masthead-title { font-size: 2.2rem; }
+      .clock-grid { grid-template-columns: 1fr; gap: 10px; }
+      .clock-card { min-height: 280px; }
+      .card-time { font-size: 3rem; }
+    }
+    @media (max-width: 360px) {
+      .card-time { font-size: 2.6rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .clock-card, .day-progress .fill, .day-progress .marker, .card-time .colon {
+        transition: none;
+        animation: none;
+      }
+    }
+
+    /* ═══════════════════════════════════════════════
+       TOOLS SECTION — Timer / Stopwatch / Alarm
+       ═══════════════════════════════════════════════ */
+
+    .section-divider {
+      max-width: 1440px;
+      margin: 56px auto 28px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .section-divider .line {
+      flex: 1;
+      height: 1px;
+      background: var(--ink-5);
+    }
+    .section-divider .label {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 1.4rem;
+      color: var(--ink);
+      letter-spacing: 0;
+    }
+    .section-divider .label::before {
+      content: "—";
+      color: var(--gold);
+      margin-right: 8px;
+    }
+    .section-divider .label::after {
+      content: "—";
+      color: var(--gold);
       margin-left: 8px;
-      margin-right: 3px;
     }
-    .section-select {
-      border-radius:7px;
-      font-size:1.03rem;
-      padding:4px 18px 4px 10px;
-      border:1.7px solid #ea98aa;
-      background:#fff0f7;
-      color:#be6b90;
-      font-weight:500;
-      margin-right:7px;
-      transition: border 0.16s, background 0.18s;
+
+    .tools-grid {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--gap);
     }
-    .section-select:focus {
-      border:1.7px solid #be6b90;
-      background:#fbe0ee;
+
+    .tool-card {
+      background: var(--paper-card);
+      border: 1px solid var(--ink-5);
+      border-radius: var(--radius);
+      padding: 28px 26px 22px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      min-height: 380px;
     }
-    .nav-arrow {
-      width:30px; height:38px;
-      border:none; 
-      background:linear-gradient(135deg, #ea98aa55 0%, #be6b9090 100%);
-      color:#be6b90; font-size:1.35rem; border-radius:5px;
-      cursor:pointer; margin:0 2px;
-      display:flex; align-items:center; justify-content:center;
-      position:relative; z-index:3;
-      transition:background 0.12s, color 0.15s;
+    .tool-card::after {
+      content: "";
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--gold) 50%, transparent 100%);
+      opacity: 0.5;
     }
-    .nav-arrow:hover { background:linear-gradient(135deg, #be6b90bb 0%, #ea98aa 100%); color:#fff;}
-    .zoom-btns {
-      display: flex; gap:2px; margin-left:0px;
-      flex-shrink:0;
+
+    .tool-num {
+      position: absolute;
+      top: 18px;
+      right: 24px;
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 0.85rem;
+      color: var(--gold);
     }
-    .zoom-btn {
-      width:24px; height:24px; border-radius:5px; border:1.4px solid #ea98aa;
-      background:linear-gradient(90deg, #fbe0ee 70%, #fff0f7 100%);
-      color:#be6b90; font-size:1.05rem; cursor:pointer;
-      display:flex; align-items:center; justify-content:center;
-      margin-right:6px; font-weight:400;
-      transition:background 0.14s, color 0.13s, border 0.15s;
-      box-shadow:none;
+
+    .tool-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
     }
-    .zoom-btn:active { background:#f5d0e5; border-color:#be6b90; }
-    .nav-scroll-outer {
-      overflow:hidden; flex:1; display:flex; align-items:center; height:100%;
-      position:relative; margin:0 2px;
+    .tool-icon {
+      font-size: 1.05rem;
     }
-    .nav-scroll {
-      display:flex; gap:4px; align-items:center; height:100%;
-      overflow-x:auto; scrollbar-width:none; scroll-behavior:smooth;
+    .tool-name {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-2);
     }
-    .nav-scroll::-webkit-scrollbar { display:none; }
-    .nav-link {
-      color:#be6b90;
-      background:none;
-      border:none;
-      font-size:0.96rem;
-      font-weight:400;
-      padding:3px 10px;
-      margin:0 0;
-      border-radius:13px;
-      cursor:pointer;
-      transition:background 0.14s, color 0.15s;
-      white-space:nowrap;
-      letter-spacing:0.01em;
+    .tool-sub {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 0.82rem;
+      color: var(--gold);
+      margin-bottom: 20px;
     }
-    .nav-link.active, .nav-link:hover {
-      background:linear-gradient(90deg, #ea98aa 0%, #be6b90 100%);
-      color:#fff;
+    .tool-sub::before { content: "— "; }
+
+    /* 큰 숫자 디스플레이 (Space Grotesk) */
+    .display-large {
+      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: clamp(2.5rem, 4vw, 3.4rem);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: baseline;
+      gap: 0;
     }
-    @media (max-width: 700px) {
-      .nav-bar-wrap { height:38px;}
-      .nav-link { font-size:0.85rem; padding:2px 8px;}
-      .zoom-btn { width:20px; height:20px; font-size:0.97rem;}
-      .nav-arrow { width:25px; height:30px; font-size:1.15rem; }
-      .section-select { font-size:0.92rem; padding:3px 9px; }
+    .display-large .ms {
+      font-size: 0.45em;
+      color: var(--ink-3);
+      margin-left: 0.15em;
+      font-weight: 400;
     }
-    .iframe-container {
-      position:absolute; top:56px; left:0;
-      width:100vw; height:calc(100vh - 56px);
-      background:none; z-index:1; border:none; margin:0; padding:0;
+    .display-large.is-active { color: var(--gold); }
+    .display-large.is-ringing {
+      animation: ring 0.5s ease-in-out infinite;
+      color: var(--mood-golden);
     }
-    iframe {
-      width:100vw; height:100vh; min-height:100%;
-      border:none; outline:none; margin:0; padding:0; display:block; background:#fff;
+    @keyframes ring {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
     }
-    @media (max-width:700px) {
-      .iframe-container { top:43px; height:calc(100vh - 43px);}
+
+    /* 입력 행 (타이머 설정) */
+    .time-input-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 16px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .time-input-row input[type="number"] {
+      width: 64px;
+      padding: 10px 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 500;
+      text-align: center;
+      border: 1px solid var(--ink-5);
+      border-radius: 6px;
+      background: transparent;
+      color: var(--ink);
+      -moz-appearance: textfield;
+      font-variant-numeric: tabular-nums;
+    }
+    .time-input-row input[type="number"]::-webkit-outer-spin-button,
+    .time-input-row input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .time-input-row input[type="number"]:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+    .time-input-row .colon-sep {
+      color: var(--ink-4);
+      font-size: 1.3rem;
+      font-weight: 400;
+    }
+    .time-input-row .unit {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-4);
+      margin-left: 6px;
+    }
+
+    /* 프리셋 (작은 알약 버튼) */
+    .preset-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+    .preset-btn {
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      border: 1px solid var(--ink-5);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 500;
+      color: var(--ink-2);
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.02em;
+    }
+    .preset-btn:hover {
+      border-color: var(--ink-2);
+      color: var(--ink);
+    }
+    .preset-btn.is-active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(168,122,58,0.06);
+    }
+
+    /* 메인 컨트롤 버튼 */
+    .control-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .btn-ctrl {
+      flex: 1;
+      background: transparent;
+      border: 1px solid var(--ink-5);
+      border-radius: 6px;
+      padding: 11px 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--ink-2);
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 44px;
+    }
+    .btn-ctrl:hover {
+      border-color: var(--ink);
+      color: var(--ink);
+    }
+    .btn-ctrl:active {
+      transform: scale(0.97);
+    }
+    .btn-ctrl.is-primary {
+      background: var(--ink);
+      color: var(--paper-card);
+      border-color: var(--ink);
+    }
+    .btn-ctrl.is-primary:hover {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+    .btn-ctrl.is-gold {
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+    .btn-ctrl:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* 랩 리스트 (스탑워치) */
+    .lap-list {
+      flex: 1;
+      overflow-y: auto;
+      margin-top: 8px;
+      padding-top: 12px;
+      border-top: 1px solid var(--ink-5);
+      max-height: 200px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.82rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .lap-list:empty::before {
+      content: "랩 기록이 여기 표시됩니다";
+      display: block;
+      color: var(--ink-4);
+      font-size: 0.74rem;
+      font-style: italic;
+      font-family: 'Fraunces', serif;
+      letter-spacing: 0.02em;
+    }
+    .lap-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--paper-deep);
+      align-items: baseline;
+    }
+    .lap-row:last-child { border-bottom: 0; }
+    .lap-num {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      color: var(--gold);
+      font-size: 0.8rem;
+      min-width: 36px;
+    }
+    .lap-total { color: var(--ink); font-weight: 500; }
+    .lap-split { color: var(--ink-4); font-size: 0.74rem; }
+    .lap-row.is-fastest .lap-total { color: var(--mood-noon); }
+    .lap-row.is-slowest .lap-total { color: var(--mood-dusk); }
+
+    /* 알람 리스트 */
+    .alarm-list {
+      flex: 1;
+      overflow-y: auto;
+      margin-top: 4px;
+      padding-top: 12px;
+      border-top: 1px solid var(--ink-5);
+      max-height: 240px;
+    }
+    .alarm-list:empty::before {
+      content: "알람을 추가해 보세요";
+      display: block;
+      color: var(--ink-4);
+      font-style: italic;
+      font-family: 'Fraunces', serif;
+      font-size: 0.85rem;
+      text-align: center;
+      padding: 16px 0;
+    }
+    .alarm-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--paper-deep);
+    }
+    .alarm-row:last-child { border-bottom: 0; }
+    .alarm-toggle {
+      width: 36px;
+      height: 20px;
+      background: var(--paper-deep);
+      border: 1px solid var(--ink-5);
+      border-radius: 999px;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      padding: 0;
+    }
+    .alarm-toggle::after {
+      content: "";
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      width: 16px;
+      height: 16px;
+      background: var(--paper-card);
+      border: 1px solid var(--ink-5);
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+    .alarm-toggle.is-on {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+    .alarm-toggle.is-on::after {
+      left: 16px;
+      border-color: var(--gold);
+    }
+    .alarm-time {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+      min-width: 70px;
+    }
+    .alarm-row:not(.is-on) .alarm-time {
+      color: var(--ink-4);
+    }
+    .alarm-label {
+      flex: 1;
+      font-size: 0.78rem;
+      color: var(--ink-3);
+      font-style: italic;
+      font-family: 'Fraunces', serif;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .alarm-row:not(.is-on) .alarm-label { opacity: 0.5; }
+    .alarm-delete {
+      background: transparent;
+      border: 0;
+      color: var(--ink-4);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      line-height: 1;
+      border-radius: 4px;
+      transition: all 0.15s;
+    }
+    .alarm-delete:hover {
+      color: var(--mood-dusk);
+      background: var(--paper-deep);
+    }
+
+    .alarm-add-form {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 4px;
+      align-items: stretch;
+    }
+    .alarm-add-form input[type="time"] {
+      flex: 0 0 110px;
+      padding: 9px 10px;
+      border: 1px solid var(--ink-5);
+      border-radius: 6px;
+      background: transparent;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+    .alarm-add-form input[type="time"]:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+    .alarm-add-form input[type="text"] {
+      flex: 1;
+      min-width: 0;
+      padding: 9px 12px;
+      border: 1px solid var(--ink-5);
+      border-radius: 6px;
+      background: transparent;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      color: var(--ink);
+    }
+    .alarm-add-form input[type="text"]:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+    .alarm-add-form button {
+      flex: 0 0 44px;
+      background: var(--ink);
+      border: 0;
+      border-radius: 6px;
+      color: var(--paper-card);
+      font-size: 1.1rem;
+      font-weight: 400;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .alarm-add-form button:hover {
+      background: var(--gold);
+    }
+
+    .ringing-banner {
+      background: var(--mood-golden);
+      color: var(--paper-card);
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.82rem;
+      animation: ring 0.5s ease-in-out infinite;
+    }
+    .ringing-banner button {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: var(--paper-card);
+      padding: 5px 14px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+    }
+    .ringing-banner button:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    .ringing-banner[hidden] { display: none; }
+
+    /* ─── tools responsive ─── */
+    @media (max-width: 1100px) {
+      .tools-grid { grid-template-columns: 1fr; }
+      .tool-card { min-height: auto; }
+      .lap-list, .alarm-list { max-height: 220px; }
+    }
+    @media (max-width: 520px) {
+      .section-divider { margin-top: 40px; margin-bottom: 22px; }
+      .section-divider .label { font-size: 1.2rem; }
+      .tool-card { padding: 22px 18px 18px; }
+      .time-input-row input[type="number"] { width: 56px; font-size: 1.25rem; padding: 9px 6px; }
+      .preset-btn { font-size: 0.7rem; padding: 5px 8px; }
+      .btn-ctrl { font-size: 0.74rem; padding: 10px 6px; }
+      .alarm-add-form input[type="time"] { flex: 0 0 100px; }
     }
   </style>
 </head>
 <body>
-  <div class="nav-bar-wrap">
-    <!-- 콤보박스: + 버튼 왼쪽! -->
-    <div class="combo-wrap">
-      <select class="section-select" id="section-select">
-        <option value="">섹션 이동...</option>
-         <option value="newsitesbar2.html">뉴스</option>
-        <option value="bbssitesbar2.html">BBS</option>
-        <option value="livesitesbar2.html">LIVE TV</option>
-        <option value="radiositesbar2.html">RADIO</option>
-        <option value="shop.html">쇼핑</option>
-        <option value="magazine.html">잡지</option>
-      </select>
+
+  <header class="masthead">
+    <div class="masthead-mark">MYWAY &nbsp;·&nbsp; HORLOGE</div>
+    <h1 class="masthead-title">The <em>World</em> Clock.</h1>
+    <div class="masthead-meta">
+      <span class="issue-num" id="issueNum">Vol. 01 · 2026</span>
+      <button class="reset-link" id="btnReset" type="button">Reset Selections</button>
     </div>
-    <div class="zoom-btns">
-      <button class="zoom-btn" id="zoom-in" title="풀화면으로 전환">+</button>
-    </div>
-    <button class="nav-arrow" id="nav-left" style="display:none;">&#8592;</button>
-    <div class="nav-scroll-outer">
-      <div class="nav-scroll" id="nav-scroll">
+  </header>
 
-       
- 
-  
- <button class="nav-link " data-url="0000worldwatch.html">세계시계</button>
+  <main class="clock-grid" id="clockGrid"></main>
 
-       <button class="nav-link " data-url="https://kr.piliapp.com/time-now/">세계시계2</button>
-       
-     <button class="nav-link " data-url="0000stopwatch.html">스탑워치</button>
+  <div class="section-divider">
+    <div class="line"></div>
+    <div class="label">Tools</div>
+    <div class="line"></div>
+  </div>
 
+  <section class="tools-grid" aria-label="시간 도구">
 
-
- <button class="nav-link " data-url="0000TIMER.html">타이머</button>
- <button class="nav-link " data-url="0000alarm.html">알람시계</button>
-   <button class="nav-link " data-url="https://search.daum.net/search?w=tot&t__nil_searchbox=suggest&sug=&q=%EB%8B%AC%EB%A0%A5">달력</button>
-       
+    <!-- ───── Timer ───── -->
+    <article class="tool-card" id="timerCard">
+      <span class="tool-num">Nº 06</span>
+      <div class="tool-head">
+        <span class="tool-icon">⏱</span>
+        <span class="tool-name">TIMER</span>
       </div>
-    </div>
-    <button class="nav-arrow" id="nav-right">&#8594;</button>
-  </div>
-  <div class="iframe-container">
-    <iframe id="main-iframe" src="0000worldwatch.html" allowfullscreen></iframe>
-  </div>
+      <div class="tool-sub">Countdown</div>
+
+      <div class="display-large" id="timerDisplay">00:00:00</div>
+
+      <div class="time-input-row" id="timerInputs">
+        <input type="number" id="timerH" min="0" max="23" value="0" aria-label="시" />
+        <span class="colon-sep">:</span>
+        <input type="number" id="timerM" min="0" max="59" value="5" aria-label="분" />
+        <span class="colon-sep">:</span>
+        <input type="number" id="timerS" min="0" max="59" value="0" aria-label="초" />
+      </div>
+
+      <div class="preset-row">
+        <button class="preset-btn" data-min="1">1분</button>
+        <button class="preset-btn" data-min="3">3분</button>
+        <button class="preset-btn" data-min="5">5분</button>
+        <button class="preset-btn" data-min="10">10분</button>
+        <button class="preset-btn" data-min="30">30분</button>
+        <button class="preset-btn" data-min="60">1시간</button>
+      </div>
+
+      <div class="control-row">
+        <button class="btn-ctrl is-primary" id="timerStart">시작</button>
+        <button class="btn-ctrl" id="timerPause" disabled>일시정지</button>
+        <button class="btn-ctrl" id="timerReset">리셋</button>
+      </div>
+
+      <div class="ringing-banner" id="timerRing" hidden>
+        <span>⏰ 시간이 끝났습니다</span>
+        <button id="timerStopRing">중지</button>
+      </div>
+    </article>
+
+    <!-- ───── Stopwatch ───── -->
+    <article class="tool-card" id="stopwatchCard">
+      <span class="tool-num">Nº 07</span>
+      <div class="tool-head">
+        <span class="tool-icon">⏲</span>
+        <span class="tool-name">STOPWATCH</span>
+      </div>
+      <div class="tool-sub">Lap timer</div>
+
+      <div class="display-large" id="swDisplay">
+        <span class="hms">00:00:00</span><span class="ms">.00</span>
+      </div>
+
+      <div class="control-row">
+        <button class="btn-ctrl is-primary" id="swStart">시작</button>
+        <button class="btn-ctrl is-gold" id="swLap" disabled>랩</button>
+        <button class="btn-ctrl" id="swReset" disabled>리셋</button>
+      </div>
+
+      <div class="lap-list" id="swLapList" aria-label="랩 기록"></div>
+    </article>
+
+    <!-- ───── Alarm ───── -->
+    <article class="tool-card" id="alarmCard">
+      <span class="tool-num">Nº 08</span>
+      <div class="tool-head">
+        <span class="tool-icon">⏰</span>
+        <span class="tool-name">ALARM</span>
+      </div>
+      <div class="tool-sub">Set &amp; forget</div>
+
+      <div class="display-large" id="alarmDisplayClock">--:--</div>
+
+      <form class="alarm-add-form" id="alarmAddForm" autocomplete="off">
+        <input type="time" id="alarmTimeInput" required value="07:00" />
+        <input type="text" id="alarmLabelInput" placeholder="라벨 (선택)" maxlength="20" />
+        <button type="submit" aria-label="알람 추가">＋</button>
+      </form>
+
+      <div class="alarm-list" id="alarmList" aria-label="알람 목록"></div>
+
+      <div class="ringing-banner" id="alarmRing" hidden>
+        <span id="alarmRingMsg">⏰ 알람</span>
+        <button id="alarmStopRing">중지</button>
+      </div>
+    </article>
+
+  </section>
+
   <script>
-    // 콤보박스: 섹션 페이지 이동
-    document.getElementById('section-select').onchange = function() {
-      if (this.value) location.href = this.value;
-    };
+    const TIMEZONES = [
+      { id: 'Asia/Seoul',         name: '한국',        sub: 'SEOUL',     flag: '🇰🇷', region: '아시아' },
+      { id: 'Asia/Tokyo',         name: '일본',        sub: 'TOKYO',     flag: '🇯🇵', region: '아시아' },
+      { id: 'Asia/Shanghai',      name: '중국',        sub: 'SHANGHAI',  flag: '🇨🇳', region: '아시아' },
+      { id: 'Asia/Hong_Kong',     name: '홍콩',        sub: 'HONG KONG', flag: '🇭🇰', region: '아시아' },
+      { id: 'Asia/Taipei',        name: '대만',        sub: 'TAIPEI',    flag: '🇹🇼', region: '아시아' },
+      { id: 'Asia/Singapore',     name: '싱가포르',    sub: 'SINGAPORE', flag: '🇸🇬', region: '아시아' },
+      { id: 'Asia/Bangkok',       name: '태국',        sub: 'BANGKOK',   flag: '🇹🇭', region: '아시아' },
+      { id: 'Asia/Ho_Chi_Minh',   name: '베트남',      sub: 'HO CHI MINH', flag: '🇻🇳', region: '아시아' },
+      { id: 'Asia/Manila',        name: '필리핀',      sub: 'MANILA',    flag: '🇵🇭', region: '아시아' },
+      { id: 'Asia/Jakarta',       name: '인도네시아',  sub: 'JAKARTA',   flag: '🇮🇩', region: '아시아' },
+      { id: 'Asia/Kuala_Lumpur',  name: '말레이시아',  sub: 'K.LUMPUR',  flag: '🇲🇾', region: '아시아' },
+      { id: 'Asia/Kolkata',       name: '인도',        sub: 'DELHI',     flag: '🇮🇳', region: '아시아' },
+      { id: 'Asia/Dubai',         name: 'UAE',         sub: 'DUBAI',     flag: '🇦🇪', region: '아시아' },
+      { id: 'Asia/Riyadh',        name: '사우디',      sub: 'RIYADH',    flag: '🇸🇦', region: '아시아' },
+      { id: 'Asia/Jerusalem',     name: '이스라엘',    sub: 'JERUSALEM', flag: '🇮🇱', region: '아시아' },
 
-    // + 버튼 : 풀페이지 전환
-    document.getElementById('zoom-in').onclick = function() {
-      if (window.top === window.self) return;
-      window.open(location.href, '_blank');
-    };
-    // 네비 클릭시 iframe src 변경 & active 클래스 처리
-    document.querySelectorAll('.nav-link').forEach(btn=>{
-      btn.addEventListener('click', function(){
-        document.querySelectorAll('.nav-link').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('main-iframe').src = btn.dataset.url;
-      });
-    });
-    // 네비바 가로 스크롤, 화살표 제어
-    const navScroll = document.getElementById('nav-scroll');
-    const leftArrow = document.getElementById('nav-left');
-    const rightArrow = document.getElementById('nav-right');
-    function updateNavArrows() {
-      leftArrow.style.display = navScroll.scrollLeft > 10 ? 'inline-flex' : 'none';
-      rightArrow.style.display = (navScroll.scrollLeft + navScroll.offsetWidth < navScroll.scrollWidth - 5) ? 'inline-flex' : 'none';
+      { id: 'Europe/Istanbul',    name: '터키',        sub: 'ISTANBUL',  flag: '🇹🇷', region: '유럽' },
+      { id: 'Europe/Moscow',      name: '러시아',      sub: 'MOSCOW',    flag: '🇷🇺', region: '유럽' },
+      { id: 'Europe/London',      name: '영국',        sub: 'LONDON',    flag: '🇬🇧', region: '유럽' },
+      { id: 'Europe/Paris',       name: '프랑스',      sub: 'PARIS',     flag: '🇫🇷', region: '유럽' },
+      { id: 'Europe/Berlin',      name: '독일',        sub: 'BERLIN',    flag: '🇩🇪', region: '유럽' },
+      { id: 'Europe/Rome',        name: '이탈리아',    sub: 'ROME',      flag: '🇮🇹', region: '유럽' },
+      { id: 'Europe/Madrid',      name: '스페인',      sub: 'MADRID',    flag: '🇪🇸', region: '유럽' },
+      { id: 'Europe/Zurich',      name: '스위스',      sub: 'ZURICH',    flag: '🇨🇭', region: '유럽' },
+      { id: 'Europe/Amsterdam',   name: '네덜란드',    sub: 'AMSTERDAM', flag: '🇳🇱', region: '유럽' },
+      { id: 'Europe/Stockholm',   name: '스웨덴',      sub: 'STOCKHOLM', flag: '🇸🇪', region: '유럽' },
+
+      { id: 'America/New_York',   name: '미국 동부',   sub: 'NEW YORK',  flag: '🇺🇸', region: '아메리카' },
+      { id: 'America/Chicago',    name: '미국 중부',   sub: 'CHICAGO',   flag: '🇺🇸', region: '아메리카' },
+      { id: 'America/Denver',     name: '미국 산악부', sub: 'DENVER',    flag: '🇺🇸', region: '아메리카' },
+      { id: 'America/Los_Angeles',name: '미국 서부',   sub: 'LOS ANGELES', flag: '🇺🇸', region: '아메리카' },
+      { id: 'Pacific/Honolulu',   name: '하와이',      sub: 'HONOLULU',  flag: '🇺🇸', region: '아메리카' },
+      { id: 'America/Toronto',    name: '캐나다 동부', sub: 'TORONTO',   flag: '🇨🇦', region: '아메리카' },
+      { id: 'America/Vancouver',  name: '캐나다 서부', sub: 'VANCOUVER', flag: '🇨🇦', region: '아메리카' },
+      { id: 'America/Mexico_City',name: '멕시코',      sub: 'MEXICO CITY', flag: '🇲🇽', region: '아메리카' },
+      { id: 'America/Sao_Paulo',  name: '브라질',      sub: 'SÃO PAULO', flag: '🇧🇷', region: '아메리카' },
+      { id: 'America/Argentina/Buenos_Aires', name: '아르헨티나', sub: 'BUENOS AIRES', flag: '🇦🇷', region: '아메리카' },
+
+      { id: 'Australia/Sydney',   name: '호주 동부',   sub: 'SYDNEY',    flag: '🇦🇺', region: '오세아니아' },
+      { id: 'Australia/Melbourne',name: '호주',        sub: 'MELBOURNE', flag: '🇦🇺', region: '오세아니아' },
+      { id: 'Australia/Perth',    name: '호주 서부',   sub: 'PERTH',     flag: '🇦🇺', region: '오세아니아' },
+      { id: 'Pacific/Auckland',   name: '뉴질랜드',    sub: 'AUCKLAND',  flag: '🇳🇿', region: '오세아니아' },
+
+      { id: 'Africa/Cairo',       name: '이집트',      sub: 'CAIRO',     flag: '🇪🇬', region: '아프리카' },
+      { id: 'Africa/Johannesburg',name: '남아공',      sub: 'JOHANNESBURG', flag: '🇿🇦', region: '아프리카' },
+      { id: 'Africa/Lagos',       name: '나이지리아',  sub: 'LAGOS',     flag: '🇳🇬', region: '아프리카' },
+    ];
+
+    const TZ_MAP = Object.fromEntries(TIMEZONES.map(t => [t.id, t]));
+    const REGIONS = ['아시아', '유럽', '아메리카', '오세아니아', '아프리카'];
+    const DEFAULTS = ['Asia/Seoul', 'Asia/Tokyo', 'Europe/London', 'America/New_York', 'America/Los_Angeles'];
+
+    const STORAGE_KEY = 'myway_worldclock_editorial_v1';
+    function loadSelections() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const arr = JSON.parse(saved);
+          if (Array.isArray(arr) && arr.length === 5 && arr.every(id => TZ_MAP[id])) return arr;
+        }
+      } catch(e) {}
+      return [...DEFAULTS];
     }
-    rightArrow.onclick = ()=>{ navScroll.scrollBy({left:100, behavior:'smooth'});}
-    leftArrow.onclick = ()=>{ navScroll.scrollBy({left:-100, behavior:'smooth'});}
-    navScroll.addEventListener('scroll', updateNavArrows);
-    window.addEventListener('resize', updateNavArrows);
-    setTimeout(updateNavArrows, 300);
+    function saveSelections(arr) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); } catch(e) {}
+    }
+    let selections = loadSelections();
 
+    function getPhase(hour, minute) {
+      const h = hour + minute / 60;
+      if (h >= 0  && h < 5 ) return { label: 'Midnight',    color: 'var(--mood-midnight)' };
+      if (h >= 5  && h < 7 ) return { label: 'Dawn',        color: 'var(--mood-dawn)' };
+      if (h >= 7  && h < 11) return { label: 'Morning',     color: 'var(--mood-morning)' };
+      if (h >= 11 && h < 14) return { label: 'Midday',      color: 'var(--mood-noon)' };
+      if (h >= 14 && h < 17) return { label: 'Afternoon',   color: 'var(--mood-afternoon)' };
+      if (h >= 17 && h < 19) return { label: 'Golden Hour', color: 'var(--mood-golden)' };
+      if (h >= 19 && h < 22) return { label: 'Dusk',        color: 'var(--mood-dusk)' };
+      return                        { label: 'Evening',     color: 'var(--mood-evening)' };
+    }
 
+    function buildSelect(currentId, slotIndex) {
+      const sel = document.createElement('select');
+      sel.className = 'card-select';
+      sel.dataset.slot = slotIndex;
+      REGIONS.forEach(region => {
+        const group = document.createElement('optgroup');
+        group.label = region;
+        TIMEZONES.filter(t => t.region === region).forEach(t => {
+          const opt = document.createElement('option');
+          opt.value = t.id;
+          opt.textContent = `${t.flag}  ${t.name} (${t.sub})`;
+          if (t.id === currentId) opt.selected = true;
+          group.appendChild(opt);
+        });
+        sel.appendChild(group);
+      });
+      sel.addEventListener('change', () => {
+        selections[slotIndex] = sel.value;
+        saveSelections(selections);
+        renderAll();
+        updateTimes();
+      });
+      return sel;
+    }
 
+    function renderAll() {
+      const grid = document.getElementById('clockGrid');
+      grid.innerHTML = '';
+      selections.forEach((tzId, i) => {
+        const tz = TZ_MAP[tzId] || TZ_MAP[DEFAULTS[i]];
+        const slotNum = String(i + 1).padStart(2, '0');
+        const card = document.createElement('article');
+        card.className = 'clock-card';
+        card.dataset.tz = tz.id;
+        card.dataset.slot = i;
+        card.innerHTML = `
+          <span class="slot-num">Nº ${slotNum}</span>
 
+          <div class="card-name-wrap">
+            <span class="card-flag">${tz.flag}</span>
+            <span class="card-name">${tz.sub}</span>
+          </div>
+          <div class="card-phase"><span class="phase-label">Morning</span></div>
 
+          <div class="card-time">
+            <span class="hh">--</span><span class="colon">:</span><span class="mm">--</span>
+            <span class="ampm">--</span>
+          </div>
 
-  (function(){
-    const el = document.getElementById('nav-scroll');
-    let isDown = false, startX, scrollLeft;
-    el.addEventListener('mousedown', function(e){
-      isDown = true;
-      el.classList.add('dragging');
-      startX = e.pageX - el.offsetLeft;
-      scrollLeft = el.scrollLeft;
-      e.preventDefault();
+          <div class="card-seconds">
+            <span class="label">SEC</span><span class="ss">--</span>
+          </div>
+
+          <div class="card-hairline"></div>
+
+          <div class="card-date">
+            <span class="date-ymd">----. --. --.</span>
+            <span class="day-name">--</span>
+          </div>
+          <div class="card-diff">
+            FROM <strong>KST</strong> <span class="arrow">→</span>
+            <span class="diff-val">--</span>
+          </div>
+
+          <div class="day-progress" aria-hidden="true">
+            <div class="fill"></div>
+            <div class="marker"></div>
+          </div>
+          <div class="day-labels">
+            <span>00</span><span>06</span><span>12</span><span>18</span><span>24</span>
+          </div>
+
+          <div class="card-select-wrap"></div>
+        `;
+        card.querySelector('.card-select-wrap').appendChild(buildSelect(tz.id, i));
+        grid.appendChild(card);
+      });
+    }
+
+    function getTimeParts(date, tzId) {
+      const fmt = new Intl.DateTimeFormat('en-GB', {
+        timeZone: tzId, hour12: false,
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        weekday: 'short'
+      });
+      const parts = fmt.formatToParts(date);
+      const get = (t) => parts.find(p => p.type === t)?.value || '';
+      return {
+        year: get('year'), month: get('month'), day: get('day'),
+        hour: get('hour'), minute: get('minute'), second: get('second'),
+        weekday: get('weekday')
+      };
+    }
+
+    function getOffsetMinutesFromKR(tzId, date) {
+      const fmt = (tz) => new Intl.DateTimeFormat('sv-SE', {
+        timeZone: tz, hour12: false,
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      }).format(date);
+      const krStr = fmt('Asia/Seoul');
+      const tzStr = fmt(tzId);
+      const toMs = (s) => Date.parse(s.replace(' ', 'T') + 'Z');
+      return Math.round((toMs(tzStr) - toMs(krStr)) / 60000);
+    }
+
+    const DAY_KR = { Mon: 'monday', Tue: 'tuesday', Wed: 'wednesday',
+                     Thu: 'thursday', Fri: 'friday', Sat: 'saturday', Sun: 'sunday' };
+
+    function formatDiff(min) {
+      if (min === 0) return '±0:00';
+      const sign = min > 0 ? '+' : '-';
+      const abs = Math.abs(min);
+      const h = Math.floor(abs / 60);
+      const m = abs % 60;
+      return `${sign}${h}:${String(m).padStart(2,'0')}`;
+    }
+
+    function updateTimes() {
+      const now = new Date();
+      document.querySelectorAll('.clock-card').forEach((card) => {
+        const tzId = card.dataset.tz;
+        const p = getTimeParts(now, tzId);
+        const hr24 = parseInt(p.hour, 10);
+        const min  = parseInt(p.minute, 10);
+        const sec  = parseInt(p.second, 10);
+        const isPM = hr24 >= 12;
+        const hr12 = ((hr24 + 11) % 12) + 1;
+
+        card.querySelector('.hh').textContent = String(hr12).padStart(2, '0');
+        card.querySelector('.mm').textContent = p.minute;
+        card.querySelector('.ampm').textContent = isPM ? 'PM' : 'AM';
+        card.querySelector('.ss').textContent = p.second;
+
+        card.querySelector('.date-ymd').textContent =
+          `${p.year}. ${p.month}. ${p.day}.`;
+        card.querySelector('.day-name').textContent = DAY_KR[p.weekday] || '?';
+
+        const diffMin = getOffsetMinutesFromKR(tzId, now);
+        card.querySelector('.diff-val').textContent = formatDiff(diffMin);
+
+        const phase = getPhase(hr24, min);
+        card.style.setProperty('--mood-color', phase.color);
+        card.querySelector('.phase-label').textContent = phase.label;
+
+        const dayProgress = (hr24 * 60 + min + sec/60) / (24 * 60) * 100;
+        card.querySelector('.day-progress .fill').style.width = dayProgress + '%';
+        card.querySelector('.day-progress .marker').style.left = dayProgress + '%';
+      });
+    }
+
+    const curYear = new Date().getFullYear();
+    document.getElementById('issueNum').textContent =
+      `Vol. ${String(Math.max(1, curYear - 2025)).padStart(2,'0')} · ${curYear}`;
+
+    document.getElementById('btnReset').addEventListener('click', () => {
+      selections = [...DEFAULTS];
+      saveSelections(selections);
+      renderAll();
+      updateTimes();
     });
-    el.addEventListener('mouseleave', ()=>{ isDown=false; el.classList.remove('dragging'); });
-    el.addEventListener('mouseup', ()=>{ isDown=false; el.classList.remove('dragging'); });
-    el.addEventListener('mousemove', function(e){
-      if(!isDown) return;
-      const x = e.pageX - el.offsetLeft;
-      const walk = (x - startX) * 1.1; // drag speed
-      el.scrollLeft = scrollLeft - walk;
+
+    renderAll();
+    updateTimes();
+
+    const ms = new Date().getMilliseconds();
+    setTimeout(() => {
+      updateTimes();
+      setInterval(updateTimes, 1000);
+    }, 1000 - ms);
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) updateTimes();
     });
-  })();
 
+    /* ═══════════════════════════════════════════════
+       TOOLS — Timer / Stopwatch / Alarm
+       ═══════════════════════════════════════════════ */
 
+    /* ─── 사운드 (Web Audio API) ─── */
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) {
+        try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        catch(e) { return null; }
+      }
+      // Some browsers suspend audio context until user gesture
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+    function beep(freq = 800, dur = 0.18, type = 'sine', vol = 0.25) {
+      const ctx = getAudioCtx(); if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.type = type;
+      gain.gain.setValueAtTime(vol, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+      osc.start();
+      osc.stop(ctx.currentTime + dur);
+    }
+    // 알람/타이머용 패턴 (3연속 비프)
+    function alarmBeep() {
+      beep(880, 0.16);
+      setTimeout(() => beep(880, 0.16), 220);
+      setTimeout(() => beep(1100, 0.30), 440);
+    }
 
+    /* ─── 시간 포맷 헬퍼 ─── */
+    function pad2(n) { return String(n).padStart(2, '0'); }
+    function fmtHMS(totalSec) {
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = Math.floor(totalSec % 60);
+      return `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
+    }
+    function fmtHMSms(ms) {
+      const totalSec = Math.floor(ms / 1000);
+      const cs = Math.floor((ms % 1000) / 10); // centiseconds
+      return { hms: fmtHMS(totalSec), cs: pad2(cs) };
+    }
 
+    /* ═══════════════════════════════════════════
+       TIMER (카운트다운)
+       ═══════════════════════════════════════════ */
+    const Timer = {
+      totalMs: 5 * 60 * 1000,   // 기본 5분
+      endTime: null,
+      running: false,
+      tickId: null,
+      ringId: null,
 
+      el: {
+        display: document.getElementById('timerDisplay'),
+        h: document.getElementById('timerH'),
+        m: document.getElementById('timerM'),
+        s: document.getElementById('timerS'),
+        startBtn: document.getElementById('timerStart'),
+        pauseBtn: document.getElementById('timerPause'),
+        resetBtn: document.getElementById('timerReset'),
+        presets: document.querySelectorAll('#timerCard .preset-btn'),
+        inputs: document.getElementById('timerInputs'),
+        ring: document.getElementById('timerRing'),
+        stopRing: document.getElementById('timerStopRing'),
+      },
 
+      readInputs() {
+        const h = Math.max(0, Math.min(23, parseInt(this.el.h.value, 10) || 0));
+        const m = Math.max(0, Math.min(59, parseInt(this.el.m.value, 10) || 0));
+        const s = Math.max(0, Math.min(59, parseInt(this.el.s.value, 10) || 0));
+        return (h * 3600 + m * 60 + s) * 1000;
+      },
+      writeInputs(ms) {
+        const sec = Math.floor(ms / 1000);
+        this.el.h.value = Math.floor(sec / 3600);
+        this.el.m.value = Math.floor((sec % 3600) / 60);
+        this.el.s.value = sec % 60;
+      },
+      updateDisplay(ms) {
+        const sec = Math.max(0, Math.ceil(ms / 1000));
+        this.el.display.textContent = fmtHMS(sec);
+        this.el.display.classList.toggle('is-active', this.running && ms > 0);
+      },
 
-   
+      start() {
+        if (!this.running) {
+          let baseMs = this.totalMs;
+          if (this.endTime === null) {
+            // 새로 시작 → 인풋에서 읽기
+            baseMs = this.readInputs();
+            if (baseMs <= 0) return;
+            this.totalMs = baseMs;
+          }
+          this.endTime = Date.now() + baseMs;
+          this.running = true;
+          this.el.startBtn.disabled = true;
+          this.el.pauseBtn.disabled = false;
+          this.el.inputs.style.pointerEvents = 'none';
+          this.el.inputs.style.opacity = '0.5';
+          this.tick();
+          this.tickId = setInterval(() => this.tick(), 250);
+        }
+      },
+      pause() {
+        if (!this.running) return;
+        this.totalMs = Math.max(0, this.endTime - Date.now());
+        this.running = false;
+        this.endTime = null;
+        clearInterval(this.tickId);
+        this.el.startBtn.disabled = false;
+        this.el.pauseBtn.disabled = true;
+        this.writeInputs(this.totalMs);
+        this.updateDisplay(this.totalMs);
+      },
+      reset() {
+        this.stopRinging();
+        clearInterval(this.tickId);
+        this.running = false;
+        this.endTime = null;
+        this.totalMs = this.readInputs() || 5 * 60 * 1000;
+        this.el.startBtn.disabled = false;
+        this.el.pauseBtn.disabled = true;
+        this.el.inputs.style.pointerEvents = '';
+        this.el.inputs.style.opacity = '';
+        this.updateDisplay(this.totalMs);
+      },
+      tick() {
+        const remaining = Math.max(0, this.endTime - Date.now());
+        this.updateDisplay(remaining);
+        if (remaining <= 0) {
+          this.complete();
+        }
+      },
+      complete() {
+        clearInterval(this.tickId);
+        this.running = false;
+        this.endTime = null;
+        this.el.startBtn.disabled = false;
+        this.el.pauseBtn.disabled = true;
+        this.el.inputs.style.pointerEvents = '';
+        this.el.inputs.style.opacity = '';
+        this.startRinging();
+      },
+      startRinging() {
+        this.el.ring.hidden = false;
+        this.el.display.classList.add('is-ringing');
+        alarmBeep();
+        this.ringId = setInterval(() => alarmBeep(), 1500);
+        // 30초 자동 중지
+        setTimeout(() => this.stopRinging(), 30000);
+      },
+      stopRinging() {
+        if (this.ringId) clearInterval(this.ringId);
+        this.ringId = null;
+        this.el.ring.hidden = true;
+        this.el.display.classList.remove('is-ringing');
+      },
+
+      init() {
+        this.updateDisplay(this.totalMs);
+        this.el.startBtn.addEventListener('click', () => { getAudioCtx(); this.start(); });
+        this.el.pauseBtn.addEventListener('click', () => this.pause());
+        this.el.resetBtn.addEventListener('click', () => this.reset());
+        this.el.stopRing.addEventListener('click', () => this.stopRinging());
+
+        this.el.presets.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const min = parseInt(btn.dataset.min, 10);
+            this.el.h.value = Math.floor(min / 60);
+            this.el.m.value = min % 60;
+            this.el.s.value = 0;
+            this.totalMs = min * 60 * 1000;
+            this.el.presets.forEach(b => b.classList.remove('is-active'));
+            btn.classList.add('is-active');
+            this.updateDisplay(this.totalMs);
+          });
+        });
+
+        // 인풋 변경 시 디스플레이 즉시 반영
+        [this.el.h, this.el.m, this.el.s].forEach(input => {
+          input.addEventListener('input', () => {
+            if (!this.running) {
+              this.totalMs = this.readInputs();
+              this.updateDisplay(this.totalMs);
+              this.el.presets.forEach(b => b.classList.remove('is-active'));
+            }
+          });
+        });
+      }
+    };
+    Timer.init();
+
+    /* ═══════════════════════════════════════════
+       STOPWATCH
+       ═══════════════════════════════════════════ */
+    const Stopwatch = {
+      elapsedMs: 0,
+      startedAt: null,
+      running: false,
+      tickId: null,
+      laps: [],   // [{ total, split }]
+
+      el: {
+        display: document.getElementById('swDisplay'),
+        hms: null,
+        ms: null,
+        startBtn: document.getElementById('swStart'),
+        lapBtn: document.getElementById('swLap'),
+        resetBtn: document.getElementById('swReset'),
+        list: document.getElementById('swLapList'),
+      },
+
+      getElapsed() {
+        if (this.running) return this.elapsedMs + (Date.now() - this.startedAt);
+        return this.elapsedMs;
+      },
+      updateDisplay() {
+        const ms = this.getElapsed();
+        const f = fmtHMSms(ms);
+        this.el.hms.textContent = f.hms;
+        this.el.ms.textContent = '.' + f.cs;
+      },
+      start() {
+        if (!this.running) {
+          this.startedAt = Date.now();
+          this.running = true;
+          this.el.startBtn.textContent = '정지';
+          this.el.startBtn.classList.remove('is-primary');
+          this.el.lapBtn.disabled = false;
+          this.el.resetBtn.disabled = false;
+          this.tickId = setInterval(() => this.updateDisplay(), 50);
+          this.el.display.classList.add('is-active');
+        } else {
+          this.stop();
+        }
+      },
+      stop() {
+        if (!this.running) return;
+        this.elapsedMs += Date.now() - this.startedAt;
+        this.startedAt = null;
+        this.running = false;
+        clearInterval(this.tickId);
+        this.el.startBtn.textContent = '계속';
+        this.el.startBtn.classList.add('is-primary');
+        this.el.lapBtn.disabled = true;
+        this.el.display.classList.remove('is-active');
+        this.updateDisplay();
+      },
+      reset() {
+        clearInterval(this.tickId);
+        this.elapsedMs = 0;
+        this.startedAt = null;
+        this.running = false;
+        this.laps = [];
+        this.el.startBtn.textContent = '시작';
+        this.el.startBtn.classList.add('is-primary');
+        this.el.lapBtn.disabled = true;
+        this.el.resetBtn.disabled = true;
+        this.el.display.classList.remove('is-active');
+        this.updateDisplay();
+        this.renderLaps();
+      },
+      lap() {
+        const total = this.getElapsed();
+        const lastTotal = this.laps.length ? this.laps[this.laps.length - 1].total : 0;
+        this.laps.push({ total, split: total - lastTotal });
+        this.renderLaps();
+      },
+      renderLaps() {
+        if (this.laps.length === 0) {
+          this.el.list.innerHTML = '';
+          return;
+        }
+        // fastest/slowest split
+        let fastestIdx = -1, slowestIdx = -1;
+        if (this.laps.length >= 2) {
+          let minSplit = Infinity, maxSplit = -Infinity;
+          this.laps.forEach((l, i) => {
+            if (l.split < minSplit) { minSplit = l.split; fastestIdx = i; }
+            if (l.split > maxSplit) { maxSplit = l.split; slowestIdx = i; }
+          });
+        }
+        // 최신이 위로
+        this.el.list.innerHTML = [...this.laps].reverse().map((l, ri) => {
+          const i = this.laps.length - 1 - ri;
+          const f = fmtHMSms(l.total);
+          const fs = fmtHMSms(l.split);
+          const cls = i === fastestIdx ? 'is-fastest' : (i === slowestIdx ? 'is-slowest' : '');
+          return `
+            <div class="lap-row ${cls}">
+              <span class="lap-num">Nº ${pad2(i + 1)}</span>
+              <span class="lap-total">${f.hms}.${f.cs}</span>
+              <span class="lap-split">+${fs.hms}.${fs.cs}</span>
+            </div>`;
+        }).join('');
+      },
+
+      init() {
+        // display 내부 span 참조
+        this.el.hms = this.el.display.querySelector('.hms');
+        this.el.ms = this.el.display.querySelector('.ms');
+        this.updateDisplay();
+        this.el.startBtn.addEventListener('click', () => { getAudioCtx(); this.start(); });
+        this.el.lapBtn.addEventListener('click', () => this.lap());
+        this.el.resetBtn.addEventListener('click', () => this.reset());
+      }
+    };
+    Stopwatch.init();
+
+    /* ═══════════════════════════════════════════
+       ALARM (여러 개, localStorage 저장)
+       ═══════════════════════════════════════════ */
+    const Alarm = {
+      ALARM_KEY: 'myway_alarms_v1',
+      alarms: [],
+      lastFiredKey: null,
+      ringingId: null,
+
+      el: {
+        clock: document.getElementById('alarmDisplayClock'),
+        form: document.getElementById('alarmAddForm'),
+        timeInput: document.getElementById('alarmTimeInput'),
+        labelInput: document.getElementById('alarmLabelInput'),
+        list: document.getElementById('alarmList'),
+        ring: document.getElementById('alarmRing'),
+        ringMsg: document.getElementById('alarmRingMsg'),
+        stopRing: document.getElementById('alarmStopRing'),
+      },
+
+      load() {
+        try {
+          const saved = localStorage.getItem(this.ALARM_KEY);
+          if (saved) {
+            const arr = JSON.parse(saved);
+            if (Array.isArray(arr)) {
+              this.alarms = arr.filter(a => a && typeof a.time === 'string');
+            }
+          }
+        } catch(e) {}
+      },
+      save() {
+        try { localStorage.setItem(this.ALARM_KEY, JSON.stringify(this.alarms)); } catch(e) {}
+      },
+      add(time, label) {
+        if (!/^\d{2}:\d{2}$/.test(time)) return;
+        const id = 'a' + Date.now() + Math.random().toString(36).slice(2,6);
+        this.alarms.push({ id, time, label: label || '', enabled: true });
+        this.alarms.sort((a, b) => a.time.localeCompare(b.time));
+        this.save();
+        this.render();
+      },
+      remove(id) {
+        this.alarms = this.alarms.filter(a => a.id !== id);
+        this.save();
+        this.render();
+      },
+      toggle(id) {
+        const a = this.alarms.find(x => x.id === id);
+        if (a) {
+          a.enabled = !a.enabled;
+          this.save();
+          this.render();
+        }
+      },
+      render() {
+        if (this.alarms.length === 0) {
+          this.el.list.innerHTML = '';
+          return;
+        }
+        this.el.list.innerHTML = this.alarms.map(a => {
+          const onClass = a.enabled ? 'is-on' : '';
+          const label = a.label ? this.escapeHtml(a.label) : '<span style="opacity:0.5">알람</span>';
+          return `
+            <div class="alarm-row ${onClass}" data-id="${a.id}">
+              <button class="alarm-toggle ${onClass}" data-toggle="${a.id}" aria-label="알람 켜기/끄기"></button>
+              <span class="alarm-time">${a.time}</span>
+              <span class="alarm-label">${label}</span>
+              <button class="alarm-delete" data-delete="${a.id}" aria-label="알람 삭제">×</button>
+            </div>`;
+        }).join('');
+        // attach handlers
+        this.el.list.querySelectorAll('[data-toggle]').forEach(b => {
+          b.addEventListener('click', () => this.toggle(b.dataset.toggle));
+        });
+        this.el.list.querySelectorAll('[data-delete]').forEach(b => {
+          b.addEventListener('click', () => {
+            if (confirm('이 알람을 삭제할까요?')) this.remove(b.dataset.delete);
+          });
+        });
+      },
+      escapeHtml(s) {
+        return s.replace(/[&<>"']/g, c => ({
+          '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+        })[c]);
+      },
+
+      checkAlarms() {
+        const now = new Date();
+        const hh = pad2(now.getHours());
+        const mm = pad2(now.getMinutes());
+        const ss = now.getSeconds();
+        const nowTime = `${hh}:${mm}`;
+        const dayKey = now.toDateString();
+
+        // update current time display
+        const isPM = now.getHours() >= 12;
+        const h12 = ((now.getHours() + 11) % 12) + 1;
+        this.el.clock.textContent = `${pad2(h12)}:${mm}`;
+
+        // 매 분 0초~5초 사이에만 체크 (중복 방지)
+        if (ss > 5) return;
+
+        this.alarms.forEach(a => {
+          if (!a.enabled) return;
+          if (a.time !== nowTime) return;
+          const fireKey = `${dayKey}__${a.id}__${a.time}`;
+          if (this.lastFiredKey === fireKey) return;
+          this.lastFiredKey = fireKey;
+          this.fire(a);
+        });
+      },
+      fire(alarm) {
+        this.el.ring.hidden = false;
+        this.el.ringMsg.textContent = `⏰ ${alarm.time}  ${alarm.label || '알람'}`;
+        alarmBeep();
+        this.ringingId = setInterval(() => alarmBeep(), 1500);
+        // 60초 자동 중지
+        setTimeout(() => this.stopRinging(), 60000);
+      },
+      stopRinging() {
+        if (this.ringingId) clearInterval(this.ringingId);
+        this.ringingId = null;
+        this.el.ring.hidden = true;
+      },
+
+      init() {
+        this.load();
+        this.render();
+        this.checkAlarms();
+
+        this.el.form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          getAudioCtx();   // unlock audio on first interaction
+          this.add(this.el.timeInput.value, this.el.labelInput.value.trim());
+          this.el.labelInput.value = '';
+        });
+        this.el.stopRing.addEventListener('click', () => this.stopRinging());
+
+        // 매 초마다 체크
+        setInterval(() => this.checkAlarms(), 1000);
+      }
+    };
+    Alarm.init();
   </script>
 </body>
 </html>
