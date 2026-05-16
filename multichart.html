@@ -3,6 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <!-- ━━━━ 도메인 보호 (myway.kr 외 호스트에서는 페이지 차단) ━━━━
+       허용: myway.kr (모든 서브도메인 포함), localhost, file:// (빈 호스트)
+       myway.kr 소유주가 도메인을 옮기거나 추가하려면 아래 정규식만 수정하면 됩니다.
+  -->
+  <script>
+  (function(){
+    var ok  = /(^|\.)myway\.kr$/i;
+    var dev = /^(localhost|127\.0\.0\.1|0\.0\.0\.0)$/i;
+    var h   = (location.hostname || '').toLowerCase();
+    if (ok.test(h) || dev.test(h) || h === '') return;
+    // 비허용 호스트: 화면 망가뜨림
+    document.documentElement.style.cssText =
+      'filter:blur(8px) saturate(0.1) brightness(0.35);pointer-events:none;overflow:hidden;';
+    document.addEventListener('DOMContentLoaded', function(){
+      var o = document.createElement('div');
+      o.style.cssText =
+        'position:fixed;inset:0;background:rgba(8,18,26,0.96);z-index:2147483647;' +
+        'display:flex;align-items:center;justify-content:center;flex-direction:column;' +
+        'gap:18px;font-family:-apple-system,"Apple SD Gothic Neo",sans-serif;' +
+        'color:#fff;text-align:center;padding:24px;backdrop-filter:blur(20px);filter:none;';
+      o.innerHTML =
+        '<div style="font-size:56px;line-height:1">⚠️</div>' +
+        '<div style="font-size:17px;font-weight:600;letter-spacing:-0.01em">' +
+          '이 페이지는 <span style="color:#6fc8ff">myway.kr</span> 전용입니다' +
+        '</div>' +
+        '<div style="font-size:12.5px;color:#aaa;line-height:1.7">' +
+          '원본: <a href="https://myway.kr/multichart.html" ' +
+          'style="color:#6fc8ff;text-decoration:none">myway.kr/multichart.html</a>' +
+        '</div>';
+      document.body.appendChild(o);
+    });
+  })();
+  </script>
+  <!-- ━━━━ 도메인 보호 끝 ━━━━ -->
+
   <title>다중 차트 · 종목 선택 - MYWAY.KR</title>
   <meta name="description" content="원하는 종목 3개를 골라 한 화면에서 실시간 차트로 비교.">
   <meta name="theme-color" content="#0a3145">
