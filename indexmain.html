@@ -291,7 +291,7 @@
     .sc-section {
       width: 100%;
       max-width: 1280px;
-      margin: 8px auto 32px;
+      margin: 28px auto 24px;
       padding: 0 24px;
       font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
       color: #333862;
@@ -1107,6 +1107,10 @@
       container.appendChild(g1Title);
       const g1 = renderGroup(group1);
       if (g1) container.appendChild(g1);
+
+      // ★ 자주가는 사이트 추가 섹션 - g1과 g2 사이에 삽입
+      const scSection = document.getElementById('sc-root');
+      if (scSection) container.appendChild(scSection);
 
       // 2단
       const g2Title = document.createElement("div");
