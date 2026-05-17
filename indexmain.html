@@ -423,26 +423,48 @@
       font-weight: 300;
     }
 
-    /* ⋮ 메뉴 버튼 - 원 우상단 모서리 */
+    /* × 삭제 버튼 - 평소엔 숨김, 호버 시 빨갛게 표시 */
     .sc-menu-btn {
       position: absolute;
-      top: -3px; right: -3px;
-      width: 22px; height: 22px;
+      top: -4px; right: -4px;
+      width: 24px; height: 24px;
       border-radius: 50%;
-      background: rgba(26,26,26,0.85);
+      background: #ef4444;
       border: 2px solid #fff;
       color: #fff;
       cursor: pointer;
-      font-size: 12px;
-      display: none;
+      font-size: 14px;
+      font-weight: 600;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0; line-height: 1;
-      z-index: 1;
+      padding: 0;
+      line-height: 1;
+      z-index: 2;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.7);
+      box-shadow: 0 3px 10px rgba(239,68,68,0.5);
+      transition: opacity 0.15s, transform 0.15s, background 0.15s;
     }
-    .sc-tile:hover .sc-menu-btn { display: inline-flex; }
+    .sc-tile:hover .sc-menu-btn {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+    .sc-menu-btn:hover {
+      background: #dc2626 !important;
+      transform: scale(1.15) !important;
+      box-shadow: 0 4px 14px rgba(239,68,68,0.65) !important;
+    }
+    /* 모바일(호버 없음)에선 살짝 보이게 */
     @media (hover: none) {
-      .sc-menu-btn { display: inline-flex; opacity: 0.7; }
+      .sc-menu-btn {
+        opacity: 0.75;
+        pointer-events: auto;
+        transform: scale(1);
+        background: rgba(26,26,26,0.6);
+      }
     }
 
     /* ───── 반응형 (logo-row와 완전 동일하게) ───── */
@@ -748,10 +770,25 @@
 
         const mb = document.createElement('button');
         mb.className = 'sc-menu-btn';
-        mb.textContent = '⋮';
-        mb.title = '편집/삭제';
-        mb.onclick = (e) => { e.preventDefault(); e.stopPropagation(); openCtx(e, s.id); };
+        mb.textContent = '×';
+        mb.title = '삭제 (편집은 우클릭)';
+        mb.setAttribute('aria-label', '삭제');
+        mb.onclick = (e) => {
+          e.preventDefault(); e.stopPropagation();
+          if (confirm('"' + (s.name || dom(s.url)) + '" 삭제할까요?')) {
+            items = items.filter(x => x.id !== s.id);
+            persist();
+            render();
+            toast('삭제됨');
+          }
+        };
         tile.appendChild(mb);
+
+        // 우클릭으로 편집 메뉴 (편집/삭제 둘 다 가능)
+        tile.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          openCtx(e, s.id);
+        });
 
         tile.addEventListener('dragstart', dStart);
         tile.addEventListener('dragover', dOver);
