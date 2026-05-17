@@ -283,6 +283,670 @@
   <div class="main-subtitle"></div>
   <div class="container" id="aiLogoContainer"></div>
 
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <!-- 자주가는 사이트 추가 섹션 (자체 포함 - 통째로 옮기거나 제거 가능) -->
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    .sc-section {
+      width: 100%;
+      max-width: 1280px;
+      margin: 8px auto 32px;
+      padding: 0 24px;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      color: #333862;
+    }
+
+    .sc-header {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 10px;
+      padding: 0 2px 14px;
+      margin-bottom: 14px;
+    }
+    .sc-title {
+      grid-column: 2;
+      margin: 0;
+      text-align: center;
+      font-family: 'Gowun Batang', 'Segoe UI', '맑은 고딕', serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #2a2f55;
+      white-space: nowrap;
+    }
+    .sc-actions {
+      grid-column: 3;
+      justify-self: end;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .sc-icon-btn {
+      width: 30px; height: 30px;
+      border: none;
+      background: transparent;
+      color: #8a93b8;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.12s;
+      padding: 0;
+    }
+    .sc-icon-btn:hover { color: #333862; background: #f1f3f8; }
+    .sc-icon-btn.danger:hover { color: #d33; background: #fdecec; }
+
+    /* ───── 그리드: .logo-row와 동일한 구조 ───── */
+    .sc-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 74px);
+      gap: 24px;
+      justify-content: center;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    /* ───── 타일: .ai-logo-wrap와 동일한 원형 ───── */
+    .sc-tile {
+      position: relative;
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 3px 24px 0 #b1c7e866;
+      border: 3px solid #e5e8f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: box-shadow 0.15s, border-color 0.15s, transform 0.12s;
+      cursor: pointer;
+      overflow: hidden;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      color: inherit;
+    }
+    .sc-tile:hover {
+      box-shadow: 0 8px 32px 0 #7e94ff99;
+      border-color: #94a2ff;
+      background: #f7faff;
+    }
+    .sc-tile.sc-dragging { opacity: 0.4; }
+    .sc-tile.sc-drag-over {
+      border-color: #4a9eff;
+      box-shadow: 0 0 0 3px rgba(74,158,255,0.3);
+    }
+
+    .sc-fav {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .sc-fav img {
+      width: 60%;
+      height: 60%;
+      object-fit: contain;
+    }
+    .sc-fav.sc-ph {
+      background: linear-gradient(135deg, #6fc8ff, #4a9eff);
+      color: #fff;
+      font-weight: 700;
+      font-size: 28px;
+    }
+
+    /* + 추가 타일 (점선 원) */
+    .sc-tile.sc-add {
+      background: transparent;
+      border: 2.5px dashed #cdd2de;
+      box-shadow: none;
+      color: #aab1c4;
+    }
+    .sc-tile.sc-add:hover {
+      border-color: #94a2ff;
+      color: #6fc8ff;
+      background: #f7faff;
+      box-shadow: none;
+    }
+    .sc-tile.sc-add .sc-fav {
+      background: transparent;
+      font-size: 32px;
+      font-weight: 300;
+    }
+
+    /* ⋮ 메뉴 버튼 - 원 우상단 모서리 */
+    .sc-menu-btn {
+      position: absolute;
+      top: -3px; right: -3px;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: rgba(26,26,26,0.85);
+      border: 2px solid #fff;
+      color: #fff;
+      cursor: pointer;
+      font-size: 12px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0; line-height: 1;
+      z-index: 1;
+    }
+    .sc-tile:hover .sc-menu-btn { display: inline-flex; }
+    @media (hover: none) {
+      .sc-menu-btn { display: inline-flex; opacity: 0.7; }
+    }
+
+    /* ───── 반응형 (logo-row와 완전 동일하게) ───── */
+    @media (min-width: 1600px) {
+      .sc-section { max-width: 1280px; padding: 0 24px; }
+      .sc-grid { grid-template-columns: repeat(12, 80px); }
+      .sc-tile { width: 80px; height: 80px; }
+      .sc-fav.sc-ph { font-size: 30px; }
+    }
+    @media (min-width: 1101px) and (max-width: 1599px) {
+      .sc-section { max-width: 1000px; }
+      .sc-grid { grid-template-columns: repeat(10, 74px); }
+      .sc-tile { width: 74px; height: 74px; }
+    }
+    @media (min-width: 901px) and (max-width: 1100px) {
+      .sc-section { max-width: 820px; }
+      .sc-grid { grid-template-columns: repeat(8, 70px); }
+      .sc-tile { width: 70px; height: 70px; }
+    }
+    @media (min-width: 701px) and (max-width: 900px) {
+      .sc-section { max-width: 700px; padding: 0 14px; }
+      .sc-grid { grid-template-columns: repeat(7, 70px); }
+      .sc-tile { width: 70px; height: 70px; }
+    }
+    @media (max-width: 700px) {
+      .sc-section { padding: 0 10px; }
+      .sc-grid { grid-template-columns: repeat(5, minmax(0, 64px)); gap: 18px; }
+      .sc-tile { width: 64px; height: 64px; border-width: 2.5px; }
+      .sc-fav.sc-ph { font-size: 24px; }
+      .sc-tile.sc-add { border-width: 2px; }
+      .sc-tile.sc-add .sc-fav { font-size: 28px; }
+      .sc-title { font-size: 16px; }
+    }
+    @media (max-width: 420px) {
+      .sc-section { padding: 0 8px; }
+      .sc-grid { grid-template-columns: repeat(4, minmax(0, 64px)); gap: 14px; }
+      .sc-title { font-size: 15px; letter-spacing: 0.02em; }
+    }
+    @media (max-width: 340px) {
+      .sc-grid { grid-template-columns: repeat(4, minmax(0, 56px)); gap: 12px; }
+      .sc-tile { width: 56px; height: 56px; }
+      .sc-fav.sc-ph { font-size: 20px; }
+      .sc-menu-btn { width: 18px; height: 18px; font-size: 10px; }
+    }
+    @media (orientation: landscape) and (max-height: 500px) {
+      .sc-section { max-width: 100%; padding: 0 16px; margin-top: 4px; }
+      .sc-grid { grid-template-columns: repeat(10, minmax(0, 52px)); gap: 12px; }
+      .sc-tile { width: 52px; height: 52px; border-width: 2px; }
+      .sc-fav.sc-ph { font-size: 18px; }
+      .sc-tile.sc-add .sc-fav { font-size: 22px; }
+    }
+    @media (orientation: landscape) and (max-height: 380px) {
+      .sc-grid { grid-template-columns: repeat(11, minmax(0, 46px)); gap: 10px; }
+      .sc-tile { width: 46px; height: 46px; }
+      .sc-fav.sc-ph { font-size: 16px; }
+    }
+
+    /* 모달 */
+    .sc-modal {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .sc-modal.sc-show { display: flex; }
+    .sc-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 22px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      color: #333862;
+    }
+    .sc-card h2 {
+      margin: 0 0 16px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .sc-field { margin-bottom: 12px; }
+    .sc-field label {
+      display: block;
+      font-size: 11px;
+      color: #777;
+      margin-bottom: 5px;
+    }
+    .sc-field input {
+      width: 100%;
+      background: #fff;
+      border: 1px solid #d8dae3;
+      color: #1a1a1a;
+      border-radius: 8px;
+      padding: 9px 11px;
+      font-size: 13.5px;
+      font-family: inherit;
+    }
+    .sc-field input:focus {
+      outline: none;
+      border-color: #4a9eff;
+      box-shadow: 0 0 0 3px rgba(74,158,255,0.15);
+    }
+    .sc-modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+    .sc-modal-actions button {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 500;
+    }
+    .sc-btn-cancel { background: #f1f1f1; color: #444; }
+    .sc-btn-cancel:hover { background: #e8e8e8; }
+    .sc-btn-primary { background: #4a9eff; color: #fff; }
+    .sc-btn-primary:hover { background: #357fde; }
+    .sc-btn-danger { background: #fdecec; color: #d33; border: 1px solid #f8c4c4; }
+    .sc-btn-danger:hover { background: #fad6d6; }
+
+    .sc-ctx {
+      position: fixed;
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      padding: 4px;
+      z-index: 9998;
+      min-width: 120px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      display: none;
+    }
+    .sc-ctx.sc-show { display: block; }
+    .sc-ctx button {
+      display: block;
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #1a1a1a;
+      padding: 8px 12px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      border-radius: 6px;
+    }
+    .sc-ctx button:hover { background: #f3f3f3; }
+    .sc-ctx button.sc-danger { color: #d33; }
+    .sc-ctx button.sc-danger:hover { background: #fdecec; }
+
+    .sc-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1a1a1a;
+      color: #fff;
+      padding: 9px 16px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      z-index: 10000;
+      transition: transform 0.22s;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+    .sc-toast.sc-show { transform: translateX(-50%) translateY(0); }
+  </style>
+
+  <section class="sc-section" id="sc-root">
+    <div class="sc-header">
+      <h2 class="sc-title">자주가는 사이트 추가</h2>
+      <div class="sc-actions">
+        <button class="sc-icon-btn" id="sc-export" title="내보내기 (JSON 다운로드)" aria-label="내보내기">↓</button>
+        <button class="sc-icon-btn" id="sc-import" title="가져오기 (JSON 업로드)" aria-label="가져오기">↑</button>
+        <button class="sc-icon-btn danger" id="sc-clear" title="모두 삭제" aria-label="모두 삭제">×</button>
+        <input type="file" id="sc-file" accept=".json,application/json" style="display:none">
+      </div>
+    </div>
+    <div class="sc-grid" id="sc-grid"></div>
+
+    <div class="sc-modal" id="sc-edit-modal">
+      <div class="sc-card">
+        <h2 id="sc-modal-title">바로가기 추가</h2>
+        <div class="sc-field">
+          <label for="sc-url">URL</label>
+          <input type="url" id="sc-url" placeholder="https://example.com" autocomplete="off">
+        </div>
+        <div class="sc-field">
+          <label for="sc-name">이름 (생략 가능)</label>
+          <input type="text" id="sc-name" placeholder="비우면 자동" autocomplete="off">
+        </div>
+        <div class="sc-modal-actions">
+          <button class="sc-btn-cancel" id="sc-cancel">취소</button>
+          <button class="sc-btn-primary" id="sc-save">저장</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc-modal" id="sc-import-modal">
+      <div class="sc-card">
+        <h2>가져오기 방법</h2>
+        <p style="font-size:12.5px;color:#555;margin:0 0 14px;line-height:1.6;">
+          파일: <strong id="sc-import-count">N</strong>개 · 현재: <strong id="sc-current-count">N</strong>개
+        </p>
+        <div class="sc-modal-actions" style="flex-direction:column;align-items:stretch;gap:7px;">
+          <button class="sc-btn-primary" id="sc-imp-merge">병합 (중복 제외 추가)</button>
+          <button class="sc-btn-danger" id="sc-imp-replace">전체 교체</button>
+          <button class="sc-btn-cancel" id="sc-imp-cancel">취소</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc-ctx" id="sc-ctx">
+      <button data-act="edit">편집</button>
+      <button data-act="delete" class="sc-danger">삭제</button>
+    </div>
+    <div class="sc-toast" id="sc-toast"></div>
+  </section>
+
+  <script>
+  (function() {
+    'use strict';
+    const KEY = 'mywayShortcutsV1';
+    const FAV = 'https://www.google.com/s2/favicons?sz=64&domain=';
+    const SAMPLES = [
+      { name: '네이버', url: 'https://www.naver.com' },
+      { name: '다음', url: 'https://www.daum.net' },
+      { name: '구글', url: 'https://www.google.com' },
+      { name: '유튜브', url: 'https://www.youtube.com' },
+      { name: '카카오', url: 'https://www.kakaocorp.com' },
+    ];
+
+    let items = [];
+    let editingId = null;
+    let pending = null;
+    let ctxId = null;
+    let dragId = null;
+
+    const $ = (id) => document.getElementById(id);
+
+    function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+    function normUrl(u) {
+      u = (u || '').trim();
+      if (!u) return '';
+      if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+      try { new URL(u); return u; } catch (e) { return ''; }
+    }
+    function dom(u) { try { return new URL(u).hostname; } catch (e) { return ''; } }
+    function guess(u) { const d = dom(u); return d ? d.replace(/^www\./, '').split('.')[0] : ''; }
+
+    function load() {
+      try {
+        const r = localStorage.getItem(KEY);
+        if (r) { const a = JSON.parse(r); if (Array.isArray(a)) return a; }
+      } catch (e) {}
+      return SAMPLES.map(s => ({ id: uid(), ...s }));
+    }
+    function persist() { try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (e) {} }
+
+    function toast(msg) {
+      const t = $('sc-toast');
+      t.textContent = msg;
+      t.classList.add('sc-show');
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => t.classList.remove('sc-show'), 1900);
+    }
+
+    function render() {
+      const grid = $('sc-grid');
+      grid.innerHTML = '';
+      items.forEach(s => {
+        const tile = document.createElement('a');
+        tile.className = 'sc-tile';
+        tile.href = s.url;
+        tile.target = '_blank';
+        tile.rel = 'noopener';
+        tile.title = s.name || dom(s.url);
+        tile.draggable = true;
+        tile.dataset.id = s.id;
+
+        const d = dom(s.url);
+        const fav = document.createElement('div');
+        fav.className = 'sc-fav';
+        if (d) {
+          const img = document.createElement('img');
+          img.src = FAV + encodeURIComponent(d);
+          img.alt = '';
+          img.onerror = () => {
+            fav.classList.add('sc-ph');
+            fav.textContent = (s.name || d).charAt(0).toUpperCase();
+          };
+          fav.appendChild(img);
+        } else {
+          fav.classList.add('sc-ph');
+          fav.textContent = (s.name || '?').charAt(0).toUpperCase();
+        }
+        tile.appendChild(fav);
+
+        const mb = document.createElement('button');
+        mb.className = 'sc-menu-btn';
+        mb.textContent = '⋮';
+        mb.title = '편집/삭제';
+        mb.onclick = (e) => { e.preventDefault(); e.stopPropagation(); openCtx(e, s.id); };
+        tile.appendChild(mb);
+
+        tile.addEventListener('dragstart', dStart);
+        tile.addEventListener('dragover', dOver);
+        tile.addEventListener('dragleave', dLeave);
+        tile.addEventListener('drop', dDrop);
+        tile.addEventListener('dragend', dEnd);
+        grid.appendChild(tile);
+      });
+
+      const add = document.createElement('div');
+      add.className = 'sc-tile sc-add';
+      add.title = '새 바로가기 추가';
+      add.innerHTML = '<div class="sc-fav">+</div>';
+      add.onclick = () => openEdit(null);
+      grid.appendChild(add);
+    }
+
+    function dStart(e) {
+      dragId = this.dataset.id;
+      this.classList.add('sc-dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      try { e.dataTransfer.setData('text/plain', dragId); } catch (err) {}
+    }
+    function dOver(e) {
+      if (!dragId || this.dataset.id === dragId) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      this.classList.add('sc-drag-over');
+    }
+    function dLeave() { this.classList.remove('sc-drag-over'); }
+    function dDrop(e) {
+      e.preventDefault();
+      this.classList.remove('sc-drag-over');
+      if (!dragId || this.dataset.id === dragId) return;
+      const f = items.findIndex(x => x.id === dragId);
+      const t = items.findIndex(x => x.id === this.dataset.id);
+      if (f < 0 || t < 0) return;
+      const [m] = items.splice(f, 1);
+      items.splice(t, 0, m);
+      persist();
+      render();
+    }
+    function dEnd() {
+      document.querySelectorAll('.sc-tile').forEach(t =>
+        t.classList.remove('sc-dragging', 'sc-drag-over'));
+      dragId = null;
+    }
+
+    function openEdit(id) {
+      editingId = id;
+      const m = $('sc-edit-modal');
+      const t = $('sc-modal-title');
+      const u = $('sc-url');
+      const n = $('sc-name');
+      if (id) {
+        const s = items.find(x => x.id === id);
+        if (!s) return;
+        t.textContent = '바로가기 편집';
+        u.value = s.url;
+        n.value = s.name || '';
+      } else {
+        t.textContent = '바로가기 추가';
+        u.value = '';
+        n.value = '';
+      }
+      m.classList.add('sc-show');
+      setTimeout(() => u.focus(), 50);
+    }
+    function closeEdit() { $('sc-edit-modal').classList.remove('sc-show'); editingId = null; }
+    function saveEdit() {
+      const u = $('sc-url'), n = $('sc-name');
+      const url = normUrl(u.value);
+      if (!url) { toast('올바른 URL을 입력해주세요'); u.focus(); return; }
+      const name = n.value.trim() || guess(url);
+      if (editingId) {
+        const s = items.find(x => x.id === editingId);
+        if (s) { s.url = url; s.name = name; }
+        toast('수정 완료');
+      } else {
+        items.push({ id: uid(), name, url });
+        toast('추가됨');
+      }
+      persist();
+      render();
+      closeEdit();
+    }
+
+    function openCtx(e, id) {
+      ctxId = id;
+      const m = $('sc-ctx');
+      m.style.left = Math.min(e.clientX, window.innerWidth - 140) + 'px';
+      m.style.top = Math.min(e.clientY, window.innerHeight - 100) + 'px';
+      m.classList.add('sc-show');
+    }
+    function closeCtx() { $('sc-ctx').classList.remove('sc-show'); ctxId = null; }
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#sc-ctx') && !e.target.closest('.sc-menu-btn')) closeCtx();
+    });
+    $('sc-ctx').addEventListener('click', (e) => {
+      const b = e.target.closest('button');
+      if (!b || !ctxId) return;
+      if (b.dataset.act === 'edit') openEdit(ctxId);
+      else if (b.dataset.act === 'delete') {
+        const s = items.find(x => x.id === ctxId);
+        if (s && confirm('"' + (s.name || dom(s.url)) + '" 삭제할까요?')) {
+          items = items.filter(x => x.id !== ctxId);
+          persist();
+          render();
+          toast('삭제됨');
+        }
+      }
+      closeCtx();
+    });
+
+    function doExport() {
+      const data = {
+        app: 'myway.kr', type: 'shortcuts', version: 1,
+        exportedAt: new Date().toISOString(),
+        count: items.length, shortcuts: items,
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const ymd = new Date().toISOString().slice(0,10).replace(/-/g, '');
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'myway-shortcuts-' + ymd + '.json';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 100);
+      toast(items.length + '개 내보내기 완료');
+    }
+    function readFile(file) {
+      const r = new FileReader();
+      r.onload = () => {
+        try {
+          const d = JSON.parse(r.result);
+          const arr = Array.isArray(d) ? d : (Array.isArray(d.shortcuts) ? d.shortcuts : null);
+          if (!arr) throw new Error('형식 오류');
+          const v = arr.filter(s => s && s.url && normUrl(s.url));
+          if (!v.length) { toast('유효한 항목 없음'); return; }
+          pending = v.map(s => ({ id: s.id || uid(), name: s.name || guess(s.url), url: normUrl(s.url) }));
+          $('sc-import-count').textContent = pending.length;
+          $('sc-current-count').textContent = items.length;
+          $('sc-import-modal').classList.add('sc-show');
+        } catch (e) { toast('파일 읽기 실패'); }
+      };
+      r.readAsText(file);
+    }
+    function doImport(mode) {
+      if (!pending) return;
+      if (mode === 'replace') {
+        items = pending.map(s => ({ ...s, id: uid() }));
+        toast('전체 교체: ' + items.length + '개');
+      } else {
+        const ex = new Set(items.map(s => s.url));
+        const add = pending.filter(s => !ex.has(s.url));
+        add.forEach(s => items.push({ ...s, id: uid() }));
+        toast(add.length + '개 추가');
+      }
+      persist(); render();
+      pending = null;
+      $('sc-import-modal').classList.remove('sc-show');
+    }
+
+    $('sc-export').onclick = doExport;
+    $('sc-import').onclick = () => $('sc-file').click();
+    $('sc-file').onchange = (e) => { if (e.target.files[0]) readFile(e.target.files[0]); e.target.value = ''; };
+    $('sc-clear').onclick = () => {
+      if (!items.length) { toast('비어있음'); return; }
+      if (confirm(items.length + '개 전부 삭제할까요?')) {
+        items = []; persist(); render(); toast('모두 삭제됨');
+      }
+    };
+    $('sc-cancel').onclick = closeEdit;
+    $('sc-save').onclick = saveEdit;
+    $('sc-url').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('sc-name').focus(); });
+    $('sc-name').addEventListener('keydown', (e) => { if (e.key === 'Enter') saveEdit(); });
+    $('sc-imp-merge').onclick = () => doImport('merge');
+    $('sc-imp-replace').onclick = () => doImport('replace');
+    $('sc-imp-cancel').onclick = () => { pending = null; $('sc-import-modal').classList.remove('sc-show'); };
+    document.querySelectorAll('.sc-modal').forEach(m => {
+      m.addEventListener('click', (e) => { if (e.target === m) m.classList.remove('sc-show'); });
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.sc-modal.sc-show').forEach(m => m.classList.remove('sc-show'));
+        closeCtx();
+      }
+    });
+
+    items = load();
+    render();
+  })();
+  </script>
+  <!-- ━━━━━━━━━━━━━━━ 자주가는 사이트 추가 끝 ━━━━━━━━━━━━━━━ -->
+
   <script>
     // 1번 그룹
     const group1 = [
