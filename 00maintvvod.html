@@ -1,461 +1,688 @@
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>MYWAY ,무료 드라마, LIVE TV, FREE VOD, TV influencer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>무료 VOD 모음 - KBS, SBS, 채널A | MYWAY.KR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="KBS, SBS, 채널A 무료 VOD를 한 곳에서 - MYWAY.KR">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
   <style>
-    body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
-    .dashboard { max-width: 1200px; margin: 0 auto; padding: 12px 0 40px 0;} /* 상단여백 축소 */
-    .gallery-label {
+    *, *::before, *::after { box-sizing: border-box; }
 
-
-      
-      font-weight: bold; font-size: 1.0rem;       margin: 3px        0 14px 0;
-
-
-      
-      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
+    :root {
+      --nav-grad: linear-gradient(95deg, #7ed6fb 10%, #b176f3 90%);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
-    .gallery-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;  /* 중앙정렬 */
-      gap: 0 16px;
-      max-width: 1235px;  /* 5개씩 딱 맞게! (283*5 + 16*4) */
-      margin: 0 auto;
-      min-height: 200px;
-      align-items: flex-start;
-    }
-    .list-row {
-      box-sizing: border-box;
-      position: relative;
+
+    html, body {
+      margin: 0; padding: 0;
       background: #fff;
-      margin-bottom: 36px;
-      transition: width 0.2s, height 0.2s;
-      display: block;
-      max-width: 283px;
+      font-family: 'Segoe UI', '맑은 고딕', 'NanumGothic', Arial, sans-serif;
+      width: 100%;
+      -webkit-text-size-adjust: 100%;
+    }
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    img { -webkit-user-drag: none; user-drag: none; -webkit-touch-callout: none; }
+    input, textarea, [contenteditable] {
+      -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text;
+    }
+
+    /* ===== 상단 sticky 헤더 ===== */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255,255,255,.96);
+      backdrop-filter: saturate(180%) blur(8px);
+      -webkit-backdrop-filter: saturate(180%) blur(8px);
+      border-bottom: 1px solid #eef0f4;
+      padding: 10px 12px;
+      padding-left: max(12px, env(safe-area-inset-left));
+      padding-right: max(12px, env(safe-area-inset-right));
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* 좌측 홈 아이콘 */
+    .home-link {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px; height: 36px;
+      padding: 0;
+      border-radius: 50%;
+      text-decoration: none;
+      color: #fff;
+      background: var(--nav-grad);
+      box-shadow: 0 6px 18px rgba(177,118,243,0.28);
+      transition: transform .15s, box-shadow .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .home-link:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(177,118,243,0.36); }
+    .home-link:active { transform: translateY(0); }
+    .home-link svg { width: 19px; height: 19px; fill: currentColor; display: block; }
+
+    /* 채널 네비 */
+    .cat-nav {
+      flex: 1 1 auto;
+      min-width: 0;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 2px 0;
+    }
+    .cat-nav::-webkit-scrollbar { display: none; }
+    .cat-btn {
+      font: inherit;
+      font-size: .92rem;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      padding: 7px 16px;
+      border-radius: 999px;
+      border: 1.5px solid #dfe3ec;
+      background: #fff;
+      color: #4a5170;
+      cursor: pointer;
+      transition: all .15s;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cat-btn:hover { background: #f4f6fb; border-color: #c7cee0; }
+    .cat-btn:active { transform: scale(0.96); }
+    .cat-btn.is-active {
+      background: #1f2740;
+      color: #fff;
+      border-color: #1f2740;
+    }
+    .cat-btn .count {
+      display: inline-block;
+      margin-left: 4px;
+      font-size: .72rem;
+      opacity: .65;
+      font-weight: 500;
+    }
+    .cat-btn.is-active .count { opacity: .85; }
+
+    /* ===== 안내 정보 (핀 로고 + 팝오버) ===== */
+    .info-wrap {
+      position: relative;
+      flex: 0 0 auto;
+      line-height: 0;
+    }
+    .info-btn {
+      width: 30px;
+      height: 36px;
+      border: none;
+      background: transparent;
+      color: #2DBAC0;       /* 핀 색상 (청록) */
+      cursor: pointer;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .15s, color .15s;
+      filter: drop-shadow(0 2px 4px rgba(45,186,192,.35));
+    }
+    .info-btn:hover { color: #1f9ea2; transform: translateY(-2px); }
+    .info-btn.is-open { color: #16797d; }
+    .info-btn:active { transform: translateY(0) scale(0.95); }
+    .info-btn svg { width: 100%; height: 100%; display: block; }
+
+    /* 첫 진입 시 3번 펄스 (시선 유도) */
+    @keyframes info-pulse {
+      0%, 100% { transform: scale(1); }
+      50%      { transform: scale(1.18); }
+    }
+    .info-btn.pulse {
+      animation: info-pulse 0.55s ease-in-out 3;
+      transform-origin: center bottom;
+    }
+
+    .info-popover {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%) translateY(-4px);
+      width: 290px;
+      background: #fff;
+      border: 1px solid #eef0f4;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(31,39,64,.18), 0 2px 6px rgba(0,0,0,.06);
+      padding: 12px 14px;
+      font-size: .85rem;
+      line-height: 1.55;
+      color: #4a5170;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .15s, transform .15s, visibility .15s;
+      pointer-events: none;
+      text-align: left;
+    }
+    /* 호버(PC) 또는 클릭(.is-open) 시 모두 열림 */
+    .info-wrap:hover .info-popover,
+    .info-popover.is-open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+    .info-popover::before {
+      content: "";
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      margin-left: -6px;
+      width: 12px; height: 12px;
+      background: #fff;
+      border-top: 1px solid #eef0f4;
+      border-left: 1px solid #eef0f4;
+      transform: rotate(45deg);
+    }
+    .info-popover .row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 4px 0;
+    }
+    .info-popover .row + .row {
+      border-top: 1px dashed #eef0f4;
+      margin-top: 4px;
+      padding-top: 8px;
+    }
+    .info-popover .ic {
+      flex: 0 0 auto;
+      font-size: 1.05rem;
+      line-height: 1.2;
+      margin-top: 1px;
+    }
+    .info-popover strong { color: #1f2740; font-weight: 700; }
+    @media (max-width: 480px) {
+      .info-popover {
+        width: calc(100vw - 32px);
+        max-width: 320px;
+      }
+    }
+
+    /* ===== 갤러리 영역 ===== */
+    .dashboard {
+      max-width: 1235px;
+      margin: 0 auto;
+      padding: 18px 12px 40px;
+    }
+    .gallery-label-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 6px 0 16px;
+      position: relative;
+    }
+    .gallery-label {
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin: 0;
+      color: #232356;
+      text-align: center;
+      letter-spacing: 0.3px;
+    }
+    .gallery-label .count {
+      font-size: .8rem;
+      font-weight: 500;
+      color: #8590ad;
+      margin-left: 6px;
+    }
+
+    /* CSS Grid 기반 카드 그리드 — vw 사이즈 제거, 흔들림 0 */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 24px 16px;
+      width: 100%;
+    }
+
+    /* 카테고리 필터 - JS 재렌더 없이 CSS만으로 토글 */
+    .gallery:not([data-active]) > [data-ch] { display: none; }
+    .gallery[data-active="kbs"] > [data-ch]:not([data-ch="kbs"]) { display: none; }
+    .gallery[data-active="sbs"] > [data-ch]:not([data-ch="sbs"]) { display: none; }
+    .gallery[data-active="cha"] > [data-ch]:not([data-ch="cha"]) { display: none; }
+
+    /* 카드 */
+    .list-row {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin: 0;
     }
     .imgframe {
-      width: 100%; height: 100%;
+      width: 100%;
+      /* 기본 portrait 비율 (200:283 ≈ 2:2.83) — 이미지 로드 전에도 자리 고정 */
+      aspect-ratio: 200 / 283;
       background: #fff;
-      position: relative;
-      box-sizing: border-box;
-      z-index: 0;
-      border-radius: 0;
       box-shadow: 0 6px 6px 0 rgba(90,90,130,0.11);
       overflow: hidden;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
+      position: relative;
     }
-    .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
-    .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
-    .img-item img {
-      display: block; width: 100%; height: 100%;
+    /* landscape 오버라이드 */
+    .list-row.box-landscape .imgframe {
+      aspect-ratio: 283 / 200;
+    }
+    .imgframe a {
+      display: block;
+      width: 100%; height: 100%;
+    }
+    .imgframe img {
+      display: block;
+      width: 100%; height: 100%;
       object-fit: contain;
       background: #fff;
+    }
+    .shadow-line {
+      text-align: center;
       margin: 0;
-      border: none;
       padding: 0;
+      max-width: 100%;
+      overflow: hidden;
     }
-    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
-    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
+    .shadow-line img {
+      display: block;
+      margin: 0 auto;
+      width: 95%;
+      height: 20px;
+      pointer-events: none;
+    }
 
-    /* ----------- 크기 강제 지정 ------------ */
-    .box-portrait  { width:200px; height:283px; }
-    .box-landscape { width:283px; height:200px; }
+    /* 반응형 컬럼 */
+    @media (max-width: 900px) {
+      .gallery { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 20px 14px; }
+    }
+    @media (max-width: 600px) {
+      .gallery { grid-template-columns: repeat(2, 1fr); gap: 18px 12px; }
+      .dashboard { padding: 14px 10px 36px; }
+    }
+    @media (max-width: 360px) {
+      .gallery { grid-template-columns: repeat(2, 1fr); gap: 14px 8px; }
+    }
 
-    /* 반응형(모바일) */
-    @media (max-width: 1235px) {
-      .gallery-row { max-width: 98vw; }
+    /* ===== MYWAY.KR 공통 ===== */
+    .myway-home-btn {
+      position: fixed;
+      right: 14px;
+      bottom: calc(14px + var(--safe-bottom));
+      z-index: 9999;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 14px 9px 12px;
+      background: #1f2740; color: #fff;
+      border-radius: 999px;
+      font-size: .82rem; font-weight: 700;
+      text-decoration: none; letter-spacing: -0.2px;
+      box-shadow: 0 4px 14px rgba(31,39,64,.32);
+      transition: transform .15s, box-shadow .15s, background-color .15s;
+      -webkit-tap-highlight-color: transparent;
     }
-    @media (max-width: 1080px) {
-      .gallery-row { max-width: 98vw; }
-      .box-portrait  { width:28vw; height:40vw; min-width:80px; min-height:100px;}
-      .box-landscape { width:40vw; height:28vw; min-width:80px; min-height:100px;}
-      .list-row { max-width: 40vw; }
+    .myway-home-btn:hover { transform: translateY(-2px); background: #2a3358; }
+    .myway-home-btn svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
+
+    .myway-footer {
+      width: 100%;
+      text-align: center;
+      padding: 22px 14px calc(28px + var(--safe-bottom));
+      margin-top: 36px;
+      border-top: 1px solid #eef0f4;
+      font-size: .82rem;
+      color: #8590ad;
     }
+    .myway-footer a { color: #4a5170; text-decoration: none; font-weight: 700; }
+    .myway-footer a:hover { color: #1f2740; }
+    .myway-footer .sep { display: inline-block; margin: 0 8px; opacity: .5; }
+
     @media (max-width: 700px) {
-      .gallery-row { max-width: 99vw; }
-      .box-portrait  { width:44vw; height:62vw; min-width:65px; min-height:85px;}
-      .box-landscape { width:62vw; height:44vw; min-width:65px; min-height:85px;}
-      .list-row { max-width: 62vw; }
+      .home-link { width: 38px; height: 38px; }
+      .home-link svg { width: 20px; height: 20px; }
+      .cat-btn { padding: 7px 14px; font-size: .88rem; }
     }
   </style>
 </head>
 <body>
-  <div class="dashboard">
-    <span class="gallery-label">SBS무료 VOD 모음</span>
-    <div class="gallery-row" id="gallery1"></div>
-    <span class="gallery-label">KBS 무료 VOD 모음</span>
-    <div class="gallery-row" id="gallery2"></div>
-    <span class="gallery-label">KBS 무료 VOD 모음</span>
-    <div class="gallery-row" id="gallery3"></div>
-    <span class="gallery-label">채널A 무료 VOD</span>
-    <div class="gallery-row" id="gallery4"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery5"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery6"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery7"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery8"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery9"></div>
-    <span class="gallery-label"></span>
-    <div class="gallery-row" id="gallery10"></div>
-  </div>
-  <script>
-    // 샘플 데이터(갤1~10)
-    const gallery1Data = [
 
-
-
-
-  { url: "https://allvod.sbs.co.kr/watch/vod/00000379136/22000084371?from=character", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/06/25/3VU1750833429114.jpg" },
-
-  { url: "https://allvod.sbs.co.kr/watch/vod/00000364336/22000081422?from=character", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/06/25/Ypv1750826050323.jpg" },
-
-
- { url: "https://allvod.sbs.co.kr/watch/vod/22000010545/22000245975?from=character", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/07/03/inP1751517139265.jpg" },
-
- { url: "https://allvod.sbs.co.kr/watch/vod/00000343372/22000070399?from=character", img: "https://img2.sbs.co.kr/sbs_img/resize/RlH1682053034827.jpg" },
-
-
-
-
-
-
-
-
-
-      
-
-
-  { url: "https://allvod.sbs.co.kr/watch/vod/P468547030/22000521285?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2024/01/15/57L1705302021556.jpg" },
-{ url: "https://allvod.sbs.co.kr/watch/vod/P468644073/22000525357?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2024/03/19/aX71710814350262.jpg" },
-
-{ url: "https://allvod.sbs.co.kr/watch/vod/P467075719/22000517681?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/05/28/7vt1748409782477.jpg" },
-{ url: "https://allvod.sbs.co.kr/watch/vod/P463878657/22000506930?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2023/07/18/bgq1689660865244.jpg" },
-
-
-{ url: "https://allvod.sbs.co.kr/watch/vod/P461258601/22000489998?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/04/15/hPp1744694283194.jpg" },
-
-      { url: "https://allvod.sbs.co.kr/watch/vod/P453350691/22000407863?from=free", img: "https://i.namu.wiki/i/QT6NJVSZEkFjHh09HFbPad4vpTOz5zZ9aX6tkUdL1Lvu75c9HdIqREO1nmPYCN0auRu8O29obYMoPwN67jCqhg.webp" },
-
-      
-      { url: "https://allvod.sbs.co.kr/watch/vod/P462342128/22000486932?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2024/11/06/1I31730854095532.jpg" },
-
-
-{ url: "https://allvod.sbs.co.kr/watch/vod/P463606002/22000486878?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/06/25/Vxl1750836272901.jpg" },
-{ url: "https://allvod.sbs.co.kr/watch/vod/P460545279/22000470528?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/05/22/1k01747899719363.jpg" },
-
-
-{ url: "https://allvod.sbs.co.kr/watch/vod/00000349314/22000074586?from=genre", img: "https://img2.sbs.co.kr/sbs_img/resize/aBV1665560910237.jpg" },
-{ url: "https://allvod.sbs.co.kr/watch/vod/00000318525/22000032243?from=genre", img: "https://img2.sbs.co.kr/sbs_img/resize/NAq1665037632215.jpg" },
-
-{ url: "https://allvod.sbs.co.kr/watch/vod/00000224904/22000017497?from=genre", img: "https://img2.sbs.co.kr/sbs_img/resize/crM1666053839347.jpg" },
-{ url: "https://allvod.sbs.co.kr/watch/vod/00000329708/22000049343?from=genre", img: "https://img2.sbs.co.kr/sbs_img/resize/JEV1663810673426.jpg" },
-
-
-
-
-
-      
-
-
-      
-{ url: "https://allvod.sbs.co.kr/watch/vod/P463892291/22000494447?from=search", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/04/24/Ecx1745455438991.jpg" },
-{ url: "https://allvod.sbs.co.kr/watch/vod/P468644077/22000529586?from=free", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2024/08/08/hSq1723082596174.jpg" },
-
-{ url: "https://allvod.sbs.co.kr/watch/vod/P465694827/22000503532?from=free", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/05/28/G7C1748409710393.jpg" },
-
-{ url: "https://allvod.sbs.co.kr/showcase/34631/P470396967/22000531878?type=program&time=30", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2024/06/13/dxZ1718252433305.jpg" },
-
-{ url: "https://allvod.sbs.co.kr/watch/vod/P463878655/22000498203?from=free", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2023/07/18/BRm1689660386017.jpg" },
-
-{ url: "https://allvod.sbs.co.kr/watch/vod/22000011114/22000552275?from=character", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/01/31/ZaJ1738302924582.jpg" },
-
-
-{ url: "https://allvod.sbs.co.kr/watch/vod/P463878655/22000498203?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2023/07/18/nh81689659942363.jpg" },
-
-{ url: "https://allvod.sbs.co.kr/watch/vod/P462511102/22000510365?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2023/09/12/LGk1694478068832.jpg" },
-
-{ url: "https://allvod.sbs.co.kr/watch/vod/22000009610/22000199820?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/06/25/1Sr1750834849336.jpg" },
-
-
-      
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-      
-    ];
-    const gallery2Data = [
-      
-
-
-  
-
-
-      
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0562&program_id=PS-2024175630-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2024-0562/2025/4/22/1745300911484_581548.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0435&program_id=PS-2024210478-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2024-0435/2024/12/19/1734584291455_561327.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0360&program_id=PS-2024100528-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2024-0360/2024/9/24/1727141698381_542733.jpg" },
-
-      { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0472&program_id=PS-2025017995-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2024-0472/2025/1/20/1737358071272_567551.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0283&program_id=PS-2024069120-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2024-0283/2024/9/6/1725587616611_540423.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0377&program_id=PS-2024101579-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2024-0377/2024/10/23/1729641564227_548853.jpg" },
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0274&program_id=PS-2024067999-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2024-0274/2024/6/10/1718000348085_526129.jpg" },
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2023-0449&program_id=PS-2023233227-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2023-0449/2024/3/11/1710140393854_508968.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2023-0090&program_id=PS-2023052697-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2023-0090/2023/10/5/1696461658581_470522.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2023-0373&program_id=PS-2023185825-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2023-0373/2024/1/9/1704783435881_498513.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0032&program_id=PS-2024023104-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2024-0032/2024/4/30/1714455790200_518857.jpg" },
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2023-0205&program_id=PS-2023110132-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2023-0205/2023/8/31/1693457278120_462599.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0913&program_id=PS-2022209599-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0913/2023/3/9/1678319698445_429780.jpg" },
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0867&program_id=PS-2022187159-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0867/2023/2/28/1677534702227_428040.jpg" },
-
-   { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0665&program_id=PS-2022117434-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0665/2022/9/19/1663570278006_401619.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0690&program_id=PS-2022129960-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0690/2022/9/26/1664177727542_403392.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0202&program_id=PS-2022068646-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0202/2022/11/9/1667975477785_409445.jpg" }, 
-    
-    { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0237&program_id=PS-2022086363-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0237/2022/9/28/1664329249605_403906.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0051&program_id=PS-2022054369-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0051/2022/5/16/1652662403288_384479.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0019&program_id=PS-2022011588-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0019/2022/4/7/1649292534656_373136.jpg" },
-    
-    { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0090&program_id=PS-2022055303-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0090/2022/6/10/1654842408288_388337.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0367&program_id=PS-2022021019-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0367/2022/4/25/1650846064009_378095.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0427&program_id=PS-2021158508-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0427/2021/11/25/1637824471143_349317.jpg" },
-    
-    { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0263&program_id=PS-2021085983-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0263/2021/12/1/1638331661328_350709.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0257&program_id=PS-2021077260-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0257/2021/9/30/1632963077971_337197.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0046&program_id=PS-2021025749-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0046/2021/12/8/1638944682028_353757.jpg" },
-    
-    { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0297&program_id=PS-2021186180-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0297/2021/11/9/1636443197972_344642.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0238&program_id=PS-2021071866-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0238/2021/10/15/1634259638997_340023.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0216&program_id=PS-2021069704-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0216/2021/9/28/1632815535350_336107.jpg" },
-    
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0212&program_id=PS-2021058752-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0212/2021/6/29/1624939892837_326387.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-1626&program_id=PS-2020193480-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-1626/2021/3/19/1616136389481_311665.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-1631&program_id=PS-2020195837-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-1631/2021/2/2/1612251045684_302857.jpg" },
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-1602&program_id=PS-2020188263-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-1602/2021/4/26/1619414083125_316476.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0001&program_id=PS-2021001041-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0001/2021/3/5/1614921620116_308660.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-0442&program_id=PS-2020128024-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-0442/2021/1/28/1611790581201_301607.jpg" },
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-0416&program_id=PS-2020113334-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-0416/2020/10/7/1602033374285_282784.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-0412&program_id=PS-2020109107-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-0412/2020/9/2/1599029638313_277208.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-0441&program_id=PS-2020135518-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-0441/2020/12/4/1607056288818_294960.jpg" },
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-0349&program_id=PS-2020077658-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-0349/2020/10/27/1603754613246_287346.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-0032&program_id=PS-2020018090-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-0032/2020/4/14/1586853387179_254928.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2019-0420&program_id=PS-2019194418-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2019-0420/2020/3/11/1583909901055_244311.jpg" },
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-0016&program_id=PS-2020005793-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-0016/2020/3/18/1584517329159_247029.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2019-0412&program_id=PS-2019190005-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2019-0412/2020/3/17/1584407956751_246448.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2019-0245&program_id=PS-2019152514-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2019-0245/2019/10/25/1571991181399_222462.jpg" },
-
-
-
-
-
- ];
-    const gallery3Data = [
-
-
-      
-
-
-
-
-
-
-      
-
-      { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2025-0018&program_id=PS-2025017008-01-000&broadcast_complete_yn=N&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2025-0018/2025/4/9/1744184563914_578417.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2017-0621&program_id=PS-2017122776-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2017-0621/2017/12/27/1514364354786_92307.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0505&program_id=PS-2024156416-01-000&broadcast_complete_yn=N&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2024-0505/2025/5/22/1747900600354_585600.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0645&program_id=PS-2024201542-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2024-0645/2025/3/11/1741650825936_571988.jpg" },
-
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2025-0012&program_id=PS-2025007661-01-000&broadcast_complete_yn=N&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2025-0012/2025/3/20/1742445641008_572821.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0604&program_id=PS-2024192615-01-000&broadcast_complete_yn=N&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2024-0604/2025/1/15/1736897500225_566139.jpg" },
-
-
-
-
-
-
-      { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2017-0970&program_id=PS-2017180694-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2017-0970/2017/12/27/1514365435998_92502.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2018-0510&program_id=PS-2018139544-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2018-0510/2018/11/27/1543279743671_166306.jpg" },
-
-
-
-      
-      
-
-
-
-
-
-      
-
-
-      
-
-      
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2006-0272&program_id=PS-0000771891-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2006-0272/2021/12/15/1639531491551_355942.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2000-0112&program_id=PS-0000447021-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2000-0112/2022/5/3/1651553428404_382079.jpg" },
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0241&program_id=PS-2021069490-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2021-0241/2021/9/14/1631595648857_334467.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2012-0222&program_id=PS-2012060324-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2023/6/1/1685579170098_345197.png" },
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2019-0029&program_id=PS-2019027825-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2019-0029/2019/5/9/1557362118358_197370.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2017-0896&program_id=PS-2017162890-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2017-0896/2017/12/27/1514365371336_92498.jpg" },
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2004-0408&program_id=PS-0000769966-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2023/6/1/1685579184713_345200.png" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-0442&program_id=PS-2020128024-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2020-0442/2021/1/28/1611790581360_301618.jpg" },
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0048&program_id=PS-2023012566-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2022-0048/2023/4/19/1681886409042_441504.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2017-0653&program_id=PS-2017124545-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2017-0653/2018/7/5/1530752698441_118977.jpg" },
-
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2019-0412&program_id=PS-2019190005-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2019-0412/2020/3/17/1584407956872_246459.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2015-0165&program_id=PS-2015052752-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2025/6/11/1749606536809_459765.png" },
-
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2013-0764&program_id=PS-2013249599-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2025/6/11/1749606464911_459743.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2015-0325&program_id=PS-2015098859-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2025/6/11/1749606491957_459754.jpg" },
-
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2010-0141&program_id=PS-0001095065-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2025/6/11/1749606578851_459776.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2013-0392&program_id=PS-2013136684-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2013-0392/2021/12/15/1639531555345_355975.jpg" },
-
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2012-0574&program_id=PS-2012155777-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2012-0574/2021/12/15/1639531468844_355931.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2010-0501&program_id=PS-0001101966-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2025/5/7/1746578296398_453213.png" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2011-1071&program_id=PS-2011168231-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2011-1071/2022/4/26/1650948033307_379962.jpg" },
-
-    { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2006-0099&program_id=PS-0000774048-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2006-0099/2024/7/24/1721798227590_532003.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2009-0520&program_id=PS-0001081298-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2009-0520/2024/9/5/1725520438202_540183.png" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2014-0506&program_id=PS-2014134852-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2014-0506/2021/12/15/1639530386338_355919.jpg" },  
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2015-0294&program_id=PS-2015106696-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2015-0294/2021/12/13/1639373632383_355145.jpg" },
-
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2019-0104&program_id=PS-2019064231-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2019-0104/2019/9/6/1567732435622_215646.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2011-0004&program_id=PS-0001119963-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2011-0004/2022/9/2/1662083102771_399056.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2008-0981&program_id=PS-0001065158-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2023/6/30/1688084246234_347144.png" },
-
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2001-0184&program_id=PS-0000769550-01-000&broadcast_complete_yn=Y&local_station_code=00", img: "https://padmin.static.kbs.co.kr/2023/6/30/1688083388277_347122.png" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2009-0897&program_id=PS-0001089138-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2009-0897/2020/1/22/1579680834312_239461.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2004-0922&program_id=PS-0000773546-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2023/7/3/1688348343930_347393.png" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=P005394&program_id=PV-0000201996-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2023/6/30/1688083370713_347100.png" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=P013326&program_id=PV-0000133162-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2023/6/30/1688083357438_347097.png" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2016-0151&program_id=PS-2016050138-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2016-0151/2017/12/21/1513841066375_90602.jpg" },
-   { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2016-0796&program_id=PS-2016219303-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2016-0796/2017/12/21/1513816615890_83614.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2017-0499&program_id=PS-2017099242-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2017-0499/2017/10/16/1508137019292_38970.jpg" },
-{ url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0320&program_id=PS-2021109807-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2021-0320/2022/3/16/1647386223556_369642.jpg" },   
-   
-
-      
-    ];
-    const gallery4Data = [
-
-
-{ url: "https://ichannela.com/program/detail/program_video_renew.do?publishId=000000182769", img: "http://image.ichannela.com/images/program/WPG2190247D/site_poster_img1_20230411085706870.jpg" },
-      { url: "https://ichannela.com/program/detail/program_video_renew.do?publishId=000000344835", img: "http://image.ichannela.com/images/program/WPG2230003D/site_poster_img1_20230427032521474.jpg" },
-      
-      { url: "https://ichannela.com/program/detail/program_detail_renew.do?cateCode=0501320001&paramGb=free", img: "http://image.ichannela.com/images/program/WPG2170136D/site_poster_img1_20230404041015436.jpg" },
-   
-      
-    ];
-    const gallery5Data = [
-
-
-
-      
-    ];
-    const gallery6Data = [
-
-
-
-
-
-
-
-      
-    ];
-    const gallery7Data = [];
-    const gallery8Data = [];
-    const gallery9Data = [];
-    const gallery10Data = [];
-    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
-
-    // 이미지 비율에 따라 박스 클래스 동적부여(최대한 단순, 기존과 구조/디자인 동일)
-    function renderGallery(data, targetId) {
-      const el = document.getElementById(targetId);
-      el.innerHTML = data.map(item => `
-        <div class="list-row">
-          <div class="imgframe">
-            <div class="img-wrap">
-              <div class="img-item">
-                <a href="${item.url}" target="_blank" rel="noopener">
-                  <img src="${item.img}">
-                </a>
-              </div>
-            </div>
+  <!-- 상단 sticky 헤더 -->
+  <header class="topbar">
+    <a href="https://myway.kr/" class="home-link" aria-label="MYWAY.KR 홈" title="MYWAY.KR 홈">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 2.5 11.4l1.3 1.5L5 11.85V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-8.15l1.2 1.05 1.3-1.5L12 3.2Z"/></svg>
+    </a>
+    <nav class="cat-nav" id="catNav">
+      <button class="cat-btn is-active" data-ch="kbs">KBS <span class="count" id="cnt-kbs"></span></button>
+      <button class="cat-btn" data-ch="sbs">SBS <span class="count" id="cnt-sbs"></span></button>
+      <button class="cat-btn" data-ch="cha">채널A <span class="count" id="cnt-cha"></span></button>
+    </nav>
+  </header>
+
+  <!-- 갤러리 -->
+  <main class="dashboard">
+    <div class="gallery-label-wrap">
+      <span class="gallery-label" id="galleryLabel">KBS 무료 VOD 모음</span>
+      <div class="info-wrap">
+        <button class="info-btn" id="infoBtn" aria-label="재생 시간 안내" aria-haspopup="true" aria-expanded="false">
+          <svg viewBox="0 0 24 28" aria-hidden="true">
+            <!-- 핀 본체 -->
+            <path d="M12 1C7.58 1 4 4.58 4 9c0 5.5 8 14 8 14s8-8.5 8-14c0-4.42-3.58-8-8-8z" fill="currentColor"/>
+            <!-- 핀 안 흰 원 -->
+            <circle cx="12" cy="9" r="2.8" fill="#ffffff"/>
+            <!-- 바닥 타원 (그림자/위치 표시) -->
+            <ellipse cx="12" cy="25.2" rx="5.2" ry="1.4" fill="none" stroke="currentColor" stroke-width="1.4"/>
+          </svg>
+        </button>
+        <div class="info-popover" id="infoPopover" role="dialog" aria-label="재생 시간 안내">
+          <div class="row">
+            <span class="ic">📱</span>
+            <span><strong>모바일</strong>은 약 <strong>3분 미리보기</strong>로 재생됩니다.</span>
           </div>
-          <div class="shadow-line">
-            <img src="${shadowUrl}">
+          <div class="row">
+            <span class="ic">💻</span>
+            <span><strong>태블릿·PC</strong>에서는 <strong>풀타임 재생</strong>됩니다.</span>
           </div>
         </div>
-      `).join('');
-      // 동적 크기 클래스 부여
-      Array.from(el.querySelectorAll('.list-row')).forEach((box, i) => {
-        const img = box.querySelector('img');
-        function applyBoxClass() {
-          if (img.naturalWidth > img.naturalHeight) {
-            box.classList.add('box-landscape');
-            box.classList.remove('box-portrait');
-          } else {
-            box.classList.add('box-portrait');
-            box.classList.remove('box-landscape');
+      </div>
+    </div>
+    <div class="gallery" id="gallery" data-active="kbs"></div>
+  </main>
+
+  <!-- MYWAY.KR 공통: 푸터 -->
+  <footer class="myway-footer">
+    <a href="https://myway.kr/">myway.kr</a>
+    <span class="sep">·</span>
+    <span>© MYWAY.KR</span>
+  </footer>
+
+  <!-- MYWAY.KR 공통: 우측 하단 홈 버튼 -->
+  <a href="https://myway.kr/" class="myway-home-btn" aria-label="myway.kr 홈으로 이동">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 2.5 11.4l1.3 1.5L5 11.85V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-8.15l1.2 1.05 1.3-1.5L12 3.2Z"/></svg>
+    myway.kr
+  </a>
+
+  <script>
+    /* ============ 복제방지 ============ */
+    (function(){
+      function isEditable(t) {
+        if (!t) return false;
+        const tag = (t.tagName || '').toLowerCase();
+        if (tag === 'input' || tag === 'textarea') return true;
+        if (t.isContentEditable) return true;
+        return false;
+      }
+      ['contextmenu','dragstart','selectstart','copy','cut'].forEach(ev => {
+        document.addEventListener(ev, e => {
+          if (isEditable(e.target)) return;
+          e.preventDefault();
+        }, { capture: true });
+      });
+      document.addEventListener('keydown', e => {
+        if (isEditable(e.target)) return;
+        const k = (e.key || '').toLowerCase();
+        if (k === 'f12') { e.preventDefault(); return; }
+        if (e.ctrlKey && e.shiftKey && (k === 'i' || k === 'j' || k === 'c')) { e.preventDefault(); return; }
+        if (e.ctrlKey && !e.shiftKey && (k === 'u' || k === 's' || k === 'c' || k === 'x' || k === 'a')) { e.preventDefault(); return; }
+      }, { capture: true });
+    })();
+
+    /* ============ VOD 데이터 (3개 채널 통합) ============ */
+    const vodData = {
+      kbs: [
+        { url: "https://www.youtube.com/watch?v=N0D4dTp-ec4&list=PLtIE58PMEFP5gl1LvEyY8PLVwrmIFXH7C&ab_channel=KBSDramaClassic", img: "https://img.youtube.com/vi/N0D4dTp-ec4/sddefault.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0562&program_id=PS-2024175630-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2024-0562/2025/4/22/1745300911484_581548.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0435&program_id=PS-2024210478-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2024-0435/2024/12/19/1734584291455_561327.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0360&program_id=PS-2024100528-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2024-0360/2024/9/24/1727141698381_542733.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0472&program_id=PS-2025017995-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2024-0472/2025/1/20/1737358071272_567551.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0283&program_id=PS-2024069120-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2024-0283/2024/9/6/1725587616611_540423.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0377&program_id=PS-2024101579-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2024-0377/2024/10/23/1729641564227_548853.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0274&program_id=PS-2024067999-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2024-0274/2024/6/10/1718000348085_526129.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2023-0449&program_id=PS-2023233227-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2023-0449/2024/3/11/1710140393854_508968.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2023-0090&program_id=PS-2023052697-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2023-0090/2023/10/5/1696461658581_470522.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2023-0373&program_id=PS-2023185825-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2023-0373/2024/1/9/1704783435881_498513.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0032&program_id=PS-2024023104-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2024-0032/2024/4/30/1714455790200_518857.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2023-0205&program_id=PS-2023110132-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2023-0205/2023/8/31/1693457278120_462599.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0913&program_id=PS-2022209599-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0913/2023/3/9/1678319698445_429780.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0867&program_id=PS-2022187159-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0867/2023/2/28/1677534702227_428040.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0665&program_id=PS-2022117434-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0665/2022/9/19/1663570278006_401619.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0690&program_id=PS-2022129960-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0690/2022/9/26/1664177727542_403392.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0202&program_id=PS-2022068646-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0202/2022/11/9/1667975477785_409445.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0237&program_id=PS-2022086363-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0237/2022/9/28/1664329249605_403906.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0051&program_id=PS-2022054369-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0051/2022/5/16/1652662403288_384479.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0019&program_id=PS-2022011588-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0019/2022/4/7/1649292534656_373136.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0090&program_id=PS-2022055303-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2022-0090/2022/6/10/1654842408288_388337.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0367&program_id=PS-2022021019-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0367/2022/4/25/1650846064009_378095.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0427&program_id=PS-2021158508-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0427/2021/11/25/1637824471143_349317.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0263&program_id=PS-2021085983-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0263/2021/12/1/1638331661328_350709.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0257&program_id=PS-2021077260-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0257/2021/9/30/1632963077971_337197.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0046&program_id=PS-2021025749-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0046/2021/12/8/1638944682028_353757.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0297&program_id=PS-2021186180-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0297/2021/11/9/1636443197972_344642.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0238&program_id=PS-2021071866-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0238/2021/10/15/1634259638997_340023.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0216&program_id=PS-2021069704-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0216/2021/9/28/1632815535350_336107.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0212&program_id=PS-2021058752-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0212/2021/6/29/1624939892837_326387.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-1626&program_id=PS-2020193480-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-1626/2021/3/19/1616136389481_311665.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-1631&program_id=PS-2020195837-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-1631/2021/2/2/1612251045684_302857.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-1602&program_id=PS-2020188263-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-1602/2021/4/26/1619414083125_316476.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0001&program_id=PS-2021001041-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2021-0001/2021/3/5/1614921620116_308660.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-0442&program_id=PS-2020128024-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-0442/2021/1/28/1611790581201_301607.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-0416&program_id=PS-2020113334-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-0416/2020/10/7/1602033374285_282784.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-0412&program_id=PS-2020109107-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-0412/2020/9/2/1599029638313_277208.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-0441&program_id=PS-2020135518-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-0441/2020/12/4/1607056288818_294960.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-0349&program_id=PS-2020077658-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-0349/2020/10/27/1603754613246_287346.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-0032&program_id=PS-2020018090-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-0032/2020/4/14/1586853387179_254928.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2019-0420&program_id=PS-2019194418-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2019-0420/2020/3/11/1583909901055_244311.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-0016&program_id=PS-2020005793-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2020-0016/2020/3/18/1584517329159_247029.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2019-0412&program_id=PS-2019190005-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2019-0412/2020/3/17/1584407956751_246448.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2019-0245&program_id=PS-2019152514-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://img.kbs.co.kr/kbs/390x219/programres.kbs.co.kr/t2019-0245/2019/10/25/1571991181399_222462.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2025-0018&program_id=PS-2025017008-01-000&broadcast_complete_yn=N&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2025-0018/2025/4/9/1744184563914_578417.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2017-0621&program_id=PS-2017122776-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2017-0621/2017/12/27/1514364354786_92307.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0505&program_id=PS-2024156416-01-000&broadcast_complete_yn=N&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2024-0505/2025/5/22/1747900600354_585600.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0645&program_id=PS-2024201542-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2024-0645/2025/3/11/1741650825936_571988.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2025-0012&program_id=PS-2025007661-01-000&broadcast_complete_yn=N&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2025-0012/2025/3/20/1742445641008_572821.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2024-0604&program_id=PS-2024192615-01-000&broadcast_complete_yn=N&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2024-0604/2025/1/15/1736897500225_566139.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2017-0970&program_id=PS-2017180694-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2017-0970/2017/12/27/1514365435998_92502.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2018-0510&program_id=PS-2018139544-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2018-0510/2018/11/27/1543279743671_166306.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2006-0272&program_id=PS-0000771891-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2006-0272/2021/12/15/1639531491551_355942.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2000-0112&program_id=PS-0000447021-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2000-0112/2022/5/3/1651553428404_382079.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0241&program_id=PS-2021069490-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2021-0241/2021/9/14/1631595648857_334467.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2012-0222&program_id=PS-2012060324-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2023/6/1/1685579170098_345197.png" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2019-0029&program_id=PS-2019027825-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2019-0029/2019/5/9/1557362118358_197370.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2017-0896&program_id=PS-2017162890-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2017-0896/2017/12/27/1514365371336_92498.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2004-0408&program_id=PS-0000769966-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2023/6/1/1685579184713_345200.png" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2020-0442&program_id=PS-2020128024-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2020-0442/2021/1/28/1611790581360_301618.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2022-0048&program_id=PS-2023012566-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2022-0048/2023/4/19/1681886409042_441504.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2017-0653&program_id=PS-2017124545-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2017-0653/2018/7/5/1530752698441_118977.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2019-0412&program_id=PS-2019190005-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2019-0412/2020/3/17/1584407956872_246459.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2015-0165&program_id=PS-2015052752-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2025/6/11/1749606536809_459765.png" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2013-0764&program_id=PS-2013249599-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2025/6/11/1749606464911_459743.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2015-0325&program_id=PS-2015098859-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2025/6/11/1749606491957_459754.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2010-0141&program_id=PS-0001095065-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2025/6/11/1749606578851_459776.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2013-0392&program_id=PS-2013136684-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2013-0392/2021/12/15/1639531555345_355975.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2012-0574&program_id=PS-2012155777-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2012-0574/2021/12/15/1639531468844_355931.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2010-0501&program_id=PS-0001101966-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2025/5/7/1746578296398_453213.png" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2011-1071&program_id=PS-2011168231-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2011-1071/2022/4/26/1650948033307_379962.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2006-0099&program_id=PS-0000774048-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2006-0099/2024/7/24/1721798227590_532003.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2009-0520&program_id=PS-0001081298-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2009-0520/2024/9/5/1725520438202_540183.png" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2014-0506&program_id=PS-2014134852-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2014-0506/2021/12/15/1639530386338_355919.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2015-0294&program_id=PS-2015106696-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2015-0294/2021/12/13/1639373632383_355145.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2019-0104&program_id=PS-2019064231-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2019-0104/2019/9/6/1567732435622_215646.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2011-0004&program_id=PS-0001119963-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2011-0004/2022/9/2/1662083102771_399056.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2008-0981&program_id=PS-0001065158-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2023/6/30/1688084246234_347144.png" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2001-0184&program_id=PS-0000769550-01-000&broadcast_complete_yn=Y&local_station_code=00", img: "https://padmin.static.kbs.co.kr/2023/6/30/1688083388277_347122.png" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2009-0897&program_id=PS-0001089138-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2009-0897/2020/1/22/1579680834312_239461.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2004-0922&program_id=PS-0000773546-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2023/7/3/1688348343930_347393.png" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=P005394&program_id=PV-0000201996-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2023/6/30/1688083370713_347100.png" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=P013326&program_id=PV-0000133162-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://padmin.static.kbs.co.kr/2023/6/30/1688083357438_347097.png" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2016-0151&program_id=PS-2016050138-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2016-0151/2017/12/21/1513841066375_90602.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2016-0796&program_id=PS-2016219303-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2016-0796/2017/12/21/1513816615890_83614.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2017-0499&program_id=PS-2017099242-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2017-0499/2017/10/16/1508137019292_38970.jpg" },
+        { url: "https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=T2021-0320&program_id=PS-2021109807-01-000&broadcast_complete_yn=Y&local_station_code=00&section_code=03", img: "https://programres.kbs.co.kr/t2021-0320/2022/3/16/1647386223556_369642.jpg" }
+      ],
+      sbs: [
+        { url: "https://allvod.sbs.co.kr/watch/vod/22000008305/22000138001?from=free", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/07/14/30O1752476734099.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/22000002041/22000097901?from=free", img: "https://img2.sbs.co.kr/sbs_img/resize/A6p1681877294601.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/22000011112/22000351665?from=free", img: "https://img2.sbs.co.kr/sbs_img/resize/lE81681974155661.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/00000379136/22000084371?from=character", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/06/25/3VU1750833429114.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/00000364336/22000081422?from=character", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/06/25/Ypv1750826050323.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/P446803259/22000373115?from=free", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/02/19/PCI1739939908074.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/22000010545/22000245975?from=character", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/07/03/inP1751517139265.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/00000343372/22000070399?from=character", img: "https://img2.sbs.co.kr/sbs_img/resize/RlH1682053034827.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/P453505934/22000404298?from=free", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2024/10/14/UWB1728885909791.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/P468547030/22000521285?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2024/01/15/57L1705302021556.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/P468644073/22000525357?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2024/03/19/aX71710814350262.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/P467075719/22000517681?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/05/28/7vt1748409782477.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/P463878657/22000506930?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2023/07/18/bgq1689660865244.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/P461258601/22000489998?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/04/15/hPp1744694283194.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/P453350691/22000407863?from=free", img: "https://i.namu.wiki/i/QT6NJVSZEkFjHh09HFbPad4vpTOz5zZ9aX6tkUdL1Lvu75c9HdIqREO1nmPYCN0auRu8O29obYMoPwN67jCqhg.webp" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/P462342128/22000486932?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2024/11/06/1I31730854095532.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/P463606002/22000486878?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/06/25/Vxl1750836272901.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/P460545279/22000470528?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/05/22/1k01747899719363.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/00000349314/22000074586?from=genre", img: "https://img2.sbs.co.kr/sbs_img/resize/aBV1665560910237.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/00000318525/22000032243?from=genre", img: "https://img2.sbs.co.kr/sbs_img/resize/NAq1665037632215.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/00000224904/22000017497?from=genre", img: "https://img2.sbs.co.kr/sbs_img/resize/crM1666053839347.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/00000329708/22000049343?from=genre", img: "https://img2.sbs.co.kr/sbs_img/resize/JEV1663810673426.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/P463892291/22000494447?from=search", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/04/24/Ecx1745455438991.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/P468644077/22000529586?from=free", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2024/08/08/hSq1723082596174.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/P465694827/22000503532?from=free", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/05/28/G7C1748409710393.jpg" },
+        { url: "https://allvod.sbs.co.kr/showcase/34631/P470396967/22000531878?type=program&time=30", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2024/06/13/dxZ1718252433305.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/P463878655/22000498203?from=free", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2023/07/18/BRm1689660386017.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/22000011114/22000552275?from=character", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/01/31/ZaJ1738302924582.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/P463878655/22000498203?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2023/07/18/nh81689659942363.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/P462511102/22000510365?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2023/09/12/LGk1694478068832.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/22000009610/22000199820?from=genre", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/06/25/1Sr1750834849336.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/00000352936/22000079349?from=free", img: "https://img2.sbs.co.kr/sbs_img/resize/vyP1663910365705.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/22000008599/22000144930?from=free", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/06/10/fm71749532391707.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/22000005887/22000119802?from=free", img: "https://img2.sbs.co.kr/sbs_img/resize/Heu1682563976583.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/00000325454/22000034577?from=free", img: "https://img2.sbs.co.kr/sbs_img/resize/pEx1665035173537.jpg" },
+        { url: "https://allvod.sbs.co.kr/watch/vod/00000232195/22000018209?from=free", img: "https://img2.sbs.co.kr/img/sbs_cms/WE/2025/04/21/VnB1745218442316.jpg" }
+      ],
+      cha: [
+        { url: "https://ichannela.com/program/detail/program_video_renew.do?publishId=000000182769", img: "http://image.ichannela.com/images/program/WPG2190247D/site_poster_img1_20230411085706870.jpg" },
+        { url: "https://ichannela.com/program/detail/program_video_renew.do?publishId=000000344835", img: "http://image.ichannela.com/images/program/WPG2230003D/site_poster_img1_20230427032521474.jpg" },
+        { url: "https://ichannela.com/program/detail/program_detail_renew.do?cateCode=0501320001&paramGb=free", img: "http://image.ichannela.com/images/program/WPG2170136D/site_poster_img1_20230404041015436.jpg" }
+      ]
+    };
+
+    const labels = { kbs: 'KBS 무료 VOD 모음', sbs: 'SBS 무료 VOD 모음', cha: '채널A 무료 VOD 모음' };
+    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
+
+    /* ============ 렌더링 (1회만) ============ */
+    function renderAll() {
+      const root = document.getElementById('gallery');
+      const frag = document.createDocumentFragment();
+      Object.keys(vodData).forEach(ch => {
+        vodData[ch].forEach(item => {
+          const row = document.createElement('div');
+          row.className = 'list-row';
+          row.dataset.ch = ch;
+          row.innerHTML =
+            '<div class="imgframe">' +
+              '<a href="' + item.url + '" target="_blank" rel="noopener">' +
+                '<img loading="lazy" decoding="async" referrerpolicy="no-referrer" src="' + item.img + '" alt="">' +
+              '</a>' +
+            '</div>' +
+            '<div class="shadow-line"><img src="' + shadowUrl + '" alt=""></div>';
+          frag.appendChild(row);
+        });
+      });
+      root.replaceChildren(frag);
+
+      /* 이미지 로드 후 landscape 비율 적용 — aspect-ratio가 미리 잡혀 있으니 깜빡임 최소 */
+      root.querySelectorAll('.list-row').forEach(row => {
+        const img = row.querySelector('img');
+        function check() {
+          if (img.naturalWidth && img.naturalHeight) {
+            if (img.naturalWidth > img.naturalHeight) {
+              row.classList.add('box-landscape');
+            }
           }
         }
-        img.onload = applyBoxClass;
-        if (img.complete) setTimeout(applyBoxClass, 20);
+        if (img.complete) check();
+        else img.addEventListener('load', check, { once: true });
       });
     }
-    renderGallery(gallery1Data, 'gallery1');
-    renderGallery(gallery2Data, 'gallery2');
-    renderGallery(gallery3Data, 'gallery3');
-    renderGallery(gallery4Data, 'gallery4');
-    renderGallery(gallery5Data, 'gallery5');
-    renderGallery(gallery6Data, 'gallery6');
-    renderGallery(gallery7Data, 'gallery7');
-    renderGallery(gallery8Data, 'gallery8');
-    renderGallery(gallery9Data, 'gallery9');
-    renderGallery(gallery10Data, 'gallery10');
+
+    /* ============ 채널 카운트 ============ */
+    function updateCounts() {
+      ['kbs','sbs','cha'].forEach(ch => {
+        const el = document.getElementById('cnt-' + ch);
+        if (el) el.textContent = (vodData[ch] || []).length;
+      });
+    }
+
+    /* ============ 네비 동작 ============ */
+    function setupNav() {
+      const nav = document.getElementById('catNav');
+      const gallery = document.getElementById('gallery');
+      const label = document.getElementById('galleryLabel');
+      nav.addEventListener('click', e => {
+        const btn = e.target.closest('.cat-btn');
+        if (!btn) return;
+        const ch = btn.dataset.ch;
+        nav.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        gallery.dataset.active = ch;
+        label.textContent = labels[ch];
+        /* 채널 전환 시 페이지 상단으로 스크롤 */
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    renderAll();
+    updateCounts();
+    setupNav();
+
+    /* ============ 안내 팝오버 토글 ============ */
+    (function(){
+      const btn = document.getElementById('infoBtn');
+      const pop = document.getElementById('infoPopover');
+      if (!btn || !pop) return;
+
+      function setOpen(open) {
+        btn.classList.toggle('is-open', open);
+        pop.classList.toggle('is-open', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        setOpen(!pop.classList.contains('is-open'));
+      });
+      document.addEventListener('click', e => {
+        if (!pop.classList.contains('is-open')) return;
+        if (e.target === btn || btn.contains(e.target)) return;
+        if (pop.contains(e.target)) return;
+        setOpen(false);
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && pop.classList.contains('is-open')) setOpen(false);
+      });
+
+      /* 진입 시 시선 유도 펄스 (애니메이션 종료 후 클래스 제거) */
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          btn.classList.add('pulse');
+          btn.addEventListener('animationend', () => btn.classList.remove('pulse'), { once: true });
+        }, 600);
+      });
+    })();
   </script>
 </body>
 </html>
