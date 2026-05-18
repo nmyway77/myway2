@@ -15,17 +15,17 @@
     *, *::before, *::after { box-sizing: border-box; }
 
     :root {
-      --bg-base: #0d1424;
-      --bg-glow: #1a2440;
-      --card-bg: linear-gradient(135deg, #2a3658 0%, #1d2745 100%);
-      --card-bg-hover: linear-gradient(135deg, #38477a 0%, #28345e 100%);
-      --card-border: rgba(255,255,255,0.06);
-      --card-border-hover: rgba(255,255,255,0.15);
-      --text-main: #ffffff;
-      --text-sub: #8b96b8;
-      --text-muted: #5a6a8f;
-      --accent: #4ade80;          /* 녹색 (미국 상승) */
-      --accent-glow: rgba(74,222,128,0.15);
+      --bg-base: #ffffff;
+      --bg-glow: #eef2fb;
+      --card-bg: #ffffff;
+      --card-bg-hover: #fafbfd;
+      --card-border: rgba(0,0,0,0.06);
+      --card-border-hover: rgba(0,0,0,0.12);
+      --text-main: #1a1f36;
+      --text-sub: #4a5170;
+      --text-muted: #8590ad;
+      --accent: #2e7d4f;          /* 짙은 녹색 - 라이트 배경에 가시성 */
+      --accent-glow: rgba(46,125,79,0.12);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
 
@@ -41,7 +41,7 @@
       overflow-x: hidden;
       background:
         radial-gradient(ellipse at top left, var(--bg-glow) 0%, transparent 50%),
-        radial-gradient(ellipse at top right, rgba(74,222,128,0.06) 0%, transparent 40%),
+        radial-gradient(ellipse at top right, rgba(46,125,79,0.05) 0%, transparent 40%),
         var(--bg-base);
       color: var(--text-main);
       -webkit-user-select: none;
@@ -59,10 +59,10 @@
       position: sticky;
       top: 0;
       z-index: 20;
-      background: rgba(13, 20, 36, 0.85);
+      background: rgba(255, 255, 255, 0.92);
       backdrop-filter: saturate(180%) blur(12px);
       -webkit-backdrop-filter: saturate(180%) blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
       padding: 12px 14px;
       padding-left: max(14px, env(safe-area-inset-left));
       padding-right: max(14px, env(safe-area-inset-right));
@@ -106,8 +106,8 @@
       letter-spacing: -0.2px;
       padding: 7px 14px;
       border-radius: 999px;
-      border: 1.5px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(0,0,0,0.08);
+      background: rgba(0,0,0,0.03);
       color: var(--text-sub);
       cursor: pointer;
       transition: all .18s;
@@ -116,16 +116,16 @@
       -webkit-tap-highlight-color: transparent;
     }
     .tab-btn:hover {
-      background: rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.06);
       color: var(--text-main);
-      border-color: rgba(255,255,255,0.18);
+      border-color: rgba(0,0,0,0.16);
     }
     .tab-btn:active { transform: scale(0.96); }
     .tab-btn.is-active {
-      background: rgba(74,222,128,0.14);
-      color: var(--accent);
-      border-color: rgba(74,222,128,0.5);
-      box-shadow: 0 0 18px rgba(74,222,128,0.18);
+      background: #1f2740;
+      color: #fff;
+      border-color: #1f2740;
+      box-shadow: 0 4px 16px rgba(31, 39, 64, 0.25);
     }
     .tab-btn .count {
       display: inline-block;
@@ -172,7 +172,8 @@
     .grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      column-gap: 12px;
+      row-gap: 28px;
     }
 
     .card {
@@ -184,29 +185,35 @@
       color: inherit;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 12px;
+      border-radius: 10px;
       position: relative;
-      overflow: hidden;
-      transition: transform .15s, box-shadow .15s, border-color .15s, background .2s;
+      overflow: visible;
+      transition: transform .2s, box-shadow .2s, border-color .2s, background .2s;
       -webkit-tap-highlight-color: transparent;
       min-height: 78px;
+      box-shadow: 0 2px 4px rgba(90, 90, 130, 0.06);
     }
-    /* 카드 좌상단 미세한 글로우 (이미지 디자인 차용) */
-    .card::before {
+    /* 라이트 카드에서는 좌상단 글로우 비활성 */
+    .card::before { content: none; }
+    /* 카드 아래 곡선 그림자 PNG (페이퍼 컬 효과) */
+    .card::after {
       content: "";
       position: absolute;
-      top: 0; left: 0;
-      width: 60%; height: 100%;
-      background: linear-gradient(120deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+      left: 3%;
+      right: 3%;
+      top: 100%;
+      height: 22px;
+      background: url('https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png') center top / 100% 100% no-repeat;
       pointer-events: none;
+      z-index: 1;
     }
     .card:hover {
       background: var(--card-bg-hover);
       border-color: var(--card-border-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.35), 0 0 0 1px rgba(74,222,128,0.12);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 10px rgba(90, 90, 130, 0.12);
     }
-    .card:active { transform: translateY(0); }
+    .card:active { transform: translateY(-1px); }
 
     .card .ticker {
       font-size: 1.25rem;
@@ -245,14 +252,14 @@
 
     /* 반응형 */
     @media (max-width: 720px) {
-      .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .grid { grid-template-columns: repeat(2, 1fr); column-gap: 10px; row-gap: 24px; }
       .card { padding: 16px 16px; min-height: 72px; }
       .card .ticker { font-size: 1.1rem; }
       .card .name-ko { font-size: .78rem; }
       .main { padding: 22px 14px 60px; }
     }
     @media (max-width: 380px) {
-      .grid { grid-template-columns: repeat(2, 1fr); gap: 9px; }
+      .grid { grid-template-columns: repeat(2, 1fr); column-gap: 9px; row-gap: 22px; }
       .card { padding: 14px 14px; }
       .card .ticker { font-size: 1.05rem; }
     }
@@ -282,7 +289,7 @@
       text-align: center;
       padding: 22px 14px calc(28px + var(--safe-bottom));
       margin-top: 28px;
-      border-top: 1px solid rgba(255,255,255,0.06);
+      border-top: 1px solid rgba(0,0,0,0.06);
       font-size: .82rem;
       color: var(--text-muted);
     }
@@ -407,48 +414,48 @@
             label: '한국 주요 주식',
             sub: 'KOSPI',
             items: [
-              { ticker: '005930', ko: '삼성전자',         url: 'https://m.stock.naver.com/fchart/domestic/stock/005930' },
-              { ticker: '000660', ko: 'SK하이닉스',       url: 'https://m.stock.naver.com/fchart/domestic/stock/000660' },
-              { ticker: '373220', ko: 'LG에너지솔루션',   url: 'https://m.stock.naver.com/fchart/domestic/stock/373220' },
-              { ticker: '035420', ko: 'NAVER',           url: 'https://m.stock.naver.com/fchart/domestic/stock/035420' },
-              { ticker: '035720', ko: '카카오',           url: 'https://m.stock.naver.com/fchart/domestic/stock/035720' },
-              { ticker: '005380', ko: '현대차',           url: 'https://m.stock.naver.com/fchart/domestic/stock/005380' }
+              { ticker: '삼성전자', ko: '005930',         url: 'https://m.stock.naver.com/fchart/domestic/stock/005930' },
+              { ticker: 'SK하이닉스', ko: '000660',       url: 'https://m.stock.naver.com/fchart/domestic/stock/000660' },
+              { ticker: 'LG에너지솔루션', ko: '373220',   url: 'https://m.stock.naver.com/fchart/domestic/stock/373220' },
+              { ticker: 'NAVER', ko: '035420',           url: 'https://m.stock.naver.com/fchart/domestic/stock/035420' },
+              { ticker: '카카오', ko: '035720',           url: 'https://m.stock.naver.com/fchart/domestic/stock/035720' },
+              { ticker: '현대차', ko: '005380',           url: 'https://m.stock.naver.com/fchart/domestic/stock/005380' }
             ]
           },
           {
             label: '방산주',
             sub: 'Defense',
             items: [
-              { ticker: '012450', ko: '한화에어로스페이스', url: 'https://m.stock.naver.com/fchart/domestic/stock/012450' },
-              { ticker: '047810', ko: '한국항공우주',       url: 'https://m.stock.naver.com/fchart/domestic/stock/047810' },
-              { ticker: '079550', ko: 'LIG넥스원',          url: 'https://m.stock.naver.com/fchart/domestic/stock/079550' },
-              { ticker: '064350', ko: '현대로템',           url: 'https://m.stock.naver.com/fchart/domestic/stock/064350' },
-              { ticker: '272210', ko: '한화시스템',         url: 'https://m.stock.naver.com/fchart/domestic/stock/272210' },
-              { ticker: '103140', ko: '풍산',               url: 'https://m.stock.naver.com/fchart/domestic/stock/103140' }
+              { ticker: '한화에어로스페이스', ko: '012450', url: 'https://m.stock.naver.com/fchart/domestic/stock/012450' },
+              { ticker: '한국항공우주', ko: '047810',       url: 'https://m.stock.naver.com/fchart/domestic/stock/047810' },
+              { ticker: 'LIG넥스원', ko: '079550',          url: 'https://m.stock.naver.com/fchart/domestic/stock/079550' },
+              { ticker: '현대로템', ko: '064350',           url: 'https://m.stock.naver.com/fchart/domestic/stock/064350' },
+              { ticker: '한화시스템', ko: '272210',         url: 'https://m.stock.naver.com/fchart/domestic/stock/272210' },
+              { ticker: '풍산', ko: '103140',               url: 'https://m.stock.naver.com/fchart/domestic/stock/103140' }
             ]
           },
           {
             label: '로봇주',
             sub: 'Robotics',
             items: [
-              { ticker: '454910', ko: '두산로보틱스',       url: 'https://m.stock.naver.com/fchart/domestic/stock/454910' },
-              { ticker: '277810', ko: '레인보우로보틱스',   url: 'https://m.stock.naver.com/fchart/domestic/stock/277810' },
-              { ticker: '058610', ko: '에스피지',           url: 'https://m.stock.naver.com/fchart/domestic/stock/058610' },
-              { ticker: '090360', ko: '로보스타',           url: 'https://m.stock.naver.com/fchart/domestic/stock/090360' },
-              { ticker: '056080', ko: '유진로봇',           url: 'https://m.stock.naver.com/fchart/domestic/stock/056080' },
-              { ticker: '090710', ko: '휴림로봇',           url: 'https://m.stock.naver.com/fchart/domestic/stock/090710' }
+              { ticker: '두산로보틱스', ko: '454910',       url: 'https://m.stock.naver.com/fchart/domestic/stock/454910' },
+              { ticker: '레인보우로보틱스', ko: '277810',   url: 'https://m.stock.naver.com/fchart/domestic/stock/277810' },
+              { ticker: '에스피지', ko: '058610',           url: 'https://m.stock.naver.com/fchart/domestic/stock/058610' },
+              { ticker: '로보스타', ko: '090360',           url: 'https://m.stock.naver.com/fchart/domestic/stock/090360' },
+              { ticker: '유진로봇', ko: '056080',           url: 'https://m.stock.naver.com/fchart/domestic/stock/056080' },
+              { ticker: '휴림로봇', ko: '090710',           url: 'https://m.stock.naver.com/fchart/domestic/stock/090710' }
             ]
           },
           {
             label: '조선주',
             sub: 'Shipbuilding',
             items: [
-              { ticker: '009540', ko: 'HD한국조선해양',     url: 'https://m.stock.naver.com/fchart/domestic/stock/009540' },
-              { ticker: '329180', ko: 'HD현대중공업',       url: 'https://m.stock.naver.com/fchart/domestic/stock/329180' },
-              { ticker: '010140', ko: '삼성중공업',         url: 'https://m.stock.naver.com/fchart/domestic/stock/010140' },
-              { ticker: '042660', ko: '한화오션',           url: 'https://m.stock.naver.com/fchart/domestic/stock/042660' },
-              { ticker: '010620', ko: 'HD현대미포',         url: 'https://m.stock.naver.com/fchart/domestic/stock/010620' },
-              { ticker: '460930', ko: '현대힘스',           url: 'https://m.stock.naver.com/fchart/domestic/stock/460930' }
+              { ticker: 'HD한국조선해양', ko: '009540',     url: 'https://m.stock.naver.com/fchart/domestic/stock/009540' },
+              { ticker: 'HD현대중공업', ko: '329180',       url: 'https://m.stock.naver.com/fchart/domestic/stock/329180' },
+              { ticker: '삼성중공업', ko: '010140',         url: 'https://m.stock.naver.com/fchart/domestic/stock/010140' },
+              { ticker: '한화오션', ko: '042660',           url: 'https://m.stock.naver.com/fchart/domestic/stock/042660' },
+              { ticker: 'HD현대미포', ko: '010620',         url: 'https://m.stock.naver.com/fchart/domestic/stock/010620' },
+              { ticker: '현대힘스', ko: '460930',           url: 'https://m.stock.naver.com/fchart/domestic/stock/460930' }
             ]
           }
         ]
