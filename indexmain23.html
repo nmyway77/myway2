@@ -1,0 +1,2102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>주요 사이트 - 포털·뉴스·BBS·방송사 모음 | MYWAY.KR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="포털·뉴스·BBS·방송사 한 곳에 모은 사이트 디렉토리 - MYWAY.KR">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      --bg-base: #ffffff;
+      --bg-glow: #eef2fb;
+      --card-bg: #ffffff;
+      --card-bg-hover: #fafbfd;
+      --card-border: rgba(0,0,0,0.06);
+      --card-border-hover: rgba(0,0,0,0.12);
+      --text-main: #1a1f36;
+      --text-sub: #4a5170;
+      --text-muted: #8590ad;
+      --accent: #2e7d4f;          /* 짙은 녹색 - 라이트 배경에 가시성 확보 */
+      --accent-glow: rgba(46,125,79,0.12);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      -webkit-text-size-adjust: 100%;
+      background: var(--bg-base);
+    }
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      background:
+        radial-gradient(ellipse at top left, var(--bg-glow) 0%, transparent 50%),
+        radial-gradient(ellipse at top right, rgba(46,125,79,0.05) 0%, transparent 40%),
+        var(--bg-base);
+      color: var(--text-main);
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    img { -webkit-user-drag: none; user-drag: none; -webkit-touch-callout: none; }
+    input, textarea, [contenteditable] {
+      -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text;
+    }
+
+    /* ===== 상단 헤더 ===== */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: saturate(180%) blur(12px);
+      -webkit-backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      padding: 12px 14px;
+      padding-left: max(14px, env(safe-area-inset-left));
+      padding-right: max(14px, env(safe-area-inset-right));
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .home-link {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      text-decoration: none;
+      color: #fff;
+      background: linear-gradient(135deg, #5b6ef0, #883cea);
+      box-shadow: 0 6px 18px rgba(91, 110, 240, 0.4);
+      transition: transform .15s, box-shadow .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .home-link:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(91, 110, 240, 0.55); }
+    .home-link svg { width: 19px; height: 19px; fill: currentColor; }
+
+    /* 탭 네비 (다크 톤) */
+    .tab-nav {
+      flex: 1 1 auto;
+      min-width: 0;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 2px 0;
+    }
+    .tab-nav::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      font: inherit;
+      font-size: .9rem;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(0,0,0,0.08);
+      background: rgba(0,0,0,0.03);
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: all .18s;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tab-btn:hover {
+      background: rgba(0,0,0,0.06);
+      color: var(--text-main);
+      border-color: rgba(0,0,0,0.16);
+    }
+    .tab-btn:active { transform: scale(0.96); }
+    .tab-btn.is-active {
+      background: #1f2740;
+      color: #fff;
+      border-color: #1f2740;
+      box-shadow: 0 4px 16px rgba(31, 39, 64, 0.25);
+    }
+    .tab-btn .count {
+      display: inline-block;
+      margin-left: 4px;
+      font-size: .72rem;
+      opacity: .7;
+      font-weight: 500;
+    }
+
+    /* ===== 본체 ===== */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 16px 60px;
+      padding-bottom: calc(60px + var(--safe-bottom));
+    }
+
+    .section { margin-bottom: 32px; }
+    .section:last-child { margin-bottom: 0; }
+
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 0 4px;
+      margin-bottom: 12px;
+    }
+    .section-label {
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      text-shadow: 0 0 16px var(--accent-glow);
+    }
+    .section-sub {
+      font-size: .75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: -0.1px;
+    }
+
+    /* 카드 그리드 */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      column-gap: 12px;
+      row-gap: 28px;  /* 카드 아래 그림자 PNG 공간 */
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 18px 18px;
+      text-decoration: none;
+      color: inherit;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      position: relative;
+      overflow: visible;  /* ::after 그림자 PNG가 카드 밖으로 나와야 함 */
+      transition: transform .2s, box-shadow .2s, border-color .2s, background .2s;
+      -webkit-tap-highlight-color: transparent;
+      min-height: 78px;
+      /* 카드 자체는 미세 그림자만 (입체감 메인은 ::after 그림자 PNG가 담당) */
+      box-shadow: 0 2px 4px rgba(90, 90, 130, 0.06);
+    }
+    /* 라이트 카드에서는 좌상단 글로우 비활성 */
+    .card::before { content: none; }
+    /* 카드 아래 곡선 그림자 PNG (shopping.html 동일 효과) */
+    .card::after {
+      content: "";
+      position: absolute;
+      left: 2.5%;
+      right: 2.5%;
+      top: 100%;
+      height: 18px;
+      background: url('https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png') center top / 100% 100% no-repeat;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .card:hover {
+      background: var(--card-bg-hover);
+      border-color: var(--card-border-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 10px rgba(90, 90, 130, 0.12);
+    }
+    .card:active { transform: translateY(-1px); }
+
+    .card .ticker {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.4px;
+      line-height: 1.15;
+      margin-bottom: 4px;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+    /* 글자 수가 많은 카드(사이트명 등)는 자동으로 살짝 작게 */
+    .card .ticker:has(+ .name-ko) { /* 보조 라벨 있는 모든 카드 */ }
+    .card[data-long="1"] .ticker { font-size: 1.05rem; }
+    .card .name-ko {
+      font-size: .82rem;
+      font-weight: 500;
+      color: var(--text-sub);
+      letter-spacing: -0.2px;
+      line-height: 1.2;
+    }
+    /* 우상단 외부 링크 마커 */
+    .card .arrow {
+      position: absolute;
+      top: 12px; right: 14px;
+      font-size: .85rem;
+      color: var(--text-muted);
+      opacity: 0;
+      transition: opacity .15s, transform .15s;
+    }
+    .card:hover .arrow {
+      opacity: 1;
+      transform: translate(2px, -2px);
+      color: var(--accent);
+    }
+
+    /* 반응형 */
+    @media (max-width: 720px) {
+      .grid { grid-template-columns: repeat(2, 1fr); column-gap: 10px; row-gap: 24px; }
+      .card { padding: 16px 16px; min-height: 72px; }
+      .card .ticker { font-size: 1.1rem; }
+      .card .name-ko { font-size: .78rem; }
+      .main { padding: 22px 14px 60px; }
+    }
+    @media (max-width: 380px) {
+      .grid { grid-template-columns: repeat(2, 1fr); column-gap: 9px; row-gap: 22px; }
+      .card { padding: 14px 14px; }
+      .card .ticker { font-size: 1.05rem; }
+    }
+
+    /* ===== 생활정보 탭 전용 : 라이트 톤 + 원형 로고 ===== */
+    body[data-active-tab="daily"] {
+      background: #ffffff;
+    }
+    body[data-active-tab="daily"] .topbar {
+      background: rgba(255, 255, 255, 0.95);
+      border-bottom: 1px solid #eef0f4;
+      backdrop-filter: saturate(180%) blur(8px);
+    }
+    body[data-active-tab="daily"] .tab-btn {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: rgba(0, 0, 0, 0.08);
+      color: #4a5170;
+    }
+    body[data-active-tab="daily"] .tab-btn:hover {
+      background: rgba(0, 0, 0, 0.08);
+      color: #1f2740;
+      border-color: rgba(0, 0, 0, 0.16);
+    }
+    body[data-active-tab="daily"] .tab-btn.is-active {
+      background: #333862;
+      color: #fff;
+      border-color: #333862;
+      box-shadow: 0 4px 16px rgba(51, 56, 98, 0.28);
+    }
+    body[data-active-tab="daily"] .myway-footer {
+      border-top: 1px solid #eef0f4;
+      color: #8590ad;
+    }
+    body[data-active-tab="daily"] .myway-footer a { color: #4a5170; }
+    body[data-active-tab="daily"] .myway-footer a:hover { color: #1f2740; }
+
+    /* 원형 로고 그리드 (INDEXMAIN 디자인) - 기본: 고정 10열 74px */
+    .logo-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 74px);
+      gap: 24px;
+      justify-content: center;
+      width: 100%;
+      max-width: 100%;
+      margin-bottom: 24px;
+    }
+    .logo-tile {
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 3px 24px 0 #b1c7e866;
+      border: 3px solid #e5e8f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: box-shadow 0.15s, border-color 0.15s, transform 0.12s;
+      cursor: pointer;
+      overflow: hidden;
+      margin: 0;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .logo-tile:hover,
+    .logo-tile:active {
+      box-shadow: 0 8px 32px 0 #7e94ff99;
+      border-color: #94a2ff;
+      background: #f7faff;
+      /* 박스는 정지 — 회전/스케일은 이미지가 담당 */
+    }
+    .logo-tile img {
+      width: 54px;
+      height: 54px;
+      object-fit: contain;
+      background: transparent;
+      border-radius: 50%;
+      transition: transform 0.12s;
+      pointer-events: none;
+      display: block;
+    }
+    .logo-tile:hover img {
+      transform: scale(1.08) rotate(-3deg);
+    }
+
+    /* ===== logo-grid 반응형 (INDEXMAIN과 동일한 9분기) ===== */
+    /* 1) 초대형 PC (1600px+) */
+    @media (min-width: 1600px) {
+      .logo-grid {
+        grid-template-columns: repeat(12, 80px);
+        gap: 28px;
+      }
+      .logo-tile { width: 80px; height: 80px; }
+      .logo-tile img { width: 58px; height: 58px; }
+    }
+    /* 2) 일반 PC (1101 ~ 1599px) */
+    @media (min-width: 1101px) and (max-width: 1599px) {
+      .logo-grid {
+        grid-template-columns: repeat(10, 74px);
+        gap: 22px;
+      }
+      .logo-tile { width: 74px; height: 74px; }
+      .logo-tile img { width: 54px; height: 54px; }
+    }
+    /* 3) 노트북 / 작은 PC (901 ~ 1100px) */
+    @media (min-width: 901px) and (max-width: 1100px) {
+      .logo-grid {
+        grid-template-columns: repeat(8, 70px);
+        gap: 18px;
+      }
+      .logo-tile { width: 70px; height: 70px; }
+      .logo-tile img { width: 50px; height: 50px; }
+    }
+    /* 4) 태블릿 (701 ~ 900px) */
+    @media (min-width: 701px) and (max-width: 900px) {
+      .logo-grid {
+        grid-template-columns: repeat(7, 70px);
+        gap: 16px;
+      }
+      .logo-tile { width: 70px; height: 70px; }
+      .logo-tile img { width: 50px; height: 50px; }
+    }
+    /* 5) 핸드폰 세로 (~ 700px) */
+    @media (max-width: 700px) {
+      .logo-grid {
+        grid-template-columns: repeat(5, minmax(0, 64px));
+        gap: 12px;
+        justify-content: center;
+        margin-bottom: 18px;
+      }
+      .logo-tile { width: 64px; height: 64px; }
+      .logo-tile img { width: 46px; height: 46px; }
+    }
+    /* 6) 작은 핸드폰 세로 (~ 420px) */
+    @media (max-width: 420px) {
+      .logo-grid {
+        grid-template-columns: repeat(4, minmax(0, 64px));
+        gap: 10px;
+      }
+      .logo-tile { width: 60px; height: 60px; }
+      .logo-tile img { width: 42px; height: 42px; }
+    }
+    /* 7) 매우 작은 핸드폰 세로 (~ 340px) */
+    @media (max-width: 340px) {
+      .logo-grid {
+        grid-template-columns: repeat(4, minmax(0, 56px));
+        gap: 8px;
+      }
+      .logo-tile { width: 54px; height: 54px; border-width: 2px; }
+      .logo-tile img { width: 38px; height: 38px; }
+    }
+    /* 8) 핸드폰 가로 모드 (landscape + 짧은 높이) */
+    @media (orientation: landscape) and (max-height: 500px) {
+      .logo-grid {
+        grid-template-columns: repeat(10, minmax(0, 52px));
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .logo-tile {
+        width: 52px; height: 52px;
+        border-width: 2px;
+        box-shadow: 0 2px 12px 0 #b1c7e855;
+      }
+      .logo-tile img { width: 36px; height: 36px; }
+    }
+    /* 9) 작은 핸드폰 가로 (iPhone SE 가로 등) */
+    @media (orientation: landscape) and (max-height: 380px) {
+      .logo-grid {
+        grid-template-columns: repeat(11, minmax(0, 46px));
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .logo-tile { width: 46px; height: 46px; }
+      .logo-tile img { width: 32px; height: 32px; }
+    }
+
+    /* 생활정보 탭에서는 섹션 헤더 숨김 (텍스트 제거) */
+    body[data-active-tab="daily"] .section-head { display: none; }
+
+    /* ===== MYWAY.KR 공통 ===== */
+    .myway-home-btn {
+      position: fixed;
+      right: 14px;
+      bottom: calc(14px + var(--safe-bottom));
+      z-index: 9999;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 14px 9px 12px;
+      background: linear-gradient(135deg, #5b6ef0, #883cea);
+      color: #fff;
+      border-radius: 999px;
+      font-size: .82rem; font-weight: 700;
+      text-decoration: none; letter-spacing: -0.2px;
+      box-shadow: 0 6px 20px rgba(91, 110, 240, 0.5);
+      transition: transform .15s, box-shadow .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .myway-home-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(91, 110, 240, 0.65); }
+    .myway-home-btn svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
+
+    .myway-footer {
+      width: 100%;
+      text-align: center;
+      padding: 22px 14px calc(28px + var(--safe-bottom));
+      margin-top: 28px;
+      border-top: 1px solid rgba(0,0,0,0.06);
+      font-size: .82rem;
+      color: var(--text-muted);
+    }
+    .myway-footer a {
+      color: var(--text-sub);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .myway-footer a:hover { color: var(--accent); }
+    .myway-footer .sep { display: inline-block; margin: 0 8px; opacity: .5; }
+  .sc-section {
+      width: 100%;
+      max-width: 1280px;
+      margin: 28px auto 24px;
+      padding: 0 24px;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      color: #333862;
+    }
+
+    .sc-header {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 10px;
+      padding: 0 2px 14px;
+      margin-bottom: 14px;
+    }
+    .sc-title {
+      grid-column: 2;
+      margin: 0;
+      text-align: center;
+      font-family: 'Gowun Batang', 'Segoe UI', '맑은 고딕', serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #2a2f55;
+      white-space: nowrap;
+    }
+    .sc-actions {
+      grid-column: 3;
+      justify-self: end;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .sc-icon-btn {
+      width: 30px; height: 30px;
+      border: none;
+      background: transparent;
+      color: #8a93b8;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.12s;
+      padding: 0;
+    }
+    .sc-icon-btn:hover { color: #333862; background: #f1f3f8; }
+    .sc-icon-btn.danger:hover { color: #d33; background: #fdecec; }
+
+    /* ───── 그리드: .logo-row와 동일한 구조 ───── */
+    .sc-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 74px);
+      gap: 24px;
+      justify-content: center;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    /* ───── 타일: .ai-logo-wrap와 동일한 원형 ───── */
+    .sc-tile {
+      position: relative;
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 3px 24px 0 #b1c7e866;
+      border: 3px solid #e5e8f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: box-shadow 0.15s, border-color 0.15s, transform 0.12s;
+      cursor: pointer;
+      overflow: hidden;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      color: inherit;
+    }
+    .sc-tile:hover {
+      box-shadow: 0 8px 32px 0 #7e94ff99;
+      border-color: #94a2ff;
+      background: #f7faff;
+    }
+    .sc-tile.sc-dragging { opacity: 0.4; }
+    .sc-tile.sc-drag-over {
+      border-color: #4a9eff;
+      box-shadow: 0 0 0 3px rgba(74,158,255,0.3);
+    }
+
+    .sc-fav {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .sc-fav img {
+      width: 60%;
+      height: 60%;
+      object-fit: contain;
+    }
+    .sc-fav.sc-ph {
+      background: linear-gradient(135deg, #6fc8ff, #4a9eff);
+      color: #fff;
+      font-weight: 700;
+      font-size: 28px;
+    }
+
+    /* + 추가 타일 (점선 원) */
+    .sc-tile.sc-add {
+      background: transparent;
+      border: 2.5px dashed #cdd2de;
+      box-shadow: none;
+      color: #aab1c4;
+    }
+    .sc-tile.sc-add:hover {
+      border-color: #94a2ff;
+      color: #6fc8ff;
+      background: #f7faff;
+      box-shadow: none;
+    }
+    .sc-tile.sc-add .sc-fav {
+      background: transparent;
+      font-size: 32px;
+      font-weight: 300;
+    }
+
+    /* × 삭제 버튼 - 평소엔 숨김, 호버 시 빨갛게 표시 */
+    .sc-menu-btn {
+      position: absolute;
+      top: -4px; right: -4px;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: #ef4444;
+      border: 2px solid #fff;
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      line-height: 1;
+      z-index: 2;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.7);
+      box-shadow: 0 3px 10px rgba(239,68,68,0.5);
+      transition: opacity 0.15s, transform 0.15s, background 0.15s;
+    }
+    .sc-tile:hover .sc-menu-btn {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+    .sc-menu-btn:hover {
+      background: #dc2626 !important;
+      transform: scale(1.15) !important;
+      box-shadow: 0 4px 14px rgba(239,68,68,0.65) !important;
+    }
+    /* 모바일(호버 없음)에선 살짝 보이게 */
+    @media (hover: none) {
+      .sc-menu-btn {
+        opacity: 0.75;
+        pointer-events: auto;
+        transform: scale(1);
+        background: rgba(26,26,26,0.6);
+      }
+    }
+
+    /* ───── 반응형 (logo-row와 완전 동일하게) ───── */
+    @media (min-width: 1600px) {
+      .sc-section { max-width: 1280px; padding: 0 24px; }
+      .sc-grid { grid-template-columns: repeat(12, 80px); }
+      .sc-tile { width: 80px; height: 80px; }
+      .sc-fav.sc-ph { font-size: 30px; }
+    }
+    @media (min-width: 1101px) and (max-width: 1599px) {
+      .sc-section { max-width: 1000px; }
+      .sc-grid { grid-template-columns: repeat(10, 74px); }
+      .sc-tile { width: 74px; height: 74px; }
+    }
+    @media (min-width: 901px) and (max-width: 1100px) {
+      .sc-section { max-width: 820px; }
+      .sc-grid { grid-template-columns: repeat(8, 70px); }
+      .sc-tile { width: 70px; height: 70px; }
+    }
+    @media (min-width: 701px) and (max-width: 900px) {
+      .sc-section { max-width: 700px; padding: 0 14px; }
+      .sc-grid { grid-template-columns: repeat(7, 70px); }
+      .sc-tile { width: 70px; height: 70px; }
+    }
+    @media (max-width: 700px) {
+      .sc-section { padding: 0 10px; }
+      .sc-grid { grid-template-columns: repeat(5, minmax(0, 64px)); gap: 18px; }
+      .sc-tile { width: 64px; height: 64px; border-width: 2.5px; }
+      .sc-fav.sc-ph { font-size: 24px; }
+      .sc-tile.sc-add { border-width: 2px; }
+      .sc-tile.sc-add .sc-fav { font-size: 28px; }
+      .sc-title { font-size: 16px; }
+    }
+    @media (max-width: 420px) {
+      .sc-section { padding: 0 8px; }
+      .sc-grid { grid-template-columns: repeat(4, minmax(0, 64px)); gap: 14px; }
+      .sc-title { font-size: 15px; letter-spacing: 0.02em; }
+    }
+    @media (max-width: 340px) {
+      .sc-grid { grid-template-columns: repeat(4, minmax(0, 56px)); gap: 12px; }
+      .sc-tile { width: 56px; height: 56px; }
+      .sc-fav.sc-ph { font-size: 20px; }
+      .sc-menu-btn { width: 18px; height: 18px; font-size: 10px; }
+    }
+    @media (orientation: landscape) and (max-height: 500px) {
+      .sc-section { max-width: 100%; padding: 0 16px; margin-top: 4px; }
+      .sc-grid { grid-template-columns: repeat(10, minmax(0, 52px)); gap: 12px; }
+      .sc-tile { width: 52px; height: 52px; border-width: 2px; }
+      .sc-fav.sc-ph { font-size: 18px; }
+      .sc-tile.sc-add .sc-fav { font-size: 22px; }
+    }
+    @media (orientation: landscape) and (max-height: 380px) {
+      .sc-grid { grid-template-columns: repeat(11, minmax(0, 46px)); gap: 10px; }
+      .sc-tile { width: 46px; height: 46px; }
+      .sc-fav.sc-ph { font-size: 16px; }
+    }
+
+    /* 모달 */
+    .sc-modal {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .sc-modal.sc-show { display: flex; }
+    .sc-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 22px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      color: #333862;
+    }
+    .sc-card h2 {
+      margin: 0 0 16px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .sc-field { margin-bottom: 12px; }
+    .sc-field label {
+      display: block;
+      font-size: 11px;
+      color: #777;
+      margin-bottom: 5px;
+    }
+    .sc-field input {
+      width: 100%;
+      background: #fff;
+      border: 1px solid #d8dae3;
+      color: #1a1a1a;
+      border-radius: 8px;
+      padding: 9px 11px;
+      font-size: 13.5px;
+      font-family: inherit;
+    }
+    .sc-field input:focus {
+      outline: none;
+      border-color: #4a9eff;
+      box-shadow: 0 0 0 3px rgba(74,158,255,0.15);
+    }
+    .sc-modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+    .sc-modal-actions button {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 500;
+    }
+    .sc-btn-cancel { background: #f1f1f1; color: #444; }
+    .sc-btn-cancel:hover { background: #e8e8e8; }
+    .sc-btn-primary { background: #4a9eff; color: #fff; }
+    .sc-btn-primary:hover { background: #357fde; }
+    .sc-btn-danger { background: #fdecec; color: #d33; border: 1px solid #f8c4c4; }
+    .sc-btn-danger:hover { background: #fad6d6; }
+
+    .sc-ctx {
+      position: fixed;
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      padding: 4px;
+      z-index: 9998;
+      min-width: 120px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      display: none;
+    }
+    .sc-ctx.sc-show { display: block; }
+    .sc-ctx button {
+      display: block;
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #1a1a1a;
+      padding: 8px 12px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      border-radius: 6px;
+    }
+    .sc-ctx button:hover { background: #f3f3f3; }
+    .sc-ctx button.sc-danger { color: #d33; }
+    .sc-ctx button.sc-danger:hover { background: #fdecec; }
+
+    .sc-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1a1a1a;
+      color: #fff;
+      padding: 9px 16px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      z-index: 10000;
+      transition: transform 0.22s;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+    .sc-toast.sc-show { transform: translateX(-50%) translateY(0); }
+
+    /* 자주가는 사이트 영역 - 생활정보 탭일 때만 표시 */
+    body:not([data-active-tab="daily"]) .sc-section { display: none; }
+
+    /* ============ 하단 갤러리 섹션 (00maincomics 디자인) ============ */
+    .gallery-section {
+      width: 100%;
+      max-width: 1100px;
+      padding: 24px 14px 48px;
+      margin: 24px auto 0;
+      border-top: 1px solid #eef0f4;
+    }
+    .masonry {
+      column-count: 4;
+      column-gap: 12px;
+    }
+    /* 갤러리 카드: .card(다크 카드) 스타일과 충돌하지 않도록 .gcard로 분리 */
+    .masonry .gcard {
+      display: block;
+      break-inside: avoid;
+      page-break-inside: avoid;
+      -webkit-column-break-inside: avoid;
+      margin: 0 0 12px;
+      padding: 0;
+      min-height: 0;
+      border: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #f4f6fb;
+      position: relative;
+      text-decoration: none;
+      color: inherit;
+      transform: translateZ(0);
+      box-shadow: none;
+    }
+    .masonry .gcard::before { content: none; }
+    .masonry .gcard:hover {
+      background: #f4f6fb;
+      border: 0;
+      transform: translateZ(0);
+      box-shadow: none;
+    }
+    .masonry .gcard img {
+      display: block;
+      width: 100%;
+      height: auto;
+      transition: filter .25s ease, transform .35s ease;
+    }
+    .masonry .gcard:hover img { transform: scale(1.03); }
+    .masonry .gcard .cap {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      padding: 18px 10px 8px;
+      font-size: .82rem; font-weight: 600;
+      color: #fff;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,.55) 80%);
+      opacity: 0;
+      transition: opacity .2s;
+      pointer-events: none;
+    }
+    .masonry .gcard:hover .cap { opacity: 1; }
+    @media (max-width: 900px) { .masonry { column-count: 3; } }
+    @media (max-width: 600px) { .masonry { column-count: 2; column-gap: 10px; } .masonry .gcard { margin-bottom: 10px; } }
+    @media (max-width: 360px) { .masonry { column-count: 1; } }
+
+    /* 갤러리도 생활정보 탭일 때만 표시 (라이트 톤이라 다른 탭과 안 어울림) */
+    body:not([data-active-tab="daily"]) .gallery-section { display: none; }
+
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="https://myway.kr/" target="_top" class="home-link" aria-label="MYWAY.KR 홈" title="MYWAY.KR 홈">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 2.5 11.4l1.3 1.5L5 11.85V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-8.15l1.2 1.05 1.3-1.5L12 3.2Z"/></svg>
+    </a>
+    <nav class="tab-nav" id="tabNav">
+      <button class="tab-btn is-active" data-tab="daily">생활정보</button>
+      <button class="tab-btn" data-tab="portal">포털</button>
+      <button class="tab-btn" data-tab="news">뉴스</button>
+      <button class="tab-btn" data-tab="bbs">BBS</button>
+      <button class="tab-btn" data-tab="broadcast">방송사</button>
+      <button class="tab-btn" data-tab="magazine">잡지</button>
+      <button class="tab-btn" data-tab="cafe">카페</button>
+      <button class="tab-btn" data-tab="blog">블로그</button>
+      <button class="tab-btn" data-tab="movie">영화</button>
+      <button class="tab-btn" data-tab="music">음악</button>
+    </nav>
+  </header>
+
+  <main class="main" id="main"></main>
+
+    <section class="sc-section" id="sc-root">
+    <div class="sc-header">
+      <h2 class="sc-title">자주가는 사이트 추가</h2>
+      <div class="sc-actions">
+        <button class="sc-icon-btn" id="sc-export" title="내보내기 (JSON 다운로드)" aria-label="내보내기">↓</button>
+        <button class="sc-icon-btn" id="sc-import" title="가져오기 (JSON 업로드)" aria-label="가져오기">↑</button>
+        <button class="sc-icon-btn danger" id="sc-clear" title="모두 삭제" aria-label="모두 삭제">×</button>
+        <input type="file" id="sc-file" accept=".json,application/json" style="display:none">
+      </div>
+    </div>
+    <div class="sc-grid" id="sc-grid"></div>
+
+    <div class="sc-modal" id="sc-edit-modal">
+      <div class="sc-card">
+        <h2 id="sc-modal-title">바로가기 추가</h2>
+        <div class="sc-field">
+          <label for="sc-url">URL</label>
+          <input type="url" id="sc-url" placeholder="https://example.com" autocomplete="off">
+        </div>
+        <div class="sc-field">
+          <label for="sc-name">이름 (생략 가능)</label>
+          <input type="text" id="sc-name" placeholder="비우면 자동" autocomplete="off">
+        </div>
+        <div class="sc-modal-actions">
+          <button class="sc-btn-cancel" id="sc-cancel">취소</button>
+          <button class="sc-btn-primary" id="sc-save">저장</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc-modal" id="sc-import-modal">
+      <div class="sc-card">
+        <h2>가져오기 방법</h2>
+        <p style="font-size:12.5px;color:#555;margin:0 0 14px;line-height:1.6;">
+          파일: <strong id="sc-import-count">N</strong>개 · 현재: <strong id="sc-current-count">N</strong>개
+        </p>
+        <div class="sc-modal-actions" style="flex-direction:column;align-items:stretch;gap:7px;">
+          <button class="sc-btn-primary" id="sc-imp-merge">병합 (중복 제외 추가)</button>
+          <button class="sc-btn-danger" id="sc-imp-replace">전체 교체</button>
+          <button class="sc-btn-cancel" id="sc-imp-cancel">취소</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc-ctx" id="sc-ctx">
+      <button data-act="edit">편집</button>
+      <button data-act="delete" class="sc-danger">삭제</button>
+    </div>
+    <div class="sc-toast" id="sc-toast"></div>
+  </section>
+
+  <!-- ============ 하단 갤러리 (00maincomics 스타일) ============ -->
+  <section class="gallery-section">
+    <div class="masonry" id="masonryGallery"></div>
+  </section>
+
+
+  <footer class="myway-footer">
+    <a href="https://myway.kr/" target="_top">myway.kr</a>
+    <span class="sep">·</span>
+    <span>© MYWAY.KR</span>
+  </footer>
+
+  <a href="https://myway.kr/" target="_top" class="myway-home-btn" aria-label="myway.kr 홈으로 이동">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 2.5 11.4l1.3 1.5L5 11.85V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-8.15l1.2 1.05 1.3-1.5L12 3.2Z"/></svg>
+    myway.kr
+  </a>
+
+  <script>
+    /* 복제방지 */
+    (function(){
+      function isEditable(t) {
+        if (!t) return false;
+        const tag = (t.tagName || '').toLowerCase();
+        if (tag === 'input' || tag === 'textarea') return true;
+        if (t.isContentEditable) return true;
+        /* 자주가는 사이트 영역(.sc-section)은 우클릭 편집·드래그 정렬 필요해서 예외 */
+        if (t.closest && t.closest('.sc-section')) return true;
+        return false;
+      }
+      ['contextmenu','dragstart','selectstart','copy','cut'].forEach(ev => {
+        document.addEventListener(ev, e => {
+          if (isEditable(e.target)) return;
+          e.preventDefault();
+        }, { capture: true });
+      });
+      document.addEventListener('keydown', e => {
+        if (isEditable(e.target)) return;
+        const k = (e.key || '').toLowerCase();
+        if (k === 'f12') { e.preventDefault(); return; }
+        if (e.ctrlKey && e.shiftKey && (k === 'i' || k === 'j' || k === 'c')) { e.preventDefault(); return; }
+        if (e.ctrlKey && !e.shiftKey && (k === 'u' || k === 's' || k === 'c' || k === 'x' || k === 'a')) { e.preventDefault(); return; }
+      }, { capture: true });
+    })();
+
+    /* ============ 데이터 ============ */
+    /* tabs[탭ID] = { sections: [{ label, sub, items: [{ticker, ko, url}] }] }
+       - chart 탭: 코인 차트(코인원) / 미국주식(NASDAQ) / 한국주식(KOSPI)
+       - fear  탭: 코인 공포·탐욕 지수 (cfgi.io) 12개 */
+    const tabs = {
+      daily: {
+        logoStyle: true,
+        sections: [
+          {
+            label: '생활정보 · MYWAY.KR 메인',
+            sub: 'INDEXMAIN',
+            items: [
+              { name: 'news',       img: '0000news2.jpg',     url: 'newsitesbar2.html' },
+              { name: 'bbs',        img: '00000mb.svg',       url: 'bbssitesbar2.html' },
+              { name: 'radio',      img: '001radio.jpg',      url: 'radiositesbar2.html' },
+              { name: 'magazine',   img: '002magazine.jpg',   url: '00barmagazine.html' },
+              { name: 'tv',         img: '002TV.jpg',         url: 'livesitesbar2.html' },
+              { name: 'movie',      img: 'https://img.freepik.com/premium-vector/click-movie-logo-vector_18099-258.jpg', url: '00mainmovieinner2.html' },
+              { name: 'vod',        img: 'https://img.freepik.com/vector-premium/vod-video-on-demand-monetizacion-video-ilustracion-stock-vectorial_100456-8327.jpg', url: '00maindramainner2.html' },
+              { name: 'music',      img: 'https://www.urbanbrush.net/web/wp-content/uploads/edd/2018/02/web-20180206111013459746.png', url: '00mainmusicinner.html' },
+              { name: 'cctv',       img: '00000mc.jpg',       url: '00barcctv.html' },
+              { name: 'mp',         img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2oGuqRTg-9duioSpiKYQQmNXfEf2jON1SIw&s', url: 'https://myway.kr/00barmp.html' },
+              { name: 'juso',       img: 'https://play-lh.googleusercontent.com/gAEHl0R5G-pcEViq9tMdj7fiiTGZB7UBXDxLUGA68HRuK6sRlbU-HFMBbng7B94zJNmiF2xIR8aAUXwWTFo1bA', url: 'https://www.juso.go.kr/' },
+              { name: 'weather',    img: 'https://cdn.ngonews.kr/news/photo/202405/150919_120020_516.jpg', url: '00mainweather.html' },
+              { name: 'fortune',    img: 'https://play-lh.googleusercontent.com/imryhJ0czkJPr1VKb9o1PtaAicQyd4n6vqU5iUMZq3dufHSCx1MHFNTjLBfut36pWE-b', url: '00mainfortune.html' },
+              { name: 'bithumb',    img: 'https://cdn.simpleicons.org/bitcoin/F7931A', url: 'https://myway.kr/00maincoininner.html' },
+              { name: 'stock',      img: 'https://blog.kakaocdn.net/dna/sDCPv/btsLOWkgzzz/AAAAAAAAAAAAAAAAAAAAAJeD5oDJ4VOLF2kdzWdMQr_Deu2I8gMKCfrHTQuGU8Ux/img.png?credential=yqXZFxpELC7KVnFOS48ylbz2pIh7yKj8&expires=1780239599&allow_ip=&allow_referer=&signature=ygPGr27K8AEcgQYq2lkVwVnw8qM%3D', url: 'https://myway.kr/indexmainpeople.html' },
+              { name: 'festival',   img: '00fest.jpg',        url: 'https://korean.visitkorea.or.kr/kfes/list/wntyFstvlList.do' },
+              { name: 'calc',       img: 'https://images.icon-icons.com/70/PNG/512/calculator_14103.png', url: 'https://myway.kr/temp2.html' },
+              { name: 'watch',      img: 'https://cdn-icons-png.flaticon.com/512/9747/9747239.png', url: 'https://myway.kr/00barwatch.html' },
+              { name: 'speed',      img: 'https://play-lh.googleusercontent.com/EMiYo4pFOaFQ5fnt7oJg-k8DSuk2BM7rnZqFcWvqdRehrBkBysv5aO61RT1dobRGVj4U=w240-h480-rw', url: 'https://sightmap.co.kr/%ec%9d%b8%ed%84%b0%eb%84%b7-%ec%86%8d%eb%8f%84-%ec%b8%a1%ec%a0%95-%ec%82%ac%ec%9d%b4%ed%8a%b8-%eb%aa%a8%ec%9d%8c-top-7/' },
+              { name: 'movieday',   img: '000movie0.jpg',     url: '00mainmovieday.html' },
+              { name: 'bus',        img: 'https://mir-s3-cdn-cf.behance.net/projects/404/a3b7bc207097041.Y3JvcCwxMzgwLDEwODAsMjcwLDA.jpg', url: 'https://myway.kr/00mainbus.html' },
+              { name: 'making',     img: 'https://cdn-icons-png.flaticon.com/512/17101/17101525.png', url: '00mainmakinginner.html' }
+            ]
+          }
+        ]
+      },
+      portal: {
+        sections: [
+          {
+            label: '국내 포털',
+            sub: 'Korea Portal',
+            items: [
+              { ticker: '네이버',     ko: 'naver.com',         url: 'https://www.naver.com/' },
+              { ticker: '다음',       ko: 'daum.net',          url: 'https://www.daum.net/' },
+              { ticker: '줌',         ko: 'zum.com',           url: 'https://zum.com/' },
+              { ticker: '네이트',     ko: 'nate.com',          url: 'https://www.nate.com/' },
+              { ticker: '카카오',     ko: 'kakao.com',         url: 'https://www.kakao.com/' }
+            ]
+          },
+          {
+            label: '해외 포털·검색',
+            sub: 'Global Portal',
+            items: [
+              { ticker: '구글',         ko: 'google.com',        url: 'https://www.google.com/' },
+              { ticker: '빙',           ko: 'bing.com',          url: 'https://www.bing.com/' },
+              { ticker: '야후',         ko: 'yahoo.com',         url: 'https://www.yahoo.com/' },
+              { ticker: '덕덕고',       ko: 'duckduckgo.com',    url: 'https://duckduckgo.com/' },
+              { ticker: 'MSN',          ko: 'msn.com',           url: 'https://www.msn.com/' },
+              { ticker: 'AOL',          ko: 'aol.com',           url: 'https://www.aol.com/' },
+              { ticker: '야후 재팬',    ko: 'yahoo.co.jp · 일본', url: 'https://www.yahoo.co.jp/' },
+              { ticker: '바이두',       ko: 'baidu.com · 중국',  url: 'https://www.baidu.com/' },
+              { ticker: '얀덱스',       ko: 'yandex.com · 러시아', url: 'https://yandex.com/' },
+              { ticker: '브레이브 검색', ko: 'search.brave.com',  url: 'https://search.brave.com/' },
+              { ticker: '에코시아',     ko: '친환경 · ecosia.org', url: 'https://www.ecosia.org/' },
+              { ticker: '스타트페이지', ko: 'startpage.com',     url: 'https://www.startpage.com/' }
+            ]
+          },
+          {
+            label: 'AI 검색·챗봇',
+            sub: 'AI Search & Chat',
+            items: [
+              { ticker: 'ChatGPT',     ko: 'OpenAI · chat.openai.com', url: 'https://chat.openai.com/' },
+              { ticker: 'Claude',      ko: 'Anthropic · claude.ai',    url: 'https://claude.ai/' },
+              { ticker: 'Perplexity',  ko: 'perplexity.ai · 검색 AI',  url: 'https://www.perplexity.ai/' },
+              { ticker: 'Gemini',      ko: '구글 · gemini.google.com', url: 'https://gemini.google.com/' },
+              { ticker: 'Copilot',     ko: 'MS · copilot.microsoft.com', url: 'https://copilot.microsoft.com/' },
+              { ticker: 'You.com',     ko: 'you.com · AI 검색',        url: 'https://you.com/' },
+              { ticker: 'Phind',       ko: 'phind.com · 개발자 AI',    url: 'https://www.phind.com/' },
+              { ticker: 'Grok',        ko: 'xAI · grok.com',           url: 'https://grok.com/' }
+            ]
+          },
+          {
+            label: 'OTT · 스트리밍',
+            sub: 'OTT & Streaming',
+            items: [
+              { ticker: '넷플릭스',     ko: 'netflix.com',          url: 'https://www.netflix.com/' },
+              { ticker: '디즈니+',      ko: 'disneyplus.com',       url: 'https://www.disneyplus.com/' },
+              { ticker: '쿠팡플레이',   ko: 'coupangplay.com',      url: 'https://www.coupangplay.com/' },
+              { ticker: 'TVapp.to',     ko: 'thetvapp.to',          url: 'https://thetvapp.to/' },
+              { ticker: 'FSTV',         ko: 'fstv.us',              url: 'https://fstv.us/live-tv.html' },
+              { ticker: 'LiveMatches',  ko: 'livematches.net',      url: 'https://livematches.net/' },
+              { ticker: 'TimStreams',   ko: 'timstreams.site',      url: 'https://timstreams.site/' },
+              { ticker: 'TV Garden',    ko: 'tv.garden',            url: 'https://tv.garden/' },
+              { ticker: 'MLBLive',      ko: 'mlblive.net',          url: 'https://mlblive.net/' }
+            ]
+          },
+          {
+            label: '라이브·게임',
+            sub: 'Live & Game',
+            items: [
+              { ticker: '치지직',       ko: '네이버 스트리밍',      url: 'https://chzzk.naver.com/' },
+              { ticker: '트위치',       ko: 'twitch.tv',            url: 'https://www.twitch.tv/' },
+              { ticker: 'Nexon',        ko: 'nexon.com · 게임',     url: 'https://www.nexon.com/' }
+            ]
+          },
+          {
+            label: 'AI 생성·도구',
+            sub: 'AI Generative',
+            items: [
+              { ticker: 'Sora',         ko: 'OpenAI · 영상 생성 AI', url: 'https://openai.com/sora' },
+              { ticker: 'HailuoAI',     ko: 'hailuoai.video · 영상', url: 'https://hailuoai.video/' },
+              { ticker: 'KlingAI',      ko: 'klingai.com · 영상',   url: 'https://www.klingai.com/' }
+            ]
+          },
+          {
+            label: '동영상·SNS 추가',
+            sub: 'More Video & SNS',
+            items: [
+              { ticker: 'YouTube 쇼츠', ko: 'youtube.com/shorts',   url: 'https://www.youtube.com/shorts' },
+              { ticker: '네이버 클립',  ko: 'm.naver.com · 클립',   url: 'https://m.naver.com/' },
+              { ticker: '네이버 LIVE',  ko: '쇼핑 라이브',           url: 'https://shoppinglive.naver.com/home' },
+              { ticker: 'Discord',      ko: 'discord.com',          url: 'https://discord.com/' },
+              { ticker: 'VK',           ko: '러시아 SNS · vk.com',  url: 'https://vk.com/' }
+            ]
+          },
+          {
+            label: '오디오·팟캐스트',
+            sub: 'Audio & Podcast',
+            items: [
+              { ticker: 'Apple 팟캐스트', ko: 'podcasts.apple.com', url: 'https://podcasts.apple.com/kr/browse' },
+              { ticker: '팟빵',          ko: 'podbbang.com',        url: 'https://www.podbbang.com/' },
+              { ticker: '네이버 오디오클립', ko: 'audioclip.naver.com', url: 'https://audioclip.naver.com/' }
+            ]
+          },
+          {
+            label: '여행',
+            sub: 'Travel',
+            items: [
+              { ticker: '야놀자',       ko: 'nol.yanolja.com',      url: 'https://nol.yanolja.com/' },
+              { ticker: '여기어때',     ko: 'yeogi.com',            url: 'https://www.yeogi.com/' },
+              { ticker: 'TripAdvisor',  ko: 'tripadvisor.co.kr',    url: 'https://www.tripadvisor.co.kr/' },
+              { ticker: 'VisitKorea',   ko: '한국관광공사',         url: 'https://korean.visitkorea.or.kr/main/main.do' }
+            ]
+          },
+          {
+            label: '도구·유틸리티',
+            sub: 'Tools & Utilities',
+            items: [
+              { ticker: 'GitHub',          ko: 'github.com · 개발',     url: 'https://github.com/' },
+              { ticker: 'SafeVisit',       ko: 'safevisit.org · 보안',  url: 'https://www.safevisit.org/' },
+              { ticker: 'Unicorn HTTPS',   ko: 'getunicorn.app · 우회', url: 'https://getunicorn.app/ko/product/unicorn-https/windows' },
+              { ticker: 'NoxInfluencer',   ko: '유튜브 채널 통계',      url: 'https://kr.noxinfluencer.com/youtube-channel-rank/top-100-all-all-youtuber-sorted-by-subs-weekly' },
+              { ticker: 'SEMrush',         ko: '사이트 트래픽 분석',    url: 'https://ko.semrush.com/trending-websites/kr/all' },
+              { ticker: 'Scribd',          ko: '문서 공유',             url: 'https://www.scribd.com/' }
+            ]
+          }
+        ]
+      },
+      news: {
+        sections: [
+          {
+            label: '종합 일간지',
+            sub: 'General News',
+            items: [
+              { ticker: '조선일보',   ko: 'chosun.com',        url: 'https://www.chosun.com/' },
+              { ticker: '중앙일보',   ko: 'joongang.co.kr',    url: 'https://www.joongang.co.kr/' },
+              { ticker: '동아일보',   ko: 'donga.com',         url: 'https://www.donga.com/' },
+              { ticker: '한겨레',     ko: 'hani.co.kr',        url: 'https://www.hani.co.kr/' },
+              { ticker: '경향신문',   ko: 'khan.co.kr',        url: 'https://www.khan.co.kr/' },
+              { ticker: '국민일보',   ko: 'kmib.co.kr',        url: 'https://www.kmib.co.kr/' },
+              { ticker: '서울신문',   ko: 'seoul.co.kr',       url: 'https://www.seoul.co.kr/' },
+              { ticker: '문화일보',   ko: 'munhwa.com',        url: 'https://www.munhwa.com/' },
+              { ticker: '세계일보',   ko: 'segye.com',         url: 'https://www.segye.com/' },
+              { ticker: '한국일보',   ko: 'hankookilbo.com',   url: 'https://www.hankookilbo.com/' }
+            ]
+          },
+          {
+            label: '경제 일간지',
+            sub: 'Business News',
+            items: [
+              { ticker: '한국경제',     ko: 'hankyung.com',       url: 'https://www.hankyung.com/' },
+              { ticker: '매일경제',     ko: 'mk.co.kr',           url: 'https://www.mk.co.kr/' },
+              { ticker: '머니투데이',   ko: 'mt.co.kr',           url: 'https://www.mt.co.kr/' },
+              { ticker: '이데일리',     ko: 'edaily.co.kr',       url: 'https://www.edaily.co.kr/' },
+              { ticker: '헤럴드경제',   ko: 'heraldcorp.com',     url: 'https://www.heraldcorp.com/' },
+              { ticker: '서울경제',     ko: 'sedaily.com',        url: 'https://www.sedaily.com/' },
+              { ticker: '아시아경제',   ko: 'asiae.co.kr',        url: 'https://www.asiae.co.kr/' },
+              { ticker: '파이낸셜뉴스', ko: 'fnnews.com',         url: 'https://www.fnnews.com/' },
+              { ticker: '디지털타임스', ko: 'dt.co.kr',           url: 'https://www.dt.co.kr/' },
+              { ticker: '전자신문',     ko: 'etnews.com',         url: 'https://www.etnews.com/' }
+            ]
+          },
+          {
+            label: '지방지',
+            sub: 'Local News',
+            items: [
+              { ticker: '부산일보',       ko: 'busan.com',           url: 'https://www.busan.com/' },
+              { ticker: '국제신문',       ko: '부산 · kookje.co.kr', url: 'https://www.kookje.co.kr/' },
+              { ticker: '매일신문',       ko: '대구 · imaeil.com',   url: 'https://www.imaeil.com/' },
+              { ticker: '영남일보',       ko: '대구·경북',           url: 'https://www.yeongnam.com/' },
+              { ticker: '경북일보',       ko: 'kyongbuk.co.kr',      url: 'https://www.kyongbuk.co.kr/' },
+              { ticker: '경남신문',       ko: '경남 · knnews.co.kr', url: 'https://www.knnews.co.kr/' },
+              { ticker: '경남도민일보',   ko: 'idomin.com',          url: 'https://www.idomin.com/' },
+              { ticker: '강원일보',       ko: 'kwnews.co.kr',        url: 'https://www.kwnews.co.kr/' },
+              { ticker: '강원도민일보',   ko: 'kado.net',            url: 'https://www.kado.net/' },
+              { ticker: '충청일보',       ko: 'ccdailynews.com',     url: 'https://www.ccdailynews.com/' },
+              { ticker: '충청투데이',     ko: 'cctoday.co.kr',       url: 'https://www.cctoday.co.kr/' },
+              { ticker: '대전일보',       ko: 'daejonilbo.com',      url: 'https://www.daejonilbo.com/' },
+              { ticker: '광주일보',       ko: 'kwangju.co.kr',       url: 'https://www.kwangju.co.kr/' },
+              { ticker: '전남일보',       ko: 'jnilbo.com',          url: 'https://www.jnilbo.com/' },
+              { ticker: '전북일보',       ko: 'jjan.kr',             url: 'https://www.jjan.kr/' },
+              { ticker: '무등일보',       ko: '광주 · mdilbo.com',   url: 'https://www.mdilbo.com/' },
+              { ticker: '경기일보',       ko: 'kyeonggi.com',        url: 'https://www.kyeonggi.com/' },
+              { ticker: '인천일보',       ko: 'incheonilbo.com',     url: 'https://www.incheonilbo.com/' },
+              { ticker: '제주일보',       ko: 'jejunews.com',        url: 'https://www.jejunews.com/' },
+              { ticker: '한라일보',       ko: '제주 · ihalla.com',   url: 'https://www.ihalla.com/' }
+            ]
+          },
+          {
+            label: '통신사·인터넷 매체',
+            sub: 'News Agency & Online',
+            items: [
+              { ticker: '연합뉴스',         ko: 'yna.co.kr',           url: 'https://www.yna.co.kr/' },
+              { ticker: '뉴시스',           ko: 'newsis.com',          url: 'https://www.newsis.com/' },
+              { ticker: '뉴스1',            ko: 'news1.kr',            url: 'https://www.news1.kr/' },
+              { ticker: '오마이뉴스',       ko: 'ohmynews.com',        url: 'https://www.ohmynews.com/' },
+              { ticker: '프레시안',         ko: 'pressian.com',        url: 'https://www.pressian.com/' },
+              { ticker: '미디어오늘',       ko: 'mediatoday.co.kr',    url: 'https://www.mediatoday.co.kr/' },
+              { ticker: '노컷뉴스',         ko: 'nocutnews.co.kr',     url: 'https://www.nocutnews.co.kr/' },
+              { ticker: '비즈니스포스트',   ko: 'businesspost.co.kr',  url: 'https://www.businesspost.co.kr/' },
+              { ticker: '미디어스',         ko: 'mediaus.co.kr',       url: 'https://www.mediaus.co.kr/' },
+              { ticker: 'PD저널',           ko: 'pdjournal.com',       url: 'https://www.pdjournal.com/' }
+            ]
+          },
+          {
+            label: '스포츠·연예',
+            sub: 'Sports & Entertainment',
+            items: [
+              { ticker: '스포츠조선',       ko: 'sports.chosun.com',   url: 'https://sports.chosun.com/' },
+              { ticker: '일간스포츠',       ko: 'isplus.com',          url: 'https://isplus.com/' },
+              { ticker: '스포츠동아',       ko: 'sports.donga.com',    url: 'https://sports.donga.com/' },
+              { ticker: '스포츠경향',       ko: 'sports.khan.co.kr',   url: 'https://sports.khan.co.kr/' },
+              { ticker: '스포츠서울',       ko: 'sportsseoul.com',     url: 'https://www.sportsseoul.com/' },
+              { ticker: '스포츠한국',       ko: 'sports.hankooki.com', url: 'https://sports.hankooki.com/' },
+              { ticker: 'OSEN',             ko: 'osen.co.kr',          url: 'https://www.osen.co.kr/' },
+              { ticker: '마이데일리',       ko: 'mydaily.co.kr',       url: 'https://www.mydaily.co.kr/' },
+              { ticker: '엑스포츠뉴스',     ko: 'xportsnews.com',      url: 'https://www.xportsnews.com/' },
+              { ticker: '스타뉴스',         ko: 'starnewskorea.com',   url: 'https://www.starnewskorea.com/' }
+            ]
+          }
+        ]
+      },
+      bbs: {
+        sections: [
+          {
+            label: 'BBS · 커뮤니티',
+            sub: 'Community',
+            items: [
+              { ticker: '디시인사이드', ko: 'dcinside.com',        url: 'https://www.dcinside.com/' },
+              { ticker: '클리앙',       ko: 'clien.net',           url: 'https://www.clien.net/' },
+              { ticker: '뽐뿌',         ko: 'ppomppu.co.kr',       url: 'https://www.ppomppu.co.kr/' },
+              { ticker: '인벤',         ko: 'inven.co.kr',         url: 'https://www.inven.co.kr/' },
+              { ticker: '더쿠',         ko: 'theqoo.net',          url: 'https://theqoo.net/' },
+              { ticker: '보배드림',     ko: 'bobaedream.co.kr',    url: 'https://www.bobaedream.co.kr/' },
+              { ticker: '루리웹',       ko: 'ruliweb.com',         url: 'https://www.ruliweb.com/' },
+              { ticker: 'PGR21',        ko: 'pgr21.com',           url: 'https://www.pgr21.com/' },
+              { ticker: 'MLB파크',      ko: 'mlbpark.donga.com',   url: 'https://mlbpark.donga.com/' },
+              { ticker: '에펨코리아',   ko: 'fmkorea.com',         url: 'https://www.fmkorea.com/' },
+              { ticker: '82쿡',         ko: '82cook.com',          url: 'https://www.82cook.com/' },
+              { ticker: '네이트판',     ko: 'pann.nate.com',       url: 'https://pann.nate.com/' }
+            ]
+          }
+        ]
+      },
+      broadcast: {
+        sections: [
+          {
+            label: '국내 방송사',
+            sub: 'Korea · 지상파·종편·보도전문',
+            items: [
+              { ticker: 'KBS',          ko: 'kbs.co.kr',           url: 'https://www.kbs.co.kr/' },
+              { ticker: 'MBC',          ko: 'imbc.com',            url: 'https://www.imbc.com/' },
+              { ticker: 'SBS',          ko: 'sbs.co.kr',           url: 'https://www.sbs.co.kr/' },
+              { ticker: 'EBS',          ko: 'ebs.co.kr',           url: 'https://www.ebs.co.kr/' },
+              { ticker: 'JTBC',         ko: 'jtbc.co.kr',          url: 'https://jtbc.co.kr/' },
+              { ticker: 'TV조선',       ko: 'tvchosun.com',        url: 'https://broadcast.tvchosun.com/' },
+              { ticker: '채널A',        ko: 'channela.com',        url: 'https://www.channela.com/' },
+              { ticker: 'MBN',          ko: 'mbn.co.kr',           url: 'https://www.mbn.co.kr/' },
+              { ticker: 'YTN',          ko: 'ytn.co.kr',           url: 'https://www.ytn.co.kr/' },
+              { ticker: '연합뉴스TV',   ko: 'yonhapnewstv.co.kr',  url: 'https://www.yonhapnewstv.co.kr/' }
+            ]
+          },
+          {
+            label: '해외 방송사 · 영미권',
+            sub: 'US · UK',
+            items: [
+              { ticker: 'CNN',          ko: '미국 · cnn.com',         url: 'https://edition.cnn.com/' },
+              { ticker: 'ABC News',     ko: '미국 · abcnews.go.com',  url: 'https://abcnews.go.com/' },
+              { ticker: 'NBC News',     ko: '미국 · nbcnews.com',     url: 'https://www.nbcnews.com/' },
+              { ticker: 'CBS News',     ko: '미국 · cbsnews.com',     url: 'https://www.cbsnews.com/' },
+              { ticker: 'FOX News',     ko: '미국 · foxnews.com',     url: 'https://www.foxnews.com/' },
+              { ticker: 'MSNBC',        ko: '미국 · msnbc.com',       url: 'https://www.msnbc.com/' },
+              { ticker: 'PBS',          ko: '미국 공공방송 · pbs.org', url: 'https://www.pbs.org/' },
+              { ticker: 'BBC',          ko: '영국 · bbc.com',         url: 'https://www.bbc.com/' },
+              { ticker: 'ITV',          ko: '영국 · itv.com',         url: 'https://www.itv.com/' },
+              { ticker: 'Sky News',     ko: '영국 · news.sky.com',    url: 'https://news.sky.com/' }
+            ]
+          },
+          {
+            label: '해외 방송사 · 유럽·중동',
+            sub: 'Europe · Middle East',
+            items: [
+              { ticker: 'Channel 4',    ko: '영국 · channel4.com',     url: 'https://www.channel4.com/' },
+              { ticker: 'DW',           ko: '독일 · 도이체벨레 · dw.com', url: 'https://www.dw.com/' },
+              { ticker: 'France 24',    ko: '프랑스 · france24.com',   url: 'https://www.france24.com/' },
+              { ticker: 'Euronews',     ko: '유럽 종합 · euronews.com', url: 'https://www.euronews.com/' },
+              { ticker: 'RAI',          ko: '이탈리아 · rai.it',       url: 'https://www.rai.it/' },
+              { ticker: 'Al Jazeera',   ko: '카타르 · aljazeera.com',  url: 'https://www.aljazeera.com/' },
+              { ticker: 'RT',           ko: '러시아 · rt.com',         url: 'https://www.rt.com/' }
+            ]
+          },
+          {
+            label: '해외 방송사 · 아시아·오세아니아',
+            sub: 'Asia · Oceania',
+            items: [
+              { ticker: 'NHK',          ko: '일본 · nhk.or.jp',         url: 'https://www.nhk.or.jp/' },
+              { ticker: 'TBS',          ko: '일본 · tbs.co.jp',         url: 'https://www.tbs.co.jp/' },
+              { ticker: 'TV Asahi',     ko: '일본 · tv-asahi.co.jp',    url: 'https://www.tv-asahi.co.jp/' },
+              { ticker: '후지TV',       ko: '일본 · fujitv.co.jp',      url: 'https://www.fujitv.co.jp/' },
+              { ticker: 'NTV',          ko: '일본 · ntv.co.jp',         url: 'https://www.ntv.co.jp/' },
+              { ticker: 'CCTV',         ko: '중국 · cctv.com',          url: 'https://www.cctv.com/' },
+              { ticker: 'CGTN',         ko: '중국 영문 · cgtn.com',     url: 'https://www.cgtn.com/' },
+              { ticker: 'TVB',          ko: '홍콩 · tvb.com',           url: 'https://www.tvb.com/' },
+              { ticker: 'ABC 호주',     ko: 'abc.net.au',               url: 'https://www.abc.net.au/' }
+            ]
+          }
+        ]
+      },
+      magazine: {
+        sections: [
+          {
+            label: '시사·종합',
+            sub: 'News Magazine',
+            items: [
+              { ticker: '시사IN',         ko: 'sisain.co.kr',           url: 'https://www.sisain.co.kr/' },
+              { ticker: '시사저널',       ko: 'sisajournal.com',        url: 'https://www.sisajournal.com/' },
+              { ticker: '한겨레21',       ko: 'h21.hani.co.kr',         url: 'https://h21.hani.co.kr/' },
+              { ticker: '주간조선',       ko: 'weekly.chosun.com',      url: 'https://weekly.chosun.com/' },
+              { ticker: '주간동아',       ko: 'weekly.donga.com',       url: 'https://weekly.donga.com/' },
+              { ticker: '주간경향',       ko: 'weekly.khan.co.kr',      url: 'https://weekly.khan.co.kr/' },
+              { ticker: '월간조선',       ko: 'monthly.chosun.com',     url: 'https://monthly.chosun.com/' },
+              { ticker: '월간중앙',       ko: 'jmagazine.joins.com',    url: 'https://jmagazine.joins.com/monthly' },
+              { ticker: '신동아',         ko: 'shindonga.donga.com',    url: 'https://shindonga.donga.com/' },
+              { ticker: '뉴스위크 한국판', ko: 'newsweekkorea.com',      url: 'https://www.newsweekkorea.com/' }
+            ]
+          },
+          {
+            label: '경제·비즈니스',
+            sub: 'Business Magazine',
+            items: [
+              { ticker: '포브스 코리아',     ko: 'forbes 코리아',          url: 'https://jmagazine.joins.com/forbes' },
+              { ticker: '한경비즈니스',     ko: 'magazine.hankyung.com',  url: 'https://magazine.hankyung.com/business' },
+              { ticker: '매경이코노미',     ko: 'mk.co.kr 매거진',        url: 'https://www.mk.co.kr/economy/' },
+              { ticker: '비즈한국',         ko: 'bizhankook.com',         url: 'https://www.bizhankook.com/' },
+              { ticker: '머니S',            ko: 'moneys.co.kr',           url: 'https://www.moneys.co.kr/' },
+              { ticker: '이코노미스트 코리아', ko: 'economist.co.kr',      url: 'https://economist.co.kr/' },
+              { ticker: '이코노미인사이트', ko: 'economyinsight.co.kr',   url: 'https://www.economyinsight.co.kr/' },
+              { ticker: '이코노미조선',     ko: 'economychosun.com',      url: 'https://economychosun.com/' }
+            ]
+          },
+          {
+            label: '여성·라이프스타일',
+            sub: 'Fashion & Lifestyle',
+            items: [
+              { ticker: '보그 코리아',    ko: 'vogue.co.kr',            url: 'https://www.vogue.co.kr/' },
+              { ticker: '엘르 코리아',    ko: 'elle.co.kr',             url: 'https://www.elle.co.kr/' },
+              { ticker: '마리끌레르',     ko: 'marieclairekorea.com',   url: 'https://www.marieclairekorea.com/' },
+              { ticker: '코스모폴리탄',   ko: 'cosmopolitan.co.kr',     url: 'https://www.cosmopolitan.co.kr/' },
+              { ticker: '하퍼스바자',     ko: 'harpersbazaar.co.kr',    url: 'https://www.harpersbazaar.co.kr/' },
+              { ticker: '우먼센스',       ko: 'womansense.co.kr',       url: 'https://www.womansense.co.kr/' },
+              { ticker: '우먼동아',       ko: 'woman.donga.com',        url: 'https://woman.donga.com/' },
+              { ticker: '우먼조선',       ko: 'woman.chosun.com',       url: 'https://woman.chosun.com/' },
+              { ticker: '레이디경향',     ko: 'lady.khan.co.kr',        url: 'https://lady.khan.co.kr/' },
+              { ticker: 'GQ 코리아',      ko: 'gqkorea.co.kr',          url: 'https://www.gqkorea.co.kr/' }
+            ]
+          },
+          {
+            label: '문화·전문',
+            sub: 'Culture & Specialty',
+            items: [
+              { ticker: '씨네21',         ko: 'cine21.com',             url: 'http://www.cine21.com/' },
+              { ticker: '매거진B',        ko: 'magazine-b.com',         url: 'https://magazine-b.com/' },
+              { ticker: '텐아시아',       ko: 'tenasia.hankyung.com',   url: 'https://tenasia.hankyung.com/' },
+              { ticker: '디자인하우스',   ko: 'designhouse.co.kr',      url: 'https://www.designhouse.co.kr/' },
+              { ticker: '어라운드',       ko: 'a-round.kr',             url: 'https://a-round.kr/' },
+              { ticker: '에스콰이어',     ko: 'esquirekorea.co.kr',     url: 'https://www.esquirekorea.co.kr/' },
+              { ticker: '메종',           ko: 'maisonkorea.com',        url: 'https://www.maisonkorea.com/' },
+              { ticker: '동아사이언스',   ko: 'dongascience.com',       url: 'https://www.dongascience.com/' }
+            ]
+          }
+        ]
+      },
+      cafe: {
+        sections: [
+          {
+            label: '카페 플랫폼',
+            sub: 'Cafe Platform',
+            items: [
+              { ticker: '네이버 카페',  ko: 'cafe.naver.com',     url: 'https://section.cafe.naver.com/' },
+              { ticker: '다음 카페',    ko: 'cafe.daum.net',      url: 'https://cafe.daum.net/' },
+              { ticker: '네이버 카페 검색', ko: '카페 검색',      url: 'https://section.cafe.naver.com/ca-fe/home/search' }
+            ]
+          },
+          {
+            label: '쇼핑·중고·생활',
+            sub: 'Shopping & Lifestyle',
+            items: [
+              { ticker: '중고나라',         ko: '회원 1,950만 · 1위',   url: 'https://cafe.naver.com/joonggonara' },
+              { ticker: '미씨쿠폰',         ko: '핫딜·쿠폰',            url: 'https://cafe.naver.com/missycoupons' },
+              { ticker: '짠돌이 카페',      ko: '재테크·절약',          url: 'https://cafe.naver.com/jjandolyi' },
+              { ticker: '레몬테라스',       ko: '인테리어·생활',        url: 'https://cafe.naver.com/remonterrace' },
+              { ticker: '살림9단',          ko: '살림·요리',            url: 'https://cafe.naver.com/queensalim' },
+              { ticker: '파우더룸',         ko: '화장품·뷰티',          url: 'https://cafe.naver.com/cosmania' }
+            ]
+          },
+          {
+            label: '부동산·재테크',
+            sub: 'Real Estate & Finance',
+            items: [
+              { ticker: '부동산 스터디',     ko: '회원 200만 · 단일 최대', url: 'https://cafe.naver.com/jaegebal' },
+              { ticker: '아름다운 내집갖기', ko: '회원 50만+',            url: 'https://cafe.naver.com/rainup' },
+              { ticker: '부동산 부자들',     ko: '부동산 투자',           url: 'https://cafe.naver.com/yyz29' },
+              { ticker: '내집장만 아카데미', ko: '내집 마련',             url: 'https://cafe.naver.com/2030home' },
+              { ticker: '월급쟁이 재테크',   ko: '재테크 카페',           url: 'https://cafe.naver.com/wjdqudwhd' }
+            ]
+          },
+          {
+            label: '맘카페·육아',
+            sub: 'Moms & Parenting',
+            items: [
+              { ticker: '맘스홀릭베이비',   ko: '회원 290만 · 맘카페 1위', url: 'https://cafe.naver.com/imsanbu' },
+              { ticker: '베이비트리',       ko: '육아·임신',               url: 'https://cafe.naver.com/babytreee' },
+              { ticker: '레몬테라스 맘',    ko: '인테리어·맘',             url: 'https://cafe.naver.com/remonterrace' }
+            ]
+          },
+          {
+            label: '학습·교육',
+            sub: 'Study & Education',
+            items: [
+              { ticker: '수만휘',           ko: '수능공부 · 수능만점',   url: 'https://cafe.naver.com/suhui' },
+              { ticker: '독편사',           ko: '독서편식사',            url: 'https://cafe.naver.com/cleanpoison' },
+              { ticker: '오르비',           ko: '대학입시 · orbi.kr',    url: 'https://orbi.kr/' }
+            ]
+          },
+          {
+            label: '패션·연예 (다음 카페)',
+            sub: 'Daum Cafe',
+            items: [
+              { ticker: '디젤매니아 (네이버)', ko: '회원 106만 · 명품 패션', url: 'https://cafe.naver.com/dieselmania' },
+              { ticker: '디젤매니아 (다음)',   ko: '다음 디매',             url: 'https://cafe.daum.net/dieselmania' },
+              { ticker: '소울드레서',          ko: '여성 패션·라이프',      url: 'https://cafe.daum.net/SoulDresser' },
+              { ticker: '여성시대',            ko: '여시 · 20대 여성',      url: 'https://cafe.daum.net/subdued20club' },
+              { ticker: '쭉빵카페',            ko: '여성 패션·연애',        url: 'https://cafe.daum.net/ok1221' },
+              { ticker: '화장발',              ko: '화장·뷰티',             url: 'https://cafe.daum.net/Khj0421' }
+            ]
+          }
+        ]
+      },
+      blog: {
+        sections: [
+          {
+            label: '블로그 플랫폼',
+            sub: 'Blog Platform',
+            items: [
+              { ticker: '네이버 블로그', ko: 'blog.naver.com',     url: 'https://blog.naver.com/' },
+              { ticker: '티스토리',      ko: 'tistory.com',        url: 'https://www.tistory.com/' },
+              { ticker: '브런치',        ko: 'brunch.co.kr · 카카오', url: 'https://brunch.co.kr/' },
+              { ticker: '벨로그',        ko: 'velog.io · 개발자',  url: 'https://velog.io/' },
+              { ticker: '미디엄',        ko: 'medium.com',         url: 'https://medium.com/' },
+              { ticker: '워드프레스',    ko: 'wordpress.com',      url: 'https://wordpress.com/' },
+              { ticker: '깃허브 페이지',  ko: 'github.io · 개발자', url: 'https://pages.github.com/' },
+              { ticker: '노션',          ko: 'notion.so',          url: 'https://www.notion.so/' }
+            ]
+          },
+          {
+            label: '인기 블로그·사이트',
+            sub: 'Popular Blogs',
+            items: [
+              { ticker: '만개의레시피',  ko: '요리·레시피',          url: 'https://www.10000recipe.com/' },
+              { ticker: '우리집밥상',    ko: '요리·식단',            url: 'https://www.10000recipe.com/' },
+              { ticker: '오늘의집',      ko: '인테리어 · ohou.se',   url: 'https://ohou.se/' },
+              { ticker: '디스이즈게임',  ko: '게임 정보',            url: 'https://www.thisisgame.com/' },
+              { ticker: 'IT동아',        ko: 'IT 리뷰',              url: 'https://it.donga.com/' },
+              { ticker: '나무위키',      ko: 'namu.wiki · 위키',     url: 'https://namu.wiki/' },
+              { ticker: 'GeekNews',      ko: '개발자 뉴스',          url: 'https://news.hada.io/' }
+            ]
+          }
+        ]
+      },
+      movie: {
+        sections: [
+          {
+            label: '영화 정보·리뷰 (국내)',
+            sub: 'Korean Movie Info',
+            items: [
+              { ticker: '왓챠피디아',     ko: 'pedia.watcha.com',       url: 'https://pedia.watcha.com/' },
+              { ticker: '키노라이츠',     ko: 'kinolights.com · OTT 통합', url: 'https://m.kinolights.com/' },
+              { ticker: '네이버 시리즈온', ko: 'serieson.naver.com',     url: 'https://serieson.naver.com/' },
+              { ticker: 'KMDb',           ko: '한국영상자료원 DB',      url: 'https://www.kmdb.or.kr/' },
+              { ticker: 'KOBIS',          ko: '영화관입장권 통합전산망', url: 'https://www.kobis.or.kr/' },
+              { ticker: '맥스무비',       ko: 'maxmovie.com',           url: 'https://www.maxmovie.com/' },
+              { ticker: 'JustWatch',      ko: 'OTT 작품 검색',          url: 'https://www.justwatch.com/kr' }
+            ]
+          },
+          {
+            label: '영화 정보·리뷰 (해외)',
+            sub: 'Global Movie Info',
+            items: [
+              { ticker: 'IMDb',           ko: 'imdb.com · 최대 DB',     url: 'https://www.imdb.com/' },
+              { ticker: 'Rotten Tomatoes', ko: '비평·관객 점수',         url: 'https://www.rottentomatoes.com/' },
+              { ticker: 'Letterboxd',     ko: 'letterboxd.com · SNS',   url: 'https://letterboxd.com/' },
+              { ticker: 'Metacritic',     ko: 'metacritic.com · 평점',  url: 'https://www.metacritic.com/movie' },
+              { ticker: 'TMDB',           ko: 'themoviedb.org · DB',    url: 'https://www.themoviedb.org/' },
+              { ticker: 'AllMovie',       ko: 'allmovie.com',           url: 'https://www.allmovie.com/' },
+              { ticker: 'Box Office Mojo', ko: 'IMDb · 박스오피스',     url: 'https://www.boxofficemojo.com/' },
+              { ticker: 'MUBI',           ko: 'mubi.com · 큐레이션',    url: 'https://mubi.com/' }
+            ]
+          },
+          {
+            label: '영화 예매·극장',
+            sub: 'Movie Booking',
+            items: [
+              { ticker: 'CGV',            ko: 'cgv.co.kr',              url: 'https://www.cgv.co.kr/' },
+              { ticker: '메가박스',       ko: 'megabox.co.kr',          url: 'https://www.megabox.co.kr/' },
+              { ticker: '롯데시네마',     ko: 'lottecinema.co.kr',      url: 'https://www.lottecinema.co.kr/' },
+              { ticker: '씨네Q',          ko: 'cineq.co.kr',            url: 'https://www.cineq.co.kr/' },
+              { ticker: '인디스페이스',   ko: 'indiespace.kr · 독립영화', url: 'https://indiespace.kr/' },
+              { ticker: 'KOFIC',          ko: '영화진흥위원회',         url: 'https://www.kofic.or.kr/' }
+            ]
+          },
+          {
+            label: '영화제·시상식',
+            sub: 'Film Festivals & Awards',
+            items: [
+              { ticker: '부산국제영화제', ko: 'biff.kr · BIFF',         url: 'https://www.biff.kr/' },
+              { ticker: '전주국제영화제', ko: 'jeonjuiff.kr · JIFF',    url: 'https://www.jeonjuiff.kr/' },
+              { ticker: '부천국제판타스틱', ko: 'bifan.kr · BIFAN',     url: 'https://www.bifan.kr/' },
+              { ticker: 'DMZ국제다큐',    ko: 'dmzdocs.com',            url: 'https://dmzdocs.com/' },
+              { ticker: '칸 영화제',      ko: 'festival-cannes.com',    url: 'https://www.festival-cannes.com/' },
+              { ticker: '베니스 영화제',  ko: 'labiennale.org',         url: 'https://www.labiennale.org/en/cinema' },
+              { ticker: '베를린 영화제',  ko: 'berlinale.de',           url: 'https://www.berlinale.de/' },
+              { ticker: '선댄스',         ko: 'sundance.org',           url: 'https://www.sundance.org/' },
+              { ticker: '아카데미',       ko: 'oscars.org · 오스카',    url: 'https://www.oscars.org/' },
+              { ticker: '청룡영화상',     ko: 'sports.chosun.com',      url: 'https://sports.chosun.com/blueDragon/' },
+              { ticker: '대종상',         ko: 'daejongawards.kr',       url: 'https://daejongawards.kr/' }
+            ]
+          }
+        ]
+      },
+      music: {
+        sections: [
+          {
+            label: '음악 스트리밍 (국내)',
+            sub: 'Korean Streaming',
+            items: [
+              { ticker: '멜론',           ko: 'melon.com',              url: 'https://www.melon.com/' },
+              { ticker: '지니뮤직',       ko: 'genie.co.kr',            url: 'https://www.genie.co.kr/' },
+              { ticker: '벅스',           ko: 'music.bugs.co.kr',       url: 'https://music.bugs.co.kr/' },
+              { ticker: '플로',           ko: 'music-flo.com · FLO',    url: 'https://www.music-flo.com/' },
+              { ticker: '바이브',         ko: 'vibe.naver.com · VIBE',  url: 'https://vibe.naver.com/' }
+            ]
+          },
+          {
+            label: '음악 스트리밍 (해외)',
+            sub: 'Global Streaming',
+            items: [
+              { ticker: 'Spotify',        ko: 'open.spotify.com',       url: 'https://open.spotify.com/' },
+              { ticker: 'YouTube Music',  ko: 'music.youtube.com',      url: 'https://music.youtube.com/' },
+              { ticker: 'Apple Music',    ko: 'music.apple.com',        url: 'https://music.apple.com/' },
+              { ticker: 'Tidal',          ko: 'tidal.com · 고음질',     url: 'https://tidal.com/' },
+              { ticker: 'Amazon Music',   ko: 'music.amazon.com',       url: 'https://music.amazon.com/' },
+              { ticker: 'Deezer',         ko: 'deezer.com',             url: 'https://www.deezer.com/' },
+              { ticker: 'SoundCloud',     ko: 'soundcloud.com',         url: 'https://soundcloud.com/' },
+              { ticker: 'Bandcamp',       ko: 'bandcamp.com · 인디',    url: 'https://bandcamp.com/' }
+            ]
+          },
+          {
+            label: '음악 차트',
+            sub: 'Music Charts',
+            items: [
+              { ticker: '멜론 차트',      ko: 'melon.com/chart',        url: 'https://www.melon.com/chart/' },
+              { ticker: '벅스 차트',      ko: 'bugs.co.kr/chart',       url: 'https://music.bugs.co.kr/chart' },
+              { ticker: '지니 차트',      ko: 'genie.co.kr/chart',      url: 'https://www.genie.co.kr/chart/' },
+              { ticker: '써클차트',       ko: 'circlechart.kr · 구 가온', url: 'https://circlechart.kr/' },
+              { ticker: '한터차트',       ko: 'hanteochart.com',        url: 'https://www.hanteochart.com/' },
+              { ticker: '아이차트',       ko: 'instiz.net · 종합 차트', url: 'https://www.instiz.net/iframe_ichart_score.htm' },
+              { ticker: '빌보드',         ko: 'billboard.com · 미국',   url: 'https://www.billboard.com/charts/' },
+              { ticker: '오리콘',         ko: 'oricon.co.jp · 일본',    url: 'https://www.oricon.co.jp/' },
+              { ticker: 'Official UK',    ko: 'officialcharts.com · 영국', url: 'https://www.officialcharts.com/' }
+            ]
+          },
+          {
+            label: '음악 정보·DB·가사',
+            sub: 'Music Info & Lyrics',
+            items: [
+              { ticker: 'Genius',         ko: 'genius.com · 가사·해석', url: 'https://genius.com/' },
+              { ticker: 'AZLyrics',       ko: 'azlyrics.com · 가사',    url: 'https://www.azlyrics.com/' },
+              { ticker: 'Discogs',        ko: 'discogs.com · 음반 DB',  url: 'https://www.discogs.com/' },
+              { ticker: 'AllMusic',       ko: 'allmusic.com',           url: 'https://www.allmusic.com/' },
+              { ticker: 'MusicBrainz',    ko: 'musicbrainz.org · 메타DB', url: 'https://musicbrainz.org/' },
+              { ticker: 'Pitchfork',      ko: 'pitchfork.com · 리뷰',   url: 'https://pitchfork.com/' },
+              { ticker: 'Rate Your Music', ko: 'rateyourmusic.com',     url: 'https://rateyourmusic.com/' },
+              { ticker: 'Last.fm',        ko: 'last.fm · 청취 통계',    url: 'https://www.last.fm/' }
+            ]
+          },
+          {
+            label: '뮤직비디오·라이브',
+            sub: 'MV & Live',
+            items: [
+              { ticker: '엠넷',           ko: 'mnet.com · KCON',        url: 'https://www.mnet.com/' },
+              { ticker: 'KBS World K-Pop', ko: 'kbsworld.kbs.co.kr',    url: 'https://kbsworld.kbs.co.kr/' },
+              { ticker: 'MTV',            ko: 'mtv.com',                url: 'https://www.mtv.com/' },
+              { ticker: 'NPR Tiny Desk',  ko: '라이브 콘서트',          url: 'https://www.npr.org/series/tiny-desk-concerts/' },
+              { ticker: 'KOZE',           ko: 'koze.kr · 콘서트 예매',  url: 'https://www.koze.kr/' },
+              { ticker: '인터파크 티켓',  ko: 'tickets.interpark.com',  url: 'https://tickets.interpark.com/' },
+              { ticker: 'YES24 티켓',     ko: 'ticket.yes24.com',       url: 'http://ticket.yes24.com/' }
+            ]
+          },
+          {
+            label: '시상식·연말 결산',
+            sub: 'Music Awards',
+            items: [
+              { ticker: 'MAMA Awards',    ko: 'mama.mnet.com',          url: 'https://mama.mnet.com/' },
+              { ticker: '멜론 뮤직어워드', ko: 'mma.melon.com · MMA',   url: 'https://mma.melon.com/' },
+              { ticker: '골든디스크',     ko: 'goldendisc.co.kr',       url: 'https://www.goldendisc.co.kr/' },
+              { ticker: 'Grammy',         ko: 'grammy.com · 그래미',    url: 'https://www.grammy.com/' },
+              { ticker: 'Billboard MA',   ko: '빌보드 뮤직 어워드',     url: 'https://www.billboard.com/h/billboard-music-awards/' }
+            ]
+          }
+        ]
+      }
+    };
+
+    /* ============ 렌더 ============ */
+    function renderTab(tabId) {
+      // body 속성 변경 → CSS 라이트/다크 톤 토글
+      document.body.dataset.activeTab = tabId;
+
+      const root = document.getElementById('main');
+      const frag = document.createDocumentFragment();
+      const tab = tabs[tabId];
+      if (!tab) return;
+
+      const isLogo = !!tab.logoStyle;
+
+      tab.sections.forEach(sec => {
+        const section = document.createElement('section');
+        section.className = 'section';
+
+        const head = document.createElement('div');
+        head.className = 'section-head';
+        const label = document.createElement('span');
+        label.className = 'section-label';
+        label.textContent = sec.label;
+        const sub = document.createElement('span');
+        sub.className = 'section-sub';
+        sub.textContent = sec.sub;
+        head.appendChild(label);
+        head.appendChild(sub);
+        section.appendChild(head);
+
+        const grid = document.createElement('div');
+        grid.className = isLogo ? 'logo-grid' : 'grid';
+
+        sec.items.forEach(it => {
+          if (isLogo) {
+            // 원형 로고 타일 (INDEXMAIN 스타일)
+            const a = document.createElement('a');
+            a.className = 'logo-tile';
+            a.href = it.url;
+            a.target = '_blank';
+            a.rel = 'noopener noreferrer';
+            a.setAttribute('aria-label', it.name || '');
+            const img = document.createElement('img');
+            img.src = it.img;
+            img.alt = it.name || '';
+            img.loading = 'lazy';
+            img.decoding = 'async';
+            img.referrerPolicy = 'no-referrer';
+            a.appendChild(img);
+            grid.appendChild(a);
+          } else {
+            // 기존 다크 카드
+            const a = document.createElement('a');
+            a.className = 'card';
+            a.href = it.url;
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.setAttribute('aria-label', it.ko || it.ticker);
+            const tk = document.createElement('div');
+            tk.className = 'ticker';
+            tk.textContent = it.ticker;
+            a.appendChild(tk);
+            if (String(it.ticker).length > 6) a.dataset.long = '1';
+            const ko = document.createElement('div');
+            ko.className = 'name-ko';
+            ko.textContent = it.ko;
+            a.appendChild(ko);
+            const arr = document.createElement('span');
+            arr.className = 'arrow';
+            arr.textContent = '↗';
+            a.appendChild(arr);
+            grid.appendChild(a);
+          }
+        });
+        section.appendChild(grid);
+        frag.appendChild(section);
+      });
+
+      root.replaceChildren(frag);
+    }
+
+    /* ============ 탭 네비 ============ */
+    function setupTabs() {
+      const nav = document.getElementById('tabNav');
+      nav.addEventListener('click', e => {
+        const btn = e.target.closest('.tab-btn');
+        if (!btn) return;
+        nav.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        renderTab(btn.dataset.tab);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // 클릭한 탭을 가시 영역 가운데로 부드럽게 가로 스크롤
+        // block: 'nearest' → 세로 페이지 스크롤은 건드리지 않음
+        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      });
+    }
+
+    renderTab('daily');
+    setupTabs();
+
+    /* ============ 하단 갤러리 (00maincomics 데이터 + 렌더 + 프리셋) ============ */
+    const gallery = [
+      { url: "https://comic.naver.com/index",          img: "https://picsum.photos/seed/myway1/600/800", title: "네이버 웹툰" },
+      { url: "https://webtoon.kakao.com/",             img: "https://picsum.photos/seed/myway2/600/600", title: "카카오 웹툰" },
+      { url: "https://www.bomtoon.com/bom/comic/free", img: "https://picsum.photos/seed/myway3/600/900", title: "봄툰 무료" },
+      { url: "https://www.toomics.com/",               img: "https://picsum.photos/seed/myway4/600/700", title: "투믹스" },
+      { url: "https://www.webtoons.com/en/genres",     img: "https://picsum.photos/seed/myway5/600/850", title: "WEBTOON 글로벌" },
+      { url: "https://www.anime-planet.com/manga/",    img: "https://picsum.photos/seed/myway6/600/650", title: "Anime-Planet Manga" },
+      { url: "https://comic-walker.com/",              img: "https://picsum.photos/seed/myway7/600/780", title: "Comic Walker" },
+      { url: "https://www.comico.jp/",                 img: "https://picsum.photos/seed/myway8/600/720", title: "Comico" },
+      { url: "https://mangaplus-creators.jp/genres",   img: "https://picsum.photos/seed/myway9/600/900", title: "Manga Plus" },
+      { url: "https://comic.sportsseoul.com/",         img: "https://picsum.photos/seed/mywayA/600/640", title: "스포츠서울 카툰" },
+      { url: "https://spcartoon.kr/",                  img: "https://picsum.photos/seed/mywayB/600/820", title: "스포츠조선 카툰" },
+      { url: "https://sports.khan.co.kr/comics/comics_author.html", img: "https://picsum.photos/seed/mywayC/600/700", title: "스포츠경향 만평" }
+    ];
+
+    function renderGallery() {
+      const root = document.getElementById('masonryGallery');
+      if (!root) return;
+      const frag = document.createDocumentFragment();
+      gallery.forEach(item => {
+        const a = document.createElement('a');
+        a.className = 'gcard';
+        a.href = item.url;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.setAttribute('aria-label', item.title || '');
+
+        const img = document.createElement('img');
+        img.src = item.img;
+        img.alt = item.title || '';
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        img.referrerPolicy = 'no-referrer';
+        a.appendChild(img);
+
+        if (item.title) {
+          const cap = document.createElement('div');
+          cap.className = 'cap';
+          cap.textContent = item.title;
+          a.appendChild(cap);
+        }
+        frag.appendChild(a);
+      });
+      root.replaceChildren(frag);
+    }
+    renderGallery();
+  </script>
+
+  <script>
+  
+  (function() {
+    'use strict';
+    const KEY = 'mywayShortcutsV1';
+    const FAV = 'https://www.google.com/s2/favicons?sz=64&domain=';
+    const SAMPLES = [
+      { name: '네이버', url: 'https://www.naver.com' },
+      { name: '다음', url: 'https://www.daum.net' },
+      { name: '구글', url: 'https://www.google.com' },
+      { name: '유튜브', url: 'https://www.youtube.com' },
+      { name: '카카오', url: 'https://www.kakaocorp.com' },
+    ];
+
+    let items = [];
+    let editingId = null;
+    let pending = null;
+    let ctxId = null;
+    let dragId = null;
+
+    const $ = (id) => document.getElementById(id);
+
+    function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+    function normUrl(u) {
+      u = (u || '').trim();
+      if (!u) return '';
+      if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+      try { new URL(u); return u; } catch (e) { return ''; }
+    }
+    function dom(u) { try { return new URL(u).hostname; } catch (e) { return ''; } }
+    function guess(u) { const d = dom(u); return d ? d.replace(/^www\./, '').split('.')[0] : ''; }
+
+    function load() {
+      try {
+        const r = localStorage.getItem(KEY);
+        if (r) { const a = JSON.parse(r); if (Array.isArray(a)) return a; }
+      } catch (e) {}
+      return SAMPLES.map(s => ({ id: uid(), ...s }));
+    }
+    function persist() { try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (e) {} }
+
+    function toast(msg) {
+      const t = $('sc-toast');
+      t.textContent = msg;
+      t.classList.add('sc-show');
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => t.classList.remove('sc-show'), 1900);
+    }
+
+    function render() {
+      const grid = $('sc-grid');
+      grid.innerHTML = '';
+      items.forEach(s => {
+        const tile = document.createElement('a');
+        tile.className = 'sc-tile';
+        tile.href = s.url;
+        tile.target = '_blank';
+        tile.rel = 'noopener';
+        tile.title = s.name || dom(s.url);
+        tile.draggable = true;
+        tile.dataset.id = s.id;
+
+        const d = dom(s.url);
+        const fav = document.createElement('div');
+        fav.className = 'sc-fav';
+        if (d) {
+          const img = document.createElement('img');
+          img.src = FAV + encodeURIComponent(d);
+          img.alt = '';
+          img.onerror = () => {
+            fav.classList.add('sc-ph');
+            fav.textContent = (s.name || d).charAt(0).toUpperCase();
+          };
+          fav.appendChild(img);
+        } else {
+          fav.classList.add('sc-ph');
+          fav.textContent = (s.name || '?').charAt(0).toUpperCase();
+        }
+        tile.appendChild(fav);
+
+        const mb = document.createElement('button');
+        mb.className = 'sc-menu-btn';
+        mb.textContent = '×';
+        mb.title = '삭제 (편집은 우클릭)';
+        mb.setAttribute('aria-label', '삭제');
+        mb.onclick = (e) => {
+          e.preventDefault(); e.stopPropagation();
+          if (confirm('"' + (s.name || dom(s.url)) + '" 삭제할까요?')) {
+            items = items.filter(x => x.id !== s.id);
+            persist();
+            render();
+            toast('삭제됨');
+          }
+        };
+        tile.appendChild(mb);
+
+        // 우클릭으로 편집 메뉴 (편집/삭제 둘 다 가능)
+        tile.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          openCtx(e, s.id);
+        });
+
+        tile.addEventListener('dragstart', dStart);
+        tile.addEventListener('dragover', dOver);
+        tile.addEventListener('dragleave', dLeave);
+        tile.addEventListener('drop', dDrop);
+        tile.addEventListener('dragend', dEnd);
+        grid.appendChild(tile);
+      });
+
+      const add = document.createElement('div');
+      add.className = 'sc-tile sc-add';
+      add.title = '새 바로가기 추가';
+      add.innerHTML = '<div class="sc-fav">+</div>';
+      add.onclick = () => openEdit(null);
+      grid.appendChild(add);
+    }
+
+    function dStart(e) {
+      dragId = this.dataset.id;
+      this.classList.add('sc-dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      try { e.dataTransfer.setData('text/plain', dragId); } catch (err) {}
+    }
+    function dOver(e) {
+      if (!dragId || this.dataset.id === dragId) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      this.classList.add('sc-drag-over');
+    }
+    function dLeave() { this.classList.remove('sc-drag-over'); }
+    function dDrop(e) {
+      e.preventDefault();
+      this.classList.remove('sc-drag-over');
+      if (!dragId || this.dataset.id === dragId) return;
+      const f = items.findIndex(x => x.id === dragId);
+      const t = items.findIndex(x => x.id === this.dataset.id);
+      if (f < 0 || t < 0) return;
+      const [m] = items.splice(f, 1);
+      items.splice(t, 0, m);
+      persist();
+      render();
+    }
+    function dEnd() {
+      document.querySelectorAll('.sc-tile').forEach(t =>
+        t.classList.remove('sc-dragging', 'sc-drag-over'));
+      dragId = null;
+    }
+
+    function openEdit(id) {
+      editingId = id;
+      const m = $('sc-edit-modal');
+      const t = $('sc-modal-title');
+      const u = $('sc-url');
+      const n = $('sc-name');
+      if (id) {
+        const s = items.find(x => x.id === id);
+        if (!s) return;
+        t.textContent = '바로가기 편집';
+        u.value = s.url;
+        n.value = s.name || '';
+      } else {
+        t.textContent = '바로가기 추가';
+        u.value = '';
+        n.value = '';
+      }
+      m.classList.add('sc-show');
+      setTimeout(() => u.focus(), 50);
+    }
+    function closeEdit() { $('sc-edit-modal').classList.remove('sc-show'); editingId = null; }
+    function saveEdit() {
+      const u = $('sc-url'), n = $('sc-name');
+      const url = normUrl(u.value);
+      if (!url) { toast('올바른 URL을 입력해주세요'); u.focus(); return; }
+      const name = n.value.trim() || guess(url);
+      if (editingId) {
+        const s = items.find(x => x.id === editingId);
+        if (s) { s.url = url; s.name = name; }
+        toast('수정 완료');
+      } else {
+        items.push({ id: uid(), name, url });
+        toast('추가됨');
+      }
+      persist();
+      render();
+      closeEdit();
+    }
+
+    function openCtx(e, id) {
+      ctxId = id;
+      const m = $('sc-ctx');
+      m.style.left = Math.min(e.clientX, window.innerWidth - 140) + 'px';
+      m.style.top = Math.min(e.clientY, window.innerHeight - 100) + 'px';
+      m.classList.add('sc-show');
+    }
+    function closeCtx() { $('sc-ctx').classList.remove('sc-show'); ctxId = null; }
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#sc-ctx') && !e.target.closest('.sc-menu-btn')) closeCtx();
+    });
+    $('sc-ctx').addEventListener('click', (e) => {
+      const b = e.target.closest('button');
+      if (!b || !ctxId) return;
+      if (b.dataset.act === 'edit') openEdit(ctxId);
+      else if (b.dataset.act === 'delete') {
+        const s = items.find(x => x.id === ctxId);
+        if (s && confirm('"' + (s.name || dom(s.url)) + '" 삭제할까요?')) {
+          items = items.filter(x => x.id !== ctxId);
+          persist();
+          render();
+          toast('삭제됨');
+        }
+      }
+      closeCtx();
+    });
+
+    function doExport() {
+      const data = {
+        app: 'myway.kr', type: 'shortcuts', version: 1,
+        exportedAt: new Date().toISOString(),
+        count: items.length, shortcuts: items,
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const ymd = new Date().toISOString().slice(0,10).replace(/-/g, '');
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'myway-shortcuts-' + ymd + '.json';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 100);
+      toast(items.length + '개 내보내기 완료');
+    }
+    function readFile(file) {
+      const r = new FileReader();
+      r.onload = () => {
+        try {
+          const d = JSON.parse(r.result);
+          const arr = Array.isArray(d) ? d : (Array.isArray(d.shortcuts) ? d.shortcuts : null);
+          if (!arr) throw new Error('형식 오류');
+          const v = arr.filter(s => s && s.url && normUrl(s.url));
+          if (!v.length) { toast('유효한 항목 없음'); return; }
+          pending = v.map(s => ({ id: s.id || uid(), name: s.name || guess(s.url), url: normUrl(s.url) }));
+          $('sc-import-count').textContent = pending.length;
+          $('sc-current-count').textContent = items.length;
+          $('sc-import-modal').classList.add('sc-show');
+        } catch (e) { toast('파일 읽기 실패'); }
+      };
+      r.readAsText(file);
+    }
+    function doImport(mode) {
+      if (!pending) return;
+      if (mode === 'replace') {
+        items = pending.map(s => ({ ...s, id: uid() }));
+        toast('전체 교체: ' + items.length + '개');
+      } else {
+        const ex = new Set(items.map(s => s.url));
+        const add = pending.filter(s => !ex.has(s.url));
+        add.forEach(s => items.push({ ...s, id: uid() }));
+        toast(add.length + '개 추가');
+      }
+      persist(); render();
+      pending = null;
+      $('sc-import-modal').classList.remove('sc-show');
+    }
+
+    $('sc-export').onclick = doExport;
+    $('sc-import').onclick = () => $('sc-file').click();
+    $('sc-file').onchange = (e) => { if (e.target.files[0]) readFile(e.target.files[0]); e.target.value = ''; };
+    $('sc-clear').onclick = () => {
+      if (!items.length) { toast('비어있음'); return; }
+      if (confirm(items.length + '개 전부 삭제할까요?')) {
+        items = []; persist(); render(); toast('모두 삭제됨');
+      }
+    };
+    $('sc-cancel').onclick = closeEdit;
+    $('sc-save').onclick = saveEdit;
+    $('sc-url').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('sc-name').focus(); });
+    $('sc-name').addEventListener('keydown', (e) => { if (e.key === 'Enter') saveEdit(); });
+    $('sc-imp-merge').onclick = () => doImport('merge');
+    $('sc-imp-replace').onclick = () => doImport('replace');
+    $('sc-imp-cancel').onclick = () => { pending = null; $('sc-import-modal').classList.remove('sc-show'); };
+    document.querySelectorAll('.sc-modal').forEach(m => {
+      m.addEventListener('click', (e) => { if (e.target === m) m.classList.remove('sc-show'); });
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.sc-modal.sc-show').forEach(m => m.classList.remove('sc-show'));
+        closeCtx();
+      }
+    });
+
+    items = load();
+    render();
+  })();
+  
+  </script>
+</body>
+</html>
