@@ -2,11 +2,22 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>인물 카테고리 갤러리 - MYWAY.KR</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="유튜버, 가수, 연예인, 배우 카테고리별 채널 모음">
+  <title>인물 채널 모음 - 유튜버, 가수, 연예인, 배우 | MYWAY.KR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="유튜버, 가수, 연예인, 배우 카테고리별 채널 모음 - MYWAY.KR">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
   <style>
     *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      --nav-grad: linear-gradient(95deg, #7ed6fb 10%, #b176f3 90%);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
 
     html, body {
       margin: 0; padding: 0;
@@ -14,128 +25,77 @@
       font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
       -webkit-text-size-adjust: 100%;
     }
-    html { min-height: 100%; }
     body {
       min-height: 100vh;
+      min-height: 100dvh;
       overflow-x: hidden;
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none;
     }
-    img {
-      -webkit-user-drag: none;
-      user-drag: none;
-      -webkit-touch-callout: none;
-    }
-    /* 입력 요소는 복제방지에서 제외 (향후 input/textarea 사용 시) */
+    img { -webkit-user-drag: none; user-drag: none; -webkit-touch-callout: none; }
     input, textarea, [contenteditable] {
-      -webkit-user-select: text;
-      -moz-user-select: text;
-      -ms-user-select: text;
-      user-select: text;
+      -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text;
     }
 
-    /* ===== MYWAY.KR 공통: 홈 버튼 + 푸터 ===== */
-    .myway-home-btn {
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      z-index: 9999;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 10px 16px 10px 14px;
-      background: #1f2740;
-      color: #fff;
-      border-radius: 999px;
-      font-size: .85rem;
-      font-weight: 700;
-      text-decoration: none;
-      letter-spacing: -0.2px;
-      box-shadow: 0 4px 14px rgba(31,39,64,.28), 0 1px 3px rgba(0,0,0,.1);
-      transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .myway-home-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(31,39,64,.36), 0 2px 4px rgba(0,0,0,.12);
-      background: #2a3358;
-    }
-    .myway-home-btn:active { transform: translateY(0); }
-    .myway-home-btn svg {
-      width: 16px; height: 16px;
-      fill: currentColor;
-      flex-shrink: 0;
-    }
-
-    .myway-footer {
-      text-align: center;
-      padding: 22px 14px 28px;
-      margin-top: 36px;
-      border-top: 1px solid #eef0f4;
-      font-size: .82rem;
-      color: #8590ad;
-    }
-    .myway-footer a {
-      color: #4a5170;
-      text-decoration: none;
-      font-weight: 700;
-      letter-spacing: -0.2px;
-      transition: color .15s;
-    }
-    .myway-footer a:hover { color: #1f2740; }
-    .myway-footer .sep {
-      display: inline-block;
-      margin: 0 8px;
-      opacity: .5;
-    }
-
-    @media (max-width: 480px) {
-      .myway-home-btn {
-        right: 12px;
-        bottom: 12px;
-        padding: 9px 14px 9px 12px;
-        font-size: .8rem;
-      }
-    }
-
-    /* ===== 헤더 + 네비 ===== */
+    /* ===== 상단 sticky 헤더 ===== */
     .topbar {
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 20;
       background: rgba(255,255,255,.96);
       backdrop-filter: saturate(180%) blur(8px);
       -webkit-backdrop-filter: saturate(180%) blur(8px);
       border-bottom: 1px solid #eef0f4;
       padding: 12px 14px 10px;
+      padding-left: max(14px, env(safe-area-inset-left));
+      padding-right: max(14px, env(safe-area-inset-right));
     }
+    .topbar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    /* 좌측 홈 아이콘 */
+    .home-link {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      text-decoration: none;
+      color: #fff;
+      background: var(--nav-grad);
+      box-shadow: 0 6px 18px rgba(177,118,243,0.28);
+      transition: transform .15s, box-shadow .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .home-link:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(177,118,243,0.36); }
+    .home-link svg { width: 18px; height: 18px; fill: currentColor; }
+
     .page-title {
-      font-size: 1.05rem;
-      font-weight: 700;
+      font-size: 1.0rem; font-weight: 700;
       color: #1f2740;
-      margin: 0 0 10px;
+      margin: 0;
       letter-spacing: -0.3px;
+      flex: 1 1 auto;
     }
     .page-title .sub {
-      font-size: .78rem;
-      font-weight: 500;
+      font-size: .78rem; font-weight: 500;
       color: #8590ad;
       margin-left: 6px;
     }
 
-    /* 카테고리 네비 — 가로 스크롤 가능 (모바일에서 카테고리 많아져도 OK) */
+    /* 카테고리 네비 */
     .cat-nav {
       display: flex;
       gap: 8px;
       overflow-x: auto;
       scrollbar-width: none;
       -ms-overflow-style: none;
-      padding-bottom: 4px;
-      margin: 0 -14px;
-      padding-left: 14px;
-      padding-right: 14px;
     }
     .cat-nav::-webkit-scrollbar { display: none; }
     .cat-btn {
@@ -148,18 +108,14 @@
       background: #fff;
       color: #4a5170;
       cursor: pointer;
-      transition: background-color .15s, border-color .15s, color .15s, transform .1s;
+      transition: all .15s;
       white-space: nowrap;
       flex: 0 0 auto;
       -webkit-tap-highlight-color: transparent;
     }
     .cat-btn:hover { background: #f4f6fb; border-color: #c7cee0; }
     .cat-btn:active { transform: scale(0.96); }
-    .cat-btn.is-active {
-      background: #1f2740;
-      color: #fff;
-      border-color: #1f2740;
-    }
+    .cat-btn.is-active { background: #1f2740; color: #fff; border-color: #1f2740; }
     .cat-btn .count {
       display: inline-block;
       margin-left: 4px;
@@ -169,86 +125,167 @@
     }
     .cat-btn.is-active .count { opacity: .85; }
 
-    /* ===== 갤러리 ===== */
-    .gallery-wrap {
-      padding: 14px 14px 48px;
+    /* ===== 갤러리 섹션 ===== */
+    .gallery-section {
+      width: 100%;
       max-width: 1100px;
+      padding: 18px 14px 48px;
       margin: 0 auto;
     }
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
+    .gallery-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
     }
-    .card {
+    .gallery-title {
+      font-size: 1.0rem; font-weight: 700;
+      letter-spacing: -0.3px;
+      color: #1f2740;
+      margin: 0;
+    }
+    .gallery-title .sub {
+      font-size: .8rem; font-weight: 500;
+      color: #8590ad;
+      margin-left: 6px;
+    }
+
+    /* 보정 프리셋 */
+    .preset-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .preset-btn {
+      font: inherit;
+      font-size: .78rem;
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid #dfe3ec;
+      background: #fff;
+      color: #4a5170;
+      cursor: pointer;
+      transition: all .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .preset-btn:hover { background: #f4f6fb; border-color: #c7cee0; }
+    .preset-btn.is-active {
+      background: #1f2740; color: #fff; border-color: #1f2740;
+    }
+
+    /* Masonry: CSS column 기반 */
+    .masonry {
+      column-count: 4;
+      column-gap: 12px;
+    }
+    .masonry .card {
       display: block;
-      position: relative;
-      aspect-ratio: 1 / 1;
-      border-radius: 12px;
+      break-inside: avoid;
+      page-break-inside: avoid;
+      -webkit-column-break-inside: avoid;
+      margin: 0 0 12px;
+      border-radius: 10px;
       overflow: hidden;
       background: #f4f6fb;
+      position: relative;
       text-decoration: none;
       color: inherit;
       transform: translateZ(0);
-      transition: transform .2s ease, box-shadow .2s ease;
     }
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(31,39,64,.18);
-    }
-    .card img {
-      width: 100%; height: 100%;
-      object-fit: cover;
+    .masonry .card img {
       display: block;
-      transition: transform .35s ease;
+      width: 100%;
+      height: auto;
+      transition: filter .25s ease, transform .35s ease;
     }
-    .card:hover img { transform: scale(1.06); }
-    .card .name {
+    .masonry .card:hover img { transform: scale(1.03); }
+
+    /* 이름 캡션 (하단 그라데이션) */
+    .masonry .card .cap {
       position: absolute;
       left: 0; right: 0; bottom: 0;
-      padding: 18px 10px 8px;
-      font-size: .78rem;
-      font-weight: 600;
+      padding: 22px 10px 9px;
+      font-size: .82rem; font-weight: 700;
       color: #fff;
-      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,.6) 75%);
-      text-shadow: 0 1px 2px rgba(0,0,0,.4);
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,.68) 78%);
+      letter-spacing: -0.2px;
+      text-shadow: 0 1px 2px rgba(0,0,0,.45);
+      transition: opacity .2s;
+      pointer-events: none;
     }
-    .card .badge {
-      position: absolute;
-      top: 6px; left: 6px;
-      display: flex; gap: 3px; flex-wrap: wrap;
+    /* PC 호버 환경: 호버 시에만 표시 (00maincomics 디자인)
+       모바일/터치: 항상 표시 (이름 확인이 핵심) */
+    @media (hover: hover) and (pointer: fine) {
+      .masonry .card .cap { opacity: 0; }
+      .masonry .card:hover .cap { opacity: 1; }
     }
-    .card .badge span {
-      font-size: .62rem;
-      font-weight: 700;
-      padding: 2px 6px;
+
+    /* 카테고리 필터 — CSS data 속성으로 (JS 재렌더 없음) */
+    .masonry[data-filter="singer"]   .card:not([data-cats~="singer"])   { display: none; }
+    .masonry[data-filter="actor"]    .card:not([data-cats~="actor"])    { display: none; }
+    .masonry[data-filter="celeb"]    .card:not([data-cats~="celeb"])    { display: none; }
+    .masonry[data-filter="youtuber"] .card:not([data-cats~="youtuber"]) { display: none; }
+
+    /* 보정 프리셋 (data-preset 토글) */
+    .masonry[data-preset="punch"] .card img { filter: saturate(1.45) contrast(1.12); }
+    .masonry[data-preset="moody"] .card img { filter: brightness(.92) contrast(1.18) saturate(.88); }
+    .masonry[data-preset="noir"]  .card img { filter: grayscale(1) contrast(1.18); }
+    .masonry[data-preset="teal"]  .card img { filter: hue-rotate(-12deg) saturate(1.3) contrast(1.08); }
+    .masonry[data-preset="film"]  .card img { filter: sepia(.28) contrast(1.05) saturate(.92); }
+
+    /* 갤러리 반응형 */
+    @media (max-width: 900px) { .masonry { column-count: 3; } }
+    @media (max-width: 600px) { .masonry { column-count: 2; column-gap: 10px; } .masonry .card { margin-bottom: 10px; } }
+    @media (max-width: 360px) { .masonry { column-count: 1; } }
+
+    /* ===== MYWAY.KR 공통 ===== */
+    .myway-home-btn {
+      position: fixed;
+      right: 14px;
+      bottom: calc(14px + var(--safe-bottom));
+      z-index: 9999;
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 14px 9px 12px;
+      background: #1f2740; color: #fff;
       border-radius: 999px;
-      color: #fff;
-      background: rgba(31,39,64,.78);
-      backdrop-filter: blur(4px);
+      font-size: .82rem; font-weight: 700;
+      text-decoration: none; letter-spacing: -0.2px;
+      box-shadow: 0 4px 14px rgba(31,39,64,.32);
+      transition: transform .15s, background-color .15s;
+      -webkit-tap-highlight-color: transparent;
     }
-    .card .badge .b-singer  { background: rgba(218,71,118,.85); }
-    .card .badge .b-actor   { background: rgba(94,114,228,.85); }
-    .card .badge .b-celeb   { background: rgba(247,151,30,.88); }
-    .card .badge .b-youtuber{ background: rgba(58,167,113,.85); }
+    .myway-home-btn:hover { transform: translateY(-2px); background: #2a3358; }
+    .myway-home-btn svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
 
-    /* 필터링 — JS 재렌더링 없이 CSS data 속성만으로 처리 */
-    .gallery[data-filter="singer"]   .card:not([data-cats~="singer"])   { display: none; }
-    .gallery[data-filter="actor"]    .card:not([data-cats~="actor"])    { display: none; }
-    .gallery[data-filter="celeb"]    .card:not([data-cats~="celeb"])    { display: none; }
-    .gallery[data-filter="youtuber"] .card:not([data-cats~="youtuber"]) { display: none; }
+    .myway-footer {
+      width: 100%;
+      text-align: center;
+      padding: 22px 14px calc(28px + var(--safe-bottom));
+      margin-top: 24px;
+      border-top: 1px solid #eef0f4;
+      font-size: .82rem;
+      color: #8590ad;
+    }
+    .myway-footer a { color: #4a5170; text-decoration: none; font-weight: 700; }
+    .myway-footer a:hover { color: #1f2740; }
+    .myway-footer .sep { display: inline-block; margin: 0 8px; opacity: .5; }
 
-    /* 반응형 컬럼 */
-    @media (max-width: 1024px) { .gallery { grid-template-columns: repeat(5, 1fr); } }
-    @media (max-width: 768px)  { .gallery { grid-template-columns: repeat(4, 1fr); gap: 10px; } }
-    @media (max-width: 520px)  { .gallery { grid-template-columns: repeat(3, 1fr); gap: 9px; } }
-    @media (max-width: 360px)  { .gallery { grid-template-columns: repeat(2, 1fr); } .card .name { font-size: .72rem; } }
+    @media (max-width: 700px) {
+      .home-link { width: 36px; height: 36px; }
+      .home-link svg { width: 19px; height: 19px; }
+      .page-title { font-size: .95rem; }
+      .cat-btn { padding: 7px 13px; font-size: .85rem; }
+    }
   </style>
 </head>
 <body>
 
+  <!-- 상단 sticky 헤더 -->
   <header class="topbar">
-    <h1 class="page-title">인물 채널 <span class="sub">카테고리별 모음</span></h1>
+    <div class="topbar-row">
+      <a href="https://myway.kr/" class="home-link" aria-label="MYWAY.KR 홈" title="MYWAY.KR 홈">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 2.5 11.4l1.3 1.5L5 11.85V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-8.15l1.2 1.05 1.3-1.5L12 3.2Z"/></svg>
+      </a>
+      <h1 class="page-title">인물 채널 <span class="sub">카테고리별 모음</span></h1>
+    </div>
     <nav class="cat-nav" id="catNav">
       <button class="cat-btn is-active" data-cat="all">전체 <span class="count" id="cnt-all"></span></button>
       <button class="cat-btn" data-cat="youtuber">유튜버 <span class="count" id="cnt-youtuber"></span></button>
@@ -258,29 +295,37 @@
     </nav>
   </header>
 
-  <main class="gallery-wrap">
-    <div class="gallery" id="gallery" data-filter="all"></div>
-  </main>
-
-  <!-- MYWAY.KR 공통: 우측 하단 홈 버튼 -->
-  <a href="https://myway.kr" class="myway-home-btn" aria-label="myway.kr 홈으로 이동">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 2.5 11.4l1.3 1.5L5 11.85V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-8.15l1.2 1.05 1.3-1.5L12 3.2Z"/></svg>
-    myway.kr
-  </a>
+  <!-- 갤러리 섹션 -->
+  <section class="gallery-section">
+    <div class="gallery-head">
+      <h2 class="gallery-title">추천 채널 <span class="sub" id="filterSub">전체</span></h2>
+      <div class="preset-row" id="presetRow">
+        <button class="preset-btn is-active" data-preset="none">기본</button>
+        <button class="preset-btn" data-preset="punch">Punch</button>
+        <button class="preset-btn" data-preset="moody">Moody</button>
+        <button class="preset-btn" data-preset="noir">Noir</button>
+        <button class="preset-btn" data-preset="teal">Teal&amp;Orange</button>
+        <button class="preset-btn" data-preset="film">Film</button>
+      </div>
+    </div>
+    <div class="masonry" id="masonryGallery" data-filter="all" data-preset="none"></div>
+  </section>
 
   <!-- MYWAY.KR 공통: 푸터 -->
   <footer class="myway-footer">
-    <a href="https://myway.kr">myway.kr</a>
+    <a href="https://myway.kr/">myway.kr</a>
     <span class="sep">·</span>
     <span>© MYWAY.KR</span>
   </footer>
 
+  <!-- MYWAY.KR 공통: 우측 하단 홈 버튼 -->
+  <a href="https://myway.kr/" class="myway-home-btn" aria-label="myway.kr 홈으로 이동">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 2.5 11.4l1.3 1.5L5 11.85V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-8.15l1.2 1.05 1.3-1.5L12 3.2Z"/></svg>
+    myway.kr
+  </a>
+
   <script>
-    /* ============================================================
-       MYWAY.KR 공통: 복제방지
-       - 입력 요소(input/textarea/contenteditable)는 정상 동작 유지
-       - 단축키: F12, Ctrl+U/S/C/X/A, Ctrl+Shift+I/J/C 차단
-       ============================================================ */
+    /* ============ 복제방지 ============ */
     (function(){
       function isEditable(t) {
         if (!t) return false;
@@ -304,15 +349,7 @@
       }, { capture: true });
     })();
 
-    /* ============================================================
-       카드 데이터
-       - cats: 카테고리 배열 (한 사람이 여러 개 가능)
-       - 가능 값: "singer", "actor", "celeb", "youtuber"
-       - 카테고리를 추가하고 싶으면:
-         1) 위 nav에 cat-btn 한 줄 추가
-         2) CSS .gallery[data-filter="새값"] 규칙 한 줄 추가
-         3) 아래 데이터의 cats 배열에 그 값 사용
-       ============================================================ */
+    /* ============ 인물 데이터 ============ */
     const people = [
       { name: "김선태", cats: ["youtuber"], url: "https://www.youtube.com/@kimseontae/videos", img: "https://i.namu.wiki/i/XFixUOxnll15Q4ZIyT9pFKStgsOcf5dFLC0AFMXTnH_9d2C6uncLLpBlZXKi_6ckl2y1zn_EbhKN7FO-XCmYcQ.webp" },
       { name: "웅진고웨이", cats: ["youtuber"], url: "https://www.youtube.com/@woongjingoway/videos", img: "https://i.namu.wiki/i/HcOondTE3e2lST0kOmwuv_0VsFFWnt4iy7J-PEPEuAhHy1uqBRMQ541KWldpq7rskLNFWdFjOb7lbRE6yBvmew.webp" },
@@ -438,23 +475,18 @@
       { name: "예스준", cats: ["youtuber"], url: "https://www.youtube.com/@%EC%98%88%EC%8A%A4%EC%A4%80/videos", img: "https://i.ytimg.com/vi/fni68F7ygOY/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLA3wxyzFrmb1bRRTCV74Vbn7OKcvg" }
     ];
 
-    /* ============================================================
-       렌더링 (1회만) + CSS data 속성으로 필터링
-       ============================================================ */
+    /* ============ 갤러리 렌더 (1회) ============ */
     function renderGallery() {
-      const root = document.getElementById('gallery');
+      const root = document.getElementById('masonryGallery');
       const frag = document.createDocumentFragment();
-
-      const catLabels = { singer: '가수', actor: '배우', celeb: '연예인', youtuber: '유튜버' };
-
       people.forEach(p => {
         const a = document.createElement('a');
         a.className = 'card';
         a.href = p.url;
         a.target = '_blank';
         a.rel = 'noopener';
-        a.setAttribute('aria-label', p.name);
         a.dataset.cats = p.cats.join(' ');
+        a.setAttribute('aria-label', p.name);
 
         const img = document.createElement('img');
         img.src = p.img;
@@ -464,27 +496,17 @@
         img.referrerPolicy = 'no-referrer';
         a.appendChild(img);
 
-        // 카테고리 뱃지
-        const badge = document.createElement('div');
-        badge.className = 'badge';
-        p.cats.forEach(c => {
-          const s = document.createElement('span');
-          s.className = 'b-' + c;
-          s.textContent = catLabels[c] || c;
-          badge.appendChild(s);
-        });
-        a.appendChild(badge);
-
-        const nm = document.createElement('div');
-        nm.className = 'name';
-        nm.textContent = p.name;
-        a.appendChild(nm);
+        const cap = document.createElement('div');
+        cap.className = 'cap';
+        cap.textContent = p.name;
+        a.appendChild(cap);
 
         frag.appendChild(a);
       });
       root.replaceChildren(frag);
     }
 
+    /* ============ 카테고리 카운트 ============ */
     function updateCounts() {
       const counts = { all: people.length, singer: 0, actor: 0, celeb: 0, youtuber: 0 };
       people.forEach(p => p.cats.forEach(c => { if (counts[c] !== undefined) counts[c]++; }));
@@ -494,21 +516,39 @@
       });
     }
 
-    function setupNav() {
+    /* ============ 카테고리 네비 ============ */
+    function setupCatNav() {
       const nav = document.getElementById('catNav');
-      const gallery = document.getElementById('gallery');
+      const grid = document.getElementById('masonryGallery');
+      const sub = document.getElementById('filterSub');
+      const labels = { all: '전체', youtuber: '유튜버', singer: '가수', celeb: '연예인', actor: '배우' };
       nav.addEventListener('click', e => {
         const btn = e.target.closest('.cat-btn');
         if (!btn) return;
         nav.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('is-active'));
         btn.classList.add('is-active');
-        gallery.dataset.filter = btn.dataset.cat;
+        grid.dataset.filter = btn.dataset.cat;
+        sub.textContent = labels[btn.dataset.cat] || '전체';
+      });
+    }
+
+    /* ============ 보정 프리셋 ============ */
+    function setupPresets() {
+      const row = document.getElementById('presetRow');
+      const grid = document.getElementById('masonryGallery');
+      row.addEventListener('click', e => {
+        const btn = e.target.closest('.preset-btn');
+        if (!btn) return;
+        row.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        grid.dataset.preset = btn.dataset.preset;
       });
     }
 
     renderGallery();
     updateCounts();
-    setupNav();
+    setupCatNav();
+    setupPresets();
   </script>
 </body>
 </html>
