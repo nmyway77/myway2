@@ -121,21 +121,129 @@
     }
     .cat-btn.is-active .count { opacity: .85; }
 
+    /* ===== 안내 정보 (핀 로고 + 팝오버) ===== */
+    .info-wrap {
+      position: relative;
+      flex: 0 0 auto;
+      line-height: 0;
+    }
+    .info-btn {
+      width: 30px;
+      height: 36px;
+      border: none;
+      background: transparent;
+      color: #2DBAC0;       /* 핀 색상 (청록) */
+      cursor: pointer;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .15s, color .15s;
+      filter: drop-shadow(0 2px 4px rgba(45,186,192,.35));
+    }
+    .info-btn:hover { color: #1f9ea2; transform: translateY(-2px); }
+    .info-btn.is-open { color: #16797d; }
+    .info-btn:active { transform: translateY(0) scale(0.95); }
+    .info-btn svg { width: 100%; height: 100%; display: block; }
+
+    /* 첫 진입 시 3번 펄스 (시선 유도) */
+    @keyframes info-pulse {
+      0%, 100% { transform: scale(1); }
+      50%      { transform: scale(1.18); }
+    }
+    .info-btn.pulse {
+      animation: info-pulse 0.55s ease-in-out 3;
+      transform-origin: center bottom;
+    }
+
+    .info-popover {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%) translateY(-4px);
+      width: 290px;
+      background: #fff;
+      border: 1px solid #eef0f4;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(31,39,64,.18), 0 2px 6px rgba(0,0,0,.06);
+      padding: 12px 14px;
+      font-size: .85rem;
+      line-height: 1.55;
+      color: #4a5170;
+      z-index: 30;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .15s, transform .15s, visibility .15s;
+      pointer-events: none;
+      text-align: left;
+    }
+    /* 호버(PC) 또는 클릭(.is-open) 시 모두 열림 */
+    .info-wrap:hover .info-popover,
+    .info-popover.is-open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+    .info-popover::before {
+      content: "";
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      margin-left: -6px;
+      width: 12px; height: 12px;
+      background: #fff;
+      border-top: 1px solid #eef0f4;
+      border-left: 1px solid #eef0f4;
+      transform: rotate(45deg);
+    }
+    .info-popover .row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 4px 0;
+    }
+    .info-popover .row + .row {
+      border-top: 1px dashed #eef0f4;
+      margin-top: 4px;
+      padding-top: 8px;
+    }
+    .info-popover .ic {
+      flex: 0 0 auto;
+      font-size: 1.05rem;
+      line-height: 1.2;
+      margin-top: 1px;
+    }
+    .info-popover strong { color: #1f2740; font-weight: 700; }
+    @media (max-width: 480px) {
+      .info-popover {
+        width: calc(100vw - 32px);
+        max-width: 320px;
+      }
+    }
+
     /* ===== 갤러리 영역 ===== */
     .dashboard {
       max-width: 1235px;
       margin: 0 auto;
       padding: 18px 12px 40px;
     }
+    .gallery-label-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 6px 0 16px;
+      position: relative;
+    }
     .gallery-label {
       font-weight: 700;
       font-size: 1.05rem;
-      margin: 6px 0 16px;
+      margin: 0;
       color: #232356;
       text-align: center;
       letter-spacing: 0.3px;
-      display: block;
-      width: 100%;
     }
     .gallery-label .count {
       font-size: .8rem;
@@ -270,7 +378,31 @@
 
   <!-- 갤러리 -->
   <main class="dashboard">
-    <span class="gallery-label" id="galleryLabel">KBS 무료 VOD 모음</span>
+    <div class="gallery-label-wrap">
+      <span class="gallery-label" id="galleryLabel">KBS 무료 VOD 모음</span>
+      <div class="info-wrap">
+        <button class="info-btn" id="infoBtn" aria-label="재생 시간 안내" aria-haspopup="true" aria-expanded="false">
+          <svg viewBox="0 0 24 28" aria-hidden="true">
+            <!-- 핀 본체 -->
+            <path d="M12 1C7.58 1 4 4.58 4 9c0 5.5 8 14 8 14s8-8.5 8-14c0-4.42-3.58-8-8-8z" fill="currentColor"/>
+            <!-- 핀 안 흰 원 -->
+            <circle cx="12" cy="9" r="2.8" fill="#ffffff"/>
+            <!-- 바닥 타원 (그림자/위치 표시) -->
+            <ellipse cx="12" cy="25.2" rx="5.2" ry="1.4" fill="none" stroke="currentColor" stroke-width="1.4"/>
+          </svg>
+        </button>
+        <div class="info-popover" id="infoPopover" role="dialog" aria-label="재생 시간 안내">
+          <div class="row">
+            <span class="ic">📱</span>
+            <span><strong>모바일</strong>은 약 <strong>3분 미리보기</strong>로 재생됩니다.</span>
+          </div>
+          <div class="row">
+            <span class="ic">💻</span>
+            <span><strong>태블릿·PC</strong>에서는 <strong>풀타임 재생</strong>됩니다.</span>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="gallery" id="gallery" data-active="kbs"></div>
   </main>
 
@@ -517,6 +649,40 @@
     renderAll();
     updateCounts();
     setupNav();
+
+    /* ============ 안내 팝오버 토글 ============ */
+    (function(){
+      const btn = document.getElementById('infoBtn');
+      const pop = document.getElementById('infoPopover');
+      if (!btn || !pop) return;
+
+      function setOpen(open) {
+        btn.classList.toggle('is-open', open);
+        pop.classList.toggle('is-open', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        setOpen(!pop.classList.contains('is-open'));
+      });
+      document.addEventListener('click', e => {
+        if (!pop.classList.contains('is-open')) return;
+        if (e.target === btn || btn.contains(e.target)) return;
+        if (pop.contains(e.target)) return;
+        setOpen(false);
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && pop.classList.contains('is-open')) setOpen(false);
+      });
+
+      /* 진입 시 시선 유도 펄스 (애니메이션 종료 후 클래스 제거) */
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          btn.classList.add('pulse');
+          btn.addEventListener('animationend', () => btn.classList.remove('pulse'), { once: true });
+        }, 600);
+      });
+    })();
   </script>
 </body>
 </html>
