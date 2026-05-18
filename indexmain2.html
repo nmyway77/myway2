@@ -901,6 +901,8 @@
       <button class="tab-btn" data-tab="magazine">잡지</button>
       <button class="tab-btn" data-tab="cafe">카페</button>
       <button class="tab-btn" data-tab="blog">블로그</button>
+      <button class="tab-btn" data-tab="movie">영화</button>
+      <button class="tab-btn" data-tab="music">음악</button>
     </nav>
   </header>
 
@@ -1498,6 +1500,148 @@
               { ticker: 'IT동아',        ko: 'IT 리뷰',              url: 'https://it.donga.com/' },
               { ticker: '나무위키',      ko: 'namu.wiki · 위키',     url: 'https://namu.wiki/' },
               { ticker: 'GeekNews',      ko: '개발자 뉴스',          url: 'https://news.hada.io/' }
+            ]
+          }
+        ]
+      },
+      movie: {
+        sections: [
+          {
+            label: '영화 정보·리뷰 (국내)',
+            sub: 'Korean Movie Info',
+            items: [
+              { ticker: '왓챠피디아',     ko: 'pedia.watcha.com',       url: 'https://pedia.watcha.com/' },
+              { ticker: '키노라이츠',     ko: 'kinolights.com · OTT 통합', url: 'https://m.kinolights.com/' },
+              { ticker: '네이버 시리즈온', ko: 'serieson.naver.com',     url: 'https://serieson.naver.com/' },
+              { ticker: 'KMDb',           ko: '한국영상자료원 DB',      url: 'https://www.kmdb.or.kr/' },
+              { ticker: 'KOBIS',          ko: '영화관입장권 통합전산망', url: 'https://www.kobis.or.kr/' },
+              { ticker: '맥스무비',       ko: 'maxmovie.com',           url: 'https://www.maxmovie.com/' },
+              { ticker: 'JustWatch',      ko: 'OTT 작품 검색',          url: 'https://www.justwatch.com/kr' }
+            ]
+          },
+          {
+            label: '영화 정보·리뷰 (해외)',
+            sub: 'Global Movie Info',
+            items: [
+              { ticker: 'IMDb',           ko: 'imdb.com · 최대 DB',     url: 'https://www.imdb.com/' },
+              { ticker: 'Rotten Tomatoes', ko: '비평·관객 점수',         url: 'https://www.rottentomatoes.com/' },
+              { ticker: 'Letterboxd',     ko: 'letterboxd.com · SNS',   url: 'https://letterboxd.com/' },
+              { ticker: 'Metacritic',     ko: 'metacritic.com · 평점',  url: 'https://www.metacritic.com/movie' },
+              { ticker: 'TMDB',           ko: 'themoviedb.org · DB',    url: 'https://www.themoviedb.org/' },
+              { ticker: 'AllMovie',       ko: 'allmovie.com',           url: 'https://www.allmovie.com/' },
+              { ticker: 'Box Office Mojo', ko: 'IMDb · 박스오피스',     url: 'https://www.boxofficemojo.com/' },
+              { ticker: 'MUBI',           ko: 'mubi.com · 큐레이션',    url: 'https://mubi.com/' }
+            ]
+          },
+          {
+            label: '영화 예매·극장',
+            sub: 'Movie Booking',
+            items: [
+              { ticker: 'CGV',            ko: 'cgv.co.kr',              url: 'https://www.cgv.co.kr/' },
+              { ticker: '메가박스',       ko: 'megabox.co.kr',          url: 'https://www.megabox.co.kr/' },
+              { ticker: '롯데시네마',     ko: 'lottecinema.co.kr',      url: 'https://www.lottecinema.co.kr/' },
+              { ticker: '씨네Q',          ko: 'cineq.co.kr',            url: 'https://www.cineq.co.kr/' },
+              { ticker: '인디스페이스',   ko: 'indiespace.kr · 독립영화', url: 'https://indiespace.kr/' },
+              { ticker: 'KOFIC',          ko: '영화진흥위원회',         url: 'https://www.kofic.or.kr/' }
+            ]
+          },
+          {
+            label: '영화제·시상식',
+            sub: 'Film Festivals & Awards',
+            items: [
+              { ticker: '부산국제영화제', ko: 'biff.kr · BIFF',         url: 'https://www.biff.kr/' },
+              { ticker: '전주국제영화제', ko: 'jeonjuiff.kr · JIFF',    url: 'https://www.jeonjuiff.kr/' },
+              { ticker: '부천국제판타스틱', ko: 'bifan.kr · BIFAN',     url: 'https://www.bifan.kr/' },
+              { ticker: 'DMZ국제다큐',    ko: 'dmzdocs.com',            url: 'https://dmzdocs.com/' },
+              { ticker: '칸 영화제',      ko: 'festival-cannes.com',    url: 'https://www.festival-cannes.com/' },
+              { ticker: '베니스 영화제',  ko: 'labiennale.org',         url: 'https://www.labiennale.org/en/cinema' },
+              { ticker: '베를린 영화제',  ko: 'berlinale.de',           url: 'https://www.berlinale.de/' },
+              { ticker: '선댄스',         ko: 'sundance.org',           url: 'https://www.sundance.org/' },
+              { ticker: '아카데미',       ko: 'oscars.org · 오스카',    url: 'https://www.oscars.org/' },
+              { ticker: '청룡영화상',     ko: 'sports.chosun.com',      url: 'https://sports.chosun.com/blueDragon/' },
+              { ticker: '대종상',         ko: 'daejongawards.kr',       url: 'https://daejongawards.kr/' }
+            ]
+          }
+        ]
+      },
+      music: {
+        sections: [
+          {
+            label: '음악 스트리밍 (국내)',
+            sub: 'Korean Streaming',
+            items: [
+              { ticker: '멜론',           ko: 'melon.com',              url: 'https://www.melon.com/' },
+              { ticker: '지니뮤직',       ko: 'genie.co.kr',            url: 'https://www.genie.co.kr/' },
+              { ticker: '벅스',           ko: 'music.bugs.co.kr',       url: 'https://music.bugs.co.kr/' },
+              { ticker: '플로',           ko: 'music-flo.com · FLO',    url: 'https://www.music-flo.com/' },
+              { ticker: '바이브',         ko: 'vibe.naver.com · VIBE',  url: 'https://vibe.naver.com/' }
+            ]
+          },
+          {
+            label: '음악 스트리밍 (해외)',
+            sub: 'Global Streaming',
+            items: [
+              { ticker: 'Spotify',        ko: 'open.spotify.com',       url: 'https://open.spotify.com/' },
+              { ticker: 'YouTube Music',  ko: 'music.youtube.com',      url: 'https://music.youtube.com/' },
+              { ticker: 'Apple Music',    ko: 'music.apple.com',        url: 'https://music.apple.com/' },
+              { ticker: 'Tidal',          ko: 'tidal.com · 고음질',     url: 'https://tidal.com/' },
+              { ticker: 'Amazon Music',   ko: 'music.amazon.com',       url: 'https://music.amazon.com/' },
+              { ticker: 'Deezer',         ko: 'deezer.com',             url: 'https://www.deezer.com/' },
+              { ticker: 'SoundCloud',     ko: 'soundcloud.com',         url: 'https://soundcloud.com/' },
+              { ticker: 'Bandcamp',       ko: 'bandcamp.com · 인디',    url: 'https://bandcamp.com/' }
+            ]
+          },
+          {
+            label: '음악 차트',
+            sub: 'Music Charts',
+            items: [
+              { ticker: '멜론 차트',      ko: 'melon.com/chart',        url: 'https://www.melon.com/chart/' },
+              { ticker: '벅스 차트',      ko: 'bugs.co.kr/chart',       url: 'https://music.bugs.co.kr/chart' },
+              { ticker: '지니 차트',      ko: 'genie.co.kr/chart',      url: 'https://www.genie.co.kr/chart/' },
+              { ticker: '써클차트',       ko: 'circlechart.kr · 구 가온', url: 'https://circlechart.kr/' },
+              { ticker: '한터차트',       ko: 'hanteochart.com',        url: 'https://www.hanteochart.com/' },
+              { ticker: '아이차트',       ko: 'instiz.net · 종합 차트', url: 'https://www.instiz.net/iframe_ichart_score.htm' },
+              { ticker: '빌보드',         ko: 'billboard.com · 미국',   url: 'https://www.billboard.com/charts/' },
+              { ticker: '오리콘',         ko: 'oricon.co.jp · 일본',    url: 'https://www.oricon.co.jp/' },
+              { ticker: 'Official UK',    ko: 'officialcharts.com · 영국', url: 'https://www.officialcharts.com/' }
+            ]
+          },
+          {
+            label: '음악 정보·DB·가사',
+            sub: 'Music Info & Lyrics',
+            items: [
+              { ticker: 'Genius',         ko: 'genius.com · 가사·해석', url: 'https://genius.com/' },
+              { ticker: 'AZLyrics',       ko: 'azlyrics.com · 가사',    url: 'https://www.azlyrics.com/' },
+              { ticker: 'Discogs',        ko: 'discogs.com · 음반 DB',  url: 'https://www.discogs.com/' },
+              { ticker: 'AllMusic',       ko: 'allmusic.com',           url: 'https://www.allmusic.com/' },
+              { ticker: 'MusicBrainz',    ko: 'musicbrainz.org · 메타DB', url: 'https://musicbrainz.org/' },
+              { ticker: 'Pitchfork',      ko: 'pitchfork.com · 리뷰',   url: 'https://pitchfork.com/' },
+              { ticker: 'Rate Your Music', ko: 'rateyourmusic.com',     url: 'https://rateyourmusic.com/' },
+              { ticker: 'Last.fm',        ko: 'last.fm · 청취 통계',    url: 'https://www.last.fm/' }
+            ]
+          },
+          {
+            label: '뮤직비디오·라이브',
+            sub: 'MV & Live',
+            items: [
+              { ticker: '엠넷',           ko: 'mnet.com · KCON',        url: 'https://www.mnet.com/' },
+              { ticker: 'KBS World K-Pop', ko: 'kbsworld.kbs.co.kr',    url: 'https://kbsworld.kbs.co.kr/' },
+              { ticker: 'MTV',            ko: 'mtv.com',                url: 'https://www.mtv.com/' },
+              { ticker: 'NPR Tiny Desk',  ko: '라이브 콘서트',          url: 'https://www.npr.org/series/tiny-desk-concerts/' },
+              { ticker: 'KOZE',           ko: 'koze.kr · 콘서트 예매',  url: 'https://www.koze.kr/' },
+              { ticker: '인터파크 티켓',  ko: 'tickets.interpark.com',  url: 'https://tickets.interpark.com/' },
+              { ticker: 'YES24 티켓',     ko: 'ticket.yes24.com',       url: 'http://ticket.yes24.com/' }
+            ]
+          },
+          {
+            label: '시상식·연말 결산',
+            sub: 'Music Awards',
+            items: [
+              { ticker: 'MAMA Awards',    ko: 'mama.mnet.com',          url: 'https://mama.mnet.com/' },
+              { ticker: '멜론 뮤직어워드', ko: 'mma.melon.com · MMA',   url: 'https://mma.melon.com/' },
+              { ticker: '골든디스크',     ko: 'goldendisc.co.kr',       url: 'https://www.goldendisc.co.kr/' },
+              { ticker: 'Grammy',         ko: 'grammy.com · 그래미',    url: 'https://www.grammy.com/' },
+              { ticker: 'Billboard MA',   ko: '빌보드 뮤직 어워드',     url: 'https://www.billboard.com/h/billboard-music-awards/' }
             ]
           }
         ]
