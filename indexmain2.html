@@ -1593,6 +1593,9 @@
         btn.classList.add('is-active');
         renderTab(btn.dataset.tab);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        // 클릭한 탭을 가시 영역 가운데로 부드럽게 가로 스크롤
+        // block: 'nearest' → 세로 페이지 스크롤은 건드리지 않음
+        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       });
     }
 
