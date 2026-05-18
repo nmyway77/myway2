@@ -152,25 +152,6 @@
       margin-left: 6px;
     }
 
-    /* 보정 프리셋 */
-    .preset-row { display: flex; gap: 6px; flex-wrap: wrap; }
-    .preset-btn {
-      font: inherit;
-      font-size: .78rem;
-      padding: 5px 11px;
-      border-radius: 999px;
-      border: 1px solid #dfe3ec;
-      background: #fff;
-      color: #4a5170;
-      cursor: pointer;
-      transition: all .15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .preset-btn:hover { background: #f4f6fb; border-color: #c7cee0; }
-    .preset-btn.is-active {
-      background: #1f2740; color: #fff; border-color: #1f2740;
-    }
-
     /* Masonry: CSS column 기반 */
     .masonry {
       column-count: 4;
@@ -225,11 +206,7 @@
     .masonry[data-filter="youtuber"] .card:not([data-cats~="youtuber"]) { display: none; }
 
     /* 보정 프리셋 (data-preset 토글) */
-    .masonry[data-preset="punch"] .card img { filter: saturate(1.45) contrast(1.12); }
-    .masonry[data-preset="moody"] .card img { filter: brightness(.92) contrast(1.18) saturate(.88); }
-    .masonry[data-preset="noir"]  .card img { filter: grayscale(1) contrast(1.18); }
-    .masonry[data-preset="teal"]  .card img { filter: hue-rotate(-12deg) saturate(1.3) contrast(1.08); }
-    .masonry[data-preset="film"]  .card img { filter: sepia(.28) contrast(1.05) saturate(.92); }
+    /* (제거됨) */
 
     /* 갤러리 반응형 */
     @media (max-width: 900px) { .masonry { column-count: 3; } }
@@ -299,16 +276,8 @@
   <section class="gallery-section">
     <div class="gallery-head">
       <h2 class="gallery-title">추천 채널 <span class="sub" id="filterSub">전체</span></h2>
-      <div class="preset-row" id="presetRow">
-        <button class="preset-btn is-active" data-preset="none">기본</button>
-        <button class="preset-btn" data-preset="punch">Punch</button>
-        <button class="preset-btn" data-preset="moody">Moody</button>
-        <button class="preset-btn" data-preset="noir">Noir</button>
-        <button class="preset-btn" data-preset="teal">Teal&amp;Orange</button>
-        <button class="preset-btn" data-preset="film">Film</button>
-      </div>
     </div>
-    <div class="masonry" id="masonryGallery" data-filter="all" data-preset="none"></div>
+    <div class="masonry" id="masonryGallery" data-filter="all"></div>
   </section>
 
   <!-- MYWAY.KR 공통: 푸터 -->
@@ -532,23 +501,11 @@
       });
     }
 
-    /* ============ 보정 프리셋 ============ */
-    function setupPresets() {
-      const row = document.getElementById('presetRow');
-      const grid = document.getElementById('masonryGallery');
-      row.addEventListener('click', e => {
-        const btn = e.target.closest('.preset-btn');
-        if (!btn) return;
-        row.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('is-active'));
-        btn.classList.add('is-active');
-        grid.dataset.preset = btn.dataset.preset;
-      });
-    }
+    /* ============ 보정 프리셋 (제거됨) ============ */
 
     renderGallery();
     updateCounts();
     setupCatNav();
-    setupPresets();
   </script>
 </body>
 </html>
