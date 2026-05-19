@@ -55,27 +55,11 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      /* 모바일 스크롤 흔들림 방지: 합성 레이어로 분리 (iOS Safari sticky+blur 버그) */
+      transform: translateZ(0);
+      will-change: transform;
+      -webkit-transform: translateZ(0);
     }
-
-    /* 좌측 홈 아이콘 */
-    .home-link {
-      flex: 0 0 auto;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px; height: 36px;
-      padding: 0;
-      border-radius: 50%;
-      text-decoration: none;
-      color: #fff;
-      background: var(--nav-grad);
-      box-shadow: 0 6px 18px rgba(177,118,243,0.28);
-      transition: transform .15s, box-shadow .15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .home-link:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(177,118,243,0.36); }
-    .home-link:active { transform: translateY(0); }
-    .home-link svg { width: 19px; height: 19px; fill: currentColor; display: block; }
 
     /* 채널 네비 */
     .cat-nav {
@@ -104,6 +88,10 @@
       white-space: nowrap;
       flex: 0 0 auto;
       -webkit-tap-highlight-color: transparent;
+      /* a 태그도 .cat-btn 모양 통일 */
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
     }
     .cat-btn:hover { background: #f4f6fb; border-color: #c7cee0; }
     .cat-btn:active { transform: scale(0.96); }
@@ -111,6 +99,16 @@
       background: #1f2740;
       color: #fff;
       border-color: #1f2740;
+    }
+    /* 외부 VOD 링크 - 살짝 시각적 구분 (보라톤 보더) */
+    .cat-link {
+      border-color: #d8caf3;
+      color: #5c4791;
+    }
+    .cat-link:hover {
+      background: #f4eefe;
+      border-color: #b176f3;
+      color: #422577;
     }
     .cat-btn .count {
       display: inline-block;
@@ -120,6 +118,11 @@
       font-weight: 500;
     }
     .cat-btn.is-active .count { opacity: .85; }
+
+    /* 태블릿/PC: 네비 중앙정렬 (모바일은 좌측 정렬 그대로 유지) */
+    @media (min-width: 721px) {
+      .cat-nav { justify-content: safe center; }
+    }
 
     /* ===== 안내 정보 (핀 로고 + 팝오버) ===== */
     .info-wrap {
@@ -141,8 +144,13 @@
       -webkit-tap-highlight-color: transparent;
       transition: transform .15s, color .15s;
       filter: drop-shadow(0 2px 4px rgba(45,186,192,.35));
+      /* 모바일 흔들림 방지: 합성 레이어 분리 */
+      transform: translateZ(0);
     }
-    .info-btn:hover { color: #1f9ea2; transform: translateY(-2px); }
+    /* 모바일에서 hover 상태가 잠금되며 흔들림 발생 - 마우스 환경에서만 hover transform */
+    @media (hover: hover) {
+      .info-btn:hover { color: #1f9ea2; transform: translateY(-2px); }
+    }
     .info-btn.is-open { color: #16797d; }
     .info-btn:active { transform: translateY(0) scale(0.95); }
     .info-btn svg { width: 100%; height: 100%; display: block; }
@@ -323,26 +331,40 @@
       .gallery { grid-template-columns: repeat(2, 1fr); gap: 14px 8px; }
     }
 
-    /* ===== MYWAY.KR 공통 ===== */
-    .myway-home-btn {
+    /* ===== VOD iframe 영역 (네비 외부 링크 클릭 시 표시) ===== */
+    /* ===== VOD iframe 영역: position:fixed로 viewport 전체 차지 (inner.html 방식) ===== */
+    .vod-frame-wrap {
       position: fixed;
-      right: 14px;
-      bottom: calc(14px + var(--safe-bottom));
-      z-index: 9999;
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 9px 14px 9px 12px;
-      background: #1f2740; color: #fff;
-      border-radius: 999px;
-      font-size: .82rem; font-weight: 700;
-      text-decoration: none; letter-spacing: -0.2px;
-      box-shadow: 0 4px 14px rgba(31,39,64,.32);
-      transition: transform .15s, box-shadow .15s, background-color .15s;
-      -webkit-tap-highlight-color: transparent;
+      left: 0;
+      top: 60px;                          /* topbar 높이 (모바일에서는 미디어쿼리로 조정) */
+      width: 100vw;
+      height: calc(100dvh - 60px);
+      height: calc(100svh - 60px);        /* 모바일 주소창 변화 대응 */
+      z-index: 10;
+      background: #f5f7fa;
+      overflow: hidden;
     }
-    .myway-home-btn:hover { transform: translateY(-2px); background: #2a3358; }
-    .myway-home-btn svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
+    .vod-frame-wrap[hidden] { display: none !important; }
+    .vod-frame-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+    /* vod-mode일 때 갤러리/라벨/footer 숨김 (iframe 풀화면) */
+    body.vod-mode .gallery-label-wrap,
+    body.vod-mode .gallery,
+    body.vod-mode .myway-footer { display: none; }
+    /* 모바일에서는 topbar가 조금 더 작음 */
+    @media (max-width: 700px) {
+      .vod-frame-wrap {
+        top: 54px;
+        height: calc(100dvh - 54px);
+        height: calc(100svh - 54px);
+      }
+    }
 
-    .myway-footer {
+    /* ===== MYWAY.KR 공통 ===== */.myway-footer {
       width: 100%;
       text-align: center;
       padding: 22px 14px calc(28px + var(--safe-bottom));
@@ -356,8 +378,6 @@
     .myway-footer .sep { display: inline-block; margin: 0 8px; opacity: .5; }
 
     @media (max-width: 700px) {
-      .home-link { width: 38px; height: 38px; }
-      .home-link svg { width: 20px; height: 20px; }
       .cat-btn { padding: 7px 14px; font-size: .88rem; }
     }
   </style>
@@ -366,13 +386,16 @@
 
   <!-- 상단 sticky 헤더 -->
   <header class="topbar">
-    <a href="https://myway.kr/" class="home-link" aria-label="MYWAY.KR 홈" title="MYWAY.KR 홈">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 2.5 11.4l1.3 1.5L5 11.85V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-8.15l1.2 1.05 1.3-1.5L12 3.2Z"/></svg>
-    </a>
     <nav class="cat-nav" id="catNav">
       <button class="cat-btn is-active" data-ch="kbs">KBS <span class="count" id="cnt-kbs"></span></button>
       <button class="cat-btn" data-ch="sbs">SBS <span class="count" id="cnt-sbs"></span></button>
       <button class="cat-btn" data-ch="cha">채널A <span class="count" id="cnt-cha"></span></button>
+      <!-- 외부 VOD 링크 (새 탭으로 이동) -->
+      <a class="cat-btn cat-link" href="00tvmain2.html" rel="noopener">live 방송사</a>
+      <a class="cat-btn cat-link" href="https://allvod.sbs.co.kr/free" rel="noopener">SBS 무료VOD</a>
+      <a class="cat-btn cat-link" href="https://vod.kbs.co.kr/" rel="noopener">KBS 무료VOD</a>
+      <a class="cat-btn cat-link" href="https://global.imbc.com/MovieProgram/0" rel="noopener">MBC 무료VOD</a>
+      <a class="cat-btn cat-link" href="https://vod.jtbc.co.kr/" rel="noopener">JTBC 무료VOD</a>
     </nav>
   </header>
 
@@ -406,6 +429,11 @@
     <div class="gallery" id="gallery" data-active="kbs"></div>
   </main>
 
+  <!-- VOD iframe 영역: position:fixed로 viewport 전체 차지 (외부 VOD 링크 클릭 시 표시) -->
+  <div class="vod-frame-wrap" id="vodFrameWrap" hidden>
+    <iframe id="vodFrame" src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+  </div>
+
   <!-- MYWAY.KR 공통: 푸터 -->
   <footer class="myway-footer">
     <a href="https://myway.kr/">myway.kr</a>
@@ -414,10 +442,6 @@
   </footer>
 
   <!-- MYWAY.KR 공통: 우측 하단 홈 버튼 -->
-  <a href="https://myway.kr/" class="myway-home-btn" aria-label="myway.kr 홈으로 이동">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 2.5 11.4l1.3 1.5L5 11.85V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-8.15l1.2 1.05 1.3-1.5L12 3.2Z"/></svg>
-    myway.kr
-  </a>
 
   <script>
     /* ============ 복제방지 ============ */
@@ -633,16 +657,44 @@
       const nav = document.getElementById('catNav');
       const gallery = document.getElementById('gallery');
       const label = document.getElementById('galleryLabel');
+      const frameWrap = document.getElementById('vodFrameWrap');
+      const frame = document.getElementById('vodFrame');
+
       nav.addEventListener('click', e => {
-        const btn = e.target.closest('.cat-btn');
+        /* ─── A. 외부 VOD 링크 (.cat-link) 클릭 → iframe 모드 ─── */
+        const link = e.target.closest('a.cat-link');
+        if (link) {
+          e.preventDefault();
+          /* iframe에 해당 URL 로드 + 표시 */
+          frame.src = link.href;
+          frameWrap.hidden = false;
+          document.body.classList.add('vod-mode');
+          /* 활성 표시: 카테고리/VOD 통합 토글 */
+          nav.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('is-active'));
+          link.classList.add('is-active');
+          /* 가운데 스크롤 + 상단으로 */
+          link.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+
+        /* ─── B. 카테고리 버튼 (data-ch 있는 button) 클릭 → 갤러리 모드 ─── */
+        const btn = e.target.closest('.cat-btn[data-ch]');
         if (!btn) return;
+        /* iframe 모드 해제 */
+        if (document.body.classList.contains('vod-mode')) {
+          document.body.classList.remove('vod-mode');
+          frameWrap.hidden = true;
+          frame.src = '';  /* 메모리/네트워크 해제 */
+        }
         const ch = btn.dataset.ch;
         nav.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('is-active'));
         btn.classList.add('is-active');
         gallery.dataset.active = ch;
         label.textContent = labels[ch];
-        /* 채널 전환 시 페이지 상단으로 스크롤 */
+        /* 채널 전환 시 페이지 상단으로 스크롤 + 클릭 버튼 가운데로 */
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       });
     }
 
