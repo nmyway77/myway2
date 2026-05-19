@@ -336,15 +336,19 @@
     .vod-frame-wrap {
       position: fixed;
       left: 0;
-      top: 60px;                          /* topbar 높이 (모바일에서는 미디어쿼리로 조정) */
+      top: 60px;
       width: 100vw;
-      height: calc(100dvh - 60px);
-      height: calc(100svh - 60px);        /* 모바일 주소창 변화 대응 */
+      /* 높이 fallback 체인 (구버전 모바일 호환): vh → dvh → svh */
+      height: calc(100vh - 60px);          /* 구버전 모바일 fallback */
+      height: calc(100dvh - 60px);         /* 최신 - 동적 viewport */
+      height: calc(100svh - 60px);         /* 최신 - small viewport */
       z-index: 10;
       background: #f5f7fa;
       overflow: hidden;
+      display: none;                       /* 기본 숨김 - class로 토글 */
+      -webkit-overflow-scrolling: touch;   /* iOS 스크롤 부드럽게 */
     }
-    .vod-frame-wrap[hidden] { display: none !important; }
+    .vod-frame-wrap.is-open { display: block; }
     .vod-frame-wrap iframe {
       width: 100%;
       height: 100%;
@@ -359,6 +363,7 @@
     @media (max-width: 700px) {
       .vod-frame-wrap {
         top: 54px;
+        height: calc(100vh - 54px);
         height: calc(100dvh - 54px);
         height: calc(100svh - 54px);
       }
@@ -430,7 +435,7 @@
   </main>
 
   <!-- VOD iframe 영역: position:fixed로 viewport 전체 차지 (외부 VOD 링크 클릭 시 표시) -->
-  <div class="vod-frame-wrap" id="vodFrameWrap" hidden>
+  <div class="vod-frame-wrap" id="vodFrameWrap">
     <iframe id="vodFrame" src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
   </div>
 
@@ -667,7 +672,7 @@
           e.preventDefault();
           /* iframe에 해당 URL 로드 + 표시 */
           frame.src = link.href;
-          frameWrap.hidden = false;
+          frameWrap.classList.add('is-open');
           document.body.classList.add('vod-mode');
           /* 활성 표시: 카테고리/VOD 통합 토글 */
           nav.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('is-active'));
@@ -684,7 +689,7 @@
         /* iframe 모드 해제 */
         if (document.body.classList.contains('vod-mode')) {
           document.body.classList.remove('vod-mode');
-          frameWrap.hidden = true;
+          frameWrap.classList.remove('is-open');
           frame.src = '';  /* 메모리/네트워크 해제 */
         }
         const ch = btn.dataset.ch;
