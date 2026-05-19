@@ -213,26 +213,12 @@
     @media (max-width: 600px) { .masonry { column-count: 2; column-gap: 10px; } .masonry .card { margin-bottom: 10px; } }
     @media (max-width: 360px) { .masonry { column-count: 1; } }
 
-    /* ===== MYWAY.KR 공통 ===== */
-    .myway-home-btn {
-      position: fixed;
-      right: 14px;
-      bottom: calc(14px + var(--safe-bottom));
-      z-index: 9999;
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 9px 14px 9px 12px;
-      background: #1f2740; color: #fff;
-      border-radius: 999px;
-      font-size: .82rem; font-weight: 700;
-      text-decoration: none; letter-spacing: -0.2px;
-      box-shadow: 0 4px 14px rgba(31,39,64,.32);
-      transition: transform .15s, background-color .15s;
-      -webkit-tap-highlight-color: transparent;
+    /* 태블릿/PC: 카테고리 네비 중앙정렬 (모바일은 좌측 정렬 그대로) */
+    @media (min-width: 721px) {
+      .cat-nav { justify-content: safe center; }
     }
-    .myway-home-btn:hover { transform: translateY(-2px); background: #2a3358; }
-    .myway-home-btn svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
 
-    .myway-footer {
+    /* ===== MYWAY.KR 공통 ===== */.myway-footer {
       width: 100%;
       text-align: center;
       padding: 22px 14px calc(28px + var(--safe-bottom));
@@ -288,10 +274,6 @@
   </footer>
 
   <!-- MYWAY.KR 공통: 우측 하단 홈 버튼 -->
-  <a href="https://myway.kr/" class="myway-home-btn" aria-label="myway.kr 홈으로 이동">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 2.5 11.4l1.3 1.5L5 11.85V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-8.15l1.2 1.05 1.3-1.5L12 3.2Z"/></svg>
-    myway.kr
-  </a>
 
   <script>
     /* ============ 복제방지 ============ */
@@ -320,6 +302,70 @@
 
     /* ============ 인물 데이터 ============ */
     const people = [
+      /* === mainpage43.html에서 추가된 가수들 (기존 데이터 위에 삽입) === */
+      { name: "1theK 원더케이", cats: ["singer"], url: "https://www.youtube.com/watch?v=kMRLzSQorK0&ab_channel=1theK%28%EC%9B%90%EB%8D%94%EC%BC%80%EC%9D%B4%29", img: "https://pimg.mk.co.kr/meet/neds/2011/11/image_readtop_2011_736156_1321232205512452.jpg" },
+      { name: "1theK 원더케이", cats: ["singer"], url: "https://www.youtube.com/watch?v=tfmwbxBKPh0&list=RDtfmwbxBKPh0&start_radio=1&ab_channel=1theK%28%EC%9B%90%EB%8D%94%EC%BC%80%EC%9D%B4%29", img: "https://flexible.img.hani.co.kr/flexible/normal/600/814/imgdb/original/2025/0303/20250303501438.jpg" },
+      { name: "iwee", cats: ["singer"], url: "https://www.youtube.com/watch?v=TaSP-AinD9U&list=RDTaSP-AinD9U&start_radio=1&ab_channel=iwee", img: "https://img.hankyung.com/photo/201912/PCM20190602000043005_P2.jpg" },
+      { name: "JTBC 엔터테인먼트", cats: ["singer"], url: "https://www.youtube.com/watch?v=0dKRWz3EDug&list=PLAeW92KkLNuK353JrtkYN74ehcGOl1KN-&index=5&ab_channel=JTBCEntertainment", img: "https://img9.yna.co.kr/etc/inner/KR/2024/07/24/AKR20240724151800005_06_i_P4.jpg" },
+      { name: "전람회", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%A0%84%EB%9E%8C%ED%9A%8C", img: "https://i.namu.wiki/i/8PC6sroonFXOkhd-bWOM0KvWuEjYt9eWr5PUYOzmbKWQ5Su339bGcbhjVEkKZWkJNLsTxuxxRJZbgehYC1M5Aw.webp" },
+      { name: "김현식", cats: ["singer"], url: "https://soundcloud.com/search?q=%EA%B9%80%ED%98%84%EC%8B%9D", img: "https://img.khan.co.kr/news/2007/10/11/7j11k08a.jpg" },
+      { name: "들국화", cats: ["singer"], url: "https://soundcloud.com/search?q=%EB%93%A4%EA%B5%AD%ED%99%94", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS691HmQnMioY8bm-8atkaENVsWEvCDfXrBNQ&s" },
+      { name: "IPIN", cats: ["singer"], url: "https://www.youtube.com/watch?v=Ccpx0pRrzAs&list=PLAeW92KkLNuJl-nR4smaq2JubVN_z6TkM&index=3&ab_channel=IPIN", img: "https://img3.yna.co.kr/photo/yna/YH/2017/04/18/PYH2017041832300001300_P4.jpg" },
+      { name: "토이", cats: ["singer"], url: "https://soundcloud.com/search?q=%ED%86%A0%EC%9D%B4", img: "https://img.etoday.co.kr/pto_db/2022/06/600/20220617155057_1765604_647_970.jpg" },
+      { name: "sg워너비", cats: ["singer"], url: "https://soundcloud.com/search?q=sg%EC%9B%8C%EB%84%88%EB%B9%84", img: "https://image.yes24.com/momo/TopCate52/MidCate05/5148490.jpg" },
+      { name: "감성네비", cats: ["singer"], url: "https://www.youtube.com/watch?v=m8ILCZk6FLU&list=PLV2M-6ANYqSwU7yiIN2hOoBsRazx84zT7&ab_channel=%EA%B0%90%EC%84%B1%EB%84%A4%EB%B9%84", img: "https://cdnweb01.wikitree.co.kr/webdata/editor/202408/26/img_20240826134816_3f10e0d5.webp" },
+      { name: "김필", cats: ["singer"], url: "https://www.youtube.com/@KIMFEELofficial/videos", img: "https://talkimg.imbc.com/TVianUpload/tvian/TViews/image/2019/12/13/cHSISW3DxtP3637118505394636347.jpg" },
+      { name: "김태우", cats: ["singer"], url: "https://soundcloud.com/search?q=%EA%B9%80%ED%83%9C%EC%9A%B0", img: "https://newsimg.sedaily.com/2017/07/03/1OIBY96Z4P_1.jpg" },
+      { name: "허각", cats: ["singer"], url: "https://soundcloud.com/search?q=%ED%97%88%EA%B0%81", img: "https://img.sbs.co.kr/newsnet/etv/upload/2013/11/04/30000330433_500.jpg" },
+      { name: "KBS 레전드 케이팝", cats: ["singer"], url: "https://www.youtube.com/watch?v=ZHRLtOqESmw&list=RDZHRLtOqESmw&start_radio=1&ab_channel=KBS%EB%A0%88%EC%A0%84%EB%93%9C%EC%BC%80%EC%9D%B4%ED%8C%9D", img: "https://dimg.donga.com/wps/NEWS/IMAGE/2013/04/08/54259502.11.jpg" },
+      { name: "박효신", cats: ["singer"], url: "https://soundcloud.com/search?q=%EB%B0%95%ED%9A%A8%EC%8B%A0", img: "https://pbs.twimg.com/media/D_mr4MQVAAA0V4z?format=jpg&name=4096x4096" },
+      { name: "KBS Kpop", cats: ["singer"], url: "https://www.youtube.com/watch?v=WABhOy9wm3c&list=RDWABhOy9wm3c&start_radio=1&ab_channel=KBSKpop", img: "https://dimg.donga.com/wps/NEWS/IMAGE/2012/10/26/50405551.4.jpg" },
+      { name: "박상민", cats: ["singer"], url: "https://soundcloud.com/search?q=%EB%B0%95%EC%83%81%EB%AF%BC", img: "https://ojsfile.ohmynews.com/STD_IMG_FILE/2012/0117/IE001390962_STD.jpg" },
+      { name: "여행스케치", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%97%AC%ED%96%89%EC%8A%A4%EC%BC%80%EC%B9%98", img: "https://images.khan.co.kr/article/2011/05/31/20110601.02500119060056.01L.jpg" },
+      { name: "서태지와 아이들", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%84%9C%ED%83%9C%EC%A7%80%EC%99%80%20%EC%95%84%EC%9D%B4%EB%93%A4&query_urn=soundcloud%3Asearch-autocomplete%3A5d7e6faf6a7d4f3b8ad34c6e2be31e4f", img: "https://www.seotaiji-archive.com/xe/files/attach/images/43635/542/160/9caebdba006965ee9a35e7c3ee25f6e4.jpg" },
+      { name: "신승훈", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%8B%A0%EC%8A%B9%ED%9B%88", img: "https://cdn.stardailynews.co.kr/news/photo/201711/172168_204239_3425.jpg" },
+      { name: "김건모", cats: ["singer"], url: "https://soundcloud.com/search?q=%EA%B9%80%EA%B1%B4%EB%AA%A8", img: "https://cdn.todaykorea.co.kr/news/photo/200907/75182_60140_1917.jpg" },
+      { name: "조성모", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%A1%B0%EC%84%B1%EB%AA%A8", img: "https://img.hankyung.com/photo/201703/01.13602750.1.jpg" },
+      { name: "성시경", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%84%B1%EC%8B%9C%EA%B2%BD", img: "https://ticketimage.interpark.com/PlayDictionary/DATA/PlayDic/PlayDicUpload/040004/07/01/0400040701_1039_01.505.jpg" },
+      { name: "김광석", cats: ["singer"], url: "https://soundcloud.com/search?q=%EA%B9%80%EA%B4%91%EC%84%9D", img: "https://img.sbs.co.kr/newsnet/etv/upload/2017/09/20/30000580828_500.jpg" },
+      { name: "김정호 하얀나비", cats: ["singer"], url: "https://soundcloud.com/search?q=%EA%B9%80%EC%A0%95%ED%98%B8%20%ED%95%98%EC%96%80%EB%82%98%EB%B9%84", img: "https://i.namu.wiki/i/SmknbOcUyU8dten1_NFBL2MZg8WrcnMZzLpvyGUHdXGM4vs1VV6gwG1-Gn10RDbpjFtZkVL9oqqcqkQxqP3Pow.webp" },
+      { name: "jamescho", cats: ["singer"], url: "https://www.youtube.com/watch?v=D47SFEgqlBM&list=RDD47SFEgqlBM&start_radio=1&ab_channel=jamescho", img: "https://i.namu.wiki/i/OHs3TheNGPogoE3mv_xHb44BWH9PEOTSuhjKgDuDCH3qTwSaLAnq8JJNnLGp1kupedR5ib6JKjKLeRvhx0mrsQ.webp" },
+      { name: "김범수", cats: ["singer"], url: "https://soundcloud.com/search?q=%EA%B9%80%EB%B2%94%EC%88%98", img: "https://cdn.emetro.co.kr/data2/content/image/2015/02/24/0540/20150224000185.jpg" },
+      { name: "김연우", cats: ["singer"], url: "https://soundcloud.com/search?q=%EA%B9%80%EC%97%B0%EC%9A%B0", img: "https://i.namu.wiki/i/77BJgfK7PrJCYa3tt3gS_wHENUIfwgtI4CDn0ySgUlE4qSd03NkvvMn96JGjFCsPLXw5nm-WoCA1pLA3qB_-0A.webp" },
+      { name: "유재하", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%9C%A0%EC%9E%AC%ED%95%98", img: "https://i.namu.wiki/i/bcUmsG95AGbAYa18wtWbzaFDGxGgrNJWxhWECHrQ3S9jvmT0t50_dCxWK6pN2Sg-IFFmFCeBzVMx76R_B8csDw.webp" },
+      { name: "이소라", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%9D%B4%EC%86%8C%EB%9D%BC", img: "https://dimg.donga.com/wps/NEWS/IMAGE/2011/03/31/36044389.3.jpg" },
+      { name: "SBS 엔터테인먼트", cats: ["singer"], url: "https://www.youtube.com/watch?v=LXAmpAMzMsc&list=RDLXAmpAMzMsc&start_radio=1&ab_channel=SBSEntertainment", img: "https://cdn.ksilbo.co.kr/news/photo/200810/P200706230116011M.jpg" },
+      { name: "아이유", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%95%84%EC%9D%B4%EC%9C%A0", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGnZ-BXL4PWsJyIyFM7AhxrcNm_WQjZ7Rp2w4jBF5w_4OiIqJMt-h5aQgxSFZkS2n94Bg&usqp=CAU" },
+      { name: "양희은", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%96%91%ED%9D%AC%EC%9D%80", img: "https://image.yes24.com/images/chyes/music/musicspecial/20110720/03.jpg" },
+      { name: "소찬휘", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%86%8C%EC%B0%AC%ED%9C%98", img: "https://file2.nocutnews.co.kr/newsroom/image/2015/01/10/20150110173012341999.jpg" },
+      { name: "린애", cats: ["singer"], url: "https://soundcloud.com/search?q=%EB%A6%B0%EC%95%A0", img: "https://d3tvwjfge35btc.cloudfront.net/Assets/13/448/L_p1002744813.jpg" },
+      { name: "임재범", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%9E%84%EC%9E%AC%EB%B2%94", img: "https://img.seoul.co.kr/img/upload/2022/06/16/SSI_2022061616305101_O2.jpg" },
+      { name: "부활", cats: ["singer"], url: "https://soundcloud.com/search?q=%EB%B6%80%ED%99%9C", img: "https://i.namu.wiki/i/6ykw3GOcToixeXVaB4-FFHHicOJItMl7J30ScCqGpVUl9O7hsN1ZRu3guK1_hMnMJMJa-OEgm8R-jimiefATxw.webp" },
+      { name: "이승철", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%9D%B4%EC%8A%B9%EC%B2%A0", img: "https://pimg.mk.co.kr/meet/neds/2010/05/image_readtop_2010_237755_1273438744271284.jpg" },
+      { name: "신해철", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%8B%A0%ED%95%B4%EC%B2%A0", img: "https://i.namu.wiki/i/0D49dSHeRpc4xYsyhzUOpd73wgnIiowpfaUMw8SRgY8nzuPzBxXIeZrcpez_EPiSlIyMGu_NqxnLlf8DyzZW3A.webp" },
+      { name: "싸이", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%8B%B8%EC%9D%B4", img: "https://i.namu.wiki/i/efChuAmzQ4wRRKTv5edXs35NUTr_tDd2fKeR3r2Kj5Itl8gRy4SxRIdpNX1grSFiXLw__A0R94M_2qS9AzK4vg.webp" },
+      { name: "타샤니", cats: ["singer"], url: "https://soundcloud.com/search?q=%ED%83%80%EC%83%A4%EB%8B%88", img: "https://image.bugsm.co.kr/album/images/500/53/5376.jpg" },
+      { name: "자자 버스안에서", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%9E%90%EC%9E%90%20%EB%B2%84%EC%8A%A4%EC%95%88%EC%97%90%EC%84%9C&query_urn=soundcloud%3Asearch-autocomplete%3A9a2e371774094d6dbc003d7fca1c7d41", img: "https://flexible.img.hani.co.kr/flexible/normal/640/640/imgdb/original/2020/0607/20200607501716.jpg" },
+      { name: "양파", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%96%91%ED%8C%8C", img: "https://daily.hankooki.com/news/photo/201501/20150113_1_bodyFimg_143405.jpg" },
+      { name: "dj doc", cats: ["singer"], url: "https://soundcloud.com/search?q=dj%20doc", img: "https://image.genie.co.kr/Y/IMAGE/IMG_ALBUM/015/035/475/15035475_1312529055225_1_600x600.JPG" },
+      { name: "조관우", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%A1%B0%EA%B4%80%EC%9A%B0", img: "https://i.namu.wiki/i/l-Ufh_ILKSSdunh0snsG9JBbt74nwvk7OW-hRVM4sgdI7pManGqGY7DVhllVAW8NYVyffGl5vcuUXn13lWDdrA.webp" },
+      { name: "강수지", cats: ["singer"], url: "https://soundcloud.com/search?q=%EA%B0%95%EC%88%98%EC%A7%80", img: "https://dimg.donga.com/wps/NEWS/IMAGE/2009/01/05/7104972.1.jpg" },
+      { name: "거미", cats: ["singer"], url: "https://soundcloud.com/search?q=%EA%B1%B0%EB%AF%B8", img: "https://newsimg.sedaily.com/2017/06/05/1OH2Y7I0OK_1.jpg" },
+      { name: "터보", cats: ["singer"], url: "https://soundcloud.com/search?q=%ED%84%B0%EB%B3%B4", img: "https://i.namu.wiki/i/T5BuKEIrRgPHcI7jIQ7AsRwLsdos4nMaJxe3hSGzkWFfarK_-U1dLNjAIWGKyMY1FUUmb9VJpxJBjesyQc5z8Q.webp" },
+      { name: "변진섭", cats: ["singer"], url: "https://soundcloud.com/search?q=%EB%B3%80%EC%A7%84%EC%84%AD", img: "https://m.sportsworldi.com/content/image/2012/11/07/20121107020519_0.jpg" },
+      { name: "조덕배", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%A1%B0%EB%8D%95%EB%B0%B0", img: "https://mblogthumb-phinf.pstatic.net/20151018_67/yessok104_1445150119801bLG3k_PNG/%B4%D9%BF%EE%B7%CE%B5%E5.png?type=w420" },
+      { name: "이문세", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%9D%B4%EB%AC%B8%EC%84%B8", img: "https://i.namu.wiki/i/1brAEa-jZI2CzeYT5kA9q_F9Os4UR7STVcD2u1wjYiWybiEquFUkSGhwJlW8PW_KU-vvq-dp6FrXrmpqY4bZEg.webp" },
+      { name: "더원", cats: ["singer"], url: "https://soundcloud.com/search?q=%EB%8D%94%EC%9B%90", img: "https://i.namu.wiki/i/5ZmBPyMZ-dydAPCkaWB_r286OtxDsNnXynol5uHVsrTPAWuEqW7a3_F0CzjVTDL3Z6HNN7DE5UcrGaiRCWlHQA.webp" },
+      { name: "김현정", cats: ["singer"], url: "https://soundcloud.com/search?q=%EA%B9%80%ED%98%84%EC%A0%95", img: "https://cdn.incheonilbo.com/news/photo/202007/1047519_321960_5859.jpg" },
+      { name: "오현란", cats: ["singer"], url: "https://soundcloud.com/search?q=%EC%98%A4%ED%98%84%EB%9E%80", img: "https://is1-ssl.mzstatic.com/image/thumb/Music/0e/47/74/mzi.ldpeizab.jpg/486x486bb.png" },
+      { name: "민해경", cats: ["singer"], url: "https://soundcloud.com/search?q=%EB%AF%BC%ED%95%B4%EA%B2%BD", img: "https://i.namu.wiki/i/GvJcoVxwZG9PwzLeBXnnJP6VECFVAYbOb9nGHXTpO43FwxTdfkeXU8JSLf3T37oT3h7crJTQieKmhZHeG8KdiA.webp" },
+      { name: "나얼", cats: ["singer"], url: "https://soundcloud.com/search?q=%EB%82%98%EC%96%BC", img: "https://i.namu.wiki/i/oXd8AbVY9zA2Ymzbs4uKRQebT73NeX6j2138vjU1EOZi4tSktjORXjcn7wGMteGH7B3akbG2maemmpWHc-ZPBQ.webp" },
+      { name: "VIBE", cats: ["singer"], url: "https://vibe.naver.com/today", img: "https://music-phinf.pstatic.net/20240923_133/1727094084949jVo7k_PNG/vibe_og_tag_square3x.png" },
+      { name: "VEVO", cats: ["singer"], url: "https://www.youtube.com/@VEVO", img: "https://play-lh.googleusercontent.com/S3Wc8RcjrGvFwn6y8Q6xQRVGxO2FJr9HIaN7pxO-uG9i6D8ijNXAtoEwkBk0JLc69w" },
+      { name: "SoundCloud", cats: ["singer"], url: "https://soundcloud.com/SOundCloud", img: "https://cdn.iconsumer.or.kr/news/photo/202103/15608_20188_542.jpg" },
+      { name: "멜론", cats: ["singer"], url: "https://www.melon.com/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXV_WBvi-G9LwPKbyh8x5qBPDEhYyzis24fiy9qNtEzlkUCPYduyZ6PyYMQuzBcjgjBVg&usqp=CAU" },
+      { name: "벅스", cats: ["singer"], url: "https://music.bugs.co.kr/", img: "https://lh3.ggpht.com/M6UXPC-jncjtUd020iWikIdSaQ80Q1je3-uyTy-NkdOHme0X518DuYGsG3ftxTi5-w" },
+      /* === 기존 데이터 === */
       { name: "김선태", cats: ["youtuber"], url: "https://www.youtube.com/@kimseontae/videos", img: "https://i.namu.wiki/i/XFixUOxnll15Q4ZIyT9pFKStgsOcf5dFLC0AFMXTnH_9d2C6uncLLpBlZXKi_6ckl2y1zn_EbhKN7FO-XCmYcQ.webp" },
       { name: "웅진고웨이", cats: ["youtuber"], url: "https://www.youtube.com/@woongjingoway/videos", img: "https://i.namu.wiki/i/HcOondTE3e2lST0kOmwuv_0VsFFWnt4iy7J-PEPEuAhHy1uqBRMQ541KWldpq7rskLNFWdFjOb7lbRE6yBvmew.webp" },
       { name: "영알남", cats: ["youtuber"], url: "https://www.youtube.com/@Youngalnam/videos", img: "https://yt3.googleusercontent.com/ytc/AIdro_kx1aIc6M5ebBut6EgAZCSxqaS5dFKqVK6bO034ziceiw=s900-c-k-c0x00ffffff-no-rj" },
