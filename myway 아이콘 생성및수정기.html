@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>상단 아이콘 데이터 생성기 (indexmain7 daily)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --panel: #fff;
+      --border: #e4e7ee;
+      --text: #1a1f36;
+      --text-sub: #6b7488;
+      --accent: #7e94ff;
+      --danger: #d9534f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .header {
+      padding: 18px 22px;
+      background: linear-gradient(135deg, #7e94ff 0%, #b176f3 100%);
+      color: #fff;
+    }
+    .header h1 { margin: 0; font-size: 1.2rem; font-weight: 700; letter-spacing: -0.3px; }
+    .header .sub { font-size: .82rem; opacity: .9; margin-top: 4px; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(31, 39, 64, 0.04);
+    }
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+    .panel h2 .count {
+      font-size: .78rem;
+      color: var(--text-sub);
+      font-weight: 500;
+      margin-left: 6px;
+    }
+
+    .form-grid { display: grid; gap: 10px; }
+    .form-row { display: flex; flex-direction: column; gap: 4px; }
+    .form-row label {
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+    .form-row input[type=text], .form-row input[type=url] {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font: inherit;
+      font-size: .92rem;
+      color: var(--text);
+      background: #fff;
+      transition: border-color .15s;
+    }
+    .form-row input:focus { outline: none; border-color: var(--accent); }
+    .form-row .hint { font-size: .75rem; color: var(--text-sub); margin-top: 2px; }
+
+    .actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .btn {
+      padding: 9px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .btn:hover { background: #f4f6fb; }
+    .btn-primary { background: #7e94ff; color: #fff; border-color: #7e94ff; }
+    .btn-primary:hover { background: #6577eb; }
+    .btn-danger { color: var(--danger); }
+    .btn-danger:hover { background: #fdeaea; }
+
+    .item-list {
+      margin-top: 16px;
+      max-height: 360px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fafbfc;
+    }
+    .item-list:empty::before {
+      content: "아직 추가된 아이콘이 없습니다.";
+      display: block;
+      padding: 24px 16px;
+      text-align: center;
+      color: var(--text-sub);
+      font-size: .85rem;
+    }
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      transition: background .12s;
+    }
+    .item-row:last-child { border-bottom: 0; }
+    .item-row:hover { background: #f0eff9; }
+    .item-row.is-editing { background: #fff5d6; }
+    .item-row .icon-thumb {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid #e5e8f6;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .item-row .icon-thumb img {
+      width: 28px; height: 28px;
+      object-fit: contain;
+      border-radius: 50%;
+    }
+    .item-row .info { flex: 1 1 auto; min-width: 0; }
+    .item-row .name {
+      font-size: .9rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .item-row .url {
+      font-size: .76rem; color: var(--text-sub);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .item-row .ctrl { display: flex; gap: 4px; flex-shrink: 0; }
+    .ctrl-btn {
+      width: 28px; height: 28px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text-sub);
+      cursor: pointer;
+      font-size: .85rem; padding: 0;
+    }
+    .ctrl-btn:hover { background: #f4f6fb; color: var(--text); }
+    .ctrl-btn.danger:hover { color: var(--danger); background: #fdeaea; }
+    .ctrl-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    .code-output {
+      width: 100%;
+      min-height: 180px;
+      max-height: 280px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #1f2740;
+      color: #d8def0;
+      font-family: 'SF Mono', Consolas, Monaco, monospace;
+      font-size: .82rem;
+      line-height: 1.55;
+      resize: vertical;
+      white-space: pre;
+      overflow: auto;
+    }
+
+    /* ===== indexmain7 logo-tile 정확 재현 ===== */
+    .preview-area {
+      padding: 22px 14px;
+      border-radius: 8px;
+      background: #fff;
+      min-height: 200px;
+    }
+    .preview-empty {
+      text-align: center;
+      color: var(--text-sub);
+      font-size: .88rem;
+      padding: 40px 12px;
+    }
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 74px);
+      gap: 24px;
+      justify-content: center;
+    }
+    .logo-tile {
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 3px 24px 0 #b1c7e866;
+      border: 3px solid #e5e8f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: box-shadow 0.15s, border-color 0.15s, transform 0.12s;
+      cursor: pointer;
+      overflow: hidden;
+      margin: 0;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .logo-tile:hover {
+      box-shadow: 0 8px 32px 0 #7e94ff99;
+      border-color: #94a2ff;
+      background: #f7faff;
+    }
+    .logo-tile img {
+      width: 54px;
+      height: 54px;
+      object-fit: contain;
+      background: transparent;
+      border-radius: 50%;
+      transition: transform 0.12s;
+      pointer-events: none;
+      display: block;
+    }
+    .logo-tile:hover img {
+      transform: scale(1.08) rotate(-3deg);
+    }
+    .logo-name {
+      grid-column: 1 / -1;
+      text-align: center;
+      font-size: .76rem;
+      color: var(--text-sub);
+      margin-top: -10px;
+    }
+
+    #toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      padding: 11px 20px;
+      background: rgba(31, 39, 64, 0.94);
+      color: #fff;
+      font-size: .88rem;
+      font-weight: 600;
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(31,39,64,0.3);
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s, transform .2s;
+    }
+    #toast.is-show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>🎯 상단 아이콘 데이터 생성기 <span style="opacity:.7;font-weight:400;font-size:.85rem">(indexmain7 daily 탭용)</span></h1>
+    <div class="sub">이미지 URL + 링크 URL + 이름 → JS 코드 자동 생성 + 원형 아이콘 미리보기</div>
+  </header>
+
+  <div class="layout">
+    <section class="panel">
+      <h2>1. 아이콘 추가</h2>
+
+      <div class="form-grid">
+        <div class="form-row">
+          <label>이미지 URL <span style="color:var(--danger)">*</span></label>
+          <input type="url" id="imgInput" placeholder="https://cdn.simpleicons.org/bitcoin/F7931A" autocomplete="off">
+          <div class="hint">정사각 또는 투명 배경 PNG/SVG 권장 (원형 박스 안에 들어감)</div>
+        </div>
+
+        <div class="form-row">
+          <label>링크 URL <span style="color:var(--danger)">*</span></label>
+          <input type="url" id="urlInput" placeholder="https://myway.kr/00maincoininner.html 또는 https://example.com" autocomplete="off">
+        </div>
+
+        <div class="form-row">
+          <label>이름 (짧을수록 좋음) <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="nameInput" placeholder="예: bithumb, weather, calc" autocomplete="off">
+          <div class="hint">데이터의 name 필드. 호버 시 식별용 + 정렬 기준</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="addBtn">➕ 아이콘 추가</button>
+        <button type="button" class="btn" id="cancelEditBtn" style="display:none">↶ 수정 취소</button>
+        <button type="button" class="btn btn-danger" id="clearBtn">모두 지우기</button>
+      </div>
+      <div id="editIndicator" style="display:none;margin-top:8px;padding:6px 10px;background:#fff5d6;border:1px solid #f0d878;border-radius:6px;font-size:.82rem;color:#7a5d10">
+        ✏️ <strong id="editIndex"></strong>번 아이콘 수정 중 — 변경 후 [수정 적용]을 누르세요
+      </div>
+
+      <h2 style="margin-top: 22px;">2. 추가된 아이콘 <span class="count" id="countLbl">0개</span></h2>
+      <div class="item-list" id="itemList"></div>
+
+      <h2 style="margin-top: 22px;">3. 생성된 코드</h2>
+      <textarea class="code-output" id="codeOutput" spellcheck="false" placeholder="// 항목을 추가하거나, 기존 코드를 여기에 붙여넣고 [코드 적용]을 누르세요.&#10;// 형식: { name: '...', img: '...', url: '...' }"></textarea>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="copyBtn">📋 코드 복사</button>
+        <button type="button" class="btn" id="applyBtn">📥 코드 적용 (붙여넣기 후 파싱)</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>4. 실시간 미리보기 <span style="font-weight:500;color:var(--text-sub);font-size:.78rem">(indexmain7 logo-tile 스타일)</span></h2>
+      <div class="preview-area">
+        <div id="previewBox"><div class="preview-empty">항목을 추가하면 원형 아이콘이 표시됩니다.</div></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast" role="status"></div>
+
+  <script>
+  (function() {
+    'use strict';
+
+    const STORAGE_KEY = 'myway_icon_builder_v1';
+    let items = [];
+    let editingIndex = -1;
+
+    const $ = (id) => document.getElementById(id);
+    const imgInput = $('imgInput');
+    const urlInput = $('urlInput');
+    const nameInput = $('nameInput');
+    const itemList = $('itemList');
+    const codeOutput = $('codeOutput');
+    const previewBox = $('previewBox');
+    const countLbl = $('countLbl');
+    const addBtn = $('addBtn');
+    const cancelEditBtn = $('cancelEditBtn');
+    const editIndicator = $('editIndicator');
+    const editIndexLbl = $('editIndex');
+
+    // === 토스트 ===
+    let toastTimer;
+    function showToast(msg, ms) {
+      const t = $('toast');
+      t.textContent = msg;
+      t.classList.add('is-show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('is-show'), ms || 1800);
+    }
+
+    // === localStorage ===
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ items }));
+      } catch (e) {}
+    }
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (Array.isArray(data.items)) items = data.items;
+      } catch (e) {}
+    }
+
+    // === URL에서 이름 자동 추정 (호스트 또는 파일명) ===
+    function guessName(url) {
+      if (!url) return '';
+      try {
+        if (url.startsWith('http')) {
+          const u = new URL(url);
+          const host = u.hostname.replace(/^www\./, '').replace(/^m\./, '');
+          const parts = host.split('.');
+          return parts[parts.length >= 2 ? parts.length - 2 : 0];
+        }
+        /* 상대 경로 - 파일명 사용 (예: 00mainweather.html → mainweather) */
+        const m = url.match(/([^/]+)\.html?$/);
+        if (m) return m[1].replace(/^00/, '').replace(/^main/, '');
+      } catch (e) {}
+      return '';
+    }
+
+    urlInput.addEventListener('input', () => {
+      if (!nameInput.value.trim()) {
+        const guessed = guessName(urlInput.value.trim());
+        nameInput.placeholder = guessed ? '자동 추정: ' + guessed : '예: bithumb, weather, calc';
+      }
+    });
+
+    // === 항목 추가/수정 ===
+    function addItem() {
+      const img = imgInput.value.trim();
+      const url = urlInput.value.trim();
+      let name = nameInput.value.trim();
+      if (!img || !url) {
+        showToast('⚠ 이미지 URL과 링크 URL은 필수입니다');
+        return;
+      }
+      if (!name) name = guessName(url) || 'icon';
+
+      const item = { name, img, url };
+
+      if (editingIndex >= 0 && editingIndex < items.length) {
+        items[editingIndex] = item;
+        exitEditMode();
+        showToast('✓ 수정 적용됨');
+      } else {
+        items.push(item);
+        showToast('✓ 추가됨 (총 ' + items.length + '개)');
+      }
+
+      imgInput.value = '';
+      urlInput.value = '';
+      nameInput.value = '';
+      nameInput.placeholder = '예: bithumb, weather, calc';
+      imgInput.focus();
+      saveState();
+      render();
+    }
+    addBtn.addEventListener('click', addItem);
+
+    [imgInput, urlInput, nameInput].forEach(inp => {
+      inp.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); addItem(); }
+      });
+    });
+
+    function enterEditMode(index) {
+      if (index < 0 || index >= items.length) return;
+      const it = items[index];
+      imgInput.value = it.img || '';
+      urlInput.value = it.url || '';
+      nameInput.value = it.name || '';
+      editingIndex = index;
+      addBtn.textContent = '✓ 수정 적용';
+      cancelEditBtn.style.display = '';
+      editIndicator.style.display = '';
+      editIndexLbl.textContent = (index + 1);
+      imgInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      imgInput.focus();
+      render();
+    }
+
+    function exitEditMode() {
+      editingIndex = -1;
+      addBtn.textContent = '➕ 아이콘 추가';
+      cancelEditBtn.style.display = 'none';
+      editIndicator.style.display = 'none';
+    }
+
+    cancelEditBtn.addEventListener('click', () => {
+      exitEditMode();
+      imgInput.value = '';
+      urlInput.value = '';
+      nameInput.value = '';
+      render();
+      showToast('수정 취소');
+    });
+
+    // === 항목 목록 액션 ===
+    itemList.addEventListener('click', e => {
+      const row = e.target.closest('.item-row');
+      if (!row) return;
+      const idx = parseInt(row.dataset.idx, 10);
+
+      const btn = e.target.closest('.ctrl-btn');
+      if (btn) {
+        const act = btn.dataset.act;
+        if (act === 'up' && idx > 0) {
+          [items[idx-1], items[idx]] = [items[idx], items[idx-1]];
+          if (editingIndex === idx) editingIndex--;
+          else if (editingIndex === idx - 1) editingIndex++;
+        } else if (act === 'down' && idx < items.length - 1) {
+          [items[idx+1], items[idx]] = [items[idx], items[idx+1]];
+          if (editingIndex === idx) editingIndex++;
+          else if (editingIndex === idx + 1) editingIndex--;
+        } else if (act === 'del') {
+          items.splice(idx, 1);
+          if (editingIndex === idx) exitEditMode();
+          else if (editingIndex > idx) editingIndex--;
+        }
+        saveState();
+        render();
+        return;
+      }
+      enterEditMode(idx);
+    });
+
+    $('clearBtn').addEventListener('click', () => {
+      if (items.length === 0) return;
+      if (!confirm(items.length + '개 아이콘을 모두 지우시겠습니까?')) return;
+      items = [];
+      exitEditMode();
+      saveState();
+      render();
+      showToast('모두 지웠습니다');
+    });
+
+    $('copyBtn').addEventListener('click', async () => {
+      const code = codeOutput.value;
+      if (!code) { showToast('복사할 코드가 없습니다'); return; }
+      try {
+        await navigator.clipboard.writeText(code);
+        showToast('✓ 클립보드에 복사됨!');
+      } catch (e) {
+        codeOutput.focus();
+        codeOutput.select();
+        document.execCommand('copy');
+        showToast('✓ 복사됨!');
+      }
+    });
+
+    // === 코드 파싱 (양방향) ===
+    function parseCode(text) {
+      const out = [];
+      if (!text || !text.trim()) return out;
+      const blocks = text.match(/\{[^{}]+\}/g) || [];
+      blocks.forEach(block => {
+        const get = (key) => {
+          /* 키: '...' (single) 또는 "..." (double) 둘 다 지원 */
+          const m = block.match(new RegExp(key + '\\s*:\\s*([\'"])((?:\\\\.|(?!\\1)[^\\\\])*)\\1'));
+          if (!m) return '';
+          return m[2].replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+        };
+        const name = get('name') || get('alt') || get('label') || 'icon';
+        const img = get('img') || get('image');
+        const url = get('url') || get('href');
+        if (url && img) out.push({ name, img, url });
+      });
+      return out;
+    }
+
+    $('applyBtn').addEventListener('click', () => {
+      const text = codeOutput.value;
+      const parsed = parseCode(text);
+      if (parsed.length === 0) {
+        showToast('⚠ 파싱할 항목이 없습니다 — { name, img, url } 형태 확인');
+        return;
+      }
+      if (items.length > 0 && !confirm('현재 ' + items.length + '개 아이콘을 모두 교체하고 파싱된 ' + parsed.length + '개로 대체하시겠습니까?')) {
+        return;
+      }
+      items = parsed;
+      exitEditMode();
+      saveState();
+      render();
+      showToast('✓ ' + parsed.length + '개 아이콘 적용됨');
+    });
+
+    // === 렌더 ===
+    function escapeJs(s) {
+      return String(s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"']/g, m => ({
+        '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+      }[m]));
+    }
+
+    function buildCode() {
+      if (items.length === 0) return '';
+      /* indexmain7와 정확히 동일한 형식 (single quote) */
+      return items.map(it => {
+        return `{ name: '${escapeJs(it.name)}', img: '${escapeJs(it.img)}', url: '${escapeJs(it.url)}' },`;
+      }).join('\n');
+    }
+
+    function renderItemList() {
+      countLbl.textContent = items.length + '개';
+      if (items.length === 0) { itemList.innerHTML = ''; return; }
+      itemList.innerHTML = items.map((it, i) => `
+        <div class="item-row${i === editingIndex ? ' is-editing' : ''}" data-idx="${i}">
+          <div class="icon-thumb">
+            <img src="${escapeHtml(it.img)}" alt="" referrerpolicy="no-referrer" onerror="this.style.opacity=0.3;this.alt='✗'">
+          </div>
+          <div class="info">
+            <div class="name">${escapeHtml(it.name)}</div>
+            <div class="url">${escapeHtml(it.url)}</div>
+          </div>
+          <div class="ctrl">
+            <button class="ctrl-btn" data-act="up" title="위로" ${i===0?'disabled':''}>▲</button>
+            <button class="ctrl-btn" data-act="down" title="아래" ${i===items.length-1?'disabled':''}>▼</button>
+            <button class="ctrl-btn danger" data-act="del" title="삭제">✕</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderPreview() {
+      if (items.length === 0) {
+        previewBox.innerHTML = '<div class="preview-empty">항목을 추가하면 원형 아이콘이 표시됩니다.</div>';
+        return;
+      }
+      const tiles = items.map(it => `
+        <a class="logo-tile" href="${escapeHtml(it.url)}" target="_blank" rel="noopener" title="${escapeHtml(it.name)}">
+          <img src="${escapeHtml(it.img)}" alt="${escapeHtml(it.name)}" loading="lazy" referrerpolicy="no-referrer">
+        </a>
+      `).join('');
+      previewBox.innerHTML = '<div class="preview-grid">' + tiles + '</div>';
+    }
+
+    function render() {
+      renderItemList();
+      codeOutput.value = buildCode();
+      renderPreview();
+    }
+
+    // === 초기화 ===
+    loadState();
+    render();
+  })();
+  </script>
+</body>
+</html>

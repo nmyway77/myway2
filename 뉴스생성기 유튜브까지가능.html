@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>뉴스 카드 데이터 생성기 (빙/MSN 스타일)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 외부 이미지 referrer 차단 (유튜브 CDN 등 hot-link 정책 회피) -->
+  <meta name="referrer" content="no-referrer">
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --panel: #fff;
+      --border: #e4e7ee;
+      --text: #1a1f36;
+      --text-sub: #6b7488;
+      --accent: #1f6feb;
+      --danger: #d9534f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .header {
+      padding: 18px 22px;
+      background: linear-gradient(135deg, #0d3a82 0%, #1f6feb 100%);
+      color: #fff;
+    }
+    .header h1 { margin: 0; font-size: 1.2rem; font-weight: 700; letter-spacing: -0.3px; }
+    .header .sub { font-size: .82rem; opacity: .9; margin-top: 4px; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(31, 39, 64, 0.04);
+    }
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+    .panel h2 .count {
+      font-size: .78rem;
+      color: var(--text-sub);
+      font-weight: 500;
+      margin-left: 6px;
+    }
+
+    .form-grid { display: grid; gap: 10px; }
+    .form-row { display: flex; flex-direction: column; gap: 4px; }
+    .form-row.row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .form-row.row-2 > div { display: flex; flex-direction: column; gap: 4px; }
+    .form-row label {
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+    .form-row input[type=text], .form-row input[type=url], .form-row textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font: inherit;
+      font-size: .92rem;
+      color: var(--text);
+      background: #fff;
+      transition: border-color .15s;
+      font-family: inherit;
+    }
+    .form-row textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+    .form-row input:focus, .form-row textarea:focus { outline: none; border-color: var(--accent); }
+    .form-row .hint { font-size: .75rem; color: var(--text-sub); margin-top: 2px; }
+
+    .actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .btn {
+      padding: 9px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .btn:hover { background: #f4f6fb; }
+    .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-primary:hover { background: #1858c0; }
+    .btn-danger { color: var(--danger); }
+    .btn-danger:hover { background: #fdeaea; }
+
+    .item-list {
+      margin-top: 16px;
+      max-height: 320px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fafbfc;
+    }
+    .item-list:empty::before {
+      content: "아직 추가된 항목이 없습니다.";
+      display: block;
+      padding: 24px 16px;
+      text-align: center;
+      color: var(--text-sub);
+      font-size: .85rem;
+    }
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      transition: background .12s;
+    }
+    .item-row:last-child { border-bottom: 0; }
+    .item-row:hover { background: #eef5ff; }
+    .item-row.is-editing { background: #fff5d6; }
+    .item-row img {
+      width: 60px; height: 40px;
+      object-fit: cover;
+      border-radius: 4px;
+      background: #eef0f4;
+      flex-shrink: 0;
+    }
+    .item-row .info { flex: 1 1 auto; min-width: 0; }
+    .item-row .title {
+      font-size: .88rem; font-weight: 600;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+    .item-row .meta {
+      font-size: .74rem; color: var(--text-sub);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+    .item-row .ctrl { display: flex; gap: 4px; flex-shrink: 0; }
+    .ctrl-btn {
+      width: 28px; height: 28px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text-sub);
+      cursor: pointer;
+      font-size: .85rem; padding: 0;
+    }
+    .ctrl-btn:hover { background: #f4f6fb; color: var(--text); }
+    .ctrl-btn.danger:hover { color: var(--danger); background: #fdeaea; }
+    .ctrl-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    .code-output {
+      width: 100%;
+      min-height: 180px;
+      max-height: 280px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #1f2740;
+      color: #d8def0;
+      font-family: 'SF Mono', Consolas, Monaco, monospace;
+      font-size: .82rem;
+      line-height: 1.55;
+      resize: vertical;
+      white-space: pre;
+      overflow: auto;
+    }
+
+    /* ===== 유튜브 썸네일 추출기 (내장) ===== */
+    .yt-extractor {
+      display: none;
+      margin-top: 8px;
+      padding: 10px;
+      border: 1.5px solid #e0d4f7;
+      border-radius: 8px;
+      background: #faf6ff;
+    }
+    .yt-extractor.is-open { display: block; }
+    .yt-extractor-title {
+      font-size: .78rem;
+      font-weight: 700;
+      color: #5c4791;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .yt-extractor-title a {
+      font-size: .72rem;
+      font-weight: 500;
+      color: #5c4791;
+      text-decoration: underline;
+      opacity: .85;
+    }
+    .yt-extractor-title a:hover { opacity: 1; }
+    .yt-candidates {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 8px;
+    }
+    .yt-cand {
+      cursor: pointer;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+      transition: border-color .12s, transform .12s;
+      position: relative;
+      padding: 0;
+    }
+    .yt-cand:hover {
+      border-color: #b176f3;
+      transform: scale(1.03);
+    }
+    .yt-cand.is-selected {
+      border-color: #7e94ff;
+      box-shadow: 0 0 0 2px rgba(126,148,255,0.3);
+    }
+    .yt-cand img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      display: block;
+      background: #ddd;
+    }
+    .yt-cand .lbl {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      font-size: .68rem;
+      padding: 2px 4px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    /* ===== 뉴스 카드 미리보기: people 방식 (원본 비율 유지 + masonry) ===== */
+    .preview-area {
+      padding: 12px;
+      border-radius: 8px;
+      background: #fafbfd;
+      min-height: 200px;
+    }
+    .preview-empty {
+      text-align: center;
+      color: var(--text-sub);
+      font-size: .88rem;
+      padding: 40px 12px;
+    }
+    /* masonry 컬럼 - 각 카드 높이가 이미지 비율에 따라 다양 */
+    .news-grid {
+      column-count: 3;
+      column-gap: 14px;
+    }
+    .news-card {
+      position: relative;
+      display: block;
+      break-inside: avoid;
+      margin: 0 0 14px;
+      border-radius: 10px;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      background: #1a1f36;
+      box-shadow: 0 2px 8px rgba(31,39,64,0.08);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .news-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 18px rgba(31,39,64,0.18);
+    }
+    /* 이미지는 원본 비율 그대로 - 세로형/가로형/정사각형 모두 자연스럽게 */
+    .news-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #1a1f36;
+    }
+    .news-card .grad {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 60%;
+      max-height: 200px;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.5) 55%, rgba(0,0,0,0.94) 100%);
+      pointer-events: none;
+    }
+    .news-card .body {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      padding: 16px 14px 13px;
+      color: #fff;
+    }
+    .news-card .meta {
+      font-size: .72rem;
+      opacity: .9;
+      margin-bottom: 6px;
+      letter-spacing: -0.1px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+    .news-card .meta .dot {
+      display: inline-block;
+      margin: 0 6px;
+      opacity: .55;
+    }
+    .news-card .title {
+      font-size: .95rem;
+      font-weight: 700;
+      line-height: 1.35;
+      letter-spacing: -0.3px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    }
+    /* 매우 작은 이미지(낮은 높이) 대비 - 헤드라인이 너무 크게 보이지 않게 */
+    @media (max-width: 1100px) { .news-grid { column-count: 2; } }
+    @media (max-width: 600px) {
+      .news-grid { column-count: 1; }
+      .news-card .title { font-size: 1rem; }
+    }
+
+    #toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      padding: 11px 20px;
+      background: rgba(31, 39, 64, 0.94);
+      color: #fff;
+      font-size: .88rem;
+      font-weight: 600;
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(31,39,64,0.3);
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s, transform .2s;
+    }
+    #toast.is-show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>📰 뉴스 카드 데이터 생성기 (빙/MSN 스타일)</h1>
+    <div class="sub">썸네일 + 헤드라인 + 출처 + 시간 입력 → JS 코드 자동 생성 + 큰 카드 미리보기</div>
+  </header>
+
+  <div class="layout">
+    <section class="panel">
+      <h2>1. 뉴스 항목 추가</h2>
+
+      <div class="form-grid">
+        <div class="form-row">
+          <label>썸네일 이미지 URL <span style="color:var(--danger)">*</span></label>
+          <input type="url" id="imgInput" placeholder="https://news-site.com/article-thumbnail.jpg" autocomplete="off">
+          <!-- 유튜브 썸네일 추출기 (URL이 유튜브일 때 자동 표시) -->
+          <div class="yt-extractor" id="ytExtractor">
+            <div class="yt-extractor-title">
+              <span>🎬 유튜브 썸네일 후보 — 클릭하여 선택</span>
+              <a href="https://myway.kr/extract7.html" target="_blank" rel="noopener">myway.kr 추출기 ↗</a>
+            </div>
+            <div class="yt-candidates" id="ytCandidates"></div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label>기사 링크 URL <span style="color:var(--danger)">*</span></label>
+          <input type="url" id="urlInput" placeholder="https://www.chosun.com/... 또는 https://youtu.be/..." autocomplete="off">
+          <div class="hint">도메인에서 출처 자동 추정 (조선일보 / SBS / KBS 등 50+) · <strong>유튜브 URL이면 썸네일도 자동 추출</strong></div>
+        </div>
+
+        <div class="form-row">
+          <label>헤드라인 <span style="color:var(--danger)">*</span></label>
+          <textarea id="titleInput" placeholder="예: 삼성전자, 신규 반도체 공장 발표… 투자 규모 사상 최대" rows="2"></textarea>
+        </div>
+
+        <div class="form-row row-2">
+          <div>
+            <label>출처 <span style="font-weight:500;color:var(--text-sub)">(비우면 자동)</span></label>
+            <input type="text" id="sourceInput" placeholder="예: 조선일보 (사이트 이름, URL 아님)" autocomplete="off">
+          </div>
+          <div>
+            <label>시간</label>
+            <input type="text" id="timeInput" placeholder="예: 2시간 전 / 오늘 14:30" autocomplete="off">
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="addBtn">➕ 항목 추가</button>
+        <button type="button" class="btn" id="cancelEditBtn" style="display:none">↶ 수정 취소</button>
+        <button type="button" class="btn btn-danger" id="clearBtn">모두 지우기</button>
+      </div>
+      <div id="editIndicator" style="display:none;margin-top:8px;padding:6px 10px;background:#fff5d6;border:1px solid #f0d878;border-radius:6px;font-size:.82rem;color:#7a5d10">
+        ✏️ <strong id="editIndex"></strong>번 항목 수정 중 — 변경 후 [수정 적용]을 누르세요
+      </div>
+
+      <h2 style="margin-top: 22px;">2. 추가된 뉴스 <span class="count" id="countLbl">0개</span></h2>
+      <div class="item-list" id="itemList"></div>
+
+      <h2 style="margin-top: 22px;">3. 생성된 코드</h2>
+      <textarea class="code-output" id="codeOutput" spellcheck="false" placeholder="// 항목을 추가하거나, 기존 코드를 여기에 붙여넣고 [코드 적용]을 누르세요.&#10;// 형식: { title, source, time, url, img }"></textarea>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="copyBtn">📋 코드 복사</button>
+        <button type="button" class="btn" id="applyBtn">📥 코드 적용 (붙여넣기 후 파싱)</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>4. 실시간 미리보기</h2>
+      <div class="preview-area">
+        <div id="previewBox"><div class="preview-empty">항목을 추가하면 빙/MSN 스타일 카드가 표시됩니다.</div></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast" role="status"></div>
+
+  <script>
+  (function() {
+    'use strict';
+
+    const STORAGE_KEY = 'myway_news_builder_v1';
+    let items = [];
+    let editingIndex = -1;
+
+    const $ = (id) => document.getElementById(id);
+    const imgInput = $('imgInput');
+    const urlInput = $('urlInput');
+    const titleInput = $('titleInput');
+    const sourceInput = $('sourceInput');
+    const timeInput = $('timeInput');
+    const itemList = $('itemList');
+    const codeOutput = $('codeOutput');
+    const previewBox = $('previewBox');
+    const countLbl = $('countLbl');
+    const addBtn = $('addBtn');
+    const cancelEditBtn = $('cancelEditBtn');
+    const editIndicator = $('editIndicator');
+    const editIndexLbl = $('editIndex');
+    const ytExtractor = $('ytExtractor');
+    const ytCandidates = $('ytCandidates');
+
+    // === 토스트 ===
+    let toastTimer;
+    function showToast(msg, ms) {
+      const t = $('toast');
+      t.textContent = msg;
+      t.classList.add('is-show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('is-show'), ms || 1800);
+    }
+
+    // === localStorage ===
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ items }));
+      } catch (e) {}
+    }
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (Array.isArray(data.items)) items = data.items;
+      } catch (e) {}
+    }
+
+    // === URL 도메인에서 출처 자동 추정 ===
+    const SOURCE_MAP = {
+      'chosun.com': '조선일보',
+      'joongang.co.kr': '중앙일보',
+      'joongang.com': '중앙일보',
+      'donga.com': '동아일보',
+      'hani.co.kr': '한겨레',
+      'khan.co.kr': '경향신문',
+      'hankookilbo.com': '한국일보',
+      'mk.co.kr': '매일경제',
+      'mt.co.kr': '머니투데이',
+      'hankyung.com': '한국경제',
+      'edaily.co.kr': '이데일리',
+      'sedaily.com': '서울경제',
+      'yna.co.kr': '연합뉴스',
+      'yonhapnews.co.kr': '연합뉴스',
+      'newsis.com': '뉴시스',
+      'news1.kr': '뉴스1',
+      'ohmynews.com': '오마이뉴스',
+      'pressian.com': '프레시안',
+      'nocutnews.co.kr': '노컷뉴스',
+      'sbs.co.kr': 'SBS뉴스',
+      'kbs.co.kr': 'KBS뉴스',
+      'imbc.com': 'MBC뉴스',
+      'mbc.co.kr': 'MBC뉴스',
+      'ytn.co.kr': 'YTN',
+      'jtbc.co.kr': 'JTBC뉴스',
+      'jtbc.com': 'JTBC뉴스',
+      'tvchosun.com': 'TV조선',
+      'channela.com': '채널A',
+      'mbn.co.kr': 'MBN',
+      'naver.com': '네이버뉴스',
+      'daum.net': '다음뉴스',
+      'zdnet.co.kr': 'ZDNet Korea',
+      'etnews.com': '전자신문',
+      'inews24.com': '아이뉴스24',
+      'bloter.net': '블로터',
+      'theguru.co.kr': '더구루',
+      'segye.com': '세계일보',
+      'munhwa.com': '문화일보',
+      'kmib.co.kr': '국민일보',
+      'seoul.co.kr': '서울신문',
+      'asiae.co.kr': '아시아경제',
+      'fnnews.com': '파이낸셜뉴스',
+      'mediatoday.co.kr': '미디어오늘',
+      'nytimes.com': 'New York Times',
+      'wsj.com': 'Wall Street Journal',
+      'bbc.com': 'BBC',
+      'bbc.co.uk': 'BBC',
+      'cnn.com': 'CNN',
+      'reuters.com': 'Reuters',
+      'apnews.com': 'AP News',
+      'bloomberg.com': 'Bloomberg',
+      'theverge.com': 'The Verge',
+      'techcrunch.com': 'TechCrunch',
+      'engadget.com': 'Engadget',
+      'wired.com': 'WIRED',
+      'arstechnica.com': 'Ars Technica',
+    };
+
+    /* === 유튜브 URL 감지 + Video ID 추출 + 썸네일 자동 생성 === */
+    function extractYouTubeId(url) {
+      if (!url) return null;
+      let m = url.match(/[?&]v=([\w-]{11})/);              // watch?v=
+      if (m) return m[1];
+      m = url.match(/youtu\.be\/([\w-]{11})/);             // youtu.be/
+      if (m) return m[1];
+      m = url.match(/youtube\.com\/(?:embed|shorts|v)\/([\w-]{11})/);  // /embed/, /shorts/, /v/
+      if (m) return m[1];
+      return null;
+    }
+    function youtubeThumb(videoId) {
+      /* i.ytimg.com 직접 접근 (img.youtube.com 리다이렉트 실패 회피) */
+      /* hqdefault는 모든 영상에 존재함 (480x360) */
+      return videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : '';
+    }
+    function youtubeChannel(url) {
+      /* ab_channel 파라미터 또는 @handle 추출 */
+      try {
+        const u = new URL(url);
+        const ab = u.searchParams.get('ab_channel');
+        if (ab) return decodeURIComponent(ab).trim();
+      } catch (e) {}
+      const m = url.match(/youtube\.com\/@([\w.\-]+)/);
+      if (m) return m[1];
+      return '';
+    }
+
+    function guessSource(url) {
+      if (!url) return '';
+      /* 유튜브 우선 처리: 채널명 있으면 채널, 없으면 "YouTube" */
+      if (extractYouTubeId(url) || /youtube\.com|youtu\.be/i.test(url)) {
+        return youtubeChannel(url) || 'YouTube';
+      }
+      try {
+        const host = new URL(url).hostname.toLowerCase().replace(/^www\./, '').replace(/^m\./, '').replace(/^news\./, '');
+        if (SOURCE_MAP[host]) return SOURCE_MAP[host];
+        /* 부분 매칭 (서브도메인 등) */
+        for (const key in SOURCE_MAP) {
+          if (host.endsWith(key)) return SOURCE_MAP[key];
+        }
+        /* 매핑 없으면 도메인 메인 부분만, 첫글자 대문자화 (URL 그대로 표시 방지) */
+        const parts = host.split('.');
+        const main = parts.length >= 2 ? parts[parts.length - 2] : host;
+        return main.charAt(0).toUpperCase() + main.slice(1);
+      } catch (e) {}
+      return '';
+    }
+
+    /* source 정제: URL 형태 입력 시 자동으로 사이트 이름으로 변환 (방어) */
+    function cleanSourceValue(value) {
+      if (!value) return '';
+      const trimmed = String(value).trim();
+      if (/^https?:\/\//i.test(trimmed)) {
+        return guessSource(trimmed) || trimmed.split('/')[2] || trimmed;
+      }
+      return trimmed;
+    }
+
+    /* === 유튜브 썸네일 후보 표시 (4가지 사이즈) === */
+    function showYtCandidates(videoId) {
+      if (!videoId) {
+        ytExtractor.classList.remove('is-open');
+        ytCandidates.innerHTML = '';
+        return;
+      }
+      const sizes = [
+        { key: 'maxresdefault', label: 'HD (1280×720)' },
+        { key: 'sddefault',     label: 'SD (640×480)' },
+        { key: 'hqdefault',     label: 'HQ (480×360)' },
+        { key: 'mqdefault',     label: 'MQ (320×180)' }
+      ];
+      ytCandidates.innerHTML = sizes.map(s => {
+        const url = `https://i.ytimg.com/vi/${videoId}/${s.key}.jpg`;
+        const selected = (imgInput.value.trim() === url) ? ' is-selected' : '';
+        return `
+        <button type="button" class="yt-cand${selected}" data-url="${url}">
+          <img src="${url}" alt="${s.label}" referrerpolicy="no-referrer" loading="lazy"
+               onerror="this.parentElement.style.opacity='.3';this.parentElement.style.cursor='not-allowed';this.parentElement.querySelector('.lbl').textContent='없음';">
+          <div class="lbl">${s.label}</div>
+        </button>`;
+      }).join('');
+      ytExtractor.classList.add('is-open');
+    }
+
+    /* 후보 클릭 → 이미지 URL 필드에 적용 */
+    ytCandidates.addEventListener('click', e => {
+      const btn = e.target.closest('.yt-cand');
+      if (!btn || !btn.dataset.url) return;
+      imgInput.value = btn.dataset.url;
+      /* 선택 표시 갱신 */
+      ytCandidates.querySelectorAll('.yt-cand').forEach(b => b.classList.toggle('is-selected', b === btn));
+      const sizeLbl = btn.querySelector('.lbl').textContent;
+      showToast('✓ ' + sizeLbl + ' 선택됨');
+    });
+
+    urlInput.addEventListener('input', () => {
+      const url = urlInput.value.trim();
+      /* (a) 출처 placeholder 자동 추정 */
+      if (!sourceInput.value.trim()) {
+        const guessed = guessSource(url);
+        sourceInput.placeholder = guessed ? '자동 추정: ' + guessed : '예: 조선일보 (사이트 이름, URL 아님)';
+      }
+      /* (b) 유튜브 URL이면 썸네일 후보 표시 + 자동 채움 (비어있을 때만) */
+      const ytId = extractYouTubeId(url);
+      if (ytId) {
+        showYtCandidates(ytId);
+        if (!imgInput.value.trim()) {
+          imgInput.value = youtubeThumb(ytId);
+        }
+      } else {
+        showYtCandidates(null);
+      }
+    });
+
+    /* 사용자가 source 필드에 URL을 붙여넣으면 자동으로 사이트 이름으로 변환 */
+    sourceInput.addEventListener('blur', () => {
+      const v = sourceInput.value.trim();
+      if (/^https?:\/\//i.test(v)) {
+        const cleaned = cleanSourceValue(v);
+        if (cleaned && cleaned !== v) {
+          sourceInput.value = cleaned;
+          showToast('출처를 "' + cleaned + '"으로 자동 변환');
+        }
+      }
+    });
+
+    // === 항목 추가/수정 ===
+    function addItem() {
+      const img = imgInput.value.trim();
+      const url = urlInput.value.trim();
+      const title = titleInput.value.trim();
+      let source = sourceInput.value.trim();
+      const time = timeInput.value.trim();
+
+      if (!img || !url || !title) {
+        showToast('⚠ 이미지, 링크, 헤드라인은 필수입니다');
+        return;
+      }
+      /* source 정제: 사용자가 URL을 잘못 붙여도 자동 변환 */
+      source = cleanSourceValue(source);
+      if (!source) source = guessSource(url) || '';
+
+      const item = { title, source, time, url, img };
+
+      if (editingIndex >= 0 && editingIndex < items.length) {
+        items[editingIndex] = item;
+        exitEditMode();
+        showToast('✓ 수정 적용됨');
+      } else {
+        items.push(item);
+        showToast('✓ 추가됨 (총 ' + items.length + '개)');
+      }
+
+      imgInput.value = '';
+      urlInput.value = '';
+      titleInput.value = '';
+      sourceInput.value = '';
+      timeInput.value = '';
+      sourceInput.placeholder = '예: 조선일보 (사이트 이름, URL 아님)';
+      showYtCandidates(null);  /* 추출기 숨김 */
+      imgInput.focus();
+      saveState();
+      render();
+    }
+    addBtn.addEventListener('click', addItem);
+
+    /* Enter로 추가 (textarea 제외 — textarea는 Ctrl+Enter) */
+    [imgInput, urlInput, sourceInput, timeInput].forEach(inp => {
+      inp.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); addItem(); }
+      });
+    });
+    titleInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); addItem(); }
+    });
+
+    function enterEditMode(index) {
+      if (index < 0 || index >= items.length) return;
+      const it = items[index];
+      imgInput.value = it.img || '';
+      urlInput.value = it.url || '';
+      titleInput.value = it.title || '';
+      sourceInput.value = it.source || '';
+      timeInput.value = it.time || '';
+      /* 편집 중 항목이 유튜브이면 후보 영역 표시 */
+      showYtCandidates(extractYouTubeId(it.url || ''));
+      editingIndex = index;
+      addBtn.textContent = '✓ 수정 적용';
+      cancelEditBtn.style.display = '';
+      editIndicator.style.display = '';
+      editIndexLbl.textContent = (index + 1);
+      imgInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      imgInput.focus();
+      render();
+    }
+
+    function exitEditMode() {
+      editingIndex = -1;
+      addBtn.textContent = '➕ 항목 추가';
+      cancelEditBtn.style.display = 'none';
+      editIndicator.style.display = 'none';
+    }
+
+    cancelEditBtn.addEventListener('click', () => {
+      exitEditMode();
+      imgInput.value = '';
+      urlInput.value = '';
+      titleInput.value = '';
+      sourceInput.value = '';
+      timeInput.value = '';
+      render();
+      showToast('수정 취소');
+    });
+
+    // === 항목 목록 액션 ===
+    itemList.addEventListener('click', e => {
+      const row = e.target.closest('.item-row');
+      if (!row) return;
+      const idx = parseInt(row.dataset.idx, 10);
+
+      const btn = e.target.closest('.ctrl-btn');
+      if (btn) {
+        const act = btn.dataset.act;
+        if (act === 'up' && idx > 0) {
+          [items[idx-1], items[idx]] = [items[idx], items[idx-1]];
+          if (editingIndex === idx) editingIndex--;
+          else if (editingIndex === idx - 1) editingIndex++;
+        } else if (act === 'down' && idx < items.length - 1) {
+          [items[idx+1], items[idx]] = [items[idx], items[idx+1]];
+          if (editingIndex === idx) editingIndex++;
+          else if (editingIndex === idx + 1) editingIndex--;
+        } else if (act === 'del') {
+          items.splice(idx, 1);
+          if (editingIndex === idx) exitEditMode();
+          else if (editingIndex > idx) editingIndex--;
+        }
+        saveState();
+        render();
+        return;
+      }
+      enterEditMode(idx);
+    });
+
+    $('clearBtn').addEventListener('click', () => {
+      if (items.length === 0) return;
+      if (!confirm(items.length + '개 뉴스를 모두 지우시겠습니까?')) return;
+      items = [];
+      exitEditMode();
+      saveState();
+      render();
+      showToast('모두 지웠습니다');
+    });
+
+    $('copyBtn').addEventListener('click', async () => {
+      const code = codeOutput.value;
+      if (!code) { showToast('복사할 코드가 없습니다'); return; }
+      try {
+        await navigator.clipboard.writeText(code);
+        showToast('✓ 클립보드에 복사됨!');
+      } catch (e) {
+        codeOutput.focus();
+        codeOutput.select();
+        document.execCommand('copy');
+        showToast('✓ 복사됨!');
+      }
+    });
+
+    // === 코드 파싱 ===
+    function parseCode(text) {
+      const out = [];
+      if (!text || !text.trim()) return out;
+      const blocks = text.match(/\{[^{}]+\}/g) || [];
+      blocks.forEach(block => {
+        const get = (key) => {
+          const m = block.match(new RegExp(key + '\\s*:\\s*"((?:\\\\.|[^"\\\\])*)"'));
+          if (!m) return '';
+          return m[1].replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+        };
+        const title = get('title') || get('headline') || '';
+        const url = get('url');
+        const img = get('img') || get('image') || get('thumbnail');
+        const source = get('source') || get('publisher') || '';
+        const time = get('time') || get('date') || get('published') || '';
+        if (url && img) out.push({ title, source, time, url, img });
+      });
+      return out;
+    }
+
+    $('applyBtn').addEventListener('click', () => {
+      const text = codeOutput.value;
+      const parsed = parseCode(text);
+      if (parsed.length === 0) {
+        showToast('⚠ 파싱할 항목이 없습니다 — { title, url, img } 형태 확인');
+        return;
+      }
+      if (items.length > 0 && !confirm('현재 ' + items.length + '개 항목을 모두 교체하고 파싱된 ' + parsed.length + '개로 대체하시겠습니까?')) {
+        return;
+      }
+      items = parsed;
+      exitEditMode();
+      saveState();
+      render();
+      showToast('✓ ' + parsed.length + '개 뉴스 적용됨');
+    });
+
+    // === 렌더 ===
+    function escapeJs(s) {
+      return String(s || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    }
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"']/g, m => ({
+        '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+      }[m]));
+    }
+
+    function buildCode() {
+      if (items.length === 0) return '';
+      return items.map(it => {
+        return `{ title: "${escapeJs(it.title)}", source: "${escapeJs(it.source)}", time: "${escapeJs(it.time)}", url: "${escapeJs(it.url)}", img: "${escapeJs(it.img)}" },`;
+      }).join('\n');
+    }
+
+    function renderItemList() {
+      countLbl.textContent = items.length + '개';
+      if (items.length === 0) { itemList.innerHTML = ''; return; }
+      itemList.innerHTML = items.map((it, i) => {
+        const safeSource = cleanSourceValue(it.source);
+        const metaParts = [];
+        if (safeSource) metaParts.push(escapeHtml(safeSource));
+        if (it.time) metaParts.push(escapeHtml(it.time));
+        const meta = metaParts.join(' · ');
+        return `
+        <div class="item-row${i === editingIndex ? ' is-editing' : ''}" data-idx="${i}">
+          <img src="${escapeHtml(it.img)}" alt="" referrerpolicy="no-referrer" onerror="this.style.opacity=0.3;this.alt='✗'">
+          <div class="info">
+            <div class="title">${escapeHtml(it.title)}</div>
+            <div class="meta">${meta || '<em style="color:#bbb">메타 없음</em>'}</div>
+          </div>
+          <div class="ctrl">
+            <button class="ctrl-btn" data-act="up" title="위로" ${i===0?'disabled':''}>▲</button>
+            <button class="ctrl-btn" data-act="down" title="아래" ${i===items.length-1?'disabled':''}>▼</button>
+            <button class="ctrl-btn danger" data-act="del" title="삭제">✕</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function renderPreview() {
+      if (items.length === 0) {
+        previewBox.innerHTML = '<div class="preview-empty">항목을 추가하면 빙/MSN 스타일 카드가 표시됩니다.</div>';
+        return;
+      }
+      const cards = items.map(it => {
+        /* 방어: source가 URL 형태면 호스트만 추출하여 표시 */
+        const safeSource = cleanSourceValue(it.source);
+        const metaParts = [];
+        if (safeSource) metaParts.push(`<span>${escapeHtml(safeSource)}</span>`);
+        if (it.time) metaParts.push(`<span>${escapeHtml(it.time)}</span>`);
+        const meta = metaParts.join('<span class="dot">·</span>');
+        return `
+        <a class="news-card" href="${escapeHtml(it.url)}" target="_blank" rel="noopener" aria-label="${escapeHtml(it.title)}">
+          <img src="${escapeHtml(it.img)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="(function(im){if(im.dataset.fb)return;im.dataset.fb='1';var m=im.src.match(/i\\.ytimg\\.com\\/vi\\/([^\\/]+)\\//);if(m){im.src='https://i.ytimg.com/vi/'+m[1]+'/mqdefault.jpg';}else{im.style.background='#444';}})(this)">
+          <div class="grad"></div>
+          <div class="body">
+            ${meta ? `<div class="meta">${meta}</div>` : ''}
+            <div class="title">${escapeHtml(it.title)}</div>
+          </div>
+        </a>`;
+      }).join('');
+      previewBox.innerHTML = '<div class="news-grid">' + cards + '</div>';
+    }
+
+    function render() {
+      renderItemList();
+      codeOutput.value = buildCode();
+      renderPreview();
+    }
+
+    // === 초기화 ===
+    loadState();
+    render();
+  })();
+  </script>
+</body>
+</html>
