@@ -351,10 +351,68 @@
     .vod-frame-wrap.is-open { display: block; }
     .vod-frame-wrap iframe {
       width: 100%;
-      height: 100%;
+      height: calc(100% - 42px);  /* 컨트롤 바 높이 빼기 */
       border: 0;
       display: block;
+      background: #fff;
     }
+    /* iframe 위 컨트롤 바 */
+    .vod-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 42px;
+      padding: 0 12px;
+      background: #1f2740;
+      color: #fff;
+      font-size: .85rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+      position: relative;
+      z-index: 1;
+    }
+    .vod-title {
+      flex: 1 1 auto;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      opacity: .85;
+    }
+    .vod-ctrl-btn {
+      flex: 0 0 auto;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.14);
+      color: #fff;
+      border: 0;
+      font: inherit;
+      font-size: .82rem;
+      cursor: pointer;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s;
+    }
+    .vod-ctrl-btn:hover, .vod-ctrl-btn:active { background: rgba(255,255,255,0.26); }
+    .vod-close { font-weight: 700; }
+    /* 토스트 (클릭 발생 시 시각적 피드백) */
+    #vodToast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      max-width: 88vw;
+      padding: 12px 18px;
+      background: rgba(31, 39, 64, 0.92);
+      color: #fff;
+      font-size: .9rem;
+      border-radius: 999px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+    #vodToast.is-show { opacity: 1; }
     /* vod-mode일 때 갤러리/라벨/footer 숨김 (iframe 풀화면) */
     body.vod-mode .gallery-label-wrap,
     body.vod-mode .gallery,
@@ -436,6 +494,11 @@
 
   <!-- VOD iframe 영역: position:fixed로 viewport 전체 차지 (외부 VOD 링크 클릭 시 표시) -->
   <div class="vod-frame-wrap" id="vodFrameWrap">
+    <div class="vod-controls">
+      <span class="vod-title" id="vodTitle">로딩 중…</span>
+      <a class="vod-ctrl-btn vod-newtab" id="vodNewtab" href="#" target="_blank" rel="noopener" title="새 탭에서 열기">새 탭에서 열기 ↗</a>
+      <button class="vod-ctrl-btn vod-close" id="vodClose" type="button" title="닫기">✕</button>
+    </div>
     <iframe id="vodFrame" src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
   </div>
 
@@ -657,50 +720,91 @@
       });
     }
 
+    /* ============ 토스트 헬퍼 ============ */
+    let toastTimer = null;
+    function showToast(msg, duration) {
+      const t = document.getElementById('vodToast');
+      if (!t) return;
+      t.textContent = msg;
+      t.classList.add('is-show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('is-show'), duration || 2200);
+    }
+
+    /* ============ VOD 모드 열기/닫기 ============ */
+    function openVodMode(url, label) {
+      const frame = document.getElementById('vodFrame');
+      const frameWrap = document.getElementById('vodFrameWrap');
+      const titleEl = document.getElementById('vodTitle');
+      const newtabBtn = document.getElementById('vodNewtab');
+      showToast('"' + label + '" 로딩 중…', 2500);
+      titleEl.textContent = label;
+      newtabBtn.href = url;
+      frame.src = url;
+      frameWrap.classList.add('is-open');
+      document.body.classList.add('vod-mode');
+      /* iframe 차단 감지: 일정 시간 후 contentDocument 접근 시도 */
+      const loadTimer = setTimeout(() => {
+        showToast('이 사이트가 페이지 내 표시를 차단했을 수 있습니다. "새 탭에서 열기"를 사용해주세요.', 4500);
+      }, 3500);
+      frame.onload = () => clearTimeout(loadTimer);
+    }
+    function closeVodMode() {
+      const frame = document.getElementById('vodFrame');
+      const frameWrap = document.getElementById('vodFrameWrap');
+      document.body.classList.remove('vod-mode');
+      frameWrap.classList.remove('is-open');
+      frame.src = '';
+    }
+
     /* ============ 네비 동작 ============ */
     function setupNav() {
       const nav = document.getElementById('catNav');
       const gallery = document.getElementById('gallery');
       const label = document.getElementById('galleryLabel');
-      const frameWrap = document.getElementById('vodFrameWrap');
-      const frame = document.getElementById('vodFrame');
 
-      nav.addEventListener('click', e => {
-        /* ─── A. 외부 VOD 링크 (.cat-link) 클릭 → iframe 모드 ─── */
-        const link = e.target.closest('a.cat-link');
-        if (link) {
+      /* (A) VOD 링크는 각 a 태그에 직접 이벤트 (위임 모바일 누락 방지) */
+      nav.querySelectorAll('a.cat-link').forEach(link => {
+        const handler = function(e) {
           e.preventDefault();
-          /* iframe에 해당 URL 로드 + 표시 */
-          frame.src = link.href;
-          frameWrap.classList.add('is-open');
-          document.body.classList.add('vod-mode');
-          /* 활성 표시: 카테고리/VOD 통합 토글 */
+          e.stopPropagation();
           nav.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('is-active'));
           link.classList.add('is-active');
-          /* 가운데 스크롤 + 상단으로 */
+          openVodMode(link.href, link.textContent.trim());
           link.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
           window.scrollTo({ top: 0, behavior: 'smooth' });
-          return;
-        }
+        };
+        link.addEventListener('click', handler);
+        /* iOS Safari 모바일에서 click 이벤트가 누락될 수 있어 touchend 백업 */
+        link.addEventListener('touchend', function(e) {
+          /* 스크롤 중일 때는 무시되도록 click 이벤트가 자연스럽게 처리 */
+        }, { passive: true });
+      });
 
-        /* ─── B. 카테고리 버튼 (data-ch 있는 button) 클릭 → 갤러리 모드 ─── */
+      /* (B) 카테고리 button만 위임 */
+      nav.addEventListener('click', e => {
         const btn = e.target.closest('.cat-btn[data-ch]');
         if (!btn) return;
-        /* iframe 모드 해제 */
-        if (document.body.classList.contains('vod-mode')) {
-          document.body.classList.remove('vod-mode');
-          frameWrap.classList.remove('is-open');
-          frame.src = '';  /* 메모리/네트워크 해제 */
-        }
+        if (document.body.classList.contains('vod-mode')) closeVodMode();
         const ch = btn.dataset.ch;
         nav.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('is-active'));
         btn.classList.add('is-active');
         gallery.dataset.active = ch;
         label.textContent = labels[ch];
-        /* 채널 전환 시 페이지 상단으로 스크롤 + 클릭 버튼 가운데로 */
         window.scrollTo({ top: 0, behavior: 'smooth' });
         btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       });
+
+      /* (C) iframe 컨트롤 - 닫기 버튼 */
+      const closeBtn = document.getElementById('vodClose');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          closeVodMode();
+          /* 첫 번째 카테고리 활성화 */
+          const firstBtn = nav.querySelector('.cat-btn[data-ch]');
+          if (firstBtn) firstBtn.click();
+        });
+      }
     }
 
     renderAll();
@@ -741,5 +845,6 @@
       });
     })();
   </script>
+  <div id="vodToast" role="status" aria-live="polite"></div>
 </body>
 </html>
