@@ -288,49 +288,6 @@
       transition: stroke 0.12s;
     }
 
-    /* === 음성 검색 마이크 버튼 === */
-    .searchbar-mic {
-      background: none;
-      border: none;
-      outline: none;
-      cursor: pointer;
-      min-width: 42px;
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      margin: 0 1px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      z-index: 4;
-      flex: 0 0 auto;
-      transition: background 0.17s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .searchbar-mic:hover { background: rgba(255,255,255,0.16); }
-    .searchbar-mic svg {
-      width: 22px;
-      height: 22px;
-      stroke: #ffffff;
-      stroke-width: 2;
-      fill: none;
-      transition: stroke 0.12s;
-    }
-    /* 듣는 중 상태 - 빨간색 + 펄스 */
-    .searchbar-mic.listening {
-      background: rgba(255,72,72,0.22);
-      animation: micPulse 1.3s infinite;
-    }
-    .searchbar-mic.listening svg { stroke: #ff5b5b; }
-    @keyframes micPulse {
-      0%   { box-shadow: 0 0 0 0 rgba(255,72,72,0.45); }
-      70%  { box-shadow: 0 0 0 11px rgba(255,72,72,0); }
-      100% { box-shadow: 0 0 0 0 rgba(255,72,72,0); }
-    }
-    /* 음성 미지원 브라우저에서는 자동 숨김 */
-    .searchbar-mic.unsupported { display: none; }
-
     /* ========== 네비바 영역 ========== */
     .screen-links-wrap {
       width: 100%;
@@ -668,14 +625,6 @@
               <option value="bugs">벅스 </option>
             </select>
             <input class="searchbar-input" id="queryParent" type="text" placeholder="검색어를 입력하세요  Myway.kr" autocomplete="off" />
-            <button class="searchbar-mic" type="button" id="micBtnParent" title="음성 검색" aria-label="음성 검색">
-              <svg viewBox="0 0 24 24">
-                <rect x="9" y="3" width="6" height="11" rx="3"/>
-                <path d="M5 11a7 7 0 0 0 14 0"/>
-                <line x1="12" y1="18" x2="12" y2="21"/>
-                <line x1="8.5" y1="21" x2="15.5" y2="21"/>
-              </svg>
-            </button>
             <button class="searchbar-btn" type="submit" title="검색" aria-label="검색">
               <svg viewBox="0 0 32 32">
                 <circle cx="15" cy="15" r="10"/>
@@ -1587,78 +1536,6 @@
         closeSuggestions();
       }
     });
-
-    /* === 음성 검색 (Web Speech API) === */
-    (function setupVoiceSearch() {
-      const micBtn = document.getElementById('micBtnParent');
-      const queryInput = document.getElementById('queryParent');
-      const searchForm = document.getElementById('searchFormParent');
-      if (!micBtn || !queryInput || !searchForm) return;
-
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      // 미지원 브라우저: 마이크 버튼 숨김
-      if (!SpeechRecognition) {
-        micBtn.classList.add('unsupported');
-        return;
-      }
-
-      const recognition = new SpeechRecognition();
-      recognition.lang = 'ko-KR';            // 한국어 인식
-      recognition.interimResults = false;     // 최종 결과만
-      recognition.maxAlternatives = 1;
-      recognition.continuous = false;
-
-      let listening = false;
-
-      micBtn.addEventListener('click', () => {
-        if (listening) {
-          recognition.stop();
-          return;
-        }
-        try {
-          recognition.start();
-        } catch (err) {
-          /* 이미 시작된 경우 등 무시 */
-        }
-      });
-
-      recognition.onstart = () => {
-        listening = true;
-        micBtn.classList.add('listening');
-        micBtn.title = '듣는 중... (다시 누르면 중지)';
-      };
-
-      recognition.onend = () => {
-        listening = false;
-        micBtn.classList.remove('listening');
-        micBtn.title = '음성 검색';
-      };
-
-      recognition.onerror = (e) => {
-        listening = false;
-        micBtn.classList.remove('listening');
-        micBtn.title = '음성 검색';
-        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
-          alert('마이크 권한이 필요합니다. 브라우저 설정에서 마이크 사용을 허용해주세요.');
-        }
-      };
-
-      recognition.onresult = (e) => {
-        const text = (e.results[0][0].transcript || '').trim();
-        if (!text) return;
-        queryInput.value = text;
-        /* 자동완성 로직(주식/코인/공포탐욕)이 갱신되도록 input 이벤트 발생 */
-        queryInput.dispatchEvent(new Event('input', { bubbles: true }));
-        /* 약간의 지연 후 자동 검색 실행 (자동완성 후보가 채워질 시간) */
-        setTimeout(() => {
-          if (searchForm.requestSubmit) {
-            searchForm.requestSubmit();
-          } else if (typeof searchForm.onsubmit === 'function') {
-            searchForm.onsubmit(new Event('submit', { cancelable: true }));
-          }
-        }, 450);
-      };
-    })();
 
     document.getElementById('searchFormParent').onsubmit = function(e) {
       e.preventDefault();
