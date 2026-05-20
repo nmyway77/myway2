@@ -206,11 +206,12 @@
       position: relative;
       display: flex;
       align-items: center;
-      background: linear-gradient(135deg,#48b6e0 0%,#b176f3 100%);
-      border-radius: 38px;
+      background: linear-gradient(135deg,#3aa9dc 0%,#7d6fe8 50%,#b176f3 100%);
+      border-radius: 42px;
       width: 100%;
       height: 100%;
-      box-shadow: 0 6px 32px 0 rgba(90,100,180,0.13), 0 2px 8px 0 rgba(255,255,255,0.14) inset;
+      border: 1px solid rgba(255,255,255,0.35);
+      box-shadow: 0 16px 44px 0 rgba(90,100,180,0.4), 0 4px 12px 0 rgba(75,45,189,0.25), inset 0 3px 14px 0 rgba(255,255,255,0.45), inset 0 -5px 14px 0 rgba(75,45,189,0.22);
       padding: 0 24px 0 18px;
       overflow: hidden;
     }
@@ -223,6 +224,7 @@
       font-size: 1.13rem;
       color: #ffffff;
       font-weight: bold;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.15);
       outline: none;
       cursor: pointer;
       min-width: 100px;
@@ -619,11 +621,15 @@
         <form class="searchbar-form" id="searchFormParent" autocomplete="off">
           <div class="searchbar-box">
             <select class="searchbar-select" id="engineParent">
-              <option value="naver">네이버 ▼</option>
+              <option value="naver">Ⓝ 네이버 ▼</option>
+              <option value="google">Ⓖ Google</option>
               <option value="stockchart">📈 주식차트</option>
               <option value="coinone">🪙 코인원 차트</option>
               <option value="cfgi">📊 공포탐욕지수</option>
-              <option value="google">Google 우회검색 </option>
+              <option value="google_image">🖼️ 구글 이미지·렌즈</option>
+              <option value="yandex_image">🖼️ Yandex 이미지 (인물/얼굴)</option>
+              <option value="bing_image">🖼️ Bing 이미지</option>
+              <option value="naver_image">🖼️ 네이버 이미지</option>
               <option value="Reddit">Reddit</option>
               <option value="youtube">Youtube </option>
               <option value="soundcloud">SoundCloud </option>
@@ -716,6 +722,10 @@
     // ========== 검색엔진 데이터 (그대로 유지) ==========
     var snarkEnginesParent = [
       { key: "naver",  home: "https://www.naver.com/", search: "https://search.naver.com/search.naver?query=" },
+      { key: "google_image", home: "https://lens.google.com/", search: "https://www.google.com/search?tbm=isch&q=" },
+      { key: "yandex_image", home: "https://yandex.com/images/", search: "https://yandex.com/images/search?text=" },
+      { key: "bing_image", home: "https://www.bing.com/visualsearch", search: "https://www.bing.com/images/search?q=" },
+      { key: "naver_image", home: "https://search.naver.com/search.naver?where=image", search: "https://search.naver.com/search.naver?where=image&query=" },
       { key: "google", home: "https://www.google.com/webhp?hl=en&gl=au", search: "https://www.google.co.uk/search?hl=ko&gl=uk&q=" },
       { key: "Reddit", home: "https://www.reddit.com/", search: "https://www.reddit.com/search/?q=" },
       { key: "youtube", home: "https://www.youtube.com/", search: "https://www.youtube.com/results?search_query=" },
