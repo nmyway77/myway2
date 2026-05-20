@@ -3,10 +3,24 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>썸네일 추출기</title>
+  <title>유튜브 썸네일 추출기 - 동영상 썸네일 다운로드 | MYWAY.KR</title>
+  <meta name="description" content="유튜브 동영상의 썸네일을 다양한 사이즈(HD, SD, HQ, MQ)로 무료 추출. URL만 입력하면 즉시 표시. Vimeo도 지원.">
+  <meta name="keywords" content="유튜브 썸네일, 썸네일 추출, 동영상 썸네일, 유튜브 이미지 다운로드, vimeo 썸네일, 썸네일 다운로드">
+  <link rel="canonical" href="https://myway.kr/extract7.html">
+  <!-- Open Graph (페이스북·카카오톡 공유 시 표시) -->
+  <meta property="og:title" content="유튜브 썸네일 추출기 - 동영상 썸네일 다운로드 | MYWAY.KR">
+  <meta property="og:description" content="유튜브 동영상의 썸네일을 다양한 사이즈(HD, SD, HQ, MQ)로 무료 추출. URL만 입력하면 즉시 표시. Vimeo도 지원.">
+  <meta property="og:url" content="https://myway.kr/extract7.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MYWAY.KR">
+  <meta property="og:locale" content="ko_KR">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="유튜브 썸네일 추출기 - 동영상 썸네일 다운로드 | MYWAY.KR">
+  <meta name="twitter:description" content="유튜브 동영상의 썸네일을 다양한 사이즈(HD, SD, HQ, MQ)로 무료 추출. URL만 입력하면 즉시 표시. Vimeo도 지원.">
+  <!-- 검색 엔진 크롤링 허용 (기본값이지만 명시) -->
+  <meta name="robots" content="index, follow">
   <meta name="viewport" content="width=device-width, initial-scale=1">
- <meta property="og:title" content="youtube,썸네일 추출기" />
-<meta property="og:description" content="썸네일 추출기" />
   <style>
     body {
       min-height: 100vh;
@@ -122,6 +136,46 @@
       .url-input-group input, .url-input-group button { width: 100%; }
       .thumb-item img { width: 98vw; min-width: 0; height: auto;}
     }
+  
+    /* === SEO 본문 섹션 (페이지 하단 자료) === */
+    .seo-info {
+      position: relative;
+      width: 100%;
+      padding: 40px 20px 80px;
+      background: #f7f8fb;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: #1a1f36;
+      box-sizing: border-box;
+      margin-top: 60px;
+      border-top: 1px solid #e4e7ee;
+    }
+    .seo-info-inner { max-width: 860px; margin: 0 auto; }
+    .seo-info h1 {
+      font-size: 1.4rem;
+      margin: 0 0 14px;
+      color: #2e3d5e;
+      letter-spacing: -0.3px;
+      text-align: left;
+      font-weight: 700;
+    }
+    .seo-info h2 {
+      font-size: 1.08rem;
+      margin: 26px 0 10px;
+      color: #2e3d5e;
+      letter-spacing: -0.2px;
+      font-weight: 700;
+    }
+    .seo-info p { margin: 0 0 12px; color: #3a4159; }
+    .seo-info ul { padding-left: 22px; margin: 0 0 14px; }
+    .seo-info li { margin-bottom: 5px; color: #3a4159; }
+    .seo-info .sites-tag { color: #6b7488; font-size: 0.85rem; }
+    @media (max-width: 700px) {
+      .seo-info { padding: 30px 16px 60px; font-size: 0.92rem; }
+      .seo-info h1 { font-size: 1.25rem; }
+    }
+
   </style>
 </head>
 <body>
@@ -196,5 +250,46 @@
       });
     }
   </script>
+
+  <!-- SEO 본문 섹션 -->
+  <section class="seo-info">
+    <div class="seo-info-inner">
+      <h1>유튜브 썸네일 추출기 - 동영상 썸네일 다운로드</h1>
+      <p>MYWAY.KR의 유튜브 썸네일 추출기는 <strong>YouTube와 Vimeo 동영상의 썸네일 이미지를 다양한 사이즈로 무료 추출</strong>해주는 도구입니다. 동영상 URL만 입력하면 즉시 모든 사이즈의 썸네일이 표시되며, 클릭으로 원하는 이미지를 선택할 수 있습니다.</p>
+
+      <h2>지원 사이즈 (YouTube)</h2>
+      <ul>
+        <li><strong>maxresdefault</strong> (1280×720, HD) - 최고 화질, 일부 영상</li>
+        <li><strong>sddefault</strong> (640×480, SD) - 표준 화질</li>
+        <li><strong>hqdefault</strong> (480×360, HQ) - 고품질 (모든 영상 지원)</li>
+        <li><strong>mqdefault</strong> (320×180, MQ) - 중간 품질</li>
+        <li><strong>default</strong> (120×90) - 기본 사이즈</li>
+      </ul>
+
+      <h2>지원 플랫폼</h2>
+      <ul>
+        <li><strong>YouTube</strong> - watch?v=, youtu.be/, shorts/, embed/ 모두 지원</li>
+        <li><strong>Vimeo</strong> - oEmbed API 통해 자동 추출</li>
+      </ul>
+
+      <h2>사용 방법</h2>
+      <p>1. 추출하고 싶은 동영상의 URL을 복사<br>
+      2. 입력창에 붙여넣기<br>
+      3. [추출] 버튼 클릭<br>
+      4. 표시된 썸네일 중 원하는 사이즈 클릭하여 선택</p>
+
+      <h2>활용 예시</h2>
+      <ul>
+        <li>블로그 글 썸네일 이미지 사용</li>
+        <li>유튜브 영상 소개 자료 만들기</li>
+        <li>발표 자료에 영상 미리보기 추가</li>
+        <li>SNS 공유 카드 만들기</li>
+        <li>강의 자료 작성 (영상 미리보기 첨부)</li>
+      </ul>
+
+      <p class="sites-tag">관련 키워드: 유튜브 썸네일, 썸네일 추출, 동영상 썸네일, 유튜브 이미지 다운로드, vimeo 썸네일, 썸네일 다운로드, 영상 미리보기, 유튜브 캡처</p>
+    </div>
+  </section>
+
 </body>
 </html>
