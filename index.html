@@ -227,7 +227,12 @@
       text-shadow: 0 1px 3px rgba(0,0,0,0.15);
       outline: none;
       cursor: pointer;
-      min-width: 100px;
+      min-width: 92px;
+      max-width: 128px;          /* 긴 옵션 선택해도 넓어지지 않게 */
+      flex: 0 0 auto;            /* 콘텐츠 따라 늘어나지 않음 */
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
       z-index: 4;
       height: 44px;
       border-radius: 16px;
@@ -243,8 +248,8 @@
     }
 
     .searchbar-input {
-      flex: 1;
-      min-width: 0;  /* flex 자식이 부모 넘지 않도록 */
+      flex: 1 1 auto;
+      min-width: 80px;  /* 검색어 입력·터치 공간 최소 보장 */
       border: none;
       background: transparent;
       color: #ffffff;
@@ -530,7 +535,8 @@
       .searchbar-wrap { height: 56px; }
       .searchbar-select {
         font-size: 1rem;
-        min-width: 80px;
+        min-width: 76px;
+        max-width: 104px;
         height: 38px;
       }
       .searchbar-input {
@@ -551,7 +557,7 @@
       :root {
         --header-height: 120px;
       }
-      .searchbar-select { min-width: 70px; padding: 0 8px 0 3px; }
+      .searchbar-select { min-width: 68px; max-width: 96px; padding: 0 8px 0 3px; }
     }
 
     /* ===== 핸드폰 가로 모드: 헤더 압축 =====
@@ -603,7 +609,7 @@
       }
       .searchbar-outer { margin-top: 4px; }
       .searchbar-wrap { height: 38px; }
-      .searchbar-select { height: 28px; min-width: 64px; font-size: 0.85rem; }
+      .searchbar-select { height: 28px; min-width: 60px; max-width: 84px; font-size: 0.85rem; }
       .searchbar-input { height: 28px; font-size: 0.9rem; }
       .searchbar-btn { min-width: 32px; height: 32px; }
       .searchbar-btn svg { width: 16px; height: 16px; }
@@ -1656,18 +1662,34 @@
       recognition.onresult = (e) => {
         const text = (e.results[0][0].transcript || '').trim();
         if (!text) return;
+        /* 검색바에 인식 결과를 확실히 표시 (자동 검색하지 않음 - 사용자가 확인 후 검색) */
         queryInput.value = text;
-        /* 자동완성 로직(주식/코인/공포탐욕)이 갱신되도록 input 이벤트 발생 */
+        /* 자동완성 로직 갱신 */
         queryInput.dispatchEvent(new Event('input', { bubbles: true }));
-        /* 약간의 지연 후 자동 검색 실행 (자동완성 후보가 채워질 시간) */
-        setTimeout(() => {
-          if (searchForm.requestSubmit) {
-            searchForm.requestSubmit();
-          } else if (typeof searchForm.onsubmit === 'function') {
-            searchForm.onsubmit(new Event('submit', { cancelable: true }));
-          }
-        }, 450);
+        /* 모바일에서 화면 갱신·커서 이동 확실히 */
+        try {
+          queryInput.focus();
+          queryInput.setSelectionRange(text.length, text.length);
+        } catch (err) {}
+        /* 인식 결과 토스트 피드백 */
+        showVoiceToast('🎤 "' + text + '" 인식됨 — 검색 버튼을 누르세요');
       };
+
+      /* 음성 인식 결과 토스트 */
+      let voiceToastTimer;
+      function showVoiceToast(msg) {
+        let t = document.getElementById('voiceToast');
+        if (!t) {
+          t = document.createElement('div');
+          t.id = 'voiceToast';
+          t.style.cssText = 'position:fixed;left:50%;bottom:32px;transform:translateX(-50%);background:rgba(31,39,64,0.95);color:#fff;font-size:0.92rem;font-weight:600;padding:12px 22px;border-radius:999px;box-shadow:0 8px 24px rgba(31,39,64,0.35);z-index:99999;opacity:0;transition:opacity 0.2s;pointer-events:none;max-width:90vw;text-align:center;';
+          document.body.appendChild(t);
+        }
+        t.textContent = msg;
+        t.style.opacity = '1';
+        clearTimeout(voiceToastTimer);
+        voiceToastTimer = setTimeout(() => { t.style.opacity = '0'; }, 2600);
+      }
     })();
 
     document.getElementById('searchFormParent').onsubmit = function(e) {
