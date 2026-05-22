@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>잡지 모음 - 시사·경제·여성·문화 매거진 | MYWAY.KR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="시사·종합, 경제·비즈니스, 여성·라이프스타일, 문화·전문 잡지 모음 - MYWAY.KR">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      --nav-grad: linear-gradient(95deg, #7ed6fb 10%, #b176f3 90%);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    html, body {
+      margin: 0; padding: 0;
+      background: #fff;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      -webkit-text-size-adjust: 100%;
+    }
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    img { -webkit-user-drag: none; user-drag: none; -webkit-touch-callout: none; }
+    input, textarea, [contenteditable] {
+      -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text;
+    }
+
+    /* ===== 상단 sticky 헤더 ===== */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255,255,255,.96);
+      backdrop-filter: saturate(180%) blur(8px);
+      -webkit-backdrop-filter: saturate(180%) blur(8px);
+      padding: 12px 14px 10px;
+      padding-left: max(14px, env(safe-area-inset-left));
+      padding-right: max(14px, env(safe-area-inset-right));
+    }
+    .topbar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    /* 좌측 홈 아이콘 */
+    .home-link {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      text-decoration: none;
+      color: #fff;
+      background: var(--nav-grad);
+      box-shadow: 0 6px 18px rgba(177,118,243,0.28);
+      transition: transform .15s, box-shadow .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .home-link:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(177,118,243,0.36); }
+    .home-link svg { width: 18px; height: 18px; fill: currentColor; }
+
+    .page-title {
+      font-size: 1.0rem; font-weight: 700;
+      color: #1f2740;
+      margin: 0;
+      letter-spacing: -0.3px;
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+    .page-title .sub {
+      font-size: .78rem; font-weight: 500;
+      color: #8590ad;
+      margin-left: 6px;
+    }
+
+    /* 카테고리 네비 */
+    .cat-nav {
+      display: flex;
+      gap: 8px;
+      flex: 1 1 auto;
+      min-width: 0;
+      justify-content: safe center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .cat-nav::-webkit-scrollbar { display: none; }
+    .cat-btn {
+      font: inherit;
+      font-size: .88rem;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1.5px solid #dfe3ec;
+      background: #fff;
+      color: #4a5170;
+      cursor: pointer;
+      transition: all .15s;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cat-btn:hover { background: #f4f6fb; border-color: #c7cee0; }
+    .cat-btn:active { transform: scale(0.96); }
+    .cat-btn.is-active { background: #1f2740; color: #fff; border-color: #1f2740; }
+    .cat-btn .count {
+      display: inline-block;
+      margin-left: 4px;
+      font-size: .72rem;
+      opacity: .65;
+      font-weight: 500;
+    }
+    .cat-btn.is-active .count { opacity: .85; }
+
+    /* ===== 갤러리 섹션 ===== */
+    .gallery-section {
+      width: 100%;
+      max-width: 1100px;
+      padding: 18px 14px 48px;
+      margin: 0 auto;
+    }
+    .gallery-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .gallery-title {
+      font-size: 1.0rem; font-weight: 700;
+      letter-spacing: -0.3px;
+      color: #1f2740;
+      margin: 0;
+    }
+    .gallery-title .sub {
+      font-size: .8rem; font-weight: 500;
+      color: #8590ad;
+      margin-left: 6px;
+    }
+
+    /* Masonry: CSS column 기반 */
+    .masonry {
+      column-count: 4;
+      column-gap: 12px;
+    }
+    .masonry .card {
+      display: block;
+      break-inside: avoid;
+      page-break-inside: avoid;
+      -webkit-column-break-inside: avoid;
+      margin: 0 0 12px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #f4f6fb;
+      position: relative;
+      text-decoration: none;
+      color: inherit;
+      transform: translateZ(0);
+    }
+    .masonry .card img {
+      display: block;
+      width: 100%;
+      height: auto;
+      transition: filter .25s ease, transform .35s ease;
+    }
+    .masonry .card:hover img { transform: scale(1.03); }
+
+    /* 이름 캡션 (하단 그라데이션) */
+    .masonry .card .cap {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      padding: 22px 10px 9px;
+      font-size: .82rem; font-weight: 700;
+      color: #fff;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,.68) 78%);
+      letter-spacing: -0.2px;
+      text-shadow: 0 1px 2px rgba(0,0,0,.45);
+      transition: opacity .2s;
+      pointer-events: none;
+    }
+    /* PC 호버 환경: 호버 시에만 표시 (00maincomics 디자인)
+       모바일/터치: 항상 표시 (이름 확인이 핵심) */
+    @media (hover: hover) and (pointer: fine) {
+      .masonry .card .cap { opacity: 0; }
+      .masonry .card:hover .cap { opacity: 1; }
+    }
+
+    /* 카테고리 필터 — CSS data 속성으로 (JS 재렌더 없음) */
+    .masonry[data-filter="news"]    .card:not([data-cats~="news"])    { display: none; }
+    .masonry[data-filter="biz"]     .card:not([data-cats~="biz"])     { display: none; }
+    .masonry[data-filter="life"]    .card:not([data-cats~="life"])    { display: none; }
+    .masonry[data-filter="culture"] .card:not([data-cats~="culture"]) { display: none; }
+
+    /* 표지 미입력 시 잡지명 커버 플레이스홀더 */
+    .masonry .card .cover-ph {
+      width: 100%; aspect-ratio: 3 / 4;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 16px;
+      background: linear-gradient(135deg, #eef1f7, #dde3ef);
+      color: #3a426a; font-weight: 700;
+      font-size: 1.02rem; line-height: 1.45; letter-spacing: -0.3px;
+      word-break: keep-all;
+    }
+
+    /* 보정 프리셋 (data-preset 토글) */
+    /* (제거됨) */
+
+    /* 갤러리 반응형 */
+    @media (max-width: 900px) { .masonry { column-count: 3; } }
+    @media (max-width: 600px) { .masonry { column-count: 2; column-gap: 10px; } .masonry .card { margin-bottom: 10px; } }
+    @media (max-width: 360px) { .masonry { column-count: 1; } }
+
+    /* 태블릿/PC: 카테고리 네비 중앙정렬 */
+    @media (min-width: 721px) {
+      .cat-nav { justify-content: safe center; }
+    }
+
+    /* ===== MYWAY.KR 공통 ===== */.myway-footer {
+      width: 100%;
+      text-align: center;
+      padding: 22px 14px calc(28px + var(--safe-bottom));
+      margin-top: 24px;
+      border-top: 1px solid #eef0f4;
+      font-size: .82rem;
+      color: #8590ad;
+    }
+    .myway-footer a.foot-link { color: #4a5170; text-decoration: none; font-weight: 700; }
+    .myway-footer a.foot-link:hover { color: #1f2740; }
+    .myway-footer .sep { display: inline-block; margin: 0 8px; opacity: .5; }
+
+    /* 푸터 하단 홈 버튼 (고정 아님 — 페이지 맨 하단에만 노출) */
+    .foot-home {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px; height: 46px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      text-decoration: none;
+      color: #fff;
+      background: var(--nav-grad);
+      box-shadow: 0 8px 22px rgba(177,118,243,0.32);
+      transition: transform .15s, box-shadow .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .foot-home:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(177,118,243,0.42); }
+    .foot-home svg { width: 21px; height: 21px; fill: currentColor; }
+    .myway-footer .foot-meta { display: block; }
+
+    @media (max-width: 700px) {
+      .home-link { width: 36px; height: 36px; }
+      .home-link svg { width: 19px; height: 19px; }
+      .page-title { font-size: .95rem; }
+      .cat-btn { padding: 7px 13px; font-size: .85rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 sticky 헤더 -->
+  <header class="topbar">
+    <div class="topbar-row">
+      <nav class="cat-nav" id="catNav">
+        <button class="cat-btn is-active" data-cat="all">전체 <span class="count" id="cnt-all"></span></button>
+        <button class="cat-btn" data-cat="news">시사·종합 <span class="count" id="cnt-news"></span></button>
+        <button class="cat-btn" data-cat="biz">경제·비즈니스 <span class="count" id="cnt-biz"></span></button>
+        <button class="cat-btn" data-cat="life">여성·라이프 <span class="count" id="cnt-life"></span></button>
+        <button class="cat-btn" data-cat="culture">문화·전문 <span class="count" id="cnt-culture"></span></button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 갤러리 섹션 -->
+  <section class="gallery-section">
+    <div class="gallery-head">
+      <h2 class="gallery-title">추천 잡지 <span class="sub" id="filterSub">전체</span></h2>
+    </div>
+    <div class="masonry" id="masonryGallery" data-filter="all"></div>
+  </section>
+
+  <!-- MYWAY.KR 공통: 푸터 (홈 버튼 포함) -->
+  <footer class="myway-footer">
+    <a href="https://myway.kr/" class="foot-home" aria-label="MYWAY.KR 홈" title="MYWAY.KR 홈">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 2.5 11.4l1.3 1.5L5 11.85V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-8.15l1.2 1.05 1.3-1.5L12 3.2Z"/></svg>
+    </a>
+    <span class="foot-meta">
+      <a href="https://myway.kr/" class="foot-link">myway.kr</a>
+      <span class="sep">·</span>
+      <span>© MYWAY.KR</span>
+    </span>
+  </footer>
+
+  <script>
+    /* ============ 복제방지 ============ */
+    (function(){
+      function isEditable(t) {
+        if (!t) return false;
+        const tag = (t.tagName || '').toLowerCase();
+        if (tag === 'input' || tag === 'textarea') return true;
+        if (t.isContentEditable) return true;
+        return false;
+      }
+      ['contextmenu','dragstart','selectstart','copy','cut'].forEach(ev => {
+        document.addEventListener(ev, e => {
+          if (isEditable(e.target)) return;
+          e.preventDefault();
+        }, { capture: true });
+      });
+      document.addEventListener('keydown', e => {
+        if (isEditable(e.target)) return;
+        const k = (e.key || '').toLowerCase();
+        if (k === 'f12') { e.preventDefault(); return; }
+        if (e.ctrlKey && e.shiftKey && (k === 'i' || k === 'j' || k === 'c')) { e.preventDefault(); return; }
+        if (e.ctrlKey && !e.shiftKey && (k === 'u' || k === 's' || k === 'c' || k === 'x' || k === 'a')) { e.preventDefault(); return; }
+      }, { capture: true });
+    })();
+
+    /* ============ 잡지 데이터 (네비별로 분리 관리) ============
+       추가/수정: 해당 카테고리 배열에 { name, url, img } 한 줄 추가
+       표지 사진: img: "" 안에 표지 이미지 URL을 넣으면 사진 카드로 표시
+                  (비워두면 잡지명 커버 박스가 자동 표시됨)
+       네비 코드: news=시사·종합 · biz=경제·비즈니스 · life=여성·라이프 · culture=문화·전문
+    ============================================================ */
+    const peopleByCat = {
+      // ───── 시사·종합 (10) ─────
+      news: [
+        { name: "시사IN", url: "https://www.sisain.co.kr/", img: "" },
+        { name: "시사저널", url: "https://www.sisajournal.com/", img: "" },
+        { name: "한겨레21", url: "https://h21.hani.co.kr/", img: "" },
+        { name: "주간조선", url: "https://weekly.chosun.com/", img: "" },
+        { name: "주간동아", url: "https://weekly.donga.com/", img: "" },
+        { name: "주간경향", url: "https://weekly.khan.co.kr/", img: "" },
+        { name: "월간조선", url: "https://monthly.chosun.com/", img: "" },
+        { name: "월간중앙", url: "https://jmagazine.joins.com/monthly", img: "" },
+        { name: "신동아", url: "https://shindonga.donga.com/", img: "" },
+        { name: "뉴스위크 한국판", url: "https://www.newsweekkorea.com/", img: "" },
+      ],
+      // ───── 경제·비즈니스 (8) ─────
+      biz: [
+        { name: "포브스 코리아", url: "https://jmagazine.joins.com/forbes", img: "" },
+        { name: "한경비즈니스", url: "https://magazine.hankyung.com/business", img: "" },
+        { name: "매경이코노미", url: "https://www.mk.co.kr/economy/", img: "" },
+        { name: "비즈한국", url: "https://www.bizhankook.com/", img: "" },
+        { name: "머니S", url: "https://www.moneys.co.kr/", img: "" },
+        { name: "이코노미스트 코리아", url: "https://economist.co.kr/", img: "" },
+        { name: "이코노미인사이트", url: "https://www.economyinsight.co.kr/", img: "" },
+        { name: "이코노미조선", url: "https://economychosun.com/", img: "" },
+      ],
+      // ───── 여성·라이프 (10) ─────
+      life: [
+        { name: "보그 코리아", url: "https://www.vogue.co.kr/", img: "" },
+        { name: "엘르 코리아", url: "https://www.elle.co.kr/", img: "" },
+        { name: "마리끌레르", url: "https://www.marieclairekorea.com/", img: "" },
+        { name: "코스모폴리탄", url: "https://www.cosmopolitan.co.kr/", img: "" },
+        { name: "하퍼스바자", url: "https://www.harpersbazaar.co.kr/", img: "" },
+        { name: "우먼센스", url: "https://www.womansense.co.kr/", img: "" },
+        { name: "우먼동아", url: "https://woman.donga.com/", img: "" },
+        { name: "우먼조선", url: "https://woman.chosun.com/", img: "" },
+        { name: "레이디경향", url: "https://lady.khan.co.kr/", img: "" },
+        { name: "GQ 코리아", url: "https://www.gqkorea.co.kr/", img: "" },
+      ],
+      // ───── 문화·전문 (8) ─────
+      culture: [
+        { name: "씨네21", url: "http://www.cine21.com/", img: "" },
+        { name: "매거진B", url: "https://magazine-b.com/", img: "" },
+        { name: "텐아시아", url: "https://tenasia.hankyung.com/", img: "" },
+        { name: "디자인하우스", url: "https://www.designhouse.co.kr/", img: "" },
+        { name: "어라운드", url: "https://a-round.kr/", img: "" },
+        { name: "에스콰이어", url: "https://www.esquirekorea.co.kr/", img: "" },
+        { name: "메종", url: "https://www.maisonkorea.com/", img: "" },
+        { name: "동아사이언스", url: "https://www.dongascience.com/", img: "" },
+      ]
+    };
+
+    /* 위 블록을 단일 배열로 평탄화 (렌더링용 — 수정 불필요) */
+    const people = [];
+    Object.keys(peopleByCat).forEach(cat => {
+      peopleByCat[cat].forEach(p => {
+        people.push({ name: p.name, url: p.url, img: p.img, cats: [cat].concat(p.also || []) });
+      });
+    });
+
+    /* ============ 갤러리 렌더 (1회) ============ */
+    function renderGallery() {
+      const root = document.getElementById('masonryGallery');
+      const frag = document.createDocumentFragment();
+      people.forEach(p => {
+        const a = document.createElement('a');
+        a.className = 'card';
+        a.href = p.url;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.dataset.cats = p.cats.join(' ');
+        a.setAttribute('aria-label', p.name);
+
+        if (p.img && p.img.trim()) {
+          const img = document.createElement('img');
+          img.src = p.img;
+          img.alt = p.name;
+          img.loading = 'lazy';
+          img.decoding = 'async';
+          img.referrerPolicy = 'no-referrer';
+          a.appendChild(img);
+        } else {
+          const ph = document.createElement('div');
+          ph.className = 'cover-ph';
+          ph.textContent = p.name;
+          a.appendChild(ph);
+        }
+
+        const cap = document.createElement('div');
+        cap.className = 'cap';
+        cap.textContent = p.name;
+        a.appendChild(cap);
+
+        frag.appendChild(a);
+      });
+      root.replaceChildren(frag);
+    }
+
+    /* ============ 카테고리 카운트 ============ */
+    function updateCounts() {
+      const counts = { all: people.length, news: 0, biz: 0, life: 0, culture: 0 };
+      people.forEach(p => p.cats.forEach(c => { if (counts[c] !== undefined) counts[c]++; }));
+      Object.keys(counts).forEach(k => {
+        const el = document.getElementById('cnt-' + k);
+        if (el) el.textContent = counts[k];
+      });
+    }
+
+    /* ============ 카테고리 네비 ============ */
+    function setupCatNav() {
+      const nav = document.getElementById('catNav');
+      const grid = document.getElementById('masonryGallery');
+      const sub = document.getElementById('filterSub');
+      const labels = { all: '전체', news: '시사·종합', biz: '경제·비즈니스', life: '여성·라이프', culture: '문화·전문' };
+      nav.addEventListener('click', e => {
+        const btn = e.target.closest('.cat-btn');
+        if (!btn) return;
+        nav.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        grid.dataset.filter = btn.dataset.cat;
+        sub.textContent = labels[btn.dataset.cat] || '전체';
+      });
+    }
+
+    /* ============ 보정 프리셋 (제거됨) ============ */
+
+    renderGallery();
+    updateCounts();
+    setupCatNav();
+  </script>
+</body>
+</html>
