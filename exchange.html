@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="no-referrer">
-  <title>실시간 환율 계산기 - 전세계 통화 환전 | MYWAY.KR</title>
+  <title>실시간 환율 계산기 - 달러·엔화·유로·위안 환율 변환 | MYWAY.KR</title>
   <meta name="description" content="달러·엔·유로·위안 등 160개 이상 통화의 실시간 환율을 확인하고 바로 환전 계산. 환율 위젯과 계산기를 한 화면에서 - MYWAY.KR">
-  <meta name="keywords" content="환율 계산기, 실시간 환율, 환전 계산, 달러 환율, 엔화 환율, 유로 환율, 위안 환율, 통화 변환">
+  <meta name="keywords" content="환율 계산기, 실시간 환율, 오늘의 환율, 달러 환율, 엔화 환율, 100엔 환율, 1달러 환율, 유로 환율, 위안 환율, 환전 계산기, 원달러 환율, 달러 원화 변환, 엔화 계산기">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://myway.kr/exchange.html">
   <meta property="og:type" content="website">
@@ -148,6 +148,30 @@
     }
     .quick-amounts button:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
 
+    /* SEO 본문 블록 */
+    .info-block {
+      margin-top: 44px; padding-top: 36px; border-top: 1px solid var(--line);
+      font-size: 15px; line-height: 1.75; color: var(--ink-soft);
+    }
+    .info-block h2 {
+      font-family: 'Fraunces', serif; font-weight: 600; font-size: 22px;
+      color: var(--ink); margin-bottom: 14px; letter-spacing: -0.01em;
+    }
+    .info-block h3 {
+      font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px;
+      color: var(--ink); margin: 26px 0 10px;
+    }
+    .info-block p { margin-bottom: 12px; }
+    .info-block strong { color: var(--ink); }
+    .conv-list { list-style: none; padding: 0; }
+    .conv-list li {
+      padding: 9px 14px; margin-bottom: 7px; background: var(--card);
+      border: 1px solid var(--line); border-radius: 10px; font-size: 14px;
+    }
+    .conv-list li strong { color: var(--accent); }
+    .faq .q { font-weight: 600; color: var(--ink); margin: 16px 0 4px; }
+    .faq .a { margin: 0 0 8px; padding-left: 2px; }
+
     footer.page-foot {
       text-align: center; padding: 40px 24px 60px; border-top: 1px solid var(--line);
       max-width: 760px; margin: 0 auto;
@@ -170,6 +194,42 @@
       .swap-zone { gap: 8px; }
     }
   </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "실시간 환율 계산기",
+    "url": "https://myway.kr/exchange.html",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "All",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" },
+    "description": "달러·엔화·유로·위안 등 160개 이상 통화의 실시간 환율을 확인하고 즉시 환전 계산하는 무료 환율 계산기"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "환율은 얼마나 자주 갱신되나요?",
+        "acceptedAnswer": { "@type": "Answer", "text": "이 계산기의 환율은 ExchangeRate-API 매매기준율로 하루 1회 갱신됩니다. 위쪽 실시간 시세 위젯은 더 자주 갱신됩니다." }
+      },
+      {
+        "@type": "Question",
+        "name": "은행 환전 금액과 다른 이유는 무엇인가요?",
+        "acceptedAnswer": { "@type": "Answer", "text": "이 계산기는 매매기준율 기준이며, 실제 은행 환전 시에는 환전 수수료와 우대율이 적용되어 금액에 차이가 발생합니다." }
+      },
+      {
+        "@type": "Question",
+        "name": "어떤 통화를 변환할 수 있나요?",
+        "acceptedAnswer": { "@type": "Answer", "text": "미국 달러(USD), 일본 엔(JPY), 유로(EUR), 중국 위안(CNY)을 포함해 전세계 160개 이상의 통화를 서로 변환할 수 있습니다." }
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 
@@ -237,6 +297,30 @@
         <span class="status"><span class="dot" id="status-dot"></span><span id="status-text">환율 불러오는 중...</span></span>
       </div>
     </div>
+
+    <!-- SEO 본문 -->
+    <section class="info-block">
+      <h2>실시간 환율 계산기 안내</h2>
+      <p>MYWAY.KR 환율 계산기는 <strong>미국 달러, 일본 엔, 유로, 중국 위안</strong>을 비롯한 전세계 160개 이상 통화의 환율을 실시간으로 불러와 즉시 환전 금액을 계산합니다. 위쪽 시세 위젯으로 주요 통화 흐름을 확인하고, 아래 계산기로 원하는 금액을 바로 환산하세요.</p>
+
+      <h3>자주 보는 환율</h3>
+      <ul class="conv-list">
+        <li><strong>달러/원 (USD/KRW)</strong> — 미국 여행·해외 직구·환전 시 가장 많이 보는 환율</li>
+        <li><strong>엔화/원 (JPY/KRW)</strong> — 일본 여행객이 자주 확인하는 환율 (보통 100엔 기준)</li>
+        <li><strong>유로/원 (EUR/KRW)</strong> — 유럽 여행·유학 시 필요</li>
+        <li><strong>위안/원 (CNY/KRW)</strong> — 중국 직구·무역 시 사용</li>
+      </ul>
+
+      <h3>자주 묻는 질문</h3>
+      <div class="faq">
+        <p class="q">Q. 환율은 얼마나 자주 갱신되나요?</p>
+        <p class="a">계산기 환율은 매매기준율로 하루 1회 갱신됩니다. 위쪽 시세 위젯은 더 자주 갱신되어 실시간에 가깝습니다.</p>
+        <p class="q">Q. 은행에서 환전하면 금액이 다른 이유는?</p>
+        <p class="a">이 계산기는 매매기준율 기준이고, 실제 은행 환전 시에는 수수료와 우대율이 적용되어 차이가 납니다. 대략적인 환산 참고용으로 활용하세요.</p>
+        <p class="q">Q. 어떤 통화까지 계산되나요?</p>
+        <p class="a">달러·엔·유로·위안은 물론, 동남아·중동·유럽 등 전세계 160개 이상 통화를 서로 변환할 수 있습니다.</p>
+      </div>
+    </section>
 
   </div>
 
