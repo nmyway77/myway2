@@ -167,6 +167,21 @@
       font-weight: 500;
       letter-spacing: -0.1px;
     }
+    .section-newslink {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: .92rem;
+      font-weight: 800;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.2px;
+      border-bottom: 1.5px solid var(--accent);
+      padding-bottom: 1px;
+      transition: opacity .15s ease;
+    }
+    .section-newslink svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .section-newslink:hover { opacity: .6; }
 
     /* 카드 그리드 */
     .grid {
@@ -923,6 +938,8 @@
       <button class="tab-btn" data-tab="news">뉴스</button>
       <button class="tab-btn" data-tab="bbs">BBS</button>
       <button class="tab-btn" data-tab="broadcast">방송사</button>
+      <button class="tab-btn" data-tab="radio">라디오</button>
+      <button class="tab-btn" data-tab="livetv">LIVE TV</button>
       <button class="tab-btn" data-tab="magazine">잡지</button>
       <button class="tab-btn" data-tab="cafe">카페</button>
       <button class="tab-btn" data-tab="blog">블로그</button>
@@ -1392,6 +1409,78 @@
           }
         ]
       },
+      radio: {
+        sections: [
+          {
+            label: '국내 라디오',
+            items: [
+              { ticker: 'KBS 라디오',   ko: '1·2·3라디오·쿨FM · onair.kbs.co.kr', url: 'https://onair.kbs.co.kr/' },
+              { ticker: 'MBC 표준FM',   ko: 'MBC · 표준FM',             url: 'https://miniwebapp.imbc.com/index?channel=sfm' },
+              { ticker: 'MBC FM4U',     ko: 'MBC · FM4U',               url: 'https://miniwebapp.imbc.com/index?channel=mfm' },
+              { ticker: 'MBC mini',     ko: 'MBC · 올댓뮤직',           url: 'https://miniwebapp.imbc.com/index?channel=chm' },
+              { ticker: 'SBS 러브FM',   ko: 'SBS · 고릴라',             url: 'https://www.sbs.co.kr/radio/gorealra.html' },
+              { ticker: 'SBS 파워FM',   ko: 'SBS · 고릴라',             url: 'https://www.sbs.co.kr/radio/gorealra.html' },
+              { ticker: 'CBS',          ko: '기독교방송 · cbs.co.kr',   url: 'https://www.cbs.co.kr/radio/' },
+              { ticker: 'TBN 교통방송', ko: '교통방송 · tbn.or.kr',     url: 'https://www.tbn.or.kr/' }
+            ]
+          },
+          {
+            label: '해외 라디오',
+            items: [
+              { ticker: 'CNN Radio',    ko: '미국 · cnn.com',           url: 'https://www.cnn.com/audio' },
+              { ticker: 'BBC Radio',    ko: '영국 · bbc.co.uk/sounds',  url: 'https://www.bbc.co.uk/sounds' }
+            ]
+          }
+        ]
+      },
+      livetv: {
+        sections: [
+          {
+            label: '실시간 스트리밍',
+            items: [
+              { ticker: 'YouTube Live',  ko: '유튜브 라이브 · youtube.com', url: 'https://www.youtube.com/feed/live' },
+              { ticker: '네이버TV',      ko: 'tv.naver.com',             url: 'https://tv.naver.com/' },
+              { ticker: '치지직',        ko: 'CHZZK · chzzk.naver.com',  url: 'https://chzzk.naver.com/' },
+              { ticker: 'SOOP',          ko: '구 아프리카TV · sooplive.co.kr', url: 'https://www.sooplive.co.kr/' },
+              { ticker: '트위치',        ko: 'Twitch · twitch.tv',       url: 'https://www.twitch.tv/' },
+              { ticker: '카카오TV',      ko: 'tv.kakao.com',             url: 'https://tv.kakao.com/' },
+              { ticker: 'LCK',           ko: 'e스포츠 · lck.co.kr',      url: 'https://www.lck.co.kr/' }
+            ]
+          },
+          {
+            label: '국내 방송 LIVE',
+            items: [
+              { ticker: 'KBS',           ko: '1·2·24 · onair.kbs.co.kr', url: 'https://onair.kbs.co.kr/' },
+              { ticker: 'MBC',           ko: 'onair.imbc.com',           url: 'https://onair.imbc.com/' },
+              { ticker: 'SBS',           ko: 'play.sbs.co.kr',           url: 'https://play.sbs.co.kr/onair/pc/index.html' },
+              { ticker: 'JTBC',          ko: 'tv.jtbc.co.kr',            url: 'https://tv.jtbc.co.kr/onair' },
+              { ticker: 'TV조선',        ko: 'tvchosun.com',             url: 'https://broadcast.tvchosun.com/' },
+              { ticker: '채널A',         ko: 'ichannela.com',            url: 'https://www.ichannela.com/' },
+              { ticker: 'EBS',           ko: 'ebs.co.kr',                url: 'https://www.ebs.co.kr/' },
+              { ticker: '아리랑TV',      ko: 'Arirang · arirang.com',    url: 'https://www.arirang.com/' }
+            ]
+          },
+          {
+            label: '뉴스 LIVE',
+            items: [
+              { ticker: 'YTN',           ko: 'ytn.co.kr',                url: 'https://www.ytn.co.kr/' },
+              { ticker: '연합뉴스TV',    ko: 'yonhapnewstv.co.kr',       url: 'https://www.yonhapnewstv.co.kr/' },
+              { ticker: '한국경제TV',    ko: '증권방송 · wowtv.co.kr',   url: 'https://www.wowtv.co.kr/' }
+            ]
+          },
+          {
+            label: '해외 LIVE TV',
+            items: [
+              { ticker: 'NHK World',     ko: '일본 · nhk.or.jp',         url: 'https://www3.nhk.or.jp/nhkworld/' },
+              { ticker: 'ABC',           ko: '미국 · abc.com',           url: 'https://abc.com/' },
+              { ticker: 'NBC News',      ko: '미국 · nbcnews.com/now',   url: 'https://www.nbcnews.com/now' },
+              { ticker: 'FOX News',      ko: '미국 · foxnews.com',       url: 'https://www.foxnews.com/' },
+              { ticker: 'ABC7',          ko: '미국 LA · abc7.com',       url: 'https://abc7.com/' },
+              { ticker: '미국 LIVE 모음', ko: 'thetvapp.to',             url: 'https://thetvapp.to/' }
+            ]
+          }
+        ]
+      },
       magazine: {
         sections: [
           {
@@ -1698,6 +1787,18 @@
     };
 
     /* ============ 렌더 ============ */
+    // 섹션 라벨별 '바로보기' 링크 매핑
+    const SECTION_QUICKLINKS = {
+      '종합 일간지':   { text: '뉴스-바로보기', url: 'https://myway.kr/newsitesbar2.html' },
+      'BBS · 커뮤니티': { text: 'BBS 바로보기',  url: 'https://myway.kr/bbssitesbar2.html' },
+      '국내 방송사':   { text: 'VOD 바로보기',  url: 'https://myway.kr/00maindramainner2.html' },
+      '시사·종합':     { text: '잡지바로보기',  url: 'https://myway.kr/00barmagazine.html' },
+      '국내 라디오':   { text: '라디오 바로보기', url: 'https://myway.kr/radiositesbar2.html' },
+      '실시간 스트리밍': { text: 'LIVE TV 바로보기', url: 'https://myway.kr/livesitesbar2.html' }
+    };
+    // 영문 보조 라벨(작은 글씨)을 숨길 탭 목록
+    const HIDE_SUB_TABS = ['news', 'bbs', 'broadcast', 'magazine'];
+
     function renderTab(tabId) {
       // body 속성 변경 → CSS 라이트/다크 톤 토글
       document.body.dataset.activeTab = tabId;
@@ -1718,11 +1819,28 @@
         const label = document.createElement('span');
         label.className = 'section-label';
         label.textContent = sec.label;
-        const sub = document.createElement('span');
-        sub.className = 'section-sub';
-        sub.textContent = sec.sub;
         head.appendChild(label);
-        head.appendChild(sub);
+
+        // 영문 보조 라벨(작은 글씨)은 지정 탭에서 미표시
+        if (!HIDE_SUB_TABS.includes(tabId) && sec.sub) {
+          const sub = document.createElement('span');
+          sub.className = 'section-sub';
+          sub.textContent = sec.sub;
+          head.appendChild(sub);
+        }
+
+        // 특정 섹션 옆 '바로보기' 링크 (신문 아이콘 + 텍스트)
+        const quick = SECTION_QUICKLINKS[sec.label];
+        if (quick) {
+          const newsLink = document.createElement('a');
+          newsLink.className = 'section-newslink';
+          newsLink.href = quick.url;
+          newsLink.target = '_blank';
+          newsLink.rel = 'noopener';
+          newsLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8z"/></svg><span>' + quick.text + '</span>';
+          head.appendChild(newsLink);
+        }
+
         section.appendChild(head);
 
         const grid = document.createElement('div');
