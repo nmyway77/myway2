@@ -152,6 +152,21 @@
       font-weight: 500;
       letter-spacing: -0.1px;
     }
+    .section-newslink {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: .92rem;
+      font-weight: 800;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.2px;
+      border-bottom: 1.5px solid var(--accent);
+      padding-bottom: 1px;
+      transition: opacity .15s ease;
+    }
+    .section-newslink svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .section-newslink:hover { opacity: .6; }
 
     /* 카드 그리드 */
     .grid {
@@ -664,6 +679,18 @@
         sub.textContent = sec.sub;
         head.appendChild(label);
         head.appendChild(sub);
+
+        /* '한국 주요 주식' 섹션 옆 비교차트 링크 */
+        if (sec.label === '한국 주요 주식') {
+          const cmpLink = document.createElement('a');
+          cmpLink.className = 'section-newslink';
+          cmpLink.href = 'https://myway.kr/multichart.html';
+          cmpLink.target = '_blank';
+          cmpLink.rel = 'noopener';
+          cmpLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12.5" y="7" width="3" height="10"/><rect x="18" y="13" width="3" height="4"/></svg><span>비교차트</span>';
+          head.appendChild(cmpLink);
+        }
+
         section.appendChild(head);
 
         const grid = document.createElement('div');
