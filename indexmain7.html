@@ -1417,23 +1417,40 @@
       radio: {
         sections: [
           {
-            label: '국내 라디오',
+            label: 'KBS 라디오',
             items: [
-              { ticker: 'KBS 라디오',   ko: '1·2·3라디오·쿨FM · onair.kbs.co.kr', url: 'https://onair.kbs.co.kr/' },
-              { ticker: 'MBC 표준FM',   ko: 'MBC · 표준FM',             url: 'https://miniwebapp.imbc.com/index?channel=sfm' },
-              { ticker: 'MBC FM4U',     ko: 'MBC · FM4U',               url: 'https://miniwebapp.imbc.com/index?channel=mfm' },
-              { ticker: 'MBC mini',     ko: 'MBC · 올댓뮤직',           url: 'https://miniwebapp.imbc.com/index?channel=chm' },
-              { ticker: 'SBS 러브FM',   ko: 'SBS · 고릴라',             url: 'https://www.sbs.co.kr/radio/gorealra.html' },
-              { ticker: 'SBS 파워FM',   ko: 'SBS · 고릴라',             url: 'https://www.sbs.co.kr/radio/gorealra.html' },
-              { ticker: 'CBS',          ko: '기독교방송 · cbs.co.kr',   url: 'https://www.cbs.co.kr/radio/' },
-              { ticker: 'TBN 교통방송', ko: '교통방송 · tbn.or.kr',     url: 'https://www.tbn.or.kr/' }
+              { ticker: 'KBS 1라디오',      ko: '뉴스·정보 · onair.kbs.co.kr', url: 'https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=21&ch_type=radioList&bora=on&chat=on' },
+              { ticker: 'KBS 2라디오',      ko: '해피 FM · onair.kbs.co.kr',   url: 'https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=22&ch_type=radioList&bora=on&chat=on' },
+              { ticker: 'KBS 3라디오',      ko: '사랑의소리 · onair.kbs.co.kr', url: 'https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=23&ch_type=radioList' },
+              { ticker: 'KBS 1FM',          ko: 'Classic FM · onair.kbs.co.kr', url: 'https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=24&ch_type=radioList&bora=on&chat=on' },
+              { ticker: 'KBS 2FM',          ko: 'Cool FM · onair.kbs.co.kr',   url: 'https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=25&ch_type=radioList' },
+              { ticker: 'KBS 한민족방송',   ko: '한민족 · onair.kbs.co.kr',    url: 'https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=26&ch_type=radioList' }
+            ]
+          },
+          {
+            label: 'MBC · SBS 라디오',
+            items: [
+              { ticker: 'MBC 표준FM',   ko: 'MBC · 표준FM',     url: 'https://miniwebapp.imbc.com/index?channel=sfm' },
+              { ticker: 'MBC FM4U',     ko: 'MBC · FM4U',       url: 'https://miniwebapp.imbc.com/index?channel=mfm' },
+              { ticker: 'MBC 올댓뮤직', ko: 'MBC · 채널M',      url: 'https://miniwebapp.imbc.com/index?channel=chm' },
+              { ticker: 'SBS 러브FM',   ko: 'SBS · 103.5MHz',   url: 'https://www.sbs.co.kr/live/S08?div=live_list' },
+              { ticker: 'SBS 파워FM',   ko: 'SBS · 107.7MHz',   url: 'https://www.sbs.co.kr/live/S07?div=live_list' }
+            ]
+          },
+          {
+            label: '기타 국내 라디오',
+            items: [
+              { ticker: 'CBS',          ko: '기독교방송 · cbs.co.kr',  url: 'https://www.cbs.co.kr/radio' },
+              { ticker: 'TBN 교통방송', ko: '교통방송 · tbn.or.kr',    url: 'https://www.tbn.or.kr/onair/tbnlive.tbn?area_code=2' },
+              { ticker: 'TBS eFM',      ko: '서울 · tbs.seoul.kr',     url: 'https://tbs.seoul.kr/eFm/index.do' }
             ]
           },
           {
             label: '해외 라디오',
             items: [
-              { ticker: 'CNN Radio',    ko: '미국 · cnn.com',           url: 'https://www.cnn.com/audio' },
-              { ticker: 'BBC Radio',    ko: '영국 · bbc.co.uk/sounds',  url: 'https://www.bbc.co.uk/sounds' }
+              { ticker: 'CNN Radio',    ko: '미국 · cnn.com',          url: 'https://edition.cnn.com/audio' },
+              { ticker: 'BBC Radio',    ko: '영국 · bbc.co.uk/sounds', url: 'https://www.bbc.co.uk/sounds/stations' },
+              { ticker: 'Radio Garden', ko: '전세계 · radio.garden',   url: 'https://radio.garden/' }
             ]
           }
         ]
