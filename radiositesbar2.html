@@ -298,7 +298,7 @@
         <a href="#" data-src="https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=21&ch_type=radioList&bora=on&chat=on">KBS1</a>
         <a href="#" data-src="https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=22&ch_type=radioList&bora=on&chat=on">KBS2</a>
         <a href="#" data-src="https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=23&ch_type=radioList">KBS3</a>
-        <a href="#" data-src="https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=25&ch_type=radioList">COOL FM</a>
+        <a href="#" class="active" data-src="https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=25&ch_type=radioList">COOL FM</a>
         <a href="#" data-src="https://edition.cnn.com/audio">CNN Radio</a>
         <a href="#" data-src="https://www.bbc.co.uk/sounds/stations">BBC Radio</a>
       </div>
@@ -310,7 +310,7 @@
 
   </div>
 
-  <iframe id="main-frame" src="00radiomain.html" title="라디오"></iframe>
+  <iframe id="main-frame" src="https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=25&ch_type=radioList" title="라디오"></iframe>
 
   <!-- MYWAY.KR 공통: 좌하단 푸터 텍스트 -->
   <div class="myway-footer-float">
@@ -428,10 +428,12 @@
     leftArrow.addEventListener('click',  () => { nav.scrollBy({ left: -110, behavior: 'smooth' }); setTimeout(checkNavOverflow, 250); });
     rightArrow.addEventListener('click', () => { nav.scrollBy({ left:  110, behavior: 'smooth' }); setTimeout(checkNavOverflow, 250); });
 
-    /* 첫 메뉴 활성 + 초기 오버플로우 검사 */
+    /* 첫 메뉴 활성 + 초기 오버플로우 검사 (이미 active 지정된 채널이 있으면 그대로 유지) */
     window.addEventListener('DOMContentLoaded', () => {
-      const first = nav.querySelector('a');
-      if (first) first.classList.add('active');
+      if (!nav.querySelector('a.active')) {
+        const first = nav.querySelector('a');
+        if (first) first.classList.add('active');
+      }
       checkNavOverflow();
       setTimeout(checkNavOverflow, 300);
     });
