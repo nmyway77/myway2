@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>실시간 환율 계산기 - 달러·엔화·유로·위안 환율 변환 | MYWAY.KR</title>
+  <meta name="description" content="달러·엔·유로·위안 등 160개 이상 통화의 실시간 환율을 확인하고 바로 환전 계산. 환율 위젯과 계산기를 한 화면에서 - MYWAY.KR">
+  <meta name="keywords" content="환율 계산기, 실시간 환율, 오늘의 환율, 달러 환율, 엔화 환율, 100엔 환율, 1달러 환율, 유로 환율, 위안 환율, 환전 계산기, 원달러 환율, 달러 원화 변환, 엔화 계산기">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://myway.kr/exchange.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="실시간 환율 계산기 - 전세계 통화 환전 | MYWAY.KR">
+  <meta property="og:description" content="160개 이상 통화 실시간 환율 + 환전 계산기">
+  <meta property="og:url" content="https://myway.kr/exchange.html">
+  <meta property="og:locale" content="ko_KR">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="실시간 환율 계산기 - MYWAY.KR">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+  <style>
+    :root {
+      --cream: #f7f3eb;
+      --ink: #2a2722;
+      --ink-soft: #6b6457;
+      --line: #e3dccd;
+      --card: #fffdf8;
+      --accent: #1f6f54;
+      --accent-soft: #e8f0ea;
+      --accent-2: #b8862f;
+      --shadow: 0 4px 28px rgba(120,108,84,0.10);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--cream); color: var(--ink);
+      font-family: 'Pretendard', 'Segoe UI', sans-serif;
+      -webkit-text-size-adjust: 100%;
+      -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+    }
+    input, textarea, select { -webkit-user-select: text; user-select: text; }
+
+    .top-home {
+      position: fixed; top: 16px; left: 18px; z-index: 200;
+      font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600;
+      color: var(--ink-soft); text-decoration: none; letter-spacing: 0.04em;
+      padding: 6px 12px; border-radius: 999px; background: rgba(255,253,248,0.7);
+      border: 1px solid var(--line); backdrop-filter: blur(6px); transition: all 0.15s;
+    }
+    .top-home:hover { color: var(--accent); border-color: var(--accent); }
+
+    header.page-head { max-width: 760px; margin: 0 auto; padding: 64px 24px 20px; text-align: center; }
+    .page-head .eyebrow {
+      font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 500;
+      letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+    }
+    .page-head h1 {
+      font-family: 'Fraunces', serif; font-weight: 600; font-size: clamp(32px, 5.5vw, 50px);
+      line-height: 1.05; letter-spacing: -0.01em;
+    }
+
+    .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px 80px; }
+
+    /* 환율 위젯 */
+    .widget-card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+      box-shadow: var(--shadow); overflow: hidden; margin: 28px 0; height: 380px;
+    }
+    .widget-card .tradingview-widget-container,
+    .widget-card .tradingview-widget-container__widget { height: 100%; width: 100%; }
+
+    .section-label {
+      font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft);
+      margin: 36px 0 12px; display: flex; align-items: center; gap: 10px;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+
+    /* 계산기 */
+    .calc {
+      background: var(--card); border: 1px solid var(--line); border-radius: 22px;
+      box-shadow: var(--shadow); padding: 28px 26px;
+    }
+    .calc-row { margin-bottom: 16px; }
+    .calc-label {
+      font-size: 13px; color: var(--ink-soft); margin-bottom: 7px; font-weight: 500;
+      font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.03em;
+    }
+    .amount-input {
+      width: 100%; font-family: 'Space Grotesk', sans-serif; font-size: 30px; font-weight: 600;
+      color: var(--ink); border: 2px solid var(--line); border-radius: 14px;
+      padding: 14px 18px; background: var(--cream); outline: none; transition: border 0.15s;
+    }
+    .amount-input:focus { border-color: var(--accent); }
+
+    .cur-select {
+      width: 100%; font-family: 'Pretendard', sans-serif; font-size: 16px; font-weight: 500;
+      color: var(--ink); border: 2px solid var(--line); border-radius: 14px;
+      padding: 13px 16px; background: var(--card); outline: none; cursor: pointer;
+      transition: border 0.15s; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b6457' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 16px center;
+    }
+    .cur-select:focus { border-color: var(--accent); }
+
+    /* 스왑 버튼 영역 */
+    .swap-zone { display: flex; align-items: flex-end; gap: 12px; }
+    .swap-col { flex: 1; }
+    .swap-btn {
+      flex: 0 0 auto; width: 46px; height: 46px; border-radius: 50%;
+      border: 2px solid var(--line); background: var(--accent-soft); color: var(--accent);
+      font-size: 20px; cursor: pointer; transition: all 0.15s; margin-bottom: 1px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .swap-btn:hover { background: var(--accent); color: #fff; transform: rotate(180deg); }
+
+    /* 결과 */
+    .result-box {
+      margin-top: 22px; padding: 24px; border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent) 0%, #2d8567 100%);
+      color: #fff; text-align: center;
+    }
+    .result-amount {
+      font-family: 'Space Grotesk', sans-serif; font-size: clamp(28px, 7vw, 42px);
+      font-weight: 700; letter-spacing: -0.01em; line-height: 1.1; word-break: break-all;
+    }
+    .result-cur { font-size: 18px; font-weight: 500; opacity: 0.9; margin-left: 6px; }
+    .result-rate { margin-top: 10px; font-size: 14px; opacity: 0.85; font-family: 'Space Grotesk', sans-serif; }
+
+    .calc-foot {
+      margin-top: 16px; text-align: center; font-size: 12px; color: var(--ink-soft);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .calc-foot .status { display: inline-flex; align-items: center; gap: 6px; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: #bbb; }
+    .dot.live { background: #2bbf6a; box-shadow: 0 0 0 3px rgba(43,191,106,0.2); }
+    .dot.err { background: #d9534f; }
+
+    /* 빠른 금액 */
+    .quick-amounts { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .quick-amounts button {
+      flex: 1; min-width: 64px; padding: 8px 4px; border: 1px solid var(--line);
+      background: var(--cream); border-radius: 10px; cursor: pointer; font-size: 13px;
+      color: var(--ink-soft); font-family: 'Space Grotesk', sans-serif; transition: all 0.13s;
+    }
+    .quick-amounts button:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+    /* SEO 본문 블록 */
+    .info-block {
+      margin-top: 44px; padding-top: 36px; border-top: 1px solid var(--line);
+      font-size: 15px; line-height: 1.75; color: var(--ink-soft);
+    }
+    .info-block h2 {
+      font-family: 'Fraunces', serif; font-weight: 600; font-size: 22px;
+      color: var(--ink); margin-bottom: 14px; letter-spacing: -0.01em;
+    }
+    .info-block h3 {
+      font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px;
+      color: var(--ink); margin: 26px 0 10px;
+    }
+    .info-block p { margin-bottom: 12px; }
+    .info-block strong { color: var(--ink); }
+    .conv-list { list-style: none; padding: 0; }
+    .conv-list li {
+      padding: 9px 14px; margin-bottom: 7px; background: var(--card);
+      border: 1px solid var(--line); border-radius: 10px; font-size: 14px;
+    }
+    .conv-list li strong { color: var(--accent); }
+    .faq .q { font-weight: 600; color: var(--ink); margin: 16px 0 4px; }
+    .faq .a { margin: 0 0 8px; padding-left: 2px; }
+
+    footer.page-foot {
+      text-align: center; padding: 40px 24px 60px; border-top: 1px solid var(--line);
+      max-width: 760px; margin: 0 auto;
+    }
+    .page-foot a { color: var(--accent); text-decoration: none; font-weight: 600;
+      font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.04em; }
+    .page-foot .note { margin-top: 8px; font-size: 12px; color: var(--ink-soft); }
+
+    .float-home {
+      position: fixed; right: 22px; bottom: 22px; z-index: 200;
+      width: 54px; height: 54px; border-radius: 50%; background: var(--accent); color: #fff;
+      display: flex; align-items: center; justify-content: center; text-decoration: none;
+      font-size: 22px; box-shadow: 0 8px 24px rgba(31,111,84,0.4); transition: transform 0.15s;
+    }
+    .float-home:hover { transform: scale(1.08); }
+
+    @media (max-width: 540px) {
+      .calc { padding: 22px 18px; }
+      .widget-card { height: 340px; }
+      .swap-zone { gap: 8px; }
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "실시간 환율 계산기",
+    "url": "https://myway.kr/exchange.html",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "All",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" },
+    "description": "달러·엔화·유로·위안 등 160개 이상 통화의 실시간 환율을 확인하고 즉시 환전 계산하는 무료 환율 계산기"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "환율은 얼마나 자주 갱신되나요?",
+        "acceptedAnswer": { "@type": "Answer", "text": "이 계산기의 환율은 ExchangeRate-API 매매기준율로 하루 1회 갱신됩니다. 위쪽 실시간 시세 위젯은 더 자주 갱신됩니다." }
+      },
+      {
+        "@type": "Question",
+        "name": "은행 환전 금액과 다른 이유는 무엇인가요?",
+        "acceptedAnswer": { "@type": "Answer", "text": "이 계산기는 매매기준율 기준이며, 실제 은행 환전 시에는 환전 수수료와 우대율이 적용되어 금액에 차이가 발생합니다." }
+      },
+      {
+        "@type": "Question",
+        "name": "어떤 통화를 변환할 수 있나요?",
+        "acceptedAnswer": { "@type": "Answer", "text": "미국 달러(USD), 일본 엔(JPY), 유로(EUR), 중국 위안(CNY)을 포함해 전세계 160개 이상의 통화를 서로 변환할 수 있습니다." }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <a href="https://myway.kr" class="top-home">← MYWAY.KR</a>
+
+  <header class="page-head">
+    <div class="eyebrow">Currency Exchange</div>
+    <h1>실시간 환율 계산기</h1>
+  </header>
+
+  <div class="wrap">
+
+    <!-- 환율 위젯 (TradingView Forex Cross Rates) -->
+    <div class="section-label">실시간 환율 시세</div>
+    <div class="widget-card">
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-forex-cross-rates.js" async>
+        {
+          "width": "100%",
+          "height": "100%",
+          "currencies": [ "USD", "KRW", "EUR", "JPY", "CNY", "GBP", "AUD", "CAD", "CHF", "HKD" ],
+          "isTransparent": true,
+          "colorTheme": "light",
+          "locale": "kr",
+          "backgroundColor": "#fffdf8"
+        }
+        </script>
+      </div>
+    </div>
+
+    <!-- 환율 계산기 -->
+    <div class="section-label">환율 계산기</div>
+    <div class="calc">
+      <div class="calc-row">
+        <div class="calc-label">금액</div>
+        <input type="text" inputmode="decimal" class="amount-input" id="amount" value="1" autocomplete="off">
+        <div class="quick-amounts">
+          <button data-amt="1">1</button>
+          <button data-amt="10">10</button>
+          <button data-amt="100">100</button>
+          <button data-amt="1000">1,000</button>
+          <button data-amt="10000">10,000</button>
+        </div>
+      </div>
+
+      <div class="swap-zone">
+        <div class="swap-col">
+          <div class="calc-label">보내는 통화 (From)</div>
+          <select class="cur-select" id="from"></select>
+        </div>
+        <button class="swap-btn" id="swap" title="통화 바꾸기" aria-label="통화 바꾸기">⇄</button>
+        <div class="swap-col">
+          <div class="calc-label">받는 통화 (To)</div>
+          <select class="cur-select" id="to"></select>
+        </div>
+      </div>
+
+      <div class="result-box">
+        <div><span class="result-amount" id="result">—</span><span class="result-cur" id="result-cur"></span></div>
+        <div class="result-rate" id="rate-info"></div>
+      </div>
+
+      <div class="calc-foot">
+        <span class="status"><span class="dot" id="status-dot"></span><span id="status-text">환율 불러오는 중...</span></span>
+      </div>
+    </div>
+
+    <!-- SEO 본문 -->
+    <section class="info-block">
+      <h2>실시간 환율 계산기 안내</h2>
+      <p>MYWAY.KR 환율 계산기는 <strong>미국 달러, 일본 엔, 유로, 중국 위안</strong>을 비롯한 전세계 160개 이상 통화의 환율을 실시간으로 불러와 즉시 환전 금액을 계산합니다. 위쪽 시세 위젯으로 주요 통화 흐름을 확인하고, 아래 계산기로 원하는 금액을 바로 환산하세요.</p>
+
+      <h3>자주 보는 환율</h3>
+      <ul class="conv-list">
+        <li><strong>달러/원 (USD/KRW)</strong> — 미국 여행·해외 직구·환전 시 가장 많이 보는 환율</li>
+        <li><strong>엔화/원 (JPY/KRW)</strong> — 일본 여행객이 자주 확인하는 환율 (보통 100엔 기준)</li>
+        <li><strong>유로/원 (EUR/KRW)</strong> — 유럽 여행·유학 시 필요</li>
+        <li><strong>위안/원 (CNY/KRW)</strong> — 중국 직구·무역 시 사용</li>
+      </ul>
+
+      <h3>자주 묻는 질문</h3>
+      <div class="faq">
+        <p class="q">Q. 환율은 얼마나 자주 갱신되나요?</p>
+        <p class="a">계산기 환율은 매매기준율로 하루 1회 갱신됩니다. 위쪽 시세 위젯은 더 자주 갱신되어 실시간에 가깝습니다.</p>
+        <p class="q">Q. 은행에서 환전하면 금액이 다른 이유는?</p>
+        <p class="a">이 계산기는 매매기준율 기준이고, 실제 은행 환전 시에는 수수료와 우대율이 적용되어 차이가 납니다. 대략적인 환산 참고용으로 활용하세요.</p>
+        <p class="q">Q. 어떤 통화까지 계산되나요?</p>
+        <p class="a">달러·엔·유로·위안은 물론, 동남아·중동·유럽 등 전세계 160개 이상 통화를 서로 변환할 수 있습니다.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="page-foot">
+    <a href="https://myway.kr">myway.kr</a>
+    <div class="note">환율은 ExchangeRate-API 매매기준율이며 하루 1회 갱신됩니다. 실제 은행 환전 시 우대율·수수료로 차이가 있을 수 있습니다.</div>
+  </footer>
+
+  <a href="https://myway.kr" class="float-home" title="홈으로" aria-label="홈으로">⌂</a>
+
+  <script>
+    // 주요 통화 한글명 + 국기 (이 목록 우선 정렬, 나머지는 코드만 알파벳순)
+    const CUR = {
+      USD:{n:'미국 달러',f:'🇺🇸'}, KRW:{n:'대한민국 원',f:'🇰🇷'}, EUR:{n:'유로',f:'🇪🇺'},
+      JPY:{n:'일본 엔',f:'🇯🇵'}, CNY:{n:'중국 위안',f:'🇨🇳'}, GBP:{n:'영국 파운드',f:'🇬🇧'},
+      HKD:{n:'홍콩 달러',f:'🇭🇰'}, TWD:{n:'대만 달러',f:'🇹🇼'}, AUD:{n:'호주 달러',f:'🇦🇺'},
+      CAD:{n:'캐나다 달러',f:'🇨🇦'}, CHF:{n:'스위스 프랑',f:'🇨🇭'}, SGD:{n:'싱가포르 달러',f:'🇸🇬'},
+      THB:{n:'태국 바트',f:'🇹🇭'}, VND:{n:'베트남 동',f:'🇻🇳'}, PHP:{n:'필리핀 페소',f:'🇵🇭'},
+      MYR:{n:'말레이시아 링깃',f:'🇲🇾'}, IDR:{n:'인도네시아 루피아',f:'🇮🇩'}, INR:{n:'인도 루피',f:'🇮🇳'},
+      NZD:{n:'뉴질랜드 달러',f:'🇳🇿'}, MXN:{n:'멕시코 페소',f:'🇲🇽'}, BRL:{n:'브라질 헤알',f:'🇧🇷'},
+      RUB:{n:'러시아 루블',f:'🇷🇺'}, TRY:{n:'튀르키예 리라',f:'🇹🇷'}, AED:{n:'아랍에미리트 디르함',f:'🇦🇪'},
+      SAR:{n:'사우디 리얄',f:'🇸🇦'}, ZAR:{n:'남아공 랜드',f:'🇿🇦'}, SEK:{n:'스웨덴 크로나',f:'🇸🇪'},
+      NOK:{n:'노르웨이 크로네',f:'🇳🇴'}, DKK:{n:'덴마크 크로네',f:'🇩🇰'}, PLN:{n:'폴란드 즐로티',f:'🇵🇱'},
+      CZK:{n:'체코 코루나',f:'🇨🇿'}, HUF:{n:'헝가리 포린트',f:'🇭🇺'}, ILS:{n:'이스라엘 셰켈',f:'🇮🇱'},
+      EGP:{n:'이집트 파운드',f:'🇪🇬'}, QAR:{n:'카타르 리얄',f:'🇶🇦'}, KWD:{n:'쿠웨이트 디나르',f:'🇰🇼'},
+      PKR:{n:'파키스탄 루피',f:'🇵🇰'}, BDT:{n:'방글라데시 타카',f:'🇧🇩'}, NGN:{n:'나이지리아 나이라',f:'🇳🇬'}
+    };
+
+    const PRIORITY = ['USD','KRW','EUR','JPY','CNY','GBP','HKD','TWD','AUD','CAD','CHF','SGD','THB','VND'];
+
+    const amountEl = document.getElementById('amount');
+    const fromEl = document.getElementById('from');
+    const toEl = document.getElementById('to');
+    const resultEl = document.getElementById('result');
+    const resultCurEl = document.getElementById('result-cur');
+    const rateInfoEl = document.getElementById('rate-info');
+    const statusDot = document.getElementById('status-dot');
+    const statusText = document.getElementById('status-text');
+
+    let RATES = {};   // USD 기준 환율
+    let UPDATED = '';
+
+    // 통화 드롭다운 채우기
+    function buildOptions(codes) {
+      const inPriority = PRIORITY.filter(c => codes.includes(c));
+      const others = codes.filter(c => !PRIORITY.includes(c)).sort();
+      const ordered = [...inPriority, ...others];
+      const optsHtml = ordered.map(c => {
+        const meta = CUR[c];
+        const label = meta ? (meta.f + ' ' + c + ' · ' + meta.n) : (c);
+        return '<option value="' + c + '">' + label + '</option>';
+      }).join('');
+      fromEl.innerHTML = optsHtml;
+      toEl.innerHTML = optsHtml;
+      fromEl.value = 'USD';
+      toEl.value = 'KRW';
+    }
+
+    // 숫자 포맷 (소수 자릿수 적응형)
+    function fmt(num) {
+      if (!isFinite(num)) return '—';
+      const abs = Math.abs(num);
+      let digits = 2;
+      if (abs >= 100) digits = 2;
+      else if (abs >= 1) digits = 4;
+      else digits = 6;
+      return num.toLocaleString('ko-KR', { minimumFractionDigits: 0, maximumFractionDigits: digits });
+    }
+
+    // 계산
+    function calc() {
+      const amt = parseFloat((amountEl.value || '').replace(/,/g, '')) || 0;
+      const from = fromEl.value, to = toEl.value;
+      if (!RATES[from] || !RATES[to]) { resultEl.textContent = '—'; return; }
+      const perUnit = RATES[to] / RATES[from];   // 1 from = ? to
+      const result = amt * perUnit;
+      resultEl.textContent = fmt(result);
+      resultCurEl.textContent = ' ' + to;
+      rateInfoEl.textContent = '1 ' + from + ' = ' + fmt(perUnit) + ' ' + to;
+    }
+
+    // 환율 로드
+    async function loadRates() {
+      try {
+        const res = await fetch('https://open.er-api.com/v6/latest/USD');
+        const data = await res.json();
+        if (data && data.result === 'success' && data.rates) {
+          RATES = data.rates;
+          UPDATED = data.time_last_update_utc || '';
+          buildOptions(Object.keys(RATES));
+          statusDot.className = 'dot live';
+          const upd = UPDATED ? new Date(UPDATED).toLocaleDateString('ko-KR') : '';
+          statusText.textContent = '실시간 환율 적용됨' + (upd ? ' · ' + upd + ' 기준' : '');
+          calc();
+        } else {
+          throw new Error('API 응답 오류');
+        }
+      } catch (e) {
+        statusDot.className = 'dot err';
+        statusText.textContent = '환율을 불러오지 못했습니다. 잠시 후 새로고침 해주세요.';
+        // 폴백: 최소 통화라도 입력 가능하게
+        if (!fromEl.options.length) buildOptions(['USD','KRW','EUR','JPY','CNY']);
+      }
+    }
+
+    // 이벤트
+    amountEl.addEventListener('input', calc);
+    fromEl.addEventListener('change', calc);
+    toEl.addEventListener('change', calc);
+    document.getElementById('swap').addEventListener('click', () => {
+      const t = fromEl.value; fromEl.value = toEl.value; toEl.value = t; calc();
+    });
+    document.querySelectorAll('.quick-amounts button').forEach(b => {
+      b.addEventListener('click', () => { amountEl.value = b.dataset.amt; calc(); });
+    });
+
+    loadRates();
+
+    // 복사 방지 (input/select/textarea 예외)
+    (function () {
+      const isField = (e) => {
+        const t = e.target;
+        return t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT');
+      };
+      ['contextmenu', 'selectstart', 'dragstart', 'copy', 'cut'].forEach(ev => {
+        document.addEventListener(ev, (e) => { if (!isField(e)) e.preventDefault(); });
+      });
+      document.addEventListener('keydown', (e) => {
+        const k = e.key.toLowerCase();
+        if (e.key === 'F12') { e.preventDefault(); return; }
+        if ((e.ctrlKey || e.metaKey) && ['u', 's', 'c', 'x', 'a'].includes(k)) { if (!isField(e)) e.preventDefault(); }
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i', 'j', 'c'].includes(k)) { e.preventDefault(); }
+      });
+    })();
+  </script>
+</body>
+</html>
