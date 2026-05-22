@@ -1460,45 +1460,61 @@
           {
             label: '실시간 스트리밍',
             items: [
-              { ticker: 'YouTube Live',  ko: '유튜브 라이브 · youtube.com', url: 'https://www.youtube.com/feed/live' },
-              { ticker: '네이버TV',      ko: 'tv.naver.com',             url: 'https://tv.naver.com/' },
-              { ticker: '치지직',        ko: 'CHZZK · chzzk.naver.com',  url: 'https://chzzk.naver.com/' },
-              { ticker: 'SOOP',          ko: '구 아프리카TV · sooplive.co.kr', url: 'https://www.sooplive.co.kr/' },
-              { ticker: '트위치',        ko: 'Twitch · twitch.tv',       url: 'https://www.twitch.tv/' },
-              { ticker: '카카오TV',      ko: 'tv.kakao.com',             url: 'https://tv.kakao.com/' },
-              { ticker: 'LCK',           ko: 'e스포츠 · lck.co.kr',      url: 'https://www.lck.co.kr/' }
+              { ticker: '치지직',         ko: 'CHZZK · chzzk.naver.com',       url: 'https://chzzk.naver.com/' },
+              { ticker: 'SOOP',           ko: '구 아프리카TV · sooplive.co.kr', url: 'https://www.sooplive.co.kr/' },
+              { ticker: '트위치',         ko: 'Twitch · twitch.tv',            url: 'https://www.twitch.tv/' },
+              { ticker: '네이버TV',       ko: 'LIVE · tv.naver.com',           url: 'https://tv.naver.com/l/livehome' },
+              { ticker: '카카오TV',       ko: 'LIVE · tv.kakao.com',           url: 'https://tv.kakao.com/live' },
+              { ticker: '네이버 쇼핑라이브', ko: 'shoppinglive.naver.com',      url: 'https://shoppinglive.naver.com/home' },
+              { ticker: 'LCK',            ko: 'e스포츠 · lck.co.kr',           url: 'https://www.lck.co.kr/' }
             ]
           },
           {
-            label: '국내 방송 LIVE',
+            label: '지상파·종합편성 LIVE',
             items: [
-              { ticker: 'KBS',           ko: '1·2·24 · onair.kbs.co.kr', url: 'https://onair.kbs.co.kr/' },
-              { ticker: 'MBC',           ko: 'onair.imbc.com',           url: 'https://onair.imbc.com/' },
-              { ticker: 'SBS',           ko: 'play.sbs.co.kr',           url: 'https://play.sbs.co.kr/onair/pc/index.html' },
-              { ticker: 'JTBC',          ko: 'tv.jtbc.co.kr',            url: 'https://tv.jtbc.co.kr/onair' },
-              { ticker: 'TV조선',        ko: 'tvchosun.com',             url: 'https://broadcast.tvchosun.com/' },
-              { ticker: '채널A',         ko: 'ichannela.com',            url: 'https://www.ichannela.com/' },
-              { ticker: 'EBS',           ko: 'ebs.co.kr',                url: 'https://www.ebs.co.kr/' },
-              { ticker: '아리랑TV',      ko: 'Arirang · arirang.com',    url: 'https://www.arirang.com/' }
+              { ticker: 'KBS1',           ko: 'onair.kbs.co.kr',          url: 'https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList' },
+              { ticker: 'KBS2',           ko: 'onair.kbs.co.kr',          url: 'https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList' },
+              { ticker: 'MBC',            ko: 'onair.imbc.com',           url: 'https://onair.imbc.com/' },
+              { ticker: 'SBS',            ko: 'sbs.co.kr/live',           url: 'https://www.sbs.co.kr/live/S01?div=main_live' },
+              { ticker: 'JTBC',           ko: 'onair.jtbc.co.kr',         url: 'https://onair.jtbc.co.kr/' },
+              { ticker: 'TV조선',         ko: 'broadcast.tvchosun.com',   url: 'https://broadcast.tvchosun.com/onair/on.cstv' },
+              { ticker: '채널A',          ko: 'ichannela.com',            url: 'https://ichannela.com/com/cmm/onair.do' },
+              { ticker: 'MBN',            ko: 'mbn.co.kr',                url: 'https://www.mbn.co.kr/vod/onair' },
+              { ticker: 'EBS',            ko: 'ebs.co.kr/onair',          url: 'https://www.ebs.co.kr/onair?mainTop&channelCodeString=tv' },
+              { ticker: '아리랑TV',       ko: 'Arirang · arirang.com',    url: 'https://www.arirang.com/live?lang=en' }
             ]
           },
           {
             label: '뉴스 LIVE',
             items: [
-              { ticker: 'YTN',           ko: 'ytn.co.kr',                url: 'https://www.ytn.co.kr/' },
-              { ticker: '연합뉴스TV',    ko: 'yonhapnewstv.co.kr',       url: 'https://www.yonhapnewstv.co.kr/' },
-              { ticker: '한국경제TV',    ko: '증권방송 · wowtv.co.kr',   url: 'https://www.wowtv.co.kr/' }
+              { ticker: 'YTN',            ko: 'ytn.co.kr',                url: 'https://www.ytn.co.kr/_hd/hd_live.html' },
+              { ticker: '연합뉴스TV',     ko: 'yonhapnewstv.co.kr',       url: 'https://www.yonhapnewstv.co.kr/live' },
+              { ticker: 'KBS NEWS',       ko: 'news.kbs.co.kr',           url: 'https://news.kbs.co.kr/news/pc/news24/news24.html?ref=pGnb' },
+              { ticker: 'MBC NEWS',       ko: 'imnews.imbc.com',          url: 'https://imnews.imbc.com/more/onair/' },
+              { ticker: 'SBS NEWS',       ko: 'news.sbs.co.kr',           url: 'https://news.sbs.co.kr/news/live.do?plink=GNB&cooper=SBSNEWS' },
+              { ticker: 'JTBC NEWS',      ko: 'news.jtbc.co.kr',          url: 'https://news.jtbc.co.kr/live' }
+            ]
+          },
+          {
+            label: '경제·증권 LIVE',
+            items: [
+              { ticker: '한국경제TV',     ko: 'wowtv.co.kr',              url: 'https://www.wowtv.co.kr/LiveCenter/Live/Index?liveID=1' },
+              { ticker: '매일경제TV',     ko: 'MBN머니 · mbnmoney',       url: 'https://mbnmoney.mbn.co.kr/tv/onair' },
+              { ticker: '서울경제TV',     ko: 'sentv.co.kr',              url: 'https://www.sentv.co.kr/onair' },
+              { ticker: '이데일리TV',     ko: 'tv.edaily.co.kr',          url: 'https://tv.edaily.co.kr/Live/HighVod' },
+              { ticker: 'MTN',            ko: '머니투데이방송 · mtn.co.kr', url: 'https://www.mtn.co.kr/' }
             ]
           },
           {
             label: '해외 LIVE TV',
             items: [
-              { ticker: 'NHK World',     ko: '일본 · nhk.or.jp',         url: 'https://www3.nhk.or.jp/nhkworld/' },
-              { ticker: 'ABC',           ko: '미국 · abc.com',           url: 'https://abc.com/' },
-              { ticker: 'NBC News',      ko: '미국 · nbcnews.com/now',   url: 'https://www.nbcnews.com/now' },
-              { ticker: 'FOX News',      ko: '미국 · foxnews.com',       url: 'https://www.foxnews.com/' },
-              { ticker: 'ABC7',          ko: '미국 LA · abc7.com',       url: 'https://abc7.com/' },
-              { ticker: '미국 LIVE 모음', ko: 'thetvapp.to',             url: 'https://thetvapp.to/' }
+              { ticker: 'NHK World',      ko: '일본 · nhk.or.jp',         url: 'https://www3.nhk.or.jp/nhkworld/' },
+              { ticker: 'ABC',            ko: '미국 · abc.com',           url: 'https://abc.com/' },
+              { ticker: 'NBC News',       ko: '미국 · nbcnews.com/now',   url: 'https://www.nbcnews.com/now' },
+              { ticker: 'FOX News',       ko: '미국 · foxnews.com',       url: 'https://www.foxnews.com/' },
+              { ticker: 'ABC7',           ko: '미국 LA · abc7.com',       url: 'https://abc7.com/' },
+              { ticker: 'TV Garden',      ko: '전세계 채널 · tv.garden',  url: 'https://tv.garden/' },
+              { ticker: '미국 LIVE 모음', ko: 'thetvapp.to',              url: 'https://thetvapp.to/' }
             ]
           }
         ]
