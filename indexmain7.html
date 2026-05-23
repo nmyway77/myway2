@@ -871,6 +871,9 @@
       margin: 24px auto 0;
       border-top: 1px solid #eef0f4;
     }
+    /* favorites iframe 임베드 */
+    .gallery-section.fav-embed { padding: 0; border-top: none; max-width: 100%; margin: 8px auto 0; }
+    #favFrame { width: 100%; border: 0; display: block; min-height: 300px; overflow: hidden; transition: height .12s; }
     .masonry {
       column-count: 4;
       column-gap: 12px;
@@ -950,63 +953,13 @@
 
   <main class="main" id="main"></main>
 
-    <section class="sc-section" id="sc-root">
-    <div class="sc-header">
-      <h2 class="sc-title">자주가는 사이트 추가</h2>
-      <div class="sc-actions">
-        <button class="sc-icon-btn" id="sc-export" title="내보내기 (JSON 다운로드)" aria-label="내보내기">↓</button>
-        <button class="sc-icon-btn" id="sc-import" title="가져오기 (JSON 업로드)" aria-label="가져오기">↑</button>
-        <button class="sc-icon-btn danger" id="sc-clear" title="모두 삭제" aria-label="모두 삭제">×</button>
-        <input type="file" id="sc-file" accept=".json,application/json" style="display:none">
-      </div>
-    </div>
-    <div class="sc-grid" id="sc-grid"></div>
-
-    <div class="sc-modal" id="sc-edit-modal">
-      <div class="sc-card">
-        <h2 id="sc-modal-title">바로가기 추가</h2>
-        <div class="sc-field">
-          <label for="sc-url">URL</label>
-          <input type="url" id="sc-url" placeholder="https://example.com" autocomplete="off">
-        </div>
-        <div class="sc-field">
-          <label for="sc-name">이름 (생략 가능)</label>
-          <input type="text" id="sc-name" placeholder="비우면 자동" autocomplete="off">
-        </div>
-        <div class="sc-modal-actions">
-          <button class="sc-btn-cancel" id="sc-cancel">취소</button>
-          <button class="sc-btn-primary" id="sc-save">저장</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="sc-modal" id="sc-import-modal">
-      <div class="sc-card">
-        <h2>가져오기 방법</h2>
-        <p style="font-size:12.5px;color:#555;margin:0 0 14px;line-height:1.6;">
-          파일: <strong id="sc-import-count">N</strong>개 · 현재: <strong id="sc-current-count">N</strong>개
-        </p>
-        <div class="sc-modal-actions" style="flex-direction:column;align-items:stretch;gap:7px;">
-          <button class="sc-btn-primary" id="sc-imp-merge">병합 (중복 제외 추가)</button>
-          <button class="sc-btn-danger" id="sc-imp-replace">전체 교체</button>
-          <button class="sc-btn-cancel" id="sc-imp-cancel">취소</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="sc-ctx" id="sc-ctx">
-      <button data-act="edit">편집</button>
-      <button data-act="delete" class="sc-danger">삭제</button>
-    </div>
-    <div class="sc-toast" id="sc-toast"></div>
-  </section>
 
   <!-- ============ 자주가는 사이트 밑: 추가 로고 그룹 (group2 ~ group4) ============ -->
   <section class="extra-logo-section" id="extraLogoSection"></section>
 
   <!-- ============ 하단 갤러리 (00maincomics 스타일) ============ -->
-  <section class="gallery-section">
-    <div class="masonry" id="masonryGallery"></div>
+  <section class="gallery-section fav-embed">
+    <iframe id="favFrame" src="homefav.html" title="내 즐겨찾기" scrolling="no" loading="lazy"></iframe>
   </section>
 
 
@@ -2102,315 +2055,44 @@
   </script>
 
   <script>
-  
-  (function() {
-    'use strict';
-    const KEY = 'mywayShortcutsV1';
-    const FAV = 'https://www.google.com/s2/favicons?sz=64&domain=';
-    const SAMPLES = [
-      { name: '네이버', url: 'https://www.naver.com' },
-      { name: '다음', url: 'https://www.daum.net' },
-      { name: '구글', url: 'https://www.google.com' },
-      { name: '유튜브', url: 'https://www.youtube.com' },
-      { name: '카카오', url: 'https://www.kakaocorp.com' },
-    ];
+    /* favorites iframe 높이 자동 맞춤 */
+    (function () {
+      var fr = document.getElementById('favFrame');
 
-    let items = [];
-    let editingId = null;
-    let pending = null;
-    let ctxId = null;
-    let dragId = null;
-
-    const $ = (id) => document.getElementById(id);
-
-    function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
-    function normUrl(u) {
-      u = (u || '').trim();
-      if (!u) return '';
-      if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
-      try { new URL(u); return u; } catch (e) { return ''; }
-    }
-    function dom(u) { try { return new URL(u).hostname; } catch (e) { return ''; } }
-    function guess(u) { const d = dom(u); return d ? d.replace(/^www\./, '').split('.')[0] : ''; }
-
-    function load() {
-      try {
-        const r = localStorage.getItem(KEY);
-        if (r) { const a = JSON.parse(r); if (Array.isArray(a)) return a; }
-      } catch (e) {}
-      return SAMPLES.map(s => ({ id: uid(), ...s }));
-    }
-    function persist() { try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (e) {} }
-
-    function toast(msg) {
-      const t = $('sc-toast');
-      t.textContent = msg;
-      t.classList.add('sc-show');
-      clearTimeout(toast._t);
-      toast._t = setTimeout(() => t.classList.remove('sc-show'), 1900);
-    }
-
-    function render() {
-      const grid = $('sc-grid');
-      grid.innerHTML = '';
-      items.forEach(s => {
-        const tile = document.createElement('a');
-        tile.className = 'sc-tile';
-        tile.href = s.url;
-        tile.target = '_blank';
-        tile.rel = 'noopener';
-        tile.title = s.name || dom(s.url);
-        tile.draggable = true;
-        tile.dataset.id = s.id;
-
-        const d = dom(s.url);
-        const fav = document.createElement('div');
-        fav.className = 'sc-fav';
-        if (d) {
-          const img = document.createElement('img');
-          img.src = FAV + encodeURIComponent(d);
-          img.alt = '';
-          img.onerror = () => {
-            fav.classList.add('sc-ph');
-            fav.textContent = (s.name || d).charAt(0).toUpperCase();
-          };
-          fav.appendChild(img);
-        } else {
-          fav.classList.add('sc-ph');
-          fav.textContent = (s.name || '?').charAt(0).toUpperCase();
-        }
-        tile.appendChild(fav);
-
-        const mb = document.createElement('button');
-        mb.className = 'sc-menu-btn';
-        mb.textContent = '×';
-        mb.title = '삭제 (편집은 우클릭)';
-        mb.setAttribute('aria-label', '삭제');
-        mb.onclick = (e) => {
-          e.preventDefault(); e.stopPropagation();
-          if (confirm('"' + (s.name || dom(s.url)) + '" 삭제할까요?')) {
-            items = items.filter(x => x.id !== s.id);
-            persist();
-            render();
-            toast('삭제됨');
-          }
-        };
-        tile.appendChild(mb);
-
-        // 우클릭으로 편집 메뉴 (편집/삭제 둘 다 가능)
-        tile.addEventListener('contextmenu', (e) => {
-          e.preventDefault();
-          openCtx(e, s.id);
-        });
-
-        tile.addEventListener('dragstart', dStart);
-        tile.addEventListener('dragover', dOver);
-        tile.addEventListener('dragleave', dLeave);
-        tile.addEventListener('drop', dDrop);
-        tile.addEventListener('dragend', dEnd);
-        grid.appendChild(tile);
-      });
-
-      const add = document.createElement('div');
-      add.className = 'sc-tile sc-add';
-      add.title = '새 바로가기 추가';
-      add.innerHTML = '<div class="sc-fav">+</div>';
-      add.onclick = () => openEdit(null);
-      grid.appendChild(add);
-    }
-
-    function dStart(e) {
-      dragId = this.dataset.id;
-      this.classList.add('sc-dragging');
-      e.dataTransfer.effectAllowed = 'move';
-      try { e.dataTransfer.setData('text/plain', dragId); } catch (err) {}
-    }
-    function dOver(e) {
-      if (!dragId || this.dataset.id === dragId) return;
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      this.classList.add('sc-drag-over');
-    }
-    function dLeave() { this.classList.remove('sc-drag-over'); }
-    function dDrop(e) {
-      e.preventDefault();
-      this.classList.remove('sc-drag-over');
-      if (!dragId || this.dataset.id === dragId) return;
-      const f = items.findIndex(x => x.id === dragId);
-      const t = items.findIndex(x => x.id === this.dataset.id);
-      if (f < 0 || t < 0) return;
-      const [m] = items.splice(f, 1);
-      items.splice(t, 0, m);
-      persist();
-      render();
-    }
-    function dEnd() {
-      document.querySelectorAll('.sc-tile').forEach(t =>
-        t.classList.remove('sc-dragging', 'sc-drag-over'));
-      dragId = null;
-    }
-
-    function openEdit(id) {
-      editingId = id;
-      const m = $('sc-edit-modal');
-      const t = $('sc-modal-title');
-      const u = $('sc-url');
-      const n = $('sc-name');
-      if (id) {
-        const s = items.find(x => x.id === id);
-        if (!s) return;
-        t.textContent = '바로가기 편집';
-        u.value = s.url;
-        n.value = s.name || '';
-      } else {
-        t.textContent = '바로가기 추가';
-        u.value = '';
-        n.value = '';
-      }
-      m.classList.add('sc-show');
-      setTimeout(() => u.focus(), 50);
-    }
-    function closeEdit() { $('sc-edit-modal').classList.remove('sc-show'); editingId = null; }
-    function saveEdit() {
-      const u = $('sc-url'), n = $('sc-name');
-      const url = normUrl(u.value);
-      if (!url) { toast('올바른 URL을 입력해주세요'); u.focus(); return; }
-      const name = n.value.trim() || guess(url);
-      if (editingId) {
-        const s = items.find(x => x.id === editingId);
-        if (s) { s.url = url; s.name = name; }
-        toast('수정 완료');
-      } else {
-        items.push({ id: uid(), name, url });
-        toast('추가됨');
-      }
-      persist();
-      render();
-      closeEdit();
-    }
-
-    function openCtx(e, id) {
-      ctxId = id;
-      const m = $('sc-ctx');
-      m.style.left = Math.min(e.clientX, window.innerWidth - 140) + 'px';
-      m.style.top = Math.min(e.clientY, window.innerHeight - 100) + 'px';
-      m.classList.add('sc-show');
-    }
-    function closeCtx() { $('sc-ctx').classList.remove('sc-show'); ctxId = null; }
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('#sc-ctx') && !e.target.closest('.sc-menu-btn')) closeCtx();
-    });
-    $('sc-ctx').addEventListener('click', (e) => {
-      const b = e.target.closest('button');
-      if (!b || !ctxId) return;
-      if (b.dataset.act === 'edit') openEdit(ctxId);
-      else if (b.dataset.act === 'delete') {
-        const s = items.find(x => x.id === ctxId);
-        if (s && confirm('"' + (s.name || dom(s.url)) + '" 삭제할까요?')) {
-          items = items.filter(x => x.id !== ctxId);
-          persist();
-          render();
-          toast('삭제됨');
-        }
-      }
-      closeCtx();
-    });
-
-    function doExport() {
-      const data = {
-        app: 'myway.kr', type: 'shortcuts', version: 1,
-        exportedAt: new Date().toISOString(),
-        count: items.length, shortcuts: items,
-      };
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const ymd = new Date().toISOString().slice(0,10).replace(/-/g, '');
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'myway-shortcuts-' + ymd + '.json';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 100);
-      toast(items.length + '개 내보내기 완료');
-    }
-    function readFile(file) {
-      const r = new FileReader();
-      r.onload = () => {
+      /* 1) 같은 도메인(myway.kr·localhost)에서는 iframe 내용 높이를 직접 읽어 맞춤 */
+      function fitDirect() {
+        if (!fr) return false;
         try {
-          const d = JSON.parse(r.result);
-          const arr = Array.isArray(d) ? d : (Array.isArray(d.shortcuts) ? d.shortcuts : null);
-          if (!arr) throw new Error('형식 오류');
-          const v = arr.filter(s => s && s.url && normUrl(s.url));
-          if (!v.length) { toast('유효한 항목 없음'); return; }
-          pending = v.map(s => ({ id: s.id || uid(), name: s.name || guess(s.url), url: normUrl(s.url) }));
-          $('sc-import-count').textContent = pending.length;
-          $('sc-current-count').textContent = items.length;
-          $('sc-import-modal').classList.add('sc-show');
-        } catch (e) { toast('파일 읽기 실패'); }
-      };
-      r.readAsText(file);
-    }
-    function doImport(mode) {
-      if (!pending) return;
-      if (mode === 'replace') {
-        items = pending.map(s => ({ ...s, id: uid() }));
-        toast('전체 교체: ' + items.length + '개');
-      } else {
-        const ex = new Set(items.map(s => s.url));
-        const add = pending.filter(s => !ex.has(s.url));
-        add.forEach(s => items.push({ ...s, id: uid() }));
-        toast(add.length + '개 추가');
+          var doc = fr.contentDocument || (fr.contentWindow && fr.contentWindow.document);
+          if (doc && doc.documentElement) {
+            var h = Math.max(
+              doc.documentElement.scrollHeight,
+              doc.body ? doc.body.scrollHeight : 0
+            );
+            if (h > 0) { fr.style.height = h + 'px'; return true; }
+          }
+        } catch (e) { /* cross-origin (file://) → 아래 postMessage로 대체 */ }
+        return false;
       }
-      persist(); render();
-      pending = null;
-      $('sc-import-modal').classList.remove('sc-show');
-    }
 
-    $('sc-export').onclick = doExport;
-    $('sc-import').onclick = () => $('sc-file').click();
-    $('sc-file').onchange = (e) => { if (e.target.files[0]) readFile(e.target.files[0]); e.target.value = ''; };
-    $('sc-clear').onclick = () => {
-      if (!items.length) { toast('비어있음'); return; }
-      if (confirm(items.length + '개 전부 삭제할까요?')) {
-        items = []; persist(); render(); toast('모두 삭제됨');
-      }
-    };
-    $('sc-cancel').onclick = closeEdit;
-    $('sc-save').onclick = saveEdit;
-    $('sc-url').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('sc-name').focus(); });
-    $('sc-name').addEventListener('keydown', (e) => { if (e.key === 'Enter') saveEdit(); });
-    $('sc-imp-merge').onclick = () => doImport('merge');
-    $('sc-imp-replace').onclick = () => doImport('replace');
-    $('sc-imp-cancel').onclick = () => { pending = null; $('sc-import-modal').classList.remove('sc-show'); };
-    document.querySelectorAll('.sc-modal').forEach(m => {
-      m.addEventListener('click', (e) => { if (e.target === m) m.classList.remove('sc-show'); });
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        document.querySelectorAll('.sc-modal.sc-show').forEach(m => m.classList.remove('sc-show'));
-        closeCtx();
-      }
-    });
-
-    items = load();
-    render();
-
-    /* ───── 제목 클릭 → 접기/펼치기 (localStorage로 상태 기억) ───── */
-    (function setupScCollapse() {
-      const section = document.getElementById('sc-root');
-      const title = section ? section.querySelector('.sc-title') : null;
-      if (!section || !title) return;
-      const CKEY = 'mywayScCollapsedV1';
-      /* 저장된 접힘 상태 복원 */
-      try {
-        if (localStorage.getItem(CKEY) === '1') section.classList.add('sc-collapsed');
-      } catch (e) {}
-      title.addEventListener('click', () => {
-        const collapsed = section.classList.toggle('sc-collapsed');
-        try { localStorage.setItem(CKEY, collapsed ? '1' : '0'); } catch (e) {}
+      /* 2) 보조: iframe이 보내주는 높이 신호 수신 */
+      window.addEventListener('message', function (e) {
+        var d = e.data;
+        if (d && d.type === 'favHeightHome' && typeof d.height === 'number' && fr) {
+          /* 직접 읽기가 되면 그 값 우선, 안 되면 신호값 사용 */
+          if (!fitDirect()) fr.style.height = (d.height + 8) + 'px';
+        }
       });
+
+      if (fr) {
+        fr.addEventListener('load', function () {
+          fitDirect();
+          setTimeout(fitDirect, 250);
+          setTimeout(fitDirect, 800);
+        });
+      }
+      setInterval(fitDirect, 800);
     })();
-  })();
-  
   </script>
 </body>
 </html>
