@@ -164,6 +164,17 @@
     .tool-ic:hover { background: #eef0f6; color: #4a5170; }
     .tool-ic.danger:hover { background: #fdeaed; color: #d6455c; }
     .tool-ic svg { width: 15px; height: 15px; }
+    .help-btn {
+      border: none; background: transparent; cursor: pointer;
+      font-family: inherit; font-size: .92rem; font-weight: 800;
+      color: #5b73ff; padding: 3px 7px; border-radius: 7px;
+      transition: color .15s, background-color .15s; white-space: nowrap;
+    }
+    .help-btn:hover { color: #3a52e6; background: #eef1ff; }
+    .help-modal { max-width: 460px; max-height: 82vh; overflow-y: auto; }
+    .help-body p { font-size: .9rem; color: #4a5170; line-height: 1.62; margin: 0 0 11px; word-break: keep-all; }
+    .help-body p:last-child { margin-bottom: 0; }
+    .help-body b { color: #1f2740; font-weight: 800; }
 
     /* 드래그 정렬 */
     .masonry .card.dragging { opacity: .4; }
@@ -389,6 +400,7 @@
     <div class="gallery-head">
       <div class="head-left">
         <h2 class="gallery-title">내 즐겨찾기 <span class="sub" id="filterSub">전체</span></h2>
+        <button class="help-btn" id="helpBtn" type="button">이용법</button>
         <div class="tool-icons">
           <button class="tool-ic" id="exportBtn" type="button" title="내보내기 (JSON 저장)" aria-label="내보내기">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -450,6 +462,27 @@
         <button type="button" class="btn-danger" id="delBtn" style="display:none">삭제</button>
         <button type="button" class="btn-ghost" id="addCancel">취소</button>
         <button type="button" class="btn-primary" id="addSubmit">등록</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 이용법 모달 -->
+  <div class="modal-overlay" id="helpModal">
+    <div class="modal help-modal">
+      <h3 class="modal-title">이용법</h3>
+      <div class="help-body">
+        <p><b>추가하기</b> — 맨 끝의 [+] 카드를 누르고 분류·이름·주소를 입력하면 등록됩니다.</p>
+        <p><b>분류</b> — 사이트 · 영상 · 사진 A~E 중에서 고릅니다. 보고 있던 탭이 자동으로 선택됩니다.</p>
+        <p><b>사이트</b> — 주소만 넣으면 제목과 도메인이 카드로 표시됩니다.</p>
+        <p><b>영상</b> — 유튜브 링크를 넣으면 썸네일이 자동으로 뜨고, 카드를 누르면 해당 영상으로 이동합니다.</p>
+        <p><b>사진</b> — 사진 주소(이미지 URL)를 넣으면 원본 비율 그대로 카드가 됩니다.</p>
+        <p><b>수정 / 삭제</b> — 카드 오른쪽 위의 색 모서리를 누르면 수정·삭제 창이 열립니다.</p>
+        <p><b>순서 변경</b> — 카드를 끌어다 놓으면 같은 분류 안에서 순서가 바뀝니다. (PC)</p>
+        <p><b>내보내기 / 가져오기 / 전체삭제</b> — 제목 옆 아이콘으로 백업·복원·전체삭제를 할 수 있습니다.</p>
+        <p><b>저장</b> — 모든 내용은 이 브라우저에 자동 저장됩니다.</p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-primary" id="helpClose">확인</button>
       </div>
     </div>
   </div>
@@ -757,7 +790,7 @@
     document.getElementById('delBtn').addEventListener('click', deleteCurrent);
     document.getElementById('inCat').addEventListener('change', refreshUrlLabel);
     document.getElementById('addModal').addEventListener('click', e => { if (e.target.id === 'addModal') closeAddModal(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeAddModal(); } });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeAddModal(); closeHelp(); } });
 
     /* ===== 드래그 정렬 ===== */
     function clearDragOver() {
@@ -804,6 +837,11 @@
     document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
     document.getElementById('importFile').addEventListener('change', e => { if (e.target.files[0]) importData(e.target.files[0]); e.target.value = ''; });
     document.getElementById('clearBtn').addEventListener('click', clearAll);
+    function openHelp() { document.getElementById('helpModal').classList.add('open'); }
+    function closeHelp() { document.getElementById('helpModal').classList.remove('open'); }
+    document.getElementById('helpBtn').addEventListener('click', openHelp);
+    document.getElementById('helpClose').addEventListener('click', closeHelp);
+    document.getElementById('helpModal').addEventListener('click', e => { if (e.target.id === 'helpModal') closeHelp(); });
 
     render();
     setupCatNav();
