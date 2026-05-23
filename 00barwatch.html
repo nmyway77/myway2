@@ -2,24 +2,8 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>전세계 시계·타이머·스톱워치 - 세계시간 한눈에 | MYWAY.KR</title>
-  <meta name="description" content="전세계 주요 도시의 시간을 한 화면에서 확인. 타이머, 스톱워치, 알람 기능을 모두 갖춘 무료 온라인 세계시계.">
-  <meta name="keywords" content="전세계시계, 세계시간, 타이머, 스톱워치, 시차계산, 월드클락, 알람, 세계 도시 시간">
-  <link rel="canonical" href="https://myway.kr/00barwatch.html">
-  <!-- Open Graph (페이스북·카카오톡 공유 시 표시) -->
-  <meta property="og:title" content="전세계 시계·타이머·스톱워치 - 세계시간 한눈에 | MYWAY.KR">
-  <meta property="og:description" content="전세계 주요 도시의 시간을 한 화면에서 확인. 타이머, 스톱워치, 알람 기능을 모두 갖춘 무료 온라인 세계시계.">
-  <meta property="og:url" content="https://myway.kr/00barwatch.html">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="MYWAY.KR">
-  <meta property="og:locale" content="ko_KR">
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="전세계 시계·타이머·스톱워치 - 세계시간 한눈에 | MYWAY.KR">
-  <meta name="twitter:description" content="전세계 주요 도시의 시간을 한 화면에서 확인. 타이머, 스톱워치, 알람 기능을 모두 갖춘 무료 온라인 세계시계.">
-  <!-- 검색 엔진 크롤링 허용 (기본값이지만 명시) -->
-  <meta name="robots" content="index, follow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>The World Clock · MYWAY</title>
   <meta name="theme-color" content="#f4ede0" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%97%8B%3C/text%3E%3C/svg%3E" />
 
@@ -953,46 +937,122 @@
       .btn-ctrl { font-size: 0.74rem; padding: 10px 6px; }
       .alarm-add-form input[type="time"] { flex: 0 0 100px; }
     }
-  
-    /* === SEO 본문 섹션 (페이지 하단 자료) === */
-    .seo-info {
-      position: relative;
-      width: 100%;
-      padding: 40px 20px 80px;
-      background: #f7f8fb;
-      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
-      font-size: 0.95rem;
-      line-height: 1.65;
-      color: #1a1f36;
-      box-sizing: border-box;
-      margin-top: 60px;
-      border-top: 1px solid #e4e7ee;
+
+    /* ─────────  TAB NAV  ───────── */
+    .tabnav {
+      max-width: 1440px;
+      margin: 0 auto 36px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--ink-5);
+      padding-bottom: 0;
     }
-    .seo-info-inner { max-width: 860px; margin: 0 auto; }
-    .seo-info h1 {
-      font-size: 1.4rem;
-      margin: 0 0 14px;
-      color: #2e3d5e;
-      letter-spacing: -0.3px;
-      text-align: left;
-      font-weight: 700;
+    .tabnav .tab {
+      background: none;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      padding: 12px 20px 14px;
+      margin-bottom: -1px;
+      font-family: 'Inter', 'Pretendard', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-4);
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
     }
-    .seo-info h2 {
-      font-size: 1.08rem;
-      margin: 26px 0 10px;
-      color: #2e3d5e;
-      letter-spacing: -0.2px;
-      font-weight: 700;
-    }
-    .seo-info p { margin: 0 0 12px; color: #3a4159; }
-    .seo-info ul { padding-left: 22px; margin: 0 0 14px; }
-    .seo-info li { margin-bottom: 5px; color: #3a4159; }
-    .seo-info .sites-tag { color: #6b7488; font-size: 0.85rem; }
-    @media (max-width: 700px) {
-      .seo-info { padding: 30px 16px 60px; font-size: 0.92rem; }
-      .seo-info h1 { font-size: 1.25rem; }
+    .tabnav .tab:hover { color: var(--ink-2); }
+    .tabnav .tab.is-active {
+      color: var(--ink);
+      border-bottom-color: var(--gold);
     }
 
+    /* ─────────  VIEWS  ───────── */
+    .view { display: none; }
+    .view.is-active { display: block; animation: viewIn 0.45s cubic-bezier(0.2,0.8,0.2,1); }
+    @keyframes viewIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    /* 단일 도구 카드 (탭 안에서 가운데) */
+    .tool-card.tool-solo {
+      max-width: 560px;
+      margin: 0 auto;
+      min-height: auto;
+      padding: 34px 34px 28px;
+      align-items: stretch;
+    }
+    .tool-card.tool-solo .display-large { justify-content: center; }
+    .tool-card.tool-solo .tool-head,
+    .tool-card.tool-solo .tool-sub { justify-content: center; text-align: center; }
+    .tool-card.tool-solo .tool-head { justify-content: center; }
+
+    /* ─────────  STOPWATCH DIAL (SVG)  ───────── */
+    .dial-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 4px auto 20px;
+      width: 100%;
+    }
+    .dial-svg {
+      width: min(290px, 74vw);
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 14px 26px rgba(28,24,20,0.20));
+    }
+    .sw-crown, .sw-stem, .sw-push {
+      fill: #c2b8a4; stroke: #8a8170; stroke-width: 1;
+    }
+    .sw-case   { fill: #29251f; }
+    .sw-bezel  { fill: #c9a865; }
+    .sw-bezel-in { fill: #b8975a; }
+    .sw-face   { fill: #fdfaf2; stroke: #e6dcc6; stroke-width: 1.5; }
+    .tick-major { stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; }
+    .tick-minor { stroke: var(--ink-4); stroke-width: 1; }
+    .numeral { fill: var(--ink-2); font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 600; text-anchor: middle; }
+    .numeral-clock { fill: var(--ink); font-family: 'Fraunces', serif; font-size: 16px; font-weight: 500; text-anchor: middle; }
+    .dial-brand { fill: var(--gold); font-family: 'Fraunces', serif; font-style: italic; font-size: 8px; letter-spacing: 1.4px; text-anchor: middle; }
+    .subdial { fill: #f1e9da; stroke: var(--ink-5); stroke-width: 1; }
+    .subtick { stroke: var(--ink-4); stroke-width: 0.8; }
+    .sw-progress { stroke: var(--gold-soft); stroke-width: 3; stroke-linecap: round; opacity: 0.9; }
+    .hand-sec      { stroke: var(--mood-golden); stroke-width: 1.7; stroke-linecap: round; }
+    .hand-min-sub  { stroke: var(--ink-2); stroke-width: 1.7; stroke-linecap: round; }
+    .hand-minute   { stroke: var(--ink); stroke-width: 3.4; stroke-linecap: round; }
+    .hand-hour     { stroke: var(--ink); stroke-width: 4.6; stroke-linecap: round; }
+    .cap     { fill: var(--ink); }
+    .cap-dot { fill: var(--mood-golden); }
+    .cap-sub { fill: var(--ink-2); }
+
+    /* ─────────  HOME + FOOTER  ───────── */
+    .float-home {
+      position: fixed; right: 22px; bottom: 22px;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--ink); color: var(--paper);
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none; z-index: 60;
+      box-shadow: 0 8px 22px rgba(28,24,20,0.30);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .float-home:hover { background: var(--gold); transform: translateY(-2px); }
+    .float-home svg { width: 23px; height: 23px; }
+    footer.site-foot {
+      max-width: 1440px;
+      margin: 64px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid var(--ink-5);
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      color: var(--ink-4);
+    }
+    footer.site-foot a { color: var(--gold); text-decoration: none; font-weight: 500; }
+    footer.site-foot a:hover { text-decoration: underline; }
+
+    @media (max-width: 520px) {
+      .tabnav .tab { padding: 10px 13px 12px; font-size: 0.66rem; letter-spacing: 0.12em; }
+      .tool-card.tool-solo { padding: 24px 18px 20px; }
+    }
   </style>
 </head>
 <body>
@@ -1006,24 +1066,28 @@
     </div>
   </header>
 
-  <main class="clock-grid" id="clockGrid"></main>
+  <nav class="tabnav" id="tabnav" aria-label="섹션 메뉴">
+    <button class="tab is-active" type="button" data-view="clock">전세계 시계</button>
+    <button class="tab" type="button" data-view="stopwatch">스탑워치</button>
+    <button class="tab" type="button" data-view="timer">타이머</button>
+    <button class="tab" type="button" data-view="alarm">알람</button>
+  </nav>
 
-  <div class="section-divider">
-    <div class="line"></div>
-    <div class="label">Tools</div>
-    <div class="line"></div>
-  </div>
+  <section class="view is-active" id="view-clock">
+    <main class="clock-grid" id="clockGrid"></main>
+  </section>
 
-  <section class="tools-grid" aria-label="시간 도구">
-
+  <section class="view" id="view-timer">
     <!-- ───── Timer ───── -->
-    <article class="tool-card" id="timerCard">
+    <article class="tool-card tool-solo" id="timerCard">
       <span class="tool-num">Nº 06</span>
       <div class="tool-head">
         <span class="tool-icon">⏱</span>
         <span class="tool-name">TIMER</span>
       </div>
       <div class="tool-sub">Countdown</div>
+
+      <div class="dial-wrap" id="tmDial"></div>
 
       <div class="display-large" id="timerDisplay">00:00:00</div>
 
@@ -1055,15 +1119,19 @@
         <button id="timerStopRing">중지</button>
       </div>
     </article>
+  </section>
 
+  <section class="view" id="view-stopwatch">
     <!-- ───── Stopwatch ───── -->
-    <article class="tool-card" id="stopwatchCard">
+    <article class="tool-card tool-solo" id="stopwatchCard">
       <span class="tool-num">Nº 07</span>
       <div class="tool-head">
         <span class="tool-icon">⏲</span>
         <span class="tool-name">STOPWATCH</span>
       </div>
       <div class="tool-sub">Lap timer</div>
+
+      <div class="dial-wrap" id="swDial"></div>
 
       <div class="display-large" id="swDisplay">
         <span class="hms">00:00:00</span><span class="ms">.00</span>
@@ -1077,15 +1145,19 @@
 
       <div class="lap-list" id="swLapList" aria-label="랩 기록"></div>
     </article>
+  </section>
 
+  <section class="view" id="view-alarm">
     <!-- ───── Alarm ───── -->
-    <article class="tool-card" id="alarmCard">
+    <article class="tool-card tool-solo" id="alarmCard">
       <span class="tool-num">Nº 08</span>
       <div class="tool-head">
         <span class="tool-icon">⏰</span>
         <span class="tool-name">ALARM</span>
       </div>
       <div class="tool-sub">Set &amp; forget</div>
+
+      <div class="dial-wrap" id="alDial"></div>
 
       <div class="display-large" id="alarmDisplayClock">--:--</div>
 
@@ -1822,43 +1894,166 @@
       }
     };
     Alarm.init();
+
+    /* ═══════════════════════════════════════════
+       탭 네비게이션 — 클릭 시 해당 섹션만 표시
+       ═══════════════════════════════════════════ */
+    (function(){
+      const tabs = Array.from(document.querySelectorAll('.tabnav .tab'));
+      const resetLink = document.getElementById('btnReset');
+      function show(name){
+        document.querySelectorAll('.view').forEach(v => v.classList.toggle('is-active', v.id === 'view-' + name));
+        tabs.forEach(t => t.classList.toggle('is-active', t.dataset.view === name));
+        if (resetLink) resetLink.style.visibility = (name === 'clock') ? '' : 'hidden';
+        try { localStorage.setItem('myway_clock_view', name); } catch(e){}
+      }
+      tabs.forEach(t => t.addEventListener('click', () => show(t.dataset.view)));
+      let init = 'clock';
+      try { const v = localStorage.getItem('myway_clock_view'); if (v) init = v; } catch(e){}
+      show(init);
+    })();
+
+    /* ═══════════════════════════════════════════
+       빈티지 스톱워치 다이얼 (SVG) — 실제 바늘이 작동
+       ═══════════════════════════════════════════ */
+    (function(){
+      const NS = 'http://www.w3.org/2000/svg';
+      const mk = (n, a) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); return e; };
+      const CX = 100, CY = 118, R = 84;
+      const SUB_CX = 100, SUB_CY = 150, SUB_R = 17;
+
+      function build(container, mode){
+        if (!container) return null;
+        const svg = mk('svg', { viewBox: '0 0 200 228', class: 'dial-svg' });
+        // 크라운 / 푸시버튼 (실제 스톱워치 형태)
+        svg.appendChild(mk('rect', { x: CX-13, y: 4, width: 26, height: 13, rx: 4, class: 'sw-crown' }));
+        svg.appendChild(mk('rect', { x: CX-5, y: 15, width: 10, height: 12, rx: 2, class: 'sw-stem' }));
+        svg.appendChild(mk('rect', { x: 150, y: 30, width: 13, height: 9, rx: 3, transform: 'rotate(45 156 34)', class: 'sw-push' }));
+        svg.appendChild(mk('rect', { x: 37, y: 30, width: 13, height: 9, rx: 3, transform: 'rotate(-45 44 34)', class: 'sw-push' }));
+        // 케이스 + 베젤 + 다이얼
+        svg.appendChild(mk('circle', { cx: CX, cy: CY, r: R+11, class: 'sw-case' }));
+        svg.appendChild(mk('circle', { cx: CX, cy: CY, r: R+6, class: 'sw-bezel' }));
+        svg.appendChild(mk('circle', { cx: CX, cy: CY, r: R+2, class: 'sw-bezel-in' }));
+        svg.appendChild(mk('circle', { cx: CX, cy: CY, r: R, class: 'sw-face' }));
+        // 진행 링 (크로노 전용)
+        let ring = null, circ = 0;
+        if (mode === 'chrono'){
+          const rr = R - 5; circ = 2 * Math.PI * rr;
+          ring = mk('circle', { cx: CX, cy: CY, r: rr, fill: 'none', class: 'sw-progress',
+            'stroke-dasharray': circ, 'stroke-dashoffset': circ, transform: 'rotate(-90 ' + CX + ' ' + CY + ')' });
+          svg.appendChild(ring);
+        }
+        // 눈금 60개
+        for (let i = 0; i < 60; i++){
+          const major = i % 5 === 0;
+          const a = i * 6 * Math.PI / 180;
+          const r1 = R - 3, r2 = R - (major ? 12 : 7);
+          svg.appendChild(mk('line', {
+            x1: CX + r1*Math.sin(a), y1: CY - r1*Math.cos(a),
+            x2: CX + r2*Math.sin(a), y2: CY - r2*Math.cos(a),
+            class: major ? 'tick-major' : 'tick-minor' }));
+        }
+        // 숫자
+        if (mode === 'chrono'){
+          for (let i = 5; i <= 60; i += 5){
+            const a = (i % 60) * 6 * Math.PI / 180; const rr = R - 24;
+            const t = mk('text', { x: CX + rr*Math.sin(a), y: CY - rr*Math.cos(a) + 4, class: 'numeral' });
+            t.textContent = i; svg.appendChild(t);
+          }
+        } else {
+          [12,3,6,9].forEach((n,k) => {
+            const a = k*90 * Math.PI/180; const rr = R - 22;
+            const t = mk('text', { x: CX + rr*Math.sin(a), y: CY - rr*Math.cos(a) + 5.5, class: 'numeral-clock' });
+            t.textContent = n; svg.appendChild(t);
+          });
+        }
+        const brand = mk('text', { x: CX, y: CY - 28, class: 'dial-brand' }); brand.textContent = 'MYWAY'; svg.appendChild(brand);
+
+        const hands = { cx: CX, cy: CY, ring: ring, circ: circ };
+        if (mode === 'chrono'){
+          // 분 서브다이얼
+          svg.appendChild(mk('circle', { cx: SUB_CX, cy: SUB_CY, r: SUB_R, class: 'subdial' }));
+          for (let i = 0; i < 12; i++){
+            const a = i*30*Math.PI/180; const r1 = SUB_R-2, r2 = SUB_R-5;
+            svg.appendChild(mk('line', { x1: SUB_CX+r1*Math.sin(a), y1: SUB_CY-r1*Math.cos(a),
+              x2: SUB_CX+r2*Math.sin(a), y2: SUB_CY-r2*Math.cos(a), class: 'subtick' }));
+          }
+          const minH = mk('line', { x1: SUB_CX, y1: SUB_CY+4, x2: SUB_CX, y2: SUB_CY-SUB_R+3, class: 'hand-min-sub' });
+          svg.appendChild(minH);
+          svg.appendChild(mk('circle', { cx: SUB_CX, cy: SUB_CY, r: 1.8, class: 'cap-sub' }));
+          const secH = mk('line', { x1: CX, y1: CY+15, x2: CX, y2: CY-R+12, class: 'hand-sec' });
+          svg.appendChild(secH);
+          svg.appendChild(mk('circle', { cx: CX, cy: CY, r: 4.5, class: 'cap' }));
+          svg.appendChild(mk('circle', { cx: CX, cy: CY, r: 1.8, class: 'cap-dot' }));
+          hands.sec = secH; hands.min = minH;
+        } else {
+          const hH = mk('line', { x1: CX, y1: CY+12, x2: CX, y2: CY-R*0.5, class: 'hand-hour' });
+          const mH = mk('line', { x1: CX, y1: CY+15, x2: CX, y2: CY-R*0.72, class: 'hand-minute' });
+          const sH = mk('line', { x1: CX, y1: CY+18, x2: CX, y2: CY-R*0.8, class: 'hand-sec' });
+          svg.appendChild(hH); svg.appendChild(mH); svg.appendChild(sH);
+          svg.appendChild(mk('circle', { cx: CX, cy: CY, r: 4.5, class: 'cap' }));
+          svg.appendChild(mk('circle', { cx: CX, cy: CY, r: 1.8, class: 'cap-dot' }));
+          hands.h = hH; hands.m = mH; hands.s = sH;
+        }
+        container.appendChild(svg);
+        return hands;
+      }
+
+      const rot = (e, deg, cx, cy) => { if (e) e.setAttribute('transform', 'rotate(' + deg + ' ' + cx + ' ' + cy + ')'); };
+
+      const swH = build(document.getElementById('swDial'), 'chrono');
+      const tmH = build(document.getElementById('tmDial'), 'chrono');
+      const alH = build(document.getElementById('alDial'), 'clock');
+
+      function frame(){
+        if (swH){
+          const e = Stopwatch.getElapsed();
+          rot(swH.sec, (e/1000 % 60) * 6, swH.cx, swH.cy);
+          rot(swH.min, (e/60000 % 60) * 6, SUB_CX, SUB_CY);
+          if (swH.ring) swH.ring.setAttribute('stroke-dashoffset', swH.circ * (1 - (e/1000 % 60)/60));
+        }
+        if (tmH){
+          const remain = Timer.running ? Math.max(0, Timer.endTime - Date.now()) : Timer.totalMs;
+          rot(tmH.sec, (remain/1000 % 60) * 6, tmH.cx, tmH.cy);
+          rot(tmH.min, (remain/60000 % 60) * 6, SUB_CX, SUB_CY);
+          const frac = Timer.totalMs > 0 ? Math.min(1, remain / Timer.totalMs) : 0;
+          if (tmH.ring) tmH.ring.setAttribute('stroke-dashoffset', tmH.circ * (1 - frac));
+        }
+        if (alH){
+          const now = new Date();
+          const cs = now.getMilliseconds(), s = now.getSeconds(), m = now.getMinutes(), h = now.getHours();
+          rot(alH.s, (s + cs/1000) * 6, alH.cx, alH.cy);
+          rot(alH.m, (m + s/60) * 6, alH.cx, alH.cy);
+          rot(alH.h, ((h % 12) + m/60) * 30, alH.cx, alH.cy);
+        }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    })();
+
+    /* ═══════════════════════════════════════════
+       MYWAY.KR 복사 방지 정책 (input/textarea/select 예외)
+       ═══════════════════════════════════════════ */
+    (function(){
+      const editable = t => t && ['INPUT','TEXTAREA','SELECT'].includes(t.tagName);
+      ['contextmenu','selectstart','dragstart','copy','cut'].forEach(evt => {
+        document.addEventListener(evt, e => { if (editable(e.target)) return; e.preventDefault(); });
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'F12'){ e.preventDefault(); return; }
+        const k = (e.key || '').toLowerCase();
+        if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(k)){ e.preventDefault(); return; }
+        if (e.ctrlKey && !e.shiftKey && ['u','s','c','x','a'].includes(k)){ if (editable(e.target)) return; e.preventDefault(); }
+      });
+    })();
   </script>
 
-  <!-- SEO 본문 섹션 -->
-  <section class="seo-info">
-    <div class="seo-info-inner">
-      <h1>전세계 시계·타이머·스톱워치 - 세계시간 한눈에 확인</h1>
-      <p>MYWAY.KR의 세계시계는 <strong>전세계 42개 주요 도시의 현재 시간</strong>을 한 화면에서 동시에 확인할 수 있는 무료 온라인 도구입니다. 시계 외에도 타이머, 스톱워치, 알람 기능을 모두 포함하여 시간 관리에 필요한 모든 기능을 제공합니다.</p>
+  <a href="https://myway.kr" class="float-home" aria-label="홈으로">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/>
+    </svg>
+  </a>
 
-      <h2>주요 기능</h2>
-      <ul>
-        <li><strong>세계 시계</strong> - 서울, 도쿄, 베이징, 런던, 뉴욕, 로스앤젤레스, 시드니 등 42개 도시</li>
-        <li><strong>타이머</strong> - 카운트다운 시간 설정 (요리, 운동, 휴식 등)</li>
-        <li><strong>스톱워치</strong> - 정확한 시간 측정 (랩 타임 기록 가능)</li>
-        <li><strong>알람</strong> - 원하는 시각에 알림</li>
-        <li><strong>주야 색상 구분</strong> - 도시별 현재 낮·밤을 색으로 표시</li>
-        <li><strong>24시간 진행 바</strong> - 하루 진행 상황을 시각적으로 표현</li>
-      </ul>
-
-      <h2>활용 예시</h2>
-      <ul>
-        <li>해외 가족·친구와 통화 시간 조율 (시차 확인)</li>
-        <li>해외 출장·여행 시간대 비교 (서울 vs 뉴욕)</li>
-        <li>해외 주식 거래 시간 (미국 장 마감 시간)</li>
-        <li>해외 화상 회의 시간 조정 (글로벌 미팅)</li>
-        <li>요리 타이머, 운동 인터벌 측정</li>
-        <li>공부·작업 시간 측정 (스톱워치)</li>
-      </ul>
-
-      <h2>지원 도시</h2>
-      <p>아시아: 서울, 도쿄, 베이징, 홍콩, 싱가포르, 방콕, 두바이, 뉴델리 등<br>
-      유럽: 런던, 파리, 베를린, 로마, 모스크바, 이스탄불 등<br>
-      미주: 뉴욕, 로스앤젤레스, 시카고, 토론토, 멕시코시티, 상파울루 등<br>
-      오세아니아: 시드니, 멜버른, 오클랜드 등</p>
-
-      <p class="sites-tag">관련 키워드: 세계시계, 전세계 시계, 세계 시간, 시차 계산, 월드클락, 타이머, 스톱워치, 알람, 도시 시간, 글로벌 시간</p>
-    </div>
-  </section>
-
+  <footer class="site-foot">© MYWAY · <a href="https://myway.kr">myway.kr</a></footer>
 </body>
 </html>
