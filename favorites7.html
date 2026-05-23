@@ -520,7 +520,7 @@
                (유튜브가 아닌 주소는 새 탭으로 열립니다)
        · 카드 우측 상단 색 코너를 누르면 수정/삭제 창이 열립니다.
     ============================================================ */
-    const STORAGE_KEY = 'mywayFavoritesV3';
+    const STORAGE_KEY = 'mywayFavoritesV5';
 
     const CATS = [
       { code: 'site',   label: '사이트' },
@@ -538,11 +538,12 @@
         { name: '구글',   url: 'https://www.google.com', img: '' }
       ],
       video: [
-        { name: '유튜브',   url: 'https://www.youtube.com', img: '' },
-        { name: '넷플릭스', url: 'https://www.netflix.com', img: '' }
+        { name: '샘플 영상 1', url: 'https://www.youtube.com/shorts/UeVlQuohfAs', img: '' },
+        { name: '샘플 영상 2', url: 'https://www.youtube.com/watch?v=Z2iPlbIBUQM', img: '' }
       ],
       photoA: [
-        { name: '샘플 사진', url: '', img: 'https://picsum.photos/seed/myway/400/520' }
+        { name: '샘플 사진', url: '', img: 'https://static.hanatour.com/product/2021/06/15/0626o1grx0/default.png' },
+        { name: '김종국', url: 'https://www.youtube.com/c/GYMJONGKOOK', img: 'https://yt3.googleusercontent.com/dQpGedX7jQIIQ-BJcj3dGroHLb_cY5Mx8bDvmyD-oJO5_NQkR6W5OlsCuqmNrWh3cGq3KvyxmYA=s900-c-k-c0x00ffffff-no-rj' }
       ],
       photoB: [], photoC: [], photoD: [], photoE: []
     };
@@ -602,7 +603,8 @@
     function buildCard(item, cat, idx) {
       const a = document.createElement('a');
       a.className = 'card';
-      if (item.url) { a.href = item.url; a.target = '_blank'; a.rel = 'noopener'; }
+      const linkUrl = item.url || (cat.indexOf('photo') === 0 ? cardImage(item, cat) : '');
+      if (linkUrl) { a.href = linkUrl; a.target = '_blank'; a.rel = 'noopener'; }
       else { a.style.cursor = 'default'; }
       a.dataset.cats = cat;
       a.setAttribute('aria-label', item.name);
