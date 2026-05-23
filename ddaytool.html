@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>D-day 계산기 - 날짜 계산·디데이·날짜 간격 | MYWAY.KR</title>
+  <meta name="description" content="목표 날짜까지 D-day를 계산하고, 두 날짜 사이 간격(일·주·개월·년)을 구하고, 특정 날짜로부터 N일 후·전 날짜를 계산하는 무료 날짜 계산기.">
+  <meta name="keywords" content="디데이 계산기, D-day 계산, 날짜 계산기, 날짜 간격 계산, 날짜 계산, 며칠 남았나, 날짜 더하기">
+  <link rel="canonical" href="https://myway.kr/ddaytool.html">
+  <meta property="og:title" content="D-day 계산기 - 날짜 계산·디데이·날짜 간격 | MYWAY.KR">
+  <meta property="og:description" content="D-day, 날짜 간격, N일 후·전 날짜를 한 번에 계산하는 무료 날짜 계산기.">
+  <meta property="og:url" content="https://myway.kr/ddaytool.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MYWAY.KR">
+  <meta property="og:locale" content="ko_KR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="robots" content="index, follow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+  <style>
+    :root{
+      --paper:#f7f3eb;--ink:#1c1a17;--muted:#7a7468;--line:#e3ddcf;--card:#fffdf8;
+      --accent:#b5851f;--accent-soft:#f3e9cf;
+      --serif:'Fraunces',Georgia,serif;--sans:'Pretendard','맑은 고딕',sans-serif;
+      --mono:'JetBrains Mono',monospace;--num:'Space Grotesk',sans-serif;
+    }
+    *{box-sizing:border-box;}
+    html,body{margin:0;padding:0;}
+    body{min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--sans);
+      -webkit-user-select:none;-moz-user-select:none;user-select:none;}
+    input,textarea,select{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
+
+    .top-home{position:fixed;top:20px;left:24px;font-family:var(--mono);font-size:.78rem;
+      letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none;z-index:50;}
+    .top-home:hover{color:var(--accent);}
+
+    .wrap{max-width:680px;margin:0 auto;padding:88px 24px 130px;}
+    .head{text-align:center;margin-bottom:30px;}
+    .eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
+    h1{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.05;margin:0 0 12px;letter-spacing:-.01em;}
+    .lede{color:var(--muted);font-size:1rem;line-height:1.6;margin:0 auto;max-width:480px;}
+
+    .tabs{display:flex;gap:6px;background:var(--card);border:1.5px solid var(--line);
+      border-radius:13px;padding:5px;margin-bottom:22px;}
+    .tabs button{flex:1;font-family:var(--sans);font-size:.9rem;font-weight:600;padding:11px 0;
+      border:none;border-radius:9px;background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;}
+    .tabs button[aria-selected="true"]{background:var(--ink);color:var(--paper);}
+    .tabs button:hover:not([aria-selected="true"]){color:var(--accent);}
+
+    .card{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:24px;}
+    .panel{display:none;}
+    .panel.active{display:block;}
+
+    .field{margin-bottom:18px;}
+    .field:last-of-type{margin-bottom:0;}
+    .field label{display:block;font-size:.84rem;font-weight:600;margin-bottom:8px;}
+    .ipt{width:100%;font-family:var(--mono);font-size:.95rem;padding:12px 14px;border:1.5px solid var(--line);
+      border-radius:11px;background:var(--paper);color:var(--ink);outline:none;}
+    .ipt:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);}
+    .row{display:flex;gap:12px;}
+    .row .field{flex:1;}
+    .calc-line{display:flex;gap:12px;align-items:flex-end;}
+    .calc-line .field{flex:1;margin-bottom:0;}
+    .calc-line .small{flex:0 0 110px;}
+
+    .seg{display:flex;gap:6px;margin-top:8px;}
+    .seg button{flex:1;font-family:var(--mono);font-size:.82rem;padding:9px 0;border:1.4px solid var(--line);
+      border-radius:9px;background:var(--paper);color:var(--muted);cursor:pointer;transition:all .15s;}
+    .seg button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper);}
+    .seg button:hover{border-color:var(--accent);}
+
+    /* 결과 */
+    .result{margin-top:22px;padding:26px 20px;border-radius:14px;background:var(--accent-soft);
+      border:1.5px solid var(--accent);text-align:center;}
+    .dday-big{font-family:var(--num);font-weight:700;font-size:clamp(2.6rem,11vw,4.2rem);
+      line-height:1;color:var(--accent);letter-spacing:-.02em;}
+    .dday-label{font-family:var(--mono);font-size:.8rem;color:var(--muted);margin-top:8px;letter-spacing:.05em;}
+    .result-main{font-family:var(--num);font-weight:700;font-size:clamp(1.8rem,7vw,2.6rem);color:var(--ink);line-height:1.15;}
+    .result-sub{margin-top:14px;color:#5e5848;font-size:.92rem;line-height:1.7;}
+    .result-sub b{color:var(--ink);font-family:var(--mono);}
+    .target-name{font-family:var(--serif);font-size:1.15rem;font-weight:600;color:var(--ink);margin-bottom:10px;}
+
+    .float-home{position:fixed;right:22px;bottom:22px;width:54px;height:54px;border-radius:50%;
+      background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;
+      text-decoration:none;box-shadow:0 8px 22px rgba(28,26,23,.28);z-index:60;transition:background .18s,transform .18s;}
+    .float-home:hover{background:var(--accent);transform:translateY(-2px);}
+    .float-home svg{width:24px;height:24px;}
+
+    footer{text-align:center;padding:30px 20px 40px;border-top:1px solid var(--line);
+      color:var(--muted);font-family:var(--mono);font-size:.78rem;letter-spacing:.04em;}
+    footer a{color:var(--accent);text-decoration:none;font-weight:600;}
+    footer a:hover{text-decoration:underline;}
+
+    @media (max-width:600px){.wrap{padding:78px 16px 110px;}.calc-line{flex-wrap:wrap;}.calc-line .small{flex:1 1 100%;}}
+  </style>
+</head>
+<body>
+  <a href="https://myway.kr" class="top-home">← MYWAY.KR</a>
+
+  <main class="wrap">
+    <div class="head">
+      <div class="eyebrow">Date Calculator</div>
+      <h1>D-day 계산기</h1>
+      <p class="lede">디데이를 세고, 두 날짜 사이 간격을 구하고, 특정 날짜로부터 며칠 후·전을 계산하세요.</p>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="dday">D-day</button>
+      <button role="tab" aria-selected="false" data-tab="gap">날짜 간격</button>
+      <button role="tab" aria-selected="false" data-tab="add">날짜 계산</button>
+    </div>
+
+    <!-- D-day -->
+    <div class="card panel active" id="panel-dday">
+      <div class="field">
+        <label for="ddayName">이름 (선택)</label>
+        <input type="text" class="ipt" id="ddayName" placeholder="예: 시험일, 기념일, 마감" maxlength="40">
+      </div>
+      <div class="field">
+        <label for="ddayDate">목표 날짜</label>
+        <input type="date" class="ipt" id="ddayDate">
+      </div>
+      <div class="field">
+        <label>기준</label>
+        <div class="seg" id="ddayMode">
+          <button type="button" data-inc="exclude" aria-pressed="true">오늘은 D-day (당일=0)</button>
+          <button type="button" data-inc="include">오늘 포함해서 세기</button>
+        </div>
+      </div>
+      <div class="result" id="ddayResult"></div>
+    </div>
+
+    <!-- 날짜 간격 -->
+    <div class="card panel" id="panel-gap">
+      <div class="row">
+        <div class="field">
+          <label for="gapFrom">시작 날짜</label>
+          <input type="date" class="ipt" id="gapFrom">
+        </div>
+        <div class="field">
+          <label for="gapTo">끝 날짜</label>
+          <input type="date" class="ipt" id="gapTo">
+        </div>
+      </div>
+      <div class="result" id="gapResult"></div>
+    </div>
+
+    <!-- 날짜 계산 -->
+    <div class="card panel" id="panel-add">
+      <div class="field">
+        <label for="addBase">기준 날짜</label>
+        <input type="date" class="ipt" id="addBase">
+      </div>
+      <div class="calc-line">
+        <div class="field small">
+          <label>방향</label>
+          <select class="ipt" id="addDir">
+            <option value="1">후 (＋)</option>
+            <option value="-1">전 (－)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="addNum">숫자</label>
+          <input type="number" class="ipt" id="addNum" value="100" min="0">
+        </div>
+        <div class="field small">
+          <label>단위</label>
+          <select class="ipt" id="addUnit">
+            <option value="day">일</option>
+            <option value="week">주</option>
+            <option value="month">개월</option>
+            <option value="year">년</option>
+          </select>
+        </div>
+      </div>
+      <div class="result" id="addResult"></div>
+    </div>
+  </main>
+
+  <a href="https://myway.kr" class="float-home" aria-label="홈으로">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/>
+    </svg>
+  </a>
+
+  <footer>© MYWAY.KR · <a href="https://myway.kr">myway.kr</a></footer>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const WD = ['일','월','화','수','목','금','토'];
+    const DAY = 86400000;
+
+    /* 날짜 유틸 */
+    function parse(str){
+      if (!str) return null;
+      const [y,m,d] = str.split('-').map(Number);
+      if (!y || !m || !d) return null;
+      return new Date(y, m - 1, d);
+    }
+    function todayStr(){
+      const d = new Date(), z = n => String(n).padStart(2,'0');
+      return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`;
+    }
+    function toStr(date){
+      const z = n => String(n).padStart(2,'0');
+      return `${date.getFullYear()}-${z(date.getMonth()+1)}-${z(date.getDate())}`;
+    }
+    function fmt(date){
+      return `${date.getFullYear()}년 ${date.getMonth()+1}월 ${date.getDate()}일 (${WD[date.getDay()]})`;
+    }
+    function dayDiff(a,b){ return Math.round((b - a) / DAY); }
+    function ymd(a,b){ // a<=b 가정, 달력 기준 차이 (음수 일수 없음)
+      let months = (b.getFullYear()-a.getFullYear())*12 + (b.getMonth()-a.getMonth());
+      let anchor = new Date(a.getFullYear(), a.getMonth()+months, a.getDate());
+      while (anchor > b){ months--; anchor = new Date(a.getFullYear(), a.getMonth()+months, a.getDate()); }
+      const d = Math.round((b - anchor) / DAY);
+      return { y: Math.floor(months/12), m: months % 12, d };
+    }
+    function num(n){ return n.toLocaleString('ko-KR'); }
+
+    /* 탭 전환 */
+    document.querySelectorAll('.tabs button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-selected', String(b === btn)));
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        $('panel-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    /* ===== D-day ===== */
+    let ddayInclude = false;
+    $('ddayMode').querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        ddayInclude = btn.dataset.inc === 'include';
+        $('ddayMode').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+        calcDday();
+      });
+    });
+    function calcDday(){
+      const box = $('ddayResult');
+      const target = parse($('ddayDate').value);
+      if (!target){ box.innerHTML = '<span class="dday-label">목표 날짜를 선택하세요</span>'; return; }
+      const today = parse(todayStr());
+      let diff = dayDiff(today, target);   // 양수=미래
+      const name = $('ddayName').value.trim();
+
+      let big, label;
+      if (ddayInclude){
+        // 오늘 포함: 미래면 D-(diff+1), 당일 D-1로 세는 한국식 카운트다운 표기 대신 "n일째"
+        if (diff >= 0){ big = 'D-' + (diff + 1); label = `오늘 포함 ${num(diff + 1)}일째 카운트`; }
+        else { big = 'D+' + (-diff); label = '지난 날짜'; }
+      } else {
+        if (diff === 0){ big = 'D-DAY'; label = '바로 오늘입니다 🎉'; }
+        else if (diff > 0){ big = 'D-' + num(diff); label = `${num(diff)}일 남았습니다`; }
+        else { big = 'D+' + num(-diff); label = `${num(-diff)}일 지났습니다`; }
+      }
+
+      const absDays = Math.abs(diff);
+      const weeks = Math.floor(absDays / 7), rem = absDays % 7;
+      let breakdown = '';
+      if (absDays >= 7){
+        const lo = diff >= 0 ? today : target, hi = diff >= 0 ? target : today;
+        const b = ymd(lo, hi);
+        const parts = [];
+        if (b.y) parts.push(`${b.y}년`);
+        if (b.m) parts.push(`${b.m}개월`);
+        if (b.d) parts.push(`${b.d}일`);
+        breakdown = `<div class="result-sub">약 <b>${parts.join(' ')}</b> · <b>${num(weeks)}주 ${rem}일</b><br>목표: <b>${fmt(target)}</b></div>`;
+      } else {
+        breakdown = `<div class="result-sub">목표: <b>${fmt(target)}</b></div>`;
+      }
+
+      box.innerHTML =
+        (name ? `<div class="target-name">${escapeHtml(name)}</div>` : '') +
+        `<div class="dday-big">${big}</div><div class="dday-label">${label}</div>${breakdown}`;
+    }
+    ['input','change'].forEach(ev => {
+      $('ddayDate').addEventListener(ev, calcDday);
+      $('ddayName').addEventListener(ev, calcDday);
+    });
+
+    /* ===== 날짜 간격 ===== */
+    function calcGap(){
+      const box = $('gapResult');
+      const a = parse($('gapFrom').value), b = parse($('gapTo').value);
+      if (!a || !b){ box.innerHTML = '<span class="dday-label">두 날짜를 선택하세요</span>'; return; }
+      const diff = Math.abs(dayDiff(a, b));
+      const lo = a <= b ? a : b, hi = a <= b ? b : a;
+      const c = ymd(lo, hi);
+      const weeks = Math.floor(diff / 7), rem = diff % 7;
+      const parts = [];
+      if (c.y) parts.push(`${c.y}년`);
+      if (c.m) parts.push(`${c.m}개월`);
+      if (c.d) parts.push(`${c.d}일`);
+      const human = parts.length ? parts.join(' ') : '0일';
+      box.innerHTML =
+        `<div class="result-main">${num(diff)}<span style="font-size:.45em;"> 일</span></div>` +
+        `<div class="result-sub">약 <b>${human}</b> · <b>${num(weeks)}주 ${rem}일</b><br>` +
+        `<b>${fmt(lo)}</b> → <b>${fmt(hi)}</b><br>` +
+        `양 끝 포함 시 <b>${num(diff + 1)}일</b></div>`;
+    }
+    ['input','change'].forEach(ev => { $('gapFrom').addEventListener(ev, calcGap); $('gapTo').addEventListener(ev, calcGap); });
+
+    /* ===== 날짜 계산 ===== */
+    function calcAdd(){
+      const box = $('addResult');
+      const base = parse($('addBase').value);
+      const n = parseInt($('addNum').value, 10);
+      if (!base || isNaN(n)){ box.innerHTML = '<span class="dday-label">기준 날짜와 숫자를 입력하세요</span>'; return; }
+      const dir = parseInt($('addDir').value, 10);
+      const unit = $('addUnit').value;
+      const amount = n * dir;
+      const r = new Date(base.getFullYear(), base.getMonth(), base.getDate());
+      if (unit === 'day') r.setDate(r.getDate() + amount);
+      else if (unit === 'week') r.setDate(r.getDate() + amount * 7);
+      else if (unit === 'month') r.setMonth(r.getMonth() + amount);
+      else if (unit === 'year') r.setFullYear(r.getFullYear() + amount);
+
+      const totalDays = dayDiff(base, r);
+      const unitKo = { day:'일', week:'주', month:'개월', year:'년' }[unit];
+      const dirKo = dir > 0 ? '후' : '전';
+      box.innerHTML =
+        `<div class="result-main">${fmt(r)}</div>` +
+        `<div class="result-sub"><b>${fmt(base)}</b><br>기준 ${num(Math.abs(n))}${unitKo} ${dirKo} · 총 <b>${num(Math.abs(totalDays))}일</b> ${dirKo}</div>`;
+    }
+    ['input','change'].forEach(ev => {
+      ['addBase','addNum','addDir','addUnit'].forEach(id => $(id).addEventListener(ev, calcAdd));
+    });
+
+    function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+    /* 초기값 */
+    (function init(){
+      const t = todayStr();
+      $('ddayDate').value = t;
+      $('gapFrom').value = t;
+      $('gapTo').value = t;
+      $('addBase').value = t;
+      calcDday(); calcGap(); calcAdd();
+    })();
+
+    /* MYWAY.KR 복사 방지 정책 (input/textarea/select 예외) */
+    (function(){
+      const editable = t => t && ['INPUT','TEXTAREA','SELECT'].includes(t.tagName);
+      ['contextmenu','selectstart','dragstart','copy','cut'].forEach(evt => {
+        document.addEventListener(evt, e => { if (editable(e.target)) return; e.preventDefault(); });
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'F12'){ e.preventDefault(); return; }
+        const k = (e.key || '').toLowerCase();
+        if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(k)){ e.preventDefault(); return; }
+        if (e.ctrlKey && !e.shiftKey && ['u','s','c','x','a'].includes(k)){ if (editable(e.target)) return; e.preventDefault(); }
+      });
+    })();
+  </script>
+</body>
+</html>

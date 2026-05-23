@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>QR코드 생성기 - URL·텍스트 QR 무료 만들기 | MYWAY.KR</title>
+  <meta name="description" content="URL, 텍스트, 와이파이 정보를 QR코드로 즉시 변환. 색상·오류복원율 설정, 투명 배경, 고해상도 PNG 다운로드 지원. 무료 QR 코드 생성기.">
+  <meta name="keywords" content="QR코드 생성기, QR코드 만들기, QR 생성, URL QR코드, 무료 QR코드, 큐알코드 생성">
+  <link rel="canonical" href="https://myway.kr/qrtool.html">
+  <meta property="og:title" content="QR코드 생성기 - URL·텍스트 QR 무료 만들기 | MYWAY.KR">
+  <meta property="og:description" content="URL·텍스트를 QR코드로 즉시 변환. 색상·오류복원율 설정, 고해상도 PNG 다운로드.">
+  <meta property="og:url" content="https://myway.kr/qrtool.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MYWAY.KR">
+  <meta property="og:locale" content="ko_KR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="robots" content="index, follow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    :root{
+      --paper:#f7f3eb;--ink:#1c1a17;--muted:#7a7468;--line:#e3ddcf;--card:#fffdf8;
+      --accent:#4642a8;--accent-soft:#e3e2f3;
+      --serif:'Fraunces',Georgia,serif;--sans:'Pretendard','맑은 고딕',sans-serif;--mono:'JetBrains Mono',monospace;
+    }
+    *{box-sizing:border-box;}
+    html,body{margin:0;padding:0;}
+    body{min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--sans);
+      -webkit-user-select:none;-moz-user-select:none;user-select:none;}
+    input,textarea{-webkit-user-select:text;-moz-user-select:text;user-select:text;}
+
+    .top-home{position:fixed;top:20px;left:24px;font-family:var(--mono);font-size:.78rem;
+      letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none;z-index:50;}
+    .top-home:hover{color:var(--accent);}
+
+    .wrap{max-width:920px;margin:0 auto;padding:88px 24px 130px;}
+    .head{text-align:center;margin-bottom:34px;}
+    .eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
+    h1{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.05;margin:0 0 12px;letter-spacing:-.01em;}
+    .lede{color:var(--muted);font-size:1rem;line-height:1.6;margin:0 auto;max-width:520px;}
+
+    .panel{display:grid;grid-template-columns:1fr 320px;gap:28px;align-items:start;}
+    @media (max-width:760px){.panel{grid-template-columns:1fr;}}
+
+    .controls{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:22px;}
+    .field{margin-bottom:20px;}
+    .field:last-child{margin-bottom:0;}
+    .field label{display:block;font-size:.84rem;font-weight:600;margin-bottom:8px;}
+    textarea#qrText{
+      width:100%;min-height:96px;resize:vertical;font-family:var(--mono);font-size:.92rem;
+      padding:12px 14px;border:1.5px solid var(--line);border-radius:11px;background:var(--paper);
+      color:var(--ink);outline:none;line-height:1.5;
+    }
+    textarea#qrText:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);}
+
+    .seg{display:flex;gap:6px;}
+    .seg button{
+      flex:1;font-family:var(--mono);font-size:.8rem;padding:9px 0;border:1.4px solid var(--line);
+      border-radius:9px;background:var(--paper);color:var(--muted);cursor:pointer;transition:all .15s;
+    }
+    .seg button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper);}
+    .seg button:hover{border-color:var(--accent);}
+    .ec-hint{font-family:var(--mono);font-size:.68rem;color:#b3ab9c;margin-top:7px;}
+
+    .color-row{display:flex;gap:16px;}
+    .color-item{flex:1;}
+    .color-item .swatch{display:flex;align-items:center;gap:10px;
+      border:1.4px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--paper);}
+    .color-item input[type="color"]{width:34px;height:34px;border:none;border-radius:7px;background:none;cursor:pointer;padding:0;}
+    .color-item .hex{font-family:var(--mono);font-size:.8rem;color:var(--muted);}
+    .toggle-row{display:flex;align-items:center;gap:9px;margin-top:14px;}
+    .toggle-row input{width:17px;height:17px;accent-color:var(--accent);cursor:pointer;}
+    .toggle-row label{font-size:.86rem;font-weight:500;margin:0;cursor:pointer;}
+
+    .preview{position:sticky;top:24px;text-align:center;}
+    .qr-stage{
+      background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:24px;
+      display:flex;align-items:center;justify-content:center;min-height:280px;
+      background-image:linear-gradient(45deg,#efeadf 25%,transparent 25%),linear-gradient(-45deg,#efeadf 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#efeadf 75%),linear-gradient(-45deg,transparent 75%,#efeadf 75%);
+      background-size:18px 18px;background-position:0 0,0 9px,9px -9px,-9px 0;
+    }
+    #qrcode{display:inline-block;}
+    #qrcode img,#qrcode canvas{width:240px!important;height:240px!important;border-radius:6px;display:block;}
+    .ph{color:var(--muted);font-family:var(--mono);font-size:.85rem;}
+    .dl-btn{
+      width:100%;margin-top:16px;font-family:var(--sans);font-size:.95rem;font-weight:600;
+      padding:13px;border:none;border-radius:11px;background:var(--ink);color:var(--paper);cursor:pointer;transition:background .18s,transform .08s;
+    }
+    .dl-btn:hover{background:var(--accent);}
+    .dl-btn:active{transform:translateY(1px);}
+    .dl-btn:disabled{opacity:.45;cursor:not-allowed;}
+    .size-note{font-family:var(--mono);font-size:.68rem;color:#b3ab9c;margin-top:8px;}
+
+    .float-home{position:fixed;right:22px;bottom:22px;width:54px;height:54px;border-radius:50%;
+      background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;
+      text-decoration:none;box-shadow:0 8px 22px rgba(28,26,23,.28);z-index:60;transition:background .18s,transform .18s;}
+    .float-home:hover{background:var(--accent);transform:translateY(-2px);}
+    .float-home svg{width:24px;height:24px;}
+
+    footer{text-align:center;padding:30px 20px 40px;border-top:1px solid var(--line);
+      color:var(--muted);font-family:var(--mono);font-size:.78rem;letter-spacing:.04em;}
+    footer a{color:var(--accent);text-decoration:none;font-weight:600;}
+    footer a:hover{text-decoration:underline;}
+
+    @media (max-width:600px){.wrap{padding:78px 16px 110px;}}
+  </style>
+</head>
+<body>
+  <a href="https://myway.kr" class="top-home">← MYWAY.KR</a>
+
+  <main class="wrap">
+    <div class="head">
+      <div class="eyebrow">QR Code Generator</div>
+      <h1>QR코드 생성기</h1>
+      <p class="lede">URL이나 텍스트를 입력하면 바로 QR코드가 만들어집니다. 색상과 오류복원율을 조절하고 고해상도 PNG로 저장하세요.</p>
+    </div>
+
+    <div class="panel">
+      <div class="controls">
+        <div class="field">
+          <label for="qrText">내용 (URL · 텍스트)</label>
+          <textarea id="qrText" placeholder="https://myway.kr 또는 원하는 텍스트를 입력하세요" spellcheck="false">https://myway.kr</textarea>
+        </div>
+
+        <div class="field">
+          <label>오류 복원율</label>
+          <div class="seg" id="ecSeg">
+            <button type="button" data-ec="L">L</button>
+            <button type="button" data-ec="M" aria-pressed="true">M</button>
+            <button type="button" data-ec="Q">Q</button>
+            <button type="button" data-ec="H">H</button>
+          </div>
+          <div class="ec-hint">높을수록 일부 손상돼도 인식 가능 (로고 삽입 시 H 권장)</div>
+        </div>
+
+        <div class="field">
+          <label>색상</label>
+          <div class="color-row">
+            <div class="color-item">
+              <div class="swatch">
+                <input type="color" id="fgColor" value="#1c1a17">
+                <span class="hex" id="fgHex">#1c1a17</span>
+              </div>
+            </div>
+            <div class="color-item">
+              <div class="swatch">
+                <input type="color" id="bgColor" value="#ffffff">
+                <span class="hex" id="bgHex">#ffffff</span>
+              </div>
+            </div>
+          </div>
+          <div class="toggle-row">
+            <input type="checkbox" id="transparent">
+            <label for="transparent">배경 투명 (PNG)</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview">
+        <div class="qr-stage">
+          <div id="qrcode"></div>
+          <span class="ph" id="placeholder" style="display:none;">내용을 입력하세요</span>
+        </div>
+        <button class="dl-btn" id="downloadBtn">PNG로 저장</button>
+        <div class="size-note">800×800px 고해상도로 저장됩니다</div>
+      </div>
+    </div>
+  </main>
+
+  <a href="https://myway.kr" class="float-home" aria-label="홈으로">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/>
+    </svg>
+  </a>
+
+  <footer>© MYWAY.KR · <a href="https://myway.kr">myway.kr</a></footer>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const textEl = $('qrText'), qrBox = $('qrcode'), placeholder = $('placeholder');
+    const fgColor = $('fgColor'), bgColor = $('bgColor'), fgHex = $('fgHex'), bgHex = $('bgHex');
+    const transparent = $('transparent'), downloadBtn = $('downloadBtn');
+    const RENDER = 800;
+
+    let ecLevel = 'M';
+    const ecMap = { L: QRCode.CorrectLevel.L, M: QRCode.CorrectLevel.M, Q: QRCode.CorrectLevel.Q, H: QRCode.CorrectLevel.H };
+
+    /* 오류복원율 버튼 */
+    $('ecSeg').querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        ecLevel = btn.dataset.ec;
+        $('ecSeg').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+        render();
+      });
+    });
+
+    /* 입력/색상 변경 */
+    let debounce;
+    textEl.addEventListener('input', () => { clearTimeout(debounce); debounce = setTimeout(render, 220); });
+    fgColor.addEventListener('input', () => { fgHex.textContent = fgColor.value; render(); });
+    bgColor.addEventListener('input', () => { bgHex.textContent = bgColor.value; render(); });
+    transparent.addEventListener('change', render);
+
+    /* 렌더 */
+    function render(){
+      const text = textEl.value.trim();
+      qrBox.innerHTML = '';
+      if (!text){
+        placeholder.style.display = 'block';
+        downloadBtn.disabled = true;
+        return;
+      }
+      placeholder.style.display = 'none';
+      downloadBtn.disabled = false;
+
+      const light = transparent.checked ? 'rgba(0,0,0,0)' : bgColor.value;
+      try {
+        new QRCode(qrBox, {
+          text: text,
+          width: RENDER,
+          height: RENDER,
+          colorDark: fgColor.value,
+          colorLight: light,
+          correctLevel: ecMap[ecLevel]
+        });
+      } catch (e){
+        qrBox.innerHTML = '';
+        placeholder.textContent = '내용이 너무 깁니다';
+        placeholder.style.display = 'block';
+        downloadBtn.disabled = true;
+      }
+    }
+
+    /* 다운로드 */
+    downloadBtn.addEventListener('click', () => {
+      const canvas = qrBox.querySelector('canvas');
+      if (!canvas) return;
+      const finish = blob => {
+        const a = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        a.href = url; a.download = 'qrcode.png';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+      };
+      if (canvas.toBlob) canvas.toBlob(finish, 'image/png');
+      else {
+        const dataUrl = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = dataUrl; a.download = 'qrcode.png';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      }
+    });
+
+    render();
+
+    /* MYWAY.KR 복사 방지 정책 (input/textarea 예외) */
+    (function(){
+      const editable = t => t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA');
+      ['contextmenu','selectstart','dragstart','copy','cut'].forEach(evt => {
+        document.addEventListener(evt, e => { if (editable(e.target)) return; e.preventDefault(); });
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'F12'){ e.preventDefault(); return; }
+        const k = (e.key || '').toLowerCase();
+        if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(k)){ e.preventDefault(); return; }
+        if (e.ctrlKey && !e.shiftKey && ['u','s','c','x','a'].includes(k)){ if (editable(e.target)) return; e.preventDefault(); }
+      });
+    })();
+  </script>
+</body>
+</html>
