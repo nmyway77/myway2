@@ -1,5 +1,4 @@
- 
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -7,289 +6,620 @@
   <meta name="description" content="유튜브 동영상의 썸네일을 다양한 사이즈(HD, SD, HQ, MQ)로 무료 추출. URL만 입력하면 즉시 표시. Vimeo도 지원.">
   <meta name="keywords" content="유튜브 썸네일, 썸네일 추출, 동영상 썸네일, 유튜브 이미지 다운로드, vimeo 썸네일, 썸네일 다운로드">
   <link rel="canonical" href="https://myway.kr/extract7.html">
-  <!-- Open Graph (페이스북·카카오톡 공유 시 표시) -->
   <meta property="og:title" content="유튜브 썸네일 추출기 - 동영상 썸네일 다운로드 | MYWAY.KR">
   <meta property="og:description" content="유튜브 동영상의 썸네일을 다양한 사이즈(HD, SD, HQ, MQ)로 무료 추출. URL만 입력하면 즉시 표시. Vimeo도 지원.">
   <meta property="og:url" content="https://myway.kr/extract7.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="MYWAY.KR">
   <meta property="og:locale" content="ko_KR">
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="유튜브 썸네일 추출기 - 동영상 썸네일 다운로드 | MYWAY.KR">
   <meta name="twitter:description" content="유튜브 동영상의 썸네일을 다양한 사이즈(HD, SD, HQ, MQ)로 무료 추출. URL만 입력하면 즉시 표시. Vimeo도 지원.">
-  <!-- 검색 엔진 크롤링 허용 (기본값이지만 명시) -->
   <meta name="robots" content="index, follow">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
   <style>
-    body {
-      min-height: 100vh;
-      margin: 0;
-      padding: 0;
-      background: #f6f7fb;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+    :root{
+      --paper:#f7f3eb;
+      --ink:#1c1a17;
+      --muted:#7a7468;
+      --line:#e3ddcf;
+      --card:#fffdf8;
+      --accent:#c63d2e;       /* 영상/유튜브 무드의 딥 레드 액센트 */
+      --accent-soft:#f5e3df;
+      --serif:'Fraunces',Georgia,serif;
+      --sans:'Pretendard','맑은 고딕',sans-serif;
+      --mono:'JetBrains Mono',monospace;
     }
-    .container {
-      background: #fff;
-      padding: 40px 60px 28px 60px;
-      border-radius: 22px;
-      box-shadow: 0 10px 38px 0 #2222aa22;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-width: 600px;
-      max-width: 90vw;
+    *{box-sizing:border-box;}
+    html,body{margin:0;padding:0;}
+    body{
+      min-height:100vh;
+      background:var(--paper);
+      color:var(--ink);
+      font-family:var(--sans);
+      -webkit-user-select:none;
+      -moz-user-select:none;
+      user-select:none;
     }
-    .container h2 {
-      margin-bottom: 18px;
-      font-size: 1.6rem;
-      color: #273472;
-      letter-spacing: 1px;
-      font-weight: bold;
-    }
-    .url-input-group {
-      display: flex;
-      gap: 10px;
-      width: 100%;
-      justify-content: center;
-      margin-bottom: 30px;
-      max-width: 700px;
-    }
-    .url-input-group input {
-      font-size: 1.13rem;
-      padding: 11px 14px;
-      border: 1.7px solid #b2b7d2;
-      border-radius: 8px;
-      outline: none;
-      width: 480px;         /* 원하는 만큼 크게! */
-      background: #f8faff;
-      transition: border 0.15s;
-    }
-    .url-input-group input:focus {
-      border-color: #3b50e7;
-    }
-    .url-input-group button {
-      padding: 11px 22px;
-      background: #3b50e7;
-      color: #fff;
-      font-size: 1.08rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background 0.18s;
-    }
-    .url-input-group button:hover {
-      background: #2838a9;
-    }
-    .thumbs-list {
-      margin-top: 12px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-    }
-    .thumb-item {
-      background: #f8faff;
-      border-radius: 14px;
-      box-shadow: 0 2px 8px #22337713;
-      overflow: hidden;
-      transition: box-shadow 0.18s;
-      cursor: pointer;
-      border: 3px solid transparent;
-    }
-    .thumb-item.selected {
-      border: 3px solid #3b50e7;
-      box-shadow: 0 2px 20px #3b50e755;
-    }
-    .thumb-item img {
-      width: 260px;
-      height: 146px;
-      object-fit: cover;
-      display: block;
-      border-radius: 12px;
-      background: #eee;
-      transition: transform 0.12s;
-    }
-    .thumb-item:hover img {
-      transform: scale(1.05);
-    }
-    .note {
-      color: #888;
-      font-size: 1rem;
-      margin-top: 28px;
-      text-align: center;
-      max-width: 800px;
-    }
-    @media (max-width: 900px) {
-      .container { min-width: unset; padding: 22px 2vw; }
-      .url-input-group { max-width: 97vw; }
-      .url-input-group input { width: 40vw; min-width: 120px; }
-      .thumb-item img { width: 32vw; height: 18vw; min-width: 120px; }
-    }
-    @media (max-width: 520px) {
-      .container { padding: 11px 2vw; }
-      .url-input-group { flex-direction: column; align-items: stretch; gap: 10px;}
-      .url-input-group input, .url-input-group button { width: 100%; }
-      .thumb-item img { width: 98vw; min-width: 0; height: auto;}
-    }
-  
-    /* === SEO 본문 섹션 (페이지 하단 자료) === */
-    .seo-info {
-      position: relative;
-      width: 100%;
-      padding: 40px 20px 80px;
-      background: #f7f8fb;
-      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
-      font-size: 0.95rem;
-      line-height: 1.65;
-      color: #1a1f36;
-      box-sizing: border-box;
-      margin-top: 60px;
-      border-top: 1px solid #e4e7ee;
-    }
-    .seo-info-inner { max-width: 860px; margin: 0 auto; }
-    .seo-info h1 {
-      font-size: 1.4rem;
-      margin: 0 0 14px;
-      color: #2e3d5e;
-      letter-spacing: -0.3px;
-      text-align: left;
-      font-weight: 700;
-    }
-    .seo-info h2 {
-      font-size: 1.08rem;
-      margin: 26px 0 10px;
-      color: #2e3d5e;
-      letter-spacing: -0.2px;
-      font-weight: 700;
-    }
-    .seo-info p { margin: 0 0 12px; color: #3a4159; }
-    .seo-info ul { padding-left: 22px; margin: 0 0 14px; }
-    .seo-info li { margin-bottom: 5px; color: #3a4159; }
-    .seo-info .sites-tag { color: #6b7488; font-size: 0.85rem; }
-    @media (max-width: 700px) {
-      .seo-info { padding: 30px 16px 60px; font-size: 0.92rem; }
-      .seo-info h1 { font-size: 1.25rem; }
+    input,textarea{
+      -webkit-user-select:text;
+      -moz-user-select:text;
+      user-select:text;
     }
 
+    /* 좌측 상단 홈 링크 */
+    .top-home{
+      position:fixed;
+      top:20px;left:24px;
+      font-family:var(--mono);
+      font-size:.78rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--muted);
+      text-decoration:none;
+      z-index:50;
+    }
+    .top-home:hover{color:var(--accent);}
+
+    .wrap{
+      max-width:880px;
+      margin:0 auto;
+      padding:96px 24px 120px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      text-align:center;
+    }
+
+    .eyebrow{
+      font-family:var(--mono);
+      font-size:.74rem;
+      letter-spacing:.22em;
+      text-transform:uppercase;
+      color:var(--accent);
+      margin-bottom:14px;
+    }
+    h1{
+      font-family:var(--serif);
+      font-weight:600;
+      font-size:clamp(2rem,5vw,3rem);
+      line-height:1.05;
+      margin:0 0 12px;
+      letter-spacing:-.01em;
+    }
+    .lede{
+      color:var(--muted);
+      font-size:1rem;
+      line-height:1.6;
+      margin:0 0 40px;
+      max-width:520px;
+    }
+
+    /* 입력창 */
+    .url-input-group{
+      display:flex;
+      gap:10px;
+      width:100%;
+      max-width:640px;
+      margin-bottom:22px;
+    }
+    .url-input-group input{
+      flex:1;
+      font-family:var(--mono);
+      font-size:.95rem;
+      padding:15px 16px;
+      border:1.5px solid var(--line);
+      border-radius:12px;
+      outline:none;
+      background:var(--card);
+      color:var(--ink);
+      transition:border-color .15s,box-shadow .15s;
+    }
+    .url-input-group input::placeholder{color:#b3ab9c;}
+    .url-input-group input:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 4px var(--accent-soft);
+    }
+    .url-input-group button{
+      padding:0 26px;
+      background:var(--ink);
+      color:var(--paper);
+      font-family:var(--sans);
+      font-size:.98rem;
+      font-weight:600;
+      border:none;
+      border-radius:12px;
+      cursor:pointer;
+      transition:background .18s,transform .08s;
+    }
+    .url-input-group button:hover{background:var(--accent);}
+    .url-input-group button:active{transform:translateY(1px);}
+
+    /* 사이즈 선택 칩 */
+    .size-filters{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:center;
+      margin-bottom:8px;
+    }
+    .size-chip{
+      font-family:var(--mono);
+      font-size:.76rem;
+      letter-spacing:.04em;
+      padding:7px 13px;
+      border:1.5px solid var(--line);
+      border-radius:999px;
+      background:var(--card);
+      color:var(--muted);
+      cursor:pointer;
+      user-select:none;
+      transition:all .15s;
+    }
+    .size-chip[aria-pressed="true"]{
+      background:var(--ink);
+      border-color:var(--ink);
+      color:var(--paper);
+    }
+    .size-chip:hover{border-color:var(--accent);}
+    .filter-hint{
+      font-family:var(--mono);
+      font-size:.72rem;
+      color:#b3ab9c;
+      margin:0 0 36px;
+    }
+
+    /* 결과 리스트 */
+    .thumbs-list{
+      width:100%;
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+      gap:22px;
+      text-align:left;
+    }
+    .thumb-item{
+      background:var(--card);
+      border:1.5px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+      transition:border-color .18s,box-shadow .18s;
+      display:flex;
+      flex-direction:column;
+    }
+    .thumb-item.selected{
+      border-color:var(--accent);
+      box-shadow:0 6px 24px rgba(198,61,46,.18);
+    }
+    .thumb-figure{
+      position:relative;
+      cursor:pointer;
+      background:#ece6da;
+      aspect-ratio:16/9;
+      overflow:hidden;
+    }
+    .thumb-figure img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transition:transform .25s;
+    }
+    .thumb-figure:hover img{transform:scale(1.04);}
+    .size-badge{
+      position:absolute;
+      top:10px;left:10px;
+      display:flex;
+      align-items:baseline;
+      gap:7px;
+      background:rgba(28,26,23,.82);
+      color:#fff;
+      padding:5px 10px;
+      border-radius:8px;
+      font-family:var(--mono);
+      font-size:.72rem;
+      letter-spacing:.03em;
+      backdrop-filter:blur(2px);
+    }
+    .size-badge .dim{opacity:.7;font-size:.66rem;}
+    .check-mark{
+      position:absolute;
+      top:10px;right:10px;
+      width:26px;height:26px;
+      border-radius:50%;
+      background:var(--accent);
+      color:#fff;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      font-size:.85rem;
+      font-weight:700;
+    }
+    .thumb-item.selected .check-mark{display:flex;}
+
+    .thumb-body{
+      padding:14px 14px 16px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .url-row{
+      display:flex;
+      gap:8px;
+    }
+    .url-field{
+      flex:1;
+      font-family:var(--mono);
+      font-size:.74rem;
+      padding:9px 11px;
+      border:1.4px solid var(--line);
+      border-radius:9px;
+      background:var(--paper);
+      color:var(--ink);
+      outline:none;
+      min-width:0;
+    }
+    .url-field:focus{border-color:var(--accent);}
+    .icon-btn{
+      flex:0 0 auto;
+      padding:0 13px;
+      border:1.4px solid var(--line);
+      border-radius:9px;
+      background:var(--card);
+      color:var(--ink);
+      font-family:var(--sans);
+      font-size:.8rem;
+      font-weight:600;
+      cursor:pointer;
+      white-space:nowrap;
+      transition:all .15s;
+    }
+    .icon-btn:hover{border-color:var(--accent);color:var(--accent);}
+    .icon-btn.copied{background:var(--accent);border-color:var(--accent);color:#fff;}
+    .btn-row{display:flex;gap:8px;}
+    .btn-row .icon-btn{flex:1;text-align:center;}
+
+    .thumb-item.unavailable{opacity:.45;}
+    .thumb-item.unavailable .thumb-body{display:none;}
+    .na-note{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:var(--mono);
+      font-size:.78rem;
+      color:#fff;
+      background:rgba(28,26,23,.55);
+    }
+
+    .empty-msg{
+      grid-column:1/-1;
+      text-align:center;
+      color:var(--accent);
+      font-size:.95rem;
+      line-height:1.7;
+      padding:30px 0;
+    }
+    .empty-msg.neutral{color:var(--muted);}
+
+    /* 우측 하단 플로팅 홈 버튼 */
+    .float-home{
+      position:fixed;
+      right:22px;bottom:22px;
+      width:54px;height:54px;
+      border-radius:50%;
+      background:var(--ink);
+      color:var(--paper);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      box-shadow:0 8px 22px rgba(28,26,23,.28);
+      z-index:60;
+      transition:background .18s,transform .18s;
+    }
+    .float-home:hover{background:var(--accent);transform:translateY(-2px);}
+    .float-home svg{width:24px;height:24px;}
+
+    /* 푸터 */
+    footer{
+      text-align:center;
+      padding:30px 20px 40px;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      font-family:var(--mono);
+      font-size:.78rem;
+      letter-spacing:.04em;
+    }
+    footer a{color:var(--accent);text-decoration:none;font-weight:600;}
+    footer a:hover{text-decoration:underline;}
+
+    @media (max-width:600px){
+      .wrap{padding:80px 16px 100px;}
+      .url-input-group{flex-direction:column;}
+      .url-input-group button{padding:14px;}
+      .thumbs-list{grid-template-columns:1fr;}
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>썸네일 추출기</h2>
+  <a href="https://myway.kr" class="top-home">← MYWAY.KR</a>
+
+  <main class="wrap">
+    <div class="eyebrow">Thumbnail Extractor</div>
+    <h1>썸네일 추출기</h1>
+    <p class="lede">YouTube · Vimeo 동영상 URL을 붙여넣으면 사이즈별 썸네일과 이미지 주소를 바로 보여드려요.</p>
+
     <div class="url-input-group">
-      <input type="text" id="videoUrl" placeholder="동영상 URL 입력 (YouTube/Vimeo)">
+      <input type="text" id="videoUrl" placeholder="동영상 URL 입력 (YouTube / Vimeo)" autocomplete="off" spellcheck="false">
       <button onclick="getThumbnails()">추출</button>
     </div>
+
+    <div class="size-filters" id="sizeFilters"></div>
+    <p class="filter-hint">표시할 사이즈를 선택하세요 (YouTube)</p>
+
     <div class="thumbs-list" id="thumbsList"></div>
-    <div class="note">
-      동영상 썸네일은 주로 <b>YouTube, Vimeo</b> 등에서 지원됩니다.<br>
-      썸네일 이미지를 클릭하면 선택됩니다.
-    </div>
-  </div>
+  </main>
+
+  <a href="https://myway.kr" class="float-home" aria-label="홈으로">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/>
+    </svg>
+  </a>
+
+  <footer>
+    © MYWAY.KR · <a href="https://myway.kr">myway.kr</a>
+  </footer>
+
   <script>
-    function getThumbnails() {
+    /* ===== YouTube 사이즈 정의 ===== */
+    const YT_SIZES = [
+      { key:'maxresdefault', label:'HD',   dim:'1280×720' },
+      { key:'sddefault',     label:'SD',   dim:'640×480'  },
+      { key:'hqdefault',     label:'HQ',   dim:'480×360'  },
+      { key:'mqdefault',     label:'MQ',   dim:'320×180'  },
+      { key:'default',       label:'기본', dim:'120×90'   },
+    ];
+    // 사이즈별 표시 여부 (기본: 작은 기본썸네일 제외 모두 켜짐)
+    const sizeState = { maxresdefault:true, sddefault:true, hqdefault:true, mqdefault:true, default:false };
+
+    /* 사이즈 선택 칩 생성 */
+    (function buildFilters(){
+      const box = document.getElementById('sizeFilters');
+      YT_SIZES.forEach(s=>{
+        const chip = document.createElement('button');
+        chip.className = 'size-chip';
+        chip.type = 'button';
+        chip.textContent = `${s.label} · ${s.dim}`;
+        chip.setAttribute('aria-pressed', String(sizeState[s.key]));
+        chip.onclick = ()=>{
+          sizeState[s.key] = !sizeState[s.key];
+          chip.setAttribute('aria-pressed', String(sizeState[s.key]));
+          if (lastVideo) getThumbnails(); // 이미 추출했다면 즉시 갱신
+        };
+        box.appendChild(chip);
+      });
+    })();
+
+    let lastVideo = null; // {type, id}
+
+    /* ===== URL 파싱 ===== */
+    function parseYouTubeId(url){
+      const m = url.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{6,})/);
+      return m ? m[1] : null;
+    }
+    function parseVimeoId(url){
+      const m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+      return m ? m[1] : null;
+    }
+
+    /* ===== 추출 ===== */
+    function getThumbnails(){
       const url = document.getElementById('videoUrl').value.trim();
       const thumbsList = document.getElementById('thumbsList');
       thumbsList.innerHTML = '';
-      let thumbs = [];
 
-      // YouTube 썸네일 추출
-      const ytMatch = url.match(/(?:youtube\.com.*[?&]v=|youtu\.be\/)([\w\-]+)/);
-      if (ytMatch) {
-        const id = ytMatch[1];
-        thumbs = [
-          `https://img.youtube.com/vi/${id}/maxresdefault.jpg`,
-          `https://img.youtube.com/vi/${id}/sddefault.jpg`,
-          `https://img.youtube.com/vi/${id}/hqdefault.jpg`,
-          `https://img.youtube.com/vi/${id}/mqdefault.jpg`,
-          `https://img.youtube.com/vi/${id}/default.jpg`,
-        ];
+      if (!url){
+        lastVideo = null;
+        showMessage('동영상 URL을 입력해 주세요.', true);
+        return;
       }
 
-      // Vimeo 썸네일 추출 (oEmbed API)
-      const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
-      if (vimeoMatch) {
-        const id = vimeoMatch[1];
-        fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${id}`)
+      const ytId = parseYouTubeId(url);
+      if (ytId){
+        lastVideo = { type:'yt', id:ytId };
+        const items = YT_SIZES
+          .filter(s => sizeState[s.key])
+          .map(s => ({
+            url:`https://img.youtube.com/vi/${ytId}/${s.key}.jpg`,
+            label:s.label, dim:s.dim
+          }));
+        if (items.length === 0){
+          showMessage('최소 한 개 이상의 사이즈를 선택해 주세요.', true);
+          return;
+        }
+        renderThumbs(items);
+        return;
+      }
+
+      const vimeoId = parseVimeoId(url);
+      if (vimeoId){
+        lastVideo = { type:'vimeo', id:vimeoId };
+        showMessage('Vimeo 썸네일을 불러오는 중…');
+        fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${vimeoId}`)
           .then(res => res.json())
           .then(data => {
-            thumbs.push(data.thumbnail_url);
-            renderThumbs(thumbs);
+            const w = data.thumbnail_width, h = data.thumbnail_height;
+            renderThumbs([{ url:data.thumbnail_url, label:'Vimeo', dim:(w&&h)?`${w}×${h}`:'원본' }]);
           })
-          .catch(() => {
-            thumbsList.innerHTML = '<div style="color:#c44;">Vimeo 썸네일을 가져올 수 없습니다.</div>';
-          });
+          .catch(() => showMessage('Vimeo 썸네일을 가져올 수 없습니다.', false));
         return;
       }
 
-      if (thumbs.length === 0) {
-        thumbsList.innerHTML = '<div style="color:#c44;">아직 이 사이트는 지원하지 않습니다.<br>주요 동영상 플랫폼(YouTube, Vimeo 등)만 지원됩니다.</div>';
-        return;
-      }
-
-      renderThumbs(thumbs);
+      lastVideo = null;
+      showMessage('아직 이 사이트는 지원하지 않습니다.<br>YouTube · Vimeo URL을 입력해 주세요.', false);
     }
 
-    function renderThumbs(thumbs) {
+    function showMessage(html, neutral){
+      document.getElementById('thumbsList').innerHTML =
+        `<div class="empty-msg${neutral?' neutral':''}">${html}</div>`;
+    }
+
+    /* ===== 렌더링 ===== */
+    function renderThumbs(items){
       const thumbsList = document.getElementById('thumbsList');
       thumbsList.innerHTML = '';
-      thumbs.forEach(url => {
-        const div = document.createElement('div');
-        div.className = 'thumb-item';
-        div.innerHTML = `<img src="${url}" alt="썸네일">`;
-        div.onclick = function() {
-          document.querySelectorAll('.thumb-item').forEach(e => e.classList.remove('selected'));
-          div.classList.add('selected');
+
+      items.forEach(item=>{
+        const card = document.createElement('div');
+        card.className = 'thumb-item';
+
+        const fig = document.createElement('div');
+        fig.className = 'thumb-figure';
+        fig.innerHTML = `
+          <img src="${item.url}" alt="${item.label} 썸네일" loading="lazy">
+          <div class="size-badge"><strong>${item.label}</strong><span class="dim">${item.dim}</span></div>
+          <div class="check-mark">✓</div>
+        `;
+        fig.onclick = ()=>{
+          if (card.classList.contains('unavailable')) return;
+          document.querySelectorAll('.thumb-item').forEach(e=>e.classList.remove('selected'));
+          card.classList.add('selected');
         };
-        thumbsList.appendChild(div);
+
+        // 유튜브 maxres 등 없는 썸네일(120×90 회색 플레이스홀더) 자동 감지
+        const img = fig.querySelector('img');
+        img.addEventListener('load', ()=>{
+          if (img.naturalWidth <= 120 && item.label !== '기본'){
+            card.classList.add('unavailable');
+            const na = document.createElement('div');
+            na.className = 'na-note';
+            na.textContent = '이 영상은 미지원 사이즈';
+            fig.appendChild(na);
+          }
+        });
+        img.addEventListener('error', ()=>{
+          card.classList.add('unavailable');
+          const na = document.createElement('div');
+          na.className = 'na-note';
+          na.textContent = '불러올 수 없음';
+          fig.appendChild(na);
+        });
+
+        const body = document.createElement('div');
+        body.className = 'thumb-body';
+
+        const urlRow = document.createElement('div');
+        urlRow.className = 'url-row';
+        const field = document.createElement('input');
+        field.className = 'url-field';
+        field.type = 'text';
+        field.readOnly = true;
+        field.value = item.url;
+        field.addEventListener('focus', ()=>field.select());
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'icon-btn';
+        copyBtn.textContent = '복사';
+        copyBtn.onclick = ()=>copyUrl(item.url, copyBtn);
+        urlRow.appendChild(field);
+        urlRow.appendChild(copyBtn);
+
+        const btnRow = document.createElement('div');
+        btnRow.className = 'btn-row';
+        const openBtn = document.createElement('a');
+        openBtn.className = 'icon-btn';
+        openBtn.href = item.url;
+        openBtn.target = '_blank';
+        openBtn.rel = 'noopener';
+        openBtn.textContent = '원본 열기';
+        const dlBtn = document.createElement('button');
+        dlBtn.className = 'icon-btn';
+        dlBtn.textContent = '다운로드';
+        dlBtn.onclick = ()=>downloadImage(item);
+        btnRow.appendChild(openBtn);
+        btnRow.appendChild(dlBtn);
+
+        body.appendChild(urlRow);
+        body.appendChild(btnRow);
+
+        card.appendChild(fig);
+        card.appendChild(body);
+        thumbsList.appendChild(card);
       });
     }
+
+    /* ===== 주소 복사 ===== */
+    function copyUrl(url, btn){
+      const done = ()=>{
+        const t = btn.textContent;
+        btn.textContent = '복사됨';
+        btn.classList.add('copied');
+        setTimeout(()=>{ btn.textContent = t; btn.classList.remove('copied'); }, 1400);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(url).then(done).catch(()=>fallbackCopy(url, done));
+      } else {
+        fallbackCopy(url, done);
+      }
+    }
+    function fallbackCopy(text, done){
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      try{ document.execCommand('copy'); done(); }catch(e){}
+      document.body.removeChild(ta);
+    }
+
+    /* ===== 다운로드 (CORS 가능 시 blob, 아니면 새 탭) ===== */
+    function downloadImage(item){
+      fetch(item.url)
+        .then(r=>r.blob())
+        .then(blob=>{
+          const a = document.createElement('a');
+          const obj = URL.createObjectURL(blob);
+          a.href = obj;
+          a.download = `thumbnail_${item.label}.jpg`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(obj);
+        })
+        .catch(()=>window.open(item.url, '_blank', 'noopener'));
+    }
+
+    /* Enter 키로 추출 */
+    document.getElementById('videoUrl').addEventListener('keydown', e=>{
+      if (e.key === 'Enter') getThumbnails();
+    });
+
+    /* ===== MYWAY.KR 복사 방지 정책 (input/textarea 예외) ===== */
+    (function(){
+      const isEditable = t => t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA');
+      ['contextmenu','selectstart','dragstart','copy','cut'].forEach(evt=>{
+        document.addEventListener(evt, e=>{
+          if (isEditable(e.target)) return;
+          e.preventDefault();
+        });
+      });
+      document.addEventListener('keydown', e=>{
+        if (e.key === 'F12'){ e.preventDefault(); return; }
+        const k = (e.key || '').toLowerCase();
+        if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(k)){ e.preventDefault(); return; }
+        if (e.ctrlKey && !e.shiftKey && ['u','s','c','x','a'].includes(k)){
+          if (isEditable(e.target)) return; // 입력창 내 복사/전체선택 등은 허용
+          e.preventDefault();
+        }
+      });
+    })();
   </script>
-
-  <!-- SEO 본문 섹션 -->
-  <section class="seo-info">
-    <div class="seo-info-inner">
-      <h1>유튜브 썸네일 추출기 - 동영상 썸네일 다운로드</h1>
-      <p>MYWAY.KR의 유튜브 썸네일 추출기는 <strong>YouTube와 Vimeo 동영상의 썸네일 이미지를 다양한 사이즈로 무료 추출</strong>해주는 도구입니다. 동영상 URL만 입력하면 즉시 모든 사이즈의 썸네일이 표시되며, 클릭으로 원하는 이미지를 선택할 수 있습니다.</p>
-
-      <h2>지원 사이즈 (YouTube)</h2>
-      <ul>
-        <li><strong>maxresdefault</strong> (1280×720, HD) - 최고 화질, 일부 영상</li>
-        <li><strong>sddefault</strong> (640×480, SD) - 표준 화질</li>
-        <li><strong>hqdefault</strong> (480×360, HQ) - 고품질 (모든 영상 지원)</li>
-        <li><strong>mqdefault</strong> (320×180, MQ) - 중간 품질</li>
-        <li><strong>default</strong> (120×90) - 기본 사이즈</li>
-      </ul>
-
-      <h2>지원 플랫폼</h2>
-      <ul>
-        <li><strong>YouTube</strong> - watch?v=, youtu.be/, shorts/, embed/ 모두 지원</li>
-        <li><strong>Vimeo</strong> - oEmbed API 통해 자동 추출</li>
-      </ul>
-
-      <h2>사용 방법</h2>
-      <p>1. 추출하고 싶은 동영상의 URL을 복사<br>
-      2. 입력창에 붙여넣기<br>
-      3. [추출] 버튼 클릭<br>
-      4. 표시된 썸네일 중 원하는 사이즈 클릭하여 선택</p>
-
-      <h2>활용 예시</h2>
-      <ul>
-        <li>블로그 글 썸네일 이미지 사용</li>
-        <li>유튜브 영상 소개 자료 만들기</li>
-        <li>발표 자료에 영상 미리보기 추가</li>
-        <li>SNS 공유 카드 만들기</li>
-        <li>강의 자료 작성 (영상 미리보기 첨부)</li>
-      </ul>
-
-      <p class="sites-tag">관련 키워드: 유튜브 썸네일, 썸네일 추출, 동영상 썸네일, 유튜브 이미지 다운로드, vimeo 썸네일, 썸네일 다운로드, 영상 미리보기, 유튜브 캡처</p>
-    </div>
-  </section>
-
 </body>
 </html>
