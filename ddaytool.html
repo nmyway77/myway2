@@ -2,9 +2,9 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>D-day 계산기 - 날짜 계산·디데이·날짜 간격 | MYWAY.KR</title>
-  <meta name="description" content="목표 날짜까지 D-day를 계산하고, 두 날짜 사이 간격(일·주·개월·년)을 구하고, 특정 날짜로부터 N일 후·전 날짜를 계산하는 무료 날짜 계산기.">
-  <meta name="keywords" content="디데이 계산기, D-day 계산, 날짜 계산기, 날짜 간격 계산, 날짜 계산, 며칠 남았나, 날짜 더하기">
+  <title>날짜 계산기 - 만나이·디데이·양력음력·제대일·출산일 | MYWAY.KR</title>
+  <meta name="description" content="만 나이, D-day, 두 날짜 간격, 날짜 더하기, 양력↔음력 변환, 제대일(전역일), 출산 예정일을 한 곳에서 계산하는 무료 날짜 계산기 모음.">
+  <meta name="keywords" content="날짜 계산기, 만 나이 계산기, 디데이 계산기, D-day 계산, 양력 음력 변환, 음력 변환기, 제대일 계산기, 전역일 계산, 출산 예정일 계산기, 날짜 간격 계산">
   <link rel="canonical" href="https://myway.kr/ddaytool.html">
   <meta property="og:title" content="D-day 계산기 - 날짜 계산·디데이·날짜 간격 | MYWAY.KR">
   <meta property="og:description" content="D-day, 날짜 간격, N일 후·전 날짜를 한 번에 계산하는 무료 날짜 계산기.">
@@ -44,12 +44,15 @@
     h1{font-family:var(--serif);font-weight:600;font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.05;margin:0 0 12px;letter-spacing:-.01em;}
     .lede{color:var(--muted);font-size:1rem;line-height:1.6;margin:0 auto;max-width:480px;}
 
-    .tabs{display:flex;gap:6px;background:var(--card);border:1.5px solid var(--line);
+    .tabs{display:flex;flex-wrap:wrap;gap:6px;background:var(--card);border:1.5px solid var(--line);
       border-radius:13px;padding:5px;margin-bottom:22px;}
-    .tabs button{flex:1;font-family:var(--sans);font-size:.9rem;font-weight:600;padding:11px 0;
-      border:none;border-radius:9px;background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;}
+    .tabs button{flex:1 1 auto;min-width:88px;font-family:var(--sans);font-size:.88rem;font-weight:600;padding:10px 8px;
+      border:none;border-radius:9px;background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap;}
     .tabs button[aria-selected="true"]{background:var(--ink);color:var(--paper);}
     .tabs button:hover:not([aria-selected="true"]){color:var(--accent);}
+    .toggle-row{display:flex;align-items:center;gap:9px;}
+    .toggle-row input{width:17px;height:17px;accent-color:var(--accent);cursor:pointer;}
+    .toggle-row label{font-size:.88rem;font-weight:500;margin:0;cursor:pointer;}
 
     .card{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:24px;}
     .panel{display:none;}
@@ -104,14 +107,18 @@
   <main class="wrap">
     <div class="head">
       <div class="eyebrow">Date Calculator</div>
-      <h1>D-day 계산기</h1>
-      <p class="lede">디데이를 세고, 두 날짜 사이 간격을 구하고, 특정 날짜로부터 며칠 후·전을 계산하세요.</p>
+      <h1>날짜 계산기</h1>
+      <p class="lede">만 나이 · 디데이 · 날짜 간격 · 날짜 더하기 · 양력↔음력 · 제대일 · 출산 예정일을 탭으로 골라 계산하세요.</p>
     </div>
 
     <div class="tabs" role="tablist">
       <button role="tab" aria-selected="true" data-tab="dday">D-day</button>
+      <button role="tab" aria-selected="false" data-tab="age">만 나이</button>
       <button role="tab" aria-selected="false" data-tab="gap">날짜 간격</button>
       <button role="tab" aria-selected="false" data-tab="add">날짜 계산</button>
+      <button role="tab" aria-selected="false" data-tab="lunar">양력·음력</button>
+      <button role="tab" aria-selected="false" data-tab="army">제대일</button>
+      <button role="tab" aria-selected="false" data-tab="birth">출산일</button>
     </div>
 
     <!-- D-day -->
@@ -179,6 +186,73 @@
       </div>
       <div class="result" id="addResult"></div>
     </div>
+
+    <!-- 만 나이 -->
+    <div class="card panel" id="panel-age">
+      <div class="field">
+        <label for="ageBirth">생년월일</label>
+        <input type="date" class="ipt" id="ageBirth">
+      </div>
+      <div class="field">
+        <label for="ageOn">기준일 (선택 · 비우면 오늘)</label>
+        <input type="date" class="ipt" id="ageOn">
+      </div>
+      <div class="result" id="ageResult"></div>
+    </div>
+
+    <!-- 양력 ↔ 음력 -->
+    <div class="card panel" id="panel-lunar">
+      <div class="field">
+        <label>변환 방향</label>
+        <div class="seg" id="lunarDir">
+          <button type="button" data-dir="s2l" aria-pressed="true">양력 → 음력</button>
+          <button type="button" data-dir="l2s">음력 → 양력</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="lunarDate" id="lunarDateLabel">양력 날짜</label>
+        <input type="date" class="ipt" id="lunarDate">
+      </div>
+      <div class="field" id="lunarLeapField" style="display:none;">
+        <div class="toggle-row"><input type="checkbox" id="lunarLeap"><label for="lunarLeap">윤달로 입력</label></div>
+      </div>
+      <div class="result" id="lunarResult"></div>
+    </div>
+
+    <!-- 제대일 -->
+    <div class="card panel" id="panel-army">
+      <div class="field">
+        <label for="armyDate">입대일</label>
+        <input type="date" class="ipt" id="armyDate">
+      </div>
+      <div class="field">
+        <label for="armyBranch">군별</label>
+        <select class="ipt" id="armyBranch">
+          <option value="18">육군 (18개월)</option>
+          <option value="18m">해병대 (18개월)</option>
+          <option value="20">해군 (20개월)</option>
+          <option value="21">공군 (21개월)</option>
+          <option value="21s">사회복무요원 (21개월)</option>
+        </select>
+      </div>
+      <div class="result" id="armyResult"></div>
+    </div>
+
+    <!-- 출산일 -->
+    <div class="card panel" id="panel-birth">
+      <div class="field">
+        <label>기준</label>
+        <div class="seg" id="birthMode">
+          <button type="button" data-m="lmp" aria-pressed="true">마지막 생리 시작일</button>
+          <button type="button" data-m="conc">배란·수정일</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="birthDate" id="birthDateLabel">마지막 생리 시작일</label>
+        <input type="date" class="ipt" id="birthDate">
+      </div>
+      <div class="result" id="birthResult"></div>
+    </div>
   </main>
 
   <a href="https://myway.kr" class="float-home" aria-label="홈으로">
@@ -188,6 +262,9 @@
   </a>
 
   <footer>© MYWAY.KR · <a href="https://myway.kr">myway.kr</a></footer>
+
+  <!-- 음력 변환 (양력↔음력) -->
+  <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
 
   <script>
     const $ = id => document.getElementById(id);
@@ -331,6 +408,140 @@
       ['addBase','addNum','addDir','addUnit'].forEach(id => $(id).addEventListener(ev, calcAdd));
     });
 
+    /* ===== 만 나이 ===== */
+    function calcAge(){
+      const box = $('ageResult');
+      const birth = parse($('ageBirth').value);
+      if (!birth){ box.innerHTML = '<span class="dday-label">생년월일을 입력하세요</span>'; return; }
+      const base = parse($('ageOn').value) || parse(todayStr());
+      if (base < birth){ box.innerHTML = '<span class="dday-label">기준일이 생년월일보다 빠릅니다</span>'; return; }
+      const a = ymd(birth, base);
+      const yearAge = base.getFullYear() - birth.getFullYear();
+      const totalDays = dayDiff(birth, base);
+      let nb = new Date(base.getFullYear(), birth.getMonth(), birth.getDate());
+      if (nb < base) nb = new Date(base.getFullYear() + 1, birth.getMonth(), birth.getDate());
+      const toNext = dayDiff(base, nb);
+      box.innerHTML =
+        `<div class="result-main">만 ${a.y}세</div>` +
+        `<div class="result-sub">정확히 <b>${a.y}년 ${a.m}개월 ${a.d}일</b><br>` +
+        `연 나이 <b>${yearAge}세</b> · 태어난 지 <b>${num(totalDays)}일</b><br>` +
+        `다음 생일까지 <b>${toNext === 0 ? '오늘! 🎂' : 'D-' + num(toNext)}</b></div>`;
+    }
+    ['input','change'].forEach(ev => { $('ageBirth').addEventListener(ev, calcAge); $('ageOn').addEventListener(ev, calcAge); });
+
+    /* ===== 양력 ↔ 음력 ===== */
+    const GAN = ['갑','을','병','정','무','기','경','신','임','계'];
+    const JI  = ['자','축','인','묘','진','사','오','미','신','유','술','해'];
+    const ZODIAC = ['원숭이','닭','개','돼지','쥐','소','호랑이','토끼','용','뱀','말','양'];
+    const mod = (n, m) => ((n % m) + m) % m;
+    function ganzhi(year){ return GAN[mod(year - 4, 10)] + JI[mod(year - 4, 12)]; }
+    function zodiacOf(year){ return ZODIAC[mod(year, 12)]; }
+    function pad2k(n){ return String(n).padStart(2, '0'); }
+    let lunarDir = 's2l';
+    $('lunarDir').querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        lunarDir = btn.dataset.dir;
+        $('lunarDir').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+        $('lunarDateLabel').textContent = lunarDir === 's2l' ? '양력 날짜' : '음력 날짜';
+        $('lunarLeapField').style.display = lunarDir === 'l2s' ? '' : 'none';
+        calcLunar();
+      });
+    });
+    function calcLunar(){
+      const box = $('lunarResult');
+      if (typeof Solar === 'undefined' || typeof Lunar === 'undefined'){
+        box.innerHTML = '<span class="dday-label">음력 데이터를 불러오는 중입니다…</span>';
+        setTimeout(calcLunar, 700); return;
+      }
+      const d = parse($('lunarDate').value);
+      if (!d){ box.innerHTML = '<span class="dday-label">날짜를 선택하세요</span>'; return; }
+      try {
+        if (lunarDir === 's2l'){
+          const lunar = Solar.fromYmd(d.getFullYear(), d.getMonth() + 1, d.getDate()).getLunar();
+          const mr = lunar.getMonth(), leap = mr < 0, lm = Math.abs(mr), ly = lunar.getYear();
+          box.innerHTML =
+            `<div class="result-main">음력 ${ly}.${pad2k(lm)}.${pad2k(lunar.getDay())}</div>` +
+            `<div class="result-sub">음력 <b>${ly}년 ${leap ? '윤' : ''}${lm}월 ${lunar.getDay()}일</b><br>` +
+            `<b>${ganzhi(ly)}년</b> · ${zodiacOf(ly)}띠<br>(양력 ${fmt(d)})</div>`;
+        } else {
+          const leap = $('lunarLeap').checked;
+          const month = leap ? -(d.getMonth() + 1) : (d.getMonth() + 1);
+          const s = Lunar.fromYmd(d.getFullYear(), month, d.getDate()).getSolar();
+          const sd = new Date(s.getYear(), s.getMonth() - 1, s.getDay());
+          box.innerHTML =
+            `<div class="result-main">${fmt(sd)}</div>` +
+            `<div class="result-sub">음력 <b>${d.getFullYear()}년 ${leap ? '윤' : ''}${d.getMonth() + 1}월 ${d.getDate()}일</b><br>` +
+            `→ 양력 <b>${s.getYear()}년 ${s.getMonth()}월 ${s.getDay()}일</b></div>`;
+        }
+      } catch (e){
+        box.innerHTML = '<span class="dday-label">변환할 수 없는 날짜입니다 (윤달 여부를 확인하세요)</span>';
+      }
+    }
+    ['input','change'].forEach(ev => { $('lunarDate').addEventListener(ev, calcLunar); $('lunarLeap').addEventListener(ev, calcLunar); });
+
+    /* ===== 제대일 ===== */
+    function addMonths(date, months){ return new Date(date.getFullYear(), date.getMonth() + months, date.getDate()); }
+    function calcArmy(){
+      const box = $('armyResult');
+      const enlist = parse($('armyDate').value);
+      if (!enlist){ box.innerHTML = '<span class="dday-label">입대일을 선택하세요</span>'; return; }
+      const months = parseInt($('armyBranch').value, 10);
+      const end = addMonths(enlist, months);
+      const discharge = new Date(end.getFullYear(), end.getMonth(), end.getDate() - 1);
+      const today = parse(todayStr());
+      const totalDays = dayDiff(enlist, discharge) + 1;
+      const elapsed = Math.max(0, Math.min(totalDays, dayDiff(enlist, today) + 1));
+      const toDis = dayDiff(today, discharge);
+      const pct = Math.max(0, Math.min(100, Math.round(elapsed / totalDays * 100)));
+      let rank = '입대 전';
+      if (today >= enlist){
+        const em = ymd(enlist, today); const emM = em.y * 12 + em.m;
+        rank = emM < 2 ? '이병' : emM < 8 ? '일병' : emM < 14 ? '상병' : '병장';
+      }
+      let status;
+      if (toDis < 0) status = `전역 완료 · 전역 후 <b>${num(-toDis)}일</b>`;
+      else if (toDis === 0) status = `<b>오늘 전역입니다 🎉</b>`;
+      else status = `전역까지 <b>D-${num(toDis)}</b> · 진행률 <b>${pct}%</b> · 현재 <b>${rank}</b>`;
+      box.innerHTML =
+        `<div class="result-main">${fmt(discharge)}</div>` +
+        `<div class="result-sub">입대 <b>${fmt(enlist)}</b> · 복무 <b>${months}개월</b> (총 ${num(totalDays)}일)<br>${status}</div>`;
+    }
+    ['input','change'].forEach(ev => { $('armyDate').addEventListener(ev, calcArmy); $('armyBranch').addEventListener(ev, calcArmy); });
+
+    /* ===== 출산일 ===== */
+    let birthMode = 'lmp';
+    $('birthMode').querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        birthMode = btn.dataset.m;
+        $('birthMode').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+        $('birthDateLabel').textContent = birthMode === 'lmp' ? '마지막 생리 시작일' : '배란·수정일';
+        calcBirth();
+      });
+    });
+    function calcBirth(){
+      const box = $('birthResult');
+      const d = parse($('birthDate').value);
+      if (!d){ box.innerHTML = '<span class="dday-label">날짜를 선택하세요</span>'; return; }
+      const start = birthMode === 'lmp' ? d : new Date(d.getFullYear(), d.getMonth(), d.getDate() - 14);
+      const due = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 280);
+      const today = parse(todayStr());
+      const gestDays = dayDiff(start, today);
+      const toDue = dayDiff(today, due);
+      let cur;
+      if (gestDays >= 0){
+        const w = Math.floor(gestDays / 7), dd = gestDays % 7;
+        const tri = w < 13 ? '1분기' : w < 28 ? '2분기' : '3분기';
+        cur = `현재 임신 <b>${w}주 ${dd}일</b> (${tri})<br>`;
+      } else {
+        cur = `<b>아직 임신 전 기준일입니다</b><br>`;
+      }
+      const dueLine = toDue > 0 ? `예정일까지 <b>D-${num(toDue)}</b>` : toDue === 0 ? `<b>예정일 당일 🎉</b>` : `예정일 <b>${num(-toDue)}일</b> 지남`;
+      box.innerHTML =
+        `<div class="result-main">${fmt(due)}</div>` +
+        `<div class="result-sub">${cur}${dueLine}<br>(40주 · 280일 기준)</div>`;
+    }
+    ['input','change'].forEach(ev => { $('birthDate').addEventListener(ev, calcBirth); });
+
     function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
     /* 초기값 */
@@ -340,7 +551,12 @@
       $('gapFrom').value = t;
       $('gapTo').value = t;
       $('addBase').value = t;
+      $('ageBirth').value = '2000-01-01';
+      $('lunarDate').value = t;
+      $('armyDate').value = t;
+      $('birthDate').value = t;
       calcDday(); calcGap(); calcAdd();
+      calcAge(); calcLunar(); calcArmy(); calcBirth();
     })();
 
     /* MYWAY.KR 복사 방지 정책 (input/textarea/select 예외) */
