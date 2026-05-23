@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>PDF 병합·분할·페이지 삭제 - PDF 합치기 자르기 | MYWAY.KR</title>
   <meta name="description" content="여러 PDF를 하나로 병합하고, 페이지 단위로 분할하거나 필요 없는 페이지만 골라 삭제·추출. 브라우저에서 바로 처리되어 파일이 서버로 전송되지 않습니다.">
-  <meta name="keywords" content="PDF 병합, PDF 합치기, PDF 분할, PDF 자르기, PDF 페이지 삭제, PDF 페이지 추출, PDF 합치기 무료">
+  <meta name="keywords" content="PDF 병합, PDF 합치기, PDF 분할, PDF 자르기, PDF 페이지 삭제, PDF 페이지 추출, PDF 합치기 무료, 이미지 PDF 변환, JPG PDF 변환, 사진 PDF 만들기">
   <link rel="canonical" href="https://myway.kr/pdfmerge.html">
   <meta property="og:title" content="PDF 병합·분할·페이지 삭제 | MYWAY.KR">
   <meta property="og:description" content="여러 PDF를 하나로 병합하고, 페이지 단위 분할·삭제·추출. 브라우저에서 바로 처리됩니다.">
@@ -200,7 +200,7 @@
     <div class="head">
       <div class="eyebrow">PDF Toolkit</div>
       <h1>PDF 병합 · 분할 · 페이지 정리</h1>
-      <p class="lede">여러 PDF를 하나로 합치고, 필요 없는 페이지는 골라서 삭제하고, 원하는 페이지만 추출하거나 분할 저장하세요.</p>
+      <p class="lede">여러 PDF와 이미지를 하나로 합치고, 필요 없는 페이지는 골라서 삭제하고, 원하는 페이지만 추출하거나 분할 저장하세요. JPG·PNG는 한 장이 한 페이지가 됩니다.</p>
       <p class="privacy">🔒 모든 처리는 브라우저 안에서만 진행되며 파일은 서버로 전송되지 않습니다.</p>
     </div>
 
@@ -208,9 +208,9 @@
       <svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M5 20h14"/>
       </svg>
-      <div class="dz-title">PDF 파일을 끌어다 놓거나 클릭해서 선택</div>
-      <div class="dz-sub">여러 개 한꺼번에 올릴 수 있어요 (PDF만 지원)</div>
-      <input type="file" id="fileInput" accept="application/pdf,.pdf" multiple hidden>
+      <div class="dz-title">PDF · 이미지를 끌어다 놓거나 클릭해서 선택</div>
+      <div class="dz-sub">여러 개 한꺼번에 올릴 수 있어요 (PDF + JPG·PNG·WebP). 이미지는 한 장이 한 페이지가 됩니다.</div>
+      <input type="file" id="fileInput" accept="application/pdf,.pdf,image/*" multiple hidden>
     </div>
 
     <div class="toolbar" id="toolbar">
@@ -283,7 +283,8 @@
 
     /* 상태 */
     let docs = [];   // { name, buffer:ArrayBuffer, numPages }
-    let pages = [];  // { id, docIndex, pageIndex, name, thumb, selected }
+    let images = []; // { name, bytes:Uint8Array, fmt:'jpg'|'png', w, h }
+    let pages = [];  // { id, type:'pdf'|'image', docIndex/pageIndex 또는 imgIndex, name, thumb, selected }
     let seq = 0;
     const uid = () => 'p' + (++seq);
 
@@ -300,13 +301,22 @@
     dz.addEventListener('drop', e => { if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files); });
 
     /* 파일 추가 + 썸네일 렌더 */
+    function isImage(f){ return f.type.startsWith('image/') || /\.(jpe?g|png|webp|gif|bmp)$/i.test(f.name); }
+    function isPdf(f){ return f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'); }
+
     async function addFiles(fileList){
-      const list = Array.from(fileList).filter(f =>
-        f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'));
-      if (!list.length){ toast('PDF 파일만 올릴 수 있어요.'); return; }
+      const list = Array.from(fileList).filter(f => isPdf(f) || isImage(f));
+      if (!list.length){ toast('PDF 또는 이미지 파일만 올릴 수 있어요.'); return; }
 
       for (const file of list){
         toast(`${file.name} 불러오는 중…`, true);
+
+        if (isImage(file)){
+          try { await addImage(file); }
+          catch { toast(`${file.name} : 이미지를 불러올 수 없습니다`); }
+          continue;
+        }
+
         let buffer;
         try { buffer = await file.arrayBuffer(); }
         catch { toast(`${file.name} 읽기 실패`); continue; }
@@ -326,11 +336,47 @@
         for (let p = 1; p <= pdf.numPages; p++){
           const page = await pdf.getPage(p);
           const thumb = await renderThumb(page);
-          pages.push({ id: uid(), docIndex, pageIndex: p - 1, name: file.name, thumb, selected: false });
+          pages.push({ id: uid(), type: 'pdf', docIndex, pageIndex: p - 1, name: file.name, thumb, selected: false });
           renderGrid();
         }
       }
       hideToast();
+    }
+
+    // 이미지를 한 페이지로 추가 (canvas로 정규화 → PNG/JPEG 바이트 저장)
+    function addImage(file){
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          const w = img.naturalWidth, h = img.naturalHeight;
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0);
+          // jpeg 원본은 jpeg로, 그 외(png/webp 등)는 알파 보존 위해 png로
+          const asJpg = /jpe?g/i.test(file.type) || /\.jpe?g$/i.test(file.name);
+          const mime = asJpg ? 'image/jpeg' : 'image/png';
+          canvas.toBlob(async (blob) => {
+            try {
+              const bytes = new Uint8Array(await blob.arrayBuffer());
+              const imgIndex = images.length;
+              images.push({ name: file.name, bytes, fmt: asJpg ? 'jpg' : 'png', w, h });
+              // 썸네일
+              const ts = 300 / Math.max(w, h);
+              const tc = document.createElement('canvas');
+              tc.width = Math.max(1, Math.round(w * ts));
+              tc.height = Math.max(1, Math.round(h * ts));
+              tc.getContext('2d').drawImage(img, 0, 0, tc.width, tc.height);
+              pages.push({ id: uid(), type: 'image', imgIndex, name: file.name, thumb: tc.toDataURL('image/jpeg', 0.8), selected: false });
+              URL.revokeObjectURL(url);
+              renderGrid();
+              resolve();
+            } catch (e){ URL.revokeObjectURL(url); reject(e); }
+          }, mime, asJpg ? 0.92 : undefined);
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('img load')); };
+        img.src = url;
+      });
     }
 
     async function renderThumb(page){
@@ -467,11 +513,18 @@
     async function buildPdf(pageList, cache){
       const out = await PDFDocument.create();
       for (const pg of pageList){
-        if (!cache[pg.docIndex]){
-          cache[pg.docIndex] = await PDFDocument.load(docs[pg.docIndex].buffer, { ignoreEncryption: true });
+        if (pg.type === 'image'){
+          const im = images[pg.imgIndex];
+          const emb = im.fmt === 'jpg' ? await out.embedJpg(im.bytes) : await out.embedPng(im.bytes);
+          const page = out.addPage([im.w, im.h]);
+          page.drawImage(emb, { x: 0, y: 0, width: im.w, height: im.h });
+        } else {
+          if (!cache[pg.docIndex]){
+            cache[pg.docIndex] = await PDFDocument.load(docs[pg.docIndex].buffer, { ignoreEncryption: true });
+          }
+          const [copied] = await out.copyPages(cache[pg.docIndex], [pg.pageIndex]);
+          out.addPage(copied);
         }
-        const [copied] = await out.copyPages(cache[pg.docIndex], [pg.pageIndex]);
-        out.addPage(copied);
       }
       return out.save();
     }
