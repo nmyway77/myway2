@@ -386,6 +386,7 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape' && chartModal.class
 /* ===================== 뷰 전환 ===================== */
 const EMBED_URL={kospi:'https://feargreed.co.kr/', fear2:'https://www.kospifgi.com/', capital:'https://www.indexergo.com/series/?frq=D&codeId=202'};
 function showView(key){
+  try { sessionStorage.setItem('mywayView_crypto', key); } catch(_) {}
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   const el=document.getElementById('view-'+key); if(el) el.classList.add('active');
   document.querySelectorAll('#topnav button').forEach(b=>b.classList.toggle('active',b.dataset.view===key));
@@ -442,7 +443,12 @@ const NEWS=[
 })();
 
 /* ===================== 초기화 ===================== */
-renderCharts('crypto');
+(function(){
+  var saved='crypto';
+  try { saved = sessionStorage.getItem('mywayView_crypto') || 'crypto'; } catch(_) {}
+  if(!document.querySelector('#topnav button[data-view="'+saved+'"]')) saved='crypto';
+  showView(saved);
+})();
 
 /* ===================== 복사 방지 ===================== */
 (function(){
@@ -456,6 +462,30 @@ renderCharts('crypto');
     if(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(k)){e.preventDefault();return;}
     if(e.ctrlKey&&['u','s','c','x','a'].includes(k)){ if(isField(e.target)&&['c','x','a'].includes(k)) return; e.preventDefault(); }
   });
+})();
+</script>
+<script>
+/* 모바일: iframe 안에서 열릴 때 외부 링크를 최상위 창에서 직접 열어
+   뒤로가기로 MYWAY 복귀 가능하게. PC·태블릿은 새 탭 유지. */
+(function(){
+  if(!/Mobi/i.test(navigator.userAgent)) return;
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('a[href]') : null;
+    if(!a) return;
+    var href = a.getAttribute('href') || '';
+    if(!href || href.charAt(0) === '#' || /^javascript:/i.test(href)) return;
+    e.preventDefault();
+    try { (window.top || window).location.href = a.href; }
+    catch(_) { window.open(a.href, '_blank'); }
+  }, true);
+  /* 뒤로가기(bfcache) 복원 시 버튼 먹통 방지: 복원되면 새로고침 */
+  window.addEventListener('pageshow', function(e){ if(e.persisted){ location.reload(); } });
+  /* 뉴스 등 window.open('_blank') → 최상위 창 이동 */
+  var _open = window.open.bind(window);
+  window.open = function(url, name, feat){
+    if(url){ try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
+    return _open(url, name, feat);
+  };
 })();
 </script>
 </body>
