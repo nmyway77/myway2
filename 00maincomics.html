@@ -15,18 +15,19 @@
   .topnav{flex:none;display:flex;gap:8px;align-items:center;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:10px 14px;background:#fff;border-bottom:1px solid var(--line);cursor:grab;scrollbar-width:none}
   .topnav::-webkit-scrollbar{display:none}
   .topnav.dragging{cursor:grabbing}
-  .topnav .nav-home{flex:none;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:var(--ink-sub);padding:9px 8px;transition:color .15s}
-  .topnav .nav-home:hover{color:var(--accent)}
-  .topnav .nav-home svg{width:16px;height:16px}
+  .nav-home{flex:none;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-sub);padding:8px;border-radius:10px;transition:color .15s,background .15s}
+  .nav-home:hover{color:var(--accent);background:#f5f6f8}
+  .nav-home svg{width:20px;height:20px;display:block}
+  /* 가운데 정렬되는 네비 묶음 (공간 남으면 중앙, 넘치면 스크롤) */
+  .nav-track{flex:none;display:flex;align-items:center;gap:8px;margin:0 auto}
   .topnav button{flex:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-family:var(--body);font-size:14px;font-weight:700;color:var(--ink-sub);cursor:pointer;transition:all .16s}
   .topnav button:hover{border-color:#cfd3da;color:var(--ink)}
   .topnav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
-  .topnav .open-btn{margin-left:auto;flex:none;color:var(--ink-sub);font-weight:700}
+  .open-btn{flex:none;color:var(--ink-sub);font-weight:700}
 
   .viewer{flex:1;position:relative;overflow:hidden;background:#fff}
   .viewer iframe{position:absolute;top:0;left:0;width:calc(100% + 18px);height:calc(100% + 18px);border:0}
 
-  /* 만화사이트 로고 모음 패널 */
   .grid-panel{position:absolute;inset:0;overflow-y:auto;display:none;padding:34px 16px 60px;background:#fff;scrollbar-width:none}
   .grid-panel::-webkit-scrollbar{display:none}
   .grid-panel.show{display:block}
@@ -42,10 +43,10 @@
 <body>
 
 <nav class="topnav" id="topnav">
-  <a class="nav-home" href="https://myway.kr">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
-    MYWAY.KR
+  <a class="nav-home" href="https://myway.kr" aria-label="MYWAY.KR 홈">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
   </a>
+  <div class="nav-track" id="navTrack"></div>
 </nav>
 
 <div class="viewer">
@@ -54,7 +55,6 @@
 </div>
 
 <script>
-/* 풀스크린 iframe으로 열 사이트 */
 const SITES=[
   ['📚 카카오웹툰','https://webtoon.kakao.com/'],
   ['🌸 봄툰','https://www.bomtoon.com/bom/comic/free'],
@@ -63,7 +63,6 @@ const SITES=[
   ['🎌 코미코','https://www.comico.jp/'],
   ['✏️ 망가플러스','https://mangaplus-creators.jp/genres'],
 ];
-/* 만화사이트 로고 모음 (이미지 URL 원본 그대로) */
 const GRID_SITES=[
   { url:"https://comic.naver.com/index", img:"https://i.namu.wiki/i/ugTlJol27avmPIWdkWY3fk18VR1J7BPr_AwwIKaF8fu2v9VW2Bmto6jQungo__wBfkhNMOGMDfemB_D1nctdyw.svg" },
   { url:"https://webtoon.kakao.com/", img:"https://upload.wikimedia.org/wikipedia/commons/8/8f/Kakao_page_logo.png" },
@@ -82,10 +81,13 @@ const GRID_SITES=[
 const viewer=document.getElementById('viewer');
 const gridPanel=document.getElementById('gridPanel');
 const nav=document.getElementById('topnav');
+const track=document.getElementById('navTrack');
 let currentUrl=SITES[0][1];
 
 function centerNavBtn(btn){
-  const target=btn.offsetLeft - (nav.clientWidth/2) + (btn.offsetWidth/2);
+  const navRect=nav.getBoundingClientRect();
+  const btnRect=btn.getBoundingClientRect();
+  const target=nav.scrollLeft + (btnRect.left - navRect.left) - (nav.clientWidth/2) + (btnRect.width/2);
   nav.scrollTo({left:Math.max(0,target),behavior:'smooth'});
 }
 function clearActive(){ nav.querySelectorAll('button[data-site],button[data-grid]').forEach(b=>b.classList.remove('active')); }
@@ -124,13 +126,13 @@ function loadSite(i, btn){
 SITES.forEach((s,i)=>{
   const b=document.createElement('button'); b.textContent=s[0]; b.dataset.site=i;
   b.addEventListener('click',()=>loadSite(i,b));
-  nav.appendChild(b);
+  track.appendChild(b);
 });
 /* 만화사이트(로고 모음) 버튼 - 뒤쪽 */
 const gridBtn=document.createElement('button'); gridBtn.textContent='🖼️ 만화사이트'; gridBtn.dataset.grid='1';
 gridBtn.addEventListener('click',()=>showGrid(gridBtn));
-nav.appendChild(gridBtn);
-/* 새 탭으로 열기 */
+track.appendChild(gridBtn);
+/* 새 탭으로 열기 (오른쪽) */
 const openBtn=document.createElement('button'); openBtn.className='open-btn'; openBtn.textContent='↗ 새 탭';
 openBtn.addEventListener('click',()=>window.open(currentUrl,'_blank','noopener'));
 nav.appendChild(openBtn);
@@ -149,7 +151,7 @@ nav.appendChild(openBtn);
 })();
 
 /* 초기화: 카카오웹툰 먼저 */
-loadSite(0, nav.querySelector('button[data-site="0"]'));
+loadSite(0, track.querySelector('button[data-site="0"]'));
 
 /* 복사 방지 */
 (function(){
