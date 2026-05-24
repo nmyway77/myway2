@@ -1933,15 +1933,27 @@
           async src="//gc.zgo.at/count.js"></script>
 
 <script>
-/* 모바일에서는 외부 링크를 현재 탭에서 열어 뒤로가기로 MYWAY 복귀 가능하게.
+/* 모바일에서는 검색·외부 링크를 현재 탭에서 열어 뒤로가기로 MYWAY 복귀 가능하게.
    PC·태블릿은 기존대로 새 탭 유지. */
 (function(){
-  if(/Mobi/i.test(navigator.userAgent)){
-    document.addEventListener('click', function(e){
-      var a = e.target.closest ? e.target.closest('a[target="_blank"]') : null;
-      if(a){ a.removeAttribute('target'); }
-    }, true);
-  }
+  if(!/Mobi/i.test(navigator.userAgent)) return;
+
+  /* 1) <base target="_blank"> 무력화 → 앵커 기본을 현재 탭으로 */
+  var b = document.querySelector('base[target]');
+  if(b) b.setAttribute('target','_self');
+
+  /* 2) 명시적 target="_blank" 앵커도 현재 탭으로 */
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('a[target="_blank"]') : null;
+    if(a){ a.setAttribute('target','_self'); }
+  }, true);
+
+  /* 3) 검색 등 window.open('_blank') → 현재 탭 이동 (뒤로가기로 MYWAY 복귀) */
+  var _open = window.open.bind(window);
+  window.open = function(url, name, feat){
+    if(url){ location.href = url; return null; }
+    return _open(url, name, feat);
+  };
 })();
 </script>
 </body>
