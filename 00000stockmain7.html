@@ -288,10 +288,10 @@
 
   <header class="topbar">
     <nav class="tab-nav" id="tabNav">
-      <button class="tab-btn is-active" data-tab="chart">주요 차트</button>
+      <button class="tab-btn is-active" data-tab="news">리포트&amp;뉴스</button>
+      <button class="tab-btn" data-tab="chart">주요 차트</button>
       <button class="tab-btn" data-tab="fear">공포지수</button>
       <button class="tab-btn" data-tab="sites">주요 사이트</button>
-      <button class="tab-btn" data-tab="news">리포트&amp;뉴스</button>
       <button class="tab-btn" data-tab="community">커뮤니티</button>
     </nav>
   </header>
@@ -555,6 +555,21 @@
       news: {
         sections: [
           {
+            label: '증권사 리서치',
+            sub: 'Securities Research',
+            items: [
+              { ticker: '미래에셋',   ko: '미래에셋증권 리서치',  url: 'https://securities.miraeasset.com/bbs/board/message/list.do?categoryId=1525' },
+              { ticker: '삼성증권',   ko: '삼성증권 리서치',      url: 'https://www.samsungpop.com/sscommon/jsp/search/research/research_pop.jsp#bm' },
+              { ticker: '키움증권',   ko: '키움증권 리서치',      url: 'https://www.kiwoom.com/h/invest/research/VAnalCRView' },
+              { ticker: '신한증권',   ko: '신한투자증권 리서치',  url: 'https://m.shinhansec.com/mweb/invt/shrh/ishrh1001?tabIdx=0' },
+              { ticker: '한화증권',   ko: '한화투자증권 리서치',  url: 'https://m.hanwhawm.com:9090/M/main/research/main/list.cmd?depth3_id=anls1' },
+              { ticker: '토스증권',   ko: '토스증권 투자정보',    url: 'https://corp.tossinvest.com/ko/investment-info' },
+              { ticker: '유안타증권', ko: '유안타증권 리서치',    url: 'https://www.myasset.com/myasset/research/rs_list/rs_list.cmd?cd006=&cd007=&cd008=&m_menuId=ind' },
+              { ticker: '한양증권',   ko: '한양증권 리서치',      url: 'https://www.hygood.co.kr/board/researchAnalyzeCompany/list' },
+              { ticker: '상상인증권', ko: '상상인증권 리서치',    url: 'https://www.sangsanginib.com/research/enterpriseReport/enterpriseReportView' }
+            ]
+          },
+          {
             label: '종목 리포트·공시',
             sub: 'Research & Disclosure',
             items: [
@@ -745,7 +760,7 @@
       });
     }
 
-    renderTab('chart');
+    renderTab('news');
     setupTabs();
   </script>
 </body>
