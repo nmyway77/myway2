@@ -2112,17 +2112,5 @@
       setInterval(fitDirect, 800);
     })();
   </script>
-<script>
-/* 모바일에서는 외부 링크를 현재 탭에서 열어 뒤로가기로 MYWAY 복귀 가능하게.
-   PC·태블릿은 기존대로 새 탭 유지. */
-(function(){
-  if(/Mobi/i.test(navigator.userAgent)){
-    document.addEventListener('click', function(e){
-      var a = e.target.closest ? e.target.closest('a[target="_blank"]') : null;
-      if(a){ a.removeAttribute('target'); }
-    }, true);
-  }
-})();
-</script>
 </body>
 </html>
