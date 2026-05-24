@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>멀티차트 | MYWAY.KR</title>
+<meta name="description" content="가상자산·비교차트·환율·원자재·미국 빅테크·공포지수를 한 화면에서. 종목을 골라 동시에 비교하고 클릭 한 번으로 크게 볼 수 있는 멀티차트.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;--card:#ffffff;--line:#ececec;--line-soft:#f3f3f3;
+    --ink:#1a1a1a;--ink-sub:#8a8f99;--ink-faint:#b8bdc7;
+    --accent:#0b6b53;
+    --num:"Space Grotesk","Pretendard",sans-serif;--mono:"JetBrains Mono",monospace;--body:"Pretendard",-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
+  select{user-select:auto}
+  a{color:inherit;text-decoration:none}
+
+  .topbar{max-width:1280px;margin:0 auto;padding:18px 16px 0;display:flex;align-items:center;gap:8px}
+  .home-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink-sub);transition:color .15s}
+  .home-link:hover{color:var(--accent)}
+  .wrap{max-width:1280px;margin:0 auto;padding:6px 16px 64px}
+
+  .topnav{position:sticky;top:0;z-index:120;display:flex;gap:8px;align-items:center;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;white-space:nowrap;margin:6px 0 22px;padding:12px 0;background:rgba(255,255,255,.97);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);cursor:grab;scrollbar-width:none}
+  .topnav::-webkit-scrollbar{display:none}
+  .topnav.dragging{cursor:grabbing}
+  .topnav button{flex:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 18px;font-family:var(--body);font-size:14px;font-weight:700;color:var(--ink-sub);cursor:pointer;transition:all .16s}
+  .topnav button:hover{border-color:#cfd3da;color:var(--ink)}
+  .topnav button.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 6px 16px -8px rgba(11,107,83,.5)}
+  .topnav .nav-sep{width:1px;align-self:stretch;background:var(--line);margin:2px 4px}
+  .topnav .news-btn{background:#fafbfc;color:var(--ink-sub);font-weight:600}
+  .topnav .news-btn:hover{background:#fff;color:var(--accent);border-color:#cfd3da}
+
+  .view{display:none}
+  .view.active{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .vhead{margin:2px 0 18px}
+  .vhead h2{font-size:24px;font-weight:800;letter-spacing:-0.02em;margin:0}
+  .vhead p{margin:6px 0 0;font-size:13px;color:var(--ink-faint)}
+
+  .chart-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .chart-cell{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;display:flex;flex-direction:column;box-shadow:0 4px 16px -12px rgba(0,0,0,.18)}
+  .chart-cell .cell-bar{display:flex;align-items:center;gap:8px;padding:11px 12px 0}
+  .sym-sel{flex:1;min-width:0;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);font-family:var(--body);font-size:13.5px;font-weight:700;padding:8px 10px;cursor:pointer;transition:border-color .15s}
+  .sym-sel:hover{border-color:#cfd3da}
+  .sym-sel:focus{outline:none;border-color:var(--accent)}
+  .expand-btn{flex:none;border:1px solid var(--line);background:#fff;border-radius:9px;width:34px;height:34px;display:grid;place-items:center;cursor:pointer;color:var(--ink-sub);font-size:15px;transition:all .15s}
+  .expand-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+  .chart-cell .cc{height:360px;margin-top:9px}
+  .chart-cell .cc .tradingview-widget-container,.chart-cell .cc .tradingview-widget-container__widget{height:100%;width:100%}
+  .chart-cell:last-child:nth-child(odd){grid-column:1/-1}
+
+  /* 공포지수 */
+  .cfgi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .cfgi-card{border:1px solid var(--line);border-radius:16px;background:#fff;padding:14px;text-align:center;box-shadow:0 4px 16px -12px rgba(0,0,0,.18)}
+  .cfgi-card .ttl{font-size:14px;font-weight:800;margin-bottom:10px}
+  .cfgi-img{display:block;width:100%;max-width:260px;margin:0 auto;border-radius:10px}
+  .cfgi-link{display:inline-block;margin-top:8px;font-size:12.5px;font-weight:700;color:var(--accent)}
+  .fear-card{border:1px solid var(--line);border-radius:16px;background:#fff;padding:14px;box-shadow:0 4px 16px -12px rgba(0,0,0,.18)}
+  .cc-vix{height:420px}
+  .cc-vix .tradingview-widget-container,.cc-vix .tradingview-widget-container__widget{height:100%;width:100%}
+  .cfgi-note{margin-top:12px;font-size:11.5px;color:var(--ink-faint);text-align:center}
+
+  /* 풀스크린 확대 모달 */
+  .modal-overlay{position:fixed;inset:0;background:rgba(20,22,26,.55);backdrop-filter:blur(4px);z-index:300;display:none;flex-direction:column}
+  .modal-overlay.show{display:flex}
+  .modal-bar{display:flex;align-items:center;gap:12px;padding:14px 18px;background:#fff;border-bottom:1px solid var(--line)}
+  .modal-bar h3{margin:0;font-size:16px;font-weight:800;letter-spacing:-0.01em}
+  .modal-bar .msym{font-family:var(--mono);font-size:12px;color:var(--ink-sub);font-weight:700;flex:1}
+  .modal-close{flex:none;width:36px;height:36px;border-radius:10px;border:0;background:#f1f2f4;cursor:pointer;font-size:17px;color:#555;display:grid;place-items:center;transition:background .15s}
+  .modal-close:hover{background:#e6e7ea}
+  .modal-host{flex:1;background:#fff;min-height:0}
+  .modal-host .tradingview-widget-container,.modal-host .tradingview-widget-container__widget{height:100%;width:100%}
+
+  footer{max-width:1280px;margin:0 auto;padding:30px 16px 50px;border-top:1px solid var(--line);text-align:center}
+  footer .t{font-size:13px;color:var(--ink-sub)}
+  footer a{font-weight:700;color:var(--accent)}
+  footer .disc{margin-top:8px;font-size:11.5px;color:var(--ink-faint);line-height:1.6}
+
+  .float-home{position:fixed;right:20px;bottom:20px;width:54px;height:54px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;box-shadow:0 8px 24px -6px rgba(11,107,83,.5);z-index:130;transition:transform .18s,box-shadow .18s}
+  .kospi-wrap{margin-top:6px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
+  .kospi-wrap iframe{display:block;width:100%;height:700px;border:0}
+  .kospi-foot{margin-top:10px;text-align:right}
+  .kospi-foot a{font-size:13px;font-weight:700;color:var(--accent)}
+  .cfgi-card .cfgi-a{display:block;border-radius:10px;transition:transform .15s}
+  .cfgi-card .cfgi-a:hover{transform:scale(1.03)}
+  .float-home:hover{transform:translateY(-3px);box-shadow:0 12px 30px -8px rgba(11,107,83,.6)}
+  .float-home svg{width:24px;height:24px}
+
+  @media(max-width:980px){ .cfgi-grid{grid-template-columns:repeat(2,1fr)} }
+  @media(max-width:860px){ .vhead h2{font-size:21px} }
+  @media(max-width:600px){
+    .chart-grid{grid-template-columns:1fr}
+    .chart-cell .cc{height:320px}
+    .cfgi-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="home-link" href="https://myway.kr">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
+    MYWAY.KR
+  </a>
+</div>
+
+<div class="wrap">
+  <nav class="topnav" id="topnav">
+    <button data-view="crypto" class="active">💰 가상자산</button>
+    <button data-view="compare">📊 비교차트</button>
+    <button data-view="forex">💱 환율</button>
+    <button data-view="commodity">⛏️ 원자재</button>
+    <button data-view="bigtech">🇺🇸 미빅테크</button>
+    <button data-view="fear">😱 공포지수</button>
+    <span class="nav-sep" id="navSep"></span>
+  </nav>
+
+  <section class="view active" id="view-crypto">
+    <div class="vhead"><h2>가상자산</h2><p>종목을 바꿔 한 화면에서 동시 비교 · 우측 ⛶ 버튼으로 크게 보기</p></div>
+    <div class="chart-grid" id="charts-crypto"></div>
+  </section>
+
+  <section class="view" id="view-compare">
+    <div class="vhead"><h2>비교차트</h2><p>주요 시장을 한 화면에서 비교</p></div>
+    <div class="chart-grid" id="charts-compare"></div>
+  </section>
+
+  <section class="view" id="view-forex">
+    <div class="vhead"><h2>환율</h2><p>주요 통화 시세</p></div>
+    <div class="chart-grid" id="charts-forex"></div>
+  </section>
+
+  <section class="view" id="view-commodity">
+    <div class="vhead"><h2>원자재</h2><p>에너지 · 금속</p></div>
+    <div class="chart-grid" id="charts-commodity"></div>
+  </section>
+
+  <section class="view" id="view-bigtech">
+    <div class="vhead"><h2>미국 빅테크</h2><p>미국 대형 기술주</p></div>
+    <div class="chart-grid" id="charts-bigtech"></div>
+  </section>
+
+  <section class="view" id="view-fear">
+    <div class="vhead"><h2>공포 / 탐욕 지수</h2><p>CFGI(cfgi.io) 기준 암호화폐 시장 심리 · 매 15분 갱신</p></div>
+    <div class="cfgi-grid" id="cfgiGrid"></div>
+    <div class="cfgi-note">출처: cfgi.io · 일봉(1D) 기준 게이지 · 게이지를 누르면 상세 페이지가 열려요</div>
+  </section>
+</div>
+
+<a class="float-home" href="https://myway.kr" aria-label="홈으로">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
+</a>
+
+<div class="modal-overlay" id="chartModal" role="dialog" aria-modal="true">
+  <div class="modal-bar">
+    <h3 id="modalTitle">차트</h3>
+    <span class="msym" id="modalSym"></span>
+    <button class="modal-close" id="modalClose" aria-label="닫기">✕</button>
+  </div>
+  <div class="modal-host" id="modalHost"></div>
+</div>
+
+<footer>
+  <div class="t">© MYWAY.KR · <a href="https://myway.kr">myway.kr</a></div>
+  <div class="disc">시세는 정보 제공 목적이며 투자 권유가 아닙니다. 차트: TradingView · 공포지수: cfgi.io.</div>
+</footer>
+
+<script>
+/* ===================== 종목 카탈로그 (콤보박스) ===================== */
+const SYMBOLS = {
+  '📊 지수': [
+    ['다우 30 (24h)','OANDA:US30USD'],
+    ['나스닥 100 (24h)','OANDA:NAS100USD'],
+    ['S&P 500 (24h)','OANDA:SPX500USD'],
+    ['나스닥 종합','NASDAQ:IXIC'],
+    ['러셀 2000 (IWM)','AMEX:IWM'],
+    ['한국 (EWY)','AMEX:EWY'],
+    ['닛케이 225','OANDA:JP225USD'],
+    ['독일 DAX','OANDA:DE30EUR'],
+    ['홍콩 항셍','OANDA:HK33HKD'],
+  ],
+  '🪙 암호화폐 (원화)': [
+    ['비트코인 (원화)','UPBIT:BTCKRW'],
+    ['이더리움 (원화)','UPBIT:ETHKRW'],
+    ['리플 (원화)','UPBIT:XRPKRW'],
+    ['솔라나 (원화)','UPBIT:SOLKRW'],
+    ['도지코인 (원화)','UPBIT:DOGEKRW'],
+  ],
+  '🪙 암호화폐 (USD)': [
+    ['비트코인 BTC','BITSTAMP:BTCUSD'],
+    ['이더리움 ETH','BITSTAMP:ETHUSD'],
+    ['리플 XRP','BITSTAMP:XRPUSD'],
+    ['솔라나 SOL','BINANCE:SOLUSDT'],
+    ['도지코인 DOGE','BINANCE:DOGEUSDT'],
+    ['에이다 ADA','BINANCE:ADAUSDT'],
+    ['트론 TRX','BINANCE:TRXUSDT'],
+    ['바이낸스코인 BNB','BINANCE:BNBUSDT'],
+  ],
+  '⛏️ 원자재': [
+    ['금 XAU','OANDA:XAUUSD'],
+    ['은 XAG','OANDA:XAGUSD'],
+    ['백금','OANDA:XPTUSD'],
+    ['구리','CAPITALCOM:COPPER'],
+    ['WTI 원유','OANDA:WTICOUSD'],
+    ['브렌트 원유','OANDA:BCOUSD'],
+    ['천연가스','CAPITALCOM:NATURALGAS'],
+  ],
+  '💱 환율 / 통화': [
+    ['원/달러 USDKRW','FX_IDC:USDKRW'],
+    ['달러/엔 USDJPY','FX:USDJPY'],
+    ['유로/달러 EURUSD','FX:EURUSD'],
+    ['파운드/달러 GBPUSD','FX:GBPUSD'],
+    ['달러인덱스 DXY','CAPITALCOM:DXY'],
+    ['원/엔 JPYKRW','FX_IDC:JPYKRW'],
+    ['원/유로 EURKRW','FX_IDC:EURKRW'],
+    ['원/위안 CNYKRW','FX_IDC:CNYKRW'],
+  ],
+  '🇺🇸 미국 주식': [
+    ['엔비디아 NVDA','NASDAQ:NVDA'],
+    ['애플 AAPL','NASDAQ:AAPL'],
+    ['마이크로소프트 MSFT','NASDAQ:MSFT'],
+    ['구글 GOOGL','NASDAQ:GOOGL'],
+    ['아마존 AMZN','NASDAQ:AMZN'],
+    ['메타 META','NASDAQ:META'],
+    ['테슬라 TSLA','NASDAQ:TSLA'],
+    ['넷플릭스 NFLX','NASDAQ:NFLX'],
+    ['브로드컴 AVGO','NASDAQ:AVGO'],
+    ['TSMC TSM','NYSE:TSM'],
+    ['팔란티어 PLTR','NASDAQ:PLTR'],
+    ['AMD','NASDAQ:AMD'],
+  ],
+  '📈 ETF': [
+    ['SPY (S&P500)','AMEX:SPY'],
+    ['QQQ (나스닥100)','NASDAQ:QQQ'],
+    ['GLD (금)','AMEX:GLD'],
+    ['SOXX (반도체)','NASDAQ:SOXX'],
+    ['TQQQ (나스닥 3X)','NASDAQ:TQQQ'],
+  ],
+};
+
+/* 각 메뉴 기본 5종목 */
+const CATS = {
+  crypto:    ['UPBIT:BTCKRW','UPBIT:ETHKRW','UPBIT:XRPKRW','UPBIT:SOLKRW','UPBIT:DOGEKRW'],
+  compare:   ['OANDA:NAS100USD','OANDA:US30USD','OANDA:SPX500USD','BITSTAMP:BTCUSD','OANDA:XAUUSD'],
+  forex:     ['FX_IDC:USDKRW','FX:USDJPY','FX:EURUSD','FX:GBPUSD','CAPITALCOM:DXY'],
+  commodity: ['OANDA:XAUUSD','OANDA:XAGUSD','OANDA:WTICOUSD','OANDA:BCOUSD','CAPITALCOM:NATURALGAS'],
+  bigtech:   ['NASDAQ:NVDA','NASDAQ:AAPL','NASDAQ:MSFT','NASDAQ:GOOGL','NASDAQ:TSLA'],
+};
+
+/* 공포지수에 표시할 코인 (CFGI 이미지) */
+const FEAR_COINS = [['비트코인','BTC','bitcoin-fear-greed-index'],['이더리움','ETH','ethereum-fear-greed-index'],['리플','XRP','ripple-fear-greed-index'],['솔라나','SOL','solana-fear-greed-index']];
+
+const TV_ADV='https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+
+/* ===================== 차트 위젯 ===================== */
+function advChart(symbol, full){
+  const cont=document.createElement('div'); cont.className='tradingview-widget-container';
+  const inner=document.createElement('div'); inner.className='tradingview-widget-container__widget'; cont.appendChild(inner);
+  const s=document.createElement('script'); s.type='text/javascript'; s.async=true; s.src=TV_ADV;
+  s.text=JSON.stringify({
+    autosize:true, symbol:symbol, interval:'D', timezone:'Asia/Seoul',
+    theme:'light', style:'1', locale:'kr',
+    backgroundColor:'#ffffff', gridColor:'rgba(0,0,0,0.04)',
+    allow_symbol_change:!!full, hide_side_toolbar:!full, hide_top_toolbar:false,
+    save_image:!!full, calendar:!!full, withdateranges:true
+  });
+  cont.appendChild(s);
+  return cont;
+}
+function fillSelect(sel){
+  Object.entries(SYMBOLS).forEach(([g,items])=>{
+    const og=document.createElement('optgroup'); og.label=g;
+    items.forEach(([label,sym])=>{ const o=document.createElement('option'); o.value=sym; o.textContent=label; og.appendChild(o); });
+    sel.appendChild(og);
+  });
+}
+function buildCell(host, defaultSym){
+  const cell=document.createElement('div'); cell.className='chart-cell';
+  const bar=document.createElement('div'); bar.className='cell-bar';
+  const sel=document.createElement('select'); sel.className='sym-sel'; fillSelect(sel); sel.value=defaultSym;
+  const exp=document.createElement('button'); exp.className='expand-btn'; exp.title='확대'; exp.textContent='⛶';
+  bar.appendChild(sel); bar.appendChild(exp);
+  const cc=document.createElement('div'); cc.className='cc';
+  cell.appendChild(bar); cell.appendChild(cc); host.appendChild(cell);
+  function curLabel(){ const o=sel.options[sel.selectedIndex]; return o?o.textContent:sel.value; }
+  function paint(sym){ cc.innerHTML=''; cc.appendChild(advChart(sym,false)); }
+  paint(sel.value);
+  sel.addEventListener('change',()=>paint(sel.value));
+  exp.addEventListener('click',()=>openFullscreen(sel.value, curLabel()));
+}
+function renderCharts(key){
+  const list=CATS[key]; if(!list) return;
+  const host=document.getElementById('charts-'+key);
+  if(!host || host.dataset.done) return;
+  host.dataset.done='1';
+  list.forEach(sym=>buildCell(host, sym));
+}
+
+/* ===================== 공포지수 (CFGI) ===================== */
+let fearDone=false;
+function renderFear(){
+  if(fearDone) return; fearDone=true;
+  const grid=document.getElementById('cfgiGrid');
+  FEAR_COINS.forEach(([name,code,slug])=>{
+    const card=document.createElement('div'); card.className='cfgi-card';
+    const ttl=document.createElement('div'); ttl.className='ttl'; ttl.textContent=name; card.appendChild(ttl);
+    const a=document.createElement('a'); a.className='cfgi-a'; a.href='https://cfgi.io/'+slug+'/'; a.target='_blank'; a.rel='noopener'; a.title=name+' 공포지수 크게 보기';
+    const img=document.createElement('img'); img.className='cfgi-img'; img.alt=name+' 공포·탐욕 지수'; img.loading='lazy';
+    const urls=[
+      'https://cfgi.io/images/cfgi/light/'+code+'-CFGI-1d.png',
+      'https://cfgi.io/images/cfgi/dark/'+code+'-CFGI-1d.png',
+      'https://cfgi.io/images/cfgi/light/'+code+'-CFGI-15m.png',
+      'https://cfgi.io/images/cfgi/dark/'+code+'-CFGI-15m.png'
+    ];
+    img.dataset.i='0';
+    img.onerror=function(){
+      let n=parseInt(this.dataset.i,10)+1;
+      if(n<urls.length){ this.dataset.i=String(n); this.src=urls[n]; }
+      else{ this.style.display='none'; const lk=document.createElement('span'); lk.className='cfgi-link'; lk.textContent='cfgi.io에서 보기 ↗'; a.appendChild(lk); }
+    };
+    img.src=urls[0];
+    a.appendChild(img); card.appendChild(a);
+    const more=document.createElement('a'); more.className='cfgi-link'; more.href='https://cfgi.io/'+slug+'/'; more.target='_blank'; more.rel='noopener'; more.textContent='크게 보기 ↗';
+    card.appendChild(more);
+    grid.appendChild(card);
+  });
+}
+
+/* ===================== 풀스크린 확대 모달 ===================== */
+const chartModal=document.getElementById('chartModal');
+function openFullscreen(symbol, title){
+  document.getElementById('modalTitle').textContent=title||'차트';
+  document.getElementById('modalSym').textContent=symbol;
+  const host=document.getElementById('modalHost');
+  host.innerHTML=''; host.appendChild(advChart(symbol,true));
+  chartModal.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeFullscreen(){
+  chartModal.classList.remove('show');
+  document.getElementById('modalHost').innerHTML='';
+  document.body.style.overflow='';
+}
+document.getElementById('modalClose').addEventListener('click',closeFullscreen);
+chartModal.addEventListener('click',e=>{ if(e.target===chartModal) closeFullscreen(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && chartModal.classList.contains('show')) closeFullscreen(); });
+
+/* ===================== 뷰 전환 ===================== */
+function showView(key){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const el=document.getElementById('view-'+key); if(el) el.classList.add('active');
+  document.querySelectorAll('#topnav button').forEach(b=>b.classList.toggle('active',b.dataset.view===key));
+  if(CATS[key]) renderCharts(key);
+  if(key==='fear') renderFear();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function centerNavBtn(btn){
+  const nav=document.getElementById('topnav');
+  const target=btn.offsetLeft - (nav.clientWidth/2) + (btn.offsetWidth/2);
+  nav.scrollTo({left:Math.max(0,target),behavior:'smooth'});
+}
+document.querySelectorAll('#topnav button').forEach(b=>b.addEventListener('click',()=>{ showView(b.dataset.view); centerNavBtn(b); }));
+
+/* ===================== 뉴스 외부 링크 네비 ===================== */
+const NEWS=[
+  ['📉 코스피 공포지수','https://kospi-fear-greed-index.co.kr/'],
+  ['📰 코인니스','https://coinness.com/article'],
+  ['📰 블록미디어','https://www.blockmedia.co.kr/'],
+  ['📰 코인리더스','https://www.coinreaders.com/'],
+  ['📰 토큰포스트','https://www.tokenpost.kr/news'],
+  ['📰 디센터','https://www.decenter.kr/blockchain'],
+];
+(function(){
+  const nav=document.getElementById('topnav');
+  NEWS.forEach(([label,url])=>{
+    const b=document.createElement('button'); b.className='news-btn'; b.innerHTML=label+' <span style="font-size:11px">↗</span>';
+    b.addEventListener('click',()=>{ window.open(url,'_blank','noopener'); centerNavBtn(b); });
+    nav.appendChild(b);
+  });
+})();
+
+/* 하단 네비 드래그 스크롤 */
+(function(){
+  const nav=document.getElementById('topnav');
+  let down=false,startX=0,startL=0,moved=false;
+  nav.addEventListener('pointerdown',e=>{ if(e.button!==0) return; down=true;moved=false;startX=e.clientX;startL=nav.scrollLeft;nav.classList.add('dragging'); });
+  nav.addEventListener('pointermove',e=>{ if(!down) return; const dx=e.clientX-startX; if(Math.abs(dx)>4) moved=true; nav.scrollLeft=startL-dx; });
+  const end=()=>{ down=false; nav.classList.remove('dragging'); };
+  nav.addEventListener('pointerup',end);
+  nav.addEventListener('pointercancel',end);
+  nav.addEventListener('pointerleave',end);
+  // 드래그였으면 클릭(이동) 막기
+  nav.addEventListener('click',e=>{ if(moved){ e.stopPropagation(); e.preventDefault(); moved=false; } },true);
+  // 세로 휠 → 가로 스크롤
+  nav.addEventListener('wheel',e=>{ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ nav.scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
+})();
+
+/* ===================== 초기화 ===================== */
+renderCharts('crypto');
+
+/* ===================== 복사 방지 ===================== */
+(function(){
+  const isField=el=>el&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA'||el.tagName==='SELECT');
+  ['contextmenu','selectstart','dragstart','copy','cut'].forEach(ev=>{
+    document.addEventListener(ev,e=>{ if(isField(e.target)) return; e.preventDefault(); });
+  });
+  document.addEventListener('keydown',e=>{
+    const k=e.key.toLowerCase();
+    if(e.key==='F12'){e.preventDefault();return;}
+    if(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(k)){e.preventDefault();return;}
+    if(e.ctrlKey&&['u','s','c','x','a'].includes(k)){ if(isField(e.target)&&['c','x','a'].includes(k)) return; e.preventDefault(); }
+  });
+})();
+</script>
+</body>
+</html>
