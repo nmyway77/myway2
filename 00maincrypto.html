@@ -127,6 +127,7 @@
     <button data-view="fear">😱 공포지수</button>
     <button data-view="kospi">📉 코스피 공포지수</button>
     <button data-view="fear2">📊 공포지수 2</button>
+    <button data-view="capital">🏦 자본시장</button>
     <span class="nav-sep" id="navSep"></span>
   </nav>
 
@@ -172,6 +173,10 @@
 
   <section class="view" id="view-fear2">
     <div class="embed-view"><iframe src="https://www.kospifgi.com/" title="공포지수 2" loading="lazy" referrerpolicy="no-referrer"></iframe></div>
+  </section>
+
+  <section class="view" id="view-capital">
+    <div class="embed-view"><iframe src="https://www.indexergo.com/series/?frq=D&amp;codeId=202" title="자본시장" loading="lazy" referrerpolicy="no-referrer"></iframe></div>
   </section>
 </div>
 
@@ -382,7 +387,7 @@ chartModal.addEventListener('click',e=>{ if(e.target===chartModal) closeFullscre
 document.addEventListener('keydown',e=>{ if(e.key==='Escape' && chartModal.classList.contains('show')) closeFullscreen(); });
 
 /* ===================== 뷰 전환 ===================== */
-const EMBED_URL={kospi:'https://feargreed.co.kr/', fear2:'https://www.kospifgi.com/'};
+const EMBED_URL={kospi:'https://feargreed.co.kr/', fear2:'https://www.kospifgi.com/', capital:'https://www.indexergo.com/series/?frq=D&codeId=202'};
 function showView(key){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   const el=document.getElementById('view-'+key); if(el) el.classList.add('active');
