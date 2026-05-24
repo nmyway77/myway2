@@ -764,6 +764,7 @@
         nav.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('is-active'));
         btn.classList.add('is-active');
         renderTab(btn.dataset.tab);
+        try { sessionStorage.setItem('mywayTab_stockmain7', btn.dataset.tab); } catch(_) {}
         window.scrollTo({ top: 0, behavior: 'smooth' });
         // 클릭한 탭을 가시 영역 가운데로 부드럽게 가로 스크롤
         // block: 'nearest' → 세로 페이지 스크롤은 건드리지 않음
@@ -771,8 +772,17 @@
       });
     }
 
-    renderTab('news');
     setupTabs();
+    (function(){
+      var saved = 'news';
+      try { saved = sessionStorage.getItem('mywayTab_stockmain7') || 'news'; } catch(_) {}
+      var nav = document.getElementById('tabNav');
+      var btn = nav.querySelector('.tab-btn[data-tab="' + saved + '"]');
+      if (!btn) { saved = 'news'; btn = nav.querySelector('.tab-btn[data-tab="news"]'); }
+      nav.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('is-active'));
+      if (btn) btn.classList.add('is-active');
+      renderTab(saved);
+    })();
   </script>
 <script>
 /* 모바일: iframe 안에서 열릴 때 외부 링크를 최상위 창에서 직접 열어

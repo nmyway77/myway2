@@ -1037,7 +1037,7 @@
               
 
  { name: 'cctv',       img: 'todaystock.jpg',       url: 'https://stock.naver.com/' },
-{ name: 'cctv',       img: 'mini100.jpg',       url: 'https://www.google.com/finance/beta/quote/NQW00:CME_EMINIS' },
+{ name: 'cctv',       img: 'mini100.jpg',       url: 'https://kr.tradingview.com/chart/HCbTtlL9/?symbol=CME_MINI%3ANQ1%21' },
               
 
               
@@ -1912,6 +1912,7 @@
         nav.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('is-active'));
         btn.classList.add('is-active');
         renderTab(btn.dataset.tab);
+        try { sessionStorage.setItem('mywayTab_indexmain7', btn.dataset.tab); } catch(_) {}
         window.scrollTo({ top: 0, behavior: 'smooth' });
         // 클릭한 탭을 가시 영역 가운데로 부드럽게 가로 스크롤
         // block: 'nearest' → 세로 페이지 스크롤은 건드리지 않음
@@ -1919,8 +1920,17 @@
       });
     }
 
-    renderTab('daily');
     setupTabs();
+    (function(){
+      var saved = 'daily';
+      try { saved = sessionStorage.getItem('mywayTab_indexmain7') || 'daily'; } catch(_) {}
+      var nav = document.getElementById('tabNav');
+      var btn = nav.querySelector('.tab-btn[data-tab="' + saved + '"]');
+      if (!btn) { saved = 'daily'; btn = nav.querySelector('.tab-btn[data-tab="daily"]'); }
+      nav.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('is-active'));
+      if (btn) btn.classList.add('is-active');
+      renderTab(saved);
+    })();
 
     /* ============ 하단 갤러리 (00maincomics 데이터 + 렌더 + 프리셋) ============ */
     const gallery = [
