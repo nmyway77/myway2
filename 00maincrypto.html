@@ -85,8 +85,12 @@
   footer .disc{margin-top:8px;font-size:11.5px;color:var(--ink-faint);line-height:1.6}
 
   .float-home{position:fixed;right:20px;bottom:20px;width:54px;height:54px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;box-shadow:0 8px 24px -6px rgba(11,107,83,.5);z-index:130;transition:transform .18s,box-shadow .18s}
-  .kospi-wrap{margin-top:6px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
-  .kospi-wrap iframe{display:block;width:100%;height:700px;border:0}
+  .embed-view{position:fixed;left:0;width:100vw;top:var(--navh,60px);height:calc(100vh - var(--navh,60px));overflow:hidden;background:#fff;z-index:40}
+  .embed-view iframe{position:absolute;top:0;left:0;width:calc(100% + 18px);height:calc(100% + 18px);border:0}
+  body.embed-mode{overflow:hidden}
+  .embed-open{position:fixed;left:20px;bottom:20px;display:none;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;color:var(--ink-sub);box-shadow:0 6px 18px -8px rgba(0,0,0,.3);z-index:135}
+  body.embed-mode .embed-open{display:inline-flex}
+  .embed-open:hover{color:var(--accent);border-color:var(--accent)}
   .kospi-foot{margin-top:10px;text-align:right}
   .kospi-foot a{font-size:13px;font-weight:700;color:var(--accent)}
   .cfgi-card .cfgi-a{display:block;border-radius:10px;transition:transform .15s;min-height:70px}
@@ -121,6 +125,8 @@
     <button data-view="bigtech">🇺🇸 미빅테크</button>
     <button data-view="index">📈 지수차트</button>
     <button data-view="fear">😱 공포지수</button>
+    <button data-view="kospi">📉 코스피 공포지수</button>
+    <button data-view="fear2">📊 공포지수 2</button>
     <span class="nav-sep" id="navSep"></span>
   </nav>
 
@@ -159,11 +165,20 @@
     <div class="cfgi-grid" id="cfgiGrid"></div>
     <div class="cfgi-note">게이지 출처: cfgi.io · 클릭 시 업비트 데이터랩(datalab.upbit.com)으로 이동</div>
   </section>
+
+  <section class="view" id="view-kospi">
+    <div class="embed-view"><iframe src="https://feargreed.co.kr/" title="코스피 공포지수" loading="lazy" referrerpolicy="no-referrer"></iframe></div>
+  </section>
+
+  <section class="view" id="view-fear2">
+    <div class="embed-view"><iframe src="https://www.kospifgi.com/" title="공포지수 2" loading="lazy" referrerpolicy="no-referrer"></iframe></div>
+  </section>
 </div>
 
 <a class="float-home" href="https://myway.kr" aria-label="홈으로">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
 </a>
+<a class="embed-open" id="embedOpen" target="_blank" rel="noopener">↗ 새 탭으로 열기</a>
 
 <div class="modal-overlay" id="chartModal" role="dialog" aria-modal="true">
   <div class="modal-bar">
@@ -367,12 +382,21 @@ chartModal.addEventListener('click',e=>{ if(e.target===chartModal) closeFullscre
 document.addEventListener('keydown',e=>{ if(e.key==='Escape' && chartModal.classList.contains('show')) closeFullscreen(); });
 
 /* ===================== 뷰 전환 ===================== */
+const EMBED_URL={kospi:'https://feargreed.co.kr/', fear2:'https://www.kospifgi.com/'};
 function showView(key){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   const el=document.getElementById('view-'+key); if(el) el.classList.add('active');
   document.querySelectorAll('#topnav button').forEach(b=>b.classList.toggle('active',b.dataset.view===key));
   if(CATS[key]) renderCharts(key);
   if(key==='fear') renderFear();
+  const embed=!!EMBED_URL[key];
+  document.body.classList.toggle('embed-mode', embed);
+  if(embed){
+    window.scrollTo(0,0);
+    const nv=document.getElementById('topnav');
+    document.documentElement.style.setProperty('--navh', Math.round(nv.getBoundingClientRect().bottom)+'px');
+    const eo=document.getElementById('embedOpen'); if(eo) eo.href=EMBED_URL[key];
+  }
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function centerNavBtn(btn){
@@ -384,7 +408,6 @@ document.querySelectorAll('#topnav button').forEach(b=>b.addEventListener('click
 
 /* ===================== 뉴스 외부 링크 네비 ===================== */
 const NEWS=[
-  ['📉 코스피 공포지수','https://kospi-fear-greed-index.co.kr/'],
   ['📰 코인니스','https://coinness.com/article'],
   ['📰 블록미디어','https://www.blockmedia.co.kr/'],
   ['📰 코인리더스','https://www.coinreaders.com/'],
