@@ -114,6 +114,7 @@ function showGrid(btn){
   gridPanel.classList.add('show');
   openBtn.style.display='none';
   clearActive();
+  try { sessionStorage.setItem('mywayComic','grid'); } catch(_) {}
   if(btn){ btn.classList.add('active'); centerNavBtn(btn); }
 }
 function loadSite(i, btn){
@@ -123,6 +124,7 @@ function loadSite(i, btn){
   viewer.src=currentUrl;
   openBtn.style.display='';
   clearActive();
+  try { sessionStorage.setItem('mywayComic','site:'+i); } catch(_) {}
   if(btn){ btn.classList.add('active'); centerNavBtn(btn); }
 }
 
@@ -154,8 +156,19 @@ nav.appendChild(openBtn);
   nav.addEventListener('wheel',e=>{ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ nav.scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
 })();
 
-/* 초기화: 카카오웹툰 먼저 */
-loadSite(0, track.querySelector('button[data-site="0"]'));
+/* 초기화: 저장된 마지막 화면 복원(없으면 카카오웹툰) */
+(function(){
+  var saved='';
+  try { saved = sessionStorage.getItem('mywayComic') || ''; } catch(_) {}
+  if(saved==='grid'){ showGrid(gridBtn); return; }
+  var m = /^site:(\d+)$/.exec(saved);
+  if(m){
+    var i = parseInt(m[1],10);
+    var b = track.querySelector('button[data-site="'+i+'"]');
+    if(b){ loadSite(i, b); return; }
+  }
+  loadSite(0, track.querySelector('button[data-site="0"]'));
+})();
 
 /* 복사 방지 */
 (function(){
@@ -169,6 +182,28 @@ loadSite(0, track.querySelector('button[data-site="0"]'));
     if(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(k)){e.preventDefault();return;}
     if(e.ctrlKey&&['u','s','c','x','a'].includes(k)){ if(isField(e.target)&&['c','x','a'].includes(k)) return; e.preventDefault(); }
   });
+})();
+</script>
+<script>
+/* 모바일: iframe 안에서 열릴 때 외부 링크를 최상위 창에서 직접 열어
+   뒤로가기로 MYWAY 복귀 가능하게. PC·태블릿은 새 탭 유지. */
+(function(){
+  if(!/Mobi/i.test(navigator.userAgent)) return;
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('a[href]') : null;
+    if(!a) return;
+    var href = a.getAttribute('href') || '';
+    if(!href || href.charAt(0) === '#' || /^javascript:/i.test(href)) return;
+    e.preventDefault();
+    try { (window.top || window).location.href = a.href; }
+    catch(_) { window.open(a.href, '_blank'); }
+  }, true);
+  window.addEventListener('pageshow', function(e){ if(e.persisted){ location.reload(); } });
+  var _open = window.open.bind(window);
+  window.open = function(url, name, feat){
+    if(url){ try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
+    return _open(url, name, feat);
+  };
 })();
 </script>
 </body>

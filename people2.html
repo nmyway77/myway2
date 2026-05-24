@@ -564,6 +564,7 @@
         btn.classList.add('is-active');
         grid.dataset.filter = btn.dataset.cat;
         sub.textContent = labels[btn.dataset.cat] || '전체';
+        try { sessionStorage.setItem('mywayCat_people2', btn.dataset.cat); } catch(_) {}
       });
     }
 
@@ -572,6 +573,41 @@
     renderGallery();
     updateCounts();
     setupCatNav();
+    (function(){
+      var saved='all';
+      try { saved = sessionStorage.getItem('mywayCat_people2') || 'all'; } catch(_) {}
+      var nav=document.getElementById('catNav');
+      var btn=nav&&nav.querySelector('.cat-btn[data-cat="'+saved+'"]');
+      if(btn){
+        nav.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        document.getElementById('masonryGallery').dataset.filter=saved;
+        var labels={ all:'전체', youtuber:'유튜버', singer:'가수', celeb:'연예인', actor:'배우' };
+        var sub=document.getElementById('filterSub'); if(sub) sub.textContent=labels[saved]||'전체';
+      }
+    })();
   </script>
+<script>
+/* 모바일: iframe 안에서 열릴 때 외부 링크를 최상위 창에서 직접 열어
+   뒤로가기로 MYWAY 복귀 가능하게. PC·태블릿은 새 탭 유지. */
+(function(){
+  if(!/Mobi/i.test(navigator.userAgent)) return;
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('a[href]') : null;
+    if(!a) return;
+    var href = a.getAttribute('href') || '';
+    if(!href || href.charAt(0) === '#' || /^javascript:/i.test(href)) return;
+    e.preventDefault();
+    try { (window.top || window).location.href = a.href; }
+    catch(_) { window.open(a.href, '_blank'); }
+  }, true);
+  window.addEventListener('pageshow', function(e){ if(e.persisted){ location.reload(); } });
+  var _open = window.open.bind(window);
+  window.open = function(url, name, feat){
+    if(url){ try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
+    return _open(url, name, feat);
+  };
+})();
+</script>
 </body>
 </html>
