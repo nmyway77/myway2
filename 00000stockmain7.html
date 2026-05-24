@@ -337,6 +337,42 @@
       chart: {
         sections: [
           {
+            label: '미국 지수 선물',
+            sub: 'US Futures · TradingView',
+            items: [
+              { ticker: '다우 선물',     ko: 'DJIA Futures',  url: 'https://kr.tradingview.com/chart/?symbol=CME_MINI%3AYM1!' },
+              { ticker: '나스닥100 미니', ko: 'E-mini · NQ',   url: 'https://kr.tradingview.com/chart/?symbol=CME_MINI%3ANQ1!' },
+              { ticker: 'S&P 500',       ko: 'ES Futures',    url: 'https://kr.tradingview.com/chart/?symbol=CME_MINI%3AES1!' },
+              { ticker: '러셀 2000',     ko: 'RTY Futures',   url: 'https://kr.tradingview.com/chart/?symbol=CME_MINI%3ARTY1!' },
+              { ticker: 'VIX',           ko: '변동성 지수',   url: 'https://kr.tradingview.com/chart/?symbol=TVC%3AVIX' },
+              { ticker: 'DXY',           ko: '달러 인덱스',   url: 'https://kr.tradingview.com/chart/?symbol=TVC%3ADXY' }
+            ]
+          },
+          {
+            label: '코인 주요 차트',
+            sub: 'Coinone',
+            items: [
+              { ticker: 'BTC',  ko: '비트코인',   url: 'https://coinone.co.kr/chart?site=coinone' },
+              { ticker: 'ETH',  ko: '이더리움',   url: 'https://coinone.co.kr/chart?site=coinoneeth' },
+              { ticker: 'XRP',  ko: '리플',       url: 'https://coinone.co.kr/chart?site=coinonexrp' },
+              { ticker: 'SOL',  ko: '솔라나',     url: 'https://coinone.co.kr/chart?site=coinonesol' },
+              { ticker: 'DOGE', ko: '도지코인',   url: 'https://coinone.co.kr/chart?site=coinonedoge' },
+              { ticker: 'ADA',  ko: '에이다',     url: 'https://coinone.co.kr/chart?site=coinoneada' }
+            ]
+          },
+          {
+            label: '미국 주요 주식',
+            sub: 'NASDAQ',
+            items: [
+              { ticker: 'AAPL',  ko: '애플',           url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3AAAPL' },
+              { ticker: 'MSFT',  ko: '마이크로소프트', url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3AMSFT' },
+              { ticker: 'NVDA',  ko: '엔비디아',       url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3ANVDA' },
+              { ticker: 'GOOGL', ko: '알파벳(구글)',   url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3AGOOGL' },
+              { ticker: 'AMZN',  ko: '아마존',         url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3AAMZN' },
+              { ticker: 'TSLA',  ko: '테슬라',         url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3ATSLA' }
+            ]
+          },
+          {
             label: '한국 주요 주식',
             sub: 'KOSPI',
             items: [
@@ -382,42 +418,6 @@
               { ticker: '한화오션', ko: '042660',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A042660' },
               { ticker: 'HD현대미포', ko: '010620',         url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A010620' },
               { ticker: '현대힘스', ko: '460930',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A460930' }
-            ]
-          },
-          {
-            label: '코인 주요 차트',
-            sub: 'Coinone',
-            items: [
-              { ticker: 'BTC',  ko: '비트코인',   url: 'https://coinone.co.kr/chart?site=coinone' },
-              { ticker: 'ETH',  ko: '이더리움',   url: 'https://coinone.co.kr/chart?site=coinoneeth' },
-              { ticker: 'XRP',  ko: '리플',       url: 'https://coinone.co.kr/chart?site=coinonexrp' },
-              { ticker: 'SOL',  ko: '솔라나',     url: 'https://coinone.co.kr/chart?site=coinonesol' },
-              { ticker: 'DOGE', ko: '도지코인',   url: 'https://coinone.co.kr/chart?site=coinonedoge' },
-              { ticker: 'ADA',  ko: '에이다',     url: 'https://coinone.co.kr/chart?site=coinoneada' }
-            ]
-          },
-          {
-            label: '미국 주요 주식',
-            sub: 'NASDAQ',
-            items: [
-              { ticker: 'AAPL',  ko: '애플',           url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3AAAPL' },
-              { ticker: 'MSFT',  ko: '마이크로소프트', url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3AMSFT' },
-              { ticker: 'NVDA',  ko: '엔비디아',       url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3ANVDA' },
-              { ticker: 'GOOGL', ko: '알파벳(구글)',   url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3AGOOGL' },
-              { ticker: 'AMZN',  ko: '아마존',         url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3AAMZN' },
-              { ticker: 'TSLA',  ko: '테슬라',         url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3ATSLA' }
-            ]
-          },
-          {
-            label: '미국 지수 선물',
-            sub: 'US Futures · TradingView',
-            items: [
-              { ticker: '다우 선물',     ko: 'DJIA Futures',  url: 'https://kr.tradingview.com/chart/?symbol=CME_MINI%3AYM1!' },
-              { ticker: '나스닥 100',    ko: 'NQ Futures',    url: 'https://kr.tradingview.com/chart/?symbol=CME_MINI%3ANQ1!' },
-              { ticker: 'S&P 500',       ko: 'ES Futures',    url: 'https://kr.tradingview.com/chart/?symbol=CME_MINI%3AES1!' },
-              { ticker: '러셀 2000',     ko: 'RTY Futures',   url: 'https://kr.tradingview.com/chart/?symbol=CME_MINI%3ARTY1!' },
-              { ticker: 'VIX',           ko: '변동성 지수',   url: 'https://kr.tradingview.com/chart/?symbol=TVC%3AVIX' },
-              { ticker: 'DXY',           ko: '달러 인덱스',   url: 'https://kr.tradingview.com/chart/?symbol=TVC%3ADXY' }
             ]
           },
           {
@@ -699,14 +699,10 @@
         const label = document.createElement('span');
         label.className = 'section-label';
         label.textContent = sec.label;
-        const sub = document.createElement('span');
-        sub.className = 'section-sub';
-        sub.textContent = sec.sub;
         head.appendChild(label);
-        head.appendChild(sub);
 
-        /* '한국 주요 주식' 섹션 옆 비교차트 링크 */
-        if (sec.label === '한국 주요 주식') {
+        /* '미국 지수 선물' 섹션: 영어 sub 대신 비교차트 링크를 그 자리에 */
+        if (sec.label === '미국 지수 선물') {
           const cmpLink = document.createElement('a');
           cmpLink.className = 'section-newslink';
           cmpLink.href = 'https://myway.kr/multichart.html';
@@ -714,6 +710,11 @@
           cmpLink.rel = 'noopener';
           cmpLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12.5" y="7" width="3" height="10"/><rect x="18" y="13" width="3" height="4"/></svg><span>비교차트</span>';
           head.appendChild(cmpLink);
+        } else {
+          const sub = document.createElement('span');
+          sub.className = 'section-sub';
+          sub.textContent = sec.sub;
+          head.appendChild(sub);
         }
 
         section.appendChild(head);
