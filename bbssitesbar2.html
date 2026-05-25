@@ -1,443 +1,266 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>한국 게시판 모음 - 디시·뽐뿌·클리앙·인벤·더쿠 | MYWAY.KR</title>
-  <meta name="description" content="한국의 유명 게시판을 한자리에서. 디시인사이드, 뽐뿌, 클리앙, 인벤, 더쿠, 루리웹, 인스티즈 등 인기 커뮤니티 BBS 모음.">
-  <meta name="keywords" content="한국 게시판, 커뮤니티 모음, 디시인사이드, 뽐뿌, 클리앙, 인벤, 더쿠, 루리웹, BBS, 커뮤니티 사이트">
-  <link rel="canonical" href="https://myway.kr/bbssitesbar2.html">
-  <!-- Open Graph (페이스북·카카오톡 공유 시 표시) -->
-  <meta property="og:title" content="한국 게시판 모음 - 디시·뽐뿌·클리앙·인벤·더쿠 | MYWAY.KR">
-  <meta property="og:description" content="한국의 유명 게시판을 한자리에서. 디시인사이드, 뽐뿌, 클리앙, 인벤, 더쿠, 루리웹, 인스티즈 등 인기 커뮤니티 BBS 모음.">
-  <meta property="og:url" content="https://myway.kr/bbssitesbar2.html">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="MYWAY.KR">
-  <meta property="og:locale" content="ko_KR">
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="한국 게시판 모음 - 디시·뽐뿌·클리앙·인벤·더쿠 | MYWAY.KR">
-  <meta name="twitter:description" content="한국의 유명 게시판을 한자리에서. 디시인사이드, 뽐뿌, 클리앙, 인벤, 더쿠, 루리웹, 인스티즈 등 인기 커뮤니티 BBS 모음.">
-  <!-- 검색 엔진 크롤링 허용 (기본값이지만 명시) -->
-  <meta name="robots" content="index, follow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>BBS · 커뮤니티 한자리 | MYWAY.KR</title>
+<meta name="description" content="디시·에펨·더쿠·클리앙·뽐뿌·루리웹 등 인기 커뮤니티와 유머·이슈 게시판을 한 화면에서. 사이트를 골라 바로 보세요.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://myway.kr/00mainbbs.html">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{ --line:#ececec;--ink:#1a1a1a;--ink-sub:#8a8f99;--accent:#0b6b53;--body:"Pretendard",-apple-system,sans-serif; }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;height:100%}
+  body{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:#fff;color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
+  .topnav{flex:none;display:flex;gap:8px;align-items:center;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:10px 14px;background:#fff;border-bottom:1px solid var(--line);cursor:grab;scrollbar-width:none}
+  .topnav::-webkit-scrollbar{display:none}
+  .topnav.dragging{cursor:grabbing}
+  .nav-home{flex:none;order:0;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-sub);padding:8px;border-radius:10px;transition:color .15s,background .15s}
+  .nav-home:hover{color:var(--accent);background:#f5f6f8}
+  .nav-home svg{width:20px;height:20px;display:block}
+  .nav-track{flex:none;order:3;display:flex;align-items:center;gap:8px;margin:0 auto}
+  .topnav button{flex:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-family:var(--body);font-size:14px;font-weight:700;color:var(--ink-sub);cursor:pointer;transition:all .16s}
+  .topnav button:hover{border-color:#cfd3da;color:var(--ink)}
+  .topnav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .topnav .grid-btn{order:1;border-color:#b9e0d4;color:var(--accent)}
+  .open-btn{flex:none;order:2;color:var(--ink-sub);font-weight:700}
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <style>
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
-      background: #fff;
-      -webkit-text-size-adjust: 100%;
-    }
+  .viewer{flex:1;position:relative;overflow:hidden;background:#0d0f12}
+  .viewer iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
 
-    /* === 네비바 영역 === */
-    .nav-wrap {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 8px;
-      background: #fff;
-      z-index: 100;
-      filter: drop-shadow(0 4px 14px rgba(177, 118, 243, 0.22));
-    }
-
-    /* === 홈 버튼 === */
-    .home-btn {
-      flex: 0 0 auto;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #b176f3 0%, #7ed6fb 100%);
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      padding: 0;
-      box-shadow: 0 4px 12px rgba(177, 118, 243, 0.35), 0 1px 3px rgba(126, 214, 251, 0.25);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-      -webkit-tap-highlight-color: transparent;
-      text-decoration: none;
-      position: relative;
-      overflow: hidden;
-    }
-    .home-btn::before {
-      content: '';
-      position: absolute;
-      inset: 1px;
-      border-radius: 9px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 60%);
-      pointer-events: none;
-    }
-    .home-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(177, 118, 243, 0.45), 0 2px 4px rgba(126, 214, 251, 0.3);
-    }
-    .home-btn:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 6px rgba(177, 118, 243, 0.3);
-    }
-    .home-btn svg {
-      width: 17px;
-      height: 17px;
-      display: block;
-      filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
-      position: relative;
-      z-index: 1;
-    }
-
-    .nav-bar-inner {
-      position: relative;
-      display: flex;
-      align-items: center;
-      flex: 1 1 auto;
-      min-width: 0;
-      height: 100%;
-    }
-
-    .screen-links {
-      display: flex;
-      gap: 4px;
-      font-size: 0.93rem;
-      font-weight: 500;
-      color: #fff;
-      white-space: nowrap;
-      background: linear-gradient(95deg, #7ed6fb 10%, #b176f3 90%);
-      padding: 0 36px;
-      align-items: center;
-      border-radius: 14px;
-      box-shadow: 0 4px 18px rgba(90,100,180,0.13), 0 2px 8px rgba(255,255,255,0.10) inset;
-      width: 100%;
-      height: 32px;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior-x: contain;
-      touch-action: pan-x;
-      cursor: grab;
-      scroll-behavior: smooth;
-    }
-    .screen-links::-webkit-scrollbar { display: none; }
-    .screen-links.dragging { cursor: grabbing; scroll-behavior: auto; }
-
-    .screen-links a {
-      color: rgba(255,255,255,0.88);
-      text-decoration: none;
-      padding: 4px 11px;
-      border-radius: 10px;
-      font-weight: 500;
-      font-size: 0.95em;
-      background: none;
-      display: inline-block;
-      white-space: nowrap;
-      flex: 0 0 auto;
-      letter-spacing: 0.01em;
-      transition: background 0.15s, color 0.13s;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-    .screen-links a:hover,
-    .screen-links a.active {
-      background: rgba(255,255,255,0.24);
-      color: #fff;
-      font-weight: 600;
-      box-shadow: 0 2px 12px rgba(177, 118, 243, 0.25);
-    }
-
-    /* === 좌/우 화살표 === */
-    .nav-arrow {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      outline: none;
-      z-index: 5;
-      cursor: pointer;
-      padding: 0;
-      border-radius: 14px;
-      -webkit-tap-highlight-color: transparent;
-      transition: opacity 0.15s;
-    }
-    .nav-arrow.left {
-      left: 0;
-      background: linear-gradient(to right, #b176f3 55%, rgba(177,118,243,0) 100%);
-    }
-    .nav-arrow.right {
-      right: 0;
-      background: linear-gradient(to left, #b176f3 55%, rgba(177,118,243,0) 100%);
-    }
-    .nav-arrow svg {
-      width: 12px;
-      height: 18px;
-      display: block;
-    }
-    .nav-arrow:active { opacity: 0.7; }
-    .nav-arrow[hidden] { display: none; }
-
-    /* === iframe === */
-    #main-frame {
-      position: fixed;
-      left: 0;
-      top: 44px;
-      width: 100%;
-      height: calc(100% - 44px);
-      border: none;
-      margin: 0;
-      background: #f5f7fa;
-      display: block;
-    }
-
-    /* === 모바일 === */
-    @media (max-width: 700px) {
-      .nav-wrap { height: 42px; padding: 5px 6px; gap: 6px; }
-      .home-btn { width: 30px; height: 30px; border-radius: 9px; }
-      .home-btn svg { width: 15px; height: 15px; }
-      .screen-links {
-        font-size: 0.88rem;
-        padding: 0 32px;
-        height: 30px;
-      }
-      .screen-links a {
-        padding: 3px 9px;
-        font-size: 0.92em;
-      }
-      .nav-arrow { width: 26px; }
-      #main-frame {
-        top: 42px;
-        height: calc(100% - 42px);
-      }
-    }
-  
-    /* === SEO 본문 섹션 (사용자가 스크롤하면 iframe 아래에 표시) === */
-    .seo-info {
-      position: relative;
-      margin-top: 100vh;
-      padding: 40px 20px 80px;
-      background: #f7f8fb;
-      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
-      font-size: 0.95rem;
-      line-height: 1.65;
-      color: #1a1f36;
-      max-width: 100%;
-      box-sizing: border-box;
-    }
-    .seo-info-inner { max-width: 860px; margin: 0 auto; }
-    .seo-info h1 {
-      font-size: 1.4rem;
-      margin: 0 0 14px;
-      color: #2e3d5e;
-      letter-spacing: -0.3px;
-    }
-    .seo-info h2 {
-      font-size: 1.08rem;
-      margin: 26px 0 10px;
-      color: #2e3d5e;
-      letter-spacing: -0.2px;
-    }
-    .seo-info p { margin: 0 0 12px; color: #3a4159; }
-    .seo-info ul { padding-left: 22px; margin: 0 0 14px; }
-    .seo-info li { margin-bottom: 5px; color: #3a4159; }
-    .seo-info .sites-tag { color: #6b7488; font-size: 0.85rem; }
-    @media (max-width: 700px) {
-      .seo-info { padding: 30px 16px 60px; font-size: 0.92rem; }
-      .seo-info h1 { font-size: 1.25rem; }
-    }
-
-  </style>
+  /* 전체목록(디렉터리) 패널 */
+  .grid-panel{position:absolute;inset:0;overflow-y:auto;display:none;padding:30px 16px 60px;background:#fff;scrollbar-width:none}
+  .grid-panel::-webkit-scrollbar{display:none}
+  .grid-panel.show{display:block}
+  .grid-title{text-align:center;font-size:20px;font-weight:800;letter-spacing:-0.02em;color:#244;margin:0 0 6px}
+  .grid-sub{text-align:center;font-size:13px;color:var(--ink-sub);margin:0 0 26px}
+  .dir-section{max-width:1040px;margin:0 auto 24px}
+  .dir-label{font-size:12.5px;font-weight:800;color:var(--accent);letter-spacing:.5px;text-transform:uppercase;margin:0 0 10px;padding:0 4px}
+  .dir-grid{display:grid;grid-template-columns:repeat(4,1fr);column-gap:10px;row-gap:26px}
+  .dir-card{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:14px 15px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;text-align:left;text-decoration:none;color:inherit;font-family:var(--body);transition:all .15s;box-shadow:0 2px 4px rgba(90,90,130,.06);position:relative;overflow:visible}
+  .dir-card::after{content:"";position:absolute;left:2.5%;right:2.5%;top:100%;height:18px;background:url('https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png') center top / 100% 100% no-repeat;pointer-events:none;z-index:1}
+  .dir-card:hover{border-color:var(--accent);background:#f5fbf8;transform:translateY(-2px);box-shadow:0 4px 10px rgba(11,107,83,.12)}
+  .dir-card .t{font-size:15px;font-weight:800;color:var(--ink);letter-spacing:-0.3px;line-height:1.15}
+  .dir-card .k{font-size:11px;color:var(--ink-sub);line-height:1.2}
+  @media (max-width:720px){ .dir-grid{grid-template-columns:repeat(2,1fr);row-gap:24px} .grid-panel{padding:24px 12px 50px} }
+</style>
 </head>
 <body>
 
-  <!-- 네비게이션 바 -->
-  <div class="nav-wrap">
-    <!-- 홈 버튼 -->
-    <a href="https://myway.kr/" class="home-btn" aria-label="MYWAY.KR 홈으로" title="MYWAY.KR 홈">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 3.2 3 10.4V20a1 1 0 0 0 1 1h5v-6h6v6h5a1 1 0 0 0 1-1v-9.6L12 3.2z"
-              fill="#fff" stroke="#fff" stroke-width="0.5" stroke-linejoin="round"/>
-      </svg>
-    </a>
+<nav class="topnav" id="topnav">
+  <a class="nav-home" href="https://myway.kr" aria-label="MYWAY.KR 홈">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
+  </a>
+  <div class="nav-track" id="navTrack"></div>
+</nav>
 
-    <div class="nav-bar-inner">
-      <button class="nav-arrow left" id="nav-arrow-left" aria-label="왼쪽 이동" hidden>
-        <svg viewBox="0 0 13 20"><polygon points="9,3 2,10 9,17" fill="#fff" opacity="0.9"/></svg>
-      </button>
+<div class="viewer">
+  <iframe id="viewer" title="커뮤니티 뷰어" referrerpolicy="no-referrer" allow="fullscreen" allowfullscreen></iframe>
+  <div class="grid-panel" id="gridPanel"></div>
+</div>
 
-      <div class="screen-links" id="parent-links">
-        <a href="#" class="active" onclick="showScreenParent(event, '00mainbbs.html')">H</a>
-        <a href="#" onclick="showScreenParent(event, 'https://modu.pcpp.go.kr/suggest-board')">국민제안</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www.dcinside.com/')">dcinsid</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www.fmkorea.com/')">fmkorea</a>
-        <a href="#" onclick="showScreenParent(event, 'https://theqoo.net/hot?filter_mode=normal')">theqoo</a>
-        <a href="#" onclick="showScreenParent(event, 'https://ppomppu.co.kr/hot.php')">뽐뿌</a>
-        <a href="#" onclick="showScreenParent(event, 'https://mlbpark.donga.com/mp/b.php?search_select=sct&search_input=&select=spf&m=search&b=kbotown&query=%EC%98%A4%ED%94%BC%EC%85%9C')">엠엘파크</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www.missycoupons.com/zero/board.php#id=general')">missycoupons</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www.inven.co.kr/board/webzine/2097?iskin=webzine')">inven</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www.instiz.net/pt?srt=3#greentop')">instiz</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www.bobaedream.co.kr/list?code=freeb')">bobaedream</a>
-        <a href="#" onclick="showScreenParent(event, 'https://hiphopplaya.com/')">hiphopplaya</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www.dogdrip.net/?mid=dogdrip&sort_index=popular')">dogdrip</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www.ilbe.com//')">일베</a>
-        <a href="#" onclick="showScreenParent(event, 'https://pann.nate.com/')">Nate판</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www.ygosu.com/community/best_article/?type=daily')">ygosu</a>
-        <a href="#" onclick="showScreenParent(event, 'https://bbs.ruliweb.com/best/humor/now?orderby=readcount&range=7d')">ruliweb</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www.clien.net/service/recommend')">clien</a>
-        <a href="#" onclick="showScreenParent(event, 'http://www.gasengi.com/main/board.php?bo_table=commu08')">gasengi</a>
-        <a href="#" onclick="showScreenParent(event, 'http://www.etoland.co.kr/bbs/board.php?bo_table=hit')">etoland</a>
-      </div>
+<script>
+/* === 상단 채널 버튼 (iframe에 바로 표시) — bbssitesbar2 === */
+const SITES=[
+  ['국민제안','https://modu.pcpp.go.kr/suggest-board'],
+  ['디시인사이드','https://www.dcinside.com/'],
+  ['에펨코리아','https://www.fmkorea.com/'],
+  ['더쿠','https://theqoo.net/hot?filter_mode=normal'],
+  ['뽐뿌','https://ppomppu.co.kr/hot.php'],
+  ['MLB파크','https://mlbpark.donga.com/'],
+  ['미시쿠폰','https://www.missycoupons.com/zero/board.php#id=general'],
+  ['인벤','https://www.inven.co.kr/board/webzine/2097?iskin=webzine'],
+  ['인스티즈','https://www.instiz.net/pt?srt=3#greentop'],
+  ['보배드림','https://www.bobaedream.co.kr/list?code=freeb'],
+  ['힙합플레야','https://hiphopplaya.com/'],
+  ['개드립','https://www.dogdrip.net/?mid=dogdrip&sort_index=popular'],
+  ['일베','https://www.ilbe.com/'],
+  ['네이트판','https://pann.nate.com/'],
+  ['와이고수','https://www.ygosu.com/community/best_article/?type=daily'],
+  ['루리웹','https://bbs.ruliweb.com/best/humor/now?orderby=readcount&range=7d'],
+  ['클리앙','https://www.clien.net/service/recommend'],
+  ['가생이','http://www.gasengi.com/main/board.php?bo_table=commu08'],
+  ['이토랜드','http://www.etoland.co.kr/bbs/board.php?bo_table=hit'],
+];
+const DEFAULT_I = Math.max(0, SITES.findIndex(s=>s[0]==='더쿠'));
 
-      <button class="nav-arrow right" id="nav-arrow-right" aria-label="오른쪽 이동" hidden>
-        <svg viewBox="0 0 13 20"><polygon points="4,3 11,10 4,17" fill="#fff" opacity="0.9"/></svg>
-      </button>
-    </div>
-  </div>
+/* === 전체목록 디렉터리 (카테고리별) — indexmain7 BBS + 추가 === */
+const DIRECTORY = [
+  { label:'인기 커뮤니티', items:[
+    ['디시인사이드','dcinside.com','https://www.dcinside.com/'],
+    ['클리앙','clien.net','https://www.clien.net/'],
+    ['뽐뿌','ppomppu.co.kr','https://www.ppomppu.co.kr/'],
+    ['인벤','inven.co.kr','https://www.inven.co.kr/'],
+    ['더쿠','theqoo.net','https://theqoo.net/'],
+    ['보배드림','bobaedream.co.kr','https://www.bobaedream.co.kr/'],
+    ['루리웹','ruliweb.com','https://www.ruliweb.com/'],
+    ['PGR21','pgr21.com','https://www.pgr21.com/'],
+    ['MLB파크','mlbpark.donga.com','https://mlbpark.donga.com/'],
+    ['에펨코리아','fmkorea.com','https://www.fmkorea.com/'],
+    ['82쿡','82cook.com','https://www.82cook.com/'],
+    ['네이트판','pann.nate.com','https://pann.nate.com/'],
+  ]},
+  { label:'유머·이슈·기타', items:[
+    ['인스티즈','instiz.net','https://www.instiz.net/'],
+    ['개드립','dogdrip.net','https://www.dogdrip.net/'],
+    ['와이고수','ygosu.com','https://www.ygosu.com/'],
+    ['가생이','gasengi.com','http://www.gasengi.com/'],
+    ['이토랜드','etoland.co.kr','http://www.etoland.co.kr/'],
+    ['일베','ilbe.com','https://www.ilbe.com/'],
+    ['미시쿠폰','missycoupons.com','https://www.missycoupons.com/'],
+    ['힙합플레야','hiphopplaya.com','https://hiphopplaya.com/'],
+    ['국민제안','modu.pcpp.go.kr','https://modu.pcpp.go.kr/suggest-board'],
+  ]},
+];
 
-  <iframe id="main-frame" src="https://www.dcinside.com/"></iframe>
+let viewer=document.getElementById('viewer');
+function setViewerSrc(url){
+  /* iframe을 새로 만들어 교체 → 안쪽 iframe src 변경이 히스토리에 쌓이지 않아
+     뒤로가기가 중간 단계에 걸리지 않음 */
+  const fresh=document.createElement('iframe');
+  fresh.id='viewer'; fresh.title='커뮤니티 뷰어';
+  fresh.setAttribute('referrerpolicy','no-referrer');
+  fresh.setAttribute('allow','fullscreen');
+  fresh.setAttribute('allowfullscreen','');
+  fresh.src=url;
+  viewer.parentNode.replaceChild(fresh, viewer);
+  viewer=fresh;
+}
 
-  <script>
-    const nav = document.getElementById('parent-links');
-    const leftArrow = document.getElementById('nav-arrow-left');
-    const rightArrow = document.getElementById('nav-arrow-right');
-    const mainFrame = document.getElementById('main-frame');
+const gridPanel=document.getElementById('gridPanel');
+const nav=document.getElementById('topnav');
+const track=document.getElementById('navTrack');
+let currentUrl=SITES[DEFAULT_I][1];
 
-    function showScreenParent(e, url) {
-      e.preventDefault();
-      if (justDragged) { justDragged = false; return; }
+function centerNavBtn(btn){
+  const navRect=nav.getBoundingClientRect();
+  const btnRect=btn.getBoundingClientRect();
+  const target=nav.scrollLeft + (btnRect.left - navRect.left) - (nav.clientWidth/2) + (btnRect.width/2);
+  nav.scrollTo({left:Math.max(0,target),behavior:'smooth'});
+}
+function clearActive(){ nav.querySelectorAll('button[data-site],button[data-grid]').forEach(b=>b.classList.remove('active')); }
 
-      document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
-      e.currentTarget.classList.add('active');
-      mainFrame.src = url;
-
-      const el = e.currentTarget;
-      const offset = el.offsetLeft - nav.clientWidth / 2 + el.clientWidth / 2;
-      nav.scrollTo({ left: offset, behavior: 'smooth' });
-      setTimeout(checkNavOverflow, 250);
-    }
-
-    let isDown = false;
-    let startX = 0;
-    let scrollStart = 0;
-    let dragDistance = 0;
-    let justDragged = false;
-
-    function dragStart(clientX) {
-      isDown = true;
-      dragDistance = 0;
-      startX = clientX;
-      scrollStart = nav.scrollLeft;
-      nav.classList.add('dragging');
-    }
-    function dragMove(clientX) {
-      if (!isDown) return;
-      const dx = clientX - startX;
-      dragDistance = Math.abs(dx);
-      nav.scrollLeft = scrollStart - dx;
-    }
-    function dragEnd() {
-      if (!isDown) return;
-      isDown = false;
-      nav.classList.remove('dragging');
-      if (dragDistance > 8) {
-        justDragged = true;
-        setTimeout(() => { justDragged = false; }, 50);
-      }
-      checkNavOverflow();
-    }
-
-    nav.addEventListener('mousedown', e => dragStart(e.pageX));
-    nav.addEventListener('mousemove', e => { if (isDown) { e.preventDefault(); dragMove(e.pageX); } });
-    nav.addEventListener('mouseup', dragEnd);
-    nav.addEventListener('mouseleave', dragEnd);
-
-    nav.addEventListener('touchstart', e => {
-      dragDistance = 0;
-      startX = e.touches[0].pageX;
-    }, { passive: true });
-    nav.addEventListener('touchmove', e => {
-      dragDistance = Math.abs(e.touches[0].pageX - startX);
-    }, { passive: true });
-    nav.addEventListener('touchend', () => {
-      if (dragDistance > 8) {
-        justDragged = true;
-        setTimeout(() => { justDragged = false; }, 50);
-      }
-      setTimeout(checkNavOverflow, 80);
+/* 전체목록 패널 1회 생성 */
+function renderGrid(){
+  if(gridPanel.dataset.done) return; gridPanel.dataset.done='1';
+  const t=document.createElement('div'); t.className='grid-title'; t.textContent='전체 커뮤니티·게시판';
+  const s=document.createElement('div'); s.className='grid-sub'; s.textContent='사이트를 누르면 새 탭으로 열려요';
+  gridPanel.appendChild(t); gridPanel.appendChild(s);
+  DIRECTORY.forEach(sec=>{
+    const wrap=document.createElement('div'); wrap.className='dir-section';
+    const lab=document.createElement('div'); lab.className='dir-label'; lab.textContent=sec.label;
+    const g=document.createElement('div'); g.className='dir-grid';
+    sec.items.forEach(it=>{
+      const c=document.createElement('a'); c.className='dir-card'; c.href=it[2]; c.target='_blank'; c.rel='noopener';
+      const tt=document.createElement('span'); tt.className='t'; tt.textContent=it[0];
+      const kk=document.createElement('span'); kk.className='k'; kk.textContent=it[1];
+      c.appendChild(tt); c.appendChild(kk);
+      g.appendChild(c);
     });
+    wrap.appendChild(lab); wrap.appendChild(g); gridPanel.appendChild(wrap);
+  });
+}
+function showGrid(btn){
+  renderGrid();
+  setViewerSrc('about:blank');   /* 열려 있던 사이트 비움 */
+  viewer.style.display='none';
+  gridPanel.classList.add('show');
+  openBtn.style.display='none';
+  clearActive();
+  try { sessionStorage.setItem('mywayBbs','grid'); } catch(_) {}
+  if(btn){ btn.classList.add('active'); centerNavBtn(btn); }
+}
+/* 상단 채널 버튼 → iframe 표시 */
+function loadSite(i, btn){
+  currentUrl=SITES[i][1];
+  gridPanel.classList.remove('show');
+  setViewerSrc(currentUrl);
+  openBtn.style.display='';
+  clearActive();
+  try { sessionStorage.setItem('mywayBbs','site:'+i); } catch(_) {}
+  if(btn){ btn.classList.add('active'); centerNavBtn(btn); }
+}
 
-    function checkNavOverflow() {
-      if (nav.scrollWidth > nav.clientWidth + 2) {
-        leftArrow.hidden = nav.scrollLeft < 5;
-        rightArrow.hidden = nav.scrollLeft + nav.clientWidth + 5 >= nav.scrollWidth;
-      } else {
-        leftArrow.hidden = true;
-        rightArrow.hidden = true;
-      }
-    }
-    nav.addEventListener('scroll', checkNavOverflow, { passive: true });
-    window.addEventListener('resize', () => setTimeout(checkNavOverflow, 50));
-    window.addEventListener('orientationchange', () => setTimeout(checkNavOverflow, 200));
+/* 채널 버튼 생성 */
+SITES.forEach((s,i)=>{
+  const b=document.createElement('button'); b.textContent=s[0]; b.dataset.site=i;
+  b.addEventListener('click',()=>loadSite(i,b));
+  track.appendChild(b);
+});
+/* 전체목록 버튼 (맨 왼쪽 - 홈 다음) */
+const gridBtn=document.createElement('button'); gridBtn.textContent='💬 전체목록'; gridBtn.dataset.grid='1'; gridBtn.className='grid-btn';
+gridBtn.addEventListener('click',()=>showGrid(gridBtn));
+nav.appendChild(gridBtn);
+/* 새 탭으로 열기 (맨 앞 - 홈 버튼 다음, 항상 보이게) */
+const openBtn=document.createElement('button'); openBtn.className='open-btn'; openBtn.textContent='↗ 새 탭';
+openBtn.addEventListener('click',()=>window.open(currentUrl,'_blank','noopener'));
+nav.insertBefore(openBtn, track);
 
-    leftArrow.addEventListener('click', () => {
-      nav.scrollBy({ left: -120, behavior: 'smooth' });
-      setTimeout(checkNavOverflow, 250);
-    });
-    rightArrow.addEventListener('click', () => {
-      nav.scrollBy({ left: 120, behavior: 'smooth' });
-      setTimeout(checkNavOverflow, 250);
-    });
+/* 네비 드래그 스크롤 */
+(function(){
+  let down=false,startX=0,startL=0,moved=false;
+  nav.addEventListener('pointerdown',e=>{ if(e.button!==0) return; down=true;moved=false;startX=e.clientX;startL=nav.scrollLeft;nav.classList.add('dragging'); });
+  nav.addEventListener('pointermove',e=>{ if(!down) return; const dx=e.clientX-startX; if(Math.abs(dx)>4) moved=true; nav.scrollLeft=startL-dx; });
+  const end=()=>{ down=false; nav.classList.remove('dragging'); };
+  nav.addEventListener('pointerup',end);
+  nav.addEventListener('pointercancel',end);
+  nav.addEventListener('pointerleave',end);
+  nav.addEventListener('click',e=>{ if(moved){ e.stopPropagation(); e.preventDefault(); moved=false; } },true);
+  nav.addEventListener('wheel',e=>{ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ nav.scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
+})();
 
-    window.addEventListener('DOMContentLoaded', checkNavOverflow);
-    window.addEventListener('load', checkNavOverflow);
-    setTimeout(checkNavOverflow, 200);
-  </script>
+/* 초기화: 저장된 마지막 화면 복원(없으면 전체목록 메인) */
+(function(){
+  var saved='';
+  try { saved = sessionStorage.getItem('mywayBbs') || ''; } catch(_) {}
+  if(saved==='grid'){ showGrid(gridBtn); return; }
+  var ms = /^site:(\d+)$/.exec(saved);
+  if(ms){
+    var i=parseInt(ms[1],10);
+    var b=track.querySelector('button[data-site="'+i+'"]');
+    if(b){ loadSite(i,b); return; }
+  }
+  loadSite(DEFAULT_I, track.querySelector('button[data-site="'+DEFAULT_I+'"]'));
+})();
 
-  <!-- SEO 본문 섹션 -->
-  <section class="seo-info">
-    <div class="seo-info-inner">
-      <h1>한국 인기 게시판 모음 - 유명 커뮤니티 사이트 한자리</h1>
-      <p>MYWAY.KR의 한국 게시판 모음 페이지는 <strong>디시인사이드, 뽐뿌, 클리앙, 인벤, 더쿠, 루리웹, 인스티즈, 보배드림</strong> 등 한국에서 가장 인기 있는 커뮤니티와 게시판 사이트를 한 화면에서 빠르게 둘러볼 수 있는 BBS 포털입니다.</p>
-
-      <h2>제공 커뮤니티 사이트</h2>
-      <ul>
-        <li><strong>디시인사이드 (dcinside)</strong> - 한국 최대 종합 커뮤니티</li>
-        <li><strong>뽐뿌 (Ppomppu)</strong> - 쇼핑·핫딜 정보 커뮤니티</li>
-        <li><strong>FM코리아 (FMKorea)</strong> - 스포츠·유머 커뮤니티</li>
-        <li><strong>더쿠 (theqoo), 인스티즈 (instiz)</strong> - 연예·아이돌 커뮤니티</li>
-        <li><strong>클리앙 (clien)</strong> - IT·기술 커뮤니티</li>
-        <li><strong>인벤 (inven), 루리웹 (ruliweb)</strong> - 게임 커뮤니티</li>
-        <li><strong>보배드림 (bobaedream)</strong> - 자동차 커뮤니티</li>
-        <li><strong>힙합플레이 (hiphopplaya)</strong> - 음악·힙합 커뮤니티</li>
-        <li><strong>엠엘비파크 (MLBPARK)</strong> - 야구 커뮤니티</li>
-        <li><strong>그 외</strong>: 미시쿠폰(missycoupons), 도그드립(dogdrip), Nate판, ygosu, 가생이, etoland, 일베</li>
-        <li><strong>공공</strong>: 국민제안 (정부 시민 의견 게시판)</li>
-      </ul>
-
-      <h2>커뮤니티 인기글 보기</h2>
-      <p>각 커뮤니티의 인기 게시글, 베스트 글, HOT 게시판으로 바로 연결됩니다. 한국 인터넷 커뮤니티의 실시간 이슈와 핫토픽을 한자리에서 빠르게 확인할 수 있습니다.</p>
-
-      <p class="sites-tag">관련 키워드: 한국 커뮤니티, 게시판 모음, 한국 BBS, 인기 게시판, 커뮤니티 사이트</p>
-    </div>
-  </section>
-
+/* 복사 방지 */
+(function(){
+  const isField=el=>el&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA'||el.tagName==='SELECT');
+  ['contextmenu','selectstart','dragstart','copy','cut'].forEach(ev=>{
+    document.addEventListener(ev,e=>{ if(isField(e.target)) return; e.preventDefault(); });
+  });
+  document.addEventListener('keydown',e=>{
+    const k=(e.key||'').toLowerCase();
+    if(e.key==='F12'){e.preventDefault();return;}
+    if(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(k)){e.preventDefault();return;}
+    if(e.ctrlKey&&['u','s','c','x','a'].includes(k)){ if(isField(e.target)&&['c','x','a'].includes(k)) return; e.preventDefault(); }
+  });
+})();
+</script>
+<script>
+/* 모바일: 외부 링크를 최상위 창에서 열어 뒤로가기로 MYWAY 복귀. PC·태블릿은 새 탭. */
+(function(){
+  if(!/Mobi/i.test(navigator.userAgent)) return;
+  document.addEventListener("click", function(e){
+    var a = e.target.closest ? e.target.closest("a[href]") : null;
+    if(!a) return;
+    var href = a.getAttribute("href") || "";
+    if(!href || href.charAt(0) === "#" || /^javascript:/i.test(href)) return;
+    e.preventDefault();
+    try { (window.top || window).location.href = a.href; }
+    catch(_) { window.open(a.href, "_blank"); }
+  }, true);
+  var _open = window.open.bind(window);
+  window.open = function(url, name, feat){
+    if(url){ try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
+    return _open(url, name, feat);
+  };
+})();
+</script>
 </body>
 </html>
