@@ -56,7 +56,6 @@
 
 <script>
 const SITES=[
-  ['📚 카카오웹툰','https://webtoon.kakao.com/'],
   ['🌸 봄툰','https://www.bomtoon.com/bom/comic/free'],
   ['📰 스포츠경향 만화','https://sports.khan.co.kr/comics/comics_author.html'],
   ['🗞️ 스포츠서울 만화','https://comic.sportsseoul.com/'],
@@ -128,7 +127,7 @@ function loadSite(i, btn){
   if(btn){ btn.classList.add('active'); centerNavBtn(btn); }
 }
 
-/* 개별 사이트 버튼 (카카오웹툰부터) */
+/* 개별 사이트 버튼 (봄툰부터) */
 SITES.forEach((s,i)=>{
   const b=document.createElement('button'); b.textContent=s[0]; b.dataset.site=i;
   b.addEventListener('click',()=>loadSite(i,b));
