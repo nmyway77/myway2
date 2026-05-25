@@ -1849,6 +1849,7 @@
       if (!sameUrl) {
         frame.src = url;
         frame.setAttribute('data-current-url', url);
+        try { sessionStorage.setItem('mywayScreen', url); } catch(_) {}
       }
 
       // 펼치기
@@ -1926,6 +1927,26 @@
         adjustHeaderHeight();
       }
     }, { passive: true });
+
+    /* ========== 뒤로가기 복귀 시 마지막 화면 복원 ==========
+       외부 링크 클릭 후 최상위 창이 이동했다가 뒤로가기로 index.html로
+       돌아오면, iframe이 기본값(indexmain7)으로 리셋되는 문제 방지.
+       마지막으로 보던 페이지를 그대로 복원한다. */
+    (function(){
+      var saved;
+      try { saved = sessionStorage.getItem('mywayScreen'); } catch(_) {}
+      if(!saved) return;
+      var frame = document.getElementById('main-frame');
+      if(!frame) return;
+      if(frame.getAttribute('data-current-url') !== saved){
+        frame.src = saved;
+        frame.setAttribute('data-current-url', saved);
+      }
+      document.querySelectorAll('#parent-links a').forEach(function(a){
+        var oc = a.getAttribute('onclick') || '';
+        a.classList.toggle('active', oc.indexOf(saved) !== -1);
+      });
+    })();
   </script>
 
   <!-- GoatCounter 방문자 카운터 (같은 IP 8시간 내 1회 집계) -->
