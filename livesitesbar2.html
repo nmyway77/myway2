@@ -1,392 +1,296 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>실시간 FREE LIVE TV, 라이브 TV, 방송, 속보, 각방송사 종합링크 - MYWAY.KR</title>
-  <meta name="description" content="무료로 즐기는 최신 무료영화, 인기 영화, 드라마, 만화 , 실시간 스트리밍 정보. Free movies, watch latest films for free!">
-  <meta property="og:title" content="무료영화, 최신 영화 추천 | Free Movies, Streaming - MYWAY.KR">
-  <meta property="og:description" content="최신 무료영화와 인기작들을 무료로 시청하세요. Free movies, streaming, live TV, K-Drama, all in one place!">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>LIVE TV · 실시간 방송 | MYWAY.KR</title>
+<meta name="description" content="지상파·종편·뉴스·경제·해외 실시간 방송과 치지직·SOOP·트위치 라이브를 한 화면에서. 상단 채널을 골라 전체 화면으로 보세요.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://myway.kr/00mainlivetv.html">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{ --line:#ececec;--ink:#1a1a1a;--ink-sub:#8a8f99;--accent:#0b6b53;--body:"Pretendard",-apple-system,sans-serif; }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;height:100%}
+  body{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:#fff;color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
+  .topnav{flex:none;display:flex;gap:8px;align-items:center;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:10px 14px;background:#fff;border-bottom:1px solid var(--line);cursor:grab;scrollbar-width:none}
+  .topnav::-webkit-scrollbar{display:none}
+  .topnav.dragging{cursor:grabbing}
+  .nav-home{flex:none;order:0;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-sub);padding:8px;border-radius:10px;transition:color .15s,background .15s}
+  .nav-home:hover{color:var(--accent);background:#f5f6f8}
+  .nav-home svg{width:20px;height:20px;display:block}
+  .nav-track{flex:none;order:3;display:flex;align-items:center;gap:8px;margin:0 auto}
+  .topnav button{flex:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-family:var(--body);font-size:14px;font-weight:700;color:var(--ink-sub);cursor:pointer;transition:all .16s}
+  .topnav button:hover{border-color:#cfd3da;color:var(--ink)}
+  .topnav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .topnav .grid-btn{order:1;border-color:#b9e0d4;color:var(--accent)}
+  .open-btn{flex:none;order:2;color:var(--ink-sub);font-weight:700}
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <style>
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
-      background: #fff;
-      -webkit-text-size-adjust: 100%;
-    }
+  .viewer{flex:1;position:relative;overflow:hidden;background:#0d0f12}
+  .viewer iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
 
-    /* === 네비바 영역 === */
-    .nav-wrap {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 8px;
-      background: #fff;
-      z-index: 100;
-      filter: drop-shadow(0 4px 14px rgba(177, 118, 243, 0.22));
-    }
-
-    /* === 홈 버튼 === */
-    .home-btn {
-      flex: 0 0 auto;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #b176f3 0%, #7ed6fb 100%);
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      padding: 0;
-      box-shadow: 0 4px 12px rgba(177, 118, 243, 0.35), 0 1px 3px rgba(126, 214, 251, 0.25);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-      -webkit-tap-highlight-color: transparent;
-      text-decoration: none;
-      position: relative;
-      overflow: hidden;
-    }
-    .home-btn::before {
-      content: '';
-      position: absolute;
-      inset: 1px;
-      border-radius: 9px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 60%);
-      pointer-events: none;
-    }
-    .home-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(177, 118, 243, 0.45), 0 2px 4px rgba(126, 214, 251, 0.3);
-    }
-    .home-btn:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 6px rgba(177, 118, 243, 0.3);
-    }
-    .home-btn svg {
-      width: 17px;
-      height: 17px;
-      display: block;
-      filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
-      position: relative;
-      z-index: 1;
-    }
-
-    .nav-bar-inner {
-      position: relative;
-      display: flex;
-      align-items: center;
-      flex: 1 1 auto;
-      min-width: 0;
-      height: 100%;
-    }
-
-    .screen-links {
-      display: flex;
-      gap: 4px;
-      font-size: 0.93rem;
-      font-weight: 500;
-      color: #fff;
-      white-space: nowrap;
-      background: linear-gradient(95deg, #7ed6fb 10%, #b176f3 90%);
-      padding: 0 36px;
-      align-items: center;
-      border-radius: 14px;
-      box-shadow: 0 4px 18px rgba(90,100,180,0.13), 0 2px 8px rgba(255,255,255,0.10) inset;
-      width: 100%;
-      height: 32px;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior-x: contain;
-      touch-action: pan-x;
-      cursor: grab;
-      scroll-behavior: smooth;
-    }
-    .screen-links::-webkit-scrollbar { display: none; }
-    .screen-links.dragging { cursor: grabbing; scroll-behavior: auto; }
-
-    .screen-links a {
-      color: rgba(255,255,255,0.88);
-      text-decoration: none;
-      padding: 4px 11px;
-      border-radius: 10px;
-      font-weight: 500;
-      font-size: 0.95em;
-      background: none;
-      display: inline-block;
-      white-space: nowrap;
-      flex: 0 0 auto;
-      letter-spacing: 0.01em;
-      transition: background 0.15s, color 0.13s;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-    .screen-links a:hover,
-    .screen-links a.active {
-      background: rgba(255,255,255,0.24);
-      color: #fff;
-      font-weight: 600;
-      box-shadow: 0 2px 12px rgba(177, 118, 243, 0.25);
-    }
-
-    /* === 좌/우 화살표 === */
-    .nav-arrow {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      outline: none;
-      z-index: 5;
-      cursor: pointer;
-      padding: 0;
-      border-radius: 14px;
-      -webkit-tap-highlight-color: transparent;
-      transition: opacity 0.15s;
-    }
-    .nav-arrow.left {
-      left: 0;
-      background: linear-gradient(to right, #b176f3 55%, rgba(177,118,243,0) 100%);
-    }
-    .nav-arrow.right {
-      right: 0;
-      background: linear-gradient(to left, #b176f3 55%, rgba(177,118,243,0) 100%);
-    }
-    .nav-arrow svg {
-      width: 12px;
-      height: 18px;
-      display: block;
-    }
-    .nav-arrow:active { opacity: 0.7; }
-    .nav-arrow[hidden] { display: none; }
-
-    /* === iframe === */
-    #main-frame {
-      position: fixed;
-      left: 0;
-      top: 44px;
-      width: 100%;
-      height: calc(100% - 44px);
-      border: none;
-      margin: 0;
-      background: #f5f7fa;
-      display: block;
-    }
-
-    /* === 모바일 === */
-    @media (max-width: 700px) {
-      .nav-wrap { height: 42px; padding: 5px 6px; gap: 6px; }
-      .home-btn { width: 30px; height: 30px; border-radius: 9px; }
-      .home-btn svg { width: 15px; height: 15px; }
-      .screen-links {
-        font-size: 0.88rem;
-        padding: 0 32px;
-        height: 30px;
-      }
-      .screen-links a {
-        padding: 3px 9px;
-        font-size: 0.92em;
-      }
-      .nav-arrow { width: 26px; }
-      #main-frame {
-        top: 42px;
-        height: calc(100% - 42px);
-      }
-    }
-  </style>
+  /* 전체목록(디렉터리) 패널 */
+  .grid-panel{position:absolute;inset:0;overflow-y:auto;display:none;padding:30px 16px 60px;background:#fff;scrollbar-width:none}
+  .grid-panel::-webkit-scrollbar{display:none}
+  .grid-panel.show{display:block}
+  .grid-title{text-align:center;font-size:20px;font-weight:800;letter-spacing:-0.02em;color:#244;margin:0 0 6px}
+  .grid-sub{text-align:center;font-size:13px;color:var(--ink-sub);margin:0 0 26px}
+  .dir-section{max-width:1040px;margin:0 auto 24px}
+  .dir-label{font-size:12.5px;font-weight:800;color:var(--accent);letter-spacing:.5px;text-transform:uppercase;margin:0 0 10px;padding:0 4px}
+  .dir-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .dir-card{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:14px 15px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;text-align:left;font-family:var(--body);transition:all .15s;box-shadow:0 2px 4px rgba(90,90,130,.05)}
+  .dir-card:hover{border-color:var(--accent);background:#f5fbf8;transform:translateY(-2px);box-shadow:0 4px 10px rgba(11,107,83,.12)}
+  .dir-card .t{font-size:15px;font-weight:800;color:var(--ink);letter-spacing:-0.3px;line-height:1.15}
+  .dir-card .k{font-size:11px;color:var(--ink-sub);line-height:1.2}
+  @media (max-width:720px){ .dir-grid{grid-template-columns:repeat(2,1fr)} .grid-panel{padding:24px 12px 50px} }
+</style>
 </head>
 <body>
 
-  <!-- 네비게이션 바 -->
-  <div class="nav-wrap">
-    <!-- 홈 버튼 -->
-    <a href="https://myway.kr/" class="home-btn" aria-label="MYWAY.KR 홈으로" title="MYWAY.KR 홈">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 3.2 3 10.4V20a1 1 0 0 0 1 1h5v-6h6v6h5a1 1 0 0 0 1-1v-9.6L12 3.2z"
-              fill="#fff" stroke="#fff" stroke-width="0.5" stroke-linejoin="round"/>
-      </svg>
-    </a>
+<nav class="topnav" id="topnav">
+  <a class="nav-home" href="https://myway.kr" aria-label="MYWAY.KR 홈">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
+  </a>
+  <div class="nav-track" id="navTrack"></div>
+</nav>
 
-    <div class="nav-bar-inner">
-      <button class="nav-arrow left" id="nav-arrow-left" aria-label="왼쪽 이동" hidden>
-        <svg viewBox="0 0 13 20"><polygon points="9,3 2,10 9,17" fill="#fff" opacity="0.9"/></svg>
-      </button>
+<div class="viewer">
+  <iframe id="viewer" title="LIVE TV 뷰어" referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+  <div class="grid-panel" id="gridPanel"></div>
+</div>
 
-      <div class="screen-links" id="parent-links">
-        <a href="#" onclick="showScreenParent(event, '00tvmain2.html')">H</a>
-        <a href="#" onclick="showScreenParent(event, '00mainlivetvytube.html')">유툽TV</a>
-        <a href="#" onclick="showScreenParent(event, '00mainmovielive.html')">live movie</a>
-        <a href="#" onclick="showScreenParent(event, 'https://tv.naver.com/l')">네이버TV</a>
-        <a href="#" onclick="showScreenParent(event, 'https://chzzk.naver.com/lives')">치지직</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www.sooplive.co.kr/live/all')">SOOP</a>
-        <a href="#" onclick="showScreenParent(event, 'https://onair.imbc.com/')">MBC</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www.sbs.co.kr/live/S01?div=main_live')">SBS</a>
-        <a href="#" onclick="showScreenParent(event, 'https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList')">KBS2</a>
-        <a href="#" onclick="showScreenParent(event, 'https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList')">KBS1</a>
-        <a href="#" onclick="showScreenParent(event, 'https://news.kbs.co.kr/news/pc/news24/news24.html')">KBS24</a>
-        <a href="#" onclick="showScreenParent(event, 'https://onair.jtbc.co.kr/')">JTBC</a>
-        <a href="#" onclick="showScreenParent(event, 'https://ichannela.com/com/cmm/onair.do')">채널A</a>
-        <a href="#" class="active" onclick="showScreenParent(event, 'https://www.ytn.co.kr/_hd/hd_live.html')">YTN</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www.yonhapnewstv.co.kr/live')">연합뉴스</a>
-        <a href="#" onclick="showScreenParent(event, 'https://news.sbs.co.kr/news/live.do?plink=GNB&cooper=SBSNEWS')">SBS뉴스</a>
-        <a href="#" onclick="showScreenParent(event, 'https://imnews.imbc.com/more/onair/')">MBC 뉴스</a>
-        <a href="#" onclick="showScreenParent(event, '00barinnernew.html')">증권방송</a>
-        <a href="#" onclick="showScreenParent(event, 'arirang.html')">아리랑TV</a>
-        <a href="#" onclick="showScreenParent(event, 'https://lolesports.com/live/msi/aflol')">LCK</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www.twitch.tv/')">트위치</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www3.nhk.or.jp/nhkworld/en/live/')">NHK</a>
-        <a href="#" onclick="showScreenParent(event, 'abc.html')">ABC</a>
-        <a href="#" onclick="showScreenParent(event, 'foxtv.html')">FOX NEWS</a>
-        <a href="#" onclick="showScreenParent(event, 'https://abc7.com/watch/live')">ABC7</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www.nbcnews.com/watch')">NBC NEWS</a>
-        <a href="https://thetvapp.to" target="_blank">미국live tv 모음</a>
-        <a href="#" onclick="showScreenParent(event, 'https://news.jtbc.co.kr/live')">JTBC 뉴스</a>
-        <a href="#" onclick="showScreenParent(event, 'https://tv.kakao.com/live')">카카오TV</a>
-        <a href="#" onclick="showScreenParent(event, 'https://broadcast.tvchosun.com/onair/on.cstv')">TV조선</a>
-        <a href="#" onclick="showScreenParent(event, 'https://www.ebs.co.kr/onair?mainTop&channelCodeString=tv')">EBS TV</a>
-      </div>
+<script>
+/* === 상단 채널 버튼 (iframe에 바로 재생) — livesitesbar2 채널 === */
+const SITES=[
+  ['H','00tvmain2.html'],
+  ['유툽TV','00mainlivetvytube.html'],
+  ['live movie','00mainmovielive.html'],
+  ['네이버TV','https://tv.naver.com/l'],
+  ['치지직','https://chzzk.naver.com/lives'],
+  ['SOOP','https://www.sooplive.co.kr/live/all'],
+  ['MBC','https://onair.imbc.com/'],
+  ['SBS','https://www.sbs.co.kr/live/S01?div=main_live'],
+  ['KBS2','https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList'],
+  ['KBS1','https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList'],
+  ['KBS24','https://news.kbs.co.kr/news/pc/news24/news24.html'],
+  ['JTBC','https://onair.jtbc.co.kr/'],
+  ['채널A','https://ichannela.com/com/cmm/onair.do'],
+  ['YTN','https://www.ytn.co.kr/_hd/hd_live.html'],
+  ['연합뉴스','https://www.yonhapnewstv.co.kr/live'],
+  ['SBS뉴스','https://news.sbs.co.kr/news/live.do?plink=GNB&cooper=SBSNEWS'],
+  ['MBC 뉴스','https://imnews.imbc.com/more/onair/'],
+  ['증권방송','00barinnernew.html'],
+  ['아리랑TV','arirang.html'],
+  ['트위치','https://www.twitch.tv/'],
+  ['NHK','https://www3.nhk.or.jp/nhkworld/en/live/'],
+  ['ABC','abc.html'],
+  ['FOX NEWS','foxtv.html'],
+  ['ABC7','https://abc7.com/watch/live'],
+  ['NBC NEWS','https://www.nbcnews.com/watch'],
+  ['JTBC 뉴스','https://news.jtbc.co.kr/live'],
+  ['카카오TV','https://tv.kakao.com/live'],
+  ['TV조선','https://broadcast.tvchosun.com/onair/on.cstv'],
+  ['EBS TV','https://www.ebs.co.kr/onair?mainTop&channelCodeString=tv'],
+];
+const DEFAULT_I = SITES.findIndex(s=>s[0]==='YTN');
 
-      <button class="nav-arrow right" id="nav-arrow-right" aria-label="오른쪽 이동" hidden>
-        <svg viewBox="0 0 13 20"><polygon points="4,3 11,10 4,17" fill="#fff" opacity="0.9"/></svg>
-      </button>
-    </div>
-  </div>
+/* === 전체목록 디렉터리 (카테고리별) — livetv 데이터 === */
+const DIRECTORY = [
+  { label:'실시간 스트리밍', items:[
+    ['치지직','CHZZK · chzzk.naver.com','https://chzzk.naver.com/'],
+    ['SOOP','구 아프리카TV · sooplive','https://www.sooplive.co.kr/'],
+    ['트위치','Twitch · twitch.tv','https://www.twitch.tv/'],
+    ['네이버TV','LIVE · tv.naver.com','https://tv.naver.com/l/livehome'],
+    ['카카오TV','LIVE · tv.kakao.com','https://tv.kakao.com/live'],
+    ['네이버 쇼핑라이브','shoppinglive.naver.com','https://shoppinglive.naver.com/home'],
+    ['미국 LIVE 모음','thetvapp.to','https://thetvapp.to/'],
+    ['TV Garden','전세계 채널 · tv.garden','https://tv.garden/'],
+  ]},
+  { label:'지상파·종합편성 LIVE', items:[
+    ['KBS1','onair.kbs.co.kr','https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList'],
+    ['KBS2','onair.kbs.co.kr','https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList'],
+    ['MBC','onair.imbc.com','https://onair.imbc.com/'],
+    ['SBS','sbs.co.kr/live','https://www.sbs.co.kr/live/S01?div=main_live'],
+    ['JTBC','onair.jtbc.co.kr','https://onair.jtbc.co.kr/'],
+    ['TV조선','broadcast.tvchosun.com','https://broadcast.tvchosun.com/onair/on.cstv'],
+    ['채널A','ichannela.com','https://ichannela.com/com/cmm/onair.do'],
+    ['MBN','mbn.co.kr','https://www.mbn.co.kr/vod/onair'],
+    ['EBS','ebs.co.kr/onair','https://www.ebs.co.kr/onair?mainTop&channelCodeString=tv'],
+    ['아리랑TV','Arirang · arirang.com','https://www.arirang.com/live?lang=en'],
+  ]},
+  { label:'뉴스 LIVE', items:[
+    ['YTN','ytn.co.kr','https://www.ytn.co.kr/_hd/hd_live.html'],
+    ['연합뉴스TV','yonhapnewstv.co.kr','https://www.yonhapnewstv.co.kr/live'],
+    ['KBS NEWS','news.kbs.co.kr','https://news.kbs.co.kr/news/pc/news24/news24.html?ref=pGnb'],
+    ['MBC NEWS','imnews.imbc.com','https://imnews.imbc.com/more/onair/'],
+    ['SBS NEWS','news.sbs.co.kr','https://news.sbs.co.kr/news/live.do?plink=GNB&cooper=SBSNEWS'],
+    ['JTBC NEWS','news.jtbc.co.kr','https://news.jtbc.co.kr/live'],
+  ]},
+  { label:'경제·증권 LIVE', items:[
+    ['한국경제TV','wowtv.co.kr','https://www.wowtv.co.kr/LiveCenter/Live/Index?liveID=1'],
+    ['매일경제TV','MBN머니 · mbnmoney','https://mbnmoney.mbn.co.kr/tv/onair'],
+    ['서울경제TV','sentv.co.kr','https://www.sentv.co.kr/onair'],
+    ['이데일리TV','tv.edaily.co.kr','https://tv.edaily.co.kr/Live/HighVod'],
+    ['MTN','머니투데이방송 · mtn.co.kr','https://www.mtn.co.kr/'],
+  ]},
+  { label:'해외 LIVE TV', items:[
+    ['NHK World','일본 · nhk.or.jp','https://www3.nhk.or.jp/nhkworld/'],
+    ['ABC','미국 · abc.com','https://abc.com/'],
+    ['NBC News','미국 · nbcnews.com/now','https://www.nbcnews.com/now'],
+    ['FOX News','미국 · foxnews.com','https://www.foxnews.com/'],
+    ['ABC7','미국 LA · abc7.com','https://abc7.com/'],
+  ]},
+];
 
-  <iframe id="main-frame" src="https://www.ytn.co.kr/_hd/hd_live.html"></iframe>
+const viewer=document.getElementById('viewer');
+const gridPanel=document.getElementById('gridPanel');
+const nav=document.getElementById('topnav');
+const track=document.getElementById('navTrack');
+let currentUrl=SITES[DEFAULT_I][1];
 
-  <script>
-    const nav = document.getElementById('parent-links');
-    const leftArrow = document.getElementById('nav-arrow-left');
-    const rightArrow = document.getElementById('nav-arrow-right');
-    const mainFrame = document.getElementById('main-frame');
+function centerNavBtn(btn){
+  const navRect=nav.getBoundingClientRect();
+  const btnRect=btn.getBoundingClientRect();
+  const target=nav.scrollLeft + (btnRect.left - navRect.left) - (nav.clientWidth/2) + (btnRect.width/2);
+  nav.scrollTo({left:Math.max(0,target),behavior:'smooth'});
+}
+function clearActive(){ nav.querySelectorAll('button[data-site],button[data-grid]').forEach(b=>b.classList.remove('active')); }
 
-    function showScreenParent(e, url) {
-      e.preventDefault();
-      if (justDragged) { justDragged = false; return; }
-
-      document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
-      e.currentTarget.classList.add('active');
-      mainFrame.src = url;
-
-      const el = e.currentTarget;
-      const offset = el.offsetLeft - nav.clientWidth / 2 + el.clientWidth / 2;
-      nav.scrollTo({ left: offset, behavior: 'smooth' });
-      setTimeout(checkNavOverflow, 250);
-    }
-
-    // === 드래그 스크롤 (PC 마우스) ===
-    let isDown = false;
-    let startX = 0;
-    let scrollStart = 0;
-    let dragDistance = 0;
-    let justDragged = false;
-
-    function dragStart(clientX) {
-      isDown = true;
-      dragDistance = 0;
-      startX = clientX;
-      scrollStart = nav.scrollLeft;
-      nav.classList.add('dragging');
-    }
-    function dragMove(clientX) {
-      if (!isDown) return;
-      const dx = clientX - startX;
-      dragDistance = Math.abs(dx);
-      nav.scrollLeft = scrollStart - dx;
-    }
-    function dragEnd() {
-      if (!isDown) return;
-      isDown = false;
-      nav.classList.remove('dragging');
-      if (dragDistance > 8) {
-        justDragged = true;
-        setTimeout(() => { justDragged = false; }, 50);
-      }
-      checkNavOverflow();
-    }
-
-    nav.addEventListener('mousedown', e => dragStart(e.pageX));
-    nav.addEventListener('mousemove', e => { if (isDown) { e.preventDefault(); dragMove(e.pageX); } });
-    nav.addEventListener('mouseup', dragEnd);
-    nav.addEventListener('mouseleave', dragEnd);
-
-    // === 모바일 터치: native 스크롤만 사용 (흔들림 방지) ===
-    nav.addEventListener('touchstart', e => {
-      dragDistance = 0;
-      startX = e.touches[0].pageX;
-    }, { passive: true });
-    nav.addEventListener('touchmove', e => {
-      dragDistance = Math.abs(e.touches[0].pageX - startX);
-    }, { passive: true });
-    nav.addEventListener('touchend', () => {
-      if (dragDistance > 8) {
-        justDragged = true;
-        setTimeout(() => { justDragged = false; }, 50);
-      }
-      setTimeout(checkNavOverflow, 80);
+/* 전체목록 패널 1회 생성 */
+function renderGrid(){
+  if(gridPanel.dataset.done) return; gridPanel.dataset.done='1';
+  const t=document.createElement('div'); t.className='grid-title'; t.textContent='전체 LIVE TV 채널';
+  const s=document.createElement('div'); s.className='grid-sub'; s.textContent='채널을 누르면 위 화면에 바로 떠요';
+  gridPanel.appendChild(t); gridPanel.appendChild(s);
+  DIRECTORY.forEach(sec=>{
+    const wrap=document.createElement('div'); wrap.className='dir-section';
+    const lab=document.createElement('div'); lab.className='dir-label'; lab.textContent=sec.label;
+    const g=document.createElement('div'); g.className='dir-grid';
+    sec.items.forEach(it=>{
+      const c=document.createElement('button'); c.className='dir-card'; c.type='button';
+      const tt=document.createElement('span'); tt.className='t'; tt.textContent=it[0];
+      const kk=document.createElement('span'); kk.className='k'; kk.textContent=it[1];
+      c.appendChild(tt); c.appendChild(kk);
+      c.addEventListener('click',()=>loadUrl(it[2]));
+      g.appendChild(c);
     });
+    wrap.appendChild(lab); wrap.appendChild(g); gridPanel.appendChild(wrap);
+  });
+}
+function showGrid(btn){
+  renderGrid();
+  viewer.style.display='none';
+  gridPanel.classList.add('show');
+  openBtn.style.display='none';
+  clearActive();
+  try { sessionStorage.setItem('mywayLive','grid'); } catch(_) {}
+  if(btn){ btn.classList.add('active'); centerNavBtn(btn); }
+}
+/* 상단 채널 버튼 → iframe 재생 */
+function loadSite(i, btn){
+  currentUrl=SITES[i][1];
+  gridPanel.classList.remove('show');
+  viewer.style.display='';
+  viewer.src=currentUrl;
+  openBtn.style.display='';
+  clearActive();
+  try { sessionStorage.setItem('mywayLive','site:'+i); } catch(_) {}
+  if(btn){ btn.classList.add('active'); centerNavBtn(btn); }
+}
+/* 디렉터리 카드 → iframe 재생 (전체목록에서 선택) */
+function loadUrl(url){
+  currentUrl=url;
+  gridPanel.classList.remove('show');
+  viewer.style.display='';
+  viewer.src=url;
+  openBtn.style.display='';
+  clearActive();
+  const idx=SITES.findIndex(s=>s[1]===url);
+  if(idx>=0){ const b=track.querySelector('button[data-site="'+idx+'"]'); if(b){ b.classList.add('active'); centerNavBtn(b);} try{sessionStorage.setItem('mywayLive','site:'+idx);}catch(_){ } }
+  else { try{ sessionStorage.setItem('mywayLive','url:'+url); }catch(_){ } }
+}
 
-    // === 화살표 표시 여부 체크 ===
-    function checkNavOverflow() {
-      if (nav.scrollWidth > nav.clientWidth + 2) {
-        leftArrow.hidden = nav.scrollLeft < 5;
-        rightArrow.hidden = nav.scrollLeft + nav.clientWidth + 5 >= nav.scrollWidth;
-      } else {
-        leftArrow.hidden = true;
-        rightArrow.hidden = true;
-      }
-    }
-    nav.addEventListener('scroll', checkNavOverflow, { passive: true });
+/* 채널 버튼 생성 */
+SITES.forEach((s,i)=>{
+  const b=document.createElement('button'); b.textContent=s[0]; b.dataset.site=i;
+  b.addEventListener('click',()=>loadSite(i,b));
+  track.appendChild(b);
+});
+/* 전체목록 버튼 (맨 왼쪽 - 홈 다음) */
+const gridBtn=document.createElement('button'); gridBtn.textContent='📺 전체목록'; gridBtn.dataset.grid='1'; gridBtn.className='grid-btn';
+gridBtn.addEventListener('click',()=>showGrid(gridBtn));
+nav.appendChild(gridBtn);
+/* 새 탭으로 열기 (맨 앞 - 홈 버튼 다음, 항상 보이게) */
+const openBtn=document.createElement('button'); openBtn.className='open-btn'; openBtn.textContent='↗ 새 탭';
+openBtn.addEventListener('click',()=>window.open(currentUrl,'_blank','noopener'));
+nav.insertBefore(openBtn, track);
 
-    // === 모바일 흔들림 방지: 가로 너비 변화 시에만 반응 ===
-    let lastWidth = document.documentElement.clientWidth;
-    window.addEventListener('resize', () => {
-      const currentWidth = document.documentElement.clientWidth;
-      if (currentWidth === lastWidth) return;
-      lastWidth = currentWidth;
-      setTimeout(checkNavOverflow, 50);
-    }, { passive: true });
-    window.addEventListener('orientationchange', () => {
-      setTimeout(() => {
-        lastWidth = document.documentElement.clientWidth;
-        checkNavOverflow();
-      }, 300);
-    });
+/* 네비 드래그 스크롤 */
+(function(){
+  let down=false,startX=0,startL=0,moved=false;
+  nav.addEventListener('pointerdown',e=>{ if(e.button!==0) return; down=true;moved=false;startX=e.clientX;startL=nav.scrollLeft;nav.classList.add('dragging'); });
+  nav.addEventListener('pointermove',e=>{ if(!down) return; const dx=e.clientX-startX; if(Math.abs(dx)>4) moved=true; nav.scrollLeft=startL-dx; });
+  const end=()=>{ down=false; nav.classList.remove('dragging'); };
+  nav.addEventListener('pointerup',end);
+  nav.addEventListener('pointercancel',end);
+  nav.addEventListener('pointerleave',end);
+  nav.addEventListener('click',e=>{ if(moved){ e.stopPropagation(); e.preventDefault(); moved=false; } },true);
+  nav.addEventListener('wheel',e=>{ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ nav.scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
+})();
 
-    leftArrow.addEventListener('click', () => {
-      nav.scrollBy({ left: -120, behavior: 'smooth' });
-      setTimeout(checkNavOverflow, 250);
-    });
-    rightArrow.addEventListener('click', () => {
-      nav.scrollBy({ left: 120, behavior: 'smooth' });
-      setTimeout(checkNavOverflow, 250);
-    });
+/* 초기화: 저장된 마지막 화면 복원(없으면 LIVE TV 메인 = YTN) */
+(function(){
+  var saved='';
+  try { saved = sessionStorage.getItem('mywayLive') || ''; } catch(_) {}
+  if(saved==='grid'){ showGrid(gridBtn); return; }
+  var ms = /^site:(\d+)$/.exec(saved);
+  if(ms){
+    var i=parseInt(ms[1],10);
+    var b=track.querySelector('button[data-site="'+i+'"]');
+    if(b){ loadSite(i,b); return; }
+  }
+  var mu = /^url:(.+)$/.exec(saved);
+  if(mu){ loadUrl(mu[1]); return; }
+  showGrid(gridBtn);
+})();
 
-    window.addEventListener('DOMContentLoaded', checkNavOverflow);
-    window.addEventListener('load', checkNavOverflow);
-    setTimeout(checkNavOverflow, 200);
-  </script>
+/* 복사 방지 */
+(function(){
+  const isField=el=>el&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA'||el.tagName==='SELECT');
+  ['contextmenu','selectstart','dragstart','copy','cut'].forEach(ev=>{
+    document.addEventListener(ev,e=>{ if(isField(e.target)) return; e.preventDefault(); });
+  });
+  document.addEventListener('keydown',e=>{
+    const k=(e.key||'').toLowerCase();
+    if(e.key==='F12'){e.preventDefault();return;}
+    if(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(k)){e.preventDefault();return;}
+    if(e.ctrlKey&&['u','s','c','x','a'].includes(k)){ if(isField(e.target)&&['c','x','a'].includes(k)) return; e.preventDefault(); }
+  });
+})();
+</script>
+<script>
+/* 모바일: 외부 링크를 최상위 창에서 열어 뒤로가기로 MYWAY 복귀. PC·태블릿은 새 탭. */
+(function(){
+  if(!/Mobi/i.test(navigator.userAgent)) return;
+  document.addEventListener("click", function(e){
+    var a = e.target.closest ? e.target.closest("a[href]") : null;
+    if(!a) return;
+    var href = a.getAttribute("href") || "";
+    if(!href || href.charAt(0) === "#" || /^javascript:/i.test(href)) return;
+    e.preventDefault();
+    try { (window.top || window).location.href = a.href; }
+    catch(_) { window.open(a.href, "_blank"); }
+  }, true);
+  var _open = window.open.bind(window);
+  window.open = function(url, name, feat){
+    if(url){ try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
+    return _open(url, name, feat);
+  };
+})();
+</script>
 </body>
 </html>

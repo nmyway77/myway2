@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>실시간 FREE LIVE TV, 라이브 TV, 방송, 속보, 각방송사 종합링크 - MYWAY.KR</title>
+  <meta name="description" content="무료로 즐기는 최신 무료영화, 인기 영화, 드라마, 만화 , 실시간 스트리밍 정보. Free movies, watch latest films for free!">
+  <meta property="og:title" content="무료영화, 최신 영화 추천 | Free Movies, Streaming - MYWAY.KR">
+  <meta property="og:description" content="최신 무료영화와 인기작들을 무료로 시청하세요. Free movies, streaming, live TV, K-Drama, all in one place!">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      background: #fff;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    /* === 네비바 영역 === */
+    .nav-wrap {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      background: #fff;
+      z-index: 100;
+      filter: drop-shadow(0 4px 14px rgba(177, 118, 243, 0.22));
+    }
+
+    /* === 홈 버튼 === */
+    .home-btn {
+      flex: 0 0 auto;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #b176f3 0%, #7ed6fb 100%);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      padding: 0;
+      box-shadow: 0 4px 12px rgba(177, 118, 243, 0.35), 0 1px 3px rgba(126, 214, 251, 0.25);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .home-btn::before {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 60%);
+      pointer-events: none;
+    }
+    .home-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(177, 118, 243, 0.45), 0 2px 4px rgba(126, 214, 251, 0.3);
+    }
+    .home-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(177, 118, 243, 0.3);
+    }
+    .home-btn svg {
+      width: 17px;
+      height: 17px;
+      display: block;
+      filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav-bar-inner {
+      position: relative;
+      display: flex;
+      align-items: center;
+      flex: 1 1 auto;
+      min-width: 0;
+      height: 100%;
+    }
+
+    .screen-links {
+      display: flex;
+      gap: 4px;
+      font-size: 0.93rem;
+      font-weight: 500;
+      color: #fff;
+      white-space: nowrap;
+      background: linear-gradient(95deg, #7ed6fb 10%, #b176f3 90%);
+      padding: 0 36px;
+      align-items: center;
+      border-radius: 14px;
+      box-shadow: 0 4px 18px rgba(90,100,180,0.13), 0 2px 8px rgba(255,255,255,0.10) inset;
+      width: 100%;
+      height: 32px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      touch-action: pan-x;
+      cursor: grab;
+      scroll-behavior: smooth;
+    }
+    .screen-links::-webkit-scrollbar { display: none; }
+    .screen-links.dragging { cursor: grabbing; scroll-behavior: auto; }
+
+    .screen-links a {
+      color: rgba(255,255,255,0.88);
+      text-decoration: none;
+      padding: 4px 11px;
+      border-radius: 10px;
+      font-weight: 500;
+      font-size: 0.95em;
+      background: none;
+      display: inline-block;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      letter-spacing: 0.01em;
+      transition: background 0.15s, color 0.13s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .screen-links a:hover,
+    .screen-links a.active {
+      background: rgba(255,255,255,0.24);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 2px 12px rgba(177, 118, 243, 0.25);
+    }
+
+    /* === 좌/우 화살표 === */
+    .nav-arrow {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      outline: none;
+      z-index: 5;
+      cursor: pointer;
+      padding: 0;
+      border-radius: 14px;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.15s;
+    }
+    .nav-arrow.left {
+      left: 0;
+      background: linear-gradient(to right, #b176f3 55%, rgba(177,118,243,0) 100%);
+    }
+    .nav-arrow.right {
+      right: 0;
+      background: linear-gradient(to left, #b176f3 55%, rgba(177,118,243,0) 100%);
+    }
+    .nav-arrow svg {
+      width: 12px;
+      height: 18px;
+      display: block;
+    }
+    .nav-arrow:active { opacity: 0.7; }
+    .nav-arrow[hidden] { display: none; }
+
+    /* === iframe === */
+    #main-frame {
+      position: fixed;
+      left: 0;
+      top: 44px;
+      width: 100%;
+      height: calc(100% - 44px);
+      border: none;
+      margin: 0;
+      background: #f5f7fa;
+      display: block;
+    }
+
+    /* === 모바일 === */
+    @media (max-width: 700px) {
+      .nav-wrap { height: 42px; padding: 5px 6px; gap: 6px; }
+      .home-btn { width: 30px; height: 30px; border-radius: 9px; }
+      .home-btn svg { width: 15px; height: 15px; }
+      .screen-links {
+        font-size: 0.88rem;
+        padding: 0 32px;
+        height: 30px;
+      }
+      .screen-links a {
+        padding: 3px 9px;
+        font-size: 0.92em;
+      }
+      .nav-arrow { width: 26px; }
+      #main-frame {
+        top: 42px;
+        height: calc(100% - 42px);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 네비게이션 바 -->
+  <div class="nav-wrap">
+    <!-- 홈 버튼 -->
+    <a href="https://myway.kr/" class="home-btn" aria-label="MYWAY.KR 홈으로" title="MYWAY.KR 홈">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3.2 3 10.4V20a1 1 0 0 0 1 1h5v-6h6v6h5a1 1 0 0 0 1-1v-9.6L12 3.2z"
+              fill="#fff" stroke="#fff" stroke-width="0.5" stroke-linejoin="round"/>
+      </svg>
+    </a>
+
+    <div class="nav-bar-inner">
+      <button class="nav-arrow left" id="nav-arrow-left" aria-label="왼쪽 이동" hidden>
+        <svg viewBox="0 0 13 20"><polygon points="9,3 2,10 9,17" fill="#fff" opacity="0.9"/></svg>
+      </button>
+
+      <div class="screen-links" id="parent-links">
+        <a href="#" onclick="showScreenParent(event, '00tvmain2.html')">H</a>
+        <a href="#" onclick="showScreenParent(event, '00mainlivetvytube.html')">유툽TV</a>
+        <a href="#" onclick="showScreenParent(event, '00mainmovielive.html')">live movie</a>
+        <a href="#" onclick="showScreenParent(event, 'https://tv.naver.com/l')">네이버TV</a>
+        <a href="#" onclick="showScreenParent(event, 'https://chzzk.naver.com/lives')">치지직</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.sooplive.co.kr/live/all')">SOOP</a>
+        <a href="#" onclick="showScreenParent(event, 'https://onair.imbc.com/')">MBC</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.sbs.co.kr/live/S01?div=main_live')">SBS</a>
+        <a href="#" onclick="showScreenParent(event, 'https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList')">KBS2</a>
+        <a href="#" onclick="showScreenParent(event, 'https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList')">KBS1</a>
+        <a href="#" onclick="showScreenParent(event, 'https://news.kbs.co.kr/news/pc/news24/news24.html')">KBS24</a>
+        <a href="#" onclick="showScreenParent(event, 'https://onair.jtbc.co.kr/')">JTBC</a>
+        <a href="#" onclick="showScreenParent(event, 'https://ichannela.com/com/cmm/onair.do')">채널A</a>
+        <a href="#" class="active" onclick="showScreenParent(event, 'https://www.ytn.co.kr/_hd/hd_live.html')">YTN</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.yonhapnewstv.co.kr/live')">연합뉴스</a>
+        <a href="#" onclick="showScreenParent(event, 'https://news.sbs.co.kr/news/live.do?plink=GNB&cooper=SBSNEWS')">SBS뉴스</a>
+        <a href="#" onclick="showScreenParent(event, 'https://imnews.imbc.com/more/onair/')">MBC 뉴스</a>
+        <a href="#" onclick="showScreenParent(event, '00barinnernew.html')">증권방송</a>
+        <a href="#" onclick="showScreenParent(event, 'arirang.html')">아리랑TV</a>
+        <a href="#" onclick="showScreenParent(event, 'https://lolesports.com/live/msi/aflol')">LCK</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.twitch.tv/')">트위치</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www3.nhk.or.jp/nhkworld/en/live/')">NHK</a>
+        <a href="#" onclick="showScreenParent(event, 'abc.html')">ABC</a>
+        <a href="#" onclick="showScreenParent(event, 'foxtv.html')">FOX NEWS</a>
+        <a href="#" onclick="showScreenParent(event, 'https://abc7.com/watch/live')">ABC7</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.nbcnews.com/watch')">NBC NEWS</a>
+        <a href="https://thetvapp.to" target="_blank">미국live tv 모음</a>
+        <a href="#" onclick="showScreenParent(event, 'https://news.jtbc.co.kr/live')">JTBC 뉴스</a>
+        <a href="#" onclick="showScreenParent(event, 'https://tv.kakao.com/live')">카카오TV</a>
+        <a href="#" onclick="showScreenParent(event, 'https://broadcast.tvchosun.com/onair/on.cstv')">TV조선</a>
+        <a href="#" onclick="showScreenParent(event, 'https://www.ebs.co.kr/onair?mainTop&channelCodeString=tv')">EBS TV</a>
+      </div>
+
+      <button class="nav-arrow right" id="nav-arrow-right" aria-label="오른쪽 이동" hidden>
+        <svg viewBox="0 0 13 20"><polygon points="4,3 11,10 4,17" fill="#fff" opacity="0.9"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <iframe id="main-frame" src="https://www.ytn.co.kr/_hd/hd_live.html"></iframe>
+
+  <script>
+    const nav = document.getElementById('parent-links');
+    const leftArrow = document.getElementById('nav-arrow-left');
+    const rightArrow = document.getElementById('nav-arrow-right');
+    const mainFrame = document.getElementById('main-frame');
+
+    function showScreenParent(e, url) {
+      e.preventDefault();
+      if (justDragged) { justDragged = false; return; }
+
+      document.querySelectorAll('#parent-links a').forEach(a => a.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+      mainFrame.src = url;
+
+      const el = e.currentTarget;
+      const offset = el.offsetLeft - nav.clientWidth / 2 + el.clientWidth / 2;
+      nav.scrollTo({ left: offset, behavior: 'smooth' });
+      setTimeout(checkNavOverflow, 250);
+    }
+
+    // === 드래그 스크롤 (PC 마우스) ===
+    let isDown = false;
+    let startX = 0;
+    let scrollStart = 0;
+    let dragDistance = 0;
+    let justDragged = false;
+
+    function dragStart(clientX) {
+      isDown = true;
+      dragDistance = 0;
+      startX = clientX;
+      scrollStart = nav.scrollLeft;
+      nav.classList.add('dragging');
+    }
+    function dragMove(clientX) {
+      if (!isDown) return;
+      const dx = clientX - startX;
+      dragDistance = Math.abs(dx);
+      nav.scrollLeft = scrollStart - dx;
+    }
+    function dragEnd() {
+      if (!isDown) return;
+      isDown = false;
+      nav.classList.remove('dragging');
+      if (dragDistance > 8) {
+        justDragged = true;
+        setTimeout(() => { justDragged = false; }, 50);
+      }
+      checkNavOverflow();
+    }
+
+    nav.addEventListener('mousedown', e => dragStart(e.pageX));
+    nav.addEventListener('mousemove', e => { if (isDown) { e.preventDefault(); dragMove(e.pageX); } });
+    nav.addEventListener('mouseup', dragEnd);
+    nav.addEventListener('mouseleave', dragEnd);
+
+    // === 모바일 터치: native 스크롤만 사용 (흔들림 방지) ===
+    nav.addEventListener('touchstart', e => {
+      dragDistance = 0;
+      startX = e.touches[0].pageX;
+    }, { passive: true });
+    nav.addEventListener('touchmove', e => {
+      dragDistance = Math.abs(e.touches[0].pageX - startX);
+    }, { passive: true });
+    nav.addEventListener('touchend', () => {
+      if (dragDistance > 8) {
+        justDragged = true;
+        setTimeout(() => { justDragged = false; }, 50);
+      }
+      setTimeout(checkNavOverflow, 80);
+    });
+
+    // === 화살표 표시 여부 체크 ===
+    function checkNavOverflow() {
+      if (nav.scrollWidth > nav.clientWidth + 2) {
+        leftArrow.hidden = nav.scrollLeft < 5;
+        rightArrow.hidden = nav.scrollLeft + nav.clientWidth + 5 >= nav.scrollWidth;
+      } else {
+        leftArrow.hidden = true;
+        rightArrow.hidden = true;
+      }
+    }
+    nav.addEventListener('scroll', checkNavOverflow, { passive: true });
+
+    // === 모바일 흔들림 방지: 가로 너비 변화 시에만 반응 ===
+    let lastWidth = document.documentElement.clientWidth;
+    window.addEventListener('resize', () => {
+      const currentWidth = document.documentElement.clientWidth;
+      if (currentWidth === lastWidth) return;
+      lastWidth = currentWidth;
+      setTimeout(checkNavOverflow, 50);
+    }, { passive: true });
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => {
+        lastWidth = document.documentElement.clientWidth;
+        checkNavOverflow();
+      }, 300);
+    });
+
+    leftArrow.addEventListener('click', () => {
+      nav.scrollBy({ left: -120, behavior: 'smooth' });
+      setTimeout(checkNavOverflow, 250);
+    });
+    rightArrow.addEventListener('click', () => {
+      nav.scrollBy({ left: 120, behavior: 'smooth' });
+      setTimeout(checkNavOverflow, 250);
+    });
+
+    window.addEventListener('DOMContentLoaded', checkNavOverflow);
+    window.addEventListener('load', checkNavOverflow);
+    setTimeout(checkNavOverflow, 200);
+  </script>
+</body>
+</html>
