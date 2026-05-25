@@ -505,11 +505,10 @@
       <button class="cat-btn" data-ch="sbs">SBS <span class="count" id="cnt-sbs"></span></button>
       <button class="cat-btn" data-ch="cha">채널A <span class="count" id="cnt-cha"></span></button>
       <!-- 외부 VOD 링크 (새 탭으로 이동) -->
-      <a class="cat-btn cat-link" href="00tvmain2.html" rel="noopener">live 방송사</a>
-      <a class="cat-btn cat-link" href="https://allvod.sbs.co.kr/free" rel="noopener">SBS 무료VOD</a>
-      <a class="cat-btn cat-link" href="https://vod.kbs.co.kr/" rel="noopener">KBS 무료VOD</a>
-      <a class="cat-btn cat-link" href="https://global.imbc.com/MovieProgram/0" rel="noopener">MBC 무료VOD</a>
-      <a class="cat-btn cat-link" href="https://vod.jtbc.co.kr/" rel="noopener">JTBC 무료VOD</a>
+      <a class="cat-btn cat-link" href="https://allvod.sbs.co.kr/free" target="_blank" rel="noopener">SBS 무료VOD</a>
+      <a class="cat-btn cat-link" href="https://vod.kbs.co.kr/" target="_blank" rel="noopener">KBS 무료VOD</a>
+      <a class="cat-btn cat-link" href="https://global.imbc.com/MovieProgram/0" target="_blank" rel="noopener">MBC 무료VOD</a>
+      <a class="cat-btn cat-link" href="https://vod.jtbc.co.kr/" target="_blank" rel="noopener">JTBC 무료VOD</a>
     </nav>
   </header>
 
@@ -543,15 +542,7 @@
     <div class="gallery" id="gallery" data-active="kbs"></div>
   </main>
 
-  <!-- VOD iframe 영역: position:fixed로 viewport 전체 차지 (외부 VOD 링크 클릭 시 표시) -->
-  <div class="vod-frame-wrap" id="vodFrameWrap">
-    <div class="vod-controls">
-      <span class="vod-title" id="vodTitle">로딩 중…</span>
-      <a class="vod-ctrl-btn vod-newtab" id="vodNewtab" href="#" target="_blank" rel="noopener" title="새 탭에서 열기">새 탭에서 열기 ↗</a>
-      <button class="vod-ctrl-btn vod-close" id="vodClose" type="button" title="닫기">✕</button>
-    </div>
-    <iframe id="vodFrame" src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
-  </div>
+  <!-- (VOD 오버레이 iframe 제거: 외부 링크는 새 탭/최상위창으로 열어 백버튼 안전) -->
 
   <!-- MYWAY.KR 공통: 푸터 -->
   <footer class="myway-footer">
@@ -782,61 +773,16 @@
       toastTimer = setTimeout(() => t.classList.remove('is-show'), duration || 2200);
     }
 
-    /* ============ VOD 모드 열기/닫기 ============ */
-    function openVodMode(url, label) {
-      const frame = document.getElementById('vodFrame');
-      const frameWrap = document.getElementById('vodFrameWrap');
-      const titleEl = document.getElementById('vodTitle');
-      const newtabBtn = document.getElementById('vodNewtab');
-      showToast('"' + label + '" 로딩 중…', 2500);
-      titleEl.textContent = label;
-      newtabBtn.href = url;
-      frame.src = url;
-      frameWrap.classList.add('is-open');
-      document.body.classList.add('vod-mode');
-      /* iframe 차단 감지: 일정 시간 후 contentDocument 접근 시도 */
-      const loadTimer = setTimeout(() => {
-        showToast('이 사이트가 페이지 내 표시를 차단했을 수 있습니다. "새 탭에서 열기"를 사용해주세요.', 4500);
-      }, 3500);
-      frame.onload = () => clearTimeout(loadTimer);
-    }
-    function closeVodMode() {
-      const frame = document.getElementById('vodFrame');
-      const frameWrap = document.getElementById('vodFrameWrap');
-      document.body.classList.remove('vod-mode');
-      frameWrap.classList.remove('is-open');
-      frame.src = '';
-    }
-
-    /* ============ 네비 동작 ============ */
+    /* ============ 네비 동작 (채널 필터만; 외부 링크는 기본 새 탭/최상위창) ============ */
     function setupNav() {
       const nav = document.getElementById('catNav');
       const gallery = document.getElementById('gallery');
       const label = document.getElementById('galleryLabel');
 
-      /* (A) VOD 링크는 각 a 태그에 직접 이벤트 (위임 모바일 누락 방지) */
-      nav.querySelectorAll('a.cat-link').forEach(link => {
-        const handler = function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          nav.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('is-active'));
-          link.classList.add('is-active');
-          openVodMode(link.href, link.textContent.trim());
-          link.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
-        link.addEventListener('click', handler);
-        /* iOS Safari 모바일에서 click 이벤트가 누락될 수 있어 touchend 백업 */
-        link.addEventListener('touchend', function(e) {
-          /* 스크롤 중일 때는 무시되도록 click 이벤트가 자연스럽게 처리 */
-        }, { passive: true });
-      });
-
-      /* (B) 카테고리 button만 위임 */
+      /* 카테고리 button만 위임 — cat-link(a)는 기본 링크 동작에 맡김 */
       nav.addEventListener('click', e => {
         const btn = e.target.closest('.cat-btn[data-ch]');
         if (!btn) return;
-        if (document.body.classList.contains('vod-mode')) closeVodMode();
         const ch = btn.dataset.ch;
         nav.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('is-active'));
         btn.classList.add('is-active');
@@ -845,17 +791,6 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
         btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       });
-
-      /* (C) iframe 컨트롤 - 닫기 버튼 */
-      const closeBtn = document.getElementById('vodClose');
-      if (closeBtn) {
-        closeBtn.addEventListener('click', () => {
-          closeVodMode();
-          /* 첫 번째 카테고리 활성화 */
-          const firstBtn = nav.querySelector('.cat-btn[data-ch]');
-          if (firstBtn) firstBtn.click();
-        });
-      }
     }
 
     renderAll();
@@ -922,6 +857,32 @@
       <p class="sites-tag">관련 키워드: 무료 VOD, 다시보기, KBS VOD, SBS VOD, MBC VOD, JTBC VOD, 한국 드라마 무료, 무료 다시보기, 지상파 VOD</p>
     </div>
   </section>
+
+  <!-- MYWAY.KR 공통: 우측 하단 플로팅 홈 버튼 -->
+  <a href="https://myway.kr" aria-label="홈으로" style="position:fixed;right:18px;bottom:18px;z-index:9999;width:48px;height:48px;border-radius:50%;background:#1a1a1a;color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 6px 20px rgba(0,0,0,.3)">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
+  </a>
+
+  <script>
+  /* 모바일: 외부 링크를 최상위 창에서 열어 뒤로가기로 MYWAY 복귀. PC·태블릿은 새 탭. */
+  (function(){
+    if(!/Mobi/i.test(navigator.userAgent)) return;
+    document.addEventListener("click", function(e){
+      var a = e.target.closest ? e.target.closest("a[href]") : null;
+      if(!a) return;
+      var href = a.getAttribute("href") || "";
+      if(!href || href.charAt(0) === "#" || /^javascript:/i.test(href)) return;
+      e.preventDefault();
+      try { (window.top || window).location.href = a.href; }
+      catch(_) { window.open(a.href, "_blank"); }
+    }, true);
+    var _open = window.open.bind(window);
+    window.open = function(url, name, feat){
+      if(url){ try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
+      return _open(url, name, feat);
+    };
+  })();
+  </script>
 
 </body>
 </html>
