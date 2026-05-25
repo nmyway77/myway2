@@ -185,24 +185,22 @@ nav.appendChild(openBtn);
 })();
 </script>
 <script>
-/* 모바일: iframe 안이면 외부 링크를 최상위 창에서 열어 뒤로가기로 MYWAY 복귀.
-   단독 페이지/차단 시에는 기본 동작(새 탭)으로 안전하게 처리. */
+/* 모바일: 외부 링크를 최상위 창에서 열어 뒤로가기로 MYWAY 복귀. PC·태블릿은 새 탭. */
 (function(){
   if(!/Mobi/i.test(navigator.userAgent)) return;
-  var _open = window.open.bind(window);
   document.addEventListener("click", function(e){
     var a = e.target.closest ? e.target.closest("a[href]") : null;
     if(!a) return;
     var href = a.getAttribute("href") || "";
     if(!href || href.charAt(0) === "#" || /^javascript:/i.test(href)) return;
-    if(window.top === window) return;
     e.preventDefault();
-    try { window.top.location.href = a.href; }
-    catch(_) { _open(a.href, "_blank"); }
+    try { (window.top || window).location.href = a.href; }
+    catch(_) { window.open(a.href, "_blank"); }
   }, true);
   window.addEventListener("pageshow", function(e){ if(e.persisted){ location.reload(); } });
+  var _open = window.open.bind(window);
   window.open = function(url, name, feat){
-    if(url){ try{ if(window.top!==window){ window.top.location.href = url; return null; } }catch(_){} }
+    if(url){ try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
     return _open(url, name, feat);
   };
 })();
