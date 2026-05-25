@@ -181,6 +181,7 @@ function renderGrid(){
 }
 function showGrid(btn){
   renderGrid();
+  setViewerSrc('about:blank');   /* 재생 중인 채널 정지 → 소리 끔 */
   viewer.style.display='none';
   gridPanel.classList.add('show');
   openBtn.style.display='none';
