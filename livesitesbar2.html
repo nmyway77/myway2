@@ -75,20 +75,13 @@ const SITES=[
   ['KBS2','https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList'],
   ['KBS1','https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList'],
   ['KBS24','https://news.kbs.co.kr/news/pc/news24/news24.html'],
-
   ['채널A','https://ichannela.com/com/cmm/onair.do'],
   ['YTN','https://www.ytn.co.kr/_hd/hd_live.html'],
   ['연합뉴스','https://www.yonhapnewstv.co.kr/live'],
-  
- 
   ['아리랑TV','arirang.html'],
-
   ['NHK','https://www3.nhk.or.jp/nhkworld/en/live/'],
   ['ABC','abc.html'],
-  
   ['ABC7','https://abc7.com/watch/live'],
-  
- 
 ];
 const DEFAULT_I = SITES.findIndex(s=>s[0]==='YTN');
 
@@ -140,7 +133,19 @@ const DIRECTORY = [
   ]},
 ];
 
-const viewer=document.getElementById('viewer');
+let viewer=document.getElementById('viewer');
+function setViewerSrc(url){
+  /* iframe을 새로 만들어 교체 → 안쪽 iframe src 변경이 히스토리에 쌓이지 않아
+     뒤로가기가 중간 단계에 걸리지 않음 */
+  const fresh=document.createElement('iframe');
+  fresh.id='viewer'; fresh.title='LIVE TV 뷰어';
+  fresh.setAttribute('referrerpolicy','no-referrer');
+  fresh.setAttribute('allow','autoplay; encrypted-media; fullscreen');
+  fresh.setAttribute('allowfullscreen','');
+  fresh.src=url;
+  viewer.parentNode.replaceChild(fresh, viewer);
+  viewer=fresh;
+}
 const gridPanel=document.getElementById('gridPanel');
 const nav=document.getElementById('topnav');
 const track=document.getElementById('navTrack');
@@ -187,8 +192,7 @@ function showGrid(btn){
 function loadSite(i, btn){
   currentUrl=SITES[i][1];
   gridPanel.classList.remove('show');
-  viewer.style.display='';
-  viewer.src=currentUrl;
+  setViewerSrc(currentUrl);
   openBtn.style.display='';
   clearActive();
   try { sessionStorage.setItem('mywayLive','site:'+i); } catch(_) {}
@@ -198,8 +202,7 @@ function loadSite(i, btn){
 function loadUrl(url){
   currentUrl=url;
   gridPanel.classList.remove('show');
-  viewer.style.display='';
-  viewer.src=url;
+  setViewerSrc(url);
   openBtn.style.display='';
   clearActive();
   const idx=SITES.findIndex(s=>s[1]===url);
