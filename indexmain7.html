@@ -2136,8 +2136,6 @@
     try { (window.top || window).location.href = a.href; }
     catch(_) { window.open(a.href, '_blank'); }
   }, true);
-  /* 뒤로가기(bfcache) 복원 시 버튼 먹통 방지: 복원되면 새로고침 */
-  window.addEventListener('pageshow', function(e){ if(e.persisted){ location.reload(); } });
   var _open = window.open.bind(window);
   window.open = function(url, name, feat){
     if(url){ try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
