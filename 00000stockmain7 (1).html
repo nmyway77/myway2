@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>주요 차트 - 코인·미국주식·한국주식 | MYWAY.KR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="비트코인·이더리움·미국·한국 주요 종목 차트 모음 - MYWAY.KR">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      --bg-base: #ffffff;
+      --bg-glow: #eef2fb;
+      --card-bg: #ffffff;
+      --card-bg-hover: #fafbfd;
+      --card-border: rgba(0,0,0,0.06);
+      --card-border-hover: rgba(0,0,0,0.12);
+      --text-main: #1a1f36;
+      --text-sub: #4a5170;
+      --text-muted: #8590ad;
+      --accent: #2e7d4f;          /* 짙은 녹색 - 라이트 배경에 가시성 */
+      --accent-glow: rgba(46,125,79,0.12);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Segoe UI', '맑은 고딕', Arial, sans-serif;
+      -webkit-text-size-adjust: 100%;
+      background: var(--bg-base);
+    }
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      background:
+        radial-gradient(ellipse at top left, var(--bg-glow) 0%, transparent 50%),
+        radial-gradient(ellipse at top right, rgba(46,125,79,0.05) 0%, transparent 40%),
+        var(--bg-base);
+      color: var(--text-main);
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    img { -webkit-user-drag: none; user-drag: none; -webkit-touch-callout: none; }
+    input, textarea, [contenteditable] {
+      -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text;
+    }
+
+    /* ===== 상단 헤더 ===== */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: saturate(180%) blur(12px);
+      -webkit-backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      padding: 12px 14px;
+      padding-left: max(14px, env(safe-area-inset-left));
+      padding-right: max(14px, env(safe-area-inset-right));
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* 탭 네비 (다크 톤) */
+    .tab-nav {
+      flex: 1 1 auto;
+      min-width: 0;
+      display: flex;
+      gap: 8px;
+      justify-content: safe center;  /* 데스크탑: 중앙정렬 / 모바일 좁은 화면: 자동 좌측 폴백 */
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 2px 0;
+    }
+    .tab-nav::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      font: inherit;
+      font-size: .9rem;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(0,0,0,0.08);
+      background: rgba(0,0,0,0.03);
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: all .18s;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tab-btn:hover {
+      background: rgba(0,0,0,0.06);
+      color: var(--text-main);
+      border-color: rgba(0,0,0,0.16);
+    }
+    .tab-btn:active { transform: scale(0.96); }
+    .tab-btn.is-active {
+      background: #1f2740;
+      color: #fff;
+      border-color: #1f2740;
+      box-shadow: 0 4px 16px rgba(31, 39, 64, 0.25);
+    }
+    .tab-btn .count {
+      display: inline-block;
+      margin-left: 4px;
+      font-size: .72rem;
+      opacity: .7;
+      font-weight: 500;
+    }
+
+    /* ===== 본체 ===== */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 16px 60px;
+      padding-bottom: calc(60px + var(--safe-bottom));
+    }
+
+    .section { margin-bottom: 32px; }
+    .section:last-child { margin-bottom: 0; }
+
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 0 4px;
+      margin-bottom: 12px;
+    }
+    .section-label {
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      text-shadow: 0 0 16px var(--accent-glow);
+    }
+    .section-sub {
+      font-size: .75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: -0.1px;
+    }
+    .section-newslink {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: .92rem;
+      font-weight: 800;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.2px;
+      border-bottom: 1.5px solid var(--accent);
+      padding-bottom: 1px;
+      transition: opacity .15s ease;
+    }
+    .section-newslink svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .section-newslink:hover { opacity: .6; }
+
+    /* 카드 그리드 */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      column-gap: 12px;
+      row-gap: 28px;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 18px 18px;
+      text-decoration: none;
+      color: inherit;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      position: relative;
+      overflow: visible;
+      transition: transform .2s, box-shadow .2s, border-color .2s, background .2s;
+      -webkit-tap-highlight-color: transparent;
+      min-height: 78px;
+      box-shadow: 0 2px 4px rgba(90, 90, 130, 0.06);
+    }
+    /* 라이트 카드에서는 좌상단 글로우 비활성 */
+    .card::before { content: none; }
+    /* 카드 아래 곡선 그림자 PNG (페이퍼 컬 효과) */
+    .card::after {
+      content: "";
+      position: absolute;
+      left: 3%;
+      right: 3%;
+      top: 100%;
+      height: 22px;
+      background: url('https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png') center top / 100% 100% no-repeat;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .card:hover {
+      background: var(--card-bg-hover);
+      border-color: var(--card-border-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 10px rgba(90, 90, 130, 0.12);
+    }
+    .card:active { transform: translateY(-1px); }
+
+    .card .ticker {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.4px;
+      line-height: 1.15;
+      margin-bottom: 4px;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+    /* 글자 수가 많은 카드(사이트명 등)는 자동으로 살짝 작게 */
+    .card .ticker:has(+ .name-ko) { /* 보조 라벨 있는 모든 카드 */ }
+    .card[data-long="1"] .ticker { font-size: 1.05rem; }
+    .card .name-ko {
+      font-size: .82rem;
+      font-weight: 500;
+      color: var(--text-sub);
+      letter-spacing: -0.2px;
+      line-height: 1.2;
+    }
+    /* 우상단 외부 링크 마커 */
+    .card .arrow {
+      position: absolute;
+      top: 12px; right: 14px;
+      font-size: .85rem;
+      color: var(--text-muted);
+      opacity: 0;
+      transition: opacity .15s, transform .15s;
+    }
+    .card:hover .arrow {
+      opacity: 1;
+      transform: translate(2px, -2px);
+      color: var(--accent);
+    }
+
+    /* 반응형 */
+    @media (max-width: 720px) {
+      .grid { grid-template-columns: repeat(2, 1fr); column-gap: 10px; row-gap: 24px; }
+      .card { padding: 16px 16px; min-height: 72px; }
+      .card .ticker { font-size: 1.1rem; }
+      .card .name-ko { font-size: .78rem; }
+      .main { padding: 22px 14px 60px; }
+    }
+    @media (max-width: 380px) {
+      .grid { grid-template-columns: repeat(2, 1fr); column-gap: 9px; row-gap: 22px; }
+      .card { padding: 14px 14px; }
+      .card .ticker { font-size: 1.05rem; }
+    }
+
+    /* ===== MYWAY.KR 공통 ===== */
+
+    .myway-footer {
+      width: 100%;
+      text-align: center;
+      padding: 22px 14px calc(28px + var(--safe-bottom));
+      margin-top: 28px;
+      border-top: 1px solid rgba(0,0,0,0.06);
+      font-size: .82rem;
+      color: var(--text-muted);
+    }
+    .myway-footer a {
+      color: var(--text-sub);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .myway-footer a:hover { color: var(--accent); }
+    .myway-footer .sep { display: inline-block; margin: 0 8px; opacity: .5; }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <nav class="tab-nav" id="tabNav">
+      <button class="tab-btn is-active" data-tab="news">리포트&amp;뉴스</button>
+      <button class="tab-btn" data-tab="chart">주요 차트</button>
+      <button class="tab-btn" data-tab="fear">공포지수</button>
+      <button class="tab-btn" data-tab="sites">주요 사이트</button>
+      <button class="tab-btn" data-tab="community">커뮤니티</button>
+    </nav>
+  </header>
+
+  <main class="main" id="main"></main>
+
+  <footer class="myway-footer">
+    <a href="https://myway.kr/" target="_top">myway.kr</a>
+    <span class="sep">·</span>
+    <span>© MYWAY.KR</span>
+  </footer>
+
+  <script>
+    /* 복제방지 */
+    (function(){
+      function isEditable(t) {
+        if (!t) return false;
+        const tag = (t.tagName || '').toLowerCase();
+        if (tag === 'input' || tag === 'textarea') return true;
+        if (t.isContentEditable) return true;
+        return false;
+      }
+      ['contextmenu','dragstart','selectstart','copy','cut'].forEach(ev => {
+        document.addEventListener(ev, e => {
+          if (isEditable(e.target)) return;
+          e.preventDefault();
+        }, { capture: true });
+      });
+      document.addEventListener('keydown', e => {
+        if (isEditable(e.target)) return;
+        const k = (e.key || '').toLowerCase();
+        if (k === 'f12') { e.preventDefault(); return; }
+        if (e.ctrlKey && e.shiftKey && (k === 'i' || k === 'j' || k === 'c')) { e.preventDefault(); return; }
+        if (e.ctrlKey && !e.shiftKey && (k === 'u' || k === 's' || k === 'c' || k === 'x' || k === 'a')) { e.preventDefault(); return; }
+      }, { capture: true });
+    })();
+
+    /* ============ 데이터 ============ */
+    /* tabs[탭ID] = { sections: [{ label, sub, items: [{ticker, ko, url}] }] }
+       - chart 탭: 코인 차트(코인원) / 미국주식(NASDAQ) / 한국주식(KOSPI)
+       - fear  탭: 코인 공포·탐욕 지수 (cfgi.io) 12개 */
+    const tabs = {
+      chart: {
+        sections: [
+          {
+            label: '미국 지수 선물',
+            sub: 'US Futures · TradingView',
+            items: [
+              { ticker: '다우 선물',     ko: 'DJIA Futures',  url: 'https://kr.tradingview.com/chart/?symbol=CME_MINI%3AYM1!' },
+              { ticker: '나스닥100 미니', ko: 'E-mini · NQ',   url: 'https://kr.tradingview.com/chart/?symbol=CME_MINI%3ANQ1!' },
+              { ticker: 'S&P 500',       ko: 'ES Futures',    url: 'https://kr.tradingview.com/chart/?symbol=CME_MINI%3AES1!' },
+              { ticker: '러셀 2000',     ko: 'RTY Futures',   url: 'https://kr.tradingview.com/chart/?symbol=CME_MINI%3ARTY1!' },
+              { ticker: 'VIX',           ko: '변동성 지수',   url: 'https://kr.tradingview.com/chart/?symbol=TVC%3AVIX' },
+              { ticker: 'DXY',           ko: '달러 인덱스',   url: 'https://kr.tradingview.com/chart/?symbol=TVC%3ADXY' }
+            ]
+          },
+          {
+            label: '코인 주요 차트',
+            sub: 'Coinone',
+            items: [
+              { ticker: 'BTC',  ko: '비트코인',   url: 'https://coinone.co.kr/chart?site=coinone' },
+              { ticker: 'ETH',  ko: '이더리움',   url: 'https://coinone.co.kr/chart?site=coinoneeth' },
+              { ticker: 'XRP',  ko: '리플',       url: 'https://coinone.co.kr/chart?site=coinonexrp' },
+              { ticker: 'SOL',  ko: '솔라나',     url: 'https://coinone.co.kr/chart?site=coinonesol' },
+              { ticker: 'DOGE', ko: '도지코인',   url: 'https://coinone.co.kr/chart?site=coinonedoge' },
+              { ticker: 'ADA',  ko: '에이다',     url: 'https://coinone.co.kr/chart?site=coinoneada' }
+            ]
+          },
+          {
+            label: '미국 주요 주식',
+            sub: 'NASDAQ',
+            items: [
+              { ticker: 'AAPL',  ko: '애플',           url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3AAAPL' },
+              { ticker: 'MSFT',  ko: '마이크로소프트', url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3AMSFT' },
+              { ticker: 'NVDA',  ko: '엔비디아',       url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3ANVDA' },
+              { ticker: 'GOOGL', ko: '알파벳(구글)',   url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3AGOOGL' },
+              { ticker: 'AMZN',  ko: '아마존',         url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3AAMZN' },
+              { ticker: 'TSLA',  ko: '테슬라',         url: 'https://kr.tradingview.com/chart/?symbol=NASDAQ%3ATSLA' }
+            ]
+          },
+          {
+            label: '한국 주요 주식',
+            sub: 'KOSPI',
+            items: [
+              { ticker: '삼성전자', ko: '005930',         url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A005930' },
+              { ticker: 'SK하이닉스', ko: '000660',       url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A000660' },
+              { ticker: 'LG에너지솔루션', ko: '373220',   url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A373220' },
+              { ticker: 'NAVER', ko: '035420',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A035420' },
+              { ticker: '카카오', ko: '035720',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A035720' },
+              { ticker: '현대차', ko: '005380',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A005380' }
+            ]
+          },
+          {
+            label: '방산주',
+            sub: 'Defense',
+            items: [
+              { ticker: '한화에어로스페이스', ko: '012450', url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A012450' },
+              { ticker: '한국항공우주', ko: '047810',       url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A047810' },
+              { ticker: 'LIG넥스원', ko: '079550',          url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A079550' },
+              { ticker: '현대로템', ko: '064350',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A064350' },
+              { ticker: '한화시스템', ko: '272210',         url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A272210' },
+              { ticker: '풍산', ko: '103140',               url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A103140' }
+            ]
+          },
+          {
+            label: '로봇주',
+            sub: 'Robotics',
+            items: [
+              { ticker: '두산로보틱스', ko: '454910',       url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A454910' },
+              { ticker: '레인보우로보틱스', ko: '277810',   url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A277810' },
+              { ticker: '에스피지', ko: '058610',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A058610' },
+              { ticker: '로보스타', ko: '090360',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A090360' },
+              { ticker: '유진로봇', ko: '056080',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A056080' },
+              { ticker: '휴림로봇', ko: '090710',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A090710' }
+            ]
+          },
+          {
+            label: '조선주',
+            sub: 'Shipbuilding',
+            items: [
+              { ticker: 'HD한국조선해양', ko: '009540',     url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A009540' },
+              { ticker: 'HD현대중공업', ko: '329180',       url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A329180' },
+              { ticker: '삼성중공업', ko: '010140',         url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A010140' },
+              { ticker: '한화오션', ko: '042660',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A042660' },
+              { ticker: 'HD현대미포', ko: '010620',         url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A010620' },
+              { ticker: '현대힘스', ko: '460930',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A460930' }
+            ]
+          },
+          {
+            label: '주요 원자재',
+            sub: 'Commodities · TradingView',
+            items: [
+              { ticker: '금',         ko: 'Gold · XAU/USD',     url: 'https://kr.tradingview.com/chart/?symbol=OANDA%3AXAUUSD' },
+              { ticker: '은',         ko: 'Silver · XAG/USD',   url: 'https://kr.tradingview.com/chart/?symbol=OANDA%3AXAGUSD' },
+              { ticker: 'WTI 원유',   ko: 'Crude Oil',          url: 'https://kr.tradingview.com/chart/?symbol=TVC%3AUSOIL' },
+              { ticker: '천연가스',   ko: 'Natural Gas',        url: 'https://kr.tradingview.com/chart/?symbol=NYMEX%3ANG1!' },
+              { ticker: '구리',       ko: 'Copper',             url: 'https://kr.tradingview.com/chart/?symbol=COMEX%3AHG1!' },
+              { ticker: '백금',       ko: 'Platinum · XPT/USD', url: 'https://kr.tradingview.com/chart/?symbol=OANDA%3AXPTUSD' }
+            ]
+          }
+        ]
+      },
+      fear: {
+        sections: [
+          {
+            label: '코인 공포·탐욕 지수',
+            sub: 'CFGI.io',
+            items: [
+              { ticker: 'BTC',  ko: '비트코인',     url: 'https://cfgi.io/bitcoin-fear-greed-index/' },
+              { ticker: 'ETH',  ko: '이더리움',     url: 'https://cfgi.io/ethereum-fear-greed-index/' },
+              { ticker: 'XRP',  ko: '리플',         url: 'https://cfgi.io/ripple-fear-greed-index/' },
+              { ticker: 'SOL',  ko: '솔라나',       url: 'https://cfgi.io/solana-fear-greed-index/' },
+              { ticker: 'DOGE', ko: '도지코인',     url: 'https://cfgi.io/doge-fear-greed-index/' },
+              { ticker: 'ADA',  ko: '에이다',       url: 'https://cfgi.io/cardano-fear-greed-index/' },
+              { ticker: 'TRX',  ko: '트론',         url: 'https://cfgi.io/tron-fear-greed-index/' },
+              { ticker: 'AVAX', ko: '아발란체',     url: 'https://cfgi.io/avalanche-fear-greed-index/' },
+              { ticker: 'LINK', ko: '체인링크',     url: 'https://cfgi.io/chainlink-fear-greed-index/' },
+              { ticker: 'DOT',  ko: '폴카닷',       url: 'https://cfgi.io/polkadot-fear-greed-index/' },
+              { ticker: 'SHIB', ko: '시바이누',     url: 'https://cfgi.io/shiba-inu-fear-greed-index/' },
+              { ticker: 'LTC',  ko: '라이트코인',   url: 'https://cfgi.io/litecoin-fear-greed-index/' }
+            ]
+          }
+        ]
+      },
+      sites: {
+        sections: [
+          {
+            label: '국내 주요 사이트',
+            sub: 'Korea Markets',
+            items: [
+              { ticker: '네이버 증권',     ko: 'finance.naver.com',  url: 'https://finance.naver.com/' },
+              { ticker: '다음 증권',       ko: 'finance.daum.net',   url: 'https://finance.daum.net/' },
+              { ticker: '한국경제',        ko: 'hankyung.com',       url: 'https://www.hankyung.com/' },
+              { ticker: '매일경제 증권',   ko: 'stock.mk.co.kr',     url: 'https://stock.mk.co.kr/' },
+              { ticker: '머니투데이',      ko: 'news.mt.co.kr',      url: 'https://news.mt.co.kr/' },
+              { ticker: '이데일리',        ko: 'edaily.co.kr',       url: 'https://www.edaily.co.kr/' },
+              { ticker: '연합인포맥스',    ko: 'einfomax.co.kr',     url: 'https://news.einfomax.co.kr/' },
+              { ticker: 'DART',            ko: '전자공시시스템',     url: 'https://dart.fss.or.kr/' },
+              { ticker: 'KIND',            ko: '한국거래소 공시',    url: 'https://kind.krx.co.kr/' },
+              { ticker: '38커뮤니케이션',  ko: '공모주 정보',        url: 'https://www.38.co.kr/' }
+            ]
+          },
+          {
+            label: '미국 주요 사이트',
+            sub: 'US Markets',
+            items: [
+              { ticker: 'Bloomberg',     ko: '블룸버그',           url: 'https://www.bloomberg.com/markets' },
+              { ticker: 'CNBC',          ko: 'CNBC 마켓',          url: 'https://www.cnbc.com/markets/' },
+              { ticker: 'Yahoo Finance', ko: '야후 파이낸스',      url: 'https://finance.yahoo.com/' },
+              { ticker: 'Reuters',       ko: '로이터 마켓',        url: 'https://www.reuters.com/markets/' },
+              { ticker: 'MarketWatch',   ko: '마켓워치',           url: 'https://www.marketwatch.com/' },
+              { ticker: 'WSJ',           ko: '월스트리트저널',     url: 'https://www.wsj.com/news/markets' },
+              { ticker: 'Investing.com', ko: '인베스팅',           url: 'https://www.investing.com/' },
+              { ticker: 'Seeking Alpha', ko: '시킹알파',           url: 'https://seekingalpha.com/' },
+              { ticker: 'FT',            ko: 'Financial Times',    url: 'https://www.ft.com/markets' },
+              { ticker: 'TradingView',   ko: '트레이딩뷰',         url: 'https://www.tradingview.com/' }
+            ]
+          },
+          {
+            label: '증권 정보·분석',
+            sub: 'Stock Research · KR',
+            items: [
+              { ticker: '싱크풀',          ko: '종합 증권 정보·분석',  url: 'https://www.thinkpool.com/' },
+              { ticker: '팍스넷',          ko: '종목 정보·토론',       url: 'https://www.paxnet.co.kr/' },
+              { ticker: '인포스탁',        ko: '종합 증권 정보',       url: 'https://www.infostock.co.kr/' },
+              { ticker: 'FnGuide',         ko: '재무·실적 데이터',     url: 'https://www.fnguide.com/' },
+              { ticker: '알파스퀘어',      ko: '테마·팩터 분석',       url: 'https://alphasquare.co.kr/' },
+              { ticker: '인베스팅 코리아', ko: 'kr.investing.com',     url: 'https://kr.investing.com/' },
+              { ticker: '와이즈에프엔',    ko: 'wisefn.co.kr',         url: 'https://www.wisefn.co.kr/' },
+              { ticker: '핀업',            ko: '데이터·테마 분석',     url: 'https://finance.finup.co.kr/' },
+              { ticker: 'KRX',             ko: '한국거래소',           url: 'https://www.krx.co.kr/' },
+              { ticker: '한국IR협의회',    ko: 'kirs.or.kr',           url: 'https://www.kirs.or.kr/' }
+            ]
+          },
+          {
+            label: '증권 방송',
+            sub: 'Finance TV · KR',
+            items: [
+              { ticker: '한국경제TV',  ko: 'wowtv.co.kr',           url: 'https://www.wowtv.co.kr/' },
+              { ticker: 'MBN 머니',    ko: 'mbnmoney.mbn.co.kr',    url: 'http://mbnmoney.mbn.co.kr/' },
+              { ticker: 'SBS Biz',     ko: 'biz.sbs.co.kr',         url: 'https://biz.sbs.co.kr/' },
+              { ticker: '매경TV (MTN)', ko: 'mtn.co.kr',             url: 'https://www.mtn.co.kr/' },
+              { ticker: '서울경제TV',  ko: 'sentv.co.kr',           url: 'https://www.sentv.co.kr/' },
+              { ticker: '토마토TV',    ko: 'etomato.com',           url: 'https://www.etomato.com/' }
+            ]
+          },
+          {
+            label: '글로벌 코인 사이트',
+            sub: 'Crypto Global',
+            items: [
+              { ticker: 'CoinMarketCap', ko: '시가총액·가격',       url: 'https://coinmarketcap.com/' },
+              { ticker: 'CoinGecko',     ko: '시가총액·가격',       url: 'https://www.coingecko.com/' },
+              { ticker: 'Coinglass',     ko: '선물·청산맵',         url: 'https://www.coinglass.com/' },
+              { ticker: 'CryptoQuant',   ko: '온체인 데이터',       url: 'https://cryptoquant.com/' },
+              { ticker: 'Glassnode',     ko: '온체인 분석',         url: 'https://glassnode.com/' },
+              { ticker: 'DefiLlama',     ko: 'DeFi TVL',           url: 'https://defillama.com/' },
+              { ticker: 'CoinDesk',      ko: '글로벌 코인 뉴스',    url: 'https://www.coindesk.com/' },
+              { ticker: 'Cointelegraph', ko: '코인 뉴스',           url: 'https://cointelegraph.com/' },
+              { ticker: 'The Block',     ko: '리서치·뉴스',         url: 'https://www.theblock.co/' },
+              { ticker: 'Etherscan',     ko: '이더리움 익스플로러', url: 'https://etherscan.io/' }
+            ]
+          },
+          {
+            label: '국내 코인 사이트',
+            sub: 'Crypto Korea',
+            items: [
+              { ticker: '업비트',           ko: 'upbit.com',          url: 'https://upbit.com/' },
+              { ticker: '빗썸',             ko: 'bithumb.com',        url: 'https://www.bithumb.com/' },
+              { ticker: '코인원',           ko: 'coinone.co.kr',      url: 'https://coinone.co.kr/' },
+              { ticker: '김프 (Kimpga)',    ko: '김치 프리미엄',      url: 'https://kimpga.com/' },
+              { ticker: '코인니스',         ko: '실시간 코인 뉴스',   url: 'https://coinness.com/' },
+              { ticker: '블록미디어',       ko: 'blockmedia.co.kr',   url: 'https://www.blockmedia.co.kr/' },
+              { ticker: '코인리더스',       ko: 'coinreaders.com',    url: 'https://www.coinreaders.com/' },
+              { ticker: '코인데스크 코리아', ko: 'coindeskkorea.com',  url: 'https://www.coindeskkorea.com/' },
+              { ticker: '토큰포스트',       ko: 'tokenpost.kr',       url: 'https://www.tokenpost.kr/' },
+              { ticker: '디센터',           ko: 'decenter.kr',        url: 'https://www.decenter.kr/' }
+            ]
+          },
+          {
+            label: '시장 도구·차트',
+            sub: 'Tools & Charts',
+            items: [
+              { ticker: 'CFGI 마켓',       ko: '코인 공포·탐욕 지수',  url: 'https://cfgi.io/markets' },
+              { ticker: '업비트 데이터랩', ko: '온체인 데이터(ETH)',   url: 'https://datalab.upbit.com/blockchain/ethereum' },
+              { ticker: '코인글래스 ETF',  ko: 'XRP ETF 현황',         url: 'https://www.coinglass.com/ko/etf/xrp' },
+              { ticker: '라이브차트',      ko: '나스닥100 실시간',     url: 'https://www.livecharts.co.uk/MarketCharts/nasdaq100.php' }
+            ]
+          }
+        ]
+      },
+      news: {
+        sections: [
+          {
+            label: '증권사 리서치',
+            sub: 'Securities Research',
+            items: [
+              { ticker: '미래에셋',   ko: '미래에셋증권 리서치',  url: 'https://securities.miraeasset.com/bbs/board/message/list.do?categoryId=1525' },
+              { ticker: '삼성증권',   ko: '삼성증권 리서치',      url: 'https://www.samsungpop.com/sscommon/jsp/search/research/research_pop.jsp#bm' },
+              { ticker: '키움증권',   ko: '키움증권 리서치',      url: 'https://www.kiwoom.com/h/invest/research/VAnalCRView' },
+              { ticker: '신한증권',   ko: '신한투자증권 리서치',  url: 'https://m.shinhansec.com/mweb/invt/shrh/ishrh1001?tabIdx=0' },
+              { ticker: '한화증권',   ko: '한화투자증권 리서치',  url: 'https://m.hanwhawm.com:9090/M/main/research/main/list.cmd?depth3_id=anls1' },
+              { ticker: '토스증권',   ko: '토스증권 투자정보',    url: 'https://corp.tossinvest.com/ko/investment-info' },
+              { ticker: '유안타증권', ko: '유안타증권 리서치',    url: 'https://www.myasset.com/myasset/research/rs_list/rs_list.cmd?cd006=&cd007=&cd008=&m_menuId=ind' },
+              { ticker: '한양증권',   ko: '한양증권 리서치',      url: 'https://www.hygood.co.kr/board/researchAnalyzeCompany/list' },
+              { ticker: '상상인증권', ko: '상상인증권 리서치',    url: 'https://www.sangsanginib.com/research/enterpriseReport/enterpriseReportView' }
+            ]
+          },
+          {
+            label: '종목 리포트·공시',
+            sub: 'Research & Disclosure',
+            items: [
+              { ticker: '한경 컨센서스',     ko: '증권사 리포트 모음',   url: 'https://markets.hankyung.com/consensus' },
+              { ticker: '네이버 리서치',     ko: '증권사 보고서',        url: 'https://finance.naver.com/research/company_list.naver' },
+              { ticker: 'FnGuide 리포트',    ko: '종목 리포트 트렌드',   url: 'http://comp.fnguide.com/SVO2/ASP/SVD_Report_Trend.asp?pGB=1&gicode=A005930&MenuYn=Y&NewMenuID=801&stkGb=701' },
+              { ticker: 'FnGuide 캘린더',    ko: '실적·공시 일정',       url: 'https://asp01.fnguide.com/SVO2/ASP/SVD_comp_calendar.asp?pGB=1' },
+              { ticker: '알파스퀘어',        ko: '테마·팩터 분석',       url: 'https://alphasquare.co.kr/home/theme-factor' },
+              { ticker: '핀업 테마',         ko: '테마주 로그',          url: 'https://finance.finup.co.kr/Lab/ThemeLog' },
+              { ticker: 'DART',              ko: '금감원 전자공시',      url: 'https://dart.fss.or.kr/' },
+              { ticker: 'KIND',              ko: '한국거래소 공시',      url: 'https://kind.krx.co.kr/' },
+              { ticker: '세이브로',          ko: '예탁결제원 공시',      url: 'https://seibro.or.kr/' }
+            ]
+          },
+          {
+            label: '국내 실시간 뉴스',
+            sub: 'Korea News',
+            items: [
+              { ticker: '한경 실시간',       ko: 'hankyung.com/realtime',  url: 'https://www.hankyung.com/realtime' },
+              { ticker: '매경 증권',         ko: 'mk.co.kr/news/stock',    url: 'https://www.mk.co.kr/news/stock/' },
+              { ticker: '머투 속보',         ko: 'news.mt.co.kr',          url: 'https://news.mt.co.kr/newsflash/newsflash.html' },
+              { ticker: '이데일리',          ko: 'edaily.co.kr',           url: 'https://www.edaily.co.kr/News/' },
+              { ticker: '연합인포맥스',      ko: 'einfomax.co.kr',         url: 'https://news.einfomax.co.kr/' },
+              { ticker: '인포스탁',          ko: 'infostockdaily.co.kr',   url: 'https://www.infostockdaily.co.kr/' },
+              { ticker: '서울경제',          ko: 'sedaily.com',            url: 'https://www.sedaily.com/' },
+              { ticker: '파이낸셜뉴스',      ko: 'fnnews.com',             url: 'https://www.fnnews.com/' },
+              { ticker: '한국경제TV',        ko: 'wowtv.co.kr',            url: 'https://www.wowtv.co.kr/' },
+              { ticker: 'MBN 머니',          ko: 'mbnmoney.mbn.co.kr',     url: 'http://mbnmoney.mbn.co.kr/' }
+            ]
+          },
+          {
+            label: '해외 실시간 뉴스',
+            sub: 'Global News',
+            items: [
+              { ticker: 'Bloomberg',     ko: '블룸버그 마켓',     url: 'https://www.bloomberg.com/markets' },
+              { ticker: 'CNBC',          ko: 'CNBC 마켓',         url: 'https://www.cnbc.com/markets/' },
+              { ticker: 'Reuters',       ko: '로이터 마켓',       url: 'https://www.reuters.com/markets/' },
+              { ticker: 'Yahoo Finance', ko: '야후 파이낸스',     url: 'https://finance.yahoo.com/' },
+              { ticker: 'MarketWatch',   ko: '마켓워치',          url: 'https://www.marketwatch.com/' },
+              { ticker: 'WSJ',           ko: 'WSJ 마켓',          url: 'https://www.wsj.com/news/markets' },
+              { ticker: 'FT',            ko: 'Financial Times',   url: 'https://www.ft.com/markets' },
+              { ticker: 'Investing 뉴스', ko: '주식시장 속보',     url: 'https://www.investing.com/news/stock-market-news' },
+              { ticker: 'Seeking Alpha', ko: '시킹알파 분석',     url: 'https://seekingalpha.com/' },
+              { ticker: "Barron's",      ko: '배런스',            url: 'https://www.barrons.com/' }
+            ]
+          },
+          {
+            label: '코인 뉴스',
+            sub: 'Crypto News',
+            items: [
+              { ticker: 'CoinDesk',         ko: '글로벌 코인 뉴스',  url: 'https://www.coindesk.com/' },
+              { ticker: 'Cointelegraph',    ko: '코인 뉴스',         url: 'https://cointelegraph.com/' },
+              { ticker: 'The Block',        ko: '리서치·뉴스',       url: 'https://www.theblock.co/' },
+              { ticker: 'Decrypt',          ko: 'decrypt.co',        url: 'https://decrypt.co/' },
+              { ticker: '코인니스',          ko: '실시간 한국 뉴스',  url: 'https://coinness.com/' },
+              { ticker: '블록미디어',        ko: 'blockmedia.co.kr',  url: 'https://www.blockmedia.co.kr/' },
+              { ticker: '코인리더스',        ko: 'coinreaders.com',   url: 'https://www.coinreaders.com/' },
+              { ticker: '코인데스크 코리아', ko: 'coindeskkorea.com', url: 'https://www.coindeskkorea.com/' },
+              { ticker: '토큰포스트',        ko: 'tokenpost.kr',      url: 'https://www.tokenpost.kr/' },
+              { ticker: '디센터',            ko: 'decenter.kr',       url: 'https://www.decenter.kr/' }
+            ]
+          }
+        ]
+      },
+      community: {
+        sections: [
+          {
+            label: '코인 실시간 채팅',
+            sub: 'Coinone',
+            items: [
+              { ticker: '코인원 채팅',  ko: '실시간 거래 채팅 · XRP 페이지',  url: 'https://coinone.co.kr/chart?site=coinonexrp' }
+            ]
+          },
+          {
+            label: '국내 주식 종목토론방',
+            sub: 'NAVER Board',
+            items: [
+              { ticker: '삼성전자',           ko: '005930', url: 'https://finance.naver.com/item/board.naver?code=005930' },
+              { ticker: 'SK하이닉스',         ko: '000660', url: 'https://finance.naver.com/item/board.naver?code=000660' },
+              { ticker: 'LG에너지솔루션',     ko: '373220', url: 'https://finance.naver.com/item/board.naver?code=373220' },
+              { ticker: '삼성바이오로직스',   ko: '207940', url: 'https://finance.naver.com/item/board.naver?code=207940' },
+              { ticker: 'POSCO홀딩스',        ko: '005490', url: 'https://finance.naver.com/item/board.naver?code=005490' },
+              { ticker: 'NAVER',              ko: '035420', url: 'https://finance.naver.com/item/board.naver?code=035420' },
+              { ticker: '카카오',             ko: '035720', url: 'https://finance.naver.com/item/board.naver?code=035720' },
+              { ticker: '현대차',             ko: '005380', url: 'https://finance.naver.com/item/board.naver?code=005380' },
+              { ticker: '기아',               ko: '000270', url: 'https://finance.naver.com/item/board.naver?code=000270' },
+              { ticker: '셀트리온',           ko: '068270', url: 'https://finance.naver.com/item/board.naver?code=068270' },
+              { ticker: 'LG화학',             ko: '051910', url: 'https://finance.naver.com/item/board.naver?code=051910' },
+              { ticker: '삼성SDI',            ko: '006400', url: 'https://finance.naver.com/item/board.naver?code=006400' },
+              { ticker: '에코프로비엠',       ko: '247540', url: 'https://finance.naver.com/item/board.naver?code=247540' },
+              { ticker: '에코프로',           ko: '086520', url: 'https://finance.naver.com/item/board.naver?code=086520' },
+              { ticker: '한화에어로스페이스', ko: '012450', url: 'https://finance.naver.com/item/board.naver?code=012450' },
+              { ticker: '한국항공우주',       ko: '047810', url: 'https://finance.naver.com/item/board.naver?code=047810' },
+              { ticker: '두산로보틱스',       ko: '454910', url: 'https://finance.naver.com/item/board.naver?code=454910' },
+              { ticker: '레인보우로보틱스',   ko: '277810', url: 'https://finance.naver.com/item/board.naver?code=277810' },
+              { ticker: 'HD한국조선해양',     ko: '009540', url: 'https://finance.naver.com/item/board.naver?code=009540' },
+              { ticker: '한화오션',           ko: '042660', url: 'https://finance.naver.com/item/board.naver?code=042660' }
+            ]
+          }
+        ]
+      }
+    };
+
+    /* ============ 렌더 ============ */
+    function renderTab(tabId) {
+      const root = document.getElementById('main');
+      const frag = document.createDocumentFragment();
+      const tab = tabs[tabId];
+      if (!tab) return;
+
+      tab.sections.forEach(sec => {
+        const section = document.createElement('section');
+        section.className = 'section';
+
+        const head = document.createElement('div');
+        head.className = 'section-head';
+        const label = document.createElement('span');
+        label.className = 'section-label';
+        label.textContent = sec.label;
+        head.appendChild(label);
+
+        /* '미국 지수 선물' 섹션: 영어 sub 대신 비교차트 링크를 그 자리에 */
+        if (sec.label === '미국 지수 선물') {
+          const cmpLink = document.createElement('a');
+          cmpLink.className = 'section-newslink';
+          cmpLink.href = 'https://myway.kr/multichart.html';
+          cmpLink.target = '_blank';
+          cmpLink.rel = 'noopener';
+          cmpLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12.5" y="7" width="3" height="10"/><rect x="18" y="13" width="3" height="4"/></svg><span>비교차트</span>';
+          head.appendChild(cmpLink);
+        } else {
+          const sub = document.createElement('span');
+          sub.className = 'section-sub';
+          sub.textContent = sec.sub;
+          head.appendChild(sub);
+        }
+
+        section.appendChild(head);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        sec.items.forEach(it => {
+          const a = document.createElement('a');
+          a.className = 'card';
+          a.href = it.url;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.setAttribute('aria-label', it.ko);
+
+          const tk = document.createElement('div');
+          tk.className = 'ticker';
+          tk.textContent = it.ticker;
+          a.appendChild(tk);
+          /* 사이트명 등 긴 라벨은 자동 축소 (6자 이상) */
+          if (String(it.ticker).length > 6) a.dataset.long = '1';
+
+          const ko = document.createElement('div');
+          ko.className = 'name-ko';
+          ko.textContent = it.ko;
+          a.appendChild(ko);
+
+          const arr = document.createElement('span');
+          arr.className = 'arrow';
+          arr.textContent = '↗';
+          a.appendChild(arr);
+
+          grid.appendChild(a);
+        });
+        section.appendChild(grid);
+        frag.appendChild(section);
+      });
+
+      root.replaceChildren(frag);
+    }
+
+    /* ============ 탭 네비 ============ */
+    function setupTabs() {
+      const nav = document.getElementById('tabNav');
+      nav.addEventListener('click', e => {
+        const btn = e.target.closest('.tab-btn');
+        if (!btn) return;
+        nav.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        renderTab(btn.dataset.tab);
+        try { sessionStorage.setItem('mywayTab_stockmain7', btn.dataset.tab); } catch(_) {}
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // 클릭한 탭을 가시 영역 가운데로 부드럽게 가로 스크롤
+        // block: 'nearest' → 세로 페이지 스크롤은 건드리지 않음
+        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      });
+    }
+
+    setupTabs();
+    (function(){
+      var saved = 'news';
+      try { saved = sessionStorage.getItem('mywayTab_stockmain7') || 'news'; } catch(_) {}
+      var nav = document.getElementById('tabNav');
+      var btn = nav.querySelector('.tab-btn[data-tab="' + saved + '"]');
+      if (!btn) { saved = 'news'; btn = nav.querySelector('.tab-btn[data-tab="news"]'); }
+      nav.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('is-active'));
+      if (btn) btn.classList.add('is-active');
+      renderTab(saved);
+    })();
+  </script>
+<script>
+/* 모바일: iframe 안에서 열릴 때 외부 링크를 최상위 창에서 직접 열어
+   뒤로가기로 MYWAY 복귀 가능하게. PC·태블릿은 새 탭 유지. */
+(function(){
+  if(!/Mobi/i.test(navigator.userAgent)) return;
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('a[href]') : null;
+    if(!a) return;
+    var href = a.getAttribute('href') || '';
+    if(!href || href.charAt(0) === '#' || /^javascript:/i.test(href)) return;
+    e.preventDefault();
+    try { (window.top || window).location.href = a.href; }
+    catch(_) { window.open(a.href, '_blank'); }
+  }, true);
+  var _open = window.open.bind(window);
+  window.open = function(url, name, feat){
+    if(url){ try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
+    return _open(url, name, feat);
+  };
+})();
+</script>
+</body>
+</html>

@@ -213,7 +213,6 @@
     try { (window.top || window).location.href = a.href; }
     catch(_) { window.open(a.href, "_blank"); }
   }, true);
-  window.addEventListener("pageshow", function(e){ if(e.persisted){ location.reload(); } });
   var _open = window.open.bind(window);
   window.open = function(url, name, feat){
     if(url){ try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
