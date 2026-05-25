@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>만화 · 웹툰 | MYWAY.KR</title>
+<meta name="description" content="무료 만화 사이트 모음과 카카오웹툰·봄툰·코미코·망가플러스를 한 화면에서. 상단 메뉴로 골라 전체 화면으로 보세요.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{ --line:#ececec;--ink:#1a1a1a;--ink-sub:#8a8f99;--accent:#0b6b53;--body:"Pretendard",-apple-system,sans-serif; }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;height:100%}
+  body{display:flex;flex-direction:column;height:100vh;overflow:hidden;background:#fff;color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
+
+  .topnav{flex:none;display:flex;gap:8px;align-items:center;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:10px 14px;background:#fff;border-bottom:1px solid var(--line);cursor:grab;scrollbar-width:none}
+  .topnav::-webkit-scrollbar{display:none}
+  .topnav.dragging{cursor:grabbing}
+  .nav-home{flex:none;order:0;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-sub);padding:8px;border-radius:10px;transition:color .15s,background .15s}
+  .nav-home:hover{color:var(--accent);background:#f5f6f8}
+  .nav-home svg{width:20px;height:20px;display:block}
+  /* 가운데 정렬되는 네비 묶음 (공간 남으면 중앙, 넘치면 스크롤) */
+  .nav-track{flex:none;order:2;display:flex;align-items:center;gap:8px;margin:0 auto}
+  .topnav button{flex:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-family:var(--body);font-size:14px;font-weight:700;color:var(--ink-sub);cursor:pointer;transition:all .16s}
+  .topnav button:hover{border-color:#cfd3da;color:var(--ink)}
+  .topnav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .open-btn{flex:none;order:1;color:var(--ink-sub);font-weight:700}
+
+  .viewer{flex:1;position:relative;overflow:hidden;background:#fff}
+  .viewer iframe{position:absolute;top:0;left:0;width:calc(100% + 18px);height:calc(100% + 18px);border:0}
+
+  .grid-panel{position:absolute;inset:0;overflow-y:auto;display:none;padding:34px 16px 60px;background:#fff;scrollbar-width:none}
+  .grid-panel::-webkit-scrollbar{display:none}
+  .grid-panel.show{display:block}
+  .grid-title{text-align:center;font-size:20px;font-weight:800;letter-spacing:-0.02em;color:#244;margin:0 0 6px}
+  .grid-sub{text-align:center;font-size:13px;color:var(--ink-sub);margin:0 0 28px}
+  .grid-inner{max-width:880px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:center;gap:24px}
+  .logo-wrap{width:84px;height:84px;border-radius:50%;background:#fff;box-shadow:0 3px 18px rgba(177,199,232,.4);border:3px solid #e5e8f6;display:flex;justify-content:center;align-items:center;overflow:hidden;transition:box-shadow .15s,border-color .15s,background-color .15s;cursor:pointer}
+  .logo-wrap:hover{box-shadow:0 8px 28px rgba(126,148,255,.55);border-color:#94a2ff;background:#f7faff}
+  .logo-wrap img{width:60px;height:60px;object-fit:contain;border-radius:50%;background:transparent;transition:transform .12s;display:block}
+  .logo-wrap:hover img{transform:scale(1.08) rotate(-3deg)}
+</style>
+</head>
+<body>
+
+<nav class="topnav" id="topnav">
+  <a class="nav-home" href="https://myway.kr" aria-label="MYWAY.KR 홈">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
+  </a>
+  <div class="nav-track" id="navTrack"></div>
+</nav>
+
+<div class="viewer">
+  <iframe id="viewer" title="만화 뷰어" referrerpolicy="no-referrer"></iframe>
+  <div class="grid-panel" id="gridPanel"></div>
+</div>
+
+<script>
+const SITES=[
+  ['🌸 봄툰','https://www.bomtoon.com/bom/comic/free'],
+  ['📰 스포츠경향 만화','https://sports.khan.co.kr/comics/comics_author.html'],
+  ['🗞️ 스포츠서울 만화','https://comic.sportsseoul.com/'],
+  ['🎌 코미코','https://www.comico.jp/'],
+  ['✏️ 망가플러스','https://mangaplus-creators.jp/genres'],
+  ['⚔️ 묵검향','https://www.mukgeomhyang.co.kr/comic/free'],
+  ['🐉 구영탄','https://www.guyeongtan.com/comic/free'],
+  ['💥 코믹스','https://comix.to/home'],
+  ['👻 망가파이어','https://mangafire.to/genre/horror'],
+];
+const GRID_SITES=[
+  { url:"https://comic.naver.com/index", img:"https://i.namu.wiki/i/ugTlJol27avmPIWdkWY3fk18VR1J7BPr_AwwIKaF8fu2v9VW2Bmto6jQungo__wBfkhNMOGMDfemB_D1nctdyw.svg" },
+  { url:"https://webtoon.kakao.com/", img:"https://upload.wikimedia.org/wikipedia/commons/8/8f/Kakao_page_logo.png" },
+  { url:"https://www.toomics.com/", img:"https://play-lh.googleusercontent.com/DUS5sjyQsaE9Us4WuJ4_CPMyBgdqV4YJGpdWmoiOOQ-3GJALRprXWNlqDTPip6X1JTOw" },
+  { url:"https://www.bomtoon.com/bom/comic/free", img:"https://play-lh.googleusercontent.com/kM5rMvD1lLEysyF7csBtsEwCxHtcCxc-9t2Kn05YPdUaGU4Z--0ySJDOKghhwdv5EBol" },
+  { url:"https://sports.khan.co.kr/comics/comics_author.html", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCg9Mkm6Y6g62qNOkqYXdujygQQ2CqYnLuxw&s" },
+  { url:"https://spcartoon.kr/", img:"https://www.sportschosun.com/img/thum_sns.png" },
+  { url:"https://comic.sportsseoul.com/", img:"https://play-lh.googleusercontent.com/xA3JvveLtwrIxiRGv_8pW5aP_hwZWoZXUdA8DKfm9PVMmwD8kWKAddGTQfM_Bnv-1HU" },
+  { url:"https://www.webtoons.com/en/genres", img:"https://downthetubes.net/wp-content/uploads/2024/11/WEBTOON_2025_CONTEST-1_121634-808x1024.jpg" },
+  { url:"https://www.anime-planet.com/manga/", img:"https://apkdirectory.in/logo/anime-planet-apk.webp" },
+  { url:"https://comic-walker.com/", img:"https://img.utdstc.com/icon/e8c/034/e8c034399659782c5fcacae8cdc51f90a89780ed6e6806d1ec20d7877a4642dc:200" },
+  { url:"https://www.comico.jp/", img:"https://nimage.g-enews.com/phpwas/restmb_allidxmake.php?idx=5&simg=20170928154109010309bdce8ae77106247255189.jpg" },
+  { url:"https://mangaplus-creators.jp/genres", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1tZ9UOu-ofmnGqXMeHKt_m081LO1xs6LU3Cnl5_901SMTuMtOAcoI9QzfL05E7QgFb0A&usqp=CAU" }
+];
+
+const viewer=document.getElementById('viewer');
+const gridPanel=document.getElementById('gridPanel');
+const nav=document.getElementById('topnav');
+const track=document.getElementById('navTrack');
+let currentUrl=SITES[0][1];
+
+function centerNavBtn(btn){
+  const navRect=nav.getBoundingClientRect();
+  const btnRect=btn.getBoundingClientRect();
+  const target=nav.scrollLeft + (btnRect.left - navRect.left) - (nav.clientWidth/2) + (btnRect.width/2);
+  nav.scrollTo({left:Math.max(0,target),behavior:'smooth'});
+}
+function clearActive(){ nav.querySelectorAll('button[data-site],button[data-grid]').forEach(b=>b.classList.remove('active')); }
+
+function renderGrid(){
+  if(gridPanel.dataset.done) return; gridPanel.dataset.done='1';
+  const t=document.createElement('div'); t.className='grid-title'; t.textContent='무료 만화 사이트 모음';
+  const s=document.createElement('div'); s.className='grid-sub'; s.textContent='로고를 누르면 새 탭으로 열려요';
+  const inner=document.createElement('div'); inner.className='grid-inner';
+  GRID_SITES.forEach(g=>{
+    const a=document.createElement('a'); a.className='logo-wrap'; a.href=g.url; a.target='_blank'; a.rel='noopener';
+    const img=document.createElement('img'); img.src=g.img; img.alt=''; img.loading='lazy'; img.decoding='async'; img.referrerPolicy='no-referrer';
+    a.appendChild(img); inner.appendChild(a);
+  });
+  gridPanel.appendChild(t); gridPanel.appendChild(s); gridPanel.appendChild(inner);
+}
+function showGrid(btn){
+  renderGrid();
+  viewer.style.display='none';
+  gridPanel.classList.add('show');
+  openBtn.style.display='none';
+  clearActive();
+  try { sessionStorage.setItem('mywayComic','grid'); } catch(_) {}
+  if(btn){ btn.classList.add('active'); centerNavBtn(btn); }
+}
+function loadSite(i, btn){
+  currentUrl=SITES[i][1];
+  gridPanel.classList.remove('show');
+  viewer.style.display='';
+  viewer.src=currentUrl;
+  openBtn.style.display='';
+  clearActive();
+  try { sessionStorage.setItem('mywayComic','site:'+i); } catch(_) {}
+  if(btn){ btn.classList.add('active'); centerNavBtn(btn); }
+}
+
+/* 개별 사이트 버튼 (봄툰부터) */
+SITES.forEach((s,i)=>{
+  const b=document.createElement('button'); b.textContent=s[0]; b.dataset.site=i;
+  b.addEventListener('click',()=>loadSite(i,b));
+  track.appendChild(b);
+});
+/* 만화사이트(로고 모음) 버튼 - 뒤쪽 */
+const gridBtn=document.createElement('button'); gridBtn.textContent='🖼️ 만화사이트'; gridBtn.dataset.grid='1';
+gridBtn.addEventListener('click',()=>showGrid(gridBtn));
+track.appendChild(gridBtn);
+/* 새 탭으로 열기 (맨 앞 - 홈 버튼 다음, 항상 보이게) */
+const openBtn=document.createElement('button'); openBtn.className='open-btn'; openBtn.textContent='↗ 새 탭';
+openBtn.addEventListener('click',()=>window.open(currentUrl,'_blank','noopener'));
+nav.insertBefore(openBtn, track);
+
+/* 네비 드래그 스크롤 */
+(function(){
+  let down=false,startX=0,startL=0,moved=false;
+  nav.addEventListener('pointerdown',e=>{ if(e.button!==0) return; down=true;moved=false;startX=e.clientX;startL=nav.scrollLeft;nav.classList.add('dragging'); });
+  nav.addEventListener('pointermove',e=>{ if(!down) return; const dx=e.clientX-startX; if(Math.abs(dx)>4) moved=true; nav.scrollLeft=startL-dx; });
+  const end=()=>{ down=false; nav.classList.remove('dragging'); };
+  nav.addEventListener('pointerup',end);
+  nav.addEventListener('pointercancel',end);
+  nav.addEventListener('pointerleave',end);
+  nav.addEventListener('click',e=>{ if(moved){ e.stopPropagation(); e.preventDefault(); moved=false; } },true);
+  nav.addEventListener('wheel',e=>{ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ nav.scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
+})();
+
+/* 초기화: 저장된 마지막 화면 복원(없으면 카카오웹툰) */
+(function(){
+  var saved='';
+  try { saved = sessionStorage.getItem('mywayComic') || ''; } catch(_) {}
+  if(saved==='grid'){ showGrid(gridBtn); return; }
+  var m = /^site:(\d+)$/.exec(saved);
+  if(m){
+    var i = parseInt(m[1],10);
+    var b = track.querySelector('button[data-site="'+i+'"]');
+    if(b){ loadSite(i, b); return; }
+  }
+  loadSite(0, track.querySelector('button[data-site="0"]'));
+})();
+
+/* 복사 방지 */
+(function(){
+  const isField=el=>el&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA'||el.tagName==='SELECT');
+  ['contextmenu','selectstart','dragstart','copy','cut'].forEach(ev=>{
+    document.addEventListener(ev,e=>{ if(isField(e.target)) return; e.preventDefault(); });
+  });
+  document.addEventListener('keydown',e=>{
+    const k=e.key.toLowerCase();
+    if(e.key==='F12'){e.preventDefault();return;}
+    if(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(k)){e.preventDefault();return;}
+    if(e.ctrlKey&&['u','s','c','x','a'].includes(k)){ if(isField(e.target)&&['c','x','a'].includes(k)) return; e.preventDefault(); }
+  });
+})();
+</script>
+<script>
+/* 모바일: 외부 링크를 최상위 창에서 열어 뒤로가기로 MYWAY 복귀. PC·태블릿은 새 탭. */
+(function(){
+  if(!/Mobi/i.test(navigator.userAgent)) return;
+  document.addEventListener("click", function(e){
+    var a = e.target.closest ? e.target.closest("a[href]") : null;
+    if(!a) return;
+    var href = a.getAttribute("href") || "";
+    if(!href || href.charAt(0) === "#" || /^javascript:/i.test(href)) return;
+    e.preventDefault();
+    try { (window.top || window).location.href = a.href; }
+    catch(_) { window.open(a.href, "_blank"); }
+  }, true);
+  var _open = window.open.bind(window);
+  window.open = function(url, name, feat){
+    if(url){ try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
+    return _open(url, name, feat);
+  };
+})();
+</script>
+</body>
+</html>
