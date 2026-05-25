@@ -42,7 +42,7 @@
   .dir-section{max-width:1040px;margin:0 auto 24px}
   .dir-label{font-size:12.5px;font-weight:800;color:var(--accent);letter-spacing:.5px;text-transform:uppercase;margin:0 0 10px;padding:0 4px}
   .dir-grid{display:grid;grid-template-columns:repeat(4,1fr);column-gap:10px;row-gap:26px}
-  .dir-card{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:14px 15px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;text-align:left;font-family:var(--body);transition:all .15s;box-shadow:0 2px 4px rgba(90,90,130,.06);position:relative;overflow:visible}
+  .dir-card{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:14px 15px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;text-align:left;text-decoration:none;color:inherit;font-family:var(--body);transition:all .15s;box-shadow:0 2px 4px rgba(90,90,130,.06);position:relative;overflow:visible}
   .dir-card::after{content:"";position:absolute;left:2.5%;right:2.5%;top:100%;height:18px;background:url('https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png') center top / 100% 100% no-repeat;pointer-events:none;z-index:1}
   .dir-card:hover{border-color:var(--accent);background:#f5fbf8;transform:translateY(-2px);box-shadow:0 4px 10px rgba(11,107,83,.12)}
   .dir-card .t{font-size:15px;font-weight:800;color:var(--ink);letter-spacing:-0.3px;line-height:1.15}
@@ -67,7 +67,9 @@
 <script>
 /* === 상단 채널 버튼 (iframe에 바로 재생) — livesitesbar2 채널 === */
 const SITES=[
- 
+  ['H','00tvmain2.html'],
+  ['유툽TV','00mainlivetvytube.html'],
+  ['live movie','00mainmovielive.html'],
   ['네이버TV','https://tv.naver.com/l'],
   ['치지직','https://chzzk.naver.com/lives'],
   ['SOOP','https://www.sooplive.co.kr/live/all'],
@@ -76,17 +78,21 @@ const SITES=[
   ['KBS2','https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList'],
   ['KBS1','https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList'],
   ['KBS24','https://news.kbs.co.kr/news/pc/news24/news24.html'],
+  ['JTBC','https://onair.jtbc.co.kr/'],
   ['채널A','https://ichannela.com/com/cmm/onair.do'],
   ['YTN','https://www.ytn.co.kr/_hd/hd_live.html'],
   ['연합뉴스','https://www.yonhapnewstv.co.kr/live'],
-
+  ['SBS뉴스','https://news.sbs.co.kr/news/live.do?plink=GNB&cooper=SBSNEWS'],
+  ['MBC 뉴스','https://imnews.imbc.com/more/onair/'],
+  ['증권방송','00barinnernew.html'],
   ['아리랑TV','arirang.html'],
-  
+  ['트위치','https://www.twitch.tv/'],
   ['NHK','https://www3.nhk.or.jp/nhkworld/en/live/'],
   ['ABC','abc.html'],
-
+  ['FOX NEWS','foxtv.html'],
   ['ABC7','https://abc7.com/watch/live'],
- 
+  ['NBC NEWS','https://www.nbcnews.com/watch'],
+  ['JTBC 뉴스','https://news.jtbc.co.kr/live'],
   ['카카오TV','https://tv.kakao.com/live'],
   ['TV조선','https://broadcast.tvchosun.com/onair/on.cstv'],
   ['EBS TV','https://www.ebs.co.kr/onair?mainTop&channelCodeString=tv'],
@@ -166,11 +172,10 @@ function renderGrid(){
     const lab=document.createElement('div'); lab.className='dir-label'; lab.textContent=sec.label;
     const g=document.createElement('div'); g.className='dir-grid';
     sec.items.forEach(it=>{
-      const c=document.createElement('button'); c.className='dir-card'; c.type='button';
+      const c=document.createElement('a'); c.className='dir-card'; c.href=it[2]; c.target='_blank'; c.rel='noopener';
       const tt=document.createElement('span'); tt.className='t'; tt.textContent=it[0];
       const kk=document.createElement('span'); kk.className='k'; kk.textContent=it[1];
       c.appendChild(tt); c.appendChild(kk);
-      c.addEventListener('click',()=>loadUrl(it[2]));
       g.appendChild(c);
     });
     wrap.appendChild(lab); wrap.appendChild(g); gridPanel.appendChild(wrap);
