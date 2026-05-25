@@ -138,10 +138,10 @@ SITES.forEach((s,i)=>{
 const gridBtn=document.createElement('button'); gridBtn.textContent='🖼️ 만화사이트'; gridBtn.dataset.grid='1';
 gridBtn.addEventListener('click',()=>showGrid(gridBtn));
 track.appendChild(gridBtn);
-/* 새 탭으로 열기 (오른쪽) */
+/* 새 탭으로 열기 (맨 앞 - 홈 버튼 다음, 항상 보이게) */
 const openBtn=document.createElement('button'); openBtn.className='open-btn'; openBtn.textContent='↗ 새 탭';
 openBtn.addEventListener('click',()=>window.open(currentUrl,'_blank','noopener'));
-nav.appendChild(openBtn);
+nav.insertBefore(openBtn, track);
 
 /* 네비 드래그 스크롤 */
 (function(){
