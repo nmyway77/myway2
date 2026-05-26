@@ -19,30 +19,30 @@
     html,body{margin:0;padding:0;height:100%;background:var(--paper);}
     body{min-height:100vh;min-width:100vw;color:var(--ink);font-family:var(--sans);-webkit-user-select:none;user-select:none;}
     input,textarea{-webkit-user-select:text;user-select:text;}
-    .container{display:flex;height:100vh;height:100dvh;width:100vw;overflow:hidden;}
+    .container{display:flex;flex-direction:column;height:100vh;height:100dvh;width:100vw;overflow:hidden;}
 
-    /* ===== 사이드 ===== */
-    .side-nav{width:288px;min-width:248px;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:50;}
-    .side-head{padding:22px 20px 14px;border-bottom:1px solid var(--line);}
+    /* ===== 사이드(하단 바) ===== */
+    .side-nav{order:2;width:100%;flex:0 0 auto;background:var(--panel);border-top:1px solid var(--line);display:flex;flex-direction:column;z-index:50;}
+    .side-head{padding:9px 16px 2px;}
     .head-row{display:flex;align-items:center;gap:11px;}
     .home-mini{flex:0 0 auto;width:34px;height:34px;border-radius:9px;background:var(--accent);display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 2px 6px rgba(210,75,53,.35);transition:.16s;}
     .home-mini:hover{background:#bb3f2c;transform:translateY(-1px);}
     .home-mini svg{width:18px;height:18px;fill:#fff;}
-    .brand{font-family:var(--serif);font-weight:700;font-size:1.3rem;letter-spacing:-.01em;color:var(--ink);margin:0 0 3px;}
-    .brand-sub{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);}
-    .nav-btns{display:flex;gap:7px;padding:14px 20px 12px;flex-wrap:wrap;}
+    .brand{font-family:var(--serif);font-weight:700;font-size:1.05rem;letter-spacing:-.01em;color:var(--ink);margin:0;}
+    .brand-sub{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);}
+    .nav-btns{display:flex;gap:7px;padding:8px 16px 6px;flex-wrap:nowrap;}
     .nav-btns button{flex:1 1 auto;padding:9px 10px;border-radius:10px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:var(--sans);transition:.16s;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);}
     .nav-btns button:hover{background:#e9e2d3;}
-    .nav-btns button.primary{background:var(--accent);color:#fff;border-color:var(--accent);flex:1 1 100%;}
+    .nav-btns button.primary{background:var(--accent);color:#fff;border-color:var(--accent);flex:1 1 auto;}
     .nav-btns button.primary:hover{background:#bb3f2c;}
-    .video-list{flex:1;min-height:0;overflow-y:auto;padding:14px 16px 18px;display:flex;flex-direction:column;gap:11px;scrollbar-width:thin;scrollbar-color:#d8cfbd transparent;}
-    .video-list::-webkit-scrollbar{width:8px;}
+    .video-list{flex:0 0 auto;overflow-x:auto;overflow-y:hidden;padding:8px 16px 12px;display:flex;flex-direction:row;gap:11px;scrollbar-width:thin;scrollbar-color:#d8cfbd transparent;}
+    .video-list::-webkit-scrollbar{height:8px;}
     .video-list::-webkit-scrollbar-thumb{background:#dcd3c1;border-radius:8px;}
     .video-list::-webkit-scrollbar-track{background:transparent;}
     .empty-hint{color:var(--ink-soft);font-size:.86rem;line-height:1.6;text-align:center;padding:40px 14px;}
 
     /* ===== 사진 카드 (사이드 가로폭 꽉 채움) ===== */
-    .video-card{position:relative;width:100%;overflow:hidden;border-radius:13px;cursor:pointer;background:#e9e2d3;border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s,border-color .2s;}
+    .video-card{position:relative;flex:0 0 210px;width:210px;overflow:hidden;border-radius:13px;cursor:pointer;background:#e9e2d3;border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s,border-color .2s;}
     .video-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hi);}
     .video-card.active{box-shadow:0 0 0 2px var(--accent),var(--shadow-hi);border-color:var(--accent);}
     .video-card.dragging{opacity:.45;}
@@ -57,12 +57,12 @@
     .edit-btn:hover{background:#fff;}
     .edit-icon{width:14px;height:14px;fill:var(--ink-soft);pointer-events:none;}
 
-    .side-foot{padding:12px 20px;border-top:1px solid var(--line);font-size:.74rem;color:var(--ink-soft);text-align:center;}
+    .side-foot{display:none;}
     .side-foot a{color:var(--accent);text-decoration:none;font-weight:600;}
     .side-foot a:hover{text-decoration:underline;}
 
     /* ===== 메인 (원본 구조) ===== */
-    .main{flex:1 1 auto;min-width:0;width:100%;height:100vh;height:100dvh;background:#1b1814;position:relative;}
+    .main{order:1;flex:1 1 auto;min-width:0;width:100%;height:auto;background:#1b1814;position:relative;}
     .yt-container,.yt-inner{position:static;display:block;width:100%;height:100%;}
     .yt-frame-box{position:absolute;inset:0;background:#000;overflow:hidden;}
     iframe,video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;display:block;}
@@ -91,17 +91,9 @@
 
     /* ===== 반응형 ===== */
     @media (max-width:900px){
-      .container{flex-direction:column;height:100vh;height:100dvh;overflow:hidden;}
-      .side-nav{width:100vw;min-width:0;height:auto;flex:0 0 auto;border-right:none;border-bottom:1px solid var(--line);}
-      .side-head{padding:12px 16px 6px;}
-      .brand{font-size:1.05rem;}
-      .nav-btns{padding:0 16px 10px;}
-      .nav-btns button.primary{flex:1 1 auto;}
-      .video-list{flex:0 0 auto;flex-direction:row;overflow-x:auto;overflow-y:hidden;padding:10px 14px;gap:10px;}
-      .video-card{flex:0 0 160px;width:160px;}
-      .side-foot{display:none;}
-      .main{flex:1 1 auto;width:100vw;}
-      iframe,video{border-radius:0!important;}
+      .nav-btns{padding:6px 14px;}
+      .video-list{padding:8px 14px 10px;gap:10px;}
+      .video-card{flex:0 0 150px;width:150px;}
       .expand-btn{right:12px;bottom:12px;width:38px;height:38px;}
     }
   </style>
@@ -116,7 +108,7 @@
         </a>
         <div>
           <h1 class="brand">영상 디렉토리</h1>
-          <div class="brand-sub">My Video Shelf · v5</div>
+          <div class="brand-sub">My Video Shelf · v6</div>
         </div>
       </div>
     </div>
