@@ -116,7 +116,7 @@
         </a>
         <div>
           <h1 class="brand">영상 디렉토리</h1>
-          <div class="brand-sub">My Video Shelf · v3</div>
+          <div class="brand-sub">My Video Shelf · v4</div>
         </div>
       </div>
     </div>
@@ -226,23 +226,37 @@
       card.className = 'video-card' + (i===selectedIdx ? ' active' : '');
 
       var imgUrl = cardImage(v);
-      if (imgUrl){
-        var img = document.createElement('img');
-        img.className = 'card-img';
-        img.src = imgUrl; img.alt = v.name||''; img.loading = 'lazy';
-        card.appendChild(img);
-      } else {
+      var ytid = getYouTubeId(v.url);
+      function addPlaceholder(){
+        var oi = card.querySelector('.card-img'); if(oi) oi.remove();
+        var on = card.querySelector('.card-name'); if(on) on.remove();
+        if (card.querySelector('.card-ph')) return;
         var ph = document.createElement('div');
         ph.className = 'card-ph';
         ph.style.background = v.color || '#5b6470';
         ph.textContent = v.name || '\u25B6';
-        card.appendChild(ph);
+        card.insertBefore(ph, card.firstChild);
       }
-      if (imgUrl && v.name){
-        var nm = document.createElement('div');
-        nm.className = 'card-name';
-        nm.textContent = v.name;
-        card.appendChild(nm);
+      if (imgUrl){
+        var img = document.createElement('img');
+        img.className = 'card-img';
+        img.alt = ''; img.loading = 'lazy';
+        img.referrerPolicy = 'no-referrer';
+        var chain = (!v.img && ytid)
+          ? ['https://i.ytimg.com/vi/'+ytid+'/hqdefault.jpg','https://i.ytimg.com/vi/'+ytid+'/mqdefault.jpg','https://i.ytimg.com/vi/'+ytid+'/default.jpg']
+          : [imgUrl];
+        var ci = 0;
+        img.onerror = function(){ ci++; if (ci < chain.length){ img.src = chain[ci]; } else { img.onerror=null; addPlaceholder(); } };
+        img.src = chain[0];
+        card.appendChild(img);
+        if (v.name){
+          var nm = document.createElement('div');
+          nm.className = 'card-name';
+          nm.textContent = v.name;
+          card.appendChild(nm);
+        }
+      } else {
+        addPlaceholder();
       }
 
       var flag = document.createElement('div');
