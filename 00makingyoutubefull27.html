@@ -62,11 +62,11 @@
     .side-foot a:hover{text-decoration:underline;}
 
     /* ===== 메인 (원본 구조) ===== */
-    .main{flex:1 1 auto;min-width:0;width:100%;height:100vh;background:#1b1814;position:relative;display:flex;}
-    .yt-container{flex:1;width:100%;height:100%;display:flex;}
-    .yt-inner{flex:1;width:100%;height:100%;display:flex;flex-direction:column;}
-    .yt-frame-box{flex:1;width:100%;height:100%;background:#000;overflow:hidden;display:flex;}
-    iframe,video{flex:1;width:100%;height:100%;border:0;background:#000;display:block;}
+    .main{flex:1 1 auto;min-width:0;min-height:100vh;width:100%;background:#1b1814;position:relative;display:flex;align-items:stretch;justify-content:stretch;padding:0;margin:0;}
+    .yt-container{width:100%;height:100vh;display:flex;align-items:stretch;justify-content:stretch;background:none;padding:0;margin:0;box-sizing:border-box;}
+    .yt-inner{width:100%;height:100%;margin:0;display:flex;flex-direction:column;align-items:stretch;gap:0;justify-content:stretch;}
+    .yt-frame-box{width:100%;height:100%;flex:1;background:#000;border-radius:0;box-shadow:none;overflow:hidden;display:flex;align-items:stretch;justify-content:stretch;margin:0;}
+    iframe,video{width:100%;height:100%;border:0;border-radius:0;background:#000;display:block;min-height:180px;}
 
     /* 전체화면 버튼 */
     .expand-btn{position:absolute;right:16px;bottom:16px;z-index:60;width:42px;height:42px;border:none;border-radius:11px;cursor:pointer;background:rgba(20,18,16,.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.35);transition:.16s;opacity:.85;}
@@ -100,10 +100,7 @@
       .video-list{flex-direction:row;overflow-x:auto;overflow-y:hidden;padding:12px 14px;gap:10px;}
       .video-card{flex:0 0 220px;width:220px;}
       .side-foot{display:none;}
-      .main{height:auto;}
-      .yt-container,.yt-inner{height:auto!important;width:100vw!important;}
-      .yt-frame-box{height:auto!important;width:100vw!important;aspect-ratio:16/9;}
-      iframe,video{width:100%!important;height:100%!important;border-radius:0!important;}
+      .main,.yt-container,.yt-inner,.yt-frame-box,iframe,video{border-radius:0!important;width:100vw!important;min-width:0!important;min-height:50vw!important;height:60vw!important;}
       .expand-btn{right:12px;bottom:12px;width:38px;height:38px;}
     }
   </style>
