@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>여권 영문이름 변환기 · MYWAY.KR</title>
+<meta name="description" content="한글 이름을 국립국어원 로마자 표기법(여권 영문이름 기준)으로 변환하고, 자주 쓰는 성씨 표기와 붙임표 옵션을 골라 여권 형식으로 확인하는 무료 도구입니다.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+<style>
+:root{
+  --paper:#f7f3eb; --ink:#1d1b16; --ink-soft:#6a6457; --line:#ddd5c5;
+  --navy:#1b3a5b; --navy-deep:#13293f; --gold:#b8923f; --gold-soft:#e9dcc0;
+  --panel:#fffdf8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:"Pretendard",sans-serif;background:var(--paper);color:var(--ink);
+  min-height:100vh;-webkit-user-select:none;user-select:none;
+  background-image:radial-gradient(circle at 12% 18%, #fbf8f1 0%, transparent 45%),
+                   radial-gradient(circle at 88% 82%, #f1ece0 0%, transparent 50%);
+}
+input{-webkit-user-select:text!important;user-select:text!important;}
+
+.home-corner{position:fixed;top:16px;left:18px;z-index:50;}
+.home-corner a{font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-soft);text-decoration:none;border:1px solid var(--line);border-radius:6px;padding:6px 11px;background:var(--panel);transition:.18s;}
+.home-corner a:hover{color:var(--navy);border-color:var(--navy);}
+
+.wrap{max-width:680px;margin:0 auto;padding:64px 18px 90px;}
+
+.head{text-align:center;margin-bottom:34px;}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.32em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:14px;}
+.head h1{font-family:"Fraunces",serif;font-weight:600;font-size:38px;line-height:1.1;letter-spacing:-.02em;color:var(--navy);}
+.head h1 em{font-style:italic;color:var(--gold);}
+.head p{font-size:14.5px;color:var(--ink-soft);margin-top:12px;line-height:1.6;}
+
+/* Input */
+.input-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px 24px;
+  box-shadow:0 14px 40px -22px rgba(27,58,91,.4);}
+.field-label{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px;display:block;}
+#nameInput{width:100%;font-family:"Fraunces",serif;font-size:34px;font-weight:500;text-align:center;
+  border:0;border-bottom:2px solid var(--gold-soft);background:transparent;color:var(--navy);padding:8px 4px 12px;outline:none;transition:.2s;}
+#nameInput::placeholder{color:#cfc7b5;}
+#nameInput:focus{border-bottom-color:var(--gold);}
+
+.opts{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;margin-top:22px;}
+.opt{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink-soft);}
+.opt .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+.opt .seg button{border:0;background:var(--paper);font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ink-soft);
+  padding:6px 12px;cursor:pointer;transition:.15s;}
+.opt .seg button.on{background:var(--navy);color:#fff;}
+
+/* Passport card */
+.passport{margin-top:30px;border-radius:16px;overflow:hidden;
+  background:linear-gradient(155deg,#1b3a5b 0%,#16314d 55%,#13293f 100%);
+  box-shadow:0 24px 60px -26px rgba(19,41,63,.85);position:relative;color:#f3eede;}
+.passport::before{content:"";position:absolute;inset:0;background-image:
+  repeating-linear-gradient(45deg, rgba(255,255,255,.018) 0 2px, transparent 2px 8px);pointer-events:none;}
+.pp-top{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid rgba(184,146,63,.35);}
+.pp-top .crest{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.26em;color:var(--gold);}
+.pp-top .type{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.2em;color:#cdbf9b;}
+.pp-body{padding:22px 22px 18px;}
+.pp-row{margin-bottom:16px;}
+.pp-row .lab{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.18em;color:#9fb2c6;text-transform:uppercase;margin-bottom:5px;}
+.pp-row .lab .ko{color:#cdbf9b;margin-left:7px;}
+.pp-val{display:flex;align-items:center;gap:12px;}
+.pp-val .txt{font-family:"Fraunces",serif;font-size:27px;font-weight:500;letter-spacing:.02em;color:#fff;line-height:1.15;min-height:32px;word-break:break-word;}
+.pp-val.small .txt{font-size:21px;}
+.copy-btn{flex:0 0 auto;border:1px solid rgba(184,146,63,.5);background:rgba(184,146,63,.12);color:var(--gold);
+  font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.05em;padding:5px 9px;border-radius:6px;cursor:pointer;transition:.15s;white-space:nowrap;}
+.copy-btn:hover{background:var(--gold);color:#13293f;}
+.copy-btn.done{background:#3a7d52;border-color:#3a7d52;color:#fff;}
+.pp-divider{height:1px;background:rgba(184,146,63,.28);margin:4px 0 16px;}
+.mrz{background:#0e2236;padding:14px 18px;font-family:"JetBrains Mono",monospace;font-size:13px;letter-spacing:.12em;
+  color:#cfe0ef;word-break:break-all;line-height:1.7;border-top:1px solid rgba(184,146,63,.25);}
+
+/* Surname chips */
+.chips-wrap{margin-top:24px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;}
+.chips-wrap h3{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:13px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{font-family:"JetBrains Mono",monospace;font-size:13px;border:1px solid var(--line);background:var(--paper);
+  color:var(--ink);padding:8px 14px;border-radius:20px;cursor:pointer;transition:.15s;}
+.chip:hover{border-color:var(--navy);}
+.chip.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+.chip .tag{opacity:.6;font-size:10px;margin-left:5px;}
+.chip.on .tag{opacity:.8;}
+
+/* Breakdown */
+.breakdown{margin-top:18px;font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ink-soft);
+  text-align:center;line-height:1.9;}
+.breakdown b{color:var(--navy);font-weight:700;}
+
+.note{margin-top:26px;font-size:12.5px;color:var(--ink-soft);line-height:1.75;
+  border-left:3px solid var(--gold-soft);padding:4px 0 4px 16px;}
+
+.empty{text-align:center;color:#b8b09c;font-family:"Fraunces",serif;font-style:italic;font-size:18px;padding:30px 0;}
+
+.float-home{position:fixed;right:18px;bottom:18px;z-index:99;width:46px;height:46px;border-radius:50%;
+  background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 18px rgba(27,58,91,.4);text-decoration:none;transition:.2s;}
+.float-home:hover{transform:translateY(-3px) scale(1.05);background:var(--navy-deep);}
+.float-home svg{width:20px;height:20px;stroke:#fff;}
+
+footer{text-align:center;padding:30px 16px 40px;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-soft);}
+footer a{color:var(--navy);text-decoration:none;font-weight:500;}
+footer a:hover{text-decoration:underline;}
+
+@media (max-width:560px){
+  .wrap{padding:58px 14px 80px;}
+  .head h1{font-size:30px;}
+  #nameInput{font-size:28px;}
+  .pp-val .txt{font-size:22px;}
+}
+</style>
+</head>
+<body>
+
+<div class="home-corner"><a href="https://myway.kr">← MYWAY</a></div>
+
+<div class="wrap">
+  <div class="head">
+    <div class="kicker">Republic of Korea · Passport Name</div>
+    <h1>여권 <em>영문이름</em> 변환</h1>
+    <p>한글 이름을 국립국어원 로마자 표기법에 따라 변환합니다.<br>여권에 자주 쓰는 성씨 표기와 붙임표(-)도 골라보세요.</p>
+  </div>
+
+  <div class="input-card">
+    <label class="field-label" for="nameInput">한글 이름 입력</label>
+    <input id="nameInput" type="text" placeholder="홍길동" autocomplete="off" spellcheck="false" maxlength="20">
+    <div class="opts">
+      <div class="opt">
+        <span>성씨</span>
+        <div class="seg" id="surLenSeg">
+          <button data-len="auto" class="on">자동</button>
+          <button data-len="1">1글자</button>
+          <button data-len="2">2글자</button>
+        </div>
+      </div>
+      <div class="opt">
+        <span>붙임표</span>
+        <div class="seg" id="hyphenSeg">
+          <button data-h="0" class="on">없음 (Gildong)</button>
+          <button data-h="1">있음 (Gil-dong)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="resultArea">
+    <div class="empty">이름을 입력하면 여권 형식으로 보여드려요.</div>
+  </div>
+
+  <div class="note">
+    국립국어원 로마자 표기법을 기준으로 한 <b>표준·권장 표기</b>입니다. 실제 여권 영문이름은 신청인이 정하며, 가족·기존 여권의 표기와 일치시키는 것이 좋습니다. 한 번 발급되면 변경이 까다로우니 발급 전 확인하세요. 본 도구는 참고용입니다.
+  </div>
+</div>
+
+<a href="https://myway.kr" class="float-home" title="MYWAY.KR 홈">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+</a>
+
+<footer>© <a href="https://myway.kr">myway.kr</a> · 여권 영문이름 변환기 — 입력값은 브라우저 안에서만 처리됩니다.</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var INITIAL=["g","kk","n","d","tt","r","m","b","pp","s","ss","","j","jj","ch","k","t","p","h"];
+  var MEDIAL=["a","ae","ya","yae","eo","e","yeo","ye","o","wa","wae","oe","yo","u","wo","we","wi","yu","eu","ui","i"];
+  var FINAL=["","k","k","k","n","n","n","t","l","k","m","l","l","l","p","l","m","p","p","t","t","ng","t","t","k","t","p","t"];
+
+  // 관용 성씨(첫번째=권장 관용표기) — 표준 표기는 자동 계산되어 함께 제시
+  var SUR_ALT={
+    "김":["Kim","Gim"],"이":["Lee","Yi","Rhee","I"],"박":["Park","Bak","Pak"],"최":["Choi","Choe"],
+    "정":["Jung","Jeong","Chung"],"강":["Kang","Gang"],"조":["Cho","Jo"],"윤":["Yoon","Yun"],
+    "장":["Jang","Chang"],"임":["Lim","Im","Rim"],"한":["Han"],"오":["Oh","O"],"서":["Seo","Suh"],
+    "신":["Shin","Sin"],"권":["Kwon","Gwon"],"황":["Hwang"],"안":["Ahn","An"],"송":["Song"],
+    "전":["Jeon","Jun","Chun"],"홍":["Hong"],"유":["Yoo","Yu","You"],"고":["Ko","Go","Koh"],
+    "문":["Moon","Mun"],"양":["Yang"],"손":["Son","Sohn"],"배":["Bae"],"백":["Baek","Paek","Baik"],
+    "허":["Heo","Hur","Huh"],"남":["Nam"],"심":["Shim","Sim"],"노":["Noh","No","Roh"],"하":["Ha"],
+    "곽":["Kwak","Gwak"],"성":["Sung","Seong"],"차":["Cha"],"주":["Joo","Ju"],"우":["Woo","Wu"],
+    "구":["Koo","Gu","Ku"],"민":["Min"],"류":["Ryu","Yu","Lyu"],"나":["Na"],"진":["Jin","Chin"],
+    "지":["Ji","Jee"],"채":["Chae"],"원":["Won"],"천":["Cheon","Chun"],"방":["Bang"],"현":["Hyun","Hyeon"],
+    "함":["Ham"],"변":["Byun","Byeon"],"석":["Seok","Suk"],"길":["Gil","Kil"],"연":["Yeon"],
+    "경":["Kyung","Gyeong"],"태":["Tae"],"엄":["Eom","Um","Uhm"],"표":["Pyo"],"명":["Myung","Myong"],
+    "위":["Wi","Wie"],"기":["Ki","Gi"],"반":["Ban"],"라":["Ra","La"],"왕":["Wang"],"금":["Keum","Geum"],
+    "옥":["Ok","Ock"],"육":["Yook","Yuk"],"인":["In"],"맹":["Maeng"],"제":["Je","Jae"],"모":["Mo"],
+    "탁":["Tak"],"국":["Kook","Guk"],"어":["Eo","Uh"],"은":["Eun"],"편":["Pyun","Pyeon"],"용":["Yong"],
+    "예":["Ye"],"봉":["Bong"],"부":["Boo","Bu"],"피":["Pi"],"감":["Kam","Gam"],"호":["Ho"],
+    "두":["Doo","Du"],"복":["Bok"],"빈":["Bin"],"동":["Dong"],"순":["Soon","Sun"],"승":["Seung"],
+    "선":["Sun","Seon"],"설":["Seol","Sul"],"마":["Ma"],"여":["Yeo","Yu"],"추":["Chu","Choo"],
+    "도":["Do","Doh"],"소":["So"]
+  };
+  var COMPOUND={"남궁":"Namgung","황보":"Hwangbo","제갈":"Jegal","사공":"Sagong","선우":"Sunwoo","서문":"Seomun","독고":"Dokgo","동방":"Dongbang"};
+
+  function isHangul(ch){var c=ch.charCodeAt(0);return c>=0xAC00&&c<=0xD7A3;}
+  function romSyl(ch){
+    var c=ch.charCodeAt(0); if(c<0xAC00||c>0xD7A3) return "";
+    var idx=c-0xAC00;
+    return INITIAL[Math.floor(idx/588)]+MEDIAL[Math.floor((idx%588)/28)]+FINAL[idx%28];
+  }
+  function cap(s){return s? s.charAt(0).toUpperCase()+s.slice(1):s;}
+  function romGiven(syls,hyphen){
+    var parts=syls.map(romSyl);
+    if(hyphen) return parts.map(function(p,i){return i===0?cap(p):p;}).join("-");
+    return cap(parts.join(""));
+  }
+  function uniq(arr){var seen={},out=[];arr.forEach(function(x){if(x&&!seen[x.toLowerCase()]){seen[x.toLowerCase()]=1;out.push(x);}});return out;}
+
+  // 상태
+  var state={ surLen:"auto", hyphen:0, surnameChoice:null };
+  var lastParse=null;
+
+  function parse(name){
+    name=(name||"").replace(/\s+/g,"");
+    var chars=name.split("").filter(isHangul);
+    if(chars.length===0) return null;
+    var surKo;
+    if(state.surLen==="2") surKo=chars.slice(0,2);
+    else if(state.surLen==="1") surKo=chars.slice(0,1);
+    else { // auto
+      if(chars.length>=3 && COMPOUND[chars[0]+chars[1]]) surKo=chars.slice(0,2);
+      else surKo=chars.slice(0,1);
+    }
+    if(surKo.length>=chars.length) surKo=chars.slice(0,1); // 이름 없는 경우 방지
+    var givenKo=chars.slice(surKo.length);
+    var surStr=surKo.join("");
+    // 성씨 후보
+    var cands=[];
+    if(COMPOUND[surStr]) cands.push(COMPOUND[surStr]);
+    if(surKo.length===1 && SUR_ALT[surStr]) cands=cands.concat(SUR_ALT[surStr]);
+    cands.push(cap(surKo.map(romSyl).join(""))); // 표준 표기
+    cands=uniq(cands);
+    return { surKo:surKo, givenKo:givenKo, surStr:surStr, surStd:cap(surKo.map(romSyl).join("")), cands:cands };
+  }
+
+  function mrzName(sur, given){
+    var s=sur.toUpperCase().replace(/[^A-Z]/g,"");
+    var g=given.toUpperCase().replace(/-/g," ").replace(/[^A-Z ]/g,"").trim().replace(/ +/g,"<");
+    var field=s+"<<"+g;
+    field=field.replace(/[^A-Z<]/g,"<");
+    if(field.length>39) field=field.slice(0,39);
+    while(field.length<39) field+="<";
+    return "P<KOR"+field;
+  }
+
+  function render(){
+    var area=document.getElementById("resultArea");
+    var raw=document.getElementById("nameInput").value;
+    var p=parse(raw);
+    lastParse=p;
+    if(!p){ area.innerHTML='<div class="empty">이름을 입력하면 여권 형식으로 보여드려요.</div>'; return; }
+
+    // 성씨 선택값 결정
+    if(!state.surnameChoice || p.cands.indexOf(state.surnameChoice)<0) state.surnameChoice=p.cands[0];
+    var sur=state.surnameChoice;
+    var given=romGiven(p.givenKo, state.hyphen===1);
+    var fullName=sur+" "+given;
+    var mrz=mrzName(sur,given);
+
+    // 음절 분해 표시
+    var bd = p.surKo.map(romSyl).map(function(r,i){return p.surKo[i]+" <b>"+cap(r)+"</b>";}).join("·")
+           + "  +  " + p.givenKo.map(romSyl).map(function(r,i){return p.givenKo[i]+" <b>"+cap(r)+"</b>";}).join("·");
+
+    var chipsHtml = p.cands.map(function(c){
+      var tag = (c===p.surStd && !(COMPOUND[p.surStr])) ? '<span class="tag">표준</span>' :
+                (p.cands.indexOf(c)===0 ? '<span class="tag">관용</span>' : '');
+      return '<button class="chip'+(c===sur?' on':'')+'" data-sur="'+c+'">'+c+tag+'</button>';
+    }).join("");
+
+    area.innerHTML =
+      '<div class="passport">'+
+        '<div class="pp-top"><span class="crest">◆ REPUBLIC OF KOREA</span><span class="type">TYPE PM · KOR</span></div>'+
+        '<div class="pp-body">'+
+          '<div class="pp-row"><div class="lab">Surname <span class="ko">성</span></div>'+
+            '<div class="pp-val"><span class="txt">'+esc(sur.toUpperCase())+'</span>'+
+            '<button class="copy-btn" data-copy="'+esc(sur)+'">복사</button></div></div>'+
+          '<div class="pp-row"><div class="lab">Given names <span class="ko">이름</span></div>'+
+            '<div class="pp-val"><span class="txt">'+esc(given.toUpperCase())+'</span>'+
+            '<button class="copy-btn" data-copy="'+esc(given)+'">복사</button></div></div>'+
+          '<div class="pp-divider"></div>'+
+          '<div class="pp-row" style="margin-bottom:0"><div class="lab">Full name <span class="ko">전체</span></div>'+
+            '<div class="pp-val small"><span class="txt">'+esc(fullName)+'</span>'+
+            '<button class="copy-btn" data-copy="'+esc(fullName)+'">복사</button></div></div>'+
+        '</div>'+
+        '<div class="mrz">'+esc(mrz)+'</div>'+
+      '</div>'+
+      '<div class="breakdown">'+bd+'</div>'+
+      (p.cands.length>1 ?
+        '<div class="chips-wrap"><h3>성씨 표기 선택</h3><div class="chips">'+chipsHtml+'</div></div>' : '');
+  }
+
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+
+  // 이벤트
+  var input=document.getElementById("nameInput");
+  input.addEventListener("input", function(){ state.surnameChoice=null; render(); });
+
+  document.getElementById("surLenSeg").addEventListener("click", function(e){
+    var b=e.target.closest("button"); if(!b) return;
+    state.surLen=b.getAttribute("data-len"); state.surnameChoice=null;
+    [].forEach.call(this.children,function(x){x.classList.remove("on");}); b.classList.add("on");
+    render();
+  });
+  document.getElementById("hyphenSeg").addEventListener("click", function(e){
+    var b=e.target.closest("button"); if(!b) return;
+    state.hyphen=parseInt(b.getAttribute("data-h"),10);
+    [].forEach.call(this.children,function(x){x.classList.remove("on");}); b.classList.add("on");
+    render();
+  });
+
+  document.getElementById("resultArea").addEventListener("click", function(e){
+    var chip=e.target.closest(".chip");
+    if(chip){ state.surnameChoice=chip.getAttribute("data-sur"); render(); return; }
+    var cb=e.target.closest(".copy-btn");
+    if(cb){
+      var txt=cb.getAttribute("data-copy");
+      var done=function(){ cb.classList.add("done"); var t=cb.textContent; cb.textContent="복사됨"; setTimeout(function(){cb.classList.remove("done");cb.textContent="복사";},1200); };
+      if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done,function(){fallback(txt);done();}); }
+      else { fallback(txt); done(); }
+    }
+  });
+  function fallback(txt){ var ta=document.createElement("textarea"); ta.value=txt; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy");}catch(e){} document.body.removeChild(ta); }
+
+  input.focus();
+
+  // ===== 복사 방지 (MYWAY.KR 정책) — input 예외, 복사버튼은 JS clipboard 사용 =====
+  ["contextmenu","selectstart","dragstart","copy","cut"].forEach(function(evt){
+    document.addEventListener(evt,function(e){ if(e.target&&e.target.closest&&e.target.closest("input")) return; e.preventDefault(); });
+  });
+  document.addEventListener("keydown",function(e){
+    if(e.key==="F12"){ e.preventDefault(); return; }
+    var k=(e.key||"").toLowerCase(), inInput=document.activeElement&&document.activeElement.tagName==="INPUT";
+    if(e.ctrlKey||e.metaKey){
+      if(inInput&&["c","x","a","v","z"].indexOf(k)>=0) return;
+      if(["u","s","c","x","a"].indexOf(k)>=0) e.preventDefault();
+      if(e.shiftKey&&["i","j","c"].indexOf(k)>=0) e.preventDefault();
+    }
+  });
+})();
+</script>
+</body>
+</html>
