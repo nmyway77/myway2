@@ -109,7 +109,7 @@
         </a>
         <div>
           <h1 class="brand">영상 디렉토리</h1>
-          <div class="brand-sub">My Video Shelf · v9</div>
+          <div class="brand-sub">My Video Shelf · v10</div>
         </div>
       </div>
     </div>
@@ -142,6 +142,8 @@
     <h2 class="modal-title" id="modalTitle">영상 추가</h2>
     <label>유튜브 / 영상 주소</label>
     <input id="addUrl" type="text" placeholder="https://youtu.be/..." autocomplete="off" oninput="updatePreview()">
+    <label>제목 (사진 아래 표시 · 비워도 됨)</label>
+    <input id="addName" type="text" placeholder="카드에 표시할 제목" autocomplete="off">
     <label>사진 주소 (이미지 URL · 비우면 자동)</label>
     <input id="addImg" type="text" placeholder="https://...jpg" autocomplete="off" oninput="updatePreview()">
     <div class="img-preview" id="imgPreview">미리보기</div>
@@ -352,6 +354,7 @@
     document.getElementById('modalTitle').textContent = '영상 추가';
     document.getElementById('delBtn').style.display = 'none';
     document.getElementById('addUrl').value = '';
+    document.getElementById('addName').value = '';
     document.getElementById('addImg').value = '';
     updatePreview();
     document.getElementById('addModal').style.display = 'flex';
@@ -362,6 +365,7 @@
     document.getElementById('modalTitle').textContent = '영상 수정';
     document.getElementById('delBtn').style.display = '';
     document.getElementById('addUrl').value = videos[idx].url || '';
+    document.getElementById('addName').value = videos[idx].name || '';
     document.getElementById('addImg').value = videos[idx].img || '';
     updatePreview();
     document.getElementById('addModal').style.display = 'flex';
@@ -372,13 +376,15 @@
 
   function saveVideo(){
     var url = document.getElementById('addUrl').value.trim();
+    var name = document.getElementById('addName').value.trim();
     var img = document.getElementById('addImg').value.trim();
     if (!url){ alert('영상 주소를 입력하세요.'); return; }
     if (editIdx===null){
-      videos.push({ url:url, img:img, name:'', color:'#5b6470' });
+      videos.push({ url:url, img:img, name:name, color:'#5b6470' });
       selectedIdx = videos.length-1;
     } else {
       videos[editIdx].url = url;
+      videos[editIdx].name = name;
       videos[editIdx].img = img;
     }
     persist(); closeAddModal(); renderList(); renderMain();
