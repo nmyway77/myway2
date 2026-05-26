@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>구슬 순위 결정기 · MYWAY.KR</title>
+<meta name="description" content="구슬을 위에서 굴려 핀을 튕기며 떨어뜨리고, 결승선에 도착한 순서대로 순위가 정해지는 무료 순위 결정 게임입니다. 사다리타기 대신 써보세요.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+<style>
+:root{
+  --paper:#f7f3eb; --ink:#1d1b16; --ink-soft:#6a6457; --line:#ddd5c5;
+  --board:#141a30; --board-edge:#0c1124; --accent:#e8590c; --accent-deep:#c44608;
+  --panel:#fffdf8; --gold:#f0a020;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:"Pretendard",sans-serif;background:var(--paper);color:var(--ink);
+  min-height:100vh;-webkit-user-select:none;user-select:none;
+  background-image:radial-gradient(circle at 15% 12%,#fbf8f1 0,transparent 42%),radial-gradient(circle at 85% 88%,#f0eadd 0,transparent 48%);
+}
+input,textarea{-webkit-user-select:text!important;user-select:text!important;}
+
+.home-corner{position:fixed;top:16px;left:18px;z-index:50;}
+.home-corner a{font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-soft);text-decoration:none;border:1px solid var(--line);border-radius:6px;padding:6px 11px;background:var(--panel);transition:.18s;}
+.home-corner a:hover{color:var(--accent);border-color:var(--accent);}
+
+.wrap{max-width:920px;margin:0 auto;padding:58px 18px 90px;}
+.head{text-align:center;margin-bottom:26px;}
+.kicker{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
+.head h1{font-family:"Fraunces",serif;font-weight:600;font-size:36px;line-height:1.1;letter-spacing:-.02em;}
+.head h1 em{font-style:italic;color:var(--accent);}
+.head p{font-size:14px;color:var(--ink-soft);margin-top:10px;}
+
+.layout{display:flex;gap:24px;align-items:flex-start;justify-content:center;flex-wrap:wrap;}
+
+/* Control panel */
+.panel{flex:1 1 260px;max-width:320px;min-width:240px;background:var(--panel);border:1px solid var(--line);
+  border-radius:16px;padding:20px;box-shadow:0 14px 40px -24px rgba(20,26,48,.4);}
+.panel h2{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:12px;}
+#names{width:100%;height:150px;resize:vertical;border:1px solid var(--line);border-radius:10px;background:var(--paper);
+  font-family:"Pretendard",sans-serif;font-size:14px;color:var(--ink);padding:12px;line-height:1.7;outline:none;}
+#names:focus{border-color:var(--accent);}
+.hint{font-size:11.5px;color:var(--ink-soft);margin-top:8px;line-height:1.6;}
+.row{display:flex;align-items:center;gap:10px;margin-top:16px;}
+.row label{font-size:13px;color:var(--ink-soft);}
+.count-box{display:flex;align-items:center;border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.count-box button{border:0;background:var(--paper);color:var(--ink);width:34px;height:34px;font-size:18px;cursor:pointer;transition:.15s;}
+.count-box button:hover{background:var(--accent);color:#fff;}
+.count-box span{min-width:40px;text-align:center;font-family:"JetBrains Mono",monospace;font-weight:700;font-size:15px;}
+
+.btns{display:flex;gap:10px;margin-top:18px;}
+.btn{flex:1;font-family:"JetBrains Mono",monospace;font-size:14px;font-weight:700;letter-spacing:.03em;border:0;
+  padding:13px;border-radius:11px;cursor:pointer;transition:.16s;}
+.btn.go{background:var(--accent);color:#fff;box-shadow:0 6px 16px -6px var(--accent-deep);}
+.btn.go:hover{background:var(--accent-deep);transform:translateY(-1px);}
+.btn.go:disabled{background:#d8cfc0;color:#fff;box-shadow:none;cursor:default;transform:none;}
+.btn.reset{flex:0 0 auto;background:var(--paper);color:var(--ink-soft);border:1px solid var(--line);}
+.btn.reset:hover{border-color:var(--accent);color:var(--accent);}
+
+/* Board */
+.board-wrap{flex:0 0 auto;}
+#board{display:block;border-radius:16px;box-shadow:0 18px 50px -22px rgba(20,26,48,.7);
+  border:6px solid #1f2742;background:var(--board);max-width:100%;height:auto;touch-action:none;}
+
+/* Results */
+.results{flex:1 1 220px;max-width:300px;min-width:200px;background:var(--panel);border:1px solid var(--line);
+  border-radius:16px;padding:18px;box-shadow:0 14px 40px -24px rgba(20,26,48,.4);}
+.results h2{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:14px;}
+.rank-list{display:flex;flex-direction:column;gap:7px;}
+.rank-cell{display:flex;align-items:center;gap:11px;padding:9px 11px;border:1px solid var(--line);border-radius:11px;
+  background:var(--paper);min-height:46px;transition:.25s;}
+.rank-cell.filled{border-color:transparent;background:#fff;box-shadow:0 4px 14px -8px rgba(20,26,48,.5);animation:pop .35s ease;}
+@keyframes pop{0%{transform:scale(.85);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.rank-no{font-family:"Fraunces",serif;font-weight:600;font-size:20px;width:30px;text-align:center;color:var(--ink-soft);flex:0 0 auto;}
+.rank-cell.filled .rank-no{color:var(--accent);}
+.rank-cell.top1 .rank-no{color:var(--gold);}
+.marble-dot{width:22px;height:22px;border-radius:50%;flex:0 0 auto;box-shadow:inset -3px -3px 5px rgba(0,0,0,.25),inset 2px 2px 4px rgba(255,255,255,.45);}
+.rank-name{font-size:14.5px;font-weight:500;word-break:break-all;}
+.rank-cell:not(.filled) .rank-name{color:#c3bba8;}
+
+.note{margin:30px auto 0;max-width:680px;font-size:12.5px;color:var(--ink-soft);line-height:1.7;text-align:center;}
+
+.float-home{position:fixed;right:18px;bottom:18px;z-index:99;width:46px;height:46px;border-radius:50%;
+  background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 18px rgba(232,89,12,.4);text-decoration:none;transition:.2s;}
+.float-home:hover{transform:translateY(-3px) scale(1.05);background:var(--accent-deep);}
+.float-home svg{width:20px;height:20px;stroke:#fff;}
+
+footer{text-align:center;padding:30px 16px 40px;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-soft);}
+footer a{color:var(--accent);text-decoration:none;font-weight:500;}
+footer a:hover{text-decoration:underline;}
+
+@media (max-width:880px){
+  .layout{flex-direction:column;align-items:center;}
+  .panel,.results{max-width:460px;width:100%;}
+  .board-wrap{order:-1;}
+}
+</style>
+</head>
+<body>
+
+<div class="home-corner"><a href="https://myway.kr">← MYWAY</a></div>
+
+<div class="wrap">
+  <div class="head">
+    <div class="kicker">Marble Rank Race</div>
+    <h1>구슬 <em>순위</em> 결정기</h1>
+    <p>구슬을 굴리면 핀을 튕기며 떨어져요. 결승선에 먼저 닿는 순서대로 순위가 정해집니다.</p>
+  </div>
+
+  <div class="layout">
+    <div class="panel">
+      <h2>참가자</h2>
+      <textarea id="names" placeholder="한 줄에 한 명씩&#10;예)&#10;철수&#10;영희&#10;민준&#10;수아" spellcheck="false"></textarea>
+      <div class="hint">비워두면 인원수만큼 1·2·3… 번호로 진행돼요.</div>
+      <div class="row">
+        <label>인원수</label>
+        <div class="count-box">
+          <button id="minus">−</button><span id="countVal">6</span><button id="plus">+</button>
+        </div>
+      </div>
+      <div class="btns">
+        <button class="btn go" id="goBtn">구슬 굴리기</button>
+        <button class="btn reset" id="resetBtn">초기화</button>
+      </div>
+    </div>
+
+    <div class="board-wrap">
+      <canvas id="board"></canvas>
+    </div>
+
+    <div class="results">
+      <h2>순위</h2>
+      <div class="rank-list" id="rankList"></div>
+    </div>
+  </div>
+
+  <div class="note">사다리타기 대신 쓰는 랜덤 순위 게임이에요. 핀 튕김은 매번 달라서 결과도 매번 랜덤입니다.</div>
+</div>
+
+<a href="https://myway.kr" class="float-home" title="MYWAY.KR 홈">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+</a>
+
+<footer>© <a href="https://myway.kr">myway.kr</a> · 구슬 순위 결정기 — 모든 처리는 브라우저 안에서만 이뤄집니다.</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var W=440, H=560, FINISH=H-26;
+  var COLORS=["#e8590c","#1d4f9e","#2b8a3e","#c2255c","#9c36b5","#1098ad","#e67700","#5c940d","#d6336c","#1864ab","#087f5b","#862e9c","#f08c00","#3b5bdb"];
+
+  var canvas=document.getElementById("board"), ctx=canvas.getContext("2d");
+  var dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+  canvas.width=W*dpr; canvas.height=H*dpr; canvas.style.width=W+"px"; canvas.style.height=H+"px";
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  var M=window.Matter, engine, runner, pegs=[], marbles=[], releaseQueue=[], releaseTimer=null;
+  var running=false, results=[], participants=[], stuckFrames={};
+
+  var countVal=6;
+  function readParticipants(){
+    var lines=document.getElementById("names").value.split("\n").map(function(s){return s.trim();}).filter(Boolean);
+    if(lines.length>=2) return lines.slice(0,14);
+    var n=countVal, arr=[]; for(var i=1;i<=n;i++) arr.push(String(i)); return arr;
+  }
+
+  function buildBoard(){
+    pegs=[];
+    engine=M.Engine.create();
+    engine.gravity.y=1.05;
+    var world=engine.world;
+    var wallOpt={isStatic:true,restitution:0.2,friction:0.4,render:{visible:false}};
+    // 벽
+    M.Composite.add(world,[
+      M.Bodies.rectangle(-8,H/2,20,H*2,wallOpt),
+      M.Bodies.rectangle(W+8,H/2,20,H*2,wallOpt),
+      M.Bodies.rectangle(W/2,H+30,W*2,60,wallOpt)
+    ]);
+    // 깔때기(상단 가이드)
+    M.Composite.add(world,[
+      M.Bodies.rectangle(64,70,150,8,Object.assign({angle:0.5},wallOpt)),
+      M.Bodies.rectangle(W-64,70,150,8,Object.assign({angle:-0.5},wallOpt))
+    ]);
+    // 핀 배치 (지그재그)
+    var top=140, bottom=FINISH-46, rowGap=44, colGap=46;
+    var row=0;
+    for(var y=top;y<=bottom;y+=rowGap){
+      var offset=(row%2===0)?colGap/2:0;
+      for(var x=24+offset;x<=W-24;x+=colGap){
+        var peg=M.Bodies.circle(x,y,5,{isStatic:true,restitution:0.55,friction:0.0,render:{visible:false}});
+        peg._isPeg=true; pegs.push(peg); M.Composite.add(world,peg);
+      }
+      row++;
+    }
+    runner=M.Runner.create();
+    M.Events.on(engine,"afterUpdate",onUpdate);
+    M.Runner.run(runner,engine);
+  }
+
+  function makeMarble(p,color,x){
+    var b=M.Bodies.circle(x,18,10,{restitution:0.45,friction:0.02,frictionAir:0.004,density:0.0016,
+      render:{visible:false}});
+    b._label=p; b._color=color; b._finished=false; b._id=Math.random();
+    M.Body.setVelocity(b,{x:(Math.random()-0.5)*2,y:0});
+    return b;
+  }
+
+  function onUpdate(){
+    // 결승 도착 처리
+    for(var i=marbles.length-1;i>=0;i--){
+      var m=marbles[i];
+      if(!m._finished && m.position.y>=FINISH){
+        m._finished=true;
+        results.push({label:m._label,color:m._color});
+        fillRank(results.length,m._label,m._color);
+        M.Composite.remove(engine.world,m);
+        marbles.splice(i,1);
+        if(results.length>=participants.length) finishAll();
+        continue;
+      }
+      // 끼임 방지: 거의 멈추면 살짝 밀기
+      var sp=Math.hypot(m.velocity.x,m.velocity.y);
+      if(sp<0.25 && m.position.y<FINISH-20){
+        stuckFrames[m._id]=(stuckFrames[m._id]||0)+1;
+        if(stuckFrames[m._id]>26){ M.Body.applyForce(m,m.position,{x:(Math.random()-0.5)*0.012,y:0.004}); stuckFrames[m._id]=0; }
+      } else stuckFrames[m._id]=0;
+    }
+    draw();
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // 보드 배경
+    ctx.fillStyle="#141a30"; ctx.fillRect(0,0,W,H);
+    // 미세 격자光
+    ctx.fillStyle="rgba(255,255,255,0.018)";
+    for(var gy=0;gy<H;gy+=22){ ctx.fillRect(0,gy,W,1); }
+    // 핀
+    for(var i=0;i<pegs.length;i++){
+      var p=pegs[i];
+      ctx.beginPath(); ctx.arc(p.position.x,p.position.y,5,0,7);
+      ctx.fillStyle="#46507a"; ctx.fill();
+      ctx.beginPath(); ctx.arc(p.position.x-1.3,p.position.y-1.3,1.8,0,7);
+      ctx.fillStyle="rgba(255,255,255,0.5)"; ctx.fill();
+    }
+    // 결승선
+    ctx.strokeStyle="rgba(240,160,32,0.9)"; ctx.lineWidth=2; ctx.setLineDash([7,6]);
+    ctx.beginPath(); ctx.moveTo(0,FINISH); ctx.lineTo(W,FINISH); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle="rgba(240,160,32,0.85)"; ctx.font="600 11px 'JetBrains Mono',monospace";
+    ctx.fillText("FINISH",8,FINISH-6);
+    // 구슬
+    for(var j=0;j<marbles.length;j++) drawMarble(marbles[j]);
+  }
+  function drawMarble(m){
+    var x=m.position.x,y=m.position.y,r=10;
+    ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fillStyle=m._color; ctx.fill();
+    ctx.beginPath(); ctx.arc(x-3.2,y-3.2,3.4,0,7); ctx.fillStyle="rgba(255,255,255,0.55)"; ctx.fill();
+    ctx.beginPath(); ctx.arc(x+3,y+3,2.4,0,7); ctx.fillStyle="rgba(0,0,0,0.18)"; ctx.fill();
+    var lab=m._label.length>2?m._label.slice(0,2):m._label;
+    ctx.fillStyle="#fff"; ctx.font="700 10px 'Pretendard',sans-serif";
+    ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillText(lab,x,y+0.5); ctx.textAlign="start";
+  }
+
+  // 결과판
+  function buildRankCells(n){
+    var list=document.getElementById("rankList"); list.innerHTML="";
+    for(var i=1;i<=n;i++){
+      var cell=document.createElement("div");
+      cell.className="rank-cell"; cell.id="rank"+i;
+      cell.innerHTML='<span class="rank-no">'+i+'</span><span class="marble-dot" style="background:#e9e2d3"></span><span class="rank-name">대기</span>';
+      list.appendChild(cell);
+    }
+  }
+  function fillRank(rank,label,color){
+    var cell=document.getElementById("rank"+rank); if(!cell) return;
+    cell.className="rank-cell filled"+(rank===1?" top1":"");
+    cell.querySelector(".marble-dot").style.background=color;
+    cell.querySelector(".rank-name").textContent=label;
+  }
+
+  function start(){
+    if(running) return;
+    participants=readParticipants();
+    if(participants.length<2){ return; }
+    results=[]; marbles=[]; releaseQueue=[]; stuckFrames={};
+    if(runner){ M.Runner.stop(runner); M.Events.off(engine,"afterUpdate",onUpdate); }
+    buildBoard();
+    buildRankCells(participants.length);
+    running=true;
+    document.getElementById("goBtn").disabled=true;
+    // 구슬을 차례로 투입
+    var idx=0;
+    releaseTimer=setInterval(function(){
+      if(idx>=participants.length){ clearInterval(releaseTimer); releaseTimer=null; return; }
+      var color=COLORS[idx%COLORS.length];
+      var x=60+Math.random()*(W-120);
+      var b=makeMarble(participants[idx],color,x);
+      marbles.push(b); M.Composite.add(engine.world,b);
+      idx++;
+    },280);
+  }
+  function finishAll(){
+    running=false;
+    document.getElementById("goBtn").disabled=false;
+  }
+  function reset(){
+    running=false;
+    if(releaseTimer){ clearInterval(releaseTimer); releaseTimer=null; }
+    if(runner){ M.Runner.stop(runner); }
+    if(engine){ M.Events.off(engine,"afterUpdate",onUpdate); M.Engine.clear(engine); }
+    marbles=[]; results=[]; pegs=[];
+    document.getElementById("goBtn").disabled=false;
+    document.getElementById("rankList").innerHTML="";
+    ctx.clearRect(0,0,W,H); ctx.fillStyle="#141a30"; ctx.fillRect(0,0,W,H);
+    drawIdle();
+  }
+  function drawIdle(){
+    ctx.fillStyle="rgba(255,255,255,0.5)"; ctx.font="600 15px 'JetBrains Mono',monospace";
+    ctx.textAlign="center";
+    ctx.fillText("참가자를 입력하고", W/2, H/2-12);
+    ctx.fillText("구슬 굴리기 ▶", W/2, H/2+14);
+    ctx.textAlign="start";
+  }
+
+  // 인원수 조절
+  function setCount(v){ countVal=Math.max(2,Math.min(14,v)); document.getElementById("countVal").textContent=countVal; }
+  document.getElementById("plus").addEventListener("click",function(){ setCount(countVal+1); });
+  document.getElementById("minus").addEventListener("click",function(){ setCount(countVal-1); });
+  document.getElementById("goBtn").addEventListener("click",start);
+  document.getElementById("resetBtn").addEventListener("click",reset);
+
+  // 초기 화면
+  ctx.fillStyle="#141a30"; ctx.fillRect(0,0,W,H); drawIdle();
+
+  // ===== 복사 방지 (MYWAY.KR 정책) — input/textarea 예외 =====
+  function inEditable(t){ return t&&t.closest&&(t.closest("input")||t.closest("textarea")); }
+  ["contextmenu","selectstart","dragstart","copy","cut"].forEach(function(evt){
+    document.addEventListener(evt,function(e){ if(inEditable(e.target)) return; e.preventDefault(); });
+  });
+  document.addEventListener("keydown",function(e){
+    if(e.key==="F12"){ e.preventDefault(); return; }
+    var k=(e.key||"").toLowerCase(), edit=inEditable(document.activeElement);
+    if(e.ctrlKey||e.metaKey){
+      if(edit&&["c","x","a","v","z"].indexOf(k)>=0) return;
+      if(["u","s","c","x","a"].indexOf(k)>=0) e.preventDefault();
+      if(e.shiftKey&&["i","j","c"].indexOf(k)>=0) e.preventDefault();
+    }
+  });
+})();
+</script>
+</body>
+</html>
