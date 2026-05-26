@@ -56,6 +56,8 @@
     }
     .video-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hi);}
     .video-card.active{box-shadow:0 0 0 2px var(--accent),var(--shadow-hi);border-color:var(--accent);}
+    .video-card.dragging{opacity:.45;}
+    .video-card.drag-over{border-color:var(--accent);box-shadow:0 -3px 0 -1px var(--accent),var(--shadow);}
     .card-color{
       position:absolute;top:0;right:0;width:40px;height:40px;border-radius:0 13px 0 18px;background:var(--accent);
       box-shadow:inset 2px -2px 5px rgba(0,0,0,.18),inset -1px 1px 2px rgba(255,255,255,.35);
@@ -174,7 +176,7 @@
     <div class="yt-container">
       <div class="yt-inner">
         <div class="yt-frame-box" id="ytFrameBox">
-          <iframe id="mainFrame" src="https://www.youtube.com/embed/5w__FG2fGa4?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+          <iframe id="mainFrame" src="https://www.youtube.com/embed/tQ9tse8cTy4?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>
         </div>
       </div>
     </div>
@@ -205,12 +207,29 @@
 <script>
   const PALETTE = ['#d24b35','#e08a2e','#e0b93e','#3f8f6e','#3a6ea5','#7a5ea5','#c64f86','#5b6470'];
 
-  let videos = JSON.parse(localStorage.getItem('ytNaviList5') || '[]');
-  videos = videos.map(function(v,i){
-    return { url:v.url||'', name:v.name||v.title||'제목 없음', color:v.color||PALETTE[i%PALETTE.length] };
-  });
-  let selectedIdx = (videos.length>0) ? 0 : null;
+  const DEFAULT_VIDEOS = [
+    { url:'https://www.youtube.com/watch?v=0G0hgz_Aq5Y', name:'송정해수욕장1', color:'#3a6ea5' },
+    { url:'https://www.youtube.com/watch?v=tQ9tse8cTy4', name:'송정2',          color:'#2f8f8f' },
+    { url:'https://www.youtube.com/watch?v=hGYVR5h8IfE', name:'고성해수욕장',   color:'#3f8f6e' },
+    { url:'https://www.youtube.com/watch?v=jmVmZlsQIL8', name:'광안대교1',      color:'#7a5ea5' },
+    { url:'https://www.youtube.com/watch?v=2SyeAPODClU', name:'광안대교2',      color:'#9a5fb0' },
+    { url:'https://www.youtube.com/watch?v=009kOq0x4ZI', name:'강문해변',       color:'#e08a2e' },
+    { url:'https://www.youtube.com/watch?v=DSgn-lTHJzM', name:'서울역',         color:'#c64f86' },
+    { url:'https://www.youtube.com/watch?v=f-77scE-PVw', name:'석촌호수',       color:'#5b6470' }
+  ];
+
+  let saved = [];
+  try { saved = JSON.parse(localStorage.getItem('ytNaviList5') || '[]'); } catch(e){ saved = []; }
+  let videos, selectedIdx;
+  if (saved && saved.length){
+    videos = saved.map(function(v,i){ return { url:v.url||'', name:v.name||v.title||'제목 없음', color:v.color||PALETTE[i%PALETTE.length] }; });
+    selectedIdx = videos.length>0 ? 0 : null;
+  } else {
+    videos = DEFAULT_VIDEOS.map(function(v){ return { url:v.url, name:v.name, color:v.color }; });
+    selectedIdx = 1; // 초기 화면: 송정2
+  }
   let editIdx = null;
+  let dragFrom = null;
   let pickColor = PALETTE[0];
 
   function parseToEmbed(input){
@@ -259,8 +278,42 @@
       card.appendChild(editBtn);
 
       card.onclick = function(){ selectedIdx = i; renderList(); renderMain(); scrollActive(); };
+
+      // 드래그 순서조정
+      card.draggable = true;
+      card.addEventListener('dragstart', function(e){
+        dragFrom = i; card.classList.add('dragging');
+        if (e.dataTransfer){ e.dataTransfer.effectAllowed='move'; try{ e.dataTransfer.setData('text/plain', String(i)); }catch(_){} }
+      });
+      card.addEventListener('dragend', function(){
+        dragFrom = null; card.classList.remove('dragging'); clearDragOver();
+      });
+      card.addEventListener('dragover', function(e){
+        e.preventDefault(); if(e.dataTransfer) e.dataTransfer.dropEffect='move';
+        if (dragFrom!==null && dragFrom!==i) card.classList.add('drag-over');
+      });
+      card.addEventListener('dragleave', function(){ card.classList.remove('drag-over'); });
+      card.addEventListener('drop', function(e){
+        e.preventDefault(); card.classList.remove('drag-over'); reorder(dragFrom, i);
+      });
+
       list.appendChild(card);
     });
+  }
+
+  function clearDragOver(){
+    var els = document.querySelectorAll('.video-card.drag-over');
+    Array.prototype.forEach.call(els, function(el){ el.classList.remove('drag-over'); });
+  }
+
+  function reorder(from, to){
+    if (from===null || from===undefined || to===null || from===to) return;
+    var moved = videos.splice(from,1)[0];
+    videos.splice(to,0,moved);
+    if (selectedIdx===from) selectedIdx = to;
+    else if (from < selectedIdx && to >= selectedIdx) selectedIdx--;
+    else if (from > selectedIdx && to <= selectedIdx) selectedIdx++;
+    persist(); renderList(); renderMain();
   }
 
   // 선택 카드 자동 스크롤 (PC: 위아래 / 모바일: 좌우)
@@ -297,7 +350,7 @@
         box.innerHTML = '<div style="color:#fff;text-align:center;margin:auto;">알 수 없는 주소입니다.</div>';
       }
     } else {
-      box.innerHTML = '<iframe src="https://www.youtube.com/embed/5w__FG2fGa4?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
+      box.innerHTML = '<iframe src="https://www.youtube.com/embed/tQ9tse8cTy4?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
     }
   }
 
@@ -399,6 +452,7 @@
     document.addEventListener(ev, function(e){
       var t = e.target;
       if (t && (t.tagName==='INPUT' || t.tagName==='TEXTAREA')) return;
+      if (ev==='dragstart' && t && t.closest && t.closest('.video-card')) return; // 카드 순서조정 허용
       e.preventDefault();
     });
   });
