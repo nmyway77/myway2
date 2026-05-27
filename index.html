@@ -634,6 +634,7 @@
               <option value="chatgpt">💬 ChatGPT</option>
               <option value="bing">Ⓑ Bing</option>
               <option value="stockchart">📈 주식차트</option>
+              <option value="alphasquare">📈 알파스퀘어 차트</option>
               <option value="coinone">🪙 코인원 차트</option>
               <option value="cfgi">📊 공포탐욕지수</option>
               <option value="google_image">🖼️ 구글 이미지·렌즈</option>
@@ -1019,6 +1020,30 @@
         // 종목코드 자체도 키
         m[code] = url;
         m[code.toLowerCase()] = url;
+      });
+      return m;
+    })();
+
+    /* ─────────────────────────────────────────────────
+       알파스퀘어 차트 단축키 맵
+       종목명/별칭/코드 → https://alphasquare.co.kr/home/stock-information?code=6자리
+       (한국주식만. 미국주식은 알파스퀘어 코드 체계가 달라 제외)
+       ───────────────────────────────────────────────── */
+    function buildAlphaUrl(code) {
+      const c = String(code).replace(/\..*$/, '');   // 005930.x 같은 접미사 제거
+      return 'https://alphasquare.co.kr/home/stock-information?code=' + c;
+    }
+    function alphaCoinUrl(ticker) {
+      // 코인은 원화마켓 코드(KRW-BTC) 형식
+      return 'https://alphasquare.co.kr/home/stock-information?code=KRW-' + String(ticker).toUpperCase();
+    }
+    const alphaShortcuts = (() => {
+      const m = {};
+      stockChartData.forEach(([code, market, ...aliases]) => {
+        if (market !== 'KR') return;                  // 한국주식만 매핑
+        const url = buildAlphaUrl(code);
+        aliases.forEach(a => { if (!a) return; m[a] = url; m[a.toLowerCase()] = url; });
+        m[code] = url; m[code.toLowerCase()] = url;
       });
       return m;
     })();
@@ -1530,56 +1555,73 @@
     let apiDebounceTimer = null;
     function updateSuggestions() {
       const mode = engineSelectEl.value;
-      if (mode !== 'stockchart' && mode !== 'coinone' && mode !== 'cfgi') {
+      const isStock = (mode === 'stockchart' || mode === 'alphasquare');
+      if (!isStock && mode !== 'coinone' && mode !== 'cfgi') {
         closeSuggestions();
         return;
       }
       const query = queryInputEl.value.trim();
 
       // 모드별 로컬 매핑 결과 즉시 표시
-      if (mode === 'coinone')      currentSuggestions = searchCoinsLocal(query);
-      else if (mode === 'cfgi')    currentSuggestions = searchFgiLocal(query);
-      else                         currentSuggestions = searchStocksLocal(query);
+      if (mode === 'coinone')          currentSuggestions = searchCoinsLocal(query);
+      else if (mode === 'cfgi')        currentSuggestions = searchFgiLocal(query);
+      else if (mode === 'alphasquare') currentSuggestions = searchAlphaLocal(query);
+      else                             currentSuggestions = searchStocksLocal(query);
       activeIndex = -1;
       renderSuggestions();
 
-      // 자동완성 API는 주식차트에서만 시도
+      // 자동완성 API는 주식차트/알파스퀘어에서 시도 (네이버 AC가 코드 제공)
       clearTimeout(apiDebounceTimer);
-      if (!query || mode !== 'stockchart') return;
+      if (!query || !isStock) return;
       apiDebounceTimer = setTimeout(() => callApiAndMerge(query), 150);
+    }
+    /** 알파스퀘어 로컬 후보: 한국주식(6자리 코드) + 코인(KRW-티커) 모두 알파스퀘어 URL로 */
+    function searchAlphaLocal(query){
+      const stocks = searchStocksLocal(query)
+        .filter(s => s.market === 'KR')
+        .map(s => Object.assign({}, s, { url: buildAlphaUrl(s.code) }));
+      const coins = searchCoinsLocal(query)
+        .map(c => ({ code: c.ticker, market: 'COIN', name: c.name, ticker: c.ticker, url: alphaCoinUrl(c.ticker) }));
+      return [...stocks, ...coins].slice(0, 12);
     }
 
     /** 자동완성 API 결과를 받아 기존 로컬 결과에 병합 */
     async function callApiAndMerge(query) {
       // 사용자가 더 입력했거나 닫혔으면 무시
       if (queryInputEl.value.trim() !== query) return;
-      if (engineSelectEl.value !== 'stockchart') return;
+      if (engineSelectEl.value !== 'stockchart' && engineSelectEl.value !== 'alphasquare') return;
 
       try {
         const apiResults = await tryNaverStockAc(query);
         if (!apiResults || apiResults.length === 0) return;
         // race condition 방지: 응답 도착 시 현재 입력값과 다르면 무시
         if (queryInputEl.value.trim() !== query) return;
-        if (engineSelectEl.value !== 'stockchart') return;
+        const mode = engineSelectEl.value;
+        if (mode !== 'stockchart' && mode !== 'alphasquare') return;
+        const isAlpha = (mode === 'alphasquare');
 
         // 로컬 결과의 코드 집합 (중복 방지)
         const localCodes = new Set(currentSuggestions.map(r => r.code));
-        const newOnes = apiResults.filter(r => {
+        let newOnes = apiResults.filter(r => {
           const cleanCode = String(r.code).split('.')[0];
           return !localCodes.has(cleanCode) && !localCodes.has(r.code);
         });
+        if (isAlpha) newOnes = newOnes.filter(r => r.market === 'KR');   // 알파스퀘어는 한국주식만
         if (newOnes.length === 0) return;
 
         // 로컬 결과 + API 추가분 (최대 15개)
         const merged = [
           ...currentSuggestions,
-          ...newOnes.map(r => ({
-            code: String(r.code).split('.')[0],
-            market: r.market,
-            name: r.name,
-            ticker: r.market === 'KR' ? String(r.code).split('.')[0] : r.code,
-            url: r.url
-          }))
+          ...newOnes.map(r => {
+            const code = String(r.code).split('.')[0];
+            return {
+              code,
+              market: r.market,
+              name: r.name,
+              ticker: r.market === 'KR' ? code : r.code,
+              url: isAlpha ? buildAlphaUrl(code) : r.url
+            };
+          })
         ].slice(0, 15);
         currentSuggestions = merged;
         renderSuggestions();
@@ -1740,6 +1782,38 @@
           : 'https://search.naver.com/search.naver?where=nexearch&query='
             + encodeURIComponent(query + ' 주가');
         window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
+        return;
+      }
+
+      // ── 알파스퀘어 차트 모드: 종목명/코드 → 알파스퀘어 종목정보 페이지(새 탭) ──
+      if (engineKey === 'alphasquare') {
+        if (!query) { window.open('https://alphasquare.co.kr/', '_blank', 'noopener,noreferrer'); return; }
+        // 0) 자동완성 후보가 있으면 활성/첫 항목 선택 (알파스퀘어 URL로 열림)
+        if (currentSuggestions.length > 0) {
+          const idx = activeIndex >= 0 ? activeIndex : 0;
+          selectSuggestion(idx);
+          return;
+        }
+        // 1) 정확 매핑 (종목명/별칭/코드)
+        let url = alphaShortcuts[query] || alphaShortcuts[query.toLowerCase()];
+        // 2) 6자리 숫자면 코드로 바로 사용
+        if (!url && /^\d{6}$/.test(query)) url = buildAlphaUrl(query);
+        // 3) 부분 일치 (한국주식만)
+        if (!url) {
+          const q = query.toLowerCase();
+          for (const [code, market, ...aliases] of stockChartData) {
+            if (market !== 'KR') continue;
+            if ([code, ...aliases].some(k => k && String(k).toLowerCase().includes(q))) { url = buildAlphaUrl(code); break; }
+          }
+        }
+        // 4) 코인 일치 (KRW-티커)
+        if (!url) {
+          const q = query.toLowerCase();
+          for (const [ticker, ...aliases] of coinChartData) {
+            if ([ticker, ...aliases].some(k => k && String(k).toLowerCase().includes(q))) { url = alphaCoinUrl(ticker); break; }
+          }
+        }
+        window.open(url || 'https://alphasquare.co.kr/', '_blank', 'noopener,noreferrer');
         return;
       }
 
