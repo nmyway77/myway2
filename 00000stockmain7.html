@@ -221,6 +221,55 @@
     }
     .card:active { transform: translateY(-1px); }
 
+    /* ===== 분할 카드(한국 주식: 좌 알파스퀘어 / 우 네이버) ===== */
+    .card-split { padding: 14px 14px 22px; justify-content: flex-start; }
+    .card-split .card-content {
+      position: relative;
+      z-index: 1;
+      pointer-events: none; /* 클릭은 좌/우 영역이 담당 */
+    }
+    .card-half {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 50%;
+      z-index: 2;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 7px;
+      text-decoration: none;
+      border-radius: 10px;
+      transition: background .15s;
+    }
+    .card-half-l { left: 0;  border-top-right-radius: 0; border-bottom-right-radius: 0; }
+    .card-half-r { right: 0; border-top-left-radius: 0;  border-bottom-left-radius: 0; }
+    .card-half .src-label {
+      font-size: .64rem;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      color: var(--text-muted);
+      opacity: .55;
+      transition: opacity .15s, color .15s;
+      white-space: nowrap;
+    }
+    .card-half-l .src-label::before { content: "◀ "; font-size: .58rem; }
+    .card-half-r .src-label::after  { content: " ▶"; font-size: .58rem; }
+    /* 중앙 구분선 */
+    .card-split::before {
+      content: "";
+      position: absolute;
+      top: 28%; bottom: 22%;
+      left: 50%;
+      width: 1px;
+      background: var(--card-border);
+      transform: translateX(-0.5px);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .card-half:hover { background: var(--card-bg-hover); }
+    .card-half:hover .src-label { opacity: 1; color: var(--accent); }
+    .card-half:active { background: var(--card-border-hover); }
+
     .card .ticker {
       font-size: 1.25rem;
       font-weight: 800;
@@ -924,6 +973,58 @@
         const grid = document.createElement('div');
         grid.className = 'grid';
         sec.items.forEach(it => {
+          /* 한국 주식: ko가 6자리 숫자(종목코드)면 좌=알파스퀘어 / 우=네이버 차트 분할 */
+          const krCode = /^[0-9]{6}$/.test(String(it.ko).trim()) ? String(it.ko).trim() : null;
+
+          if (krCode) {
+            const card = document.createElement('div');
+            card.className = 'card card-split';
+            if (String(it.ticker).length > 6) card.dataset.long = '1';
+
+            /* 표시 내용 (클릭은 아래 두 영역이 담당) */
+            const content = document.createElement('div');
+            content.className = 'card-content';
+            const tk = document.createElement('div');
+            tk.className = 'ticker';
+            tk.textContent = it.ticker;
+            const ko = document.createElement('div');
+            ko.className = 'name-ko';
+            ko.textContent = it.ko;
+            content.appendChild(tk);
+            content.appendChild(ko);
+            card.appendChild(content);
+
+            /* 좌측: 알파스퀘어 */
+            const left = document.createElement('a');
+            left.className = 'card-half card-half-l';
+            left.href = it.url;
+            left.target = '_blank';
+            left.rel = 'noopener';
+            left.setAttribute('aria-label', it.ticker + ' 알파스퀘어 차트');
+            const lLbl = document.createElement('span');
+            lLbl.className = 'src-label';
+            lLbl.textContent = '알파스퀘어';
+            left.appendChild(lLbl);
+            card.appendChild(left);
+
+            /* 우측: 네이버 차트 */
+            const right = document.createElement('a');
+            right.className = 'card-half card-half-r';
+            right.href = 'https://stock.naver.com/fchart/domestic/stock/' + krCode;
+            right.target = '_blank';
+            right.rel = 'noopener';
+            right.setAttribute('aria-label', it.ticker + ' 네이버 차트');
+            const rLbl = document.createElement('span');
+            rLbl.className = 'src-label';
+            rLbl.textContent = '네이버';
+            right.appendChild(rLbl);
+            card.appendChild(right);
+
+            grid.appendChild(card);
+            return;
+          }
+
+          /* 그 외(미국주식·코인·선물 등): 기존 단일 링크 카드 */
           const a = document.createElement('a');
           a.className = 'card';
           a.href = it.url;
