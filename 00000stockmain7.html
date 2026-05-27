@@ -254,18 +254,6 @@
     }
     .card-half-l .src-label::before { content: "◀ "; font-size: .58rem; }
     .card-half-r .src-label::after  { content: " ▶"; font-size: .58rem; }
-    /* 중앙 구분선 */
-    .card-split::before {
-      content: "";
-      position: absolute;
-      top: 28%; bottom: 22%;
-      left: 50%;
-      width: 1px;
-      background: var(--card-border);
-      transform: translateX(-0.5px);
-      z-index: 1;
-      pointer-events: none;
-    }
     .card-half:hover { background: var(--card-bg-hover); }
     .card-half:hover .src-label { opacity: 1; color: var(--accent); }
     .card-half:active { background: var(--card-border-hover); }
@@ -973,10 +961,27 @@
         const grid = document.createElement('div');
         grid.className = 'grid';
         sec.items.forEach(it => {
-          /* 한국 주식: ko가 6자리 숫자(종목코드)면 좌=알파스퀘어 / 우=네이버 차트 분할 */
+          /* 우측 네이버 차트 + 좌측 라벨 결정
+             - 한국주식: ko가 6자리 종목코드 → 좌 알파스퀘어
+             - 코인: url에 upbit.com → 좌 업비트
+             - 미국 나스닥 주식: url에 NASDAQ: → 좌 트레이딩뷰
+             (선물·원자재 등은 네이버 종목이 아니므로 제외) */
+          const itUrl = String(it.url || '');
           const krCode = /^[0-9]{6}$/.test(String(it.ko).trim()) ? String(it.ko).trim() : null;
+          let naverUrl = null, leftLabel = null;
 
           if (krCode) {
+            naverUrl = 'https://stock.naver.com/fchart/domestic/stock/' + krCode;
+            leftLabel = '알파스퀘어';
+          } else if (/upbit\.com/i.test(itUrl)) {
+            naverUrl = 'https://stock.naver.com/fchart/crypto/BITHUMB/' + String(it.ticker).trim();
+            leftLabel = '업비트';
+          } else if (/NASDAQ(%3A|:)/i.test(itUrl)) {
+            naverUrl = 'https://stock.naver.com/fchart/foreign/stock/' + String(it.ticker).trim() + '.O';
+            leftLabel = '트레이딩뷰';
+          }
+
+          if (naverUrl) {
             const card = document.createElement('div');
             card.className = 'card card-split';
             if (String(it.ticker).length > 6) card.dataset.long = '1';
@@ -994,23 +999,23 @@
             content.appendChild(ko);
             card.appendChild(content);
 
-            /* 좌측: 알파스퀘어 */
+            /* 좌측: 원본(알파스퀘어/업비트/트레이딩뷰) */
             const left = document.createElement('a');
             left.className = 'card-half card-half-l';
             left.href = it.url;
             left.target = '_blank';
             left.rel = 'noopener';
-            left.setAttribute('aria-label', it.ticker + ' 알파스퀘어 차트');
+            left.setAttribute('aria-label', it.ticker + ' ' + leftLabel + ' 차트');
             const lLbl = document.createElement('span');
             lLbl.className = 'src-label';
-            lLbl.textContent = '알파스퀘어';
+            lLbl.textContent = leftLabel;
             left.appendChild(lLbl);
             card.appendChild(left);
 
             /* 우측: 네이버 차트 */
             const right = document.createElement('a');
             right.className = 'card-half card-half-r';
-            right.href = 'https://stock.naver.com/fchart/domestic/stock/' + krCode;
+            right.href = naverUrl;
             right.target = '_blank';
             right.rel = 'noopener';
             right.setAttribute('aria-label', it.ticker + ' 네이버 차트');
@@ -1024,7 +1029,7 @@
             return;
           }
 
-          /* 그 외(미국주식·코인·선물 등): 기존 단일 링크 카드 */
+          /* 그 외(선물·원자재 등): 기존 단일 링크 카드 */
           const a = document.createElement('a');
           a.className = 'card';
           a.href = it.url;
