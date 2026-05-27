@@ -67,7 +67,6 @@
 <script>
 /* === 상단 채널 버튼 (iframe에 바로 표시) — bbssitesbar2 === */
 const SITES=[
-  ['국민제안','https://modu.pcpp.go.kr/suggest-board'],
   ['디시인사이드','https://www.dcinside.com/'],
   ['에펨코리아','https://www.fmkorea.com/'],
   ['더쿠','https://theqoo.net/hot?filter_mode=normal'],
@@ -83,11 +82,8 @@ const SITES=[
   ['네이트판','https://pann.nate.com/'],
   ['와이고수','https://www.ygosu.com/community/best_article/?type=daily'],
   ['루리웹','https://bbs.ruliweb.com/best/humor/now?orderby=readcount&range=7d'],
-  ['클리앙','https://www.clien.net/service/recommend'],
-  ['가생이','http://www.gasengi.com/main/board.php?bo_table=commu08'],
-  ['이토랜드','http://www.etoland.co.kr/bbs/board.php?bo_table=hit'],
 ];
-const DEFAULT_I = Math.max(0, SITES.findIndex(s=>s[0]==='더쿠'));
+const DEFAULT_I = Math.max(0, SITES.findIndex(s=>s[0]==='디시인사이드'));
 
 /* === 전체목록 디렉터리 (카테고리별) — indexmain7 BBS + 추가 === */
 const DIRECTORY = [
