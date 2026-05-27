@@ -152,6 +152,12 @@
       font-weight: 500;
       letter-spacing: -0.1px;
     }
+    .section-sub.is-upbit {
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: .8px;
+      color: #1b64da;
+    }
     .section-newslink {
       display: inline-flex;
       align-items: center;
@@ -288,8 +294,8 @@
 
   <header class="topbar">
     <nav class="tab-nav" id="tabNav">
-      <button class="tab-btn is-active" data-tab="news">리포트&amp;뉴스</button>
-      <button class="tab-btn" data-tab="chart">주요 차트</button>
+      <button class="tab-btn" data-tab="news">리포트&amp;뉴스</button>
+      <button class="tab-btn is-active" data-tab="chart">주요 차트</button>
       <button class="tab-btn" data-tab="fear">공포지수</button>
       <button class="tab-btn" data-tab="sites">주요 사이트</button>
       <button class="tab-btn" data-tab="community">커뮤니티</button>
@@ -350,14 +356,14 @@
           },
           {
             label: '코인 주요 차트',
-            sub: 'Coinone',
+            sub: 'UPBIT',
             items: [
-              { ticker: 'BTC',  ko: '비트코인',   url: 'https://coinone.co.kr/chart?site=coinone' },
-              { ticker: 'ETH',  ko: '이더리움',   url: 'https://coinone.co.kr/chart?site=coinoneeth' },
-              { ticker: 'XRP',  ko: '리플',       url: 'https://coinone.co.kr/chart?site=coinonexrp' },
-              { ticker: 'SOL',  ko: '솔라나',     url: 'https://coinone.co.kr/chart?site=coinonesol' },
-              { ticker: 'DOGE', ko: '도지코인',   url: 'https://coinone.co.kr/chart?site=coinonedoge' },
-              { ticker: 'ADA',  ko: '에이다',     url: 'https://coinone.co.kr/chart?site=coinoneada' }
+              { ticker: 'BTC',  ko: '비트코인',   url: 'https://www.upbit.com/exchange?code=CRIX.UPBIT.KRW-BTC' },
+              { ticker: 'ETH',  ko: '이더리움',   url: 'https://www.upbit.com/exchange?code=CRIX.UPBIT.KRW-ETH' },
+              { ticker: 'XRP',  ko: '리플',       url: 'https://www.upbit.com/exchange?code=CRIX.UPBIT.KRW-XRP' },
+              { ticker: 'SOL',  ko: '솔라나',     url: 'https://www.upbit.com/exchange?code=CRIX.UPBIT.KRW-SOL' },
+              { ticker: 'DOGE', ko: '도지코인',   url: 'https://www.upbit.com/exchange?code=CRIX.UPBIT.KRW-DOGE' },
+              { ticker: 'ADA',  ko: '에이다',     url: 'https://www.upbit.com/exchange?code=CRIX.UPBIT.KRW-ADA' }
             ]
           },
           {
@@ -373,51 +379,123 @@
             ]
           },
           {
-            label: '한국 주요 주식',
-            sub: 'KOSPI',
+            label: '반도체',
+            sub: 'Semiconductor · 알파스퀘어',
             items: [
-              { ticker: '삼성전자', ko: '005930',         url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A005930' },
-              { ticker: 'SK하이닉스', ko: '000660',       url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A000660' },
-              { ticker: 'LG에너지솔루션', ko: '373220',   url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A373220' },
-              { ticker: 'NAVER', ko: '035420',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A035420' },
-              { ticker: '카카오', ko: '035720',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A035720' },
-              { ticker: '현대차', ko: '005380',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A005380' }
+              { ticker: '삼성전자', ko: '005930', url: 'https://alphasquare.co.kr/home/stock-information?code=005930' },
+              { ticker: 'SK하이닉스', ko: '000660', url: 'https://alphasquare.co.kr/home/stock-information?code=000660' },
+              { ticker: '한미반도체', ko: '042700', url: 'https://alphasquare.co.kr/home/stock-information?code=042700' },
+              { ticker: 'DB하이텍', ko: '000990', url: 'https://alphasquare.co.kr/home/stock-information?code=000990' }
             ]
           },
           {
-            label: '방산주',
-            sub: 'Defense',
+            label: '2차전지',
+            sub: 'Battery · 알파스퀘어',
             items: [
-              { ticker: '한화에어로스페이스', ko: '012450', url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A012450' },
-              { ticker: '한국항공우주', ko: '047810',       url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A047810' },
-              { ticker: 'LIG넥스원', ko: '079550',          url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A079550' },
-              { ticker: '현대로템', ko: '064350',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A064350' },
-              { ticker: '한화시스템', ko: '272210',         url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A272210' },
-              { ticker: '풍산', ko: '103140',               url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A103140' }
+              { ticker: 'LG에너지솔루션', ko: '373220', url: 'https://alphasquare.co.kr/home/stock-information?code=373220' },
+              { ticker: '삼성SDI', ko: '006400', url: 'https://alphasquare.co.kr/home/stock-information?code=006400' },
+              { ticker: '포스코퓨처엠', ko: '003670', url: 'https://alphasquare.co.kr/home/stock-information?code=003670' },
+              { ticker: '에코프로비엠', ko: '247540', url: 'https://alphasquare.co.kr/home/stock-information?code=247540' }
             ]
           },
           {
-            label: '로봇주',
-            sub: 'Robotics',
+            label: '자동차',
+            sub: 'Auto · 알파스퀘어',
             items: [
-              { ticker: '두산로보틱스', ko: '454910',       url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A454910' },
-              { ticker: '레인보우로보틱스', ko: '277810',   url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A277810' },
-              { ticker: '에스피지', ko: '058610',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A058610' },
-              { ticker: '로보스타', ko: '090360',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A090360' },
-              { ticker: '유진로봇', ko: '056080',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A056080' },
-              { ticker: '휴림로봇', ko: '090710',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A090710' }
+              { ticker: '현대차', ko: '005380', url: 'https://alphasquare.co.kr/home/stock-information?code=005380' },
+              { ticker: '기아', ko: '000270', url: 'https://alphasquare.co.kr/home/stock-information?code=000270' },
+              { ticker: '현대모비스', ko: '012330', url: 'https://alphasquare.co.kr/home/stock-information?code=012330' },
+              { ticker: '한온시스템', ko: '018880', url: 'https://alphasquare.co.kr/home/stock-information?code=018880' }
             ]
           },
           {
-            label: '조선주',
-            sub: 'Shipbuilding',
+            label: '인터넷·게임',
+            sub: 'Internet · Game · 알파스퀘어',
             items: [
-              { ticker: 'HD한국조선해양', ko: '009540',     url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A009540' },
-              { ticker: 'HD현대중공업', ko: '329180',       url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A329180' },
-              { ticker: '삼성중공업', ko: '010140',         url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A010140' },
-              { ticker: '한화오션', ko: '042660',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A042660' },
-              { ticker: 'HD현대미포', ko: '010620',         url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A010620' },
-              { ticker: '현대힘스', ko: '460930',           url: 'https://kr.tradingview.com/chart/?symbol=KRX%3A460930' }
+              { ticker: 'NAVER', ko: '035420', url: 'https://alphasquare.co.kr/home/stock-information?code=035420' },
+              { ticker: '카카오', ko: '035720', url: 'https://alphasquare.co.kr/home/stock-information?code=035720' },
+              { ticker: '크래프톤', ko: '259960', url: 'https://alphasquare.co.kr/home/stock-information?code=259960' },
+              { ticker: '엔씨소프트', ko: '036570', url: 'https://alphasquare.co.kr/home/stock-information?code=036570' }
+            ]
+          },
+          {
+            label: '바이오·제약',
+            sub: 'Bio · Pharma · 알파스퀘어',
+            items: [
+              { ticker: '삼성바이오로직스', ko: '207940', url: 'https://alphasquare.co.kr/home/stock-information?code=207940' },
+              { ticker: '셀트리온', ko: '068270', url: 'https://alphasquare.co.kr/home/stock-information?code=068270' },
+              { ticker: '유한양행', ko: '000100', url: 'https://alphasquare.co.kr/home/stock-information?code=000100' },
+              { ticker: 'SK바이오팜', ko: '326030', url: 'https://alphasquare.co.kr/home/stock-information?code=326030' }
+            ]
+          },
+          {
+            label: '방산',
+            sub: 'Defense · 알파스퀘어',
+            items: [
+              { ticker: '한화에어로스페이스', ko: '012450', url: 'https://alphasquare.co.kr/home/stock-information?code=012450' },
+              { ticker: '한국항공우주', ko: '047810', url: 'https://alphasquare.co.kr/home/stock-information?code=047810' },
+              { ticker: 'LIG넥스원', ko: '079550', url: 'https://alphasquare.co.kr/home/stock-information?code=079550' },
+              { ticker: '현대로템', ko: '064350', url: 'https://alphasquare.co.kr/home/stock-information?code=064350' }
+            ]
+          },
+          {
+            label: '조선',
+            sub: 'Shipbuilding · 알파스퀘어',
+            items: [
+              { ticker: 'HD한국조선해양', ko: '009540', url: 'https://alphasquare.co.kr/home/stock-information?code=009540' },
+              { ticker: 'HD현대중공업', ko: '329180', url: 'https://alphasquare.co.kr/home/stock-information?code=329180' },
+              { ticker: '삼성중공업', ko: '010140', url: 'https://alphasquare.co.kr/home/stock-information?code=010140' },
+              { ticker: '한화오션', ko: '042660', url: 'https://alphasquare.co.kr/home/stock-information?code=042660' }
+            ]
+          },
+          {
+            label: '로봇',
+            sub: 'Robotics · 알파스퀘어',
+            items: [
+              { ticker: '두산로보틱스', ko: '454910', url: 'https://alphasquare.co.kr/home/stock-information?code=454910' },
+              { ticker: '레인보우로보틱스', ko: '277810', url: 'https://alphasquare.co.kr/home/stock-information?code=277810' },
+              { ticker: '에스피지', ko: '058610', url: 'https://alphasquare.co.kr/home/stock-information?code=058610' },
+              { ticker: '유진로봇', ko: '056080', url: 'https://alphasquare.co.kr/home/stock-information?code=056080' }
+            ]
+          },
+          {
+            label: '원자력·전력',
+            sub: 'Nuclear · Power · 알파스퀘어',
+            items: [
+              { ticker: '두산에너빌리티', ko: '034020', url: 'https://alphasquare.co.kr/home/stock-information?code=034020' },
+              { ticker: '한국전력', ko: '015760', url: 'https://alphasquare.co.kr/home/stock-information?code=015760' },
+              { ticker: '한전기술', ko: '052690', url: 'https://alphasquare.co.kr/home/stock-information?code=052690' },
+              { ticker: 'LS ELECTRIC', ko: '010120', url: 'https://alphasquare.co.kr/home/stock-information?code=010120' }
+            ]
+          },
+          {
+            label: '금융',
+            sub: 'Finance · 알파스퀘어',
+            items: [
+              { ticker: 'KB금융', ko: '105560', url: 'https://alphasquare.co.kr/home/stock-information?code=105560' },
+              { ticker: '신한지주', ko: '055550', url: 'https://alphasquare.co.kr/home/stock-information?code=055550' },
+              { ticker: '하나금융지주', ko: '086790', url: 'https://alphasquare.co.kr/home/stock-information?code=086790' },
+              { ticker: '메리츠금융지주', ko: '138040', url: 'https://alphasquare.co.kr/home/stock-information?code=138040' }
+            ]
+          },
+          {
+            label: '철강·소재',
+            sub: 'Steel · 알파스퀘어',
+            items: [
+              { ticker: 'POSCO홀딩스', ko: '005490', url: 'https://alphasquare.co.kr/home/stock-information?code=005490' },
+              { ticker: '현대제철', ko: '004020', url: 'https://alphasquare.co.kr/home/stock-information?code=004020' },
+              { ticker: '고려아연', ko: '010130', url: 'https://alphasquare.co.kr/home/stock-information?code=010130' },
+              { ticker: '풍산', ko: '103140', url: 'https://alphasquare.co.kr/home/stock-information?code=103140' }
+            ]
+          },
+          {
+            label: '화학',
+            sub: 'Chemical · 알파스퀘어',
+            items: [
+              { ticker: 'LG화학', ko: '051910', url: 'https://alphasquare.co.kr/home/stock-information?code=051910' },
+              { ticker: '롯데케미칼', ko: '011170', url: 'https://alphasquare.co.kr/home/stock-information?code=011170' },
+              { ticker: '금호석유', ko: '011780', url: 'https://alphasquare.co.kr/home/stock-information?code=011780' },
+              { ticker: '한화솔루션', ko: '009830', url: 'https://alphasquare.co.kr/home/stock-information?code=009830' }
             ]
           },
           {
@@ -458,6 +536,39 @@
       },
       sites: {
         sections: [
+          {
+            label: '국내 코인 사이트',
+            sub: 'Crypto Korea',
+            items: [
+              { ticker: '업비트',           ko: 'upbit.com',          url: 'https://www.upbit.com/exchange?code=CRIX.UPBIT.KRW-BTC' },
+              { ticker: '빗썸',             ko: 'bithumb.com',        url: 'https://www.bithumb.com/react/trade/order/BTC-KRW' },
+              { ticker: '코인원',           ko: 'coinone.co.kr',      url: 'https://coinone.co.kr/exchange/trade/btc/krw' },
+              { ticker: '코인원 채팅',      ko: '실시간 거래 채팅',   url: 'https://coinone.co.kr/chart?site=coinone' },
+              { ticker: '김프 (Kimpga)',    ko: '김치 프리미엄',      url: 'https://kimpga.com/' },
+              { ticker: '코인니스',         ko: '실시간 코인 뉴스',   url: 'https://coinness.com/' },
+              { ticker: '블록미디어',       ko: 'blockmedia.co.kr',   url: 'https://www.blockmedia.co.kr/' },
+              { ticker: '코인리더스',       ko: 'coinreaders.com',    url: 'https://www.coinreaders.com/' },
+              { ticker: '코인데스크 코리아', ko: 'coindeskkorea.com',  url: 'https://www.coindeskkorea.com/' },
+              { ticker: '토큰포스트',       ko: 'tokenpost.kr',       url: 'https://www.tokenpost.kr/' },
+              { ticker: '디센터',           ko: 'decenter.kr',        url: 'https://www.decenter.kr/' }
+            ]
+          },
+          {
+            label: '글로벌 코인 사이트',
+            sub: 'Crypto Global',
+            items: [
+              { ticker: 'CoinMarketCap', ko: '시가총액·가격',       url: 'https://coinmarketcap.com/' },
+              { ticker: 'CoinGecko',     ko: '시가총액·가격',       url: 'https://www.coingecko.com/' },
+              { ticker: 'Coinglass',     ko: '선물·청산맵',         url: 'https://www.coinglass.com/' },
+              { ticker: 'CryptoQuant',   ko: '온체인 데이터',       url: 'https://cryptoquant.com/' },
+              { ticker: 'Glassnode',     ko: '온체인 분석',         url: 'https://glassnode.com/' },
+              { ticker: 'DefiLlama',     ko: 'DeFi TVL',           url: 'https://defillama.com/' },
+              { ticker: 'CoinDesk',      ko: '글로벌 코인 뉴스',    url: 'https://www.coindesk.com/' },
+              { ticker: 'Cointelegraph', ko: '코인 뉴스',           url: 'https://cointelegraph.com/' },
+              { ticker: 'The Block',     ko: '리서치·뉴스',         url: 'https://www.theblock.co/' },
+              { ticker: 'Etherscan',     ko: '이더리움 익스플로러', url: 'https://etherscan.io/' }
+            ]
+          },
           {
             label: '국내 주요 사이트',
             sub: 'Korea Markets',
@@ -516,38 +627,6 @@
               { ticker: '매경TV (MTN)', ko: 'mtn.co.kr',             url: 'https://www.mtn.co.kr/' },
               { ticker: '서울경제TV',  ko: 'sentv.co.kr',           url: 'https://www.sentv.co.kr/' },
               { ticker: '토마토TV',    ko: 'etomato.com',           url: 'https://www.etomato.com/' }
-            ]
-          },
-          {
-            label: '글로벌 코인 사이트',
-            sub: 'Crypto Global',
-            items: [
-              { ticker: 'CoinMarketCap', ko: '시가총액·가격',       url: 'https://coinmarketcap.com/' },
-              { ticker: 'CoinGecko',     ko: '시가총액·가격',       url: 'https://www.coingecko.com/' },
-              { ticker: 'Coinglass',     ko: '선물·청산맵',         url: 'https://www.coinglass.com/' },
-              { ticker: 'CryptoQuant',   ko: '온체인 데이터',       url: 'https://cryptoquant.com/' },
-              { ticker: 'Glassnode',     ko: '온체인 분석',         url: 'https://glassnode.com/' },
-              { ticker: 'DefiLlama',     ko: 'DeFi TVL',           url: 'https://defillama.com/' },
-              { ticker: 'CoinDesk',      ko: '글로벌 코인 뉴스',    url: 'https://www.coindesk.com/' },
-              { ticker: 'Cointelegraph', ko: '코인 뉴스',           url: 'https://cointelegraph.com/' },
-              { ticker: 'The Block',     ko: '리서치·뉴스',         url: 'https://www.theblock.co/' },
-              { ticker: 'Etherscan',     ko: '이더리움 익스플로러', url: 'https://etherscan.io/' }
-            ]
-          },
-          {
-            label: '국내 코인 사이트',
-            sub: 'Crypto Korea',
-            items: [
-              { ticker: '업비트',           ko: 'upbit.com',          url: 'https://upbit.com/' },
-              { ticker: '빗썸',             ko: 'bithumb.com',        url: 'https://www.bithumb.com/' },
-              { ticker: '코인원',           ko: 'coinone.co.kr',      url: 'https://coinone.co.kr/' },
-              { ticker: '김프 (Kimpga)',    ko: '김치 프리미엄',      url: 'https://kimpga.com/' },
-              { ticker: '코인니스',         ko: '실시간 코인 뉴스',   url: 'https://coinness.com/' },
-              { ticker: '블록미디어',       ko: 'blockmedia.co.kr',   url: 'https://www.blockmedia.co.kr/' },
-              { ticker: '코인리더스',       ko: 'coinreaders.com',    url: 'https://www.coinreaders.com/' },
-              { ticker: '코인데스크 코리아', ko: 'coindeskkorea.com',  url: 'https://www.coindeskkorea.com/' },
-              { ticker: '토큰포스트',       ko: 'tokenpost.kr',       url: 'https://www.tokenpost.kr/' },
-              { ticker: '디센터',           ko: 'decenter.kr',        url: 'https://www.decenter.kr/' }
             ]
           },
           {
@@ -712,7 +791,7 @@
           head.appendChild(cmpLink);
         } else {
           const sub = document.createElement('span');
-          sub.className = 'section-sub';
+          sub.className = 'section-sub' + (sec.label === '코인 주요 차트' ? ' is-upbit' : '');
           sub.textContent = sec.sub;
           head.appendChild(sub);
         }
@@ -774,11 +853,11 @@
 
     setupTabs();
     (function(){
-      var saved = 'news';
-      try { saved = sessionStorage.getItem('mywayTab_stockmain7') || 'news'; } catch(_) {}
+      var saved = 'chart';
+      try { saved = sessionStorage.getItem('mywayTab_stockmain7') || 'chart'; } catch(_) {}
       var nav = document.getElementById('tabNav');
       var btn = nav.querySelector('.tab-btn[data-tab="' + saved + '"]');
-      if (!btn) { saved = 'news'; btn = nav.querySelector('.tab-btn[data-tab="news"]'); }
+      if (!btn) { saved = 'chart'; btn = nav.querySelector('.tab-btn[data-tab="chart"]'); }
       nav.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('is-active'));
       if (btn) btn.classList.add('is-active');
       renderTab(saved);
