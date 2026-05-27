@@ -288,6 +288,41 @@
     }
     .myway-footer a:hover { color: var(--accent); }
     .myway-footer .sep { display: inline-block; margin: 0 8px; opacity: .5; }
+  
+    /* ===== 첫화면 상단: 실시간 지표 + 종합정보 ===== */
+    #chartTop .chart-top-inner{ max-width:1200px; margin:0 auto; padding:22px 16px 4px; }
+    .ind-strip{ margin-bottom:28px; }
+    .ind-head{ display:flex; align-items:baseline; gap:10px; padding:0 4px; margin-bottom:10px; }
+    .ind-t{ font-size:.95rem; font-weight:800; color:var(--text-main); letter-spacing:-.2px; }
+    .ind-t::before{ content:""; display:inline-block; width:7px; height:7px; border-radius:50%; background:#e0245e; margin-right:7px; vertical-align:middle; box-shadow:0 0 0 3px rgba(224,36,94,.15); }
+    .ind-sub{ font-size:.72rem; color:var(--text-muted); }
+    .tv-box{ border:1px solid var(--card-border); border-radius:16px; background:var(--card-bg); padding:6px 4px; overflow:hidden; box-shadow:0 1px 2px rgba(16,24,40,.05); }
+    .tv-box .tradingview-widget-copyright{ font-size:10px; text-align:right; padding:2px 10px 0; }
+    .tv-box .tradingview-widget-copyright a{ color:#7a86a8; text-decoration:none; }
+    .tv-box .tradingview-widget-copyright .trademark{ color:var(--text-muted); }
+
+    .info-head{ display:flex; align-items:baseline; gap:10px; padding:0 4px; margin-bottom:14px; }
+    .info-title{ font-size:1.15rem; font-weight:800; color:var(--text-main); letter-spacing:-.4px; margin:0; }
+    .info-title::before{ content:""; display:inline-block; width:4px; height:18px; border-radius:3px; background:linear-gradient(180deg,#2e7d4f,#10b981); margin-right:9px; vertical-align:-3px; }
+    .info-desc{ font-size:.72rem; color:var(--text-muted); }
+    .info-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:10px; }
+    .info-card{ position:relative; display:flex; flex-direction:column; gap:11px; padding:16px 12px; border-radius:16px; text-decoration:none;
+      background:var(--card-bg); border:1px solid var(--card-border); box-shadow:0 1px 2px rgba(16,24,40,.05);
+      transition:transform .2s cubic-bezier(.2,.7,.3,1), box-shadow .2s, border-color .2s; overflow:hidden;
+      animation:infoIn .55s cubic-bezier(.2,.7,.3,1) both; }
+    .info-card::after{ content:""; position:absolute; left:0; right:0; top:0; height:3px; background:linear-gradient(90deg,var(--c),var(--c2)); }
+    .info-card:hover{ transform:translateY(-5px); box-shadow:0 16px 32px -14px var(--c); border-color:transparent; }
+    .info-ico{ width:42px; height:42px; border-radius:13px; display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(135deg,var(--c),var(--c2)); box-shadow:0 8px 18px -8px var(--c); }
+    .info-ico svg{ width:23px; height:23px; stroke:#fff; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .info-name{ font-size:.97rem; font-weight:800; color:var(--text-main); letter-spacing:-.3px; }
+    .info-en{ font-size:.66rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.7px; }
+    .info-arrow{ position:absolute; top:16px; right:14px; width:16px; height:16px; color:var(--c); opacity:0; transform:translateX(-4px); transition:.2s; }
+    .info-card:hover .info-arrow{ opacity:1; transform:translateX(0); }
+    @keyframes infoIn{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;} }
+    @media (max-width:980px){ .info-grid{ grid-template-columns:repeat(4,1fr); } #chartTop .chart-top-inner{ padding:18px 14px 2px; } }
+    @media (max-width:520px){ .info-grid{ grid-template-columns:repeat(2,1fr); gap:10px; } .info-card{ padding:16px 14px; } }
+
   </style>
 </head>
 <body>
@@ -301,6 +336,89 @@
       <button class="tab-btn" data-tab="community">커뮤니티</button>
     </nav>
   </header>
+
+
+  <section id="chartTop" class="chart-top">
+    <div class="chart-top-inner">
+
+      <!-- 실시간 지표 (TradingView Ticker Tape · 키 불필요) -->
+      <div class="ind-strip">
+        <div class="ind-head"><span class="ind-t">실시간 지표</span><span class="ind-sub">비트코인 · 나스닥100 · 다우 · 금 · 환율</span></div>
+        <div class="tv-box">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/markets/?utm_source=myway.kr&utm_medium=widget&utm_campaign=ticker-tape" rel="noopener nofollow" target="_blank"><span class="blue-text">Ticker tape</span></a><span class="trademark"> by TradingView</span></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+            {
+              "symbols": [
+                { "description": "비트코인", "proName": "UPBIT:BTCKRW" },
+                { "description": "나스닥100", "proName": "FOREXCOM:NSXUSD" },
+                { "description": "다우", "proName": "FOREXCOM:DJI" },
+                { "description": "금", "proName": "TVC:GOLD" },
+                { "description": "환율 USD/KRW", "proName": "FX_IDC:USDKRW" }
+              ],
+              "showSymbolLogo": true,
+              "isTransparent": true,
+              "displayMode": "adaptive",
+              "colorTheme": "light",
+              "locale": "kr"
+            }
+            </script>
+          </div>
+        </div>
+      </div>
+
+      <!-- 종합정보 (링크는 href="#" 를 실제 주소로 교체하세요) -->
+      <div class="info-block">
+        <div class="info-head"><h2 class="info-title">종합정보</h2><span class="info-desc">뉴스 · 지수 · 주식 · 코인 · 국채 · 환율</span></div>
+        <div class="info-grid">
+        <a class="info-card" href="https://kr.tradingview.com/news-flow/" target="_blank" rel="noopener" data-cat="news" style="--c:#ef4444;--c2:#f97316;animation-delay:.04s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><path d="M4 5h12v15H5a1 1 0 0 1-1-1z"/><path d="M16 9h4v9a2 2 0 0 1-2 2"/><line x1="7" y1="9" x2="13" y2="9"/><line x1="7" y1="13" x2="13" y2="13"/><line x1="7" y1="17" x2="11" y2="17"/></svg></span>
+          <span class="info-name">뉴스</span>
+          <span class="info-en">News</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="https://kr.tradingview.com/markets/indices/" target="_blank" rel="noopener" data-cat="index" style="--c:#3b82f6;--c2:#06b6d4;animation-delay:.08s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span>
+          <span class="info-name">지수</span>
+          <span class="info-en">Index</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="https://alphasquare.co.kr/home/stock-information?code=005930" target="_blank" rel="noopener" data-cat="krstock" style="--c:#16a34a;--c2:#10b981;animation-delay:.12s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><line x1="6" y1="20" x2="6" y2="12"/><line x1="12" y1="20" x2="12" y2="5"/><line x1="18" y1="20" x2="18" y2="14"/></svg></span>
+          <span class="info-name">국내주식</span>
+          <span class="info-en">Korea</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="https://kr.tradingview.com/markets/stocks-usa/" target="_blank" rel="noopener" data-cat="globalstock" style="--c:#6366f1;--c2:#818cf8;animation-delay:.16s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg></span>
+          <span class="info-name">해외주식</span>
+          <span class="info-en">Global</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="https://www.upbit.com/exchange?code=CRIX.UPBIT.KRW-BTC" target="_blank" rel="noopener" data-cat="coin" style="--c:#f59e0b;--c2:#fbbf24;animation-delay:.20s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><circle cx="9.5" cy="9.5" r="6"/><path d="M13.5 5.2A6 6 0 1 1 15 16.8"/></svg></span>
+          <span class="info-name">코인</span>
+          <span class="info-en">Crypto</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="https://kr.tradingview.com/markets/bonds/" target="_blank" rel="noopener" data-cat="bond" style="--c:#7c3aed;--c2:#a855f7;animation-delay:.24s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><path d="M3 9l9-5 9 5"/><line x1="3" y1="21" x2="21" y2="21"/><line x1="6" y1="21" x2="6" y2="11"/><line x1="10" y1="21" x2="10" y2="11"/><line x1="14" y1="21" x2="14" y2="11"/><line x1="18" y1="21" x2="18" y2="11"/></svg></span>
+          <span class="info-name">국채</span>
+          <span class="info-en">Bonds</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="https://kr.tradingview.com/markets/currencies/" target="_blank" rel="noopener" data-cat="fx" style="--c:#0d9488;--c2:#14b8a6;animation-delay:.28s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><polyline points="16 3 20 7 16 11"/><line x1="20" y1="7" x2="7" y2="7"/><polyline points="8 13 4 17 8 21"/><line x1="4" y1="17" x2="17" y2="17"/></svg></span>
+          <span class="info-name">환율</span>
+          <span class="info-en">Exchange</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
 
   <main class="main" id="main"></main>
 
@@ -765,6 +883,7 @@
     /* ============ 렌더 ============ */
     function renderTab(tabId) {
       const root = document.getElementById('main');
+      var _ct = document.getElementById('chartTop'); if(_ct){ _ct.style.display = (tabId === 'chart') ? '' : 'none'; }
       const frag = document.createDocumentFragment();
       const tab = tabs[tabId];
       if (!tab) return;
@@ -884,6 +1003,13 @@
     if(url){ try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
     return _open(url, name, feat);
   };
+})();
+</script>
+<script>
+(function(){
+  document.querySelectorAll('.info-card').forEach(function(a){
+    a.addEventListener('click', function(e){ if(a.getAttribute('href')==='#') e.preventDefault(); });
+  });
 })();
 </script>
 </body>
