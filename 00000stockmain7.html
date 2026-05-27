@@ -342,7 +342,7 @@
     .info-title{ font-size:1.15rem; font-weight:800; color:var(--text-main); letter-spacing:-.4px; margin:0; }
     .info-title::before{ content:""; display:inline-block; width:4px; height:18px; border-radius:3px; background:linear-gradient(180deg,#2e7d4f,#10b981); margin-right:9px; vertical-align:-3px; }
     .info-desc{ font-size:.72rem; color:var(--text-muted); }
-    .info-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:10px; }
+    .info-grid{ display:grid; grid-template-columns:repeat(8,1fr); gap:10px; }
     .info-card{ position:relative; display:flex; flex-direction:column; gap:11px; padding:16px 12px; border-radius:16px; text-decoration:none;
       background:var(--card-bg); border:1px solid var(--card-border); box-shadow:0 1px 2px rgba(16,24,40,.05);
       transition:transform .2s cubic-bezier(.2,.7,.3,1), box-shadow .2s, border-color .2s; overflow:hidden;
@@ -407,7 +407,7 @@
 
       <!-- 종합정보 (링크는 href="#" 를 실제 주소로 교체하세요) -->
       <div class="info-block">
-        <div class="info-head"><h2 class="info-title">종합정보</h2><span class="info-desc">뉴스 · 지수 · 주식 · 코인 · 국채 · 환율</span></div>
+        <div class="info-head"><h2 class="info-title">종합정보</h2><span class="info-desc">뉴스 · 지수 · 주식 · 코인 · 국채 · 환율 · 공시</span></div>
         <div class="info-grid">
         <a class="info-card" href="https://kr.tradingview.com/news-flow/" target="_blank" rel="noopener" data-cat="news" style="--c:#ef4444;--c2:#f97316;animation-delay:.04s">
           <span class="info-ico"><svg viewBox="0 0 24 24"><path d="M4 5h12v15H5a1 1 0 0 1-1-1z"/><path d="M16 9h4v9a2 2 0 0 1-2 2"/><line x1="7" y1="9" x2="13" y2="9"/><line x1="7" y1="13" x2="13" y2="13"/><line x1="7" y1="17" x2="11" y2="17"/></svg></span>
@@ -449,6 +449,12 @@
           <span class="info-ico"><svg viewBox="0 0 24 24"><polyline points="16 3 20 7 16 11"/><line x1="20" y1="7" x2="7" y2="7"/><polyline points="8 13 4 17 8 21"/><line x1="4" y1="17" x2="17" y2="17"/></svg></span>
           <span class="info-name">환율</span>
           <span class="info-en">Exchange</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="https://dart.fss.or.kr/main.do" target="_blank" rel="noopener" data-cat="disclosure" style="--c:#475569;--c2:#64748b;animation-delay:.32s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="14 3 14 9 20 9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg></span>
+          <span class="info-name">공시</span>
+          <span class="info-en">Disclosure</span>
           <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </a>
         </div>
@@ -977,21 +983,25 @@
              (선물·원자재 등은 네이버 종목이 아니므로 제외) */
           const itUrl = String(it.url || '');
           const krCode = /^[0-9]{6}$/.test(String(it.ko).trim()) ? String(it.ko).trim() : null;
-          let naverUrl = null, leftLabel = null;
+          let naverUrl = null, leftLabel = null, leftUrl = null;
 
           if (krCode) {
             naverUrl = 'https://stock.naver.com/fchart/domestic/stock/' + krCode;
             leftLabel = '알파스퀘어';
+            leftUrl = it.url;
           } else if (/upbit\.com/i.test(itUrl)) {
             naverUrl = 'https://stock.naver.com/fchart/crypto/BITHUMB/' + String(it.ticker).trim();
-            leftLabel = '업비트';
+            leftLabel = '빗썸';
+            leftUrl = 'https://www.bithumb.com/react/trade/order/' + String(it.ticker).trim() + '-KRW';
           } else if (/NASDAQ(%3A|:)/i.test(itUrl)) {
             naverUrl = 'https://stock.naver.com/fchart/foreign/stock/' + String(it.ticker).trim() + '.O';
             leftLabel = '트레이딩뷰';
+            leftUrl = it.url;
           } else if (/(CME_MINI|TVC)(%3A|:)/i.test(itUrl) && NAVER_INDEX[String(it.ticker).trim()]) {
             /* 미국 지수 선물·지수 → 네이버 */
             naverUrl = NAVER_INDEX[String(it.ticker).trim()];
             leftLabel = '트레이딩뷰';
+            leftUrl = it.url;
           }
 
           if (naverUrl) {
@@ -1012,10 +1022,10 @@
             content.appendChild(ko);
             card.appendChild(content);
 
-            /* 좌측: 원본(알파스퀘어/업비트/트레이딩뷰) */
+            /* 좌측: 원본(알파스퀘어/빗썸/트레이딩뷰) */
             const left = document.createElement('a');
             left.className = 'card-half card-half-l';
-            left.href = it.url;
+            left.href = leftUrl;
             left.target = '_blank';
             left.rel = 'noopener';
             left.setAttribute('aria-label', it.ticker + ' ' + leftLabel + ' 차트');
