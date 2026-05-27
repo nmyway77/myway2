@@ -923,6 +923,15 @@
 
     /* ============ 렌더 ============ */
     function renderTab(tabId) {
+      /* 미국 지수 선물·지수의 네이버 차트 매핑 (ticker 기준) */
+      const NAVER_INDEX = {
+        '다우 선물':      'https://stock.naver.com/fchart/foreign/futures/YMcv1',
+        '나스닥100 미니': 'https://stock.naver.com/fchart/foreign/futures/NQcv1',
+        'S&P 500':        'https://stock.naver.com/fchart/foreign/futures/EScv1',
+        '러셀 2000':      'https://stock.naver.com/fchart/foreign/futures/RTYcv1',
+        'VIX':            'https://stock.naver.com/fchart/foreign/index/.VIX',
+        'DXY':            'https://stock.naver.com/fchart/marketindex/exchange/.DXY'
+      };
       const root = document.getElementById('main');
       var _ct = document.getElementById('chartTop'); if(_ct){ _ct.style.display = (tabId === 'chart') ? '' : 'none'; }
       const frag = document.createDocumentFragment();
@@ -978,6 +987,10 @@
             leftLabel = '업비트';
           } else if (/NASDAQ(%3A|:)/i.test(itUrl)) {
             naverUrl = 'https://stock.naver.com/fchart/foreign/stock/' + String(it.ticker).trim() + '.O';
+            leftLabel = '트레이딩뷰';
+          } else if (/(CME_MINI|TVC)(%3A|:)/i.test(itUrl) && NAVER_INDEX[String(it.ticker).trim()]) {
+            /* 미국 지수 선물·지수 → 네이버 */
+            naverUrl = NAVER_INDEX[String(it.ticker).trim()];
             leftLabel = '트레이딩뷰';
           }
 
