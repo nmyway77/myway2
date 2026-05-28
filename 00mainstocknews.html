@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>주식·코인 뉴스 · 실시간 | MYWAY.KR</title>
+<meta name="description" content="한경·매경·머니투데이·연합인포맥스 증권 뉴스와 코인리더스·블록미디어·블록체인투데이 코인 뉴스를 한 화면에서. 매체를 골라 바로 확인하세요.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://myway.kr/00mainstocknews.html">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{ --line:#ececec;--ink:#1a1a1a;--ink-sub:#8a8f99;--accent:#0b6b53;--body:"Pretendard",-apple-system,sans-serif; }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;height:100%}
+  body{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:#fff;color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
+
+  .topnav{flex:none;display:flex;gap:8px;align-items:center;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:10px 14px;background:#fff;border-bottom:1px solid var(--line);cursor:grab;scrollbar-width:none}
+  .topnav::-webkit-scrollbar{display:none}
+  .topnav.dragging{cursor:grabbing}
+  .nav-home{flex:none;order:0;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-sub);padding:8px;border-radius:10px;transition:color .15s,background .15s}
+  .nav-home:hover{color:var(--accent);background:#f5f6f8}
+  .nav-home svg{width:20px;height:20px;display:block}
+  .nav-track{flex:none;order:2;display:flex;align-items:center;gap:8px;margin:0 auto}
+  .topnav button{flex:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-family:var(--body);font-size:14px;font-weight:700;color:var(--ink-sub);cursor:pointer;transition:all .16s}
+  .topnav button:hover{border-color:#cfd3da;color:var(--ink)}
+  .topnav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .open-btn{flex:none;order:1;color:var(--ink-sub);font-weight:700}
+
+  .viewer{flex:1;position:relative;overflow:hidden;background:#0d0f12}
+  .viewer iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+</style>
+</head>
+<body>
+
+<nav class="topnav" id="topnav">
+  <a class="nav-home" href="https://myway.kr" aria-label="MYWAY.KR 홈">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
+  </a>
+  <div class="nav-track" id="navTrack"></div>
+</nav>
+
+<div class="viewer">
+  <iframe id="viewer" title="주식·코인 뉴스 뷰어" referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+</div>
+
+<script>
+/* === 상단 매체 버튼 (iframe에 바로 표시) — 주식·코인 뉴스 === */
+const SITES=[
+  ['한경','https://www.hankyung.com/koreamarket/'],
+  ['매경','https://www.mk.co.kr/news/stock'],
+  ['연합인포','https://news.einfomax.co.kr/'],
+  ['코인리더스','https://www.coinreaders.com/'],
+  ['블록미디어','https://www.blockmedia.co.kr/'],
+  ['블체미','https://blockchaintoday.co.kr/'],
+  ['트레이딩뷰','https://kr.tradingview.com/news-flow/', true], /* true = 새 창으로 */
+];
+const DEFAULT_I = 1; /* 메인: 매경 */
+
+let viewer=document.getElementById('viewer');
+function setViewerSrc(url){
+  /* iframe을 새로 만들어 교체 → 안쪽 iframe src 변경이 히스토리에 쌓이지 않아
+     뒤로가기가 중간 단계에 걸리지 않음 */
+  const fresh=document.createElement('iframe');
+  fresh.id='viewer'; fresh.title='주식·코인 뉴스 뷰어';
+  fresh.setAttribute('referrerpolicy','no-referrer');
+  fresh.setAttribute('allow','autoplay; encrypted-media; fullscreen');
+  fresh.setAttribute('allowfullscreen','');
+  fresh.src=url;
+  viewer.parentNode.replaceChild(fresh, viewer);
+  viewer=fresh;
+}
+
+const nav=document.getElementById('topnav');
+const track=document.getElementById('navTrack');
+let currentUrl=SITES[DEFAULT_I][1];
+
+function centerNavBtn(btn){
+  const navRect=nav.getBoundingClientRect();
+  const btnRect=btn.getBoundingClientRect();
+  const target=nav.scrollLeft + (btnRect.left - navRect.left) - (nav.clientWidth/2) + (btnRect.width/2);
+  nav.scrollTo({left:Math.max(0,target),behavior:'smooth'});
+}
+function clearActive(){ nav.querySelectorAll('button[data-site]').forEach(b=>b.classList.remove('active')); }
+
+/* 상단 매체 버튼 → iframe 표시 */
+function loadSite(i, btn){
+  currentUrl=SITES[i][1];
+  setViewerSrc(currentUrl);
+  openBtn.style.display='';
+  clearActive();
+  try { sessionStorage.setItem('mywayStockNewsV2','site:'+i); } catch(_) {}
+  if(btn){ btn.classList.add('active'); centerNavBtn(btn); }
+}
+
+/* 매체 버튼 생성 */
+SITES.forEach((s,i)=>{
+  const b=document.createElement('button'); b.textContent=s[0]; b.dataset.site=i;
+  if(s[2]){
+    /* 새 창으로 여는 매체(트레이딩뷰 등) — iframe에 로드하지 않음 */
+    b.dataset.ext='1';
+    b.addEventListener('click',()=>window.open(s[1],'_blank','noopener'));
+  } else {
+    b.addEventListener('click',()=>loadSite(i,b));
+  }
+  track.appendChild(b);
+});
+/* 새 탭으로 열기 (맨 앞 - 홈 버튼 다음, 항상 보이게) */
+const openBtn=document.createElement('button'); openBtn.className='open-btn'; openBtn.textContent='↗ 새 탭';
+openBtn.addEventListener('click',()=>window.open(currentUrl,'_blank','noopener'));
+nav.insertBefore(openBtn, track);
+
+/* 네비 드래그 스크롤 */
+(function(){
+  let down=false,startX=0,startL=0,moved=false;
+  nav.addEventListener('pointerdown',e=>{ if(e.button!==0) return; down=true;moved=false;startX=e.clientX;startL=nav.scrollLeft;nav.classList.add('dragging'); });
+  nav.addEventListener('pointermove',e=>{ if(!down) return; const dx=e.clientX-startX; if(Math.abs(dx)>4) moved=true; nav.scrollLeft=startL-dx; });
+  const end=()=>{ down=false; nav.classList.remove('dragging'); };
+  nav.addEventListener('pointerup',end);
+  nav.addEventListener('pointercancel',end);
+  nav.addEventListener('pointerleave',end);
+  nav.addEventListener('click',e=>{ if(moved){ e.stopPropagation(); e.preventDefault(); moved=false; } },true);
+  nav.addEventListener('wheel',e=>{ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ nav.scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
+})();
+
+/* 초기화: 저장된 마지막 매체 복원(없으면 한경) */
+(function(){
+  var saved='';
+  try { saved = sessionStorage.getItem('mywayStockNewsV2') || ''; } catch(_) {}
+  var ms = /^site:(\d+)$/.exec(saved);
+  if(ms){
+    var i=parseInt(ms[1],10);
+    var b=track.querySelector('button[data-site="'+i+'"]');
+    if(b){ loadSite(i,b); return; }
+  }
+  var b0=track.querySelector('button[data-site="'+DEFAULT_I+'"]');
+  loadSite(DEFAULT_I, b0);
+})();
+
+/* 복사 방지 */
+(function(){
+  const isField=el=>el&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA'||el.tagName==='SELECT');
+  ['contextmenu','selectstart','dragstart','copy','cut'].forEach(ev=>{
+    document.addEventListener(ev,e=>{ if(isField(e.target)) return; e.preventDefault(); });
+  });
+  document.addEventListener('keydown',e=>{
+    const k=(e.key||'').toLowerCase();
+    if(e.key==='F12'){e.preventDefault();return;}
+    if(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(k)){e.preventDefault();return;}
+    if(e.ctrlKey&&['u','s','c','x','a'].includes(k)){ if(isField(e.target)&&['c','x','a'].includes(k)) return; e.preventDefault(); }
+  });
+})();
+</script>
+<script>
+/* 모바일: 외부 링크를 최상위 창에서 열어 뒤로가기로 MYWAY 복귀. PC·태블릿은 새 탭. */
+(function(){
+  if(!/Mobi/i.test(navigator.userAgent)) return;
+  document.addEventListener("click", function(e){
+    var a = e.target.closest ? e.target.closest("a[href]") : null;
+    if(!a) return;
+    var href = a.getAttribute("href") || "";
+    if(!href || href.charAt(0) === "#" || /^javascript:/i.test(href)) return;
+    e.preventDefault();
+    try { (window.top || window).location.href = a.href; }
+    catch(_) { window.open(a.href, "_blank"); }
+  }, true);
+  var _open = window.open.bind(window);
+  window.open = function(url, name, feat){
+    if(url){ try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
+    return _open(url, name, feat);
+  };
+})();
+</script>
+</body>
+</html>
