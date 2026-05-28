@@ -508,7 +508,7 @@
             sub: 'US Futures · TradingView',
             items: [
               { ticker: '다우 선물',     ko: 'DJIA Futures',  url: 'https://kr.tradingview.com/chart/?symbol=CME_MINI%3AYM1!' },
-              { ticker: '나스닥100 미니', ko: 'E-mini · NQ',   url: 'https://kr.tradingview.com/chart/?symbol=CME_MINI%3ANQ1!' },
+              { ticker: '나스닥100 미니', ko: 'E-mini · NQ',   url: 'https://kr.tradingview.com/symbols/CME_MINI-NQ1!/' },
               { ticker: 'S&P 500',       ko: 'ES Futures',    url: 'https://kr.tradingview.com/chart/?symbol=CME_MINI%3AES1!' },
               { ticker: '러셀 2000',     ko: 'RTY Futures',   url: 'https://kr.tradingview.com/chart/?symbol=CME_MINI%3ARTY1!' },
               { ticker: 'VIX',           ko: '변동성 지수',   url: 'https://kr.tradingview.com/chart/?symbol=TVC%3AVIX' },
@@ -997,8 +997,8 @@
             naverUrl = 'https://stock.naver.com/fchart/foreign/stock/' + String(it.ticker).trim() + '.O';
             leftLabel = '트레이딩뷰';
             leftUrl = it.url;
-          } else if (/(CME_MINI|TVC)(%3A|:)/i.test(itUrl) && NAVER_INDEX[String(it.ticker).trim()]) {
-            /* 미국 지수 선물·지수 → 네이버 */
+          } else if (NAVER_INDEX[String(it.ticker).trim()] && /tradingview\.com/i.test(itUrl)) {
+            /* 미국 지수 선물·지수 → 네이버 (ticker 기반 매칭, URL 형식 무관) */
             naverUrl = NAVER_INDEX[String(it.ticker).trim()];
             leftLabel = '트레이딩뷰';
             leftUrl = it.url;
