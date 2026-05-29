@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>영상 디렉토리 · MYWAY</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="유튜브 영상과 라이브 화면을 사진 카드로 모아두고 한 화면에서 바로 감상하는 영상 디렉토리입니다.">
+  <style>
+    :root{
+      --paper:#f7f3eb; --panel:#fffdf8; --panel-2:#f1ece0;
+      --ink:#2a2620; --ink-soft:#6b6353; --line:#e7dfcf;
+      --accent:#d24b35; --accent-soft:#fbe7e1;
+      --serif:Georgia,"Apple SD Gothic Neo","Malgun Gothic",serif;
+      --sans:system-ui,-apple-system,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+      --shadow:0 4px 14px rgba(60,45,30,.12),0 1px 3px rgba(0,0,0,.06);
+      --shadow-hi:0 12px 30px rgba(60,45,30,.22);
+    }
+    *{box-sizing:border-box;}
+    html,body{margin:0;padding:0;height:100%;background:var(--paper);}
+    body{min-height:100vh;min-width:100vw;color:var(--ink);font-family:var(--sans);-webkit-user-select:none;user-select:none;}
+    input,textarea{-webkit-user-select:text;user-select:text;}
+    .container{display:flex;flex-direction:column;height:100vh;height:100dvh;width:100vw;overflow:hidden;}
+
+    /* ===== 사이드(하단 바) — 보기 전용 ===== */
+    .side-nav{order:2;width:100%;flex:0 0 auto;background:var(--panel);border-top:1px solid var(--line);display:flex;flex-direction:column;z-index:50;}
+    .side-bar{display:flex;align-items:center;gap:9px;padding:7px 14px 0;}
+    .home-mini{flex:0 0 auto;width:30px;height:30px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 2px 6px rgba(210,75,53,.35);transition:.16s;}
+    .home-mini:hover{background:#bb3f2c;transform:translateY(-1px);}
+    .home-mini svg{width:16px;height:16px;fill:#fff;}
+    .brand{font-family:var(--serif);font-weight:700;font-size:.92rem;letter-spacing:-.01em;color:var(--ink);margin:0;white-space:nowrap;}
+    .video-list{flex:0 0 auto;overflow-x:auto;overflow-y:hidden;padding:7px 14px 9px;display:flex;flex-direction:row;gap:9px;scrollbar-width:thin;scrollbar-color:#d8cfbd transparent;cursor:grab;}
+    .video-list.drag-scrolling{cursor:grabbing;}
+    .video-list::-webkit-scrollbar{height:8px;}
+    .video-list::-webkit-scrollbar-thumb{background:#dcd3c1;border-radius:8px;}
+    .video-list::-webkit-scrollbar-track{background:transparent;}
+    .empty-hint{color:var(--ink-soft);font-size:.86rem;line-height:1.6;text-align:center;padding:30px 14px;}
+
+    /* ===== 사진 카드 (사진 + 제목) ===== */
+    .video-card{position:relative;flex:0 0 150px;width:150px;overflow:hidden;border-radius:11px;cursor:pointer;background:#e9e2d3;border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s,border-color .2s;}
+    .video-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hi);}
+    .video-card.active{box-shadow:0 0 0 2px var(--accent),var(--shadow-hi);border-color:var(--accent);}
+    .card-img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;}
+    .card-ph{display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:16/9;color:#fff;font-weight:700;font-size:.9rem;text-align:center;padding:6px;background:var(--accent);}
+    .card-name{position:absolute;left:0;right:0;bottom:0;padding:14px 9px 6px;color:#fff;font-weight:600;font-size:.78rem;text-shadow:0 1px 6px rgba(0,0,0,.6);background:linear-gradient(to top,rgba(15,12,10,.7),rgba(15,12,10,0));pointer-events:none;}
+    .play-flag{position:absolute;top:7px;left:7px;width:8px;height:8px;border-radius:50%;background:#fff;opacity:0;box-shadow:0 0 8px #fff;transition:.2s;}
+    .video-card.active .play-flag{opacity:1;background:var(--accent);box-shadow:0 0 9px var(--accent);}
+
+    .side-foot{display:none;}
+    .side-foot a{color:var(--accent);text-decoration:none;font-weight:600;}
+
+    /* ===== 메인 (영역 꽉 채움) ===== */
+    .main{order:1;flex:1 1 auto;min-width:0;width:100%;height:auto;background:#1b1814;position:relative;}
+    .yt-container,.yt-inner{position:static;display:block;width:100%;height:100%;}
+    .yt-frame-box{position:absolute;inset:0;background:#000;overflow:hidden;}
+    iframe,video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;display:block;}
+
+    /* 전체화면 버튼 */
+    .expand-btn{position:absolute;right:16px;bottom:16px;z-index:60;width:42px;height:42px;border:none;border-radius:11px;cursor:pointer;background:rgba(20,18,16,.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.35);transition:.16s;opacity:.85;}
+    .expand-btn:hover{background:rgba(20,18,16,.8);opacity:1;transform:translateY(-1px);}
+    .expand-btn svg{width:20px;height:20px;fill:#fff;pointer-events:none;}
+
+    /* ===== 반응형 ===== */
+    @media (max-width:900px){
+      .side-bar{padding:7px 12px 0;gap:8px;}
+      .video-list{padding:7px 12px 8px;gap:8px;}
+      .video-card{flex:0 0 124px;width:124px;}
+      .expand-btn{right:12px;bottom:12px;width:38px;height:38px;}
+    }
+    @media (max-width:560px){
+      .video-card{flex:0 0 112px;width:112px;}
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <aside class="side-nav">
+    <div class="side-bar">
+      <a class="home-mini" href="https://myway.kr" target="_top" title="홈으로">
+        <svg viewBox="0 0 24 24"><path d="M12 3 2 12h3v8h6v-5h2v5h6v-8h3z"/></svg>
+      </a>
+      <h1 class="brand">영상 디렉토리</h1>
+    </div>
+    <div class="video-list" id="videoList"></div>
+    <div class="side-foot"><a href="https://myway.kr" target="_top">myway.kr</a></div>
+  </aside>
+
+  <div class="main">
+    <div class="yt-container">
+      <div class="yt-inner">
+        <div class="yt-frame-box" id="ytFrameBox">
+          <iframe id="mainFrame" src="https://www.youtube.com/embed/DSgn-lTHJzM?autoplay=1&amp;mute=1&amp;playsinline=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+      </div>
+    </div>
+    <button class="expand-btn" id="expandBtn" onclick="toggleFullscreen()" title="전체화면">
+      <svg viewBox="0 0 24 24"><path d="M4 4h6V2H2v8h2V4zm16 0v6h2V2h-8v2h6zM4 20v-6H2v8h8v-2H4zm16 0h-6v2h8v-8h-2v6z"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  /* ====================================================================
+     ▼ 영상 목록 — 여기만 수정하면 됩니다. (사진 / URL / 제목)
+       · url  : 유튜브 또는 사이트 주소 (필수)
+       · name : 카드에 표시할 제목
+       · img  : 사진 주소 (생략하면 유튜브 썸네일 자동)
+  ==================================================================== */
+  var DEFAULT_VIDEOS = [
+    { url:'https://www.youtube.com/watch?v=DSgn-lTHJzM', name:'서울역' },
+    { url:'https://www.youtube.com/watch?v=0G0hgz_Aq5Y', name:'송정해수욕장1' },
+    { url:'https://www.youtube.com/watch?v=tQ9tse8cTy4', name:'송정2' },
+    { url:'https://www.youtube.com/watch?v=hGYVR5h8IfE', name:'고성해수욕장' },
+    { url:'https://www.youtube.com/watch?v=jmVmZlsQIL8', name:'광안대교1' },
+    { url:'https://www.youtube.com/watch?v=2SyeAPODClU', name:'광안대교2' },
+    { url:'https://www.youtube.com/watch?v=009kOq0x4ZI', name:'강문해변' },
+    { url:'https://www.youtube.com/watch?v=f-77scE-PVw', name:'석촌호수' },
+    { url:'https://www.ulleung.go.kr/live/index.do?lnk_uid=56', name:'독도' },
+    { url:'https://www.jeju.go.kr/tool/halla/cctv_01.html', name:'한라산' },
+    { url:'https://www.jejuits.go.kr/jido/mainView.do?DEVICE_KIND=CCTV', name:'제주전지역' },
+    { url:'https://d.kbs.co.kr/special/cctv', name:'KBS재난지역' }
+  ];
+
+  var videos = DEFAULT_VIDEOS.map(function(v){ return { url:v.url||'', img:v.img||'', name:v.name||'' }; });
+  var selectedIdx = videos.length ? 0 : null;
+  var suppressClick = false;
+
+  function getYouTubeId(input){
+    input = (input||'').trim();
+    var m = input.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/|youtube\.com\/live\/)([a-zA-Z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }
+  function cardImage(v){
+    if (v.img) return v.img;
+    var id = getYouTubeId(v.url);
+    return id ? 'https://i.ytimg.com/vi/'+id+'/hqdefault.jpg' : '';
+  }
+  function parseToEmbed(input){
+    input = (input||'').trim();
+    var id = getYouTubeId(input);
+    if (id) return {type:'youtube', code:'https://www.youtube.com/embed/'+id+'?autoplay=1&mute=1&playsinline=1'};
+    if (input.match(/^https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]{11}/))
+      return {type:'youtube', code: input.indexOf('autoplay=1')>=0 ? input : input + (input.indexOf('?')>=0?'&autoplay=1':'?autoplay=1')};
+    var vm = input.match(/vimeo\.com\/(\d+)/);
+    if (vm) return {type:'vimeo', code:'https://player.vimeo.com/video/'+vm[1]+'?autoplay=1'};
+    if (input.match(/\.(mp4|webm|ogg)(\?|$)/i)) return {type:'video', code:input};
+    if (input.indexOf('<iframe')===0) return {type:'embed', code:input};
+    return {type:'link', code:input};
+  }
+
+  function renderList(){
+    var list = document.getElementById('videoList');
+    list.innerHTML = '';
+    if (videos.length===0){
+      list.innerHTML = '<div class="empty-hint">표시할 영상이 없습니다.</div>';
+      return;
+    }
+    videos.forEach(function(v,i){
+      var card = document.createElement('div');
+      card.className = 'video-card' + (i===selectedIdx ? ' active' : '');
+
+      var imgUrl = cardImage(v);
+      var ytid = getYouTubeId(v.url);
+      function addPlaceholder(){
+        var oi = card.querySelector('.card-img'); if(oi) oi.remove();
+        var on = card.querySelector('.card-name'); if(on) on.remove();
+        if (card.querySelector('.card-ph')) return;
+        var ph = document.createElement('div');
+        ph.className = 'card-ph';
+        ph.textContent = v.name || '\u25B6';
+        card.insertBefore(ph, card.firstChild);
+      }
+      if (imgUrl){
+        var img = document.createElement('img');
+        img.className = 'card-img';
+        img.alt = '';
+        img.referrerPolicy = 'no-referrer';
+        var chain = (!v.img && ytid)
+          ? ['https://i.ytimg.com/vi/'+ytid+'/hqdefault.jpg','https://i.ytimg.com/vi/'+ytid+'/mqdefault.jpg','https://i.ytimg.com/vi/'+ytid+'/default.jpg']
+          : [imgUrl];
+        var ci = 0;
+        img.onerror = function(){ ci++; if (ci < chain.length){ img.src = chain[ci]; } else { img.onerror=null; addPlaceholder(); } };
+        img.src = chain[0];
+        card.appendChild(img);
+        if (v.name){
+          var nm = document.createElement('div');
+          nm.className = 'card-name';
+          nm.textContent = v.name;
+          card.appendChild(nm);
+        }
+      } else {
+        addPlaceholder();
+      }
+
+      var flag = document.createElement('div');
+      flag.className = 'play-flag';
+      card.appendChild(flag);
+
+      card.onclick = function(){ if(suppressClick) return; selectedIdx = i; renderList(); renderMain(); scrollActive(); };
+
+      list.appendChild(card);
+    });
+  }
+
+  function scrollActive(){
+    var act = document.querySelector('.video-card.active');
+    if (act && act.scrollIntoView) act.scrollIntoView({behavior:'smooth', block:'center', inline:'center'});
+  }
+
+  function enableDragScroll(){
+    var list = document.getElementById('videoList');
+    if (!list) return;
+    var down=false, startX=0, startScroll=0, moved=false;
+    list.addEventListener('mousedown', function(e){
+      down=true; moved=false; startX=e.pageX; startScroll=list.scrollLeft;
+      list.classList.add('drag-scrolling');
+    });
+    document.addEventListener('mousemove', function(e){
+      if(!down) return;
+      var dx = e.pageX - startX;
+      if(Math.abs(dx)>4) moved=true;
+      list.scrollLeft = startScroll - dx;
+    });
+    document.addEventListener('mouseup', function(){
+      if(!down) return;
+      down=false; list.classList.remove('drag-scrolling');
+      if(moved){ suppressClick=true; setTimeout(function(){ suppressClick=false; }, 0); }
+    });
+    list.addEventListener('wheel', function(e){
+      if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){ list.scrollLeft += e.deltaY; e.preventDefault(); }
+    }, {passive:false});
+  }
+
+  function toggleFullscreen(){
+    var el = document.querySelector('.main');
+    var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+    if (!fsEl){ var req = el.requestFullscreen || el.webkitRequestFullscreen; if(req) req.call(el); }
+    else { var ex = document.exitFullscreen || document.webkitExitFullscreen; if(ex) ex.call(document); }
+  }
+
+  function renderMain(){
+    var v = (selectedIdx!=null && videos[selectedIdx]) ? videos[selectedIdx] : null;
+    var box = document.getElementById('ytFrameBox');
+    if (v){
+      var p = parseToEmbed(v.url);
+      if (p.type==='youtube' || p.type==='vimeo' || p.type==='link'){
+        box.innerHTML = '<iframe src="'+p.code+'" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
+      } else if (p.type==='video'){
+        box.innerHTML = '<video src="'+p.code+'" controls autoplay muted playsinline></video>';
+      } else if (p.type==='embed'){
+        box.innerHTML = p.code;
+      } else {
+        box.innerHTML = '<div style="color:#fff;text-align:center;margin:auto;">알 수 없는 주소입니다.</div>';
+      }
+    } else {
+      box.innerHTML = '<iframe src="https://www.youtube.com/embed/DSgn-lTHJzM?autoplay=1&mute=1&playsinline=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
+    }
+  }
+
+  // 복사 방지
+  ['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){
+    document.addEventListener(ev, function(e){
+      var t = e.target;
+      if (t && (t.tagName==='INPUT' || t.tagName==='TEXTAREA')) return;
+      e.preventDefault();
+    });
+  });
+  document.addEventListener('keydown', function(e){
+    var t = e.target;
+    var isInput = t && (t.tagName==='INPUT' || t.tagName==='TEXTAREA');
+    var k = (e.key||'').toUpperCase();
+    if (e.key==='F12'){ e.preventDefault(); return; }
+    if (e.ctrlKey && e.shiftKey && ['I','J','C'].indexOf(k)>=0){ e.preventDefault(); return; }
+    if (e.ctrlKey && ['U','S','C','X','A'].indexOf(k)>=0){
+      if (isInput && ['C','X','A'].indexOf(k)>=0) return;
+      e.preventDefault();
+    }
+  });
+
+  renderList();
+  renderMain();
+  enableDragScroll();
+</script>
+</body>
+</html>
