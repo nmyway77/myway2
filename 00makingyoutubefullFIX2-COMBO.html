@@ -180,6 +180,7 @@
   var videos = normalize(VIDEO_GROUPS[currentGroup]);
   var selectedIdx = videos.length ? 0 : null;
   var suppressClick = false;
+  var mobileNoticeShown = false;  // 모바일에서 새 탭 안내를 한 번이라도 보여줬는지
 
   function onGroupChange(){
     var sel = document.getElementById('groupSelect');
@@ -263,7 +264,15 @@
       flag.className = 'play-flag';
       card.appendChild(flag);
 
-      card.onclick = function(){ if(suppressClick) return; selectedIdx = i; renderList(); renderMain(); scrollActive(); };
+      card.onclick = function(){
+        if(suppressClick) return;
+        selectedIdx = i;
+        var p = parseToEmbed(videos[i].url);
+        if (isMobileDevice() && p.type==='link' && mobileNoticeShown){
+          window.open(videos[i].url, '_blank', 'noopener');
+        }
+        renderList(); renderMain(); scrollActive();
+      };
 
       list.appendChild(card);
     });
@@ -322,6 +331,7 @@
         box.innerHTML = '<iframe src="'+p.code+'" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
       } else if (p.type==='link'){
         if (isMobileDevice()){
+          mobileNoticeShown = true;
           var nm = escAttr(v.name || '영상 페이지');
           var href = escAttr(v.url);
           box.innerHTML =
