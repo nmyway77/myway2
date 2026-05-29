@@ -138,15 +138,17 @@ const DIRECTORY = [
 
 let viewer=document.getElementById('viewer');
 function setViewerSrc(url){
-  /* iframe을 새로 만들어 교체 → 안쪽 iframe src 변경이 히스토리에 쌓이지 않아
-     뒤로가기가 중간 단계에 걸리지 않음 */
-  const fresh=document.createElement('iframe');
-  fresh.id='viewer'; fresh.title='LIVE TV 뷰어';
-  fresh.setAttribute('referrerpolicy','no-referrer');
-  fresh.setAttribute('allow','autoplay; encrypted-media; fullscreen');
-  fresh.setAttribute('allowfullscreen','');
-  fresh.src=url;
-  viewer.parentNode.replaceChild(fresh, viewer);
+  /* iframe을 마크업(innerHTML)으로 새로 만들어 교체.
+     → allow(자동재생 권한)가 src 로드 시점에 확실히 적용되어 모바일 자동재생이 안정적.
+     → 기존 iframe만 교체하므로 gridPanel(전체목록)은 그대로 유지됨. */
+  const wrap=document.querySelector('.viewer');
+  const old=document.getElementById('viewer');
+  const safe=String(url).replace(/"/g,'%22');
+  const tmp=document.createElement('div');
+  tmp.innerHTML='<iframe id="viewer" title="LIVE TV 뷰어" referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen src="'+safe+'"></iframe>';
+  const fresh=tmp.firstElementChild;
+  if(old){ old.replaceWith(fresh); }
+  else { wrap.insertBefore(fresh, wrap.firstChild); }
   viewer=fresh;
 }
 const gridPanel=document.getElementById('gridPanel');
