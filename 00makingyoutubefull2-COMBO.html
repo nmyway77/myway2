@@ -81,6 +81,8 @@
     .modal-inner label{font-size:.8rem;font-weight:600;color:var(--ink-soft);margin:8px 0 5px;}
     .modal-inner input[type=text]{padding:11px 14px;border-radius:10px;border:1px solid var(--line);font-size:.95rem;background:var(--paper);color:var(--ink);font-family:var(--sans);outline:none;transition:.15s;width:100%;}
     .modal-inner input[type=text]:focus{border-color:var(--accent);background:#fff;}
+    .modal-inner select.modal-select{padding:11px 38px 11px 14px;border-radius:10px;border:1px solid var(--line);font-size:.95rem;background-color:var(--paper);color:var(--ink);font-family:var(--sans);font-weight:600;outline:none;transition:.15s;width:100%;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='%236b6353'><path d='M7 10l5 5 5-5z'/></svg>");background-repeat:no-repeat;background-position:right 13px center;}
+    .modal-inner select.modal-select:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft);}
     .img-preview{margin-top:8px;width:100%;aspect-ratio:16/9;border-radius:10px;border:1px dashed var(--line);background:#f1ece0 center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:.82rem;overflow:hidden;}
     .modal-actions{display:flex;gap:9px;margin-top:18px;}
     .modal-actions button{flex:1;padding:11px 0;border-radius:11px;border:none;cursor:pointer;font-size:.95rem;font-weight:600;font-family:var(--sans);transition:.15s;}
@@ -154,6 +156,19 @@
 <div id="addModal" class="modal-bg">
   <div class="modal-inner">
     <h2 class="modal-title" id="modalTitle">영상 추가</h2>
+    <label>저장할 방송사</label>
+    <select id="addGroup" class="modal-select">
+      <option value="KBS">KBS</option>
+      <option value="MBC">MBC</option>
+      <option value="SBS">SBS</option>
+      <option value="JTBC">JTBC</option>
+      <option value="CHA">채널A</option>
+      <option value="TV조선">TV조선</option>
+      <option value="A">그외 A</option>
+      <option value="B">그외 B</option>
+      <option value="C">그외 C</option>
+      <option value="D">그외 D</option>
+    </select>
     <label>유튜브 / 영상 주소</label>
     <input id="addUrl" type="text" placeholder="https://youtu.be/..." autocomplete="off" oninput="updatePreview()">
     <label>제목 (사진 아래 표시 · 비워도 됨)</label>
@@ -406,6 +421,7 @@
     editIdx = null;
     document.getElementById('modalTitle').textContent = '영상 추가';
     document.getElementById('delBtn').style.display = 'none';
+    document.getElementById('addGroup').value = currentGroup;
     document.getElementById('addUrl').value = '';
     document.getElementById('addName').value = '';
     document.getElementById('addImg').value = '';
@@ -417,6 +433,7 @@
     editIdx = idx;
     document.getElementById('modalTitle').textContent = '영상 수정';
     document.getElementById('delBtn').style.display = '';
+    document.getElementById('addGroup').value = currentGroup;
     document.getElementById('addUrl').value = videos[idx].url || '';
     document.getElementById('addName').value = videos[idx].name || '';
     document.getElementById('addImg').value = videos[idx].img || '';
@@ -434,16 +451,50 @@
     var url = document.getElementById('addUrl').value.trim();
     var name = document.getElementById('addName').value.trim();
     var img = document.getElementById('addImg').value.trim();
+    var targetGroup = document.getElementById('addGroup').value;
     if (!url){ alert('영상 주소를 입력하세요.'); return; }
+    if (!groupsData[targetGroup]) groupsData[targetGroup] = [];
+
+    var movedToOther = false;
+
     if (editIdx===null){
-      videos.push({ url:url, img:img, name:name, color:'#5b6470' });
-      selectedIdx = videos.length-1;
+      // 추가
+      var item = { url:url, img:img, name:name, color:'#5b6470' };
+      if (targetGroup === currentGroup){
+        videos.push(item);
+        selectedIdx = videos.length-1;
+      } else {
+        groupsData[targetGroup].push(item);
+        movedToOther = true;
+      }
     } else {
-      videos[editIdx].url = url;
-      videos[editIdx].name = name;
-      videos[editIdx].img = img;
+      // 수정
+      var cur = videos[editIdx];
+      cur.url = url; cur.name = name; cur.img = img;
+      if (targetGroup !== currentGroup){
+        // 다른 방송사로 이동
+        videos.splice(editIdx,1);
+        groupsData[targetGroup].push(cur);
+        if (videos.length===0) selectedIdx = null;
+        else if (selectedIdx >= videos.length) selectedIdx = videos.length-1;
+        movedToOther = true;
+      }
     }
-    persist(); closeAddModal(); renderList(); renderMain();
+
+    persist();
+    closeAddModal();
+
+    if (movedToOther){
+      // 저장한 방송사 그룹으로 화면 전환
+      currentGroup = targetGroup;
+      videos = groupsData[currentGroup];
+      selectedIdx = videos.length>0 ? videos.length-1 : null;
+      var topSel = document.getElementById('groupSelect');
+      if (topSel) topSel.value = currentGroup;
+      persist();
+    }
+
+    renderList(); renderMain();
   }
   function deleteVideo(){
     if (editIdx===null) return;
