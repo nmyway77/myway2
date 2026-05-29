@@ -305,34 +305,13 @@
     else { var ex = document.exitFullscreen || document.webkitExitFullscreen; if(ex) ex.call(document); }
   }
 
-  function isMobileDevice(){
-    return /Android|iPhone|iPad|iPod|IEMobile|Opera Mini|Mobi/i.test(navigator.userAgent || '')
-        || (typeof window.matchMedia === 'function' && window.matchMedia('(max-width:900px)').matches);
-  }
-  function escAttr(s){
-    return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
   function renderMain(){
     var v = (selectedIdx!=null && videos[selectedIdx]) ? videos[selectedIdx] : null;
     var box = document.getElementById('ytFrameBox');
     if (v){
       var p = parseToEmbed(v.url);
-      if (p.type==='youtube' || p.type==='vimeo'){
+      if (p.type==='youtube' || p.type==='vimeo' || p.type==='link'){
         box.innerHTML = '<iframe src="'+p.code+'" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
-      } else if (p.type==='link'){
-        if (isMobileDevice()){
-          var nm = escAttr(v.name || '영상 페이지');
-          var href = escAttr(v.url);
-          box.innerHTML =
-            '<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:26px;text-align:center;background:#1b1814;">'
-            + '<div style="font-size:1.06rem;font-weight:700;color:#f4ede1;">'+nm+'</div>'
-            + '<div style="font-size:.85rem;line-height:1.6;color:#b6ab98;max-width:300px;">이 화면은 휴대폰 브라우저 정책상 앱 안에서 바로 재생되지 않아요. 아래 버튼으로 새 탭에서 열어 주세요.</div>'
-            + '<a href="'+href+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:13px 24px;border-radius:12px;background:#d24b35;color:#fff;font-weight:700;font-size:.96rem;text-decoration:none;box-shadow:0 4px 14px rgba(210,75,53,.4);">새 탭에서 열기 →</a>'
-            + '</div>';
-        } else {
-          box.innerHTML = '<iframe src="'+p.code+'" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
-        }
       } else if (p.type==='video'){
         box.innerHTML = '<video src="'+p.code+'" controls autoplay muted playsinline></video>';
       } else if (p.type==='embed'){
