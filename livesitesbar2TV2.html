@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>LIVE TV · 실시간 방송 | MYWAY.KR</title>
+<meta name="description" content="지상파·종편·뉴스·경제·해외 실시간 방송과 치지직·SOOP·트위치 라이브를 한 화면에서. 상단 채널을 골라 전체 화면으로 보세요.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://myway.kr/00mainlivetv.html">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{ --line:#ececec;--ink:#1a1a1a;--ink-sub:#8a8f99;--accent:#0b6b53;--body:"Pretendard",-apple-system,sans-serif; }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;height:100%}
+  body{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:#fff;color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
+
+  .topnav{flex:none;display:flex;gap:8px;align-items:center;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:10px 14px;background:#fff;border-bottom:1px solid var(--line);cursor:grab;scrollbar-width:none}
+  .topnav::-webkit-scrollbar{display:none}
+  .topnav.dragging{cursor:grabbing}
+  .nav-home{flex:none;order:0;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-sub);padding:8px;border-radius:10px;transition:color .15s,background .15s}
+  .nav-home:hover{color:var(--accent);background:#f5f6f8}
+  .nav-home svg{width:20px;height:20px;display:block}
+  .nav-track{flex:none;order:3;display:flex;align-items:center;gap:8px;margin:0 auto}
+  .topnav button{flex:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-family:var(--body);font-size:14px;font-weight:700;color:var(--ink-sub);cursor:pointer;transition:all .16s}
+  .topnav button:hover{border-color:#cfd3da;color:var(--ink)}
+  .topnav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .topnav .grid-btn{order:1;border-color:#b9e0d4;color:var(--accent)}
+  .open-btn{flex:none;order:2;color:var(--ink-sub);font-weight:700}
+
+  .viewer{flex:1;position:relative;overflow:hidden;background:#0d0f12}
+  .viewer iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+
+  /* 전체목록(디렉터리) 패널 */
+  .grid-panel{position:absolute;inset:0;overflow-y:auto;display:none;padding:30px 16px 60px;background:#fff;scrollbar-width:none}
+  .grid-panel::-webkit-scrollbar{display:none}
+  .grid-panel.show{display:block}
+  .grid-title{text-align:center;font-size:20px;font-weight:800;letter-spacing:-0.02em;color:#244;margin:0 0 6px}
+  .grid-sub{text-align:center;font-size:13px;color:var(--ink-sub);margin:0 0 26px}
+  .dir-section{max-width:1040px;margin:0 auto 24px}
+  .dir-label{font-size:12.5px;font-weight:800;color:var(--accent);letter-spacing:.5px;text-transform:uppercase;margin:0 0 10px;padding:0 4px}
+  .dir-grid{display:grid;grid-template-columns:repeat(4,1fr);column-gap:10px;row-gap:26px}
+  .dir-card{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:14px 15px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;text-align:left;text-decoration:none;color:inherit;font-family:var(--body);transition:all .15s;box-shadow:0 2px 4px rgba(90,90,130,.06);position:relative;overflow:visible}
+  .dir-card::after{content:"";position:absolute;left:2.5%;right:2.5%;top:100%;height:18px;background:url('https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png') center top / 100% 100% no-repeat;pointer-events:none;z-index:1}
+  .dir-card:hover{border-color:var(--accent);background:#f5fbf8;transform:translateY(-2px);box-shadow:0 4px 10px rgba(11,107,83,.12)}
+  .dir-card .t{font-size:15px;font-weight:800;color:var(--ink);letter-spacing:-0.3px;line-height:1.15}
+  .dir-card .k{font-size:11px;color:var(--ink-sub);line-height:1.2}
+  @media (max-width:720px){ .dir-grid{grid-template-columns:repeat(2,1fr);row-gap:24px} .grid-panel{padding:24px 12px 50px} }
+</style>
+</head>
+<body>
+
+<nav class="topnav" id="topnav">
+  <a class="nav-home" href="https://myway.kr" aria-label="MYWAY.KR 홈">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
+  </a>
+  <div class="nav-track" id="navTrack"></div>
+</nav>
+
+<div class="viewer">
+  <iframe id="viewer" title="LIVE TV 뷰어" referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+  <div class="grid-panel" id="gridPanel"></div>
+</div>
+
+<script>
+/* === 상단 채널 버튼 (iframe에 바로 재생) — livesitesbar2 채널 === */
+const SITES=[
+  ['Famelack','https://famelack.com/'],
+  ['TVAPP','https://int.klcis.cc/'],
+  ['네이버TV','https://tv.naver.com/l'],
+  ['치지직','https://chzzk.naver.com/lives'],
+  ['SOOP','https://www.sooplive.co.kr/live/all'],
+  ['MBC','https://onair.imbc.com/'],
+  ['SBS','https://www.sbs.co.kr/live/S01?div=main_live'],
+  ['KBS2','https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList'],
+  ['KBS1','https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList'],
+  ['KBS24','https://news.kbs.co.kr/news/pc/news24/news24.html'],
+  ['채널A','https://ichannela.com/com/cmm/onair.do'],
+  ['YTN','https://www.ytn.co.kr/_hd/hd_live.html'],
+  ['연합뉴스','https://www.yonhapnewstv.co.kr/live'],
+  ['아리랑TV','arirang.html'],
+  ['NHK','https://www3.nhk.or.jp/nhkworld/en/live/'],
+  ['ABC','abc.html'],
+  ['ABC7','https://abc7.com/watch/live'],
+];
+const DEFAULT_I = SITES.findIndex(s=>s[0]==='Famelack');
+
+/* === 전체목록 디렉터리 (카테고리별) — livetv 데이터 === */
+const DIRECTORY = [
+  { label:'실시간 스트리밍', items:[
+    ['치지직','CHZZK · chzzk.naver.com','https://chzzk.naver.com/'],
+    ['SOOP','구 아프리카TV · sooplive','https://www.sooplive.co.kr/'],
+    ['트위치','Twitch · twitch.tv','https://www.twitch.tv/'],
+    ['네이버TV','LIVE · tv.naver.com','https://tv.naver.com/l/livehome'],
+    ['카카오TV','LIVE · tv.kakao.com','https://tv.kakao.com/live'],
+    ['네이버 쇼핑라이브','shoppinglive.naver.com','https://shoppinglive.naver.com/home'],
+    ['미국 LIVE 모음','thetvapp.to','https://thetvapp.to/'],
+    ['TheTVApp','int.klcis.cc','https://int.klcis.cc/'],
+    ['TV Garden','전세계 채널 · tv.garden','https://tv.garden/'],
+  ]},
+  { label:'지상파·종합편성 LIVE', items:[
+    ['KBS1','onair.kbs.co.kr','https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList'],
+    ['KBS2','onair.kbs.co.kr','https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList'],
+    ['MBC','onair.imbc.com','https://onair.imbc.com/'],
+    ['SBS','sbs.co.kr/live','https://www.sbs.co.kr/live/S01?div=main_live'],
+    ['JTBC','onair.jtbc.co.kr','https://onair.jtbc.co.kr/'],
+    ['TV조선','broadcast.tvchosun.com','https://broadcast.tvchosun.com/onair/on.cstv'],
+    ['채널A','ichannela.com','https://ichannela.com/com/cmm/onair.do'],
+    ['MBN','mbn.co.kr','https://www.mbn.co.kr/vod/onair'],
+    ['EBS','ebs.co.kr/onair','https://www.ebs.co.kr/onair?mainTop&channelCodeString=tv'],
+    ['아리랑TV','Arirang · arirang.com','https://www.arirang.com/live?lang=en'],
+  ]},
+  { label:'뉴스 LIVE', items:[
+    ['YTN','ytn.co.kr','https://www.ytn.co.kr/_hd/hd_live.html'],
+    ['연합뉴스TV','yonhapnewstv.co.kr','https://www.yonhapnewstv.co.kr/live'],
+    ['KBS NEWS','news.kbs.co.kr','https://news.kbs.co.kr/news/pc/news24/news24.html?ref=pGnb'],
+    ['MBC NEWS','imnews.imbc.com','https://imnews.imbc.com/more/onair/'],
+    ['SBS NEWS','news.sbs.co.kr','https://news.sbs.co.kr/news/live.do?plink=GNB&cooper=SBSNEWS'],
+    ['JTBC NEWS','news.jtbc.co.kr','https://news.jtbc.co.kr/live'],
+  ]},
+  { label:'경제·증권 LIVE', items:[
+    ['한국경제TV','wowtv.co.kr','https://www.wowtv.co.kr/LiveCenter/Live/Index?liveID=1'],
+    ['매일경제TV','MBN머니 · mbnmoney','https://mbnmoney.mbn.co.kr/tv/onair'],
+    ['서울경제TV','sentv.co.kr','https://www.sentv.co.kr/onair'],
+    ['이데일리TV','tv.edaily.co.kr','https://tv.edaily.co.kr/Live/HighVod'],
+    ['MTN','머니투데이방송 · mtn.co.kr','https://www.mtn.co.kr/'],
+  ]},
+  { label:'해외 LIVE TV', items:[
+    ['NHK World','일본 · nhk.or.jp','https://www3.nhk.or.jp/nhkworld/'],
+    ['ABC','미국 · abc.com','https://abc.com/'],
+    ['NBC News','미국 · nbcnews.com/now','https://www.nbcnews.com/now'],
+    ['FOX News','미국 · foxnews.com','https://www.foxnews.com/'],
+    ['ABC7','미국 LA · abc7.com','https://abc7.com/'],
+  ]},
+];
+
+let viewer=document.getElementById('viewer');
+function setViewerSrc(url){
+  /* iframe을 새로 만들어 교체 → 안쪽 iframe src 변경이 히스토리에 쌓이지 않아
+     뒤로가기가 중간 단계에 걸리지 않음 */
+  const fresh=document.createElement('iframe');
+  fresh.id='viewer'; fresh.title='LIVE TV 뷰어';
+  fresh.setAttribute('referrerpolicy','no-referrer');
+  fresh.setAttribute('allow','autoplay; encrypted-media; fullscreen');
+  fresh.setAttribute('allowfullscreen','');
+  fresh.src=url;
+  viewer.parentNode.replaceChild(fresh, viewer);
+  viewer=fresh;
+}
+const gridPanel=document.getElementById('gridPanel');
+const nav=document.getElementById('topnav');
+const track=document.getElementById('navTrack');
+let currentUrl=SITES[DEFAULT_I][1];
+
+function centerNavBtn(btn){
+  const navRect=nav.getBoundingClientRect();
+  const btnRect=btn.getBoundingClientRect();
+  const target=nav.scrollLeft + (btnRect.left - navRect.left) - (nav.clientWidth/2) + (btnRect.width/2);
+  nav.scrollTo({left:Math.max(0,target),behavior:'smooth'});
+}
+function clearActive(){ nav.querySelectorAll('button[data-site],button[data-grid]').forEach(b=>b.classList.remove('active')); }
+
+/* 전체목록 패널 1회 생성 */
+function renderGrid(){
+  if(gridPanel.dataset.done) return; gridPanel.dataset.done='1';
+  const t=document.createElement('div'); t.className='grid-title'; t.textContent='전체 LIVE TV 채널';
+  const s=document.createElement('div'); s.className='grid-sub'; s.textContent='채널을 누르면 위 화면에 바로 떠요';
+  gridPanel.appendChild(t); gridPanel.appendChild(s);
+  DIRECTORY.forEach(sec=>{
+    const wrap=document.createElement('div'); wrap.className='dir-section';
+    const lab=document.createElement('div'); lab.className='dir-label'; lab.textContent=sec.label;
+    const g=document.createElement('div'); g.className='dir-grid';
+    sec.items.forEach(it=>{
+      const c=document.createElement('a'); c.className='dir-card'; c.href=it[2]; c.target='_blank'; c.rel='noopener';
+      const tt=document.createElement('span'); tt.className='t'; tt.textContent=it[0];
+      const kk=document.createElement('span'); kk.className='k'; kk.textContent=it[1];
+      c.appendChild(tt); c.appendChild(kk);
+      g.appendChild(c);
+    });
+    wrap.appendChild(lab); wrap.appendChild(g); gridPanel.appendChild(wrap);
+  });
+}
+function showGrid(btn){
+  renderGrid();
+  setViewerSrc('about:blank');   /* 재생 중인 채널 정지 → 소리 끔 */
+  viewer.style.display='none';
+  gridPanel.classList.add('show');
+  openBtn.style.display='none';
+  clearActive();
+  try { sessionStorage.setItem('mywayLive','grid'); } catch(_) {}
+  if(btn){ btn.classList.add('active'); centerNavBtn(btn); }
+}
+/* 상단 채널 버튼 → iframe 재생 */
+function loadSite(i, btn){
+  currentUrl=SITES[i][1];
+  gridPanel.classList.remove('show');
+  setViewerSrc(currentUrl);
+  openBtn.style.display='';
+  clearActive();
+  try { sessionStorage.setItem('mywayLive','site:'+i); } catch(_) {}
+  if(btn){ btn.classList.add('active'); centerNavBtn(btn); }
+}
+/* 디렉터리 카드 → iframe 재생 (전체목록에서 선택) */
+function loadUrl(url){
+  currentUrl=url;
+  gridPanel.classList.remove('show');
+  setViewerSrc(url);
+  openBtn.style.display='';
+  clearActive();
+  const idx=SITES.findIndex(s=>s[1]===url);
+  if(idx>=0){ const b=track.querySelector('button[data-site="'+idx+'"]'); if(b){ b.classList.add('active'); centerNavBtn(b);} try{sessionStorage.setItem('mywayLive','site:'+idx);}catch(_){ } }
+  else { try{ sessionStorage.setItem('mywayLive','url:'+url); }catch(_){ } }
+}
+
+/* 채널 버튼 생성 */
+SITES.forEach((s,i)=>{
+  const b=document.createElement('button'); b.textContent=s[0]; b.dataset.site=i;
+  b.addEventListener('click',()=>loadSite(i,b));
+  track.appendChild(b);
+});
+/* 전체목록 버튼 (맨 왼쪽 - 홈 다음) */
+const gridBtn=document.createElement('button'); gridBtn.textContent='📺 전체목록'; gridBtn.dataset.grid='1'; gridBtn.className='grid-btn';
+gridBtn.addEventListener('click',()=>showGrid(gridBtn));
+nav.appendChild(gridBtn);
+/* 새 탭으로 열기 (맨 앞 - 홈 버튼 다음, 항상 보이게) */
+const openBtn=document.createElement('button'); openBtn.className='open-btn'; openBtn.textContent='↗ 새 탭';
+openBtn.addEventListener('click',()=>window.open(currentUrl,'_blank','noopener'));
+nav.insertBefore(openBtn, track);
+
+/* 네비 드래그 스크롤 */
+(function(){
+  let down=false,startX=0,startL=0,moved=false;
+  nav.addEventListener('pointerdown',e=>{ if(e.button!==0) return; down=true;moved=false;startX=e.clientX;startL=nav.scrollLeft;nav.classList.add('dragging'); });
+  nav.addEventListener('pointermove',e=>{ if(!down) return; const dx=e.clientX-startX; if(Math.abs(dx)>4) moved=true; nav.scrollLeft=startL-dx; });
+  const end=()=>{ down=false; nav.classList.remove('dragging'); };
+  nav.addEventListener('pointerup',end);
+  nav.addEventListener('pointercancel',end);
+  nav.addEventListener('pointerleave',end);
+  nav.addEventListener('click',e=>{ if(moved){ e.stopPropagation(); e.preventDefault(); moved=false; } },true);
+  nav.addEventListener('wheel',e=>{ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ nav.scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
+})();
+
+/* 초기화: 저장된 마지막 화면 복원(없으면 기본 = Famelack) */
+(function(){
+  var saved='';
+  try { saved = sessionStorage.getItem('mywayLive') || ''; } catch(_) {}
+  if(saved==='grid'){ showGrid(gridBtn); return; }
+  var ms = /^site:(\d+)$/.exec(saved);
+  if(ms){
+    var i=parseInt(ms[1],10);
+    var b=track.querySelector('button[data-site="'+i+'"]');
+    if(b){ loadSite(i,b); return; }
+  }
+  var mu = /^url:(.+)$/.exec(saved);
+  if(mu){ loadUrl(mu[1]); return; }
+  var db=track.querySelector('button[data-site="'+DEFAULT_I+'"]');
+  loadSite(DEFAULT_I, db);
+})();
+
+/* 복사 방지 */
+(function(){
+  const isField=el=>el&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA'||el.tagName==='SELECT');
+  ['contextmenu','selectstart','dragstart','copy','cut'].forEach(ev=>{
+    document.addEventListener(ev,e=>{ if(isField(e.target)) return; e.preventDefault(); });
+  });
+  document.addEventListener('keydown',e=>{
+    const k=(e.key||'').toLowerCase();
+    if(e.key==='F12'){e.preventDefault();return;}
+    if(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(k)){e.preventDefault();return;}
+    if(e.ctrlKey&&['u','s','c','x','a'].includes(k)){ if(isField(e.target)&&['c','x','a'].includes(k)) return; e.preventDefault(); }
+  });
+})();
+</script>
+<script>
+/* 모바일: 외부 링크를 최상위 창에서 열어 뒤로가기로 MYWAY 복귀. PC·태블릿은 새 탭. */
+(function(){
+  if(!/Mobi/i.test(navigator.userAgent)) return;
+  document.addEventListener("click", function(e){
+    var a = e.target.closest ? e.target.closest("a[href]") : null;
+    if(!a) return;
+    var href = a.getAttribute("href") || "";
+    if(!href || href.charAt(0) === "#" || /^javascript:/i.test(href)) return;
+    e.preventDefault();
+    try { (window.top || window).location.href = a.href; }
+    catch(_) { window.open(a.href, "_blank"); }
+  }, true);
+  var _open = window.open.bind(window);
+  window.open = function(url, name, feat){
+    if(url){ try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
+    return _open(url, name, feat);
+  };
+})();
+</script>
+</body>
+</html>
