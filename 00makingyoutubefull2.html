@@ -21,21 +21,19 @@
     input,textarea{-webkit-user-select:text;user-select:text;}
     .container{display:flex;flex-direction:column;height:100vh;height:100dvh;width:100vw;overflow:hidden;}
 
-    /* ===== 사이드(하단 바) ===== */
+    /* ===== 사이드(하단 바) — 컴팩트 ===== */
     .side-nav{order:2;width:100%;flex:0 0 auto;background:var(--panel);border-top:1px solid var(--line);display:flex;flex-direction:column;z-index:50;}
-    .side-head{padding:9px 16px 2px;}
-    .head-row{display:flex;align-items:center;gap:11px;}
-    .home-mini{flex:0 0 auto;width:34px;height:34px;border-radius:9px;background:var(--accent);display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 2px 6px rgba(210,75,53,.35);transition:.16s;}
+    .side-bar{display:flex;align-items:center;gap:9px;padding:6px 14px 0;}
+    .home-mini{flex:0 0 auto;width:30px;height:30px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 2px 6px rgba(210,75,53,.35);transition:.16s;}
     .home-mini:hover{background:#bb3f2c;transform:translateY(-1px);}
-    .home-mini svg{width:18px;height:18px;fill:#fff;}
-    .brand{font-family:var(--serif);font-weight:700;font-size:1.05rem;letter-spacing:-.01em;color:var(--ink);margin:0;}
-    .brand-sub{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);}
-    .nav-btns{display:flex;gap:7px;padding:8px 16px 6px;flex-wrap:nowrap;}
-    .nav-btns button{flex:1 1 auto;padding:9px 10px;border-radius:10px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:var(--sans);transition:.16s;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);}
+    .home-mini svg{width:16px;height:16px;fill:#fff;}
+    .brand{font-family:var(--serif);font-weight:700;font-size:.92rem;letter-spacing:-.01em;color:var(--ink);margin:0;white-space:nowrap;}
+    .nav-btns{display:flex;gap:6px;margin-left:auto;flex-wrap:nowrap;}
+    .nav-btns button{flex:0 0 auto;padding:6px 11px;border-radius:9px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:var(--sans);transition:.16s;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);white-space:nowrap;}
     .nav-btns button:hover{background:#e9e2d3;}
-    .nav-btns button.primary{background:var(--accent);color:#fff;border-color:var(--accent);flex:1 1 auto;}
+    .nav-btns button.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
     .nav-btns button.primary:hover{background:#bb3f2c;}
-    .video-list{flex:0 0 auto;overflow-x:auto;overflow-y:hidden;padding:8px 16px 12px;display:flex;flex-direction:row;gap:11px;scrollbar-width:thin;scrollbar-color:#d8cfbd transparent;cursor:grab;}
+    .video-list{flex:0 0 auto;overflow-x:auto;overflow-y:hidden;padding:7px 14px 9px;display:flex;flex-direction:row;gap:9px;scrollbar-width:thin;scrollbar-color:#d8cfbd transparent;cursor:grab;}
     .video-list.drag-scrolling{cursor:grabbing;}
     .video-list::-webkit-scrollbar{height:8px;}
     .video-list::-webkit-scrollbar-thumb{background:#dcd3c1;border-radius:8px;}
@@ -43,17 +41,17 @@
     .empty-hint{color:var(--ink-soft);font-size:.86rem;line-height:1.6;text-align:center;padding:40px 14px;}
 
     /* ===== 사진 카드 (사이드 가로폭 꽉 채움) ===== */
-    .video-card{position:relative;flex:0 0 210px;width:210px;overflow:hidden;border-radius:13px;cursor:pointer;background:#e9e2d3;border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s,border-color .2s;}
+    .video-card{position:relative;flex:0 0 150px;width:150px;overflow:hidden;border-radius:11px;cursor:pointer;background:#e9e2d3;border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s,border-color .2s;}
     .video-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hi);}
     .video-card.active{box-shadow:0 0 0 2px var(--accent),var(--shadow-hi);border-color:var(--accent);}
     .video-card.dragging{opacity:.45;}
     .video-card.drag-over{border-color:var(--accent);box-shadow:0 -3px 0 -1px var(--accent),var(--shadow);}
     .card-img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;}
-    .card-ph{display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:16/9;color:#fff;font-weight:700;font-size:1.05rem;text-align:center;padding:8px;background:var(--accent);}
-    .card-name{position:absolute;left:0;right:0;bottom:0;padding:18px 12px 9px;color:#fff;font-weight:600;font-size:.92rem;text-shadow:0 1px 6px rgba(0,0,0,.6);background:linear-gradient(to top,rgba(15,12,10,.7),rgba(15,12,10,0));pointer-events:none;}
-    .play-flag{position:absolute;top:8px;left:8px;width:9px;height:9px;border-radius:50%;background:#fff;opacity:0;box-shadow:0 0 8px #fff;transition:.2s;}
+    .card-ph{display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:16/9;color:#fff;font-weight:700;font-size:.9rem;text-align:center;padding:6px;background:var(--accent);}
+    .card-name{position:absolute;left:0;right:0;bottom:0;padding:14px 9px 6px;color:#fff;font-weight:600;font-size:.78rem;text-shadow:0 1px 6px rgba(0,0,0,.6);background:linear-gradient(to top,rgba(15,12,10,.7),rgba(15,12,10,0));pointer-events:none;}
+    .play-flag{position:absolute;top:7px;left:7px;width:8px;height:8px;border-radius:50%;background:#fff;opacity:0;box-shadow:0 0 8px #fff;transition:.2s;}
     .video-card.active .play-flag{opacity:1;background:var(--accent);box-shadow:0 0 9px var(--accent);}
-    .edit-btn{position:absolute;top:8px;right:8px;z-index:3;width:28px;height:28px;border:none;border-radius:8px;cursor:pointer;background:rgba(255,255,255,.78);display:flex;align-items:center;justify-content:center;opacity:0;transition:.15s;}
+    .edit-btn{position:absolute;top:7px;right:7px;z-index:3;width:24px;height:24px;border:none;border-radius:7px;cursor:pointer;background:rgba(255,255,255,.78);display:flex;align-items:center;justify-content:center;opacity:0;transition:.15s;}
     .video-card:hover .edit-btn{opacity:1;}
     .edit-btn:hover{background:#fff;}
     .edit-icon{width:14px;height:14px;fill:var(--ink-soft);pointer-events:none;}
@@ -92,31 +90,32 @@
 
     /* ===== 반응형 ===== */
     @media (max-width:900px){
-      .nav-btns{padding:6px 14px;}
-      .video-list{padding:8px 14px 10px;gap:10px;}
-      .video-card{flex:0 0 150px;width:150px;}
+      .side-bar{padding:6px 12px 0;gap:8px;}
+      .video-list{padding:7px 12px 8px;gap:8px;}
+      .video-card{flex:0 0 124px;width:124px;}
+      .nav-btns button{padding:6px 9px;font-size:.74rem;}
       .expand-btn{right:12px;bottom:12px;width:38px;height:38px;}
+    }
+    @media (max-width:560px){
+      .brand{display:none;}
+      .video-card{flex:0 0 112px;width:112px;}
+      .nav-btns{margin-left:auto;}
     }
   </style>
 </head>
 <body>
 <div class="container">
   <aside class="side-nav">
-    <div class="side-head">
-      <div class="head-row">
-        <a class="home-mini" href="https://myway.kr" target="_top" title="홈으로">
-          <svg viewBox="0 0 24 24"><path d="M12 3 2 12h3v8h6v-5h2v5h6v-8h3z"/></svg>
-        </a>
-        <div>
-          <h1 class="brand">영상 디렉토리</h1>
-          <div class="brand-sub">My Video Shelf · v10</div>
-        </div>
+    <div class="side-bar">
+      <a class="home-mini" href="https://myway.kr" target="_top" title="홈으로">
+        <svg viewBox="0 0 24 24"><path d="M12 3 2 12h3v8h6v-5h2v5h6v-8h3z"/></svg>
+      </a>
+      <h1 class="brand">영상 디렉토리</h1>
+      <div class="nav-btns">
+        <button class="primary" onclick="openAddModal()">+ 추가</button>
+        <button onclick="importData()">가져오기</button>
+        <button onclick="exportData()">내보내기</button>
       </div>
-    </div>
-    <div class="nav-btns">
-      <button class="primary" onclick="openAddModal()">+ 영상 추가</button>
-      <button onclick="importData()">가져오기</button>
-      <button onclick="exportData()">내보내기</button>
     </div>
     <div class="video-list" id="videoList"></div>
     <div class="side-foot"><a href="https://myway.kr" target="_top">myway.kr</a></div>
@@ -189,7 +188,7 @@
 
   function getYouTubeId(input){
     input = (input||'').trim();
-    var m = input.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/);
+    var m = input.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/|youtube\.com\/live\/)([a-zA-Z0-9_-]{11})/);
     return m ? m[1] : null;
   }
   function cardImage(v){
