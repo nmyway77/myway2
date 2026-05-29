@@ -256,6 +256,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-wrap: wrap;
       gap: 8px;
       margin: 6px 0 16px;
       position: relative;
@@ -274,6 +275,25 @@
       color: #8590ad;
       margin-left: 6px;
     }
+    .watch-now {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-right: 7px;
+      padding: 5px 12px;
+      border-radius: 8px;
+      background: #7b5cf0;
+      color: #fff;
+      font-weight: 600;
+      font-size: .82rem;
+      letter-spacing: .3px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background .16s, transform .16s;
+    }
+    .watch-now svg { width: 12px; height: 12px; flex: 0 0 auto; }
+    .watch-now:hover { background: #6a4fd0; transform: translateY(-1px); }
+    .watch-now:active { transform: translateY(0); }
 
     /* CSS Grid 기반 카드 그리드 — vw 사이즈 제거, 흔들림 0 */
     .gallery {
@@ -515,6 +535,10 @@
   <!-- 갤러리 -->
   <main class="dashboard">
     <div class="gallery-label-wrap">
+      <a class="watch-now" href="https://myway.kr/00makingyoutubefullFIX2-COMBO.html" target="_blank" rel="noopener" title="바로보기">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+        바로보기
+      </a>
       <span class="gallery-label" id="galleryLabel">KBS 무료 VOD 모음</span>
       <div class="info-wrap">
         <button class="info-btn" id="infoBtn" aria-label="재생 시간 안내" aria-haspopup="true" aria-expanded="false">
