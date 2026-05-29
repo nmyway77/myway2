@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>영상 디렉토리 · MYWAY</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="유튜브 영상과 라이브 화면을 사진 카드로 모아두고 한 화면에서 바로 감상하는 나만의 영상 디렉토리입니다.">
+  <style>
+    :root{
+      --paper:#f7f3eb; --panel:#fffdf8; --panel-2:#f1ece0;
+      --ink:#2a2620; --ink-soft:#6b6353; --line:#e7dfcf;
+      --accent:#d24b35; --accent-soft:#fbe7e1;
+      --serif:Georgia,"Apple SD Gothic Neo","Malgun Gothic",serif;
+      --sans:system-ui,-apple-system,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+      --shadow:0 4px 14px rgba(60,45,30,.12),0 1px 3px rgba(0,0,0,.06);
+      --shadow-hi:0 12px 30px rgba(60,45,30,.22);
+    }
+    *{box-sizing:border-box;}
+    html,body{margin:0;padding:0;height:100%;background:var(--paper);}
+    body{min-height:100vh;min-width:100vw;color:var(--ink);font-family:var(--sans);-webkit-user-select:none;user-select:none;}
+    input,textarea{-webkit-user-select:text;user-select:text;}
+    .container{display:flex;flex-direction:column;height:100vh;height:100dvh;width:100vw;overflow:hidden;}
+
+    /* ===== 사이드(하단 바) — 컴팩트 ===== */
+    .side-nav{order:2;width:100%;flex:0 0 auto;background:var(--panel);border-top:1px solid var(--line);display:flex;flex-direction:column;z-index:50;}
+    .side-bar{display:flex;align-items:center;gap:9px;padding:6px 14px 0;}
+    .home-mini{flex:0 0 auto;width:30px;height:30px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 2px 6px rgba(210,75,53,.35);transition:.16s;}
+    .home-mini:hover{background:#bb3f2c;transform:translateY(-1px);}
+    .home-mini svg{width:16px;height:16px;fill:#fff;}
+    .brand{font-family:var(--serif);font-weight:700;font-size:.92rem;letter-spacing:-.01em;color:var(--ink);margin:0;white-space:nowrap;}
+    .nav-btns{display:flex;gap:6px;margin-left:auto;flex-wrap:nowrap;}
+    .nav-btns button{flex:0 0 auto;padding:6px 11px;border-radius:9px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:var(--sans);transition:.16s;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);white-space:nowrap;}
+    .nav-btns button:hover{background:#e9e2d3;}
+    .nav-btns button.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+    .nav-btns button.primary:hover{background:#bb3f2c;}
+    .video-list{flex:0 0 auto;overflow-x:auto;overflow-y:hidden;padding:7px 14px 9px;display:flex;flex-direction:row;gap:9px;scrollbar-width:thin;scrollbar-color:#d8cfbd transparent;cursor:grab;}
+    .video-list.drag-scrolling{cursor:grabbing;}
+    .video-list::-webkit-scrollbar{height:8px;}
+    .video-list::-webkit-scrollbar-thumb{background:#dcd3c1;border-radius:8px;}
+    .video-list::-webkit-scrollbar-track{background:transparent;}
+    .empty-hint{color:var(--ink-soft);font-size:.86rem;line-height:1.6;text-align:center;padding:40px 14px;}
+
+    /* ===== 사진 카드 (사이드 가로폭 꽉 채움) ===== */
+    .video-card{position:relative;flex:0 0 150px;width:150px;overflow:hidden;border-radius:11px;cursor:pointer;background:#e9e2d3;border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s,border-color .2s;}
+    .video-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hi);}
+    .video-card.active{box-shadow:0 0 0 2px var(--accent),var(--shadow-hi);border-color:var(--accent);}
+    .video-card.dragging{opacity:.45;}
+    .video-card.drag-over{border-color:var(--accent);box-shadow:0 -3px 0 -1px var(--accent),var(--shadow);}
+    .card-img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;}
+    .card-ph{display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:16/9;color:#fff;font-weight:700;font-size:.9rem;text-align:center;padding:6px;background:var(--accent);}
+    .card-name{position:absolute;left:0;right:0;bottom:0;padding:14px 9px 6px;color:#fff;font-weight:600;font-size:.78rem;text-shadow:0 1px 6px rgba(0,0,0,.6);background:linear-gradient(to top,rgba(15,12,10,.7),rgba(15,12,10,0));pointer-events:none;}
+    .play-flag{position:absolute;top:7px;left:7px;width:8px;height:8px;border-radius:50%;background:#fff;opacity:0;box-shadow:0 0 8px #fff;transition:.2s;}
+    .video-card.active .play-flag{opacity:1;background:var(--accent);box-shadow:0 0 9px var(--accent);}
+    .edit-btn{position:absolute;top:7px;right:7px;z-index:3;width:24px;height:24px;border:none;border-radius:7px;cursor:pointer;background:rgba(255,255,255,.78);display:flex;align-items:center;justify-content:center;opacity:0;transition:.15s;}
+    .video-card:hover .edit-btn{opacity:1;}
+    .edit-btn:hover{background:#fff;}
+    .edit-icon{width:14px;height:14px;fill:var(--ink-soft);pointer-events:none;}
+
+    .side-foot{display:none;}
+    .side-foot a{color:var(--accent);text-decoration:none;font-weight:600;}
+    .side-foot a:hover{text-decoration:underline;}
+
+    /* ===== 메인 (원본 구조) ===== */
+    .main{order:1;flex:1 1 auto;min-width:0;width:100%;height:auto;background:#1b1814;position:relative;}
+    .yt-container,.yt-inner{position:static;display:block;width:100%;height:100%;}
+    .yt-frame-box{position:absolute;inset:0;background:#000;overflow:hidden;}
+    iframe,video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;display:block;}
+
+    /* 전체화면 버튼 */
+    .expand-btn{position:absolute;right:16px;bottom:16px;z-index:60;width:42px;height:42px;border:none;border-radius:11px;cursor:pointer;background:rgba(20,18,16,.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.35);transition:.16s;opacity:.85;}
+    .expand-btn:hover{background:rgba(20,18,16,.8);opacity:1;transform:translateY(-1px);}
+    .expand-btn svg{width:20px;height:20px;fill:#fff;pointer-events:none;}
+
+    /* ===== 모달 ===== */
+    .modal-bg{display:none;position:fixed;inset:0;z-index:200;background:rgba(40,32,22,.34);align-items:center;justify-content:center;padding:18px;}
+    .modal-inner{background:var(--panel);color:var(--ink);border-radius:18px;padding:26px 28px 20px;box-shadow:0 16px 50px rgba(40,30,20,.32);width:100%;max-width:380px;display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);}
+    .modal-title{font-family:var(--serif);font-weight:700;font-size:1.2rem;margin:0 0 10px;}
+    .modal-inner label{font-size:.8rem;font-weight:600;color:var(--ink-soft);margin:8px 0 5px;}
+    .modal-inner input[type=text]{padding:11px 14px;border-radius:10px;border:1px solid var(--line);font-size:.95rem;background:var(--paper);color:var(--ink);font-family:var(--sans);outline:none;transition:.15s;width:100%;}
+    .modal-inner input[type=text]:focus{border-color:var(--accent);background:#fff;}
+    .img-preview{margin-top:8px;width:100%;aspect-ratio:16/9;border-radius:10px;border:1px dashed var(--line);background:#f1ece0 center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:.82rem;overflow:hidden;}
+    .modal-actions{display:flex;gap:9px;margin-top:18px;}
+    .modal-actions button{flex:1;padding:11px 0;border-radius:11px;border:none;cursor:pointer;font-size:.95rem;font-weight:600;font-family:var(--sans);transition:.15s;}
+    .btn-save{background:var(--accent);color:#fff;}
+    .btn-save:hover{background:#bb3f2c;}
+    .btn-cancel{background:var(--panel-2);color:var(--ink);}
+    .btn-cancel:hover{background:#e4ddcd;}
+    .btn-del{background:none;color:var(--accent);border:1px solid var(--accent)!important;flex:0 0 auto!important;padding:11px 16px!important;}
+    .btn-del:hover{background:var(--accent-soft);}
+
+    /* ===== 코드 모달 ===== */
+    .code-modal{max-width:580px;}
+    .code-hint{font-size:.8rem;color:var(--ink-soft);line-height:1.55;margin:0 0 6px;}
+    .code-hint b{color:var(--ink);font-weight:700;}
+    .code-area{width:100%;height:260px;resize:vertical;font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.76rem;line-height:1.55;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);outline:none;white-space:pre;overflow:auto;-webkit-user-select:text;user-select:text;}
+    .code-area:focus{border-color:var(--accent);background:#fff;}
+
+    /* ===== 반응형 ===== */
+    @media (max-width:900px){
+      .side-bar{padding:6px 12px 0;gap:8px;}
+      .video-list{padding:7px 12px 8px;gap:8px;}
+      .video-card{flex:0 0 124px;width:124px;}
+      .nav-btns button{padding:6px 9px;font-size:.74rem;}
+      .expand-btn{right:12px;bottom:12px;width:38px;height:38px;}
+    }
+    @media (max-width:740px){
+      .brand{display:none;}
+    }
+    @media (max-width:560px){
+      .video-card{flex:0 0 112px;width:112px;}
+      .nav-btns{margin-left:auto;}
+      .nav-btns button{padding:6px 8px;font-size:.72rem;}
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <aside class="side-nav">
+    <div class="side-bar">
+      <a class="home-mini" href="https://myway.kr" target="_top" title="홈으로">
+        <svg viewBox="0 0 24 24"><path d="M12 3 2 12h3v8h6v-5h2v5h6v-8h3z"/></svg>
+      </a>
+      <h1 class="brand">영상 디렉토리</h1>
+      <div class="nav-btns">
+        <button class="primary" onclick="openAddModal()">+ 추가</button>
+        <button onclick="openCodeModal()">코드</button>
+        <button onclick="importData()">가져오기</button>
+        <button onclick="exportData()">내보내기</button>
+      </div>
+    </div>
+    <div class="video-list" id="videoList"></div>
+    <div class="side-foot"><a href="https://myway.kr" target="_top">myway.kr</a></div>
+  </aside>
+
+  <div class="main">
+    <div class="yt-container">
+      <div class="yt-inner">
+        <div class="yt-frame-box" id="ytFrameBox">
+          <iframe id="mainFrame" src="https://www.youtube.com/embed/DSgn-lTHJzM?autoplay=1&amp;mute=1&amp;playsinline=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+      </div>
+    </div>
+    <button class="expand-btn" id="expandBtn" onclick="toggleFullscreen()" title="전체화면">
+      <svg viewBox="0 0 24 24"><path d="M4 4h6V2H2v8h2V4zm16 0v6h2V2h-8v2h6zM4 20v-6H2v8h8v-2H4zm16 0h-6v2h8v-8h-2v6z"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- 추가/수정 모달 -->
+<div id="addModal" class="modal-bg">
+  <div class="modal-inner">
+    <h2 class="modal-title" id="modalTitle">영상 추가</h2>
+    <label>유튜브 / 영상 주소</label>
+    <input id="addUrl" type="text" placeholder="https://youtu.be/..." autocomplete="off" oninput="updatePreview()">
+    <label>제목 (사진 아래 표시 · 비워도 됨)</label>
+    <input id="addName" type="text" placeholder="카드에 표시할 제목" autocomplete="off">
+    <label>사진 주소 (이미지 URL · 비우면 자동)</label>
+    <input id="addImg" type="text" placeholder="https://...jpg" autocomplete="off" oninput="updatePreview()">
+    <div class="img-preview" id="imgPreview">미리보기</div>
+    <div class="modal-actions">
+      <button class="btn-del" id="delBtn" onclick="deleteVideo()" style="display:none;">삭제</button>
+      <button class="btn-cancel" onclick="closeAddModal()">취소</button>
+      <button class="btn-save" onclick="saveVideo()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 코드 출력 모달 -->
+<div id="codeModal" class="modal-bg">
+  <div class="modal-inner code-modal">
+    <h2 class="modal-title">파일에 넣을 코드</h2>
+    <p class="code-hint">아래 코드를 복사해 HTML 파일 안의 <b>var DEFAULT_VIDEOS = [ ... ];</b> 부분을 통째로 교체하면 모든 기기에서 영구 적용됩니다.</p>
+    <textarea id="codeArea" class="code-area" readonly spellcheck="false"></textarea>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeCodeModal()">닫기</button>
+      <button class="btn-save" id="copyBtn" onclick="copyCode()">복사</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  var DEFAULT_VIDEOS = [
+    { url:'https://www.youtube.com/watch?v=DSgn-lTHJzM',                 name:'서울역',       color:'#c64f86' },
+    { url:'https://www.youtube.com/watch?v=0G0hgz_Aq5Y',                 name:'송정해수욕장1', color:'#3a6ea5' },
+    { url:'https://www.youtube.com/watch?v=tQ9tse8cTy4',                 name:'송정2',        color:'#3aa0a0' },
+    { url:'https://www.youtube.com/watch?v=hGYVR5h8IfE',                 name:'고성해수욕장', color:'#4f9e7a' },
+    { url:'https://www.youtube.com/watch?v=jmVmZlsQIL8',                 name:'광안대교1',    color:'#7a5ea5' },
+    { url:'https://www.youtube.com/watch?v=2SyeAPODClU',                 name:'광안대교2',    color:'#9a5fb0' },
+    { url:'https://www.youtube.com/watch?v=009kOq0x4ZI',                 name:'강문해변',     color:'#e08a2e' },
+    { url:'https://www.youtube.com/watch?v=f-77scE-PVw',                 name:'석촌호수',     color:'#5b6470' },
+    { url:'https://www.ulleung.go.kr/live/index.do?lnk_uid=56',          name:'독도',        color:'#d24b35' },
+    { url:'https://www.jeju.go.kr/tool/halla/cctv_01.html',              name:'한라산',      color:'#3f8f6e' },
+    { url:'https://www.jejuits.go.kr/jido/mainView.do?DEVICE_KIND=CCTV', name:'제주전지역',  color:'#2f8f8f' },
+    { url:'https://d.kbs.co.kr/special/cctv',                            name:'KBS재난지역', color:'#b5462f' }
+  ];
+
+  let saved = [];
+  try { saved = JSON.parse(localStorage.getItem('mywayVideoImgV1') || '[]'); } catch(e){ saved = []; }
+  let videos, selectedIdx;
+  if (saved && saved.length){
+    videos = saved.map(function(v){
+      return { url:v.url||'', img:v.img||v.icon||v.thumb||'', name:v.name||v.title||'', color:v.color||'#5b6470' };
+    });
+    selectedIdx = videos.length>0 ? 0 : null;
+  } else {
+    videos = DEFAULT_VIDEOS.map(function(v){ return { url:v.url, img:'', name:v.name, color:v.color }; });
+    selectedIdx = 0; // 초기 화면: 서울역
+  }
+  let editIdx = null;
+  let dragFrom = null;
+  let suppressClick = false;
+
+  function getYouTubeId(input){
+    input = (input||'').trim();
+    var m = input.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/|youtube\.com\/live\/)([a-zA-Z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }
+  function cardImage(v){
+    if (v.img) return v.img;
+    var id = getYouTubeId(v.url);
+    return id ? 'https://i.ytimg.com/vi/'+id+'/hqdefault.jpg' : '';
+  }
+  function parseToEmbed(input){
+    input = (input||'').trim();
+    var id = getYouTubeId(input);
+    if (id) return {type:'youtube', code:'https://www.youtube.com/embed/'+id+'?autoplay=1&mute=1&playsinline=1'};
+    if (input.match(/^https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]{11}/))
+      return {type:'youtube', code: input.indexOf('autoplay=1')>=0 ? input : input + (input.indexOf('?')>=0?'&autoplay=1':'?autoplay=1')};
+    var vm = input.match(/vimeo\.com\/(\d+)/);
+    if (vm) return {type:'vimeo', code:'https://player.vimeo.com/video/'+vm[1]+'?autoplay=1'};
+    if (input.match(/\.(mp4|webm|ogg)(\?|$)/i)) return {type:'video', code:input};
+    if (input.indexOf('<iframe')===0) return {type:'embed', code:input};
+    return {type:'link', code:input};
+  }
+
+  function renderList(){
+    var list = document.getElementById('videoList');
+    list.innerHTML = '';
+    if (videos.length===0){
+      list.innerHTML = '<div class="empty-hint">아직 영상이 없어요.<br>\u2018+ 영상 추가\u2019로 시작해 보세요.</div>';
+      return;
+    }
+    videos.forEach(function(v,i){
+      var card = document.createElement('div');
+      card.className = 'video-card' + (i===selectedIdx ? ' active' : '');
+
+      var imgUrl = cardImage(v);
+      var ytid = getYouTubeId(v.url);
+      function addPlaceholder(){
+        var oi = card.querySelector('.card-img'); if(oi) oi.remove();
+        var on = card.querySelector('.card-name'); if(on) on.remove();
+        if (card.querySelector('.card-ph')) return;
+        var ph = document.createElement('div');
+        ph.className = 'card-ph';
+        ph.style.background = v.color || '#5b6470';
+        ph.textContent = v.name || '\u25B6';
+        card.insertBefore(ph, card.firstChild);
+      }
+      if (imgUrl){
+        var img = document.createElement('img');
+        img.className = 'card-img';
+        img.alt = '';
+        img.referrerPolicy = 'no-referrer';
+        var chain = (!v.img && ytid)
+          ? ['https://i.ytimg.com/vi/'+ytid+'/hqdefault.jpg','https://i.ytimg.com/vi/'+ytid+'/mqdefault.jpg','https://i.ytimg.com/vi/'+ytid+'/default.jpg']
+          : [imgUrl];
+        var ci = 0;
+        img.onerror = function(){ ci++; if (ci < chain.length){ img.src = chain[ci]; } else { img.onerror=null; addPlaceholder(); } };
+        img.src = chain[0];
+        card.appendChild(img);
+        if (v.name){
+          var nm = document.createElement('div');
+          nm.className = 'card-name';
+          nm.textContent = v.name;
+          card.appendChild(nm);
+        }
+      } else {
+        addPlaceholder();
+      }
+
+      var flag = document.createElement('div');
+      flag.className = 'play-flag';
+      card.appendChild(flag);
+
+      var editBtn = document.createElement('button');
+      editBtn.className = 'edit-btn';
+      editBtn.title = '수정';
+      editBtn.onclick = function(e){ e.stopPropagation(); openEditModal(i); };
+      editBtn.innerHTML = '<svg class="edit-icon" viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 0 1 2.828 2.828l-8.586 8.586-3.536.707.707-3.536 8.587-8.585zm2.121-2.121a4 4 0 0 0-5.657 0l-8.586 8.586A2 2 0 0 0 1 12.414V17a1 1 0 0 0 1 1h4.586a2 2 0 0 0 1.414-.586l8.586-8.586a4 4 0 0 0 0-5.657z"/></svg>';
+      card.appendChild(editBtn);
+
+      card.onclick = function(){ if(suppressClick) return; selectedIdx = i; renderList(); renderMain(); scrollActive(); };
+
+      list.appendChild(card);
+    });
+  }
+
+  function clearDragOver(){
+    var els = document.querySelectorAll('.video-card.drag-over');
+    Array.prototype.forEach.call(els, function(el){ el.classList.remove('drag-over'); });
+  }
+  function reorder(from, to){
+    if (from===null || from===undefined || to===null || from===to) return;
+    var moved = videos.splice(from,1)[0];
+    videos.splice(to,0,moved);
+    if (selectedIdx===from) selectedIdx = to;
+    else if (from < selectedIdx && to >= selectedIdx) selectedIdx--;
+    else if (from > selectedIdx && to <= selectedIdx) selectedIdx++;
+    persist(); renderList(); renderMain();
+  }
+  function scrollActive(){
+    var act = document.querySelector('.video-card.active');
+    if (act && act.scrollIntoView) act.scrollIntoView({behavior:'smooth', block:'center', inline:'center'});
+  }
+
+  // 카드 줄 마우스 드래그로 좌우 스크롤
+  function enableDragScroll(){
+    var list = document.getElementById('videoList');
+    if (!list) return;
+    var down=false, startX=0, startScroll=0, moved=false;
+    list.addEventListener('mousedown', function(e){
+      down=true; moved=false; startX=e.pageX; startScroll=list.scrollLeft;
+      list.classList.add('drag-scrolling');
+    });
+    document.addEventListener('mousemove', function(e){
+      if(!down) return;
+      var dx = e.pageX - startX;
+      if(Math.abs(dx)>4) moved=true;
+      list.scrollLeft = startScroll - dx;
+    });
+    document.addEventListener('mouseup', function(){
+      if(!down) return;
+      down=false; list.classList.remove('drag-scrolling');
+      if(moved){ suppressClick=true; setTimeout(function(){ suppressClick=false; }, 0); }
+    });
+    list.addEventListener('wheel', function(e){
+      if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){ list.scrollLeft += e.deltaY; e.preventDefault(); }
+    }, {passive:false});
+  }
+  function toggleFullscreen(){
+    var el = document.querySelector('.main');
+    var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+    if (!fsEl){ var req = el.requestFullscreen || el.webkitRequestFullscreen; if(req) req.call(el); }
+    else { var ex = document.exitFullscreen || document.webkitExitFullscreen; if(ex) ex.call(document); }
+  }
+
+  function renderMain(){
+    var v = (selectedIdx!=null && videos[selectedIdx]) ? videos[selectedIdx] : null;
+    var box = document.getElementById('ytFrameBox');
+    if (v){
+      var p = parseToEmbed(v.url);
+      if (p.type==='youtube' || p.type==='vimeo' || p.type==='link'){
+        box.innerHTML = '<iframe src="'+p.code+'" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
+      } else if (p.type==='video'){
+        box.innerHTML = '<video src="'+p.code+'" controls autoplay muted playsinline></video>';
+      } else if (p.type==='embed'){
+        box.innerHTML = p.code;
+      } else {
+        box.innerHTML = '<div style="color:#fff;text-align:center;margin:auto;">알 수 없는 주소입니다.</div>';
+      }
+    } else {
+      box.innerHTML = '<iframe src="https://www.youtube.com/embed/DSgn-lTHJzM?autoplay=1&mute=1&playsinline=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
+    }
+  }
+
+  function updatePreview(){
+    var url = document.getElementById('addUrl').value.trim();
+    var img = document.getElementById('addImg').value.trim();
+    var pv = document.getElementById('imgPreview');
+    var src = img || cardImage({url:url, img:''});
+    if (src){ pv.style.backgroundImage = 'url("'+src+'")'; pv.textContent=''; }
+    else { pv.style.backgroundImage = 'none'; pv.textContent='미리보기'; }
+  }
+
+  function openAddModal(){
+    editIdx = null;
+    document.getElementById('modalTitle').textContent = '영상 추가';
+    document.getElementById('delBtn').style.display = 'none';
+    document.getElementById('addUrl').value = '';
+    document.getElementById('addName').value = '';
+    document.getElementById('addImg').value = '';
+    updatePreview();
+    document.getElementById('addModal').style.display = 'flex';
+    setTimeout(function(){ document.getElementById('addUrl').focus(); }, 150);
+  }
+  function openEditModal(idx){
+    editIdx = idx;
+    document.getElementById('modalTitle').textContent = '영상 수정';
+    document.getElementById('delBtn').style.display = '';
+    document.getElementById('addUrl').value = videos[idx].url || '';
+    document.getElementById('addName').value = videos[idx].name || '';
+    document.getElementById('addImg').value = videos[idx].img || '';
+    updatePreview();
+    document.getElementById('addModal').style.display = 'flex';
+    setTimeout(function(){ document.getElementById('addUrl').focus(); }, 150);
+  }
+  function closeAddModal(){ document.getElementById('addModal').style.display = 'none'; editIdx = null; }
+  function persist(){ localStorage.setItem('mywayVideoImgV1', JSON.stringify(videos)); }
+
+  function saveVideo(){
+    var url = document.getElementById('addUrl').value.trim();
+    var name = document.getElementById('addName').value.trim();
+    var img = document.getElementById('addImg').value.trim();
+    if (!url){ alert('영상 주소를 입력하세요.'); return; }
+    if (editIdx===null){
+      videos.push({ url:url, img:img, name:name, color:'#5b6470' });
+      selectedIdx = videos.length-1;
+    } else {
+      videos[editIdx].url = url;
+      videos[editIdx].name = name;
+      videos[editIdx].img = img;
+    }
+    persist(); closeAddModal(); renderList(); renderMain();
+  }
+  function deleteVideo(){
+    if (editIdx===null) return;
+    if (!confirm('이 영상을 삭제할까요?')) return;
+    videos.splice(editIdx,1);
+    if (videos.length===0) selectedIdx = null;
+    else if (selectedIdx >= videos.length) selectedIdx = videos.length-1;
+    persist(); closeAddModal(); renderList(); renderMain();
+  }
+
+  function escStr(s){
+    return "'" + String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'") + "'";
+  }
+  function buildVideoCode(){
+    var lines = videos.map(function(v){
+      var parts = ['url:'+escStr(v.url), 'name:'+escStr(v.name)];
+      if (v.img) parts.push('img:'+escStr(v.img));
+      parts.push('color:'+escStr(v.color||'#5b6470'));
+      return '    { ' + parts.join(', ') + ' }';
+    });
+    return '  var DEFAULT_VIDEOS = [\n' + lines.join(',\n') + '\n  ];';
+  }
+  function openCodeModal(){
+    document.getElementById('codeArea').value = buildVideoCode();
+    var b = document.getElementById('copyBtn'); if(b) b.textContent='복사';
+    document.getElementById('codeModal').style.display = 'flex';
+  }
+  function closeCodeModal(){ document.getElementById('codeModal').style.display = 'none'; }
+  function copyCode(){
+    var ta = document.getElementById('codeArea');
+    ta.focus(); ta.select(); try{ ta.setSelectionRange(0, ta.value.length); }catch(e){}
+    function ok(){ var b=document.getElementById('copyBtn'); if(b){ b.textContent='복사됨!'; setTimeout(function(){ b.textContent='복사'; },1300); } }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(ta.value).then(ok, function(){ try{ document.execCommand('copy'); }catch(e){} ok(); });
+    } else {
+      try{ document.execCommand('copy'); }catch(e){}
+      ok();
+    }
+  }
+
+  function exportData(){
+    var blob = new Blob([JSON.stringify(videos,null,2)], {type:'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.href = url; a.download = 'myway_videos.json'; a.click();
+    URL.revokeObjectURL(url);
+  }
+  function importData(){
+    var input = document.createElement('input');
+    input.type='file'; input.accept='.json,application/json';
+    input.onchange = function(e){
+      var file = e.target.files[0]; if(!file) return;
+      var reader = new FileReader();
+      reader.onload = function(evt){
+        try{
+          var json = JSON.parse(evt.target.result);
+          if (Array.isArray(json) && json.length && json[0].url){
+            videos = json.map(function(v){ return {url:v.url||'',img:v.img||v.icon||v.thumb||'',name:v.name||v.title||'',color:v.color||'#5b6470'}; });
+            selectedIdx = videos.length>0 ? 0 : null;
+            persist(); renderList(); renderMain();
+          } else { alert('올바른 데이터가 아닙니다.'); }
+        } catch(err){ alert('가져오기 실패: JSON 파싱 에러'); }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  }
+
+  // 복사 방지 (카드 드래그는 예외)
+  ['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){
+    document.addEventListener(ev, function(e){
+      var t = e.target;
+      if (t && (t.tagName==='INPUT' || t.tagName==='TEXTAREA')) return;
+      e.preventDefault();
+    });
+  });
+  document.addEventListener('keydown', function(e){
+    var t = e.target;
+    var isInput = t && (t.tagName==='INPUT' || t.tagName==='TEXTAREA');
+    var k = (e.key||'').toUpperCase();
+    if (e.key==='F12'){ e.preventDefault(); return; }
+    if (e.ctrlKey && e.shiftKey && ['I','J','C'].indexOf(k)>=0){ e.preventDefault(); return; }
+    if (e.ctrlKey && ['U','S','C','X','A'].indexOf(k)>=0){
+      if (isInput && ['C','X','A'].indexOf(k)>=0) return;
+      e.preventDefault();
+    }
+  });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeAddModal(); closeCodeModal(); } });
+
+  renderList();
+  renderMain();
+  enableDragScroll();
+</script>
+</body>
+</html>
