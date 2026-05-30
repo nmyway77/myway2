@@ -342,6 +342,7 @@
     .info-title{ font-size:1.15rem; font-weight:800; color:var(--text-main); letter-spacing:-.4px; margin:0; }
     .info-title::before{ content:""; display:inline-block; width:4px; height:18px; border-radius:3px; background:linear-gradient(180deg,#2e7d4f,#10b981); margin-right:9px; vertical-align:-3px; }
     .info-desc{ font-size:.72rem; color:var(--text-muted); }
+    .info-block + .info-block{ margin-top:1.6rem; }
     .info-grid{ display:grid; grid-template-columns:repeat(8,1fr); gap:10px; }
     .info-card{ position:relative; display:flex; flex-direction:column; gap:11px; padding:16px 12px; border-radius:16px; text-decoration:none;
       background:var(--card-bg); border:1px solid var(--card-border); box-shadow:0 1px 2px rgba(16,24,40,.05);
@@ -366,8 +367,9 @@
 
   <header class="topbar">
     <nav class="tab-nav" id="tabNav">
+      <button class="tab-btn is-active" data-tab="today">TODAY</button>
       <button class="tab-btn" data-tab="news">리포트&amp;뉴스</button>
-      <button class="tab-btn is-active" data-tab="chart">주요 차트</button>
+      <button class="tab-btn" data-tab="chart">주요 차트</button>
       <button class="tab-btn" data-tab="fear">공포지수</button>
       <button class="tab-btn" data-tab="sites">주요 사이트</button>
       <button class="tab-btn" data-tab="community">커뮤니티</button>
@@ -455,6 +457,201 @@
           <span class="info-ico"><svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="14 3 14 9 20 9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg></span>
           <span class="info-name">공시</span>
           <span class="info-en">Disclosure</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        </div>
+      </div>
+
+      <!-- 바로보기 -->
+      <div class="info-block">
+        <div class="info-head"><h2 class="info-title">바로보기</h2><span class="info-desc">LIVETV · 잡지 · 라디오 · BBS · FREE VOD · CCTV · PEOPLE · MOVIE</span></div>
+        <div class="info-grid">
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="livetv" style="--c:#ef4444;--c2:#f87171;animation-delay:.04s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><rect x="2.5" y="4.5" width="19" height="13" rx="2"/><polygon points="10 8.5 14.5 11 10 13.5"/><line x1="8" y1="20.5" x2="16" y2="20.5"/><line x1="12" y1="17.5" x2="12" y2="20.5"/></svg></span>
+          <span class="info-name">LIVETV</span>
+          <span class="info-en">Live TV</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="magazine" style="--c:#f59e0b;--c2:#fbbf24;animation-delay:.08s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><path d="M4 3.5h6.5a2 2 0 0 1 1.5.7 2 2 0 0 1 1.5-.7H20v15h-6.5a1.5 1.5 0 0 0-1.5 1.5 1.5 1.5 0 0 0-1.5-1.5H4z"/><line x1="12" y1="4.2" x2="12" y2="20"/></svg></span>
+          <span class="info-name">잡지</span>
+          <span class="info-en">Magazine</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="radio" style="--c:#0891b2;--c2:#06b6d4;animation-delay:.12s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><path d="M6 8.5 17 3.5"/><rect x="2.5" y="8" width="19" height="11.5" rx="2"/><circle cx="16.5" cy="13.7" r="2.6"/><line x1="6" y1="12" x2="11" y2="12"/><line x1="6" y1="16" x2="9.5" y2="16"/></svg></span>
+          <span class="info-name">라디오</span>
+          <span class="info-en">Radio</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="bbs" style="--c:#6366f1;--c2:#818cf8;animation-delay:.16s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="17" y2="13"/><line x1="7" y1="17" x2="12" y2="17"/></svg></span>
+          <span class="info-name">BBS</span>
+          <span class="info-en">BBS</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="freevod" style="--c:#ec4899;--c2:#f472b6;animation-delay:.20s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polygon points="10 8.3 16 12 10 15.7"/></svg></span>
+          <span class="info-name">FREE VOD</span>
+          <span class="info-en">Free VOD</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="cctv" style="--c:#475569;--c2:#64748b;animation-delay:.24s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><path d="M2.5 8.5 17 5l.8 3.6L3.3 12z"/><path d="M4.5 11.5v4a1.5 1.5 0 0 0 1.5 1.5h2.5"/><circle cx="8" cy="20" r="1.5"/><line x1="17.5" y1="7" x2="21" y2="8.5"/></svg></span>
+          <span class="info-name">CCTV</span>
+          <span class="info-en">CCTV</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="people" style="--c:#16a34a;--c2:#10b981;animation-delay:.28s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.3"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 5.2a3.3 3.3 0 0 1 0 6.4"/><path d="M17 14.4A6 6 0 0 1 21 20"/></svg></span>
+          <span class="info-name">PEOPLE</span>
+          <span class="info-en">People</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="movie" style="--c:#7c3aed;--c2:#a855f7;animation-delay:.32s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="1.5"/><path d="M3.5 8 6 4.5l3.2 1L6.7 9M10 8l2.5-3.5 3.2 1L13.2 9M16.5 8 19 4.5l1.7.6"/></svg></span>
+          <span class="info-name">MOVIE</span>
+          <span class="info-en">Movie</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        </div>
+      </div>
+
+      <!-- 생활정보 -->
+      <div class="info-block">
+        <div class="info-head"><h2 class="info-title">생활정보</h2><span class="info-desc">날씨 · 운세 · 달력 · 만평 · 전세계시간</span></div>
+        <div class="info-grid">
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="weather" style="--c:#0ea5e9;--c2:#38bdf8;animation-delay:.04s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><circle cx="7.5" cy="7.5" r="3"/><line x1="7.5" y1="2" x2="7.5" y2="3.2"/><line x1="7.5" y1="11.8" x2="7.5" y2="13"/><line x1="2" y1="7.5" x2="3.2" y2="7.5"/><line x1="11.5" y1="3.5" x2="10.6" y2="4.4"/><path d="M16 20a3.5 3.5 0 1 0-.5-6.97A5 5 0 0 0 6 14a3 3 0 0 0 .5 6z"/></svg></span>
+          <span class="info-name">날씨</span>
+          <span class="info-en">Weather</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="fortune" style="--c:#8b5cf6;--c2:#a78bfa;animation-delay:.08s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 10.5 4 6.5 6.5 0 0 0 20 14.5z"/><path d="M17 3l.7 1.8L19.5 5.5l-1.8.7L17 8l-.7-1.8L14.5 5.5l1.8-.7z"/></svg></span>
+          <span class="info-name">운세</span>
+          <span class="info-en">Fortune</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="calendar" style="--c:#f43f5e;--c2:#fb7185;animation-delay:.12s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="2.5"/><line x1="3" y1="9.5" x2="21" y2="9.5"/><line x1="8" y1="2.5" x2="8" y2="6"/><line x1="16" y1="2.5" x2="16" y2="6"/></svg></span>
+          <span class="info-name">달력</span>
+          <span class="info-en">Calendar</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="cartoon" style="--c:#f97316;--c2:#fb923c;animation-delay:.16s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><path d="M21 14a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="12.5" x2="13" y2="12.5"/></svg></span>
+          <span class="info-name">만평</span>
+          <span class="info-en">Cartoon</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="worldtime" style="--c:#0891b2;--c2:#06b6d4;animation-delay:.20s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><polyline points="12 7 12 12 16.5 14.2"/></svg></span>
+          <span class="info-name">전세계시간</span>
+          <span class="info-en">World Clock</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        </div>
+      </div>
+
+      <!-- TOOLS -->
+      <div class="info-block">
+        <div class="info-head"><h2 class="info-title">TOOLS</h2><span class="info-desc">계산기 · 변환 · 검사 · 이미지 · 정보 등 자주 쓰는 도구</span></div>
+        <div class="info-grid">
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="calc" style="--c:#6366f1;--c2:#818cf8;animation-delay:.04s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><rect x="4.5" y="2.5" width="15" height="19" rx="2.5"/><rect x="7.5" y="5.5" width="9" height="3.5" rx="1"/><line x1="8" y1="13" x2="8" y2="13"/><line x1="12" y1="13" x2="12" y2="13"/><line x1="16" y1="13" x2="16" y2="13"/><line x1="8" y1="16.5" x2="8" y2="16.5"/><line x1="12" y1="16.5" x2="12" y2="16.5"/><line x1="16" y1="16.5" x2="16" y2="16.5"/><line x1="8" y1="19.5" x2="8" y2="19.5"/><line x1="12" y1="19.5" x2="12" y2="19.5"/><line x1="16" y1="19.5" x2="16" y2="19.5"/></svg></span>
+          <span class="info-name">계산기</span>
+          <span class="info-en">Calculator</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="fxcalc" style="--c:#059669;--c2:#10b981;animation-delay:.08s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><path d="M16 4l3 3-3 3"/><path d="M19 7H10a4 4 0 0 0-4 4"/><path d="M8 20l-3-3 3-3"/><path d="M5 17h9a4 4 0 0 0 4-4"/></svg></span>
+          <span class="info-name">환율계산기</span>
+          <span class="info-en">Exchange</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="engaddr" style="--c:#0ea5e9;--c2:#38bdf8;animation-delay:.12s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><polyline points="3.5 7 12 13 20.5 7"/></svg></span>
+          <span class="info-name">영문주소</span>
+          <span class="info-en">Address</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="engname" style="--c:#8b5cf6;--c2:#a78bfa;animation-delay:.16s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="8" cy="11" r="2.3"/><path d="M4.5 16.5a3.6 3.6 0 0 1 7 0"/><line x1="14.5" y1="9.5" x2="18.5" y2="9.5"/><line x1="14.5" y1="13" x2="17.5" y2="13"/></svg></span>
+          <span class="info-name">영어이름</span>
+          <span class="info-en">Name</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="spell" style="--c:#ec4899;--c2:#f472b6;animation-delay:.20s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><path d="M3.5 18l4.5-12 4.5 12"/><line x1="5.3" y1="13.5" x2="10.7" y2="13.5"/><polyline points="14.5 14.5 17 17 21.5 11.5"/></svg></span>
+          <span class="info-name">맞춤법검사</span>
+          <span class="info-en">Spell Check</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="wordcount" style="--c:#f59e0b;--c2:#fbbf24;animation-delay:.24s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="10.5" x2="20" y2="10.5"/><line x1="4" y1="15" x2="15" y2="15"/><line x1="4" y1="19.5" x2="11" y2="19.5"/></svg></span>
+          <span class="info-name">글자수세기</span>
+          <span class="info-en">Word Count</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="pdf" style="--c:#ef4444;--c2:#f87171;animation-delay:.28s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><path d="M14 2.5H7A2.5 2.5 0 0 0 4.5 5v14A2.5 2.5 0 0 0 7 21.5h10a2.5 2.5 0 0 0 2.5-2.5V8z"/><polyline points="14 2.5 14 8 19.5 8"/><line x1="8.5" y1="13" x2="15.5" y2="13"/><line x1="8.5" y1="16.5" x2="13" y2="16.5"/></svg></span>
+          <span class="info-name">PDF 도구</span>
+          <span class="info-en">PDF Tool</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="crop" style="--c:#14b8a6;--c2:#2dd4bf;animation-delay:.32s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6.5"/><path d="M3 8V5a2 2 0 0 1 2-2h3"/><path d="M21 16v3a2 2 0 0 1-2 2h-3"/></svg></span>
+          <span class="info-name">사진원형자르기</span>
+          <span class="info-en">Crop</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="qr" style="--c:#475569;--c2:#64748b;animation-delay:.36s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1"/><line x1="14" y1="14" x2="14" y2="14"/><line x1="17.5" y1="14" x2="17.5" y2="14"/><line x1="21" y1="14" x2="21" y2="14"/><line x1="14" y1="17.5" x2="14" y2="17.5"/><line x1="21" y1="17.5" x2="21" y2="17.5"/><line x1="14" y1="21" x2="14" y2="21"/><line x1="17.5" y1="21" x2="17.5" y2="21"/><line x1="21" y1="21" x2="21" y2="21"/></svg></span>
+          <span class="info-name">QR코드만들기</span>
+          <span class="info-en">QR Code</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="thumb" style="--c:#d946ef;--c2:#e879f9;animation-delay:.40s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><polygon points="10 9 15.5 12 10 15"/></svg></span>
+          <span class="info-name">썸네일추출기</span>
+          <span class="info-en">Thumbnail</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="unit" style="--c:#3b82f6;--c2:#60a5fa;animation-delay:.44s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><rect x="2.5" y="7.5" width="19" height="9" rx="1.5"/><line x1="7" y1="7.5" x2="7" y2="11"/><line x1="11" y1="7.5" x2="11" y2="11"/><line x1="15" y1="7.5" x2="15" y2="11"/><line x1="19" y1="7.5" x2="19" y2="10"/></svg></span>
+          <span class="info-name">단위계산기</span>
+          <span class="info-en">Unit</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="speed" style="--c:#f97316;--c2:#fb923c;animation-delay:.48s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><path d="M4 18a8 8 0 1 1 16 0"/><line x1="12" y1="18" x2="15.5" y2="11.5"/><circle cx="12" cy="18" r="1.2"/></svg></span>
+          <span class="info-name">속도측정</span>
+          <span class="info-en">Speed</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="dday" style="--c:#e11d48;--c2:#fb7185;animation-delay:.52s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><path d="M7 3h10"/><path d="M7 21h10"/><path d="M7 3c0 4 10 5 10 9s-10 5-10 9"/><path d="M17 3c0 4-10 5-10 9s10 5 10 9"/></svg></span>
+          <span class="info-name">디데이계산기</span>
+          <span class="info-en">D-Day</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="show" style="--c:#7c3aed;--c2:#a855f7;animation-delay:.56s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><path d="M3 9.5V7a1.5 1.5 0 0 1 1.5-1.5h15A1.5 1.5 0 0 1 21 7v2.5a2.5 2.5 0 0 0 0 5V17a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17v-2.5a2.5 2.5 0 0 0 0-5z"/><line x1="14" y1="6" x2="14" y2="8.5"/><line x1="14" y1="11" x2="14" y2="13"/><line x1="14" y1="15.5" x2="14" y2="18"/></svg></span>
+          <span class="info-name">공연정보</span>
+          <span class="info-en">Show</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="travel" style="--c:#0d9488;--c2:#14b8a6;animation-delay:.60s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><rect x="3" y="7.5" width="18" height="12" rx="2"/><path d="M8.5 7.5V5.5a1.5 1.5 0 0 1 1.5-1.5h4a1.5 1.5 0 0 1 1.5 1.5v2"/><line x1="3" y1="12" x2="21" y2="12"/></svg></span>
+          <span class="info-name">여행정보</span>
+          <span class="info-en">Travel</span>
+          <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="info-card" href="#" target="_blank" rel="noopener" data-cat="rankgame" style="--c:#eab308;--c2:#facc15;animation-delay:.64s">
+          <span class="info-ico"><svg viewBox="0 0 24 24"><path d="M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 6H4.5a2 2 0 0 0 0 4H7M17 6h2.5a2 2 0 0 1 0 4H17"/><line x1="12" y1="13" x2="12" y2="16.5"/><path d="M8.5 20.5h7M9.7 20.5l.4-4M14.3 20.5l-.4-4"/></svg></span>
+          <span class="info-name">순위결정게임</span>
+          <span class="info-en">Rank Game</span>
           <svg class="info-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </a>
         </div>
@@ -939,10 +1136,10 @@
         'DXY':            'https://stock.naver.com/fchart/marketindex/exchange/.DXY'
       };
       const root = document.getElementById('main');
-      var _ct = document.getElementById('chartTop'); if(_ct){ _ct.style.display = (tabId === 'chart') ? '' : 'none'; }
+      var _ct = document.getElementById('chartTop'); if(_ct){ _ct.style.display = (tabId === 'today') ? '' : 'none'; }
       const frag = document.createDocumentFragment();
       const tab = tabs[tabId];
-      if (!tab) return;
+      if (!tab) { root.replaceChildren(); return; }
 
       tab.sections.forEach(sec => {
         const section = document.createElement('section');
@@ -1105,11 +1302,11 @@
 
     setupTabs();
     (function(){
-      var saved = 'chart';
-      try { saved = sessionStorage.getItem('mywayTab_stockmain7') || 'chart'; } catch(_) {}
+      var saved = 'today';
+      try { saved = sessionStorage.getItem('mywayTab_stockmain7') || 'today'; } catch(_) {}
       var nav = document.getElementById('tabNav');
       var btn = nav.querySelector('.tab-btn[data-tab="' + saved + '"]');
-      if (!btn) { saved = 'chart'; btn = nav.querySelector('.tab-btn[data-tab="chart"]'); }
+      if (!btn) { saved = 'today'; btn = nav.querySelector('.tab-btn[data-tab="today"]'); }
       nav.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('is-active'));
       if (btn) btn.classList.add('is-active');
       renderTab(saved);
