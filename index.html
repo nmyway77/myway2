@@ -989,15 +989,22 @@
     const IS_MOBILE_DEVICE = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Tablet|Silk/i.test(navigator.userAgent)
                           || (window.matchMedia && window.matchMedia('(max-width: 820px)').matches);
 
+    /* 핸드폰만 별도 감지 (태블릿은 PC로 취급)
+       · 안드로이드 폰은 UA에 'Mobile' 포함, 태블릿은 미포함
+       · 아이패드(최신)는 Mac으로 잡혀 자동으로 PC 취급됨
+       · 좁은 화면(<=600px)도 폰으로 간주 */
+    const IS_PHONE = /iPhone|iPod|Android.*Mobile|Windows Phone|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+                  || (window.matchMedia && window.matchMedia('(max-width: 600px)').matches);
+
     function buildStockChartUrl(code, market) {
       if (market === 'KR') {
-        // 한국주식
-        return IS_MOBILE_DEVICE
+        // 한국주식: 핸드폰은 m.stock, 태블릿·PC는 stock.naver.com
+        return IS_PHONE
           ? `https://m.stock.naver.com/fchart/domestic/stock/${code}`
-          : `https://finance.naver.com/item/fchart.naver?code=${code}`;
+          : `https://stock.naver.com/fchart/domestic/stock/${code}`;
       }
-      // 미국주식 (NASDAQ='O', NYSE='N')
-      return IS_MOBILE_DEVICE
+      // 미국주식 (NASDAQ='O', NYSE='N') — 핸드폰은 모바일 차트, 태블릿·PC는 worldstock
+      return IS_PHONE
         ? `https://m.stock.naver.com/fchart/foreign/stock/${code}.${market}`
         : `https://m.stock.naver.com/worldstock/stock/${code}.${market}/total`;
     }
