@@ -378,6 +378,10 @@
     .favm-bg.show { display: flex; }
     .favm { background: #fff; border-radius: 20px; width: 100%; max-width: 380px; padding: 22px; box-shadow: 0 24px 60px rgba(30,40,80,.35); max-height: 90vh; overflow: auto; }
     .favm h3 { margin: 0 0 6px; font-size: 1.12rem; color: #222a4a; font-weight: 800; }
+    .favm-paste { width: 100%; margin-top: 12px; padding: 14px; border: 1.5px dashed #aeb9ea; border-radius: 12px; background: #f3f6ff; color: #4757f5; font-weight: 700; font-size: .95rem; cursor: pointer; transition: .15s; display: flex; align-items: center; justify-content: center; gap: 7px; }
+    .favm-paste:hover { background: #e9eeff; border-color: #7e94ff; }
+    .favm-paste:active { transform: scale(.99); }
+    .favm-hint { font-size: .76rem; color: #9aa2c0; margin: 8px 2px 0; line-height: 1.5; }
     .favm label { display: block; font-size: .76rem; font-weight: 700; color: #6a749c; margin: 12px 0 5px; }
     .favm input[type=text] { width: 100%; padding: 11px 13px; border: 1.5px solid #e2e6f3; border-radius: 11px; font-size: .95rem; color: #222a4a; outline: none; transition: .15s; background: #fafbff; }
     .favm input[type=text]:focus { border-color: #7e94ff; background: #fff; }
@@ -990,6 +994,11 @@
   <div class="favm-bg" id="favmBg">
     <div class="favm" role="dialog" aria-modal="true">
       <h3>즐겨찾기 추가</h3>
+      <button class="favm-paste" id="favPasteBtn">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        복사한 주소 붙여넣기
+      </button>
+      <p class="favm-hint">브라우저에서 사이트 주소를 복사한 뒤 위 버튼을 누르면 자동으로 입력돼요.</p>
       <label>주소 (URL)</label>
       <input type="text" id="favUrl" placeholder="https://example.com" inputmode="url" autocomplete="off">
       <label>이름 (선택)</label>
@@ -2094,7 +2103,7 @@
       const elName = document.getElementById('favName');
       const elImg = document.getElementById('favImg');
       function clearInputs() { elUrl.value = ''; elName.value = ''; elImg.value = ''; }
-      function openFavModal() { renderFavList(); bg.classList.add('show'); setTimeout(() => elUrl.focus(), 30); }
+      function openFavModal() { clearInputs(); renderFavList(); bg.classList.add('show'); setTimeout(() => elUrl.focus(), 30); }
       function closeFavModal() { bg.classList.remove('show'); clearInputs(); }
       bg.addEventListener('click', e => { if (e.target === bg) closeFavModal(); });
       document.getElementById('favDoneBtn').addEventListener('click', closeFavModal);
@@ -2119,12 +2128,29 @@
         });
       }
 
+      function hostName(u) { try { return new URL(/^https?:\/\//i.test(u) ? u : 'https://' + u).hostname.replace(/^www\./, ''); } catch (_) { return ''; } }
+
+      document.getElementById('favPasteBtn').addEventListener('click', async () => {
+        try {
+          const txt = ((await navigator.clipboard.readText()) || '').trim();
+          if (!txt) { alert('클립보드가 비어 있어요. 먼저 사이트 주소를 복사해 주세요.'); return; }
+          elUrl.value = txt;
+          if (!elName.value.trim()) { const h = hostName(txt); if (h) elName.value = h; }
+          elUrl.focus();
+        } catch (_) {
+          alert('클립보드를 읽을 수 없어요. 주소 칸을 길게 눌러 직접 붙여넣어 주세요.');
+          elUrl.focus();
+        }
+      });
+
       document.getElementById('favAddBtn').addEventListener('click', () => {
         let url = elUrl.value.trim();
         if (!url) { alert('주소(URL)를 입력하세요.'); elUrl.focus(); return; }
         if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+        let name = elName.value.trim();
+        if (!name) name = hostName(url);
         const favs = loadFavs();
-        favs.push({ name: elName.value.trim(), url: url, img: elImg.value.trim() });
+        favs.push({ name: name, url: url, img: elImg.value.trim() });
         saveFavs(favs);
         clearInputs();
         renderFavList(); mountFavGrid();
