@@ -69,9 +69,10 @@
 /* === 상단 채널 버튼 (iframe에 바로 재생) — livesitesbar2 채널 === */
 const SITES=[
   ['Famelack','https://famelack.com/'],
-  ['TVAPP','https://int.klcis.cc/'],
    ['MLB','https://mlblive.net/'],
-   ['네이버TV','https://tv.naver.com/l'],
+   ['TVAPP','https://thetvapp.to/','newwin'],
+  ['KLCIS','https://int.klcis.cc/','newwin'],
+      ['네이버TV','https://tv.naver.com/l'],
   ['치지직','https://chzzk.naver.com/lives'],
   ['SOOP','https://www.sooplive.co.kr/live/all'],
   ['MBC','https://onair.imbc.com/'],
@@ -190,7 +191,12 @@ function showGrid(btn){
   if(btn){ btn.classList.add('active'); centerNavBtn(btn); }
 }
 /* 상단 채널 버튼 → iframe 재생 */
-function loadSite(i, btn){
+function loadSite(i, btn, fromRestore){
+  if(SITES[i] && SITES[i][2]==='newwin'){
+    if(!fromRestore) window.open(SITES[i][1],'_blank','noopener');
+    if(btn) centerNavBtn(btn);
+    return;
+  }
   currentUrl=SITES[i][1];
   gridPanel.classList.remove('show');
   document.getElementById('viewerBox').style.display='';
@@ -250,7 +256,10 @@ nav.insertBefore(openBtn, track);
   if(ms){
     var i=parseInt(ms[1],10);
     var b=track.querySelector('button[data-site="'+i+'"]');
-    if(b){ loadSite(i,b); return; }
+    if(b){
+      if(SITES[i] && SITES[i][2]==='newwin'){ var dbn=track.querySelector('button[data-site="'+DEFAULT_I+'"]'); loadSite(DEFAULT_I, dbn); return; }
+      loadSite(i,b); return;
+    }
   }
   var mu = /^url:(.+)$/.exec(saved);
   if(mu){ loadUrl(mu[1]); return; }
