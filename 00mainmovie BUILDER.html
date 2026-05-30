@@ -1,0 +1,703 @@
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>MYWAY 인플루언서 influencer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { background: #fff; font-family: 'Segoe UI','맑은 고딕','NanumGothic',Arial,sans-serif; margin:0; padding:0;}
+    .dashboard { max-width: 1200px; margin: 0 auto;      padding:    0px            0 40px 0;} /* 상단여백 축소 */
+    .gallery-label {
+
+
+      
+      font-weight: bold; font-size: 1.0rem;       margin: 3px        0 14px 0;
+
+
+      
+      color: #232356; text-align: center; letter-spacing: 0.5px; display: block; width: 100%;
+    }
+    .gallery-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;  /* 중앙정렬 */
+      gap: 0 16px;
+      max-width: 1235px;  /* 5개씩 딱 맞게! (283*5 + 16*4) */
+      margin: 0 auto;
+      min-height: 200px;
+      align-items: flex-start;
+    }
+    .list-row {
+      box-sizing: border-box;
+      position: relative;
+      background: #fff;
+      margin-bottom: 36px;
+      transition: width 0.2s, height 0.2s;
+      display: block;
+      max-width: 283px;
+    }
+    .imgframe {
+      width: 100%; height: 100%;
+      background: #fff;
+      position: relative;
+      box-sizing: border-box;
+      z-index: 0;
+      border-radius: 0;
+      box-shadow: 0 6px 6px 0 rgba(90,90,130,0.11);
+      overflow: hidden;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .img-wrap { position: relative; height: 100%; width: 100%; overflow: hidden; margin:0; padding:0;}
+    .img-item { position: relative; width: 100%; height: 100%; overflow: hidden;}
+    .img-item img {
+      display: block; width: 100%; height: 100%;
+      object-fit: contain;
+      background: #fff;
+      margin: 0;
+      border: none;
+      padding: 0;
+    }
+    .shadow-line { text-align: center; margin: 0; padding: 0; max-width: 100%; overflow: hidden !important; vertical-align: top;}
+    .shadow-line img { display: block; margin: 0 auto; width: 95%; height: 20px; pointer-events: none; user-select: none; }
+
+    /* ----------- 크기 강제 지정 ------------ */
+    .box-portrait  { width:200px; height:283px; }
+    .box-landscape { width:283px; height:200px; }
+
+    /* 반응형(모바일) */
+    @media (max-width: 1235px) {
+      .gallery-row { max-width: 98vw; }
+    }
+    @media (max-width: 1080px) {
+      .gallery-row { max-width: 98vw; }
+      .box-portrait  { width:28vw; height:40vw; min-width:80px; min-height:100px;}
+      .box-landscape { width:40vw; height:28vw; min-width:80px; min-height:100px;}
+      .list-row { max-width: 40vw; }
+    }
+    @media (max-width: 700px) {
+      .gallery-row { max-width: 99vw; }
+      .box-portrait  { width:44vw; height:62vw; min-width:65px; min-height:85px;}
+      .box-landscape { width:62vw; height:44vw; min-width:65px; min-height:85px;}
+      .list-row { max-width: 62vw; }
+    }
+  </style>
+</head>
+<body>
+  <style>
+    .mv-toolbar{position:sticky;top:0;z-index:200;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;padding:10px 14px;background:rgba(255,255,255,.93);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid #ececf2;}
+    .mv-toolbar button{font-family:inherit;font-size:.85rem;font-weight:700;padding:8px 15px;border-radius:10px;border:1px solid #d7dae8;background:#f5f6fb;color:#39406a;cursor:pointer;transition:.15s;}
+    .mv-toolbar button:hover{background:#ebedf7;border-color:#b9c0dd;}
+    .mv-toolbar button.primary{background:#5b6bff;color:#fff;border-color:#5b6bff;}
+    .mv-toolbar button.primary:hover{background:#4757f5;}
+    .mvm-bg{position:fixed;inset:0;background:rgba(20,28,55,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:9999;padding:18px;}
+    .mvm-bg.show{display:flex;}
+    .mvm{background:#fff;border-radius:18px;width:100%;max-width:440px;padding:22px;box-shadow:0 24px 60px rgba(30,40,80,.35);max-height:90vh;overflow:auto;color:#232356;text-align:left;}
+    .mvm h3{margin:0 0 4px;font-size:1.1rem;font-weight:800;}
+    .mvm label{display:block;font-size:.76rem;font-weight:700;color:#6a749c;margin:11px 0 5px;}
+    .mvm select,.mvm input[type=text]{width:100%;padding:10px 12px;border:1.5px solid #e2e6f3;border-radius:10px;font-size:.92rem;color:#232356;background:#fafbff;outline:none;font-family:inherit;box-sizing:border-box;}
+    .mvm select:focus,.mvm input[type=text]:focus{border-color:#7e94ff;background:#fff;}
+    .mvm-save{width:100%;margin-top:14px;padding:11px;border:none;border-radius:11px;background:#5b6bff;color:#fff;font-weight:700;font-size:.92rem;cursor:pointer;}
+    .mvm-save:hover{background:#4757f5;}
+    .mvm-list{margin-top:16px;border-top:1px solid #eef0f7;padding-top:12px;display:flex;flex-direction:column;gap:7px;max-height:230px;overflow:auto;}
+    .mvm-row{display:flex;align-items:center;gap:9px;}
+    .mvm-row img{width:46px;height:30px;object-fit:cover;border-radius:6px;border:1px solid #eef0f7;flex:0 0 auto;background:#f0f0f5;}
+    .mvm-row .u{flex:1;font-size:.74rem;color:#5a648c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .mvm-row button{flex:0 0 auto;border:none;border-radius:7px;width:28px;height:28px;cursor:pointer;font-size:.82rem;line-height:1;}
+    .mvm-row .e{background:#eef2ff;color:#4757f5;}
+    .mvm-row .d{background:#fdecec;color:#e0483a;}
+    .mvm-empty{font-size:.8rem;color:#9aa2c0;text-align:center;padding:8px;}
+    .mvm-io{display:flex;gap:9px;margin-top:14px;}
+    .mvm-done{width:100%;margin-top:12px;padding:10px;border:none;border-radius:10px;background:#eef0f7;color:#5a648c;font-weight:700;cursor:pointer;}
+    .mvm-done:hover{background:#e4e7f2;}
+    .mvm-code{max-width:560px;}
+    .mvm-hint{font-size:.76rem;color:#8a92b5;line-height:1.55;margin:6px 0 10px;}
+    .mvm-codearea{width:100%;height:300px;border:1.5px solid #e2e6f3;border-radius:10px;padding:11px;font-family:'Courier New',monospace;font-size:.76rem;color:#2a2a3a;background:#fafbff;outline:none;resize:vertical;white-space:pre;box-sizing:border-box;}
+  </style>
+
+  <div class="mv-toolbar">
+    <button class="primary" id="mvAddBtn">+ 추가</button>
+    <button id="mvCodeBtn">코드</button>
+    <button id="mvImportBtn">가져오기</button>
+    <button id="mvExportBtn">내보내기</button>
+  </div>
+  <div class="dashboard">
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery1"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery2"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery3"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery4"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery5"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery6"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery7"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery8"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery9"></div>
+    <span class="gallery-label"></span>
+    <div class="gallery-row" id="gallery10"></div>
+  </div>
+
+  <!-- 관리 모달 (추가/수정/삭제) -->
+  <div class="mvm-bg" id="mvmBg">
+    <div class="mvm">
+      <h3>갤러리 항목 관리</h3>
+      <label>갤러리 선택</label>
+      <select id="mvGallery">
+        <option value="1">갤러리 1</option>
+        <option value="2">갤러리 2</option>
+        <option value="3">갤러리 3</option>
+        <option value="4">갤러리 4</option>
+        <option value="5">갤러리 5</option>
+        <option value="6">갤러리 6</option>
+        <option value="7">갤러리 7</option>
+        <option value="8">갤러리 8</option>
+        <option value="9">갤러리 9</option>
+        <option value="10">갤러리 10</option>
+      </select>
+      <label>영상 주소 (URL)</label>
+      <input type="text" id="mvUrl" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off">
+      <label>이미지 주소 (선택 · 비우면 유튜브 썸네일 자동)</label>
+      <input type="text" id="mvImg" placeholder="https://...jpg" autocomplete="off">
+      <button class="mvm-save" id="mvSaveBtn">추가하기</button>
+      <div class="mvm-list" id="mvList"></div>
+      <button class="mvm-done" id="mvDoneBtn">닫기</button>
+    </div>
+  </div>
+
+  <!-- 코드 모달 -->
+  <div class="mvm-bg" id="mvmCodeBg">
+    <div class="mvm mvm-code">
+      <h3>파일에 넣을 코드</h3>
+      <p class="mvm-hint">아래 코드를 복사해, HTML 파일 안의 <b>const gallery1Data … const gallery10Data</b> 부분을 통째로 교체하면 모든 기기에 영구 적용됩니다.</p>
+      <textarea class="mvm-codearea" id="mvCodeArea" readonly spellcheck="false"></textarea>
+      <div class="mvm-io">
+        <button class="mvm-done" id="mvCodeCloseBtn" style="margin-top:0;">닫기</button>
+        <button class="mvm-save" id="mvCopyBtn" style="margin-top:0;">복사</button>
+      </div>
+    </div>
+  </div>
+  <input type="file" id="mvImportFile" accept=".json,.html,.htm,application/json,text/html" style="display:none">
+
+  <script>
+    // 샘플 데이터(갤1~10)
+    const gallery1Data = [
+
+ { url: "https://www.youtube.com/watch?v=AQj8jzahbEI&ab_channel=%D0%AD%D1%85%D0%90%D0%B3%D0%B0", img: "https://img.youtube.com/vi/AQj8jzahbEI/sddefault.jpg" },
+
+
+ { url: "https://www.youtube.com/watch?v=MNdB5pYeCWM&ab_channel=SeemaMishra", img: "https://img.youtube.com/vi/MNdB5pYeCWM/sddefault.jpg" },
+
+ { url: "https://www.youtube.com/watch?v=Zf-aVQD_ppA&ab_channel=FlickFix", img: "https://img.youtube.com/vi/Zf-aVQD_ppA/sddefault.jpg" },
+
+
+
+
+
+      
+      { url: "https://www.youtube.com/watch?v=SpzsPiViemQ&ab_channel=OnlyEnglishMovies", img: "https://img.youtube.com/vi/SpzsPiViemQ/sddefault.jpg" },
+
+
+
+      
+
+{ url: "https://www.youtube.com/watch?v=SmDfDzlHyB8&t=3086s&ab_channel=ScreenRecords", img: "https://img.youtube.com/vi/SmDfDzlHyB8/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=xi-YD_V0SR0&ab_channel=OnlyEnglishMovies", img: "https://img.youtube.com/vi/xi-YD_V0SR0/sddefault.jpg" },
+      
+{ url: "https://www.youtube.com/watch?v=_nQJ8B5NtA8&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/_nQJ8B5NtA8/sddefault.jpg" },
+      { url: "https://www.youtube.com/watch?v=Eq5me8PSbp0&ab_channel=FocusTv", img: "https://img.youtube.com/vi/Eq5me8PSbp0/sddefault.jpg" },
+
+
+
+      
+
+
+{ url: "https://www.youtube.com/watch?v=AwR_hc3DU7s&ab_channel=Trollboi22", img: "https://img.youtube.com/vi/AwR_hc3DU7s/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=B6MxMML6Hmc&ab_channel=ScreenRecords", img: "https://img.youtube.com/vi/B6MxMML6Hmc/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=M0bM_tRFmxA&ab_channel=HoangChinh", img: "https://img.youtube.com/vi/M0bM_tRFmxA/sddefault.jpg" },
+
+      { url: "https://www.youtube.com/watch?v=z46qfGqJ_bE&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/z46qfGqJ_bE/sddefault.jpg" },
+
+      { url: "https://www.youtube.com/watch?v=c1irAuyueLA&ab_channel=CyberAssistindo", img: "https://img.youtube.com/vi/c1irAuyueLA/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=1h4QQmnuNCs&ab_channel=CyberAssistindo", img: "https://img.youtube.com/vi/1h4QQmnuNCs/sddefault.jpg" },
+      
+
+{ url: "https://www.youtube.com/watch?v=_3HZ1A7xDaA", img: "https://img.youtube.com/vi/_3HZ1A7xDaA/sddefault.jpg" },
+
+      
+{ url: "https://www.youtube.com/watch?v=hZJYroqd0dI", img: "https://img.youtube.com/vi/hZJYroqd0dI/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=gFiptJvLsk4&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/gFiptJvLsk4/sddefault.jpg" },
+      
+ { url: "https://www.youtube.com/watch?v=wpPBXmuQNHc", img: "https://img.youtube.com/vi/wpPBXmuQNHc/sddefault.jpg" },
+
+      
+   { url: "https://www.youtube.com/watch?v=mc93fO8ub8M", img: "https://img.youtube.com/vi/mc93fO8ub8M/sddefault.jpg" },
+
+      { url: "https://www.youtube.com/watch?v=pA1o0O7vP9M", img: "https://img.youtube.com/vi/pA1o0O7vP9M/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=tVuL7tlG1K4&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/tVuL7tlG1K4/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=dBXVCx20GaI&ab_channel=Boxoffice%7C4KFullMovies", img: "https://img.youtube.com/vi/dBXVCx20GaI/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=YNemVi1H8Ck&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/YNemVi1H8Ck/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=Trqj71QbBsU&list=PLuBIJqLCZWDsnbCahYy2efs3qH_lShfCm&ab_channel=TQ007", img: "https://img.youtube.com/vi/Trqj71QbBsU/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=qxzDiXxOeAc&list=PLuBIJqLCZWDt9iFtQ63y3j2axK4PGUdkO&ab_channel=TQ007", img: "https://img.youtube.com/vi/qxzDiXxOeAc/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=I0UgB6xX_ME&list=PLxuO7c1ouEXursV23ZibQ7tmu6QWOMitR&ab_channel=RobertMay", img: "https://img.youtube.com/vi/I0UgB6xX_ME/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=OHeSdVtC7a8&list=PLuBIJqLCZWDt7F1klEkPlNTHWO2o71-eN&ab_channel=TQ007", img: "https://img.youtube.com/vi/OHeSdVtC7a8/sddefault.jpg" },
+
+
+
+{ url: "https://www.youtube.com/@TQ00Z/playlists", img: "https://img.youtube.com/vi/f3a5oIDvQTg/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=evnaiKMlX_c&t=142s&ab_channel=FRAME25", img: "https://img.youtube.com/vi/evnaiKMlX_c/sddefault.jpg" },
+
+
+
+
+
+
+
+
+      
+      
+      { url: "https://www.youtube.com/watch?v=8zuDc18wyiw&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/8zuDc18wyiw/sddefault.jpg" },
+      
+ { url: "https://www.youtube.com/watch?v=plaU0sa1MQ8&ab_channel=SSMovieRecaps", img: "https://img.youtube.com/vi/plaU0sa1MQ8/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=xzglePk2zAo&ab_channel=VSci-Fi-FullFreeSci-FiMovies", img: "https://img.youtube.com/vi/xzglePk2zAo/sddefault.jpg" },
+
+
+
+
+{ url: "https://www.youtube.com/watch?v=wpHvBrIIJnA&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/wpHvBrIIJnA/sddefault.jpg" },
+
+
+
+      
+
+
+
+
+
+      
+{ url: "https://www.youtube.com/watch?v=M17vU6hgNu4&ab_channel=SmingsWorld", img: "https://img.youtube.com/vi/M17vU6hgNu4/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=Bl9p7dWvFcg&ab_channel=SmingsWorld", img: "https://img.youtube.com/vi/Bl9p7dWvFcg/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=erLjUZ9fxDk&ab_channel=SmingsWorld", img: "https://img.youtube.com/vi/erLjUZ9fxDk/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=WiWvLVmJGbo&ab_channel=SmingsWorld", img: "https://img.youtube.com/vi/WiWvLVmJGbo/sddefault.jpg" },
+{ url: "https://www.youtube.com/watch?v=pdYteeK5s1s&ab_channel=IOF-Hindi", img: "https://img.youtube.com/vi/pdYteeK5s1s/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=UiGBEQoxz-g&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/UiGBEQoxz-g/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Rk8vW_GGxok&ab_channel=%EB%82%98%ED%98%BC%EC%9E%90%EB%85%BC%EB%8B%A4", img: "https://img.youtube.com/vi/Rk8vW_GGxok/sddefault.jpg" },
+
+
+
+
+
+
+      { url: "https://www.youtube.com/watch?v=KId5Mg7K9HE&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/KId5Mg7K9HE/sddefault.jpg" },
+
+
+
+{ url: "https://www.youtube.com/watch?v=77AsImTSzok&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/77AsImTSzok/sddefault.jpg" },
+      
+
+{ url: "https://www.youtube.com/watch?v=DYEW2G_sB7Q&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/DYEW2G_sB7Q/sddefault.jpg" },
+      
+
+
+{ url: "https://www.youtube.com/watch?v=lIVdXD-snZg&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/lIVdXD-snZg/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Zj8qo0aaG_I&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Zj8qo0aaG_I/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=6jxkQLb05Ho&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/6jxkQLb05Ho/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Kj9oxB5Sg9I&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Kj9oxB5Sg9I/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=DxcXM-dsauk&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/DxcXM-dsauk/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=9YPd6TOfAm8&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/9YPd6TOfAm8/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=iUZD6O8pGC8&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/iUZD6O8pGC8/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=8aQ1l3qhA-I&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/8aQ1l3qhA-I/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=5FtabbwJ6FI&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/5FtabbwJ6FI/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Wmnt0RRIogY&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Wmnt0RRIogY/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=AgHz4qhQ2mk&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/AgHz4qhQ2mk/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=fTu6n2Q0wC8&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/fTu6n2Q0wC8/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Gi9_6BAfEGY&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Gi9_6BAfEGY/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=VCBHLn8ymDQ&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/VCBHLn8ymDQ/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=ZqYiKNa8VWM&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/ZqYiKNa8VWM/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=Q7E0tugZels&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Q7E0tugZels/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=JywU3Y8zwzw&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/JywU3Y8zwzw/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=0y1p42k34LI&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/0y1p42k34LI/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=qyA6ZTgittc&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/qyA6ZTgittc/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=gSgXsirvOl4&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/gSgXsirvOl4/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=beG3c2LtfuI&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/beG3c2LtfuI/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=B2cGYwc8M6Q&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/B2cGYwc8M6Q/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=kdB2kK_vwzk&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/kdB2kK_vwzk/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=J8721jcYkdU&ab_channel=%ED%94%8C%EB%A0%88%EC%9D%B4%EB%AC%B4%EB%B9%84", img: "https://img.youtube.com/vi/J8721jcYkdU/sddefault.jpg" },
+
+      
+{ url: "https://www.youtube.com/watch?v=5QPrB8m5DF4&ab_channel=Su-HyeongPark", img: "https://img.youtube.com/vi/5QPrB8m5DF4/sddefault.jpg" },
+
+      
+
+
+
+
+      
+
+
+
+      
+      
+       
+   
+{ url: "https://www.youtube.com/watch?v=f6hxvT0y3fA&ab_channel=Boxoffice%7CROMANCE%7CFullMovies", img: "https://img.youtube.com/vi/f6hxvT0y3fA/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=U4LI2Wf8egg&ab_channel=ClipFlixKorea", img: "https://img.youtube.com/vi/U4LI2Wf8egg/sddefault.jpg" },
+
+
+
+{ url: "https://www.youtube.com/watch?v=Ikfv6pH2WmM&ab_channel=%EC%8A%A4%EB%B0%8D%EC%8A%A4", img: "https://img.youtube.com/vi/Ikfv6pH2WmM/sddefault.jpg" },
+
+
+
+      
+
+
+
+    { url: "https://www.youtube.com/watch?v=zkb2mtPV3vE&ab_channel=Viraldrama", img: "https://img.youtube.com/vi/zkb2mtPV3vE/sddefault.jpg" },
+      
+{ url: "https://www.youtube.com/watch?v=Gar1ONSRku8&ab_channel=LionMalus", img: "https://img.youtube.com/vi/Gar1ONSRku8/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=7Ke4pWDzmJg&ab_channel=IOF-Hindi", img: "https://img.youtube.com/vi/7Ke4pWDzmJg/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=2G2zlNfPesA&list=PL28d5JImIlH6aF6WYpRANAxlpk6oA0BnQ&ab_channel=%ED%95%9C%EA%B5%AD%EC%95%A0%EB%8B%88%EB%A9%94%EC%9D%B4%EC%85%98KoreanAnimation", img: "https://img.youtube.com/vi/2G2zlNfPesA/sddefault.jpg" },
+
+
+
+{ url: "https://www.youtube.com/watch?v=Y6D136RHiVc&ab_channel=%ED%95%9C%EA%B5%AD%EA%B3%A0%EC%A0%84%EC%98%81%ED%99%94KoreanClassicFilm", img: "https://img.youtube.com/vi/Y6D136RHiVc/sddefault.jpg" },
+
+   { url: "https://www.youtube.com/watch?v=eygaIptkEx0&ab_channel=DisasterMovies", img: "https://img.youtube.com/vi/eygaIptkEx0/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=hOdCKTUsu6A&ab_channel=ReelVisionMovies", img: "https://img.youtube.com/vi/hOdCKTUsu6A/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=lHxJd0l5dck&ab_channel=HitSeries", img: "https://img.youtube.com/vi/lHxJd0l5dck/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=eV7xAef7RQo&ab_channel=Cin%C3%A9film", img: "https://img.youtube.com/vi/eV7xAef7RQo/sddefault.jpg" },
+      
+{ url: "https://www.youtube.com/watch?v=jvqbubqCVsc&list=PLAEE4E29C29BC8BC2&ab_channel=GEM%3ACinemaCollection", img: "https://img.youtube.com/vi/jvqbubqCVsc/sddefault.jpg" },
+      
+
+{ url: "https://www.youtube.com/watch?v=ChyHumL9u3I&ab_channel=TheFilmDepot", img: "https://img.youtube.com/vi/ChyHumL9u3I/sddefault.jpg" },
+      
+{ url: "https://www.youtube.com/watch?v=bFfRNFMPeNo&list=PLwI2xy-W0M6I8AuJTq8dtC9aXMa-0SM0u&ab_channel=LoveDelight", img: "https://img.youtube.com/vi/bFfRNFMPeNo/sddefault.jpg" },
+      
+
+{ url: "https://www.youtube.com/watch?v=8urw36dsA3I&list=PLlsbL68NnCv1Vb5Xx-KgCQys3VAhlhDpO&ab_channel=%ED%95%9C%EA%B5%AD%EA%B3%A0%EC%A0%84%EC%98%81%ED%99%94KoreanClassicFilm", img: "https://img.youtube.com/vi/8urw36dsA3I/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=JE7xl6WhAdA&ab_channel=CineTimeAcrossAges", img: "https://img.youtube.com/vi/JE7xl6WhAdA/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=gFiptJvLsk4&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/gFiptJvLsk4/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=Xpm7URf-Jb8&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/Xpm7URf-Jb8/sddefault.jpg" },
+
+      { url: "https://www.youtube.com/watch?v=LMo4yaYwpqE&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/LMo4yaYwpqE/sddefault.jpg" },
+      
+{ url: "https://www.youtube.com/watch?v=7ODYzPni_IE&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/7ODYzPni_IE/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=lzFsrnMDE8k&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/lzFsrnMDE8k/sddefault.jpg" },
+
+
+{ url: "https://www.youtube.com/watch?v=3cQIpH4nKII&ab_channel=HollywoodAction", img: "https://img.youtube.com/vi/3cQIpH4nKII/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=vGCQPi430o0&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/vGCQPi430o0/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=TYsvaoOkLWQ&ab_channel=BlockbusterEnglishMovies", img: "https://img.youtube.com/vi/TYsvaoOkLWQ/sddefault.jpg" },
+
+
+
+
+{ url: "https://www.youtube.com/watch?v=i9ipCLciNVk&list=PLum50h_rWpG5e-46sLWgZAvWrbGzms---&index=13&ab_channel=eurosleaze", img: "https://img.youtube.com/vi/i9ipCLciNVk/sddefault.jpg" },
+      
+{ url: "https://www.youtube.com/watch?v=AWuxeDm1SGA&ab_channel=SamuelGoldwynFilms", img: "https://img.youtube.com/vi/AWuxeDm1SGA/sddefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=ytm851gqCqo&ab_channel=LOL%21Throwbacks", img: "https://img.youtube.com/vi/ytm851gqCqo/hqdefault.jpg" },
+
+{ url: "https://www.youtube.com/watch?v=7kguwrO1lfY&ab_channel=HarryPotter", img: "https://img.youtube.com/vi/7kguwrO1lfY/sddefault.jpg" },
+
+
+      
+    ];
+    const gallery2Data = [
+      
+
+
+
+
+
+      
+
+      
+    ];
+    const gallery3Data = [
+
+
+  
+
+      
+    ];
+    const gallery4Data = [
+
+
+
+      
+    ];
+    const gallery5Data = [
+
+
+
+      
+    ];
+    const gallery6Data = [
+
+
+
+
+
+
+
+      
+    ];
+    const gallery7Data = [];
+    const gallery8Data = [];
+    const gallery9Data = [];
+    const gallery10Data = [];
+    const shadowUrl = "https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png";
+
+    // 이미지 비율에 따라 박스 클래스 동적부여(최대한 단순, 기존과 구조/디자인 동일)
+    function renderGallery(data, targetId) {
+      const el = document.getElementById(targetId);
+      el.innerHTML = data.map(item => `
+        <div class="list-row">
+          <div class="imgframe">
+            <div class="img-wrap">
+              <div class="img-item">
+                <a href="${item.url}" target="_blank" rel="noopener">
+                  <img src="${item.img}">
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="shadow-line">
+            <img src="${shadowUrl}">
+          </div>
+        </div>
+      `).join('');
+      // 동적 크기 클래스 부여
+      Array.from(el.querySelectorAll('.list-row')).forEach((box, i) => {
+        const img = box.querySelector('img');
+        function applyBoxClass() {
+          if (img.naturalWidth > img.naturalHeight) {
+            box.classList.add('box-landscape');
+            box.classList.remove('box-portrait');
+          } else {
+            box.classList.add('box-portrait');
+            box.classList.remove('box-landscape');
+          }
+        }
+        img.onload = applyBoxClass;
+        if (img.complete) setTimeout(applyBoxClass, 20);
+      });
+    }
+    /* ===== 데이터 관리 (추가/수정/삭제 · 내보내기/가져오기 · 코드) ===== */
+    const DEFAULTS = {
+      gallery1: gallery1Data, gallery2: gallery2Data, gallery3: gallery3Data, gallery4: gallery4Data, gallery5: gallery5Data,
+      gallery6: gallery6Data, gallery7: gallery7Data, gallery8: gallery8Data, gallery9: gallery9Data, gallery10: gallery10Data
+    };
+    const MV_KEY = 'mywayMovieGalleriesV1';
+    function deepClone(o) { return JSON.parse(JSON.stringify(o)); }
+    function normGallery(a) { return Array.isArray(a) ? a.filter(x => x && x.url).map(x => ({ url: String(x.url), img: x.img || '' })) : []; }
+    function loadG() {
+      try {
+        const o = JSON.parse(localStorage.getItem(MV_KEY));
+        if (o && typeof o === 'object') { const r = {}; for (let i = 1; i <= 10; i++) r['gallery' + i] = normGallery(o['gallery' + i]); return r; }
+      } catch (_) {}
+      return null;
+    }
+    let galleries = loadG() || deepClone(DEFAULTS);
+    function saveG() { try { localStorage.setItem(MV_KEY, JSON.stringify(galleries)); } catch (_) {} }
+    function renderAll() { for (let i = 1; i <= 10; i++) renderGallery(galleries['gallery' + i], 'gallery' + i); }
+    renderAll();
+
+    function ytId(u) { const m = (u || '').match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/|youtube\.com\/live\/)([a-zA-Z0-9_-]{11})/); return m ? m[1] : null; }
+    function autoImg(u) { const id = ytId(u); return id ? ('https://img.youtube.com/vi/' + id + '/sddefault.jpg') : ''; }
+
+    /* 관리 모달 */
+    const mvmBg = document.getElementById('mvmBg');
+    const mvGallery = document.getElementById('mvGallery');
+    const mvUrl = document.getElementById('mvUrl');
+    const mvImg = document.getElementById('mvImg');
+    const mvSaveBtn = document.getElementById('mvSaveBtn');
+    let mvEditIdx = null;
+    function curKey() { return 'gallery' + mvGallery.value; }
+    function clearMv() { mvUrl.value = ''; mvImg.value = ''; mvEditIdx = null; mvSaveBtn.textContent = '추가하기'; }
+    function openManage() { clearMv(); renderItems(); mvmBg.classList.add('show'); }
+    function closeManage() { mvmBg.classList.remove('show'); clearMv(); }
+    function renderItems() {
+      const arr = galleries[curKey()] || [];
+      const list = document.getElementById('mvList');
+      list.innerHTML = '';
+      if (!arr.length) { const e = document.createElement('div'); e.className = 'mvm-empty'; e.textContent = '이 갤러리에 항목이 없어요.'; list.appendChild(e); return; }
+      arr.forEach((it, idx) => {
+        const row = document.createElement('div'); row.className = 'mvm-row';
+        const im = document.createElement('img'); im.src = it.img || autoImg(it.url); im.alt = '';
+        const u = document.createElement('span'); u.className = 'u'; u.textContent = it.url;
+        const e = document.createElement('button'); e.className = 'e'; e.textContent = '\u270E'; e.title = '수정';
+        e.onclick = () => { mvUrl.value = it.url; mvImg.value = it.img || ''; mvEditIdx = idx; mvSaveBtn.textContent = '수정 저장'; mvUrl.focus(); };
+        const d = document.createElement('button'); d.className = 'd'; d.textContent = '\u2715'; d.title = '삭제';
+        d.onclick = () => { galleries[curKey()].splice(idx, 1); saveG(); renderItems(); renderAll(); clearMv(); };
+        row.appendChild(im); row.appendChild(u); row.appendChild(e); row.appendChild(d);
+        list.appendChild(row);
+      });
+    }
+    mvGallery.addEventListener('change', () => { clearMv(); renderItems(); });
+    mvSaveBtn.addEventListener('click', () => {
+      let url = mvUrl.value.trim();
+      if (!url) { alert('영상 주소(URL)를 입력하세요.'); mvUrl.focus(); return; }
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      let img = mvImg.value.trim(); if (!img) img = autoImg(url);
+      const arr = galleries[curKey()];
+      if (mvEditIdx != null && arr[mvEditIdx]) arr[mvEditIdx] = { url: url, img: img };
+      else arr.push({ url: url, img: img });
+      saveG(); clearMv(); renderItems(); renderAll(); mvUrl.focus();
+    });
+    document.getElementById('mvAddBtn').addEventListener('click', openManage);
+    document.getElementById('mvDoneBtn').addEventListener('click', closeManage);
+    mvmBg.addEventListener('click', e => { if (e.target === mvmBg) closeManage(); });
+
+    /* 코드 출력 */
+    const mvmCodeBg = document.getElementById('mvmCodeBg');
+    function buildCode() {
+      let out = '';
+      for (let i = 1; i <= 10; i++) {
+        const arr = galleries['gallery' + i] || [];
+        out += '    const gallery' + i + 'Data = [';
+        if (arr.length) out += '\n' + arr.map(it => '      { url: ' + JSON.stringify(it.url) + ', img: ' + JSON.stringify(it.img) + ' }').join(',\n') + '\n    ];';
+        else out += '];';
+        out += '\n';
+      }
+      return out;
+    }
+    document.getElementById('mvCodeBtn').addEventListener('click', () => { document.getElementById('mvCodeArea').value = buildCode(); mvmCodeBg.classList.add('show'); });
+    document.getElementById('mvCodeCloseBtn').addEventListener('click', () => mvmCodeBg.classList.remove('show'));
+    mvmCodeBg.addEventListener('click', e => { if (e.target === mvmCodeBg) mvmCodeBg.classList.remove('show'); });
+    document.getElementById('mvCopyBtn').addEventListener('click', async () => {
+      const ta = document.getElementById('mvCodeArea');
+      const btn = document.getElementById('mvCopyBtn');
+      try { await navigator.clipboard.writeText(ta.value); btn.textContent = '복사됨!'; setTimeout(() => btn.textContent = '복사', 1200); }
+      catch (_) { ta.select(); try { document.execCommand('copy'); btn.textContent = '복사됨!'; setTimeout(() => btn.textContent = '복사', 1200); } catch (e2) {} }
+    });
+
+    /* 내보내기 / 가져오기 */
+    document.getElementById('mvExportBtn').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(galleries, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'myway-movie-galleries.json';
+      document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 100);
+    });
+    /* 기존 HTML 파일에서 galleryNData 추출 */
+    function parseHtmlGalleries(text) {
+      let found = false;
+      const result = {};
+      for (let i = 1; i <= 10; i++) {
+        const blockRe = new RegExp('gallery' + i + 'Data\\s*=\\s*\\[([\\s\\S]*?)\\]\\s*;');
+        const mb = text.match(blockRe);
+        const arr = [];
+        if (mb) {
+          found = true;
+          const objRe = /\{\s*url:\s*(['"])([\s\S]*?)\1\s*,\s*img:\s*(['"])([\s\S]*?)\3\s*\}/g;
+          let mo;
+          while ((mo = objRe.exec(mb[1])) !== null) arr.push({ url: mo[2], img: mo[4] });
+        }
+        result['gallery' + i] = arr;
+      }
+      return found ? result : null;
+    }
+
+    const mvFile = document.getElementById('mvImportFile');
+    document.getElementById('mvImportBtn').addEventListener('click', () => mvFile.click());
+    mvFile.addEventListener('change', e => {
+      const f = e.target.files && e.target.files[0]; if (!f) return;
+      const rd = new FileReader();
+      rd.onload = () => {
+        const text = rd.result || '';
+        let data = null;
+        try {
+          const o = JSON.parse(text);
+          if (o && typeof o === 'object' && !Array.isArray(o)) { data = {}; for (let i = 1; i <= 10; i++) data['gallery' + i] = normGallery(o['gallery' + i]); }
+        } catch (_) {}
+        if (!data) {
+          const h = parseHtmlGalleries(text);
+          if (h) { data = {}; for (let i = 1; i <= 10; i++) data['gallery' + i] = normGallery(h['gallery' + i]); }
+        }
+        if (!data) { alert('JSON 파일이나, 갤러리 데이터가 들어있는 HTML 파일을 선택해 주세요.'); mvFile.value = ''; return; }
+        galleries = data; saveG(); renderItems(); renderAll();
+        const total = Object.keys(galleries).reduce((s, k) => s + galleries[k].length, 0);
+        alert('가져오기 완료: 총 ' + total + '개 항목');
+        mvFile.value = '';
+      };
+      rd.readAsText(f);
+    });
+  </script>
+</body>
+</html>
