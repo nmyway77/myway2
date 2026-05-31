@@ -253,7 +253,11 @@
 
     /* 갤러리 반응형 */
     @media (max-width: 900px) { .masonry { column-count: 3; } }
-    @media (max-width: 600px) { .masonry { column-count: 2; column-gap: 10px; } .masonry .card { margin-bottom: 10px; } }
+    @media (max-width: 600px) {
+      .masonry { column-count: 3; column-gap: 7px; }
+      .masonry .card { margin-bottom: 7px; }
+      .masonry .card .cap { padding: 16px 6px 6px; font-size: .68rem; }
+    }
 
     /* 태블릿/PC: 카테고리 네비 중앙정렬 */
     @media (min-width: 721px) {
