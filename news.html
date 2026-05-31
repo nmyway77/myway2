@@ -401,7 +401,7 @@
     const STORAGE_KEY = 'mywayNewsV1';
     /* DEFAULTS 내용을 바꿀 때마다 아래 숫자를 1 올리세요.
        그러면 모든 방문자의 화면이 새 DEFAULTS로 다시 채워집니다. */
-    const DEFAULTS_VERSION = 3;
+    const DEFAULTS_VERSION = 4;
 
     const CATS = [
       { code: 'genNews', label: '일반뉴스' },
@@ -414,7 +414,14 @@
         { name: "보그", url: "https://www.vogue.co.kr/", img: "https://img.vogue.co.kr/vogue/2024/02/style_65ceef66858de-1116x1400.jpg" },
         { name: "엘르", url: "https://www.elle.co.kr/", img: "https://www.elle.co.kr/resources_old/online/org_online_image/el/12fec014-92f2-4883-9983-6b0daff4b157.jpg" },
         { name: "마리끌레르", url: "https://www.marieclairekorea.com/", img: "https://image.aladin.co.kr/product/16870/23/cover500/k032534972_1.jpg" },
-        { name: "코스모폴리", url: "https://www.cosmopolitan.co.kr/", img: "https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000588834.jpg" }
+        { name: "코스모폴리", url: "https://www.cosmopolitan.co.kr/", img: "https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000588834.jpg" },
+        { name: "하퍼스바자", url: "https://www.harpersbazaar.co.kr/", img: "https://image.yes24.com/goods/103932601/XL" },
+        { name: "우먼센스", url: "https://www.womansense.co.kr/", img: "https://i.ytimg.com/vi/DTQjqK4_Ml4/hq720_2.jpg?sqp=-oaymwEiCLQEENAFSFryq4qpAxQIARUAAAAAJQAAyEI9AICiQ9ABAQ==&rs=AOn4CLBlZcELGfCcm06hnVjMfWxNO1fDZg" },
+        { name: "우먼동", url: "https://woman.donga.com/", img: "https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000558677.jpg" },
+        { name: "우먼조선", url: "https://woman.chosun.com/", img: "https://img.ridicdn.net/cover/486000697/xxlarge#1" }
+    
+      
+      
       ],
       entNews: [
         { name: "하퍼스바자", url: "https://www.harpersbazaar.co.kr/", img: "https://image.yes24.com/goods/103932601/XL" },
@@ -430,27 +437,14 @@
       ]
     };
 
+    /* 데이터는 항상 DEFAULTS에서 직접 읽음 (localStorage 캐싱 없음)
+       → DEFAULTS만 고치면 즉시 반영, 버전 숫자 올릴 필요 없음 */
     function loadData() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const d = JSON.parse(raw);
-          if (d._ver === DEFAULTS_VERSION) {
-            CATS.forEach(c => { if (!Array.isArray(d[c.code])) d[c.code] = []; });
-            return d;
-          }
-          /* 버전이 다르면 아래로 빠져 새 DEFAULTS로 다시 초기화 */
-        }
-      } catch (e) {}
       const init = JSON.parse(JSON.stringify(DEFAULTS));
-      init._ver = DEFAULTS_VERSION;
-      saveData(init);
+      CATS.forEach(c => { if (!Array.isArray(init[c.code])) init[c.code] = []; });
       return init;
     }
-    function saveData(d) {
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
-      catch (e) { alert('이 브라우저에서 저장 공간을 사용할 수 없습니다.'); }
-    }
+    function saveData(d) { /* 저장 안 함 (방문자 편집 기능 없음) */ }
 
     let data = loadData();
     let currentFilter = 'genNews';
