@@ -711,6 +711,26 @@
       setTimeout(reportHeight, 1000);
       setInterval(reportHeight, 1000);
     })();
+
+    /* ===== 모바일: iframe 안에서 열릴 때 링크를 최상위 창에서 직접 열어
+       뒤로가기로 MYWAY 복귀 가능하게. PC·태블릿은 새 탭 유지. ===== */
+    (function(){
+      if (!/Mobi/i.test(navigator.userAgent)) return;
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest ? e.target.closest('a[href]') : null;
+        if (!a) return;
+        var href = a.getAttribute('href') || '';
+        if (!href || href.charAt(0) === '#' || /^javascript:/i.test(href)) return;
+        e.preventDefault();
+        try { (window.top || window).location.href = a.href; }
+        catch (_) { window.open(a.href, '_blank'); }
+      }, true);
+      var _open = window.open.bind(window);
+      window.open = function (url, name, feat) {
+        if (url) { try { (window.top || window).location.href = url; } catch (_) { location.href = url; } return null; }
+        return _open(url, name, feat);
+      };
+    })();
   </script>
 </body>
 </html>
