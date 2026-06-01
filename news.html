@@ -127,6 +127,24 @@
     }
     .cat-btn.is-active .count { opacity: .85; }
 
+    /* 접기 / 펼치기 토글 (티나지 않게) */
+    .collapse-toggle {
+      flex: 0 0 auto;
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1.5px solid #d3d8e4; background: #fff; color: #5a627e;
+      cursor: pointer; transition: color .2s, border-color .2s, background .2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .collapse-toggle:hover { color: #1f2740; border-color: #b9c0d2; background: #f4f6fb; }
+    .collapse-toggle:active { transform: scale(0.94); }
+    .collapse-toggle svg {
+      width: 15px; height: 15px; fill: currentColor; stroke: none;
+      transition: transform .25s ease;
+    }
+    body.is-collapsed .collapse-toggle svg { transform: rotate(180deg); }
+    body.is-collapsed .gallery-section { display: none; }
+
     /* ===== 갤러리 섹션 ===== */
     .gallery-section {
       width: 100%;
@@ -253,11 +271,7 @@
 
     /* 갤러리 반응형 */
     @media (max-width: 900px) { .masonry { column-count: 3; } }
-    @media (max-width: 600px) {
-      .masonry { column-count: 3; column-gap: 7px; }
-      .masonry .card { margin-bottom: 7px; }
-      .masonry .card .cap { padding: 16px 6px 6px; font-size: .68rem; }
-    }
+    @media (max-width: 600px) { .masonry { column-count: 2; column-gap: 10px; } .masonry .card { margin-bottom: 10px; } }
 
     /* 태블릿/PC: 카테고리 네비 중앙정렬 */
     @media (min-width: 721px) {
@@ -310,10 +324,13 @@
   <header class="topbar">
     <div class="topbar-row">
       <nav class="cat-nav" id="catNav">
-        <button class="cat-btn is-active" data-cat="genNews">일반뉴스 <span class="count" id="cnt-genNews"></span></button>
-        <button class="cat-btn" data-cat="entNews">연예뉴스 <span class="count" id="cnt-entNews"></span></button>
-        <button class="cat-btn" data-cat="etcNews">기타 <span class="count" id="cnt-etcNews"></span></button>
+        <button class="cat-btn is-active" data-cat="genNews">Magazines <span class="count" id="cnt-genNews"></span></button>
+        <button class="cat-btn" data-cat="entNews">News <span class="count" id="cnt-entNews"></span></button>
+        <button class="cat-btn" data-cat="etcNews">Others <span class="count" id="cnt-etcNews"></span></button>
       </nav>
+      <button class="collapse-toggle" id="collapseToggle" aria-label="목록 접기/펼치기" aria-expanded="true" title="접기 / 펼치기">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8l6 9H6z"/></svg>
+      </button>
     </div>
   </header>
 
@@ -341,9 +358,9 @@
       <label class="field">
         <span>분류</span>
         <select id="inCat">
-          <option value="genNews">일반뉴스</option>
-          <option value="entNews">연예뉴스</option>
-          <option value="etcNews">기타</option>
+          <option value="genNews">Magazines</option>
+          <option value="entNews">News</option>
+          <option value="etcNews">Others</option>
         </select>
       </label>
       <label class="field">
@@ -408,9 +425,9 @@
     const DEFAULTS_VERSION = 4;
 
     const CATS = [
-      { code: 'genNews', label: '일반뉴스' },
-      { code: 'entNews', label: '연예뉴스' },
-      { code: 'etcNews', label: '기타' }
+      { code: 'genNews', label: 'Magazines' },
+      { code: 'entNews', label: 'News' },
+      { code: 'etcNews', label: 'Others' }
     ];
 
     const DEFAULTS = {
@@ -712,6 +729,17 @@
       document.addEventListener('click', function (e) {
         if (e.target.closest && e.target.closest('.cat-btn')) setTimeout(reportHeight, 60);
       });
+      /* 접기 / 펼치기 토글 */
+      var _collapseToggle = document.getElementById('collapseToggle');
+      if (_collapseToggle) {
+        _collapseToggle.addEventListener('click', function () {
+          var collapsed = document.body.classList.toggle('is-collapsed');
+          _collapseToggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+          reportHeight();
+          setTimeout(reportHeight, 60);
+          setTimeout(reportHeight, 350);
+        });
+      }
       window.addEventListener('load', function () {
         document.querySelectorAll('img').forEach(function (img) {
           if (!img.complete) img.addEventListener('load', reportHeight);
