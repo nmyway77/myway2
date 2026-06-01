@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>우편번호 · 주소 검색 | MYWAY.KR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="도로명주소·지번주소·영문주소와 우편번호를 한 번에 검색합니다. 다음 우편번호 서비스 기반 - MYWAY.KR">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --paper: #f7f3eb; --ink: #25282f; --muted: #7c8089; --line: #e3ddd0;
+      --card: #fffdf8; --accent: #2b6fe3; --accent2: #7ed6fb;
+      --grad: linear-gradient(95deg, #7ed6fb 8%, #b176f3 92%);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    html, body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; }
+    body {
+      background: var(--paper); color: var(--ink);
+      font-family: 'Pretendard', system-ui, sans-serif;
+      min-height: 100vh; min-height: 100dvh;
+      -webkit-user-select: none; -moz-user-select: none; user-select: none; overflow-x: hidden;
+    }
+    input { -webkit-user-select: text; user-select: text; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 30px 18px 110px; }
+
+    .top { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .brand-home {
+      flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+      width: 38px; height: 38px; border-radius: 12px; text-decoration: none; color: #fff;
+      background: var(--grad); box-shadow: 0 6px 16px rgba(177,118,243,.28);
+    }
+    .brand-home svg { width: 19px; height: 19px; fill: currentColor; }
+    h1 { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.5rem; margin: 0; letter-spacing: -.3px; }
+    .lead { color: var(--muted); font-size: .92rem; margin: 6px 0 20px; line-height: 1.55; }
+
+    /* 검색 위젯 카드 */
+    .search-card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+      padding: 12px; box-shadow: 0 10px 30px rgba(43,111,227,.06); overflow: hidden;
+    }
+    #postcodeBox { width: 100%; height: 480px; border-radius: 12px; overflow: hidden; }
+    .loading { padding: 40px 0; text-align: center; color: var(--muted); font-size: .92rem; }
+
+    /* 결과 카드 */
+    #result { margin-top: 22px; }
+    .res-card {
+      background: var(--card); border: 1.5px solid var(--accent); border-radius: 16px;
+      padding: 18px; box-shadow: 0 8px 24px rgba(43,111,227,.1);
+    }
+    .res-card .picked {
+      font-size: .78rem; font-weight: 600; color: var(--accent);
+      font-family: 'JetBrains Mono', monospace; letter-spacing: .04em; margin-bottom: 12px;
+    }
+    .row {
+      display: flex; align-items: flex-start; gap: 10px; padding: 11px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .row:last-child { border-bottom: none; }
+    .row .lab {
+      flex: 0 0 78px; font-size: .8rem; font-weight: 700; color: var(--muted);
+      padding-top: 2px;
+    }
+    .row .val {
+      flex: 1 1 0; min-width: 0; font-size: .98rem; font-weight: 600; color: var(--ink);
+      line-height: 1.4; word-break: keep-all;
+    }
+    .row .val.zip {
+      font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; color: var(--accent); letter-spacing: .03em;
+    }
+    .row .copy {
+      flex: 0 0 auto; border: none; background: transparent; cursor: pointer; padding: 4px;
+      display: inline-flex; color: var(--muted); border-radius: 6px; -webkit-tap-highlight-color: transparent;
+    }
+    .row .copy:hover { color: var(--accent); }
+    .row .copy svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .row .copy.done { color: #2faa6a; }
+
+    .notice {
+      margin-top: 26px; padding: 14px 16px; border-radius: 12px;
+      background: rgba(43,111,227,.06); border: 1px solid rgba(43,111,227,.16);
+      color: #5a6478; font-size: .82rem; line-height: 1.6;
+    }
+
+    .fab-home {
+      position: fixed; right: 18px; bottom: calc(18px + var(--safe-bottom)); z-index: 50;
+      width: 52px; height: 52px; border-radius: 50%; text-decoration: none; color: #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--grad); box-shadow: 0 8px 24px rgba(177,118,243,.4); transition: transform .15s;
+    }
+    .fab-home:hover { transform: translateY(-2px) scale(1.04); }
+    .fab-home svg { width: 24px; height: 24px; fill: currentColor; }
+
+    footer { text-align: center; padding: 26px 16px calc(20px + var(--safe-bottom)); color: var(--muted); font-size: .82rem; }
+    footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 1.3rem; }
+      #postcodeBox { height: 60vh; min-height: 420px; }
+      .row .lab { flex-basis: 64px; font-size: .76rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <a class="brand-home" href="https://myway.kr" aria-label="MYWAY 홈">
+        <svg viewBox="0 0 24 24"><path d="M12 3 3 10.5V21h6v-6h6v6h6V10.5L12 3z"/></svg>
+      </a>
+      <h1>우편번호 · 주소 검색</h1>
+    </div>
+    <p class="lead">건물명·동·도로명으로 검색하면 도로명주소·지번주소·영문주소와 우편번호를 한 번에 확인할 수 있어요. 결과를 선택하면 아래에서 복사할 수 있습니다.</p>
+
+    <div class="search-card">
+      <div id="postcodeBox"><div class="loading">주소 검색을 불러오는 중…</div></div>
+    </div>
+
+    <div id="result"></div>
+
+    <div class="notice">
+      도로명 주소가 발급된 주소만 검색됩니다. 데이터는 행정안전부 도로명주소 기준이며, 다음(카카오) 우편번호 서비스로 제공됩니다.
+    </div>
+  </div>
+
+  <a class="fab-home" href="https://myway.kr" aria-label="MYWAY 홈으로">
+    <svg viewBox="0 0 24 24"><path d="M12 3 3 10.5V21h6v-6h6v6h6V10.5L12 3z"/></svg>
+  </a>
+
+  <footer>우편번호 · 주소 검색 · <a href="https://myway.kr">myway.kr</a></footer>
+
+  <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    function getQuery() {
+      try { return (new URLSearchParams(location.search).get('q') || '').trim(); }
+      catch (e) { return ''; }
+    }
+
+    function copyIcon() {
+      return '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+    }
+    function checkIcon() {
+      return '<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';
+    }
+    function row(label, value, isZip) {
+      if (!value) return '';
+      return '<div class="row"><span class="lab">' + label + '</span>' +
+        '<span class="val' + (isZip ? ' zip' : '') + '">' + value + '</span>' +
+        '<button class="copy" data-copy="' + value.replace(/"/g, '&quot;') + '" aria-label="복사">' + copyIcon() + '</button></div>';
+    }
+
+    function showResult(data) {
+      const road = data.roadAddress || data.autoRoadAddress || '';
+      const roadFull = road + (data.buildingName ? ' (' + data.buildingName + ')' : '');
+      const jibun = data.jibunAddress || data.autoJibunAddress || '';
+      const eng = data.roadAddressEnglish || '';
+      const zip = data.zonecode || '';
+
+      let html = '<div class="res-card"><div class="picked">선택한 주소</div>';
+      html += row('도로명', roadFull, false);
+      html += row('지번', jibun, false);
+      html += row('영문', eng, false);
+      html += row('우편번호', zip, true);
+      html += '</div>';
+      document.getElementById('result').innerHTML = html;
+      window.scrollTo({ top: document.getElementById('result').offsetTop - 20, behavior: 'smooth' });
+    }
+
+    function copyText(text, btn) {
+      const done = () => {
+        btn.classList.add('done');
+        const old = btn.innerHTML; btn.innerHTML = checkIcon();
+        setTimeout(() => { btn.classList.remove('done'); btn.innerHTML = old; }, 1100);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+      } else { fallbackCopy(text, done); }
+    }
+    function fallbackCopy(text, cb) {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); cb && cb(); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    document.getElementById('result').addEventListener('click', function (e) {
+      const btn = e.target.closest && e.target.closest('.copy');
+      if (btn) copyText(btn.getAttribute('data-copy'), btn);
+    });
+
+    function initWidget() {
+      if (!(window.daum && daum.Postcode)) {
+        document.getElementById('postcodeBox').innerHTML =
+          '<div class="loading">주소 검색 서비스를 불러오지 못했습니다. 새로고침 해주세요.</div>';
+        return;
+      }
+      const box = document.getElementById('postcodeBox');
+      box.innerHTML = '';
+      const q = getQuery();
+      const opts = {
+        oncomplete: showResult,
+        width: '100%',
+        height: '100%',
+        autoClose: false,
+        maxSuggestItems: 5
+      };
+      new daum.Postcode(opts).embed(box, q ? { q: q, autoClose: false } : { autoClose: false });
+    }
+
+    // 스크립트가 이미 로드됐으면 바로, 아니면 로드 대기
+    if (window.daum && daum.Postcode) {
+      initWidget();
+    } else {
+      let tries = 0;
+      const t = setInterval(function () {
+        tries++;
+        if (window.daum && daum.Postcode) { clearInterval(t); initWidget(); }
+        else if (tries > 40) { clearInterval(t); initWidget(); }
+      }, 100);
+    }
+  })();
+  </script>
+
+  <!-- ===== 복사 방지 (MYWAY 공통, 입력칸 예외) ===== -->
+  <script>
+  (function () {
+    function inField(t) {
+      return t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+    }
+    ['contextmenu', 'selectstart', 'dragstart', 'copy', 'cut'].forEach(function (ev) {
+      document.addEventListener(ev, function (e) {
+        if (inField(e.target)) return;
+        e.preventDefault();
+      });
+    });
+    document.addEventListener('keydown', function (e) {
+      var k = (e.key || '').toLowerCase();
+      if (e.key === 'F12') { e.preventDefault(); return; }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (k === 'i' || k === 'j' || k === 'c')) { e.preventDefault(); return; }
+      if ((e.ctrlKey || e.metaKey) && (k === 'u' || k === 's' || k === 'c' || k === 'x' || k === 'a')) {
+        if (inField(e.target)) return;
+        e.preventDefault();
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

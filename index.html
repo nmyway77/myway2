@@ -1893,6 +1893,17 @@
         return;
       }
 
+      // ── 우편번호 검색 / 한글주소→영어 (MYWAY 자체 페이지 postcode.html 연동) ──
+      //   입력값을 ?q= 로 넘기면 다음 우편번호 서비스가 바로 검색 실행.
+      //   결과에 도로명·지번·영문주소·우편번호가 함께 나옴.
+      if (engineKey === 'postcode' || engineKey === 'jusoen') {
+        const u = query
+          ? 'https://myway.kr/postcode.html?q=' + encodeURIComponent(query)
+          : 'https://myway.kr/postcode.html';
+        window.open(u, '_blank', 'noopener,noreferrer');
+        return;
+      }
+
       // ── 일반 검색엔진 모드 (기존 동작) ──
       const engineObj = snarkEnginesParent.find(e => e.key === engineKey);
       if (engineObj) {
