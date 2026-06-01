@@ -62,14 +62,27 @@
       font-size: .78rem; font-weight: 600; color: var(--accent);
       font-family: 'JetBrains Mono', monospace; letter-spacing: .04em; margin-bottom: 12px;
     }
+    .copy-all {
+      width: 100%; margin-bottom: 14px; padding: 13px; border: none; border-radius: 12px;
+      background: var(--grad); color: #fff; font-size: 1rem; font-weight: 700; font-family: inherit;
+      cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 8px 20px rgba(177,118,243,.28); -webkit-tap-highlight-color: transparent;
+      transition: transform .12s;
+    }
+    .copy-all:hover { transform: translateY(-1px); }
+    .copy-all:active { transform: scale(.985); }
+    .copy-all svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
+
     .row {
-      display: flex; align-items: flex-start; gap: 10px; padding: 11px 0;
-      border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; gap: 10px; padding: 12px 10px;
+      border-bottom: 1px solid var(--line); border-radius: 10px; cursor: pointer;
+      transition: background .12s; -webkit-tap-highlight-color: transparent;
     }
     .row:last-child { border-bottom: none; }
+    .row:hover { background: rgba(43,111,227,.05); }
+    .row:active { background: rgba(43,111,227,.1); }
     .row .lab {
-      flex: 0 0 78px; font-size: .8rem; font-weight: 700; color: var(--muted);
-      padding-top: 2px;
+      flex: 0 0 78px; font-size: .8rem; font-weight: 700; color: var(--muted); padding-top: 1px;
     }
     .row .val {
       flex: 1 1 0; min-width: 0; font-size: .98rem; font-weight: 600; color: var(--ink);
@@ -79,12 +92,21 @@
       font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; color: var(--accent); letter-spacing: .03em;
     }
     .row .copy {
-      flex: 0 0 auto; border: none; background: transparent; cursor: pointer; padding: 4px;
-      display: inline-flex; color: var(--muted); border-radius: 6px; -webkit-tap-highlight-color: transparent;
+      flex: 0 0 auto; border: none; background: transparent; padding: 4px; pointer-events: none;
+      display: inline-flex; color: var(--muted); border-radius: 6px;
     }
-    .row .copy:hover { color: var(--accent); }
     .row .copy svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; }
-    .row .copy.done { color: #2faa6a; }
+    .row.done { background: rgba(47,170,106,.1); }
+    .row.done .copy { color: #2faa6a; }
+
+    /* 복사됨 토스트 */
+    .toast {
+      position: fixed; left: 50%; bottom: calc(86px + var(--safe-bottom)); transform: translateX(-50%) translateY(20px);
+      background: #25282f; color: #fff; padding: 10px 18px; border-radius: 22px; font-size: .88rem; font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0,0,0,.25); opacity: 0; pointer-events: none; z-index: 60;
+      transition: opacity .2s, transform .2s; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     .notice {
       margin-top: 26px; padding: 14px 16px; border-radius: 12px;
@@ -132,6 +154,8 @@
     </div>
   </div>
 
+  <div class="toast" id="toast"></div>
+
   <a class="fab-home" href="https://myway.kr" aria-label="MYWAY 홈으로">
     <svg viewBox="0 0 24 24"><path d="M12 3 3 10.5V21h6v-6h6v6h6V10.5L12 3z"/></svg>
   </a>
@@ -156,9 +180,10 @@
     }
     function row(label, value, isZip) {
       if (!value) return '';
-      return '<div class="row"><span class="lab">' + label + '</span>' +
+      return '<div class="row" data-copy="' + value.replace(/"/g, '&quot;') + '">' +
+        '<span class="lab">' + label + '</span>' +
         '<span class="val' + (isZip ? ' zip' : '') + '">' + value + '</span>' +
-        '<button class="copy" data-copy="' + value.replace(/"/g, '&quot;') + '" aria-label="복사">' + copyIcon() + '</button></div>';
+        '<span class="copy">' + copyIcon() + '</span></div>';
     }
 
     function showResult(data) {
@@ -168,7 +193,13 @@
       const eng = data.roadAddressEnglish || '';
       const zip = data.zonecode || '';
 
+      // 전체 복사용: 도로명주소 [우편번호]
+      const allText = roadFull + (zip ? ' [' + zip + ']' : '');
+
       let html = '<div class="res-card"><div class="picked">선택한 주소</div>';
+      html += '<button class="copy-all" data-copy="' + allText.replace(/"/g, '&quot;') + '">' +
+        copyIcon() + ' 도로명주소 + 우편번호 복사</button>';
+      html += '<p style="font-size:.8rem;color:var(--muted);margin:0 0 10px;text-align:center;">아래 항목을 탭하면 개별 복사돼요</p>';
       html += row('도로명', roadFull, false);
       html += row('지번', jibun, false);
       html += row('영문', eng, false);
@@ -178,14 +209,24 @@
       window.scrollTo({ top: document.getElementById('result').offsetTop - 20, behavior: 'smooth' });
     }
 
-    function copyText(text, btn) {
-      const done = () => {
-        btn.classList.add('done');
-        const old = btn.innerHTML; btn.innerHTML = checkIcon();
-        setTimeout(() => { btn.classList.remove('done'); btn.innerHTML = old; }, 1100);
+    var toastTimer;
+    function toast(msg) {
+      var el = document.getElementById('toast');
+      el.textContent = msg; el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { el.classList.remove('show'); }, 1500);
+    }
+
+    function copyText(text, rowEl) {
+      const done = function () {
+        toast('복사됨: ' + (text.length > 24 ? text.slice(0, 24) + '…' : text));
+        if (rowEl && rowEl.classList.contains('row')) {
+          rowEl.classList.add('done');
+          setTimeout(function () { rowEl.classList.remove('done'); }, 1000);
+        }
       };
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+        navigator.clipboard.writeText(text).then(done).catch(function () { fallbackCopy(text, done); });
       } else { fallbackCopy(text, done); }
     }
     function fallbackCopy(text, cb) {
@@ -196,8 +237,8 @@
       document.body.removeChild(ta);
     }
     document.getElementById('result').addEventListener('click', function (e) {
-      const btn = e.target.closest && e.target.closest('.copy');
-      if (btn) copyText(btn.getAttribute('data-copy'), btn);
+      const target = e.target.closest && e.target.closest('[data-copy]');
+      if (target) copyText(target.getAttribute('data-copy'), target);
     });
 
     function initWidget() {
