@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>티켓팅 서버시계 · 예매 카운트다운 | MYWAY.KR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="표준 서버 시간에 동기화된 정밀 시계와 예매 오픈 카운트다운. 내 기기 시계 오차를 보정해 정확한 순간에 예매하세요 - MYWAY.KR">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --paper: #f7f3eb; --ink: #25282f; --muted: #7c8089; --line: #e3ddd0;
+      --card: #fffdf8; --accent: #e8533f; --ok: #2faa6a; --warn: #e8943f;
+      --grad: linear-gradient(95deg, #7ed6fb 8%, #b176f3 92%);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    html, body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; }
+    body {
+      background: var(--paper); color: var(--ink);
+      font-family: 'Pretendard', system-ui, sans-serif;
+      min-height: 100vh; min-height: 100dvh;
+      -webkit-user-select: none; -moz-user-select: none; user-select: none; overflow-x: hidden;
+    }
+    input { -webkit-user-select: text; user-select: text; }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 28px 18px 110px; }
+
+    .top { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .brand-home {
+      flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+      width: 38px; height: 38px; border-radius: 12px; text-decoration: none; color: #fff;
+      background: var(--grad); box-shadow: 0 6px 16px rgba(177,118,243,.28);
+    }
+    .brand-home svg { width: 19px; height: 19px; fill: currentColor; }
+    h1 { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.4rem; margin: 0; letter-spacing: -.3px; }
+
+    /* 서버 시계 */
+    .clock-card {
+      background: #1b2330; color: #fff; border-radius: 20px; padding: 24px 20px;
+      text-align: center; box-shadow: 0 14px 36px rgba(27,35,48,.22); margin-bottom: 16px;
+    }
+    .clock-label {
+      font-family: 'JetBrains Mono', monospace; font-size: .72rem; letter-spacing: .14em;
+      text-transform: uppercase; color: #8fa1bd; margin-bottom: 8px;
+    }
+    .clock-time {
+      font-family: 'Space Grotesk', monospace; font-weight: 700;
+      font-size: clamp(2.6rem, 13vw, 4rem); line-height: 1; letter-spacing: .01em;
+      font-variant-numeric: tabular-nums;
+    }
+    .clock-time .cs { font-size: .5em; color: #7ed6fb; vertical-align: baseline; }
+    .clock-date { font-size: .85rem; color: #9fb0c9; margin-top: 8px; }
+    .sync-row {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 14px; font-size: .8rem; color: #9fb0c9;
+    }
+    .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #5a6a82; }
+    .sync-dot.ok { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+    .sync-dot.syncing { background: var(--warn); animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .resync {
+      background: rgba(255,255,255,.1); color: #cdd8e8; border: none; border-radius: 8px;
+      padding: 5px 10px; font-size: .76rem; font-family: inherit; cursor: pointer; margin-left: 4px;
+    }
+    .resync:hover { background: rgba(255,255,255,.18); }
+
+    /* 항상 보이는 큰 안내 */
+    .main-guide {
+      background: var(--accent); color: #fff; border-radius: 16px;
+      padding: 20px 16px; text-align: center; margin-bottom: 16px;
+      font-size: clamp(1.4rem, 6vw, 1.9rem); font-weight: 800; line-height: 1.3;
+      box-shadow: 0 10px 26px rgba(232,83,63,.28);
+    }
+
+    /* 카운트다운 설정 */
+    .panel {
+      background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+      padding: 16px; margin-bottom: 16px;
+    }
+    .panel h2 { font-size: .98rem; margin: 0 0 12px; color: var(--ink); }
+    .time-inputs { display: flex; align-items: center; gap: 8px; justify-content: center; }
+    .time-inputs input {
+      width: 64px; text-align: center; padding: 12px 6px; border: 1.5px solid var(--line);
+      border-radius: 10px; font-size: 1.4rem; font-family: 'Space Grotesk', monospace; font-weight: 600;
+      color: var(--ink); background: #fff; outline: none; font-variant-numeric: tabular-nums;
+    }
+    .time-inputs input:focus { border-color: var(--accent); }
+    .time-inputs .colon { font-size: 1.4rem; font-weight: 700; color: var(--muted); }
+    .presets { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; margin-top: 12px; }
+    .preset {
+      background: #f1ece1; border: 1px solid var(--line); border-radius: 8px; padding: 7px 11px;
+      font-size: .82rem; color: #5c6068; cursor: pointer; font-family: inherit;
+    }
+    .preset:hover { border-color: var(--accent); color: var(--accent); }
+    .start-btn {
+      width: 100%; margin-top: 14px; padding: 13px; border: none; border-radius: 12px;
+      background: var(--grad); color: #fff; font-size: 1rem; font-weight: 700; font-family: inherit;
+      cursor: pointer; box-shadow: 0 8px 20px rgba(177,118,243,.28); -webkit-tap-highlight-color: transparent;
+    }
+    .start-btn:active { transform: scale(.99); }
+
+    /* 카운트다운 표시 */
+    .countdown-card {
+      display: none; background: var(--card); border: 2px solid var(--line); border-radius: 18px;
+      padding: 22px 18px; text-align: center; margin-bottom: 16px;
+    }
+    .countdown-card.active { display: block; }
+    .cd-label { font-size: .82rem; color: var(--muted); margin-bottom: 6px; }
+    .cd-target { font-family: 'JetBrains Mono', monospace; font-size: .9rem; color: var(--ink); margin-bottom: 12px; }
+    .cd-guide {
+      font-size: .9rem; font-weight: 600; color: var(--accent);
+      background: rgba(232,83,63,.08); border-radius: 10px; padding: 9px 12px; margin-bottom: 14px;
+      line-height: 1.4;
+    }
+    .cd-guide b { font-weight: 800; }
+    .cd-value {
+      font-family: 'Space Grotesk', monospace; font-weight: 700; font-variant-numeric: tabular-nums;
+      font-size: clamp(2.8rem, 15vw, 4.6rem); line-height: 1; color: var(--ink); transition: color .2s;
+    }
+    .cd-state-soon .cd-value { color: var(--warn); }
+    .cd-state-now .cd-value { color: var(--accent); animation: flash .4s infinite; }
+    .cd-state-go .cd-value { color: var(--ok); animation: flash .35s infinite; }
+    @keyframes flash { 0%,100%{opacity:1} 50%{opacity:.25} }
+    .cd-msg { margin-top: 12px; font-size: 1.3rem; font-weight: 800; min-height: 1.2em; }
+    .cd-state-go .cd-msg { color: var(--ok); font-size: clamp(1.8rem, 8vw, 2.6rem); line-height: 1.2; }
+    .stop-btn {
+      margin-top: 14px; background: transparent; border: 1.5px solid var(--line); color: var(--muted);
+      border-radius: 10px; padding: 8px 16px; font-size: .85rem; font-family: inherit; cursor: pointer;
+    }
+
+    .tips {
+      background: rgba(232,83,63,.05); border: 1px solid rgba(232,83,63,.15); border-radius: 12px;
+      padding: 14px 16px; font-size: .84rem; color: #6a5550; line-height: 1.65;
+    }
+    .tips b { color: var(--accent); }
+
+    /* ── 예매 정보 빠른 복사 ── */
+    .qf-head { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.15rem; margin: 26px 0 4px; }
+    .qf-lead { color: var(--muted); font-size: .86rem; margin: 0 0 14px; line-height: 1.5; }
+    .qf-item {
+      background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+      padding: 12px 12px 12px 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
+    }
+    .qf-item .fields { flex: 1 1 0; min-width: 0; }
+    .qf-item .label-in {
+      width: 100%; border: none; background: transparent; outline: none;
+      font-family: 'JetBrains Mono', monospace; font-size: .72rem; font-weight: 600;
+      letter-spacing: .03em; color: #228a54; padding: 0 0 3px; text-transform: uppercase;
+    }
+    .qf-item .value-in {
+      width: 100%; border: none; background: transparent; outline: none;
+      font-size: 1.06rem; font-weight: 600; color: var(--ink); padding: 0;
+    }
+    .qf-item .value-in::placeholder { color: #c2bdb1; font-weight: 400; }
+    .qf-item .copy {
+      flex: 0 0 auto; border: none; border-radius: 10px; padding: 11px 16px;
+      background: #2faa6a; color: #fff; font-size: .92rem; font-weight: 700; font-family: inherit;
+      cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background .15s, transform .1s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .qf-item .copy:hover { background: #228a54; }
+    .qf-item .copy:active { transform: scale(.95); }
+    .qf-item .copy svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.2; }
+    .qf-item .del {
+      flex: 0 0 auto; border: none; background: transparent; color: #c7c0b2; cursor: pointer;
+      font-size: 1.3rem; line-height: 1; padding: 4px 6px; border-radius: 8px;
+    }
+    .qf-item .del:hover { color: var(--accent); background: #f1ece1; }
+    .add-btn {
+      width: 100%; margin-top: 6px; padding: 13px; border: 1.5px dashed var(--line); border-radius: 12px;
+      background: transparent; color: var(--muted); font-size: .95rem; font-weight: 600; font-family: inherit; cursor: pointer;
+    }
+    .add-btn:hover { border-color: #2faa6a; color: #228a54; }
+    .qf-clear-guide {
+      text-align: center; font-size: 1.12rem; color: #d3492f; font-weight: 700;
+      margin: 20px 0 10px; line-height: 1.5;
+    }
+    .qf-clear-guide b { font-weight: 800; }
+    .qf-clear {
+      display: block; width: 100%; margin: 0; padding: 19px;
+      background: #d3492f; border: none; border-radius: 14px;
+      color: #fff; font-size: 1.3rem; font-weight: 800; font-family: inherit; cursor: pointer;
+      -webkit-tap-highlight-color: transparent; transition: background .15s, transform .1s;
+      box-shadow: 0 8px 22px rgba(211,73,47,.32); letter-spacing: .02em;
+    }
+    .qf-clear:hover { background: #b93a23; }
+    .qf-clear:active { transform: scale(.985); }
+    .qf-notice {
+      margin-top: 16px; padding: 12px 14px; border-radius: 12px;
+      background: rgba(232,83,63,.06); border: 1px solid rgba(232,83,63,.16);
+      color: #7a5550; font-size: .8rem; line-height: 1.55;
+    }
+    .qf-notice b { color: #d3492f; }
+    .toast {
+      position: fixed; left: 50%; bottom: calc(86px + var(--safe-bottom)); transform: translateX(-50%) translateY(20px);
+      background: #25282f; color: #fff; padding: 10px 18px; border-radius: 22px; font-size: .9rem; font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0,0,0,.25); opacity: 0; pointer-events: none; z-index: 60;
+      transition: opacity .2s, transform .2s; white-space: nowrap; max-width: 90vw; overflow: hidden; text-overflow: ellipsis;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .fab-home {
+      position: fixed; right: 18px; bottom: calc(18px + var(--safe-bottom)); z-index: 50;
+      width: 52px; height: 52px; border-radius: 50%; text-decoration: none; color: #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--grad); box-shadow: 0 8px 24px rgba(177,118,243,.4);
+    }
+    .fab-home svg { width: 24px; height: 24px; fill: currentColor; }
+    footer { text-align: center; padding: 24px 16px calc(20px + var(--safe-bottom)); color: var(--muted); font-size: .82rem; }
+    footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <a class="brand-home" href="https://myway.kr" aria-label="MYWAY 홈">
+        <svg viewBox="0 0 24 24"><path d="M12 3 3 10.5V21h6v-6h6v6h6V10.5L12 3z"/></svg>
+      </a>
+      <h1>티켓팅 서버시계</h1>
+    </div>
+
+    <div class="clock-card">
+      <div class="clock-label">표준 서버시간 (KST)</div>
+      <div class="clock-time" id="clock">--:--:--<span class="cs">.--</span></div>
+      <div class="clock-date" id="clockDate">동기화 준비 중…</div>
+      <div class="sync-row">
+        <span class="sync-dot syncing" id="syncDot"></span>
+        <span id="syncText">서버 시간 동기화 중…</span>
+        <button class="resync" id="resyncBtn">재동기화</button>
+      </div>
+    </div>
+
+    <div class="main-guide">🔔 알람이 울리면<br>예매 버튼을 누르세요</div>
+
+    <div class="panel">
+      <h2>예매 오픈 시각 설정</h2>
+      <div class="time-inputs">
+        <input type="number" id="hh" min="0" max="23" placeholder="14" inputmode="numeric">
+        <span class="colon">:</span>
+        <input type="number" id="mm" min="0" max="59" placeholder="00" inputmode="numeric">
+        <span class="colon">:</span>
+        <input type="number" id="ss" min="0" max="59" placeholder="00" inputmode="numeric">
+      </div>
+      <div class="presets">
+        <button class="preset" data-t="10:00:00">10:00</button>
+        <button class="preset" data-t="11:00:00">11:00</button>
+        <button class="preset" data-t="14:00:00">14:00</button>
+        <button class="preset" data-t="20:00:00">20:00</button>
+        <button class="preset" data-t="+1">1분 뒤(연습)</button>
+      </div>
+      <button class="start-btn" id="startBtn">카운트다운 시작</button>
+    </div>
+
+    <div class="countdown-card" id="cdCard">
+      <div class="cd-label">예매 오픈까지</div>
+      <div class="cd-target" id="cdTarget"></div>
+      <div class="cd-guide">알람이 울리면 예매 버튼을 누르세요</div>
+      <div class="cd-value" id="cdValue">00:00.00</div>
+      <div class="cd-msg" id="cdMsg"></div>
+      <button class="stop-btn" id="stopBtn">중지</button>
+    </div>
+
+    <div class="tips">
+      <b>쓰는 법</b><br>
+      ① 예매 시각을 입력하고 "카운트다운 시작"을 누르세요.<br>
+      ② <b>알람이 울리면 예매 버튼을 누르세요.</b><br>
+      ③ 미리 로그인·결제수단을 저장해두면 더 빨라요.
+    </div>
+
+    <div class="qf-head">예매 정보 빠른 복사</div>
+    <p class="qf-lead">자주 쓰는 정보를 저장해두고, 예매할 때 <b>복사</b>를 눌러 사이트 입력칸에 붙여넣으세요.</p>
+    <div id="qfList"></div>
+    <button class="add-btn" id="qfAddBtn">+ 항목 추가</button>
+    <p class="qf-clear-guide">🔒 카드번호 등 민감정보를 저장했다면<br><b>구매 작업이 끝난 뒤 반드시 [전체 삭제]</b>를 눌러 주세요.</p>
+    <button class="qf-clear" id="qfClearBtn">전체 삭제</button>
+    <div class="qf-notice">
+      ⚠️ 입력 내용은 <b>이 기기(브라우저)에만</b> 저장되며 어디로도 전송되지 않아요. <b>공용·타인의 PC에서는 절대 사용하지 마세요.</b> 민감정보를 저장했다면 구매 후 위 [전체 삭제]로 꼭 지우세요.
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <a class="fab-home" href="https://myway.kr" aria-label="MYWAY 홈으로">
+    <svg viewBox="0 0 24 24"><path d="M12 3 3 10.5V21h6v-6h6v6h6V10.5L12 3z"/></svg>
+  </a>
+  <footer>티켓팅 서버시계 · <a href="https://myway.kr">myway.kr</a></footer>
+
+
+  <script>
+  (function () {
+    'use strict';
+    var offset = 0;          // 서버시간 - 기기시간 (ms)
+    var synced = false;
+
+    function serverNow() { return Date.now() + offset; }
+
+    /* ===== 서버 시간 동기화 (동일 출처 Date 헤더 + 초 경계 감지) ===== */
+    async function sampleDate() {
+      var url = location.pathname + '?_t=' + Date.now() + Math.random();
+      var t0 = Date.now();
+      var res = await fetch(url, { method: 'HEAD', cache: 'no-store' });
+      var t1 = Date.now();
+      var ds = res.headers.get('date');
+      if (!ds) throw new Error('no-date-header');
+      return { sec: new Date(ds).getTime(), recv: t1, rtt: t1 - t0 };
+    }
+
+    async function syncViaHeader() {
+      var prev = null, edges = 0, best = null;
+      for (var i = 0; i < 45; i++) {
+        var s;
+        try { s = await sampleDate(); } catch (e) { throw e; }
+        if (prev && s.sec > prev.sec) {
+          // 서버 초가 막 바뀐 순간 = 응답 수신 시점(절반 RTT 보정)에 정수 초
+          var localAtCross = s.recv - s.rtt / 2;
+          var off = s.sec - localAtCross;
+          best = (best === null) ? off : (best + off) / 2;
+          if (++edges >= 2) break;
+        }
+        prev = s;
+      }
+      if (best === null) throw new Error('no-edge');
+      return best;
+    }
+
+    // 폴백: 공개 시간 API (KST)
+    async function syncViaApi() {
+      var t0 = Date.now();
+      var res = await fetch('https://worldtimeapi.org/api/timezone/Asia/Seoul', { cache: 'no-store' });
+      var t1 = Date.now();
+      var j = await res.json();
+      var serverMs = new Date(j.utc_datetime || j.datetime).getTime();
+      return serverMs - (t1 - (t1 - t0) / 2);
+    }
+
+    function setSyncUI(state, text) {
+      var dot = document.getElementById('syncDot');
+      dot.className = 'sync-dot' + (state === 'ok' ? ' ok' : state === 'syncing' ? ' syncing' : '');
+      document.getElementById('syncText').textContent = text;
+    }
+
+    async function doSync() {
+      setSyncUI('syncing', '서버 시간 동기화 중…');
+      synced = false;
+      try {
+        offset = await syncViaHeader();
+        synced = true;
+      } catch (e1) {
+        try { offset = await syncViaApi(); synced = true; }
+        catch (e2) { offset = 0; synced = false; }
+      }
+      if (synced) {
+        var diff = (offset / 1000);
+        var sign = diff >= 0 ? '+' : '';
+        setSyncUI('ok', '동기화 완료 · 내 기기와 ' + sign + diff.toFixed(2) + '초 차이');
+      } else {
+        setSyncUI('off', '동기화 실패 — 기기 시간 사용 중');
+      }
+    }
+
+    /* ===== 시계 표시 ===== */
+    var fmtDate = new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+    function parts(ms) {
+      var d = new Date(ms);
+      // KST 기준 시/분/초
+      var f = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+      var p = {}; f.formatToParts(d).forEach(function (x) { p[x.type] = x.value; });
+      return { h: p.hour, m: p.minute, s: p.second, cs: Math.floor((((ms % 1000) + 1000) % 1000) / 10) };
+    }
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+    function tickClock() {
+      var now = serverNow();
+      var pt = parts(now);
+      document.getElementById('clock').innerHTML =
+        pt.h + ':' + pt.m + ':' + pt.s + '<span class="cs">.' + pad(pt.cs) + '</span>';
+      document.getElementById('clockDate').textContent = synced ? fmtDate.format(new Date(now)) : '기기 시간 (동기화 안됨)';
+      requestAnimationFrame(tickClock);
+    }
+
+    /* ===== 카운트다운 ===== */
+    var targetMs = null, audioCtx = null, beeped = {};
+    function kstYMD(ms) {
+      var f = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit' });
+      return f.format(new Date(ms)); // YYYY-MM-DD
+    }
+    function buildTarget(h, m, s) {
+      var nowMs = serverNow();
+      var ymd = kstYMD(nowMs);
+      var iso = ymd + 'T' + pad(h) + ':' + pad(m) + ':' + pad(s) + '+09:00';
+      var t = new Date(iso).getTime();
+      if (t <= nowMs - 200) t += 24 * 3600 * 1000; // 이미 지났으면 다음 날
+      return t;
+    }
+    function beep(freq, dur) {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.frequency.value = freq; o.type = 'sine'; o.connect(g); g.connect(audioCtx.destination);
+        g.gain.setValueAtTime(0.18, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+      } catch (e) {}
+    }
+
+    function tickCountdown() {
+      if (targetMs === null) return;
+      var rem = targetMs - serverNow();
+      var card = document.getElementById('cdCard');
+      var val = document.getElementById('cdValue');
+      var msg = document.getElementById('cdMsg');
+      var absMs = Math.abs(rem);
+      var mm = Math.floor(absMs / 60000);
+      var ss = Math.floor((absMs % 60000) / 1000);
+      var cs = Math.floor((absMs % 1000) / 10);
+      var txt = (rem < 0 ? '+' : '') + pad(mm) + ':' + pad(ss) + '.' + pad(cs);
+      val.textContent = txt;
+
+      var sec = rem / 1000;
+      card.className = 'countdown-card active';
+      msg.textContent = '';
+      if (rem <= 0) {
+        card.classList.add('cd-state-go');
+        msg.textContent = '지금!! 예매 클릭 🎟️';
+        if (!beeped.go) { beep(880, 0.5); beep(1320, 0.5); beeped.go = true; }
+      } else if (sec <= 3) {
+        card.classList.add('cd-state-now');
+        var whole = Math.ceil(sec);
+        if (!beeped['c' + whole]) { beep(660, 0.12); beeped['c' + whole] = true; }
+      } else if (sec <= 10) {
+        card.classList.add('cd-state-soon');
+      }
+      requestAnimationFrame(tickCountdown);
+    }
+
+    function startCountdown(h, m, s) {
+      targetMs = buildTarget(h, m, s);
+      beeped = {};
+      try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+      var f = new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+      document.getElementById('cdTarget').textContent = '목표: ' + f.format(new Date(targetMs));
+      document.getElementById('cdCard').classList.add('active');
+      requestAnimationFrame(tickCountdown);
+    }
+
+    /* ===== 바인딩 ===== */
+    document.getElementById('resyncBtn').addEventListener('click', doSync);
+    document.querySelectorAll('.preset').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var t = b.getAttribute('data-t');
+        if (t === '+1') {
+          var n = parts(serverNow() + 60000);
+          document.getElementById('hh').value = +n.h;
+          document.getElementById('mm').value = +n.m;
+          document.getElementById('ss').value = +n.s;
+        } else {
+          var a = t.split(':');
+          document.getElementById('hh').value = +a[0];
+          document.getElementById('mm').value = +a[1];
+          document.getElementById('ss').value = +a[2];
+        }
+      });
+    });
+    document.getElementById('startBtn').addEventListener('click', function () {
+      var h = parseInt(document.getElementById('hh').value, 10);
+      var m = parseInt(document.getElementById('mm').value, 10);
+      var s = parseInt(document.getElementById('ss').value, 10) || 0;
+      if (isNaN(h) || isNaN(m) || h < 0 || h > 23 || m < 0 || m > 59) {
+        alert('시:분을 올바르게 입력해 주세요.'); return;
+      }
+      startCountdown(h, m, s);
+    });
+    document.getElementById('stopBtn').addEventListener('click', function () {
+      targetMs = null;
+      document.getElementById('cdCard').className = 'countdown-card';
+    });
+
+    // 시작
+    requestAnimationFrame(tickClock);
+    doSync();
+    setInterval(function () { if (synced) doSync(); }, 60000); // 1분마다 재동기화
+  })();
+  </script>
+
+  <!-- 예매 정보 빠른 복사 -->
+  <script>
+  (function () {
+    'use strict';
+    var KEY = 'mywayQuickFill';
+    var DEFAULTS = [
+      { label: '이름', value: '' }, { label: '휴대폰', value: '' },
+      { label: '생년월일', value: '' }, { label: '이메일', value: '' }, { label: '주소', value: '' }
+    ];
+    function load() { try { var s = localStorage.getItem(KEY); if (s) return JSON.parse(s); } catch (e) {} return DEFAULTS.slice(); }
+    function save(d) { try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {} }
+    var items = load(), list = document.getElementById('qfList');
+    function cIcon() { return '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>'; }
+    function kIcon() { return '<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>'; }
+    function escAttr(s) { return (s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+    function render() {
+      list.innerHTML = '';
+      items.forEach(function (it, idx) {
+        var row = document.createElement('div');
+        row.className = 'qf-item';
+        row.innerHTML =
+          '<div class="fields">' +
+            '<input class="label-in" value="' + escAttr(it.label) + '" placeholder="라벨" data-i="' + idx + '" data-k="label">' +
+            '<input class="value-in" value="' + escAttr(it.value) + '" placeholder="내용을 입력하세요" data-i="' + idx + '" data-k="value">' +
+          '</div>' +
+          '<button class="copy" data-copy="' + idx + '">' + cIcon() + '복사</button>' +
+          '<button class="del" data-del="' + idx + '" aria-label="삭제">&times;</button>';
+        list.appendChild(row);
+      });
+    }
+    var tTimer;
+    function toast(msg) {
+      var el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show');
+      clearTimeout(tTimer); tTimer = setTimeout(function () { el.classList.remove('show'); }, 1400);
+    }
+    function fb(text, cb) {
+      var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); cb && cb(); } catch (e) {} document.body.removeChild(ta);
+    }
+    function doCopy(text, btn) {
+      if (!text) { toast('내용이 비어 있어요'); return; }
+      var done = function () {
+        toast('복사됨: ' + (text.length > 20 ? text.slice(0, 20) + '…' : text));
+        var old = btn.innerHTML; btn.innerHTML = kIcon() + '완료';
+        setTimeout(function () { btn.innerHTML = old; }, 1100);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(function () { fb(text, done); });
+      else fb(text, done);
+    }
+    list.addEventListener('input', function (e) {
+      var t = e.target;
+      if (t.dataset && t.dataset.i !== undefined) { items[+t.dataset.i][t.dataset.k] = t.value; save(items); }
+    });
+    list.addEventListener('click', function (e) {
+      var cp = e.target.closest && e.target.closest('.copy');
+      if (cp) { doCopy(items[+cp.getAttribute('data-copy')].value, cp); return; }
+      var del = e.target.closest && e.target.closest('.del');
+      if (del) { items.splice(+del.getAttribute('data-del'), 1); save(items); render(); }
+    });
+    document.getElementById('qfAddBtn').addEventListener('click', function () {
+      items.push({ label: '새 항목', value: '' }); save(items); render();
+      var ins = list.querySelectorAll('.label-in'); if (ins.length) ins[ins.length - 1].focus();
+    });
+    document.getElementById('qfClearBtn').addEventListener('click', function () {
+      if (!confirm('저장된 모든 내용을 완전히 삭제할까요?\n(카드번호 등 민감정보 포함)')) return;
+      try { localStorage.removeItem(KEY); } catch (e) {}
+      items = DEFAULTS.map(function (d) { return { label: d.label, value: '' }; });
+      save(items); render(); toast('전체 삭제 완료 — 저장된 정보가 지워졌어요');
+    });
+    render();
+  })();
+  </script>
+
+  <!-- 복사 방지 (MYWAY 공통, 입력칸 예외) -->
+  <script>
+  (function () {
+    function inField(t) { return t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable); }
+    ['contextmenu', 'selectstart', 'dragstart', 'copy', 'cut'].forEach(function (ev) {
+      document.addEventListener(ev, function (e) { if (inField(e.target)) return; e.preventDefault(); });
+    });
+    document.addEventListener('keydown', function (e) {
+      var k = (e.key || '').toLowerCase();
+      if (e.key === 'F12') { e.preventDefault(); return; }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (k === 'i' || k === 'j' || k === 'c')) { e.preventDefault(); return; }
+      if ((e.ctrlKey || e.metaKey) && (k === 'u' || k === 's' || k === 'c' || k === 'x' || k === 'a')) {
+        if (inField(e.target)) return; e.preventDefault();
+      }
+    });
+  })();
+  </script>
+</body>
+</html>
