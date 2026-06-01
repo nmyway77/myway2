@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>한글이름 → 영어(로마자) 변환기 | MYWAY.KR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="한글 이름을 여권용 로마자 표기로 변환합니다. 성·이름을 입력하면 국어의 로마자 표기법과 실제로 많이 쓰는 변형 표기를 함께 보여줍니다 - MYWAY.KR">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --paper: #f7f3eb;
+      --ink: #25282f;
+      --muted: #7c8089;
+      --line: #e3ddd0;
+      --card: #fffdf8;
+      --accent: #5a4fd6;
+      --accent2: #b176f3;
+      --grad: linear-gradient(95deg, #7ed6fb 8%, #b176f3 92%);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    html, body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Pretendard', system-ui, sans-serif;
+      min-height: 100vh; min-height: 100dvh;
+      -webkit-user-select: none; -moz-user-select: none; user-select: none;
+      overflow-x: hidden;
+    }
+    input { -webkit-user-select: text; user-select: text; }
+
+    .wrap { max-width: 720px; margin: 0 auto; padding: 30px 18px 110px; }
+
+    .top { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+    .brand-home {
+      flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+      width: 38px; height: 38px; border-radius: 12px; text-decoration: none; color: #fff;
+      background: var(--grad); box-shadow: 0 6px 16px rgba(177,118,243,.28);
+    }
+    .brand-home svg { width: 19px; height: 19px; fill: currentColor; }
+    h1 {
+      font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.5rem;
+      margin: 0; letter-spacing: -.3px; line-height: 1.2;
+    }
+    h1 .en { color: var(--accent); }
+    .lead { color: var(--muted); font-size: .92rem; margin: 8px 0 24px; line-height: 1.55; }
+
+    /* 입력 카드 */
+    .input-card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+      padding: 20px 18px; box-shadow: 0 10px 30px rgba(90,79,214,.06);
+    }
+    .fields { display: flex; gap: 12px; }
+    .field { flex: 1 1 0; min-width: 0; }
+    .field label {
+      display: block; font-family: 'JetBrains Mono', monospace; font-size: .72rem;
+      font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 6px;
+    }
+    .field input {
+      width: 100%; padding: 13px 14px; border: 1.5px solid var(--line); border-radius: 12px;
+      font-size: 1.15rem; font-family: inherit; color: var(--ink); background: #fff;
+      outline: none; transition: border-color .15s, box-shadow .15s;
+    }
+    .field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(90,79,214,.12); }
+    .field input::placeholder { color: #c2bdb1; }
+
+    .go-btn {
+      width: 100%; margin-top: 14px; padding: 14px; border: none; border-radius: 12px;
+      background: var(--grad); color: #fff; font-size: 1.02rem; font-weight: 700;
+      font-family: inherit; cursor: pointer; letter-spacing: -.2px;
+      box-shadow: 0 8px 22px rgba(177,118,243,.3); transition: transform .12s, box-shadow .12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .go-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(177,118,243,.38); }
+    .go-btn:active { transform: scale(.985); }
+
+    /* 결과 */
+    #result { margin-top: 26px; }
+    .res-block { margin-bottom: 22px; }
+    .res-head {
+      display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px;
+    }
+    .res-title { font-weight: 700; font-size: 1.0rem; color: var(--ink); }
+    .res-kr { color: var(--muted); font-size: .9rem; }
+    .chips { display: flex; flex-wrap: wrap; gap: 9px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 9px;
+      background: var(--card); border: 1.5px solid var(--line); border-radius: 11px;
+      padding: 9px 12px; transition: border-color .15s, transform .1s;
+    }
+    .chip:hover { border-color: var(--accent2); }
+    .chip .txt {
+      font-family: 'JetBrains Mono', monospace; font-size: 1.02rem; font-weight: 600;
+      color: var(--ink); letter-spacing: .02em;
+    }
+    .chip.primary { border-color: var(--accent); background: rgba(90,79,214,.05); }
+    .chip .copy {
+      border: none; background: transparent; cursor: pointer; padding: 2px;
+      display: inline-flex; color: var(--muted); border-radius: 6px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .chip .copy:hover { color: var(--accent); }
+    .chip .copy svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .chip .copy.done { color: #2faa6a; }
+
+    .full-block .chip { padding: 11px 14px; }
+    .full-block .chip .txt { font-size: 1.08rem; }
+
+    .badge {
+      font-family: 'JetBrains Mono', monospace; font-size: .62rem; font-weight: 600;
+      letter-spacing: .04em; padding: 2px 6px; border-radius: 5px;
+      background: rgba(90,79,214,.1); color: var(--accent);
+    }
+    .hint { color: var(--muted); font-size: .82rem; margin-top: 6px; line-height: 1.5; }
+
+    .notice {
+      margin-top: 30px; padding: 14px 16px; border-radius: 12px;
+      background: rgba(177,118,243,.07); border: 1px solid rgba(177,118,243,.18);
+      color: #6a6478; font-size: .82rem; line-height: 1.6;
+    }
+    .notice a { color: var(--accent); font-weight: 600; }
+
+    .empty { color: var(--muted); font-size: .92rem; padding: 8px 0; }
+
+    /* 플로팅 홈 */
+    .fab-home {
+      position: fixed; right: 18px; bottom: calc(18px + var(--safe-bottom)); z-index: 50;
+      width: 52px; height: 52px; border-radius: 50%; text-decoration: none; color: #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--grad); box-shadow: 0 8px 24px rgba(177,118,243,.4);
+      transition: transform .15s;
+    }
+    .fab-home:hover { transform: translateY(-2px) scale(1.04); }
+    .fab-home svg { width: 24px; height: 24px; fill: currentColor; }
+
+    footer {
+      text-align: center; padding: 26px 16px calc(20px + var(--safe-bottom));
+      color: var(--muted); font-size: .82rem;
+    }
+    footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 1.3rem; }
+      .field input { font-size: 1.05rem; }
+      .fields { gap: 9px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <a class="brand-home" href="https://myway.kr" aria-label="MYWAY 홈">
+        <svg viewBox="0 0 24 24"><path d="M12 3 3 10.5V21h6v-6h6v6h6V10.5L12 3z"/></svg>
+      </a>
+      <h1>한글이름 <span class="en">→ English</span></h1>
+    </div>
+    <p class="lead">성과 이름을 입력하면 여권용 로마자 표기로 변환합니다. 국어의 로마자 표기법(국립국어원)을 기준으로, 실제 여권에서 많이 쓰는 변형 표기도 함께 보여드려요.</p>
+
+    <div class="input-card">
+      <div class="fields">
+        <div class="field">
+          <label for="inSur">성 (姓)</label>
+          <input type="text" id="inSur" placeholder="예) 김" autocomplete="off" inputmode="text">
+        </div>
+        <div class="field">
+          <label for="inGiven">이름 (名)</label>
+          <input type="text" id="inGiven" placeholder="예) 민교" autocomplete="off" inputmode="text">
+        </div>
+      </div>
+      <button class="go-btn" id="goBtn">로마자로 변환</button>
+      <p class="hint" style="margin-top:10px;text-align:center;">성·이름을 따로 입력하거나, 한 칸에 <b>김민교</b>처럼 전체 이름을 넣어도 자동으로 나눠요.</p>
+    </div>
+
+    <div id="result"></div>
+
+    <div class="notice">
+      이 변환기는 표기법 규칙에 따른 <b>추천 결과</b>입니다. 같은 한글도 표기 방식이 여러 가지일 수 있어요.
+      이미 발급된 가족 여권이 있다면 동일 성씨는 같은 표기를 쓰는 것이 좋고, 최종 확정은
+      <a href="https://www.passport.go.kr/home/kor/romanizeAutomatic/index.do?menuPos=38" target="_blank" rel="noopener">외교부 여권 로마자 표기 안내</a>에서 확인하세요.
+    </div>
+  </div>
+
+  <a class="fab-home" href="https://myway.kr" aria-label="MYWAY 홈으로">
+    <svg viewBox="0 0 24 24"><path d="M12 3 3 10.5V21h6v-6h6v6h6V10.5L12 3z"/></svg>
+  </a>
+
+  <footer>
+    한글이름 로마자 변환기 · <a href="https://myway.kr">myway.kr</a>
+  </footer>
+
+  <script>
+  (function () {
+    'use strict';
+
+    /* ===== 로마자 변환 엔진 (국어의 로마자 표기법) ===== */
+    // 초성 19
+    const CHO = ['g','kk','n','d','tt','r','m','b','pp','s','ss','','j','jj','ch','k','t','p','h'];
+    // 중성 21
+    const JUNG = ['a','ae','ya','yae','eo','e','yeo','ye','o','wa','wae','oe','yo','u','wo','we','wi','yu','eu','ui','i'];
+    // 종성 28 (받침이 끝소리로 발음되는 값)
+    const JONG = ['','k','k','k','n','n','n','t','l','k','m','l','l','l','p','l','m','p','p','t','t','ng','t','t','k','t','p','t'];
+
+    function isSyl(ch) { const c = ch.charCodeAt(0); return c >= 0xAC00 && c <= 0xD7A3; }
+    function decompose(ch) {
+      const c = ch.charCodeAt(0) - 0xAC00;
+      const jong = c % 28;
+      const v = Math.floor(c / 28);
+      const jung = v % 21;
+      const cho = Math.floor(v / 21);
+      return [cho, jung, jong];
+    }
+    // 음절 하나 → 로마자 (이름 규칙: 음절 간 음운변화 미반영)
+    function romSyl(ch) {
+      if (!isSyl(ch)) return ch;
+      const [cho, jung, jong] = decompose(ch);
+      return CHO[cho] + JUNG[jung] + JONG[jong];
+    }
+    function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+
+    // 음절별 로마자 배열
+    function sylArray(str) {
+      const out = [];
+      for (const ch of (str || '').trim()) {
+        if (isSyl(ch)) out.push({ kr: ch, ro: romSyl(ch) });
+      }
+      return out;
+    }
+
+    /* ===== 성씨 변형 표기 (자주 쓰는 순) ===== */
+    const SURNAME = {
+      '김':['Kim','Gim'], '이':['Lee','Yi','Rhee','I'], '박':['Park','Bak','Pak'],
+      '최':['Choi','Choe'], '정':['Jung','Jeong','Chung'], '강':['Kang','Gang'],
+      '조':['Cho','Jo'], '윤':['Yoon','Yun'], '장':['Jang','Chang'], '임':['Lim','Im','Rim'],
+      '한':['Han'], '오':['Oh','O'], '서':['Seo','Suh'], '신':['Shin','Sin'],
+      '권':['Kwon','Gwon'], '황':['Hwang'], '안':['Ahn','An'], '송':['Song'],
+      '유':['Yoo','Yu','You'], '류':['Ryu','Yu'], '전':['Jeon','Jun','Chun'], '홍':['Hong'],
+      '고':['Ko','Go','Koh'], '문':['Moon','Mun'], '양':['Yang'], '손':['Son','Sohn'],
+      '배':['Bae','Pae'], '백':['Baek','Paik','Baik'], '허':['Heo','Hur','Huh'], '남':['Nam'],
+      '심':['Sim','Shim'], '노':['Noh','No','Roh'], '하':['Ha'], '곽':['Kwak','Gwak'],
+      '성':['Sung','Seong'], '차':['Cha'], '주':['Joo','Ju'], '우':['Woo','Wu'],
+      '구':['Koo','Goo','Gu','Ku'], '민':['Min'], '나':['Na','Ra'], '진':['Jin','Chin'],
+      '지':['Ji','Jee'], '엄':['Eom','Um'], '채':['Chae'], '원':['Won'], '천':['Cheon','Chun'],
+      '방':['Bang','Pang'], '공':['Kong','Gong'], '현':['Hyun','Hyeon'], '함':['Ham'],
+      '변':['Byun','Byeon'], '염':['Yeom','Yum'], '여':['Yeo'], '추':['Chu','Choo'],
+      '도':['Do','Doh'], '소':['So'], '석':['Seok','Suk'], '선':['Sun','Seon'],
+      '설':['Seol','Sul'], '마':['Ma'], '길':['Gil','Kil'], '연':['Yeon'], '위':['Wi'],
+      '표':['Pyo'], '명':['Myung','Myeong'], '기':['Ki','Gi'], '반':['Ban','Pan'],
+      '왕':['Wang'], '금':['Keum','Geum'], '옥':['Ok'], '육':['Yook','Yuk'], '인':['In'],
+      '맹':['Maeng'], '제':['Je','Jae'], '모':['Mo'], '봉':['Bong'], '경':['Kyung','Gyeong'],
+      '남궁':['Namgung','Namkoong'], '선우':['Sunwoo','Seonu'], '황보':['Hwangbo'],
+      '제갈':['Jegal'], '사공':['Sagong'], '서문':['Seomun'], '독고':['Dokko']
+    };
+
+    /* ===== 이름 음절 자주 쓰는 변형 ===== */
+    const POPULAR = {
+      '우':'woo','영':'young','준':'joon','현':'hyun','희':'hee','수':'soo','은':'eun',
+      '주':'joo','윤':'yoon','규':'kyu','빈':'bin','율':'yul','훈':'hoon','철':'chul',
+      '경':'kyung','성':'sung','선':'sun','연':'yeon','근':'geun','국':'kook','범':'bum',
+      '석':'seok','동':'dong','용':'yong','정':'jung','종':'jong','중':'joong','승':'seung',
+      '웅':'woong','호':'ho','민':'min','진':'jin'
+    };
+
+    function dedupe(arr) {
+      const seen = {}; const out = [];
+      arr.forEach(v => { const k = v.toLowerCase(); if (v && !seen[k]) { seen[k] = 1; out.push(v); } });
+      return out;
+    }
+
+    function surnameForms(sur) {
+      sur = (sur || '').trim();
+      if (!sur) return [];
+      if (SURNAME[sur]) return SURNAME[sur].slice();
+      // 표에 없으면 규칙 변환
+      const arr = sylArray(sur);
+      if (!arr.length) return [];
+      return [cap(arr.map(s => s.ro).join(''))];
+    }
+
+    function givenForms(given) {
+      const arr = sylArray(given);
+      if (!arr.length) return [];
+      const revised = cap(arr.map(s => s.ro).join(''));
+      const popular = cap(arr.map(s => POPULAR[s.kr] || s.ro).join(''));
+      const hyphen = cap(arr.map(s => s.ro).join('-'));
+      return dedupe([revised, popular, hyphen]);
+    }
+
+    /* ===== 렌더링 ===== */
+    function copyIcon() {
+      return '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+    }
+    function chip(text, primary, badge) {
+      const b = badge ? '<span class="badge">' + badge + '</span>' : '';
+      return '<span class="chip' + (primary ? ' primary' : '') + '">' +
+        '<span class="txt">' + text + '</span>' + b +
+        '<button class="copy" data-copy="' + text + '" aria-label="복사">' + copyIcon() + '</button></span>';
+    }
+    function block(title, kr, chipsHtml, cls) {
+      return '<div class="res-block ' + (cls || '') + '">' +
+        '<div class="res-head"><span class="res-title">' + title + '</span><span class="res-kr">' + kr + '</span></div>' +
+        '<div class="chips">' + chipsHtml + '</div></div>';
+    }
+
+    // 한 칸에 전체 이름을 넣었을 때 성/이름 분리 (띄어쓰기 우선, 복성 인식)
+    function splitFull(s) {
+      s = (s || '').trim();
+      if (/\s/.test(s)) { const p = s.split(/\s+/); return [p[0], p.slice(1).join('')]; }
+      const two = s.slice(0, 2);
+      if ([...s].filter(isSyl).length > 2 && SURNAME[two]) return [two, s.slice(2)];
+      return [s.charAt(0), s.slice(1)];
+    }
+
+    function convert() {
+      let sur = document.getElementById('inSur').value.trim();
+      let given = document.getElementById('inGiven').value.trim();
+
+      // 한 칸에만 전체 이름을 넣은 경우 자동으로 성/이름 분리
+      if (!given && sur) {
+        const hl = [...sur].filter(isSyl).length;
+        if (/\s/.test(sur) || hl >= 2) { const sp = splitFull(sur); sur = sp[0]; given = sp[1]; }
+      } else if (!sur && given) {
+        const hl = [...given].filter(isSyl).length;
+        if (/\s/.test(given) || hl >= 2) { const sp = splitFull(given); sur = sp[0]; given = sp[1]; }
+      }
+
+      const surForms = surnameForms(sur);
+      const givenList = givenForms(given);
+      const box = document.getElementById('result');
+
+      if (!surForms.length && !givenList.length) {
+        box.innerHTML = '<p class="empty">성 또는 이름에 한글을 입력해 주세요.</p>';
+        return;
+      }
+
+      let html = '';
+
+      // 1) 전체 이름 (헤드라인 — 외교부 결과와 같은 형식)
+      if (surForms.length && givenList.length) {
+        const gPlain = givenList.filter(v => v.indexOf('-') === -1).slice(0, 2);
+        const combos = [];
+        surForms.slice(0, 3).forEach(s => gPlain.forEach(g => combos.push(s + ' ' + g)));
+        const list = dedupe(combos).slice(0, 6);
+        const chips = list.map((v, i) => chip(v, i === 0)).join('');
+        html += block('전체 이름', '성 이름 순 · 자주 쓰는 순', chips, 'full-block');
+        html += '<p class="hint">여권에는 대문자로 인쇄됩니다 (예: ' + (list[0] || '').toUpperCase() +
+          '). 같은 성씨는 가족과 표기를 통일하세요.</p>';
+      }
+
+      // 2) 성 변형
+      if (surForms.length) {
+        const chips = surForms.map((v, i) => chip(v, i === 0)).join('');
+        html += block('성', sur, chips);
+      }
+      // 3) 이름 변형
+      if (givenList.length) {
+        const chips = givenList.map((v, i) => {
+          let badge = '';
+          if (v.indexOf('-') !== -1) badge = '붙임표';
+          return chip(v, i === 0, badge);
+        }).join('');
+        html += block('이름', given, chips);
+      }
+
+      box.innerHTML = html;
+    }
+
+    /* ===== 복사 ===== */
+    function copyText(text, btn) {
+      const done = () => {
+        btn.classList.add('done');
+        const old = btn.innerHTML;
+        btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';
+        setTimeout(() => { btn.classList.remove('done'); btn.innerHTML = old; }, 1100);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+      } else { fallbackCopy(text, done); }
+    }
+    function fallbackCopy(text, cb) {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); cb && cb(); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+
+    /* ===== 바인딩 ===== */
+    document.getElementById('goBtn').addEventListener('click', convert);
+    ['inSur', 'inGiven'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); convert(); }
+      });
+    });
+    document.getElementById('result').addEventListener('click', e => {
+      const btn = e.target.closest && e.target.closest('.copy');
+      if (btn) copyText(btn.getAttribute('data-copy'), btn);
+    });
+
+    /* ===== 검색엔진 연동: ?n=이름 으로 들어오면 자동 변환 ===== */
+    (function initFromQuery() {
+      let n = '';
+      try { n = new URLSearchParams(location.search).get('n') || ''; } catch (e) {}
+      n = n.trim();
+      if (!n) return;
+      const sp = splitFull(n);
+      document.getElementById('inSur').value = sp[0] || '';
+      document.getElementById('inGiven').value = sp[1] || '';
+      convert();
+    })();
+  })();
+  </script>
+
+  <!-- ===== 복사 방지 (MYWAY 공통, 입력칸 예외) ===== -->
+  <script>
+  (function () {
+    function inField(t) {
+      return t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+    }
+    ['contextmenu', 'selectstart', 'dragstart', 'copy', 'cut'].forEach(function (ev) {
+      document.addEventListener(ev, function (e) {
+        if (inField(e.target)) return;
+        // 복사 버튼을 통한 프로그램적 복사는 허용 (copy 이벤트 아님)
+        e.preventDefault();
+      });
+    });
+    document.addEventListener('keydown', function (e) {
+      var k = (e.key || '').toLowerCase();
+      if (e.key === 'F12') { e.preventDefault(); return; }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (k === 'i' || k === 'j' || k === 'c')) {
+        e.preventDefault(); return;
+      }
+      if ((e.ctrlKey || e.metaKey) && (k === 'u' || k === 's' || k === 'c' || k === 'x' || k === 'a')) {
+        if (inField(e.target)) return;
+        e.preventDefault();
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

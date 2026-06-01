@@ -1883,6 +1883,16 @@
         return;
       }
 
+      // ── 한글이름 → 영어 (MYWAY 자체 변환기 romanize.html 연동) ──
+      //   입력값을 ?n= 으로 넘기면 romanize.html이 성/이름 자동 분리 후 변환.
+      if (engineKey === 'romanize') {
+        const u = query
+          ? 'https://myway.kr/romanize.html?n=' + encodeURIComponent(query)
+          : 'https://myway.kr/romanize.html';
+        window.open(u, '_blank', 'noopener,noreferrer');
+        return;
+      }
+
       // ── 일반 검색엔진 모드 (기존 동작) ──
       const engineObj = snarkEnginesParent.find(e => e.key === engineKey);
       if (engineObj) {
