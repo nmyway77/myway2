@@ -347,15 +347,20 @@
       document.getElementById('syncText').textContent = text;
     }
 
+    var MAX_OFFSET = 10 * 60 * 1000; // 10분 넘게 차이나면 동기화 오류로 간주
     async function doSync() {
       setSyncUI('syncing', '서버 시간 동기화 중…');
       synced = false;
       try {
-        offset = await syncViaHeader();
-        synced = true;
+        var o = await syncViaHeader();
+        if (Math.abs(o) > MAX_OFFSET) throw new Error('offset-too-large');
+        offset = o; synced = true;
       } catch (e1) {
-        try { offset = await syncViaApi(); synced = true; }
-        catch (e2) { offset = 0; synced = false; }
+        try {
+          var o2 = await syncViaApi();
+          if (Math.abs(o2) > MAX_OFFSET) throw new Error('offset-too-large');
+          offset = o2; synced = true;
+        } catch (e2) { offset = 0; synced = false; }
       }
       if (synced) {
         var diff = (offset / 1000);
@@ -393,11 +398,12 @@
       return f.format(new Date(ms)); // YYYY-MM-DD
     }
     function buildTarget(h, m, s) {
-      var nowMs = serverNow();
-      var ymd = kstYMD(nowMs);
+      // 날짜와 '이미 지났는지' 판정은 기기 시계 기준(안정적). 카운트다운 정밀도는 동기화 시계 사용.
+      var deviceNow = Date.now();
+      var ymd = kstYMD(deviceNow);
       var iso = ymd + 'T' + pad(h) + ':' + pad(m) + ':' + pad(s) + '+09:00';
       var t = new Date(iso).getTime();
-      if (t <= nowMs - 200) t += 24 * 3600 * 1000; // 이미 지났으면 다음 날
+      if (t <= deviceNow - 1000) t += 24 * 3600 * 1000; // 1초 이상 지났으면 다음 날
       return t;
     }
     function beep(freq, dur) {
