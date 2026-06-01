@@ -1767,10 +1767,29 @@
       }
     })();
 
+    // ── 검색엔진 선택 기억 (검색 후·새로고침·뒤로가기 시 유지) ──
+    (function () {
+      var sel = document.getElementById('engineParent');
+      if (!sel) return;
+      try {
+        var saved = localStorage.getItem('mywaySearchEngine');
+        if (saved) {
+          var exists = Array.prototype.some.call(sel.options, function (o) { return o.value === saved; });
+          if (exists) sel.value = saved;
+        }
+      } catch (e) {}
+      sel.addEventListener('change', function () {
+        try { localStorage.setItem('mywaySearchEngine', sel.value); } catch (e) {}
+      });
+    })();
+
     document.getElementById('searchFormParent').onsubmit = function(e) {
       e.preventDefault();
       const engineKey = document.getElementById('engineParent').value;
       const query = document.getElementById('queryParent').value.trim();
+
+      // 마지막 사용 엔진 기억 (뒤로가기 등으로 돌아와도 유지)
+      try { localStorage.setItem('mywaySearchEngine', engineKey); } catch (e) {}
 
       // ── 주식차트 모드: 매핑 우선, 없으면 네이버 검색 fallback ──
       if (engineKey === 'stockchart') {
