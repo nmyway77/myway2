@@ -843,7 +843,13 @@
         const im = document.createElement('img'); im.src = modalThumb(item, cat); im.alt = ''; im.referrerPolicy = 'no-referrer';
         const nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = item.name || item.url || '(이름 없음)';
         const e = document.createElement('button'); e.className = 'e'; e.textContent = '\u270E'; e.title = '수정';
-        e.onclick = () => selectForEdit(cat, idx);
+        e.onclick = () => {
+          if (!editRef) {
+            const typing = document.getElementById('inName').value.trim() || document.getElementById('inUrl').value.trim() || document.getElementById('inImg').value.trim();
+            if (typing && !confirm('작성 중인 내용이 있어요. 버리고 이 항목을 불러올까요?')) return;
+          }
+          selectForEdit(cat, idx);
+        };
         const d = document.createElement('button'); d.className = 'd'; d.textContent = '\u2715'; d.title = '삭제';
         d.onclick = () => {
           data[cat].splice(idx, 1); saveData(data); render();
