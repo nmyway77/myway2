@@ -1365,7 +1365,6 @@
 
           <div class="card-time">
             <span class="hh">--</span><span class="colon">:</span><span class="mm">--</span>
-            <span class="ampm">--</span>
           </div>
 
           <div class="card-seconds">
@@ -1446,12 +1445,8 @@
         const hr24 = parseInt(p.hour, 10);
         const min  = parseInt(p.minute, 10);
         const sec  = parseInt(p.second, 10);
-        const isPM = hr24 >= 12;
-        const hr12 = ((hr24 + 11) % 12) + 1;
-
-        card.querySelector('.hh').textContent = String(hr12).padStart(2, '0');
+        card.querySelector('.hh').textContent = String(hr24).padStart(2, '0');
         card.querySelector('.mm').textContent = p.minute;
-        card.querySelector('.ampm').textContent = isPM ? 'PM' : 'AM';
         card.querySelector('.ss').textContent = p.second;
 
         card.querySelector('.date-ymd').textContent =
@@ -1918,10 +1913,8 @@
         const nowTime = `${hh}:${mm}`;
         const dayKey = now.toDateString();
 
-        // update current time display
-        const isPM = now.getHours() >= 12;
-        const h12 = ((now.getHours() + 11) % 12) + 1;
-        this.el.clock.textContent = `${pad2(h12)}:${mm}`;
+        // update current time display (24시간제)
+        this.el.clock.textContent = `${hh}:${mm}`;
 
         // 매 분 0초~5초 사이에만 체크 (중복 방지)
         if (ss > 5) return;
