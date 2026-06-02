@@ -3,29 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>글자수 세기 + 맞춤법 검사 - 자소서·원고지 계산 | MYWAY.KR</title>
-  <meta name="description" content="실시간 글자수·단어수 세기와 동시에 자주 틀리는 맞춤법·띄어쓰기를 자동 교정. 자기소개서 글자수, 원고지 환산, SNS 글자 제한까지 한 번에 - MYWAY.KR">
-  <meta name="keywords" content="글자수 세기, 글자수 계산기, 맞춤법 검사기, 띄어쓰기 검사, 자기소개서 글자수, 원고지 계산, 단어수 세기, 글자수 카운터, 자소서 글자수, 공백 포함 글자수">
+  <title>글자수 세기 · 단어수 세기 - 자소서·원고지 계산 | MYWAY.KR</title>
+  <meta name="description" content="실시간 글자수·단어수 세기. 공백 포함/제외 글자수, 자기소개서 글자수, 원고지 환산, 바이트수, SNS 글자 제한까지 한 번에 - MYWAY.KR">
+  <meta name="keywords" content="글자수 세기, 글자수 계산기, 단어수 세기, 자기소개서 글자수, 원고지 계산, 글자수 카운터, 자소서 글자수, 공백 포함 글자수, 바이트 계산">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://myway.kr/wordcount.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="글자수 세기 + 맞춤법 검사 - 자소서·원고지 계산 | MYWAY.KR">
-  <meta property="og:description" content="실시간 글자수 세기 + 맞춤법 자동교정 + 자소서·원고지 계산">
+  <meta property="og:title" content="글자수 세기 · 단어수 세기 - 자소서·원고지 계산 | MYWAY.KR">
+  <meta property="og:description" content="실시간 글자수 세기 + 자소서·원고지 계산">
   <meta property="og:url" content="https://myway.kr/wordcount.html">
   <meta property="og:locale" content="ko_KR">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="글자수 세기 + 맞춤법 검사 - MYWAY.KR">
+  <meta name="twitter:title" content="글자수 세기 · 단어수 세기 - MYWAY.KR">
 
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "글자수 세기 + 맞춤법 검사",
+    "name": "글자수 세기 · 단어수 세기",
     "url": "https://myway.kr/wordcount.html",
     "applicationCategory": "UtilitiesApplication",
     "operatingSystem": "All",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" },
-    "description": "실시간 글자수·단어수 세기와 맞춤법·띄어쓰기 자동 교정, 자기소개서 글자수와 원고지 환산을 제공하는 무료 도구"
+    "description": "실시간 글자수·단어수 세기, 자기소개서 글자수와 원고지 환산, 바이트수 계산을 제공하는 무료 도구"
   }
   </script>
   <script type="application/ld+json">
@@ -40,8 +40,8 @@
       },
       {
         "@type": "Question",
-        "name": "맞춤법 검사는 모든 오류를 잡나요?",
-        "acceptedAnswer": { "@type": "Answer", "text": "자주 틀리는 맞춤법과 띄어쓰기를 규칙 기반으로 교정합니다. 되/돼, 몇일→며칠, 할수있다→할 수 있다 등을 잡아내며, 완전한 검사는 아니므로 참고용으로 활용하세요." }
+        "name": "단어수는 어떻게 세나요?",
+        "acceptedAnswer": { "@type": "Answer", "text": "공백(띄어쓰기·줄바꿈)으로 구분된 덩어리를 한 단어로 셉니다. 한글 글자 수와 영문 단어 수도 따로 표시해 줍니다." }
       },
       {
         "@type": "Question",
@@ -88,7 +88,15 @@
     }
     .top-home:hover { color: var(--accent); border-color: var(--accent); }
 
-    header.page-head { max-width: 920px; margin: 0 auto; padding: 60px 24px 8px; text-align: center; }
+    header.page-head { max-width: 920px; margin: 0 auto; padding: 56px 24px 8px; text-align: center; }
+    .head-cta {
+      display: inline-block; margin-top: 18px;
+      font-family: 'Pretendard', sans-serif; font-size: 14px; font-weight: 600;
+      color: var(--accent); text-decoration: none;
+      padding: 10px 20px; border-radius: 999px; border: 1px solid var(--accent);
+      background: var(--accent-soft); transition: all 0.15s;
+    }
+    .head-cta:hover { background: var(--accent); color: #fff; }
     .page-head .eyebrow {
       font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 500;
       letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
@@ -161,50 +169,6 @@
     .stat.hl .v { color: var(--accent); }
     .stat.hl .k { color: var(--accent); font-weight: 600; }
 
-    /* 맞춤법 검사 카드 */
-    .spell-card {
-      background: var(--card); border: 1px solid var(--line); border-radius: 18px;
-      box-shadow: var(--shadow); overflow: hidden; margin: 22px 0;
-    }
-    .spell-head {
-      display: flex; align-items: center; justify-content: space-between; gap: 10px;
-      padding: 16px 20px; border-bottom: 1px solid var(--line); flex-wrap: wrap;
-    }
-    .spell-head h2 {
-      font-family: 'Fraunces', serif; font-weight: 600; font-size: 19px; color: var(--ink);
-    }
-    .spell-count {
-      font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600;
-      padding: 4px 12px; border-radius: 999px;
-    }
-    .spell-count.clean { background: var(--accent-soft); color: var(--accent); }
-    .spell-count.has { background: var(--warn-soft); color: var(--warn); }
-    .apply-all {
-      font-family: 'Pretendard', sans-serif; font-size: 13px; font-weight: 600;
-      padding: 8px 16px; border-radius: 999px; border: none;
-      background: var(--accent); color: #fff; cursor: pointer; transition: all 0.14s;
-    }
-    .apply-all:hover { background: #2f5630; }
-    .apply-all:disabled { background: var(--line); color: var(--ink-soft); cursor: default; }
-    .spell-body { padding: 8px 12px 16px; max-height: 280px; overflow-y: auto; }
-    .spell-item {
-      display: flex; align-items: center; gap: 12px; padding: 11px 12px;
-      border-radius: 10px; transition: background 0.12s;
-    }
-    .spell-item:hover { background: var(--cream); }
-    .spell-item .arrow { color: var(--ink-soft); font-size: 14px; }
-    .spell-item .wrong { color: var(--warn); text-decoration: line-through; font-weight: 500; }
-    .spell-item .right { color: var(--accent); font-weight: 600; }
-    .spell-item .tag {
-      font-size: 11px; color: var(--ink-soft); background: var(--cream);
-      padding: 2px 8px; border-radius: 6px; margin-left: auto;
-    }
-    .spell-empty { text-align: center; padding: 30px 20px; color: var(--ink-soft); font-size: 14px; }
-    .spell-note {
-      padding: 12px 20px; font-size: 12px; color: var(--ink-soft); line-height: 1.6;
-      background: var(--cream); border-top: 1px solid var(--line);
-    }
-
     /* 부가 정보 (원고지/읽기/자소서) */
     .extra-grid {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 22px 0;
@@ -251,6 +215,7 @@
 
     @media (max-width: 540px) {
       textarea#text { min-height: 200px; font-size: 15px; }
+      .head-cta { font-size: 13px; padding: 9px 16px; }
     }
   </style>
 </head>
@@ -259,8 +224,9 @@
   <a href="https://myway.kr" class="top-home">← MYWAY.KR</a>
 
   <header class="page-head">
-    <div class="eyebrow">Word Counter & Spell Check</div>
+    <div class="eyebrow">Word Counter</div>
     <h1>단어·글자수 세기</h1>
+    <a class="head-cta" href="https://www.engram.us/ko/spell-check" target="_blank" rel="noopener">맞춤법 및 띄어쓰기 검사기 ↗</a>
   </header>
 
   <div class="wrap">
@@ -279,7 +245,7 @@
           <button class="ed-btn" id="clear">지우기</button>
         </div>
       </div>
-      <textarea id="text" placeholder="여기에 글을 입력하거나 붙여넣으세요. 글자수가 실시간으로 계산되고, 자주 틀리는 맞춤법·띄어쓰기를 자동으로 찾아드립니다."></textarea>
+      <textarea id="text" placeholder="여기에 글을 입력하거나 붙여넣으세요. 글자수가 실시간으로 계산됩니다."></textarea>
     </div>
 
     <!-- 기본 통계 -->
@@ -293,21 +259,6 @@
       <div class="stat"><div class="v" id="s-sentences">0</div><div class="k">문장</div></div>
       <div class="stat"><div class="v" id="s-lines">0</div><div class="k">줄</div></div>
       <div class="stat"><div class="v" id="s-bytes">0</div><div class="k">바이트</div></div>
-    </div>
-
-    <!-- 맞춤법 검사 (차별 기능) -->
-    <div class="spell-card">
-      <div class="spell-head">
-        <h2>맞춤법 · 띄어쓰기 검사</h2>
-        <span class="spell-count clean" id="spell-count">검사 대기</span>
-        <button class="apply-all" id="apply-all" disabled>모두 교정</button>
-      </div>
-      <div class="spell-body" id="spell-body">
-        <div class="spell-empty">글을 입력하면 자주 틀리는 맞춤법과 띄어쓰기를 자동으로 찾아드립니다.</div>
-      </div>
-      <div class="spell-note">
-        자주 틀리는 맞춤법·띄어쓰기를 규칙 기반으로 검사합니다 (되/돼, 몇일→며칠, 할수있다→할 수 있다 등). 완전한 맞춤법 검사가 아니므로 참고용으로 활용하세요.
-      </div>
     </div>
 
     <!-- 부가 정보 -->
@@ -333,16 +284,16 @@
 
     <!-- SEO 본문 -->
     <section class="info-block">
-      <h2>글자수 세기 + 맞춤법 검사 사용 안내</h2>
-      <p>MYWAY.KR 글자수 세기는 타이핑과 동시에 <strong>공백 포함·제외 글자수, 단어수, 문장수, 줄수, 바이트수</strong>를 실시간으로 계산합니다. 또한 자주 틀리는 <strong>맞춤법과 띄어쓰기를 자동으로 찾아 교정</strong>해 주는 기능이 있어, 자기소개서·블로그·과제 작성 시 유용합니다.</p>
+      <h2>글자수 세기 사용 안내</h2>
+      <p>MYWAY.KR 글자수 세기는 타이핑과 동시에 <strong>공백 포함·제외 글자수, 단어수, 문장수, 줄수, 바이트수</strong>를 실시간으로 계산합니다. 한글 글자 수와 영문 단어 수를 따로 보여주고, 원고지 매수와 읽기 시간까지 자동으로 환산해 자기소개서·블로그·과제 작성 시 유용합니다.</p>
       <h3>이런 분께 유용합니다</h3>
-      <p>자기소개서 글자수를 맞춰야 하는 취업 준비생, 블로그·SNS 글자 제한을 확인하려는 분, 원고지 매수를 환산해야 하는 학생, 글을 쓰면서 맞춤법을 빠르게 점검하고 싶은 분께 추천합니다.</p>
+      <p>자기소개서 글자수를 맞춰야 하는 취업 준비생, 블로그·SNS 글자 제한을 확인하려는 분, 원고지 매수를 환산해야 하는 학생, 글의 분량을 빠르게 점검하고 싶은 분께 추천합니다. 맞춤법·띄어쓰기는 상단의 검사기 링크에서 확인할 수 있습니다.</p>
       <h3>자주 묻는 질문</h3>
       <div class="faq">
         <p class="q">Q. 공백 포함과 공백 제외 글자수는 어떻게 다른가요?</p>
         <p class="a">공백 포함은 띄어쓰기·줄바꿈을 모두 센 값이고, 공백 제외는 띄어쓰기를 뺀 순수 글자수입니다. 자기소개서는 보통 공백 포함 기준이 많습니다.</p>
-        <p class="q">Q. 맞춤법 검사는 모든 오류를 잡나요?</p>
-        <p class="a">자주 틀리는 맞춤법·띄어쓰기를 규칙 기반으로 교정합니다. 되/돼, 몇일→며칠, 할수있다→할 수 있다 등을 잡으며, 완전한 검사는 아니라 참고용입니다.</p>
+        <p class="q">Q. 단어수는 어떻게 세나요?</p>
+        <p class="a">공백(띄어쓰기·줄바꿈)으로 구분된 덩어리를 한 단어로 셉니다. 한글 글자 수와 영문 단어 수도 따로 표시해, 보고서·자소서 분량을 정확히 가늠할 수 있습니다.</p>
         <p class="q">Q. 원고지 매수는 어떻게 계산되나요?</p>
         <p class="a">글자수를 200(200자 원고지) 또는 400(400자 원고지)으로 나누어 자동 환산합니다.</p>
       </div>
@@ -356,44 +307,6 @@
   </footer>
 
   <script>
-    // ───── 맞춤법 규칙 (자주 틀리는 것, 거의 항상 맞는 안전한 교정만) ─────
-    const SPELL = [
-      ['됬','됐'],['됫','됐'],['됏','됐'],['앉었','앉았'],
-      ['어떻해','어떡해'],['일일히','일일이'],['깨끗히','깨끗이'],['솔직이','솔직히'],
-      ['몇일','며칠'],['역활','역할'],['금새','금세'],['설겆이','설거지'],
-      ['어의없','어이없'],['희안','희한'],['닥달','닦달'],['구지','굳이'],
-      ['오랫만','오랜만'],['들어나','드러나'],['역량것','역량껏'],['일찌기','일찍이'],
-      ['바램','바람'],['삼가하','삼가'],['설레임','설렘'],['금세기','금세기'],
-      ['건들이','건드리'],['치루','치르'],['뇌졸증','뇌졸중'],['임마','인마'],
-      ['famous',''],['낳','낫'],['焉','']
-    ].filter(p => p[0] && !['낳','焉','famous'].includes(p[0])); // 위험·문맥의존 제거
-
-    // 안전한 핵심 규칙만 다시 정의
-    const SPELL_RULES = [
-      ['됬','됐','맞춤법'],['됫','됐','맞춤법'],['됏','됐','맞춤법'],
-      ['어떻해','어떡해','맞춤법'],['일일히','일일이','맞춤법'],['깨끗히','깨끗이','맞춤법'],
-      ['솔직이','솔직히','맞춤법'],['몇일','며칠','맞춤법'],['역활','역할','맞춤법'],
-      ['금새','금세','맞춤법'],['설겆이','설거지','맞춤법'],['어의없','어이없','맞춤법'],
-      ['희안','희한','맞춤법'],['닥달','닦달','맞춤법'],['구지','굳이','맞춤법'],
-      ['오랫만','오랜만','맞춤법'],['들어나다','드러나다','맞춤법'],['일찌기','일찍이','맞춤법'],
-      ['설레임','설렘','맞춤법'],['건들이','건드리','맞춤법'],['뇌졸증','뇌졸중','맞춤법'],
-      ['되요','돼요','되/돼'],['안되요','안 돼요','되/돼'],['안되','안 돼','되/돼'],
-      ['뭐에요','뭐예요','맞춤법'],['이에요','이에요','맞춤법']
-    ].filter(r => r[0] !== r[1]);
-
-    // 띄어쓰기 (의존명사 - 명확한 패턴만)
-    const SPACE_RULES = [
-      [/할수\s?있/g, '할 수 있', '띄어쓰기'],
-      [/할수\s?없/g, '할 수 없', '띄어쓰기'],
-      [/갈수\s?있/g, '갈 수 있', '띄어쓰기'],
-      [/갈수\s?없/g, '갈 수 없', '띄어쓰기'],
-      [/볼수\s?있/g, '볼 수 있', '띄어쓰기'],
-      [/볼수\s?없/g, '볼 수 없', '띄어쓰기'],
-      [/올수\s?있/g, '올 수 있', '띄어쓰기'],
-      [/될수\s?있/g, '될 수 있', '띄어쓰기'],
-      [/수밖에/g, '수밖에', '띄어쓰기']
-    ].filter(r => true);
-
     const $ = (id) => document.getElementById(id);
     const textEl = $('text');
 
@@ -429,76 +342,6 @@
       return m + '분 ' + (s ? s + '초' : '');
     }
 
-    // 맞춤법 검사
-    function checkSpell(text) {
-      const found = [];
-      SPELL_RULES.forEach(([w, r, tag]) => {
-        let idx = text.indexOf(w);
-        while (idx !== -1) {
-          found.push({ from: w, to: r, tag, pos: idx });
-          idx = text.indexOf(w, idx + 1);
-        }
-      });
-      SPACE_RULES.forEach(([re, r, tag]) => {
-        let m;
-        const rx = new RegExp(re.source, 'g');
-        while ((m = rx.exec(text)) !== null) {
-          if (m[0] !== r) found.push({ from: m[0], to: r, tag, pos: m.index });
-          if (m.index === rx.lastIndex) rx.lastIndex++;
-        }
-      });
-      // 중복 제거 (같은 from/to)
-      const seen = new Set();
-      const unique = [];
-      found.forEach(f => {
-        const key = f.from + '→' + f.to;
-        if (!seen.has(key)) { seen.add(key); unique.push(f); }
-      });
-      return unique;
-    }
-
-    function applyCorrections(text) {
-      let result = text;
-      SPELL_RULES.forEach(([w, r]) => { result = result.split(w).join(r); });
-      SPACE_RULES.forEach(([re, r]) => { result = result.replace(new RegExp(re.source, 'g'), r); });
-      return result;
-    }
-
-    function renderSpell(found) {
-      const body = $('spell-body');
-      const countEl = $('spell-count');
-      const applyBtn = $('apply-all');
-      if (found.length === 0) {
-        if (textEl.value.trim() === '') {
-          body.innerHTML = '<div class="spell-empty">글을 입력하면 자주 틀리는 맞춤법과 띄어쓰기를 자동으로 찾아드립니다.</div>';
-          countEl.textContent = '검사 대기';
-          countEl.className = 'spell-count clean';
-        } else {
-          body.innerHTML = '<div class="spell-empty">✓ 자주 틀리는 맞춤법·띄어쓰기 오류가 발견되지 않았습니다.</div>';
-          countEl.textContent = '깨끗함';
-          countEl.className = 'spell-count clean';
-        }
-        applyBtn.disabled = true;
-        return;
-      }
-      countEl.textContent = found.length + '개 발견';
-      countEl.className = 'spell-count has';
-      applyBtn.disabled = false;
-      body.innerHTML = found.map(f =>
-        '<div class="spell-item">' +
-        '<span class="wrong">' + escapeHtml(f.from) + '</span>' +
-        '<span class="arrow">→</span>' +
-        '<span class="right">' + escapeHtml(f.to) + '</span>' +
-        '<span class="tag">' + f.tag + '</span>' +
-        '</div>'
-      ).join('');
-    }
-
-    function escapeHtml(s) {
-      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
-
-    let spellTimer;
     function update() {
       const text = textEl.value;
       const a = analyze(text);
@@ -529,10 +372,6 @@
       bar.style.background = a.total > target ? 'var(--warn)' : 'var(--accent)';
       $('jaso-status').textContent = fmtNum(a.total) + ' / ' + fmtNum(target) +
         (a.total > target ? ' (초과 ' + fmtNum(a.total - target) + ')' : ' (남음 ' + fmtNum(target - a.total) + ')');
-
-      // 맞춤법 (디바운스)
-      clearTimeout(spellTimer);
-      spellTimer = setTimeout(() => { renderSpell(checkSpell(text)); }, 400);
     }
 
     textEl.addEventListener('input', update);
@@ -542,10 +381,6 @@
     $('paste').addEventListener('click', async () => {
       try { const t = await navigator.clipboard.readText(); textEl.value += t; update(); }
       catch (e) { alert('붙여넣기 권한이 필요합니다. Ctrl+V로 직접 붙여넣어 주세요.'); }
-    });
-    $('apply-all').addEventListener('click', () => {
-      textEl.value = applyCorrections(textEl.value);
-      update();
     });
 
     update();
