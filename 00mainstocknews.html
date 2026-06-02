@@ -23,14 +23,31 @@
   .nav-home{flex:none;order:0;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-sub);padding:8px;border-radius:10px;transition:color .15s,background .15s}
   .nav-home:hover{color:var(--accent);background:#f5f6f8}
   .nav-home svg{width:20px;height:20px;display:block}
-  .nav-track{flex:none;order:2;display:flex;align-items:center;gap:8px;margin:0 auto}
+  .nav-track{flex:none;order:3;display:flex;align-items:center;gap:8px;margin:0 auto}
   .topnav button{flex:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-family:var(--body);font-size:14px;font-weight:700;color:var(--ink-sub);cursor:pointer;transition:all .16s}
   .topnav button:hover{border-color:#cfd3da;color:var(--ink)}
   .topnav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
-  .open-btn{flex:none;order:1;color:var(--ink-sub);font-weight:700}
+  .topnav .grid-btn{order:1;border-color:#b9e0d4;color:var(--accent)}
+  .open-btn{flex:none;order:2;color:var(--ink-sub);font-weight:700}
 
   .viewer{flex:1;position:relative;overflow:hidden;background:#0d0f12}
   .viewer iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+
+  /* 전체목록(디렉터리) 패널 */
+  .grid-panel{position:absolute;inset:0;overflow-y:auto;display:none;padding:30px 16px 60px;background:#fff;scrollbar-width:none}
+  .grid-panel::-webkit-scrollbar{display:none}
+  .grid-panel.show{display:block}
+  .grid-title{text-align:center;font-size:20px;font-weight:800;letter-spacing:-0.02em;color:#244;margin:0 0 6px}
+  .grid-sub{text-align:center;font-size:13px;color:var(--ink-sub);margin:0 0 26px}
+  .dir-section{max-width:1040px;margin:0 auto 24px}
+  .dir-label{font-size:12.5px;font-weight:800;color:var(--accent);letter-spacing:.5px;text-transform:uppercase;margin:0 0 10px;padding:0 4px}
+  .dir-grid{display:grid;grid-template-columns:repeat(4,1fr);column-gap:10px;row-gap:26px}
+  .dir-card{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:14px 15px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;text-align:left;text-decoration:none;color:inherit;font-family:var(--body);transition:all .15s;box-shadow:0 2px 4px rgba(90,90,130,.06);position:relative;overflow:visible}
+  .dir-card::after{content:"";position:absolute;left:2.5%;right:2.5%;top:100%;height:18px;background:url('https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png') center top / 100% 100% no-repeat;pointer-events:none;z-index:1}
+  .dir-card:hover{border-color:var(--accent);background:#f5fbf8;transform:translateY(-2px);box-shadow:0 4px 10px rgba(11,107,83,.12)}
+  .dir-card .t{font-size:15px;font-weight:800;color:var(--ink);letter-spacing:-0.3px;line-height:1.15}
+  .dir-card .k{font-size:11px;color:var(--ink-sub);line-height:1.2}
+  @media (max-width:720px){ .dir-grid{grid-template-columns:repeat(2,1fr);row-gap:24px} .grid-panel{padding:24px 12px 50px} }
 </style>
 </head>
 <body>
@@ -44,6 +61,7 @@
 
 <div class="viewer">
   <iframe id="viewer" title="주식·코인 뉴스 뷰어" referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+  <div class="grid-panel" id="gridPanel"></div>
 </div>
 
 <script>
@@ -82,6 +100,95 @@ const SITES=[
 ];
 const DEFAULT_I = 1; /* 메인: 매경 */
 
+/* === 전체목록 디렉터리 (카테고리별) — newsitesbar2 동일 데이터 === */
+const DIRECTORY = [
+  { label:'코인 뉴스 · Crypto News', items:[
+    ['CoinDesk','글로벌 코인 뉴스','https://www.coindesk.com/'],
+    ['Cointelegraph','코인 뉴스','https://cointelegraph.com/'],
+    ['The Block','리서치·뉴스','https://www.theblock.co/'],
+    ['Decrypt','decrypt.co','https://decrypt.co/'],
+    ['코인니스','실시간 한국 뉴스','https://coinness.com/'],
+    ['블록미디어','blockmedia.co.kr','https://www.blockmedia.co.kr/'],
+    ['코인리더스','coinreaders.com','https://www.coinreaders.com/'],
+    ['코인데스크 코리아','coindeskkorea.com','https://www.coindeskkorea.com/'],
+    ['토큰포스트','tokenpost.kr','https://www.tokenpost.kr/'],
+    ['디센터','decenter.kr','https://www.decenter.kr/'],
+    ['블록체인투데이','blockchaintoday.co.kr','https://blockchaintoday.co.kr/'],
+    ['크립토뉴스','한국어 코인 뉴스','https://cryptonews.com/kr/'],
+    ['코인카프 속보','coincarp.com','https://www.coincarp.com/ko/flashnews/'],
+  ]},
+  { label:'종합 일간지', items:[
+    ['조선일보','chosun.com','https://www.chosun.com/'],
+    ['중앙일보','joongang.co.kr','https://www.joongang.co.kr/'],
+    ['동아일보','donga.com','https://www.donga.com/'],
+    ['한겨레','hani.co.kr','https://www.hani.co.kr/'],
+    ['경향신문','khan.co.kr','https://www.khan.co.kr/'],
+    ['국민일보','kmib.co.kr','https://www.kmib.co.kr/'],
+    ['서울신문','seoul.co.kr','https://www.seoul.co.kr/'],
+    ['문화일보','munhwa.com','https://www.munhwa.com/'],
+    ['세계일보','segye.com','https://www.segye.com/'],
+    ['한국일보','hankookilbo.com','https://www.hankookilbo.com/'],
+  ]},
+  { label:'경제 일간지', items:[
+    ['한국경제','hankyung.com','https://www.hankyung.com/'],
+    ['매일경제','mk.co.kr','https://www.mk.co.kr/'],
+    ['머니투데이','mt.co.kr','https://www.mt.co.kr/'],
+    ['이데일리','edaily.co.kr','https://www.edaily.co.kr/'],
+    ['헤럴드경제','heraldcorp.com','https://www.heraldcorp.com/'],
+    ['서울경제','sedaily.com','https://www.sedaily.com/'],
+    ['아시아경제','asiae.co.kr','https://www.asiae.co.kr/'],
+    ['파이낸셜뉴스','fnnews.com','https://www.fnnews.com/'],
+    ['디지털타임스','dt.co.kr','https://www.dt.co.kr/'],
+    ['전자신문','etnews.com','https://www.etnews.com/'],
+  ]},
+  { label:'통신사·인터넷 매체', items:[
+    ['연합뉴스','yna.co.kr','https://www.yna.co.kr/'],
+    ['뉴시스','newsis.com','https://www.newsis.com/'],
+    ['뉴스1','news1.kr','https://www.news1.kr/'],
+    ['오마이뉴스','ohmynews.com','https://www.ohmynews.com/'],
+    ['프레시안','pressian.com','https://www.pressian.com/'],
+    ['미디어오늘','mediatoday.co.kr','https://www.mediatoday.co.kr/'],
+    ['노컷뉴스','nocutnews.co.kr','https://www.nocutnews.co.kr/'],
+    ['비즈니스포스트','businesspost.co.kr','https://www.businesspost.co.kr/'],
+    ['미디어스','mediaus.co.kr','https://www.mediaus.co.kr/'],
+    ['PD저널','pdjournal.com','https://www.pdjournal.com/'],
+  ]},
+  { label:'스포츠·연예', items:[
+    ['스포츠조선','sports.chosun.com','https://sports.chosun.com/'],
+    ['일간스포츠','isplus.com','https://isplus.com/'],
+    ['스포츠동아','sports.donga.com','https://sports.donga.com/'],
+    ['스포츠경향','sports.khan.co.kr','https://sports.khan.co.kr/'],
+    ['스포츠서울','sportsseoul.com','https://www.sportsseoul.com/'],
+    ['스포츠한국','sports.hankooki.com','https://sports.hankooki.com/'],
+    ['OSEN','osen.co.kr','https://www.osen.co.kr/'],
+    ['마이데일리','mydaily.co.kr','https://www.mydaily.co.kr/'],
+    ['엑스포츠뉴스','xportsnews.com','https://www.xportsnews.com/'],
+    ['스타뉴스','starnewskorea.com','https://www.starnewskorea.com/'],
+  ]},
+  { label:'지방지', items:[
+    ['부산일보','busan.com','https://www.busan.com/'],
+    ['국제신문','부산 · kookje.co.kr','https://www.kookje.co.kr/'],
+    ['매일신문','대구 · imaeil.com','https://www.imaeil.com/'],
+    ['영남일보','대구·경북','https://www.yeongnam.com/'],
+    ['경북일보','kyongbuk.co.kr','https://www.kyongbuk.co.kr/'],
+    ['경남신문','경남 · knnews.co.kr','https://www.knnews.co.kr/'],
+    ['경남도민일보','idomin.com','https://www.idomin.com/'],
+    ['강원일보','kwnews.co.kr','https://www.kwnews.co.kr/'],
+    ['강원도민일보','kado.net','https://www.kado.net/'],
+    ['충청일보','ccdailynews.com','https://www.ccdailynews.com/'],
+    ['충청투데이','cctoday.co.kr','https://www.cctoday.co.kr/'],
+    ['대전일보','daejonilbo.com','https://www.daejonilbo.com/'],
+    ['광주일보','kwangju.co.kr','https://www.kwangju.co.kr/'],
+    ['전남일보','jnilbo.com','https://www.jnilbo.com/'],
+    ['전북일보','jjan.kr','https://www.jjan.kr/'],
+    ['무등일보','광주 · mdilbo.com','https://www.mdilbo.com/'],
+    ['경기일보','kyeonggi.com','https://www.kyeonggi.com/'],
+    ['인천일보','incheonilbo.com','https://www.incheonilbo.com/'],
+    ['제주일보','jejunews.com','https://www.jejunews.com/'],
+    ['한라일보','제주 · ihalla.com','https://www.ihalla.com/'],
+  ]},
+];
+
 let viewer=document.getElementById('viewer');
 function setViewerSrc(url){
   /* iframe을 새로 만들어 교체 → 안쪽 iframe src 변경이 히스토리에 쌓이지 않아
@@ -96,6 +203,7 @@ function setViewerSrc(url){
   viewer=fresh;
 }
 
+const gridPanel=document.getElementById('gridPanel');
 const nav=document.getElementById('topnav');
 const track=document.getElementById('navTrack');
 let currentUrl=SITES[DEFAULT_I][1];
@@ -106,11 +214,44 @@ function centerNavBtn(btn){
   const target=nav.scrollLeft + (btnRect.left - navRect.left) - (nav.clientWidth/2) + (btnRect.width/2);
   nav.scrollTo({left:Math.max(0,target),behavior:'smooth'});
 }
-function clearActive(){ nav.querySelectorAll('button[data-site]').forEach(b=>b.classList.remove('active')); }
+function clearActive(){ nav.querySelectorAll('button[data-site],button[data-grid]').forEach(b=>b.classList.remove('active')); }
+
+/* 전체목록 패널 1회 생성 */
+function renderGrid(){
+  if(gridPanel.dataset.done) return; gridPanel.dataset.done='1';
+  const t=document.createElement('div'); t.className='grid-title'; t.textContent='전체 신문·언론사';
+  const s=document.createElement('div'); s.className='grid-sub'; s.textContent='언론사를 누르면 새 탭으로 열려요';
+  gridPanel.appendChild(t); gridPanel.appendChild(s);
+  DIRECTORY.forEach(sec=>{
+    const wrap=document.createElement('div'); wrap.className='dir-section';
+    const lab=document.createElement('div'); lab.className='dir-label'; lab.textContent=sec.label;
+    const g=document.createElement('div'); g.className='dir-grid';
+    sec.items.forEach(it=>{
+      const c=document.createElement('a'); c.className='dir-card'; c.href=it[2]; c.target='_blank'; c.rel='noopener';
+      const tt=document.createElement('span'); tt.className='t'; tt.textContent=it[0];
+      const kk=document.createElement('span'); kk.className='k'; kk.textContent=it[1];
+      c.appendChild(tt); c.appendChild(kk);
+      g.appendChild(c);
+    });
+    wrap.appendChild(lab); wrap.appendChild(g); gridPanel.appendChild(wrap);
+  });
+}
+function showGrid(btn){
+  renderGrid();
+  setViewerSrc('about:blank');   /* 열려 있던 뉴스 정지/비움 */
+  viewer.style.display='none';
+  gridPanel.classList.add('show');
+  openBtn.style.display='none';
+  clearActive();
+  try { sessionStorage.setItem('mywayStockNewsV2','grid'); } catch(_) {}
+  if(btn){ btn.classList.add('active'); centerNavBtn(btn); }
+}
 
 /* 상단 매체 버튼 → iframe 표시 */
 function loadSite(i, btn){
   currentUrl=SITES[i][1];
+  gridPanel.classList.remove('show');
+  viewer.style.display='';
   setViewerSrc(currentUrl);
   openBtn.style.display='';
   clearActive();
@@ -130,6 +271,10 @@ SITES.forEach((s,i)=>{
   }
   track.appendChild(b);
 });
+/* 전체목록 버튼 (맨 왼쪽 - 홈 다음) */
+const gridBtn=document.createElement('button'); gridBtn.textContent='📰 전체목록'; gridBtn.dataset.grid='1'; gridBtn.className='grid-btn';
+gridBtn.addEventListener('click',()=>showGrid(gridBtn));
+nav.appendChild(gridBtn);
 /* 새 탭으로 열기 (맨 앞 - 홈 버튼 다음, 항상 보이게) */
 const openBtn=document.createElement('button'); openBtn.className='open-btn'; openBtn.textContent='↗ 새 탭';
 openBtn.addEventListener('click',()=>window.open(currentUrl,'_blank','noopener'));
@@ -148,10 +293,11 @@ nav.insertBefore(openBtn, track);
   nav.addEventListener('wheel',e=>{ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ nav.scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
 })();
 
-/* 초기화: 저장된 마지막 매체 복원(없으면 한경) */
+/* 초기화: 저장된 마지막 화면 복원(없으면 매경) */
 (function(){
   var saved='';
   try { saved = sessionStorage.getItem('mywayStockNewsV2') || ''; } catch(_) {}
+  if(saved==='grid'){ showGrid(gridBtn); return; }
   var ms = /^site:(\d+)$/.exec(saved);
   if(ms){
     var i=parseInt(ms[1],10);
