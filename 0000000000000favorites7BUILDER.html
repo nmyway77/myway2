@@ -94,8 +94,9 @@
       gap: 8px;
       flex: 1 1 auto;
       min-width: 0;
-      justify-content: safe center;
+      justify-content: flex-start;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
       -ms-overflow-style: none;
     }
@@ -160,6 +161,10 @@
     .topbar-tools .tri { font-size: .72rem; }
     @media (max-width: 700px) {
       .topbar-tools button { width: 30px; height: 30px; }
+      /* 모바일: 카테고리 네비(가로 스크롤)와 도구 버튼을 2줄로 분리 — 겹침 방지 */
+      .topbar-row { flex-wrap: wrap; row-gap: 8px; }
+      .cat-nav { order: 1; flex: 1 1 100%; width: 100%; min-width: 0; justify-content: flex-start; }
+      .topbar-tools { order: 2; width: 100%; justify-content: flex-end; }
     }
 
     /* ===== 갤러리 섹션 ===== */
