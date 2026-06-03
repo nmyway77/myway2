@@ -323,12 +323,13 @@
     .map-row select { flex: 1; min-width: 0; max-width: 230px; padding: 8px 10px; border: 1.5px solid #e2e6f3; border-radius: 9px; background: #fafbff; font-size: .85rem; color: #2a2a3a; outline: none; }
     .map-row select:focus { border-color: #8a92b5; }
 
-    /* 사진 원본 라이트박스 */
-    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; cursor: zoom-out; -webkit-user-select: none; user-select: none; }
-    .lightbox.open { display: flex; }
-    .lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 12px 50px rgba(0,0,0,.55); touch-action: pinch-zoom; }
-    .lightbox .lb-close { position: absolute; top: 14px; right: 16px; width: 42px; height: 42px; border-radius: 50%; border: none; background: rgba(255,255,255,.14); color: #fff; font-size: 1.4rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .lightbox .lb-close:hover { background: rgba(255,255,255,.28); }
+    /* 사진 원본 라이트박스 (여러 장 세로 나열 · 화면 우측 스크롤바 · 전체 너비) */
+    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.92); display: none; z-index: 1000; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; -webkit-user-select: none; user-select: none; }
+    .lightbox.open { display: block; }
+    .lb-scroll { width: 100%; min-height: 100%; display: flex; flex-direction: column; align-items: center; gap: 0; padding: 0 0 60px; }
+    .lb-scroll img { width: 100%; height: auto; display: block; object-fit: contain; touch-action: pinch-zoom; }
+    .lightbox .lb-close { position: fixed; top: 14px; right: 16px; width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(255,255,255,.16); color: #fff; font-size: 1.5rem; line-height: 1; cursor: pointer; z-index: 1001; display: flex; align-items: center; justify-content: center; }
+    .lightbox .lb-close:hover { background: rgba(255,255,255,.3); }
 
     /* 사진 카드 좌·우 동작 힌트 */
     .split-hint { position: absolute; inset: 0; display: flex; opacity: 0; transition: opacity .15s; pointer-events: none; z-index: 2; border-radius: inherit; overflow: hidden; }
@@ -338,6 +339,10 @@
     .split-hint .sh-right { justify-content: flex-end; padding-right: 9px; background: linear-gradient(to left, rgba(20,20,30,.5), transparent 72%); }
     .split-hint svg { width: 13px; height: 13px; flex: 0 0 auto; }
     @media (hover: none) { .split-hint { opacity: 1; } .split-hint > span { font-size: .62rem; } }
+
+    /* 여러 장 배지 */
+    .multi-badge { position: absolute; left: 7px; top: 7px; z-index: 3; display: flex; align-items: center; gap: 3px; padding: 3px 7px; border-radius: 20px; background: rgba(20,20,30,.62); color: #fff; font-size: .66rem; font-weight: 700; font-family: 'Courier New', monospace; pointer-events: none; }
+    .multi-badge svg { width: 11px; height: 11px; }
     .modal {
       width: 100%; max-width: 380px; background: #fff; border-radius: 16px;
       padding: 22px 20px 18px; box-shadow: 0 18px 50px rgba(20,24,38,.3);
@@ -345,12 +350,14 @@
     .modal-title { margin: 0 0 16px; font-size: 1.15rem; font-weight: 800; color: #1f2740; }
     .field { display: block; margin-bottom: 13px; }
     .field > span { display: block; font-size: .8rem; font-weight: 700; color: #6a739c; margin-bottom: 5px; }
-    .field input, .field select {
+    .field input, .field select, .field textarea {
       width: 100%; padding: 10px 12px; border: 1.5px solid #dde2ee; border-radius: 9px;
       font-size: .92rem; font-family: inherit; color: #1f2740; background: #fafbfe;
       outline: none; transition: border-color .15s;
     }
-    .field input:focus, .field select:focus { border-color: #7e94ff; }
+    .field textarea { resize: vertical; line-height: 1.5; min-height: 42px; -webkit-user-select: text; user-select: text; box-sizing: border-box; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: #7e94ff; }
+    .img-hint { display: block; font-size: .74rem; color: #8a92b5; line-height: 1.5; margin-top: 6px; font-weight: 500; }
     .modal-actions { display: flex; gap: 9px; margin-top: 18px; }
     .modal-actions button { flex: 1; padding: 11px; border-radius: 9px; font-size: .92rem; font-weight: 700; cursor: pointer; border: none; }
     .btn-ghost { background: #eef0f6; color: #4a5170; }
@@ -523,7 +530,8 @@
       </label>
       <label class="field">
         <span id="lblImg">사진 주소 (선택)</span>
-        <input id="inImg" type="text" placeholder="이미지 URL · 비우면 이름 카드로 표시" autocomplete="off">
+        <textarea id="inImg" rows="1" placeholder="이미지 URL · 비우면 이름 카드로 표시" autocomplete="off"></textarea>
+        <span class="img-hint" id="imgHint" style="display:none;">여러 장을 넣으려면 한 줄에 하나씩 붙여넣으세요. 첫 줄이 대표로 카드에 뜨고, 카드 왼쪽을 누르면 전체가 한 화면에 위→아래로 나와요.</span>
       </label>
       <div class="modal-actions">
         <button type="button" class="btn-danger" id="delBtn" style="display:none">삭제</button>
@@ -585,10 +593,10 @@
     </div>
   </div>
 
-  <!-- 사진 원본 라이트박스 -->
+  <!-- 사진 원본 라이트박스 (여러 장 세로 나열) -->
   <div class="lightbox" id="lightbox">
     <button type="button" class="lb-close" id="lbClose" aria-label="닫기">&times;</button>
-    <img id="lightboxImg" src="" alt="">
+    <div class="lb-scroll" id="lbScroll"></div>
   </div>
 
   <script>
@@ -763,9 +771,10 @@
         a.appendChild(ph);
       }
 
-      /* 사진: 왼쪽=원본 풀사이즈(라이트박스), 오른쪽=연결 페이지 */
+      /* 사진: 왼쪽=전체 사진 풀사이즈(세로 나열), 오른쪽=연결 페이지 */
       if (cat.indexOf('photo') === 0 && imgSrc) {
         const pageUrl = (item.url || '').trim();
+        const imgsArr = (Array.isArray(item.imgs) && item.imgs.length) ? item.imgs.slice() : [imgSrc];
         a.addEventListener('click', e => {
           e.preventDefault();
           const rect = a.getBoundingClientRect();
@@ -773,14 +782,20 @@
           if (pageUrl && x > rect.width / 2) {
             window.open(pageUrl, '_blank', 'noopener');
           } else {
-            openLightbox(imgSrc, item.name);
+            openLightbox(imgsArr, item.name);
           }
         });
+        if (imgsArr.length > 1) {
+          const badge = document.createElement('span');
+          badge.className = 'multi-badge';
+          badge.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/></svg>' + imgsArr.length;
+          a.appendChild(badge);
+        }
         if (pageUrl) {
           const hint = document.createElement('div');
           hint.className = 'split-hint';
           hint.innerHTML =
-            '<span class="sh-left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>원본</span>' +
+            '<span class="sh-left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>' + (imgsArr.length > 1 ? '전체' : '원본') + '</span>' +
             '<span class="sh-right">페이지<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M9 7h8v8"/></svg></span>';
           a.appendChild(hint);
         }
@@ -830,25 +845,36 @@
       const lbl = document.getElementById('lblUrl');
       const inp = document.getElementById('inUrl');
       const lblImg = document.getElementById('lblImg');
+      const img = document.getElementById('inImg');
+      const hint = document.getElementById('imgHint');
+      const isPhoto = cat.indexOf('photo') === 0;
       if (cat === 'video') {
         lbl.textContent = '영상 주소 (유튜브 링크 등)';
         inp.placeholder = '예) https://youtu.be/영상ID';
         lblImg.textContent = '썸네일 주소 (선택 · 비우면 자동)';
-      } else if (cat.indexOf('photo') === 0) {
+      } else if (isPhoto) {
         lbl.textContent = '연결 주소 (선택)';
         inp.placeholder = '비우면 클릭해도 이동 안 함';
-        lblImg.textContent = '사진 주소';
+        lblImg.textContent = '사진 주소 (여러 장 가능)';
       } else {
         lbl.textContent = '사이트 주소';
         inp.placeholder = '예) https://www.naver.com';
         lblImg.textContent = '사진 주소 (선택)';
       }
+      img.placeholder = isPhoto ? '한 줄에 하나씩 — 여러 장을 넣을 수 있어요' : '이미지 URL · 비우면 이름 카드로 표시';
+      img.rows = isPhoto ? 4 : 1;
+      hint.style.display = isPhoto ? 'block' : 'none';
     }
     function fillModal(item, cat) {
       document.getElementById('inCat').value = cat;
       document.getElementById('inName').value = item ? item.name : '';
       document.getElementById('inUrl').value = item ? item.url : '';
-      document.getElementById('inImg').value = item ? (item.img || '') : '';
+      var imgVal = '';
+      if (item) {
+        if (Array.isArray(item.imgs) && item.imgs.length) imgVal = item.imgs.join('\n');
+        else imgVal = item.img || '';
+      }
+      document.getElementById('inImg').value = imgVal;
       refreshUrlLabel();
     }
     function openAddModal() {
@@ -933,11 +959,13 @@
     function submitModal() {
       const name = document.getElementById('inName').value.trim();
       const url = normalizeUrl(document.getElementById('inUrl').value);
-      const img = document.getElementById('inImg').value.trim();
       const cat = document.getElementById('inCat').value;
+      const imgList = document.getElementById('inImg').value.split('\n').map(s => s.trim()).filter(Boolean);
+      const img = imgList[0] || '';
       if (!name) { alert('텍스트(이름)를 입력하세요.'); return; }
       if (!url && cat.indexOf('photo') !== 0 && !img) { alert('주소를 입력하세요.'); return; }
       const rec = { name: name, url: url, img: img };
+      if (cat.indexOf('photo') === 0 && imgList.length > 1) rec.imgs = imgList;
       if (editRef) {
         if (editRef.cat === cat) { data[cat][editRef.idx] = rec; }
         else { data[editRef.cat].splice(editRef.idx, 1); data[cat].push(rec); }
@@ -999,7 +1027,11 @@
       const lines = CATS.map(c => {
         const arr = data[c.code] || [];
         if (!arr.length) return '      ' + c.code + ': []';
-        return '      ' + c.code + ': [\n' + arr.map(it => '        { name: ' + JSON.stringify(it.name || '') + ', url: ' + JSON.stringify(it.url || '') + ', img: ' + JSON.stringify(it.img || '') + ' }').join(',\n') + '\n      ]';
+        return '      ' + c.code + ': [\n' + arr.map(it => {
+          var s = '{ name: ' + JSON.stringify(it.name || '') + ', url: ' + JSON.stringify(it.url || '') + ', img: ' + JSON.stringify(it.img || '');
+          if (Array.isArray(it.imgs) && it.imgs.length > 1) s += ', imgs: ' + JSON.stringify(it.imgs);
+          return '        ' + s + ' }';
+        }).join(',\n') + '\n      ]';
       });
       out += lines.join(',\n') + '\n    };\n';
       return out;
@@ -1034,8 +1066,15 @@
           const seg = mo[1];
           const name = (seg.match(/name:\s*(['"])([\s\S]*?)\1/) || [])[2] || '';
           const url = (seg.match(/url:\s*(['"])([\s\S]*?)\1/) || [])[2] || '';
-          const img = (seg.match(/img:\s*(['"])([\s\S]*?)\1/) || [])[2] || '';
-          if (name || url || img) { nd[c.code].push({ name: name, url: url, img: img }); any = true; }
+          const img = (seg.match(/\bimg:\s*(['"])([\s\S]*?)\1/) || [])[2] || '';
+          let imgs = null;
+          const imgsM = seg.match(/imgs:\s*(\[[^\]]*\])/);
+          if (imgsM) { try { const a2 = JSON.parse(imgsM[1]); if (Array.isArray(a2)) imgs = a2.map(String).map(s => s.trim()).filter(Boolean); } catch (e) {} }
+          if (name || url || img || (imgs && imgs.length)) {
+            const r = { name: name, url: url, img: img || (imgs && imgs[0]) || '' };
+            if (imgs && imgs.length > 1) r.imgs = imgs;
+            nd[c.code].push(r); any = true;
+          }
         }
       });
       return any ? nd : null;
@@ -1070,8 +1109,20 @@
       var img = getByKeys(o, IMG_KEYS).trim();
       var name = getByKeys(o, NAME_KEYS).trim();
       if (!img && isImageUrl(url)) { img = url; url = ''; }   // url이 이미지면 사진으로
-      if (!url && !img) return null;
-      return { name: name, url: url, img: img };
+      // 여러 장 배열 키 인식
+      var IMGS_KEYS = ['imgs','images','photos','gallery','pics','pictures','이미지들','사진들'];
+      var imgs = null;
+      Object.keys(o).forEach(function(k){
+        if (!imgs && IMGS_KEYS.indexOf(lc(k)) >= 0 && Array.isArray(o[k])){
+          var a2 = o[k].map(function(x){ return typeof x === 'string' ? x.trim() : (x && typeof x === 'object' ? getByKeys(x, IMG_KEYS).trim() || getByKeys(x, URL_KEYS).trim() : ''); }).filter(Boolean);
+          if (a2.length) imgs = a2;
+        }
+      });
+      if (imgs && !img) img = imgs[0];
+      if (!url && !img && !(imgs && imgs.length)) return null;
+      var it = { name: name, url: url, img: img };
+      if (imgs && imgs.length > 1) it.imgs = imgs;
+      return it;
     }
     function looksLikeItem(o){
       if (!o || typeof o !== 'object' || Array.isArray(o)) return false;
@@ -1225,20 +1276,28 @@
     document.getElementById('mapApply').addEventListener('click', applyMapping);
     document.getElementById('mapModal').addEventListener('click', function(e){ if (e.target.id === 'mapModal') closeMapModal(); });
 
-    /* 사진 원본 라이트박스 */
-    function openLightbox(src, alt){
+    /* 사진 원본 라이트박스 (여러 장 세로 나열) */
+    function openLightbox(imgs, alt){
+      if (typeof imgs === 'string') imgs = [imgs];
+      var sc = document.getElementById('lbScroll');
+      sc.innerHTML = '';
+      (imgs || []).forEach(function(src){
+        if (!src) return;
+        var im = document.createElement('img');
+        im.src = src; im.alt = alt || ''; im.referrerPolicy = 'no-referrer'; im.draggable = false; im.loading = 'lazy';
+        sc.appendChild(im);
+      });
+      sc.scrollTop = 0;
       var lb = document.getElementById('lightbox');
-      var im = document.getElementById('lightboxImg');
-      im.src = src; im.alt = alt || '';
+      lb.scrollTop = 0;
       lb.classList.add('open');
     }
     function closeLightbox(){
       document.getElementById('lightbox').classList.remove('open');
-      document.getElementById('lightboxImg').src = '';
+      document.getElementById('lbScroll').innerHTML = '';
     }
     document.getElementById('lbClose').addEventListener('click', closeLightbox);
-    document.getElementById('lightbox').addEventListener('click', function(e){ if (e.target.id === 'lightbox') closeLightbox(); });
-    document.getElementById('lightboxImg').addEventListener('click', function(e){ e.stopPropagation(); });
+    document.getElementById('lightbox').addEventListener('click', function(e){ if (e.target.id === 'lightbox' || e.target.id === 'lbScroll') closeLightbox(); });
     document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeLightbox(); });
     function openCodeModal() { document.getElementById('codeArea').value = buildCode(); document.getElementById('codeModal').classList.add('open'); }
     function closeCodeModal() { document.getElementById('codeModal').classList.remove('open'); }
