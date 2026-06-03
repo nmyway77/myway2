@@ -216,8 +216,7 @@
       color: #1f2740;
       letter-spacing: -0.3px;
       margin: 14px 0 12px;
-      padding-bottom: 7px;
-      border-bottom: 2px solid #e5e0d5;
+      padding-bottom: 2px;
     }
     .masonry .section-head:first-child { margin-top: 0; }
 
@@ -302,6 +301,31 @@
     /* 갤러리 반응형 */
     @media (max-width: 900px) { .masonry { column-count: 3; } }
     @media (max-width: 600px) { .masonry { column-count: 2; column-gap: 10px; } .masonry .card { margin-bottom: 10px; } }
+
+    /* Others(etcNews): 섹션 구분 + 텍스트 카드 구조 → multi-column(+column-span) 모바일 버그 회피용 그리드 */
+    .masonry[data-filter="etcNews"]{
+      column-count: 1 !important;
+      column-gap: normal;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 26px 12px;
+      align-items: stretch;
+    }
+    .masonry[data-filter="etcNews"] .card{ margin: 0; }
+    .masonry[data-filter="etcNews"] .card.site-card{ margin: 0; }
+    .masonry[data-filter="etcNews"] .section-head{
+      grid-column: 1 / -1;
+      column-span: normal;
+      -webkit-column-span: none;
+      margin: 12px 0 0;
+    }
+    .masonry[data-filter="etcNews"] .section-head:first-child{ margin-top: 0; }
+    @media (max-width: 900px){
+      .masonry[data-filter="etcNews"]{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+    }
+    @media (max-width: 600px){
+      .masonry[data-filter="etcNews"]{ grid-template-columns: repeat(2, minmax(0,1fr)); gap: 22px 10px; }
+    }
 
     /* 태블릿/PC: 카테고리 네비 중앙정렬 */
     @media (min-width: 721px) {
