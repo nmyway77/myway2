@@ -188,7 +188,7 @@
     });
     selectedIdx = videos.length>0 ? 0 : null;
   } else {
-    videos = DEFAULT_VIDEOS.map(function(v){ return { url:v.url, img:'', name:v.name, color:v.color }; });
+    videos = DEFAULT_VIDEOS.map(function(v){ return { url:v.url, img:v.img||'', name:v.name, color:v.color }; });
     selectedIdx = 0; // 초기 화면: 서울역
   }
   let editIdx = null;
