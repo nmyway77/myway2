@@ -200,9 +200,26 @@
     /* 제목 캡션: PC·모바일 모두 항상 표시 (마우스 올림과 무관) */
 
     /* 카테고리 필터 — CSS data 속성으로 (JS 재렌더 없음) */
-    .masonry[data-filter="genNews"] .card:not([data-cats~="genNews"]) { display: none; }
-    .masonry[data-filter="entNews"] .card:not([data-cats~="entNews"]) { display: none; }
-    .masonry[data-filter="etcNews"] .card:not([data-cats~="etcNews"]) { display: none; }
+    .masonry[data-filter="genNews"] .card:not([data-cats~="genNews"]),
+    .masonry[data-filter="genNews"] .section-head:not([data-cats~="genNews"]) { display: none; }
+    .masonry[data-filter="entNews"] .card:not([data-cats~="entNews"]),
+    .masonry[data-filter="entNews"] .section-head:not([data-cats~="entNews"]) { display: none; }
+    .masonry[data-filter="etcNews"] .card:not([data-cats~="etcNews"]),
+    .masonry[data-filter="etcNews"] .section-head:not([data-cats~="etcNews"]) { display: none; }
+    /* 분류 그룹 제목 (전체 너비) */
+    .masonry .section-head {
+      column-span: all;
+      -webkit-column-span: all;
+      break-inside: avoid;
+      font-weight: 800;
+      font-size: 1.02rem;
+      color: #1f2740;
+      letter-spacing: -0.3px;
+      margin: 14px 0 12px;
+      padding-bottom: 7px;
+      border-bottom: 2px solid #e5e0d5;
+    }
+    .masonry .section-head:first-child { margin-top: 0; }
 
     /* 카드 위치 기준 (하단 캡션 고정용) */
     .masonry .card { position: relative; }
@@ -477,9 +494,7 @@
         { name: "우먼조선", url: "https://woman.chosun.com/", img: "https://img.ridicdn.net/cover/486000697/xxlarge#1" }
       ],
       etcNews: [
-        { name: "레이디경향", url: "https://lady.khan.co.kr/", img: "" },
-        { name: "gq코리아", url: "https://www.gqkorea.co.kr/", img: "" },
-        { name: "주부생", url: "https://www.ju-bu.co.kr/", img: "" },
+        { section: "여성·라이프스타일" },
         { name: "보그 코리아", url: "https://www.vogue.co.kr/", img: "" },
         { name: "엘르 코리아", url: "https://www.elle.co.kr/", img: "" },
         { name: "마리끌레르", url: "https://www.marieclairekorea.com/", img: "" },
@@ -488,6 +503,17 @@
         { name: "우먼센스", url: "https://www.womansense.co.kr/", img: "" },
         { name: "우먼동아", url: "https://woman.donga.com/", img: "" },
         { name: "우먼조선", url: "https://woman.chosun.com/", img: "" },
+        { name: "레이디경향", url: "https://lady.khan.co.kr/", img: "" },
+        { name: "GQ 코리아", url: "https://www.gqkorea.co.kr/", img: "" },
+        { name: "allure", url: "https://www.allurekorea.com/", img: "" },
+        { name: "싱글즈", url: "https://m.singleskorea.com/", img: "" },
+        { name: "더블유코리아", url: "https://www.wkorea.com/", img: "" },
+        { name: "로피시엘", url: "https://www.lofficielkorea.com/", img: "" },
+        { name: "노블레스", url: "https://www.noblesse.com/home/main.php", img: "" },
+        { name: "헬스조선", url: "https://health.chosun.com/", img: "" },
+        { name: "KTX", url: "https://ktxmagazine.kr/", img: "" },
+        { name: "주부생", url: "https://www.ju-bu.co.kr/", img: "" },
+        { section: "시사·종합" },
         { name: "시사IN", url: "https://www.sisain.co.kr/", img: "" },
         { name: "시사저널", url: "https://www.sisajournal.com/", img: "" },
         { name: "한겨레21", url: "https://h21.hani.co.kr/", img: "" },
@@ -498,6 +524,7 @@
         { name: "월간중앙", url: "https://jmagazine.joins.com/monthly", img: "" },
         { name: "신동아", url: "https://shindonga.donga.com/", img: "" },
         { name: "뉴스위크 한국판", url: "https://www.newsweekkorea.com/", img: "" },
+        { section: "경제·비즈니스" },
         { name: "포브스 코리아", url: "https://jmagazine.joins.com/forbes", img: "" },
         { name: "한경비즈니스", url: "https://magazine.hankyung.com/business", img: "" },
         { name: "매경이코노미", url: "https://www.mk.co.kr/economy/", img: "" },
@@ -506,6 +533,7 @@
         { name: "이코노미스트 코리아", url: "https://economist.co.kr/", img: "" },
         { name: "이코노미인사이트", url: "https://www.economyinsight.co.kr/", img: "" },
         { name: "이코노미조선", url: "https://economychosun.com/", img: "" },
+        { section: "문화·전문" },
         { name: "씨네21", url: "http://www.cine21.com/", img: "" },
         { name: "매거진B", url: "https://magazine-b.com/", img: "" },
         { name: "텐아시아", url: "https://tenasia.hankyung.com/", img: "" },
@@ -560,6 +588,14 @@
     }
 
     function buildCard(item, cat, idx) {
+      if (item.section) {
+        /* 그룹 헤더 (분류 제목) — 전체 너비 */
+        const h = document.createElement('div');
+        h.className = 'section-head';
+        h.dataset.cats = cat;
+        h.textContent = item.section;
+        return h;
+      }
       const a = document.createElement('a');
       a.className = 'card';
       const linkUrl = item.url || (cat.indexOf('photo') === 0 ? cardImage(item, cat) : '');
@@ -643,7 +679,7 @@
 
     function updateCounts() {
       const counts = {};
-      CATS.forEach(c => { counts[c.code] = data[c.code].length; });
+      CATS.forEach(c => { counts[c.code] = data[c.code].filter(it => !it.section).length; });
       Object.keys(counts).forEach(k => { const el = document.getElementById('cnt-' + k); if (el) el.textContent = counts[k]; });
     }
     function labelOf(code) { const c = CATS.find(x => x.code === code); return c ? c.label : ''; }
