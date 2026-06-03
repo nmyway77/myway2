@@ -256,6 +256,19 @@
       background: #fff;
       padding: 20px 18px 18px;
       box-shadow: 0 2px 10px rgba(31,39,64,.06);
+      overflow: visible;
+      margin-bottom: 26px;
+    }
+    /* 카드 밑 음영 — 입체감 (바매거진 전체목록 스타일) */
+    .masonry .card.site-card::after {
+      content: "";
+      position: absolute;
+      left: 2.5%; right: 2.5%;
+      top: 100%;
+      height: 18px;
+      background: url('https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png') center top / 100% 100% no-repeat;
+      pointer-events: none;
+      z-index: 1;
     }
     .masonry .card.site-card .site-name {
       font-size: 1.22rem; font-weight: 800; color: #1f2740;
@@ -464,9 +477,43 @@
         { name: "우먼조선", url: "https://woman.chosun.com/", img: "https://img.ridicdn.net/cover/486000697/xxlarge#1" }
       ],
       etcNews: [
-        { name: "레이디경향", url: "https://lady.khan.co.kr/", img: "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/3904000116365.jpg" },
-        { name: "gq코리아", url: "https://www.gqkorea.co.kr/", img: "https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000525754.jpg" },
-        { name: "주부생", url: "https://www.ju-bu.co.kr/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJyp4rG7vBXQD6Dz6xKQSZPK0G2cwzGwpBKg&s" },
+        { name: "레이디경향", url: "https://lady.khan.co.kr/", img: "" },
+        { name: "gq코리아", url: "https://www.gqkorea.co.kr/", img: "" },
+        { name: "주부생", url: "https://www.ju-bu.co.kr/", img: "" },
+        { name: "보그 코리아", url: "https://www.vogue.co.kr/", img: "" },
+        { name: "엘르 코리아", url: "https://www.elle.co.kr/", img: "" },
+        { name: "마리끌레르", url: "https://www.marieclairekorea.com/", img: "" },
+        { name: "코스모폴리탄", url: "https://www.cosmopolitan.co.kr/", img: "" },
+        { name: "하퍼스바자", url: "https://www.harpersbazaar.co.kr/", img: "" },
+        { name: "우먼센스", url: "https://www.womansense.co.kr/", img: "" },
+        { name: "우먼동아", url: "https://woman.donga.com/", img: "" },
+        { name: "우먼조선", url: "https://woman.chosun.com/", img: "" },
+        { name: "시사IN", url: "https://www.sisain.co.kr/", img: "" },
+        { name: "시사저널", url: "https://www.sisajournal.com/", img: "" },
+        { name: "한겨레21", url: "https://h21.hani.co.kr/", img: "" },
+        { name: "주간조선", url: "https://weekly.chosun.com/", img: "" },
+        { name: "주간동아", url: "https://weekly.donga.com/", img: "" },
+        { name: "주간경향", url: "https://weekly.khan.co.kr/", img: "" },
+        { name: "월간조선", url: "https://monthly.chosun.com/", img: "" },
+        { name: "월간중앙", url: "https://jmagazine.joins.com/monthly", img: "" },
+        { name: "신동아", url: "https://shindonga.donga.com/", img: "" },
+        { name: "뉴스위크 한국판", url: "https://www.newsweekkorea.com/", img: "" },
+        { name: "포브스 코리아", url: "https://jmagazine.joins.com/forbes", img: "" },
+        { name: "한경비즈니스", url: "https://magazine.hankyung.com/business", img: "" },
+        { name: "매경이코노미", url: "https://www.mk.co.kr/economy/", img: "" },
+        { name: "비즈한국", url: "https://www.bizhankook.com/", img: "" },
+        { name: "머니S", url: "https://www.moneys.co.kr/", img: "" },
+        { name: "이코노미스트 코리아", url: "https://economist.co.kr/", img: "" },
+        { name: "이코노미인사이트", url: "https://www.economyinsight.co.kr/", img: "" },
+        { name: "이코노미조선", url: "https://economychosun.com/", img: "" },
+        { name: "씨네21", url: "http://www.cine21.com/", img: "" },
+        { name: "매거진B", url: "https://magazine-b.com/", img: "" },
+        { name: "텐아시아", url: "https://tenasia.hankyung.com/", img: "" },
+        { name: "디자인하우스", url: "https://www.designhouse.co.kr/", img: "" },
+        { name: "어라운드", url: "https://a-round.kr/", img: "" },
+        { name: "에스콰이어", url: "https://www.esquirekorea.co.kr/", img: "" },
+        { name: "메종", url: "https://www.maisonkorea.com/", img: "" },
+        { name: "동아사이언스", url: "https://www.dongascience.com/", img: "" }
      ]
     };
 
@@ -558,16 +605,23 @@
       }
 
       const imgSrc = cardImage(item, cat);
-      if (imgSrc) {
-        const img = document.createElement('img');
-        img.src = imgSrc; img.alt = item.name;
-        img.loading = 'lazy'; img.decoding = 'async'; img.referrerPolicy = 'no-referrer'; img.draggable = false;
-        a.appendChild(img);
-      } else {
-        const ph = document.createElement('div');
-        ph.className = 'cover-ph'; ph.textContent = item.name;
-        a.appendChild(ph);
+      if (!imgSrc) {
+        /* 이미지가 없으면 네임카드형(이름 + 도메인)으로 표시 — 전체목록 스타일 */
+        a.classList.add('site-card');
+        const body = document.createElement('div');
+        body.className = 'site-body';
+        const nm = document.createElement('div');
+        nm.className = 'site-name'; nm.textContent = item.name;
+        const dm = document.createElement('div');
+        dm.className = 'site-domain'; dm.textContent = domainOf(item.url);
+        body.appendChild(nm); body.appendChild(dm);
+        a.appendChild(body);
+        return a;
       }
+      const img = document.createElement('img');
+      img.src = imgSrc; img.alt = item.name;
+      img.loading = 'lazy'; img.decoding = 'async'; img.referrerPolicy = 'no-referrer'; img.draggable = false;
+      a.appendChild(img);
       const cap = document.createElement('div');
       cap.className = 'cap'; cap.textContent = item.name;
       a.appendChild(cap);
