@@ -318,26 +318,6 @@
       display: none; align-items: center; justify-content: center; padding: 18px;
     }
     .modal-overlay.open { display: flex; }
-    .map-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: .88rem; color: #2a2a3a; }
-    .map-row > span { flex: 0 0 auto; }
-    .map-row select { flex: 1; min-width: 0; max-width: 230px; padding: 8px 10px; border: 1.5px solid #e2e6f3; border-radius: 9px; background: #fafbff; font-size: .85rem; color: #2a2a3a; outline: none; }
-    .map-row select:focus { border-color: #8a92b5; }
-
-    /* 사진 원본 라이트박스 */
-    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; cursor: zoom-out; -webkit-user-select: none; user-select: none; }
-    .lightbox.open { display: flex; }
-    .lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 12px 50px rgba(0,0,0,.55); touch-action: pinch-zoom; }
-    .lightbox .lb-close { position: absolute; top: 14px; right: 16px; width: 42px; height: 42px; border-radius: 50%; border: none; background: rgba(255,255,255,.14); color: #fff; font-size: 1.4rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .lightbox .lb-close:hover { background: rgba(255,255,255,.28); }
-
-    /* 사진 카드 좌·우 동작 힌트 */
-    .split-hint { position: absolute; inset: 0; display: flex; opacity: 0; transition: opacity .15s; pointer-events: none; z-index: 2; border-radius: inherit; overflow: hidden; }
-    .card:hover .split-hint { opacity: 1; }
-    .split-hint > span { flex: 1; display: flex; align-items: center; gap: 4px; color: #fff; font-size: .68rem; font-weight: 700; font-family: 'Courier New', monospace; letter-spacing: .02em; }
-    .split-hint .sh-left { justify-content: flex-start; padding-left: 9px; background: linear-gradient(to right, rgba(20,20,30,.5), transparent 72%); }
-    .split-hint .sh-right { justify-content: flex-end; padding-right: 9px; background: linear-gradient(to left, rgba(20,20,30,.5), transparent 72%); }
-    .split-hint svg { width: 13px; height: 13px; flex: 0 0 auto; }
-    @media (hover: none) { .split-hint { opacity: 1; } .split-hint > span { font-size: .62rem; } }
     .modal {
       width: 100%; max-width: 380px; background: #fff; border-radius: 16px;
       padding: 22px 20px 18px; box-shadow: 0 18px 50px rgba(20,24,38,.3);
@@ -566,31 +546,6 @@
     </div>
   </div>
 
-  <!-- 수동 매핑 모달 (자동 인식 실패 시) -->
-  <div class="modal-overlay" id="mapModal">
-    <div class="modal">
-      <h3 class="modal-title">가져오기 — 항목 연결</h3>
-      <p style="font-size:.8rem;color:#8a92b5;line-height:1.55;margin:0 0 14px;">자동으로 알아보지 못했어요. 이 데이터의 어떤 항목을 주소·이름·사진으로 쓸지 골라 주세요.</p>
-      <div style="display:flex;flex-direction:column;gap:11px;">
-        <label class="map-row"><span>주소(링크)</span><select id="mapUrl"></select></label>
-        <label class="map-row"><span>이름</span><select id="mapName"></select></label>
-        <label class="map-row"><span>사진(이미지)</span><select id="mapImg"></select></label>
-        <label class="map-row"><span>분류</span><select id="mapCat"></select></label>
-      </div>
-      <p id="mapPreview" style="font-size:.74rem;color:#8a92b5;line-height:1.5;margin:13px 0 0;word-break:break-all;"></p>
-      <div class="modal-actions">
-        <button type="button" class="btn-ghost" id="mapCancel">취소</button>
-        <button type="button" class="btn-primary" id="mapApply">가져오기</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 사진 원본 라이트박스 -->
-  <div class="lightbox" id="lightbox">
-    <button type="button" class="lb-close" id="lbClose" aria-label="닫기">&times;</button>
-    <img id="lightboxImg" src="" alt="">
-  </div>
-
   <script>
     /* ============ 복제방지 ============ */
     (function(){
@@ -762,30 +717,6 @@
         ph.className = 'cover-ph'; ph.textContent = item.name;
         a.appendChild(ph);
       }
-
-      /* 사진: 왼쪽=원본 풀사이즈(라이트박스), 오른쪽=연결 페이지 */
-      if (cat.indexOf('photo') === 0 && imgSrc) {
-        const pageUrl = (item.url || '').trim();
-        a.addEventListener('click', e => {
-          e.preventDefault();
-          const rect = a.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          if (pageUrl && x > rect.width / 2) {
-            window.open(pageUrl, '_blank', 'noopener');
-          } else {
-            openLightbox(imgSrc, item.name);
-          }
-        });
-        if (pageUrl) {
-          const hint = document.createElement('div');
-          hint.className = 'split-hint';
-          hint.innerHTML =
-            '<span class="sh-left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>원본</span>' +
-            '<span class="sh-right">페이지<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M9 7h8v8"/></svg></span>';
-          a.appendChild(hint);
-        }
-      }
-
       const cap = document.createElement('div');
       cap.className = 'cap'; cap.textContent = item.name;
       a.appendChild(cap);
@@ -1040,174 +971,21 @@
       });
       return any ? nd : null;
     }
-    /* ===== 유연한 가져오기 ===== */
-    var URL_KEYS  = ['url','link','href','uri','addr','address','permalink','page','site','웹주소','주소','링크','사이트'];
-    var NAME_KEYS = ['name','title','label','text','caption','heading','desc','description','alt','이름','제목','타이틀','설명','이름표'];
-    var IMG_KEYS  = ['img','image','imageurl','imgurl','thumbnail','thumb','thumburl','icon','photo','picture','pic','cover','poster','preview','이미지','썸네일','사진'];
-
-    function lc(s){ return String(s == null ? '' : s).toLowerCase().replace(/[\s_\-]/g, ''); }
-    function getByKeys(obj, keys){
-      var map = {};
-      Object.keys(obj).forEach(function(k){ var v = obj[k]; if (v != null && typeof v !== 'object') map[lc(k)] = v; });
-      for (var i = 0; i < keys.length; i++){ var hit = map[lc(keys[i])]; if (hit !== undefined) return String(hit); }
-      return '';
-    }
-    function isUrlLike(s){
-      s = String(s || '').trim();
-      return /^https?:\/\//i.test(s) || /^\/\//.test(s) || /^www\./i.test(s) || /^[\w-]+\.[a-z]{2,}([\/?#]|$)/i.test(s);
-    }
-    function isImageUrl(s){ return /\.(png|jpe?g|gif|webp|avif|svg|bmp)([?#]|$)/i.test(String(s || '').trim()); }
-    function emptyData(){ return { site: [], video: [], photoA: [], photoB: [], photoC: [], photoD: [], photoE: [] }; }
-    function totalCount(d){ var n = 0; CATS.forEach(function(c){ n += (d[c.code] || []).length; }); return n; }
-
-    function toItem(o){
-      if (typeof o === 'string'){
-        if (!isUrlLike(o)) return null;
-        return isImageUrl(o) ? { name:'', url:'', img:o } : { name:'', url:o, img:'' };
-      }
-      if (!o || typeof o !== 'object' || Array.isArray(o)) return null;
-      var url = getByKeys(o, URL_KEYS).trim();
-      var img = getByKeys(o, IMG_KEYS).trim();
-      var name = getByKeys(o, NAME_KEYS).trim();
-      if (!img && isImageUrl(url)) { img = url; url = ''; }   // url이 이미지면 사진으로
-      if (!url && !img) return null;
-      return { name: name, url: url, img: img };
-    }
-    function looksLikeItem(o){
-      if (!o || typeof o !== 'object' || Array.isArray(o)) return false;
-      var u = getByKeys(o, URL_KEYS), im = getByKeys(o, IMG_KEYS);
-      return isUrlLike(u) || isUrlLike(im) || isImageUrl(im) || isImageUrl(u);
-    }
-    function collectItems(node, out){
-      if (node == null) return;
-      if (Array.isArray(node)){ node.forEach(function(x){ collectItems(x, out); }); return; }
-      if (typeof node === 'string'){ var s = toItem(node); if (s) out.push(s); return; }
-      if (typeof node === 'object'){
-        if (looksLikeItem(node)){ var it = toItem(node); if (it) out.push(it); return; }
-        Object.keys(node).forEach(function(k){ collectItems(node[k], out); });
-      }
-    }
-    function classify(it){
-      if (it.url && ytId(it.url)) return 'video';
-      if (it.img && !it.url) return 'photoA';
-      return 'site';
-    }
-    // 우리 카테고리 키 구조 그대로면 존중
-    function asNativeCats(d){
-      if (!d || typeof d !== 'object' || Array.isArray(d)) return null;
-      var hit = 0, nd = emptyData();
-      CATS.forEach(function(c){
-        if (Array.isArray(d[c.code])){
-          hit++;
-          d[c.code].forEach(function(o){ var it = toItem(o); if (it) nd[c.code].push(it); });
-        }
-      });
-      return hit ? nd : null;
-    }
-    // 객체 원소를 가진 배열들 수집 (수동 매핑 후보)
-    function findRecordArrays(node, out){
-      if (Array.isArray(node)){
-        if (node.length && node.some(function(x){ return x && typeof x === 'object' && !Array.isArray(x); })) out.push(node);
-        node.forEach(function(x){ findRecordArrays(x, out); });
-      } else if (node && typeof node === 'object'){
-        Object.keys(node).forEach(function(k){ findRecordArrays(node[k], out); });
-      }
-    }
-
-    function smartParse(text){
-      var parsed = null;
-      try { parsed = JSON.parse(text); } catch (e) {}
-      if (parsed == null){
-        var viaHtml = parseHtmlData(text);   // 파일 안 const DEFAULTS = {…}
-        if (viaHtml && totalCount(viaHtml)) return { data: viaHtml, parsed: null };
-      }
-      if (parsed == null) return null;
-      var native = asNativeCats(parsed);
-      if (native && totalCount(native)) return { data: native, parsed: parsed };
-      var items = [];
-      collectItems(parsed, items);
-      if (items.length){
-        var nd = emptyData();
-        items.forEach(function(it){ nd[classify(it)].push(it); });
-        return { data: nd, parsed: parsed };
-      }
-      return { data: null, parsed: parsed };   // 자동 실패 → 수동 매핑
-    }
-
-    function applyImported(nd){
-      data = nd; saveData(data); render();
-      var parts = CATS.filter(function(c){ return (nd[c.code] || []).length; })
-                      .map(function(c){ return c.label + ' ' + nd[c.code].length; });
-      alert('가져왔어요 — ' + (parts.join(', ') || '0개') + ' (총 ' + totalCount(nd) + '개)');
-    }
-
-    /* 수동 매핑 */
-    var pendingArray = null;
-    function guessKey(keyList, aliases){
-      for (var i = 0; i < keyList.length; i++){
-        for (var j = 0; j < aliases.length; j++){ if (lc(aliases[j]) === lc(keyList[i])) return keyList[i]; }
-      }
-      // 값으로 추정 (URL/이미지)
-      return '';
-    }
-    function fillSelect(id, keyList, withNone, guess){
-      var s = document.getElementById(id); s.innerHTML = '';
-      if (withNone){ var op0 = document.createElement('option'); op0.value = ''; op0.textContent = '(없음)'; s.appendChild(op0); }
-      keyList.forEach(function(k){ var op = document.createElement('option'); op.value = k; op.textContent = k; if (k === guess) op.selected = true; s.appendChild(op); });
-      if (guess && s.value !== guess) s.value = guess;
-    }
-    function openMapModal(arr){
-      pendingArray = arr;
-      var keySet = {};
-      arr.forEach(function(o){ if (o && typeof o === 'object' && !Array.isArray(o)) Object.keys(o).forEach(function(k){ keySet[k] = 1; }); });
-      var keyList = Object.keys(keySet);
-      if (!keyList.length){ alert('가져올 항목을 찾지 못했어요.'); return; }
-      // 값 기반 URL/이미지 추정
-      var gUrl = guessKey(keyList, URL_KEYS), gImg = guessKey(keyList, IMG_KEYS), gName = guessKey(keyList, NAME_KEYS);
-      var first = arr.find(function(o){ return o && typeof o === 'object'; }) || {};
-      if (!gUrl) keyList.forEach(function(k){ if (!gUrl && isUrlLike(first[k]) && !isImageUrl(first[k])) gUrl = k; });
-      if (!gImg) keyList.forEach(function(k){ if (!gImg && isImageUrl(first[k])) gImg = k; });
-      fillSelect('mapUrl', keyList, true, gUrl);
-      fillSelect('mapName', keyList, true, gName);
-      fillSelect('mapImg', keyList, true, gImg);
-      var cs = document.getElementById('mapCat'); cs.innerHTML = '';
-      CATS.forEach(function(c){ var op = document.createElement('option'); op.value = c.code; op.textContent = c.label; cs.appendChild(op); });
-      document.getElementById('mapPreview').textContent = '예시 항목: ' + JSON.stringify(first).slice(0, 140);
-      document.getElementById('mapModal').classList.add('open');
-    }
-    function closeMapModal(){ document.getElementById('mapModal').classList.remove('open'); pendingArray = null; }
-    function applyMapping(){
-      if (!pendingArray) return;
-      var uk = document.getElementById('mapUrl').value;
-      var nk = document.getElementById('mapName').value;
-      var ik = document.getElementById('mapImg').value;
-      var cat = document.getElementById('mapCat').value;
-      var nd = emptyData();
-      pendingArray.forEach(function(o){
-        if (!o || typeof o !== 'object') return;
-        var url = uk ? String(o[uk] == null ? '' : o[uk]).trim() : '';
-        var name = nk ? String(o[nk] == null ? '' : o[nk]).trim() : '';
-        var img = ik ? String(o[ik] == null ? '' : o[ik]).trim() : '';
-        if (!img && isImageUrl(url)) { img = url; url = ''; }
-        if (!url && !img && !name) return;
-        nd[cat].push({ name: name, url: url, img: img });
-      });
-      closeMapModal();
-      if (!totalCount(nd)){ alert('연결한 항목으로 가져올 데이터가 없어요.'); return; }
-      applyImported(nd);
-    }
-
     function importData(file) {
-      var reader = new FileReader();
-      reader.onload = function(){
-        var res = smartParse(reader.result);
-        if (!res){ alert('가져오기 실패: JSON 파일이나, 즐겨찾기 데이터가 들어 있는 HTML 파일이 아니에요.'); return; }
-        if (res.data){ applyImported(res.data); return; }
-        var arrs = [];
-        findRecordArrays(res.parsed, arrs);
-        if (!arrs.length){ alert('가져올 항목을 찾지 못했어요. 파일 내용을 확인해 주세요.'); return; }
-        arrs.sort(function(a, b){ return b.length - a.length; });
-        openMapModal(arrs[0]);
+      const reader = new FileReader();
+      reader.onload = () => {
+        let nd = null;
+        try {
+          const d = JSON.parse(reader.result);
+          if (d && typeof d === 'object' && !Array.isArray(d)) {
+            nd = { site: [], video: [], photoA: [], photoB: [], photoC: [], photoD: [], photoE: [] };
+            CATS.forEach(c => { if (Array.isArray(d[c.code])) nd[c.code] = d[c.code]; });
+          }
+        } catch (e) {}
+        if (!nd) nd = parseHtmlData(reader.result);
+        if (!nd) { alert('가져오기 실패: JSON 파일이나, 즐겨찾기 데이터가 있는 HTML 파일이 아닙니다.'); return; }
+        data = nd; saveData(data); render();
+        alert('가져오기가 완료되었습니다.');
       };
       reader.readAsText(file);
     }
@@ -1221,25 +999,6 @@
     document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
     document.getElementById('importFile').addEventListener('change', e => { if (e.target.files[0]) importData(e.target.files[0]); e.target.value = ''; });
     document.getElementById('clearBtn').addEventListener('click', clearAll);
-    document.getElementById('mapCancel').addEventListener('click', closeMapModal);
-    document.getElementById('mapApply').addEventListener('click', applyMapping);
-    document.getElementById('mapModal').addEventListener('click', function(e){ if (e.target.id === 'mapModal') closeMapModal(); });
-
-    /* 사진 원본 라이트박스 */
-    function openLightbox(src, alt){
-      var lb = document.getElementById('lightbox');
-      var im = document.getElementById('lightboxImg');
-      im.src = src; im.alt = alt || '';
-      lb.classList.add('open');
-    }
-    function closeLightbox(){
-      document.getElementById('lightbox').classList.remove('open');
-      document.getElementById('lightboxImg').src = '';
-    }
-    document.getElementById('lbClose').addEventListener('click', closeLightbox);
-    document.getElementById('lightbox').addEventListener('click', function(e){ if (e.target.id === 'lightbox') closeLightbox(); });
-    document.getElementById('lightboxImg').addEventListener('click', function(e){ e.stopPropagation(); });
-    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeLightbox(); });
     function openCodeModal() { document.getElementById('codeArea').value = buildCode(); document.getElementById('codeModal').classList.add('open'); }
     function closeCodeModal() { document.getElementById('codeModal').classList.remove('open'); }
     document.getElementById('codeBtn').addEventListener('click', openCodeModal);

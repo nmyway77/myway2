@@ -322,22 +322,6 @@
     .map-row > span { flex: 0 0 auto; }
     .map-row select { flex: 1; min-width: 0; max-width: 230px; padding: 8px 10px; border: 1.5px solid #e2e6f3; border-radius: 9px; background: #fafbff; font-size: .85rem; color: #2a2a3a; outline: none; }
     .map-row select:focus { border-color: #8a92b5; }
-
-    /* 사진 원본 라이트박스 */
-    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.9); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; cursor: zoom-out; -webkit-user-select: none; user-select: none; }
-    .lightbox.open { display: flex; }
-    .lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 12px 50px rgba(0,0,0,.55); touch-action: pinch-zoom; }
-    .lightbox .lb-close { position: absolute; top: 14px; right: 16px; width: 42px; height: 42px; border-radius: 50%; border: none; background: rgba(255,255,255,.14); color: #fff; font-size: 1.4rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .lightbox .lb-close:hover { background: rgba(255,255,255,.28); }
-
-    /* 사진 카드 좌·우 동작 힌트 */
-    .split-hint { position: absolute; inset: 0; display: flex; opacity: 0; transition: opacity .15s; pointer-events: none; z-index: 2; border-radius: inherit; overflow: hidden; }
-    .card:hover .split-hint { opacity: 1; }
-    .split-hint > span { flex: 1; display: flex; align-items: center; gap: 4px; color: #fff; font-size: .68rem; font-weight: 700; font-family: 'Courier New', monospace; letter-spacing: .02em; }
-    .split-hint .sh-left { justify-content: flex-start; padding-left: 9px; background: linear-gradient(to right, rgba(20,20,30,.5), transparent 72%); }
-    .split-hint .sh-right { justify-content: flex-end; padding-right: 9px; background: linear-gradient(to left, rgba(20,20,30,.5), transparent 72%); }
-    .split-hint svg { width: 13px; height: 13px; flex: 0 0 auto; }
-    @media (hover: none) { .split-hint { opacity: 1; } .split-hint > span { font-size: .62rem; } }
     .modal {
       width: 100%; max-width: 380px; background: #fff; border-radius: 16px;
       padding: 22px 20px 18px; box-shadow: 0 18px 50px rgba(20,24,38,.3);
@@ -585,12 +569,6 @@
     </div>
   </div>
 
-  <!-- 사진 원본 라이트박스 -->
-  <div class="lightbox" id="lightbox">
-    <button type="button" class="lb-close" id="lbClose" aria-label="닫기">&times;</button>
-    <img id="lightboxImg" src="" alt="">
-  </div>
-
   <script>
     /* ============ 복제방지 ============ */
     (function(){
@@ -762,30 +740,6 @@
         ph.className = 'cover-ph'; ph.textContent = item.name;
         a.appendChild(ph);
       }
-
-      /* 사진: 왼쪽=원본 풀사이즈(라이트박스), 오른쪽=연결 페이지 */
-      if (cat.indexOf('photo') === 0 && imgSrc) {
-        const pageUrl = (item.url || '').trim();
-        a.addEventListener('click', e => {
-          e.preventDefault();
-          const rect = a.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          if (pageUrl && x > rect.width / 2) {
-            window.open(pageUrl, '_blank', 'noopener');
-          } else {
-            openLightbox(imgSrc, item.name);
-          }
-        });
-        if (pageUrl) {
-          const hint = document.createElement('div');
-          hint.className = 'split-hint';
-          hint.innerHTML =
-            '<span class="sh-left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>원본</span>' +
-            '<span class="sh-right">페이지<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M9 7h8v8"/></svg></span>';
-          a.appendChild(hint);
-        }
-      }
-
       const cap = document.createElement('div');
       cap.className = 'cap'; cap.textContent = item.name;
       a.appendChild(cap);
@@ -1224,22 +1178,6 @@
     document.getElementById('mapCancel').addEventListener('click', closeMapModal);
     document.getElementById('mapApply').addEventListener('click', applyMapping);
     document.getElementById('mapModal').addEventListener('click', function(e){ if (e.target.id === 'mapModal') closeMapModal(); });
-
-    /* 사진 원본 라이트박스 */
-    function openLightbox(src, alt){
-      var lb = document.getElementById('lightbox');
-      var im = document.getElementById('lightboxImg');
-      im.src = src; im.alt = alt || '';
-      lb.classList.add('open');
-    }
-    function closeLightbox(){
-      document.getElementById('lightbox').classList.remove('open');
-      document.getElementById('lightboxImg').src = '';
-    }
-    document.getElementById('lbClose').addEventListener('click', closeLightbox);
-    document.getElementById('lightbox').addEventListener('click', function(e){ if (e.target.id === 'lightbox') closeLightbox(); });
-    document.getElementById('lightboxImg').addEventListener('click', function(e){ e.stopPropagation(); });
-    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeLightbox(); });
     function openCodeModal() { document.getElementById('codeArea').value = buildCode(); document.getElementById('codeModal').classList.add('open'); }
     function closeCodeModal() { document.getElementById('codeModal').classList.remove('open'); }
     document.getElementById('codeBtn').addEventListener('click', openCodeModal);
