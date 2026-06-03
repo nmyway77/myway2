@@ -36,6 +36,8 @@
     .nav-btns button:hover{background:#e9e2d3;}
     .nav-btns button.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
     .nav-btns button.primary:hover{background:#bb3f2c;}
+    .nav-btns button.danger{color:#b23a26;border-color:#e6c2ba;}
+    .nav-btns button.danger:hover{background:#fbe7e1;}
     .video-list{flex:0 0 auto;overflow-x:auto;overflow-y:hidden;padding:7px 14px 9px;display:flex;flex-direction:row;gap:9px;scrollbar-width:thin;scrollbar-color:#d8cfbd transparent;cursor:grab;}
     .video-list.drag-scrolling{cursor:grabbing;}
     .video-list::-webkit-scrollbar{height:8px;}
@@ -133,6 +135,7 @@
         <button onclick="showCode()">코드</button>
         <button onclick="importData()">가져오기</button>
         <button onclick="exportData()">내보내기</button>
+        <button class="danger" onclick="clearAll()">전체삭제</button>
       </div>
     </div>
     <div class="video-list" id="videoList"></div>
@@ -544,15 +547,37 @@
   function closeCodeModal(){ document.getElementById('codeModal').style.display = 'none'; }
   function copyCode(){
     var ta = document.getElementById('codeArea');
-    ta.focus(); ta.select();
-    try { ta.setSelectionRange(0, ta.value.length); } catch(e){}
-    var done = false;
-    try { done = document.execCommand('copy'); } catch(e){}
-    if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(ta.value).then(function(){}, function(){});
-      done = true;
+    var text = ta.value;
+    function legacyCopy(){
+      ta.focus(); ta.select();
+      try { ta.setSelectionRange(0, text.length); } catch(e){}
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch(e){ ok = false; }
+      alert(ok ? '코드를 복사했어요.' : '복사가 안 되면 코드를 길게 눌러(또는 드래그) 직접 복사해 주세요.');
     }
-    alert(done ? '코드를 복사했어요.' : '복사가 안 되면 코드를 직접 선택해 복사해 주세요.');
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){
+        alert('코드를 복사했어요.');
+      }, function(){
+        legacyCopy();
+      });
+    } else {
+      legacyCopy();
+    }
+  }
+  function clearAll(){
+    if (!confirm('모든 방송사의 영상 목록을 초기화할까요?\n(이 브라우저에서 추가·수정한 내용이 사라지고 파일 기본값으로 돌아갑니다)')) return;
+    try { localStorage.removeItem(STORE_KEY); localStorage.removeItem(OLD_KEY); } catch(e){}
+    groupsData = defaultGroups();
+    currentGroup = 'KBS';
+    var sel = document.getElementById('groupSelect');
+    if (sel) sel.value = 'KBS';
+    videos = groupsData[currentGroup];
+    selectedIdx = videos.length>0 ? 0 : null;
+    closeAddModal(); closeCodeModal();
+    renderList(); renderMain();
+    var list = document.getElementById('videoList');
+    if (list) list.scrollLeft = 0;
   }
 
   function exportData(){
