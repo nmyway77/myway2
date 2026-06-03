@@ -486,8 +486,6 @@
       <label class="field">
         <span>분류</span>
         <select id="inCat">
-          <option value="site">사이트</option>
-          <option value="video">영상</option>
           <option value="photoA">사진 A</option>
           <option value="photoB">사진 B</option>
           <option value="photoC">사진 C</option>
@@ -522,10 +520,8 @@
       <h3 class="modal-title">이용법</h3>
       <div class="help-body">
         <p><b>추가하기</b> — 맨 끝의 [+] 카드를 누르고 분류·이름·주소를 입력하면 등록됩니다.</p>
-        <p><b>분류</b> — 사이트 · 영상 · 사진 A~E 중에서 고릅니다. 보고 있던 탭이 자동으로 선택됩니다.</p>
-        <p><b>사이트</b> — 주소만 넣으면 제목과 도메인이 카드로 표시됩니다.</p>
-        <p><b>영상</b> — 유튜브 링크를 넣으면 썸네일이 자동으로 뜨고, 카드를 누르면 해당 영상으로 이동합니다.</p>
-        <p><b>사진</b> — 사진 주소(이미지 URL)를 넣으면 원본 비율 그대로 카드가 됩니다.</p>
+        <p><b>분류</b> — 사진 A~E 중에서 고릅니다. 보고 있던 탭이 자동으로 선택됩니다.</p>
+        <p><b>사진</b> — 사진 주소(이미지 URL)를 넣으면 원본 비율 그대로 카드가 됩니다. 연결 주소를 넣으면 카드를 눌렀을 때 그 주소로 이동합니다.</p>
         <p><b>수정 / 삭제</b> — 카드 오른쪽 위의 색 모서리를 누르면 수정·삭제 창이 열립니다.</p>
         <p><b>순서 변경</b> — 카드를 끌어다 놓으면 같은 분류 안에서 순서가 바뀝니다. (PC)</p>
         <p><b>내보내기 / 가져오기 / 전체삭제</b> — 제목 옆 아이콘으로 백업·복원·전체삭제를 할 수 있습니다.</p>
@@ -791,7 +787,7 @@
       document.getElementById('modalTitle').textContent = '즐겨찾기 추가';
       document.getElementById('addSubmit').textContent = '등록';
       document.getElementById('delBtn').style.display = 'none';
-      fillModal(null, currentFilter !== 'all' ? currentFilter : 'site');
+      fillModal(null, currentFilter !== 'all' ? currentFilter : 'photoA');
       document.getElementById('addModal').classList.add('open');
       renderModalList();
       setTimeout(() => document.getElementById('inName').focus(), 50);
