@@ -33,6 +33,7 @@
     .topbar button#save-media-btn { background: #4067d1; }
     .topbar button#export-btn { background: #21b781; }
     .topbar button#import-btn { background: #ffe178; color: #222; }
+    .topbar button#clear-all-btn { background: #e0483a; }
     .topbar select {
       margin-left: 8px; padding: 7px 11px;
       font-size: 15px; border-radius: 5px; border: 1px solid #ccd;
@@ -160,6 +161,7 @@
       <button id="export-btn">내보내기</button>
       <button id="import-btn">가져오기</button>
       <input type="file" id="import-file" accept="application/json" style="display:none">
+      <button id="clear-all-btn">전체삭제</button>
       <select id="folder-select"><option value="">전체 폴더</option></select>
     </div>
     <div class="topbar-folders" id="folder-tabs"></div>
@@ -211,7 +213,8 @@
       folderSelect = document.getElementById('folder-select'),
       folderTabs = document.getElementById('folder-tabs'),
       gridContainer = document.getElementById('media-grid'),
-      autoThumbBtn = document.getElementById('auto-thumb-btn');
+      autoThumbBtn = document.getElementById('auto-thumb-btn'),
+      clearAllBtn = document.getElementById('clear-all-btn');
     let editingIndex = null;
 
     saveBtn.onclick = () => openModal();
@@ -300,6 +303,13 @@
       };
       reader.readAsText(file);
       importFile.value = null;
+    };
+
+    clearAllBtn.onclick = () => {
+      if (!confirm('모든 미디어를 삭제할까요?\n되돌릴 수 없으니, 필요하면 먼저 내보내기 하세요.')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      folderSelect.value = '';
+      renderGrid();
     };
 
     function renameFolder(oldName, newName) {
