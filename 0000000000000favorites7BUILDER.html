@@ -29,12 +29,7 @@
       min-height: 100vh;
       min-height: 100dvh;
       overflow-x: hidden;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
     }
-    img { -webkit-user-drag: none; user-drag: none; -webkit-touch-callout: none; }
     input, textarea, [contenteditable] {
       -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text;
     }
@@ -158,6 +153,7 @@
     .topbar-tools button.danger { color: #e0483a; border-color: #f0cdcd; background: #fdf4f4; font-size: 1rem; }
     .topbar-tools button.danger:hover { background: #fbe9e9; border-color: #e6a9a9; }
     .topbar-tools button .ico-code { font-size: .72rem; letter-spacing: -1px; font-weight: 800; }
+    .topbar-tools button .io-label { font-size: .6rem; font-weight: 800; letter-spacing: .02em; }
     .topbar-tools .tri { font-size: .72rem; }
     @media (max-width: 700px) {
       .topbar-tools button { width: 30px; height: 30px; }
@@ -488,8 +484,8 @@
       </nav>
       <div class="topbar-tools">
         <button class="primary" id="addBtn" type="button" title="추가" aria-label="추가">+</button>
-        <button id="importBtn" type="button" title="가져오기" aria-label="가져오기"><span class="tri">▲</span></button>
-        <button id="exportBtn" type="button" title="내보내기" aria-label="내보내기"><span class="tri">▼</span></button>
+        <button id="importBtn" type="button" title="불러오기 (IN)" aria-label="불러오기"><span class="io-label">IN</span></button>
+        <button id="exportBtn" type="button" title="내보내기 (OUT)" aria-label="내보내기"><span class="io-label">OUT</span></button>
         <button id="codeBtn" type="button" title="코드" aria-label="코드"><span class="ico-code">&lt;/&gt;</span></button>
         <button class="danger" id="clearBtn" type="button" title="전체삭제" aria-label="전체삭제">🗑</button>
       </div>
@@ -616,31 +612,6 @@
   </div>
 
   <script>
-    /* ============ 복제방지 ============ */
-    (function(){
-      function isEditable(t) {
-        if (!t) return false;
-        const tag = (t.tagName || '').toLowerCase();
-        if (tag === 'input' || tag === 'textarea') return true;
-        if (t.isContentEditable) return true;
-        return false;
-      }
-      ['contextmenu','dragstart','selectstart','copy','cut'].forEach(ev => {
-        document.addEventListener(ev, e => {
-          if (isEditable(e.target)) return;
-          if (ev === 'dragstart' && e.target.closest && e.target.closest('.card')) return;
-          e.preventDefault();
-        }, { capture: true });
-      });
-      document.addEventListener('keydown', e => {
-        if (isEditable(e.target)) return;
-        const k = (e.key || '').toLowerCase();
-        if (k === 'f12') { e.preventDefault(); return; }
-        if (e.ctrlKey && e.shiftKey && (k === 'i' || k === 'j' || k === 'c')) { e.preventDefault(); return; }
-        if (e.ctrlKey && !e.shiftKey && (k === 'u' || k === 's' || k === 'c' || k === 'x' || k === 'a')) { e.preventDefault(); return; }
-      }, { capture: true });
-    })();
-
     /* ============ 즐겨찾기 프로그램 (사이트·영상·사진) ============
        · localStorage('mywayFavoritesV1')에 저장됩니다.
        · 카드 맨 끝의 [+] 카드를 눌러 추가합니다.
@@ -817,8 +788,8 @@
       corner.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); openEditModal(cat, idx); });
       a.appendChild(corner);
 
-      /* 사이트: 제목 + 도메인 텍스트 카드 (indexmain7 스타일) */
-      if (cat === 'site') {
+      /* 사이트: 사진이 없으면 제목+도메인 텍스트 카드 (indexmain7 스타일) */
+      if (cat === 'site' && !cardImage(item, cat)) {
         a.classList.add('site-card');
         const body = document.createElement('div');
         body.className = 'site-body';
@@ -830,6 +801,7 @@
         a.appendChild(body);
         return a;
       }
+      /* 사이트인데 사진이 있으면 → 아래 이미지 카드로 (클릭 시 URL 이동) */
 
       const imgSrc = cardImage(item, cat);
       if (imgSrc) {
@@ -1180,9 +1152,10 @@
       return any ? nd : null;
     }
     /* ===== 유연한 가져오기 ===== */
-    var URL_KEYS  = ['url','link','href','uri','addr','address','permalink','page','site','웹주소','주소','링크','사이트'];
+    var URL_KEYS  = ['url','link','href','uri','addr','address','permalink','page','site','linkurl','linkhref','pageurl','weburl','siteurl','targeturl','desturl','gotourl','href2','웹주소','주소','링크','사이트','링크주소','이동주소'];
     var NAME_KEYS = ['name','title','label','text','caption','heading','desc','description','alt','이름','제목','타이틀','설명','이름표'];
     var IMG_KEYS  = ['img','image','imageurl','imgurl','thumbnail','thumb','thumburl','icon','photo','picture','pic','cover','poster','preview','이미지','썸네일','사진'];
+    var IMGS_KEYS = ['imgs','images','photos','gallery','pics','pictures','imagelist','photolist','이미지들','사진들'];
 
     function lc(s){ return String(s == null ? '' : s).toLowerCase().replace(/[\s_\-]/g, ''); }
     function getByKeys(obj, keys){
@@ -1209,8 +1182,7 @@
       var img = getByKeys(o, IMG_KEYS).trim();
       var name = getByKeys(o, NAME_KEYS).trim();
       if (!img && isImageUrl(url)) { img = url; url = ''; }   // url이 이미지면 사진으로
-      // 여러 장 배열 키 인식
-      var IMGS_KEYS = ['imgs','images','photos','gallery','pics','pictures','이미지들','사진들'];
+      // 여러 장 배열 키 인식 (요소가 "img|link" 문자열 또는 {img,link} 객체)
       var imgs = null;
       Object.keys(o).forEach(function(k){
         if (!imgs && IMGS_KEYS.indexOf(lc(k)) >= 0 && Array.isArray(o[k])){
@@ -1228,16 +1200,23 @@
           if (a2.length) imgs = a2;
         }
       });
-      if (imgs && !img) img = imgs[0];
+      if (imgs && !img) img = parseImgEntry(imgs[0]).img;   // 대표는 링크 떼고 이미지만
       if (!url && !img && !(imgs && imgs.length)) return null;
       var it = { name: name, url: url, img: img };
-      if (imgs && imgs.length > 1) it.imgs = imgs;
+      if (imgs){
+        var hasLink = imgs.some(function(s){ return String(s).indexOf('|') >= 0; });
+        if (imgs.length > 1 || hasLink) it.imgs = imgs;   // 1장이라도 링크 있으면 보존
+      }
       return it;
+    }
+    function hasImgsArray(o){
+      return Object.keys(o).some(function(k){ return IMGS_KEYS.indexOf(lc(k)) >= 0 && Array.isArray(o[k]) && o[k].length; });
     }
     function looksLikeItem(o){
       if (!o || typeof o !== 'object' || Array.isArray(o)) return false;
       var u = getByKeys(o, URL_KEYS), im = getByKeys(o, IMG_KEYS);
-      return isUrlLike(u) || isUrlLike(im) || isImageUrl(im) || isImageUrl(u);
+      if (isUrlLike(u) || isUrlLike(im) || isImageUrl(im) || isImageUrl(u)) return true;
+      return hasImgsArray(o);
     }
     function collectItems(node, out){
       if (node == null) return;
@@ -1250,6 +1229,7 @@
     }
     function classify(it){
       if (it.url && ytId(it.url)) return 'video';
+      if (it.imgs && it.imgs.length) return 'photoA';
       if (it.img && !it.url) return 'photoA';
       return 'site';
     }
