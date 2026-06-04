@@ -358,6 +358,13 @@
     .img-hint b { color: #6a739c; font-weight: 700; }
     /* 사진 행 입력 */
     #photoRows { display: flex; flex-direction: column; gap: 8px; }
+    .paste-area { min-height: 96px; max-height: 260px; overflow-y: auto; padding: 11px 12px; border: 1.5px solid #dde2ee; border-radius: 9px; background: #fafbfe; font-size: .9rem; line-height: 1.55; color: #1f2740; -webkit-user-select: text; user-select: text; }
+    .paste-area:focus { border-color: #7e94ff; outline: none; }
+    .paste-area:empty::before { content: attr(data-ph); color: #a8afc6; }
+    .paste-area img { max-width: 100%; height: auto; border-radius: 6px; }
+    .lb-scroll .lb-content { width: 100%; max-width: 760px; margin: 14px auto 0; color: #1f2740; line-height: 1.65; font-size: 1rem; word-break: break-word; }
+    .lb-scroll .lb-content img { max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 8px 0; }
+    .lb-scroll .lb-content a { color: #3b6fe0; }
     .prow { background: #f5f7fc; border: 1px solid #e2e6f3; border-radius: 11px; padding: 9px; }
     .prow-top { display: flex; gap: 7px; margin-bottom: 6px; }
     .prow input { width: 100%; padding: 8px 10px; border: 1.5px solid #dde2ee; border-radius: 8px; font-size: .86rem; font-family: inherit; color: #1f2740; background: #fff; outline: none; transition: border-color .15s; box-sizing: border-box; -webkit-user-select: text; user-select: text; }
@@ -545,6 +552,11 @@
         <button type="button" id="addRowBtn" class="add-row-btn" style="display:none;">+ 사진 추가</button>
         <span class="img-hint" id="imgHint" style="display:none;">사진마다 <b>사진 주소</b>와, 그 사진을 눌렀을 때 이동할 <b>페이지 주소(선택)</b>를 적으세요. 맨 위 사진이 대표로 카드에 떠요.</span>
       </div>
+      <div class="field" id="pasteField" style="display:none;">
+        <span>내용 붙여넣기 (선택)</span>
+        <div id="pasteArea" class="paste-area" contenteditable="true" data-ph="다른 페이지에서 복사한 내용(사진·글)을 여기에 붙여넣으세요"></div>
+        <span class="img-hint">붙여넣은 내용은 이 항목의 <b>전체 보기 화면</b>에 사진들과 함께 나와요.</span>
+      </div>
       <div class="modal-actions">
         <button type="button" class="btn-danger" id="delBtn" style="display:none">삭제</button>
         <button type="button" class="btn-ghost" id="addCancel">취소</button>
@@ -686,6 +698,15 @@
       return { img: s.trim(), link: '' };
     }
     function entryToStr(e){ return e.link ? (e.img + '|' + e.link) : e.img; }
+    function sanitizeHtml(h){
+      return String(h || '')
+        .replace(/<script[\s\S]*?<\/script>/gi, '')
+        .replace(/<style[\s\S]*?<\/style>/gi, '')
+        .replace(/<iframe[\s\S]*?<\/iframe>/gi, '')
+        .replace(/\son\w+\s*=\s*"[^"]*"/gi, '')
+        .replace(/\son\w+\s*=\s*'[^']*'/gi, '')
+        .replace(/javascript:/gi, '');
+    }
     /* 사진 행 입력 UI */
     function makePhotoRow(img, link){
       var row = document.createElement('div'); row.className = 'prow';
@@ -826,7 +847,7 @@
           if (pageUrl && x > rect.width / 2) {
             window.open(pageUrl, '_blank', 'noopener');
           } else {
-            openLightbox(photos, item.name);
+            openLightbox(photos, item.name, item.content || '');
           }
         });
         if (photos.length > 1) {
@@ -911,6 +932,7 @@
       document.getElementById('photoRows').style.display = isPhoto ? 'flex' : 'none';
       document.getElementById('addRowBtn').style.display = isPhoto ? 'block' : 'none';
       hint.style.display = isPhoto ? 'block' : 'none';
+      document.getElementById('pasteField').style.display = isPhoto ? 'block' : 'none';
     }
     function fillModal(item, cat) {
       document.getElementById('inCat').value = cat;
@@ -932,6 +954,7 @@
         }
         setPhotoRows(entries);
       }
+      document.getElementById('pasteArea').innerHTML = (item && item.content) ? item.content : '';
       refreshUrlLabel();
     }
     function openAddModal() {
@@ -1035,6 +1058,10 @@
       if (cat.indexOf('photo') === 0 && (entries.length > 1 || hasLink)) {
         rec.imgs = entries.map(entryToStr);
       }
+      if (cat.indexOf('photo') === 0) {
+        const pasted = sanitizeHtml(document.getElementById('pasteArea').innerHTML).trim();
+        if (pasted) rec.content = pasted;
+      }
       if (editRef) {
         if (editRef.cat === cat) { data[cat][editRef.idx] = rec; }
         else { data[editRef.cat].splice(editRef.idx, 1); data[cat].push(rec); }
@@ -1044,6 +1071,7 @@
         document.getElementById('inName').value = '';
         document.getElementById('inUrl').value = '';
         document.getElementById('inImg').value = '';
+        document.getElementById('pasteArea').innerHTML = '';
         if (cat.indexOf('photo') === 0) setPhotoRows([]);
         renderModalList();
         document.getElementById('inName').focus();
@@ -1207,6 +1235,13 @@
         var hasLink = imgs.some(function(s){ return String(s).indexOf('|') >= 0; });
         if (imgs.length > 1 || hasLink) it.imgs = imgs;   // 1장이라도 링크 있으면 보존
       }
+      var content = '';
+      ['content','html','body','내용','본문'].some(function(k){
+        var v = o[k] != null && typeof o[k] === 'string' ? o[k] : (o[lc(k)] != null && typeof o[lc(k)] === 'string' ? o[lc(k)] : '');
+        if (v) { content = v; return true; }
+        return false;
+      });
+      if (content) it.content = sanitizeHtml(content);
       return it;
     }
     function hasImgsArray(o){
@@ -1367,7 +1402,7 @@
     document.getElementById('mapModal').addEventListener('click', function(e){ if (e.target.id === 'mapModal') closeMapModal(); });
 
     /* 사진 원본 라이트박스 (여러 장 세로 나열 · 사진별 링크 이동) */
-    function openLightbox(photos, alt){
+    function openLightbox(photos, alt, content){
       var list = (photos || []).map(function(p){
         return (typeof p === 'string') ? parseImgEntry(p) : { img: (p.img || '').trim(), link: (p.link || '').trim() };
       }).filter(function(e){ return e.img; });
@@ -1383,6 +1418,13 @@
         }
         sc.appendChild(im);
       });
+      if (content){
+        var box = document.createElement('div');
+        box.className = 'lb-content';
+        box.innerHTML = sanitizeHtml(content);
+        box.addEventListener('click', function(ev){ ev.stopPropagation(); });
+        sc.appendChild(box);
+      }
       sc.scrollTop = 0;
       var lb = document.getElementById('lightbox');
       lb.scrollTop = 0;
