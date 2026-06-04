@@ -60,9 +60,6 @@
     body.viewer-mode .nav-btns{display:none !important;}
     body.viewer-mode .edit-btn{display:none !important;}
     body.viewer-mode .modal-bg{display:none !important;}
-    body.dist-mode #codeToolBtn{display:none !important;}
-    body.dist-mode .nav-btns .danger{display:none !important;}
-    body.dist-mode #codeModal{display:none !important;}
     .video-card:hover .edit-btn{opacity:1;}
     .edit-btn:hover{background:#fff;}
     .edit-icon{width:14px;height:14px;fill:var(--ink-soft);pointer-events:none;}
@@ -138,7 +135,7 @@
       </select>
       <div class="nav-btns">
         <button class="primary" onclick="openAddModal()">+ 추가</button>
-        <button id="codeToolBtn" onclick="showCode()">코드</button>
+        <button onclick="showCode()">코드</button>
         <button onclick="importData()">가져오기</button>
         <button onclick="exportData()">내보내기</button>
         <button class="danger" onclick="clearAll()">전체삭제</button>
@@ -224,8 +221,6 @@
   /* 보기 전용 HTML로 내보낼 때 아래 두 줄이 자동으로 바뀝니다 (편집기에서는 false/null) */
   var VIEWER_MODE = false;
   var EMBEDDED_GROUPS = null;
-  /* 편집판(배포용) HTML로 내보낼 때 true가 됩니다 — 코드/전체삭제 버튼을 숨김 */
-  var DIST_MODE = false;
 
   var GROUP_KEYS = ['KBS','MBC','SBS','JTBC','CHA','TV조선','A','B','C','D'];
   var STORE_KEY = 'mywayVideoGroupsV1';
@@ -634,7 +629,6 @@
       if (!replaced){
         alert('기본값 표식을 찾지 못했어요. 페이지를 새로고침한 뒤 다시 시도해 주세요.'); return;
       }
-      src = src.replace('var DIST_MODE = false;', 'var DIST_MODE = true;');   // 배포판: 코드/전체삭제 숨김
       var blob = new Blob([src], {type:'text/html;charset=utf-8'});
       var url = URL.createObjectURL(blob);
       var a = document.createElement('a'); a.href = url; a.download = 'myway-videos-editable.html'; a.click();
@@ -687,7 +681,6 @@
   if (groupSel) groupSel.addEventListener('change', onGroupChange);
 
   if (VIEWER_MODE) document.body.classList.add('viewer-mode');
-  if (DIST_MODE) document.body.classList.add('dist-mode');
   renderList();
   renderMain();
   enableDragScroll();
