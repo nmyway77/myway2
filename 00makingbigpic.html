@@ -306,8 +306,11 @@
     };
 
     clearAllBtn.onclick = () => {
-      if (!confirm('모든 미디어를 삭제할까요?\n되돌릴 수 없으니, 필요하면 먼저 내보내기 하세요.')) return;
+      if (!confirm('모든 미디어와 HTML 편집 내용을 삭제할까요?\n되돌릴 수 없으니, 필요하면 먼저 내보내기 하세요.')) return;
       localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(HTML_KEY);
+      htmlPreview.innerHTML = '';
+      htmlEditor.value = '';
       folderSelect.value = '';
       renderGrid();
     };
