@@ -643,7 +643,7 @@
     var VIEWER_MODE = false;
     var EMBEDDED_DATA = null;
 
-    const STORAGE_KEY = 'mywayFavorites2V1';
+    const STORAGE_KEY = 'mywayFavoritesV5';
 
     const CATS = [
       { code: 'site',   label: '사이트' },
@@ -855,8 +855,9 @@
 
       /* 사진: 왼쪽=전체 사진 풀사이즈(세로 나열), 오른쪽=연결 페이지 */
       if (cat.indexOf('photo') === 0 && imgSrc) {
-        const pageUrl = (item.url || '').trim();
         const photos = photoList(item, cat);
+        const firstLink = (photos.find(function(p){ return p.link; }) || {}).link || '';
+        const pageUrl = (item.url || '').trim() || firstLink;
         a.addEventListener('click', e => {
           e.preventDefault();
           const rect = a.getBoundingClientRect();
@@ -1134,7 +1135,7 @@
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url; a.download = 'myway-favorites2.json';
+      a.href = url; a.download = 'myway-favorites.json';
       document.body.appendChild(a); a.click(); a.remove();
       URL.revokeObjectURL(url);
     }
@@ -1152,7 +1153,7 @@
         var blob = new Blob([src], { type: 'text/html;charset=utf-8' });
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
-        a.href = url; a.download = 'myway-gallery2.html';
+        a.href = url; a.download = 'myway-gallery.html';
         document.body.appendChild(a); a.click(); a.remove();
         URL.revokeObjectURL(url);
       } catch (e) { alert('HTML 내보내기 중 오류: ' + e.message); }

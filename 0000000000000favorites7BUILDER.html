@@ -855,8 +855,9 @@
 
       /* 사진: 왼쪽=전체 사진 풀사이즈(세로 나열), 오른쪽=연결 페이지 */
       if (cat.indexOf('photo') === 0 && imgSrc) {
-        const pageUrl = (item.url || '').trim();
         const photos = photoList(item, cat);
+        const firstLink = (photos.find(function(p){ return p.link; }) || {}).link || '';
+        const pageUrl = (item.url || '').trim() || firstLink;
         a.addEventListener('click', e => {
           e.preventDefault();
           const rect = a.getBoundingClientRect();
