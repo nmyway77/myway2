@@ -77,6 +77,7 @@ const SITES=[
   ['SBS파워FM','https://www.sbs.co.kr/live/S07?div=live_list'],
   ['TBN 교통방송','https://www.tbn.or.kr/onair/tbnlive.tbn?area_code=2'],
   ['CBS','https://www.cbs.co.kr/radio'],
+  ['radionara','https://radionara.vercel.app/'],
   ['CNN Radio','https://edition.cnn.com/audio'],
   ['BBC Radio','https://www.bbc.co.uk/sounds/stations'],
 ];
@@ -170,6 +171,11 @@ function showGrid(btn){
 }
 /* 상단 채널 버튼 → iframe 재생 */
 function loadSite(i, btn){
+  if(SITES[i] && SITES[i][2]){          /* 새 탭 전용 채널(radionara 등) */
+    window.open(SITES[i][1],'_blank','noopener');
+    if(btn) centerNavBtn(btn);
+    return;
+  }
   currentUrl=SITES[i][1];
   gridPanel.classList.remove('show');
   setViewerSrc(currentUrl);
@@ -215,8 +221,10 @@ nav.insertBefore(openBtn, track);
   var ms = /^site:(\d+)$/.exec(saved);
   if(ms){
     var i=parseInt(ms[1],10);
-    var b=track.querySelector('button[data-site="'+i+'"]');
-    if(b){ loadSite(i,b); return; }
+    if(SITES[i] && !SITES[i][2]){       /* 새 탭 전용 채널은 복원 대상에서 제외 */
+      var b=track.querySelector('button[data-site="'+i+'"]');
+      if(b){ loadSite(i,b); return; }
+    }
   }
   showGrid(gridBtn);
 })();
