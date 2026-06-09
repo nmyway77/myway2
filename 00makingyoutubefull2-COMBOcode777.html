@@ -30,7 +30,6 @@
       height: 100vh;
       height: 100dvh;
       overflow: hidden;
-      -webkit-user-select: none; user-select: none;
     }
     input, textarea, [contenteditable] {
       -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text;
@@ -456,7 +455,7 @@
     .map-row select:focus { border-color: #8a92b5; }
 
     /* 사진 원본 라이트박스 (여러 장 세로 나열 · 화면 우측 스크롤바 · 전체 너비) */
-    .lightbox { position: fixed; inset: 0; background: #ffffff; display: none; z-index: 1000; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; -webkit-user-select: none; user-select: none; }
+    .lightbox { position: fixed; inset: 0; background: #ffffff; display: none; z-index: 1000; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
     .lightbox.open { display: block; }
     .lb-scroll { width: 100%; min-height: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px 14px 70px; }
     .lb-photos { width: 100%; display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; align-content: flex-start; gap: 12px; }
@@ -1971,26 +1970,7 @@
     });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSetModal(); });
 
-    /* ===== 복사 방지 (입력칸·카드 드래그는 예외) ===== */
-    ['contextmenu', 'selectstart', 'dragstart', 'copy', 'cut'].forEach(function (ev) {
-      document.addEventListener(ev, function (e) {
-        var t = e.target;
-        if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
-        if (ev === 'dragstart' && t && t.closest && (t.closest('.card') || t.closest('.set-card'))) return;
-        e.preventDefault();
-      });
-    });
-    document.addEventListener('keydown', function (e) {
-      var t = e.target;
-      var isInput = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
-      var k = (e.key || '').toUpperCase();
-      if (e.key === 'F12') { e.preventDefault(); return; }
-      if (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].indexOf(k) >= 0) { e.preventDefault(); return; }
-      if (e.ctrlKey && ['U', 'S', 'C', 'X', 'A'].indexOf(k) >= 0) {
-        if (isInput && ['C', 'X', 'A'].indexOf(k) >= 0) return;
-        e.preventDefault();
-      }
-    });
+    /* (복사 방지 없음 — 작업용 버전) */
 
     if (VIEWER_MODE) document.body.classList.add('viewer-mode');
     if (DIST_MODE) document.body.classList.add('dist-mode');
