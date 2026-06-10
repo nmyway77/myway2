@@ -299,7 +299,7 @@
     .gallery-section {
       width: 100%;
       max-width: 1320px;
-      padding: 150vh 14px 40px;
+      padding: 18px 14px 40px;
       margin: 0 auto;
     }
     .gallery-head {
@@ -1892,6 +1892,7 @@
     function renderSetList() {
       var list = document.getElementById('setList');
       if (!list) return;
+      var keepScroll = list.scrollLeft;
       list.innerHTML = '';
       var visible = visibleSetIndices();
       var sub = document.getElementById('setBrandSub');
@@ -1929,10 +1930,19 @@
         edit.onclick = function (e) { e.stopPropagation(); openSetEdit(i); };
         card.appendChild(edit);
 
-        card.onclick = function () { selectSet(i); };
+        card.onclick = function () {
+          selectSet(i);   // 전환·재렌더 먼저
+          var raf = window.requestAnimationFrame || function (f) { setTimeout(f, 16); };
+          raf(function () {   // 레이아웃 확정 후 중앙 정렬
+            var lst = document.getElementById('setList');
+            var act = lst ? lst.querySelector('.set-card.active') : null;
+            centerSetCard(act || card);
+          });
+        };
 
         list.appendChild(card);
       });
+      list.scrollLeft = keepScroll;
     }
     function selectSet(i) {
       if (i < 0 || i >= sets.length || i === curSet) { if (i === curSet) return; return; }
@@ -2009,6 +2019,15 @@
       if (wasCur) { setActiveTab('all'); render(); }
       renderSetList();
       renderGroupSelect();
+    }
+    function centerSetCard(card) {
+      var list = document.getElementById('setList'); if (!list || !card) return;
+      var target = card.offsetLeft - (list.clientWidth - card.offsetWidth) / 2;
+      var max = list.scrollWidth - list.clientWidth;
+      if (target < 0) target = 0;
+      if (target > max) target = max;
+      if (typeof list.scrollTo === 'function') list.scrollTo({ left: target, behavior: 'smooth' });
+      else list.scrollLeft = target;
     }
     function enableSetWheel() {
       var list = document.getElementById('setList'); if (!list) return;
