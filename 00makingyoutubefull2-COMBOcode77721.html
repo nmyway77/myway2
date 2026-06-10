@@ -1930,7 +1930,15 @@
         edit.onclick = function (e) { e.stopPropagation(); openSetEdit(i); };
         card.appendChild(edit);
 
-        card.onclick = function () { centerSetCard(card); selectSet(i); };
+        card.onclick = function () {
+          selectSet(i);   // 전환·재렌더 먼저
+          var raf = window.requestAnimationFrame || function (f) { setTimeout(f, 16); };
+          raf(function () {   // 레이아웃 확정 후 중앙 정렬
+            var lst = document.getElementById('setList');
+            var act = lst ? lst.querySelector('.set-card.active') : null;
+            centerSetCard(act || card);
+          });
+        };
 
         list.appendChild(card);
       });
