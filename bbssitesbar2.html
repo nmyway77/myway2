@@ -86,30 +86,29 @@ const DEFAULT_I = Math.max(0, SITES.findIndex(s=>s[0]==='디시인사이드'));
 
 /* === 전체목록 디렉터리 (카테고리별) — indexmain7 BBS + 추가 === */
 const DIRECTORY = [
-  { label:'인기 커뮤니티', items:[
-    ['디시인사이드','dcinside.com','https://www.dcinside.com/'],
-    ['클리앙','clien.net','https://www.clien.net/'],
-    ['뽐뿌','ppomppu.co.kr','https://www.ppomppu.co.kr/'],
-    ['인벤','inven.co.kr','https://www.inven.co.kr/'],
-    ['더쿠','theqoo.net','https://theqoo.net/'],
-    ['보배드림','bobaedream.co.kr','https://www.bobaedream.co.kr/'],
-    ['루리웹','ruliweb.com','https://www.ruliweb.com/'],
-    ['PGR21','pgr21.com','https://www.pgr21.com/'],
-    ['MLB파크','mlbpark.donga.com','https://mlbpark.donga.com/'],
+  { label:'커뮤니티·게시판', items:[
+    ['더쿠','theqoo.net','https://theqoo.net/hot?filter_mode=normal'],
+    ['클리앙','clien.net','https://www.clien.net/service/group/clien_all?&od=T33'],
     ['에펨코리아','fmkorea.com','https://www.fmkorea.com/'],
-    ['82쿡','82cook.com','https://www.82cook.com/'],
+    ['디시인사이드','dcinside.com','https://www.dcinside.com/'],
+    ['보배드림','bobaedream.co.kr','https://www.bobaedream.co.kr/list?code=freeb'],
+    ['인벤','inven.co.kr','https://www.inven.co.kr/board/webzine/2097?iskin=webzine'],
+    ['인스티즈','instiz.net','https://www.instiz.net/pt?srt=3#greentop'],
+    ['루리웹','ruliweb.com','https://bbs.ruliweb.com/best/humor/now?orderby=readcount&range=7d'],
+    ['일베저장소','ilbe.com','https://www.ilbe.com/'],
+    ['개드립','dogdrip.net','https://www.dogdrip.net/?mid=dogdrip&sort_index=popular'],
+    ['와이고수','ygosu.com','https://ygosu.com/board/best_article/?type=daily'],
+    ['이토랜드','etoland.co.kr','https://etoland.co.kr/b/hit/list'],
+    ['가생이닷컴','gasengi.com','https://www.gasengi.com/'],
     ['네이트판','pann.nate.com','https://pann.nate.com/'],
-  ]},
-  { label:'유머·이슈·기타', items:[
-    ['인스티즈','instiz.net','https://www.instiz.net/'],
-    ['개드립','dogdrip.net','https://www.dogdrip.net/'],
-    ['와이고수','ygosu.com','https://www.ygosu.com/'],
-    ['가생이','gasengi.com','http://www.gasengi.com/'],
-    ['이토랜드','etoland.co.kr','http://www.etoland.co.kr/'],
-    ['일베','ilbe.com','https://www.ilbe.com/'],
-    ['미시쿠폰','missycoupons.com','https://www.missycoupons.com/'],
-    ['힙합플레야','hiphopplaya.com','https://hiphopplaya.com/'],
-    ['국민제안','modu.pcpp.go.kr','https://modu.pcpp.go.kr/suggest-board'],
+    ['미시쿠폰','missycoupons.com','https://www.missycoupons.com/zero/board.php#id=general'],
+    ['오늘의 유머','todayhumor.co.kr','https://www.todayhumor.co.kr/board/hold/list.php'],
+    ['알고사','rgo4.com','https://rgo4.com/free'],
+    ['뽐뿌','ppomppu.co.kr','https://www.ppomppu.co.kr/zboard/zboard.php?id=f1020'],
+    ['웃긴대학','humoruniv.com','https://web.humoruniv.com/main.html'],
+    ['SLR클럽','slrclub.com','https://www.slrclub.com/bbs/zboard.php?id=politics'],
+    ['MLB파크','mlbpark.donga.com','https://mlbpark.donga.com/mp'],
+    ['목동아 (네이버 카페)','cafe.naver.com','https://cafe.naver.com/f-e/cafes/17191536/menus/0?viewType=L'],
   ]},
 ];
 
@@ -213,14 +212,13 @@ nav.insertBefore(openBtn, track);
 (function(){
   var saved='';
   try { saved = sessionStorage.getItem('mywayBbs') || ''; } catch(_) {}
-  if(saved==='grid'){ showGrid(gridBtn); return; }
   var ms = /^site:(\d+)$/.exec(saved);
   if(ms){
     var i=parseInt(ms[1],10);
     var b=track.querySelector('button[data-site="'+i+'"]');
     if(b){ loadSite(i,b); return; }
   }
-  loadSite(DEFAULT_I, track.querySelector('button[data-site="'+DEFAULT_I+'"]'));
+  showGrid(gridBtn);
 })();
 
 /* 복사 방지 */
