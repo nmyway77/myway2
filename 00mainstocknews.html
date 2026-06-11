@@ -116,6 +116,11 @@ const DIRECTORY = [
     ['블록체인투데이','blockchaintoday.co.kr','https://blockchaintoday.co.kr/'],
     ['크립토뉴스','한국어 코인 뉴스','https://cryptonews.com/kr/'],
     ['코인카프 속보','coincarp.com','https://www.coincarp.com/ko/flashnews/'],
+    ['네이버뉴스','news.naver.com','https://news.naver.com/'],
+    ['다음뉴스','daum.net','https://www.daum.net/'],
+    ['구글뉴스','news.google.com','https://news.google.com/home?hl=ko&gl=KR&ceid=KR%3Ako'],
+    ['빙뉴스','bing.com','https://www.bing.com/'],
+    ['MSN뉴스','msn.com/ko-kr','https://www.msn.com/ko-kr'],
   ]},
   { label:'종합 일간지', items:[
     ['조선일보','chosun.com','https://www.chosun.com/'],
@@ -293,7 +298,7 @@ nav.insertBefore(openBtn, track);
   nav.addEventListener('wheel',e=>{ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ nav.scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
 })();
 
-/* 초기화: 저장된 마지막 화면 복원(없으면 매경) */
+/* 초기화: 저장된 마지막 화면 복원(없으면 전체목록 메인) */
 (function(){
   var saved='';
   try { saved = sessionStorage.getItem('mywayStockNewsV2') || ''; } catch(_) {}
@@ -304,8 +309,7 @@ nav.insertBefore(openBtn, track);
     var b=track.querySelector('button[data-site="'+i+'"]');
     if(b){ loadSite(i,b); return; }
   }
-  var b0=track.querySelector('button[data-site="'+DEFAULT_I+'"]');
-  loadSite(DEFAULT_I, b0);
+  showGrid(gridBtn);
 })();
 
 /* 복사 방지 */

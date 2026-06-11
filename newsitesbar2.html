@@ -107,6 +107,11 @@ const DIRECTORY = [
     ['문화일보','munhwa.com','https://www.munhwa.com/'],
     ['세계일보','segye.com','https://www.segye.com/'],
     ['한국일보','hankookilbo.com','https://www.hankookilbo.com/'],
+    ['네이버뉴스','news.naver.com','https://news.naver.com/'],
+    ['다음뉴스','daum.net','https://www.daum.net/'],
+    ['구글뉴스','news.google.com','https://news.google.com/home?hl=ko&gl=KR&ceid=KR%3Ako'],
+    ['빙뉴스','bing.com','https://www.bing.com/'],
+    ['MSN뉴스','msn.com/ko-kr','https://www.msn.com/ko-kr'],
   ]},
   { label:'경제 일간지', items:[
     ['한국경제','hankyung.com','https://www.hankyung.com/'],
@@ -275,7 +280,7 @@ nav.insertBefore(openBtn, track);
     var b=track.querySelector('button[data-site="'+i+'"]');
     if(b){ loadSite(i,b); return; }
   }
-  loadSite(DEFAULT_I, track.querySelector('button[data-site="'+DEFAULT_I+'"]'));
+  showGrid(gridBtn);
 })();
 
 /* 복사 방지 */
