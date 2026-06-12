@@ -90,7 +90,55 @@ input,textarea{-webkit-user-select:text!important;user-select:text!important;}
 footer{text-align:center;padding:30px 16px 40px;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-soft);}
 footer a{color:var(--accent);text-decoration:none;font-weight:500;}
 footer a:hover{text-decoration:underline;}
-@media (max-width:880px){.layout{flex-direction:column;align-items:center;}.panel,.results{max-width:460px;width:100%;}.board-wrap{order:-1;}}
+/* 패널 헤드(제목+미니 버튼) */
+.panel-head,.results-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;}
+.panel-head h2,.results-head h2{margin-bottom:0;}
+.mini-btn{border:1px solid var(--line);background:var(--paper);color:var(--ink-soft);border-radius:8px;
+  font-family:"Pretendard",sans-serif;font-size:12px;font-weight:600;padding:4px 10px;cursor:pointer;transition:.15s;}
+.mini-btn:hover{border-color:var(--accent);color:var(--accent);}
+.mini-btn.off{opacity:.45;}
+
+/* 참가자 아코디언 */
+.names-acc{margin-top:4px;}
+.names-acc summary{list-style:none;cursor:pointer;font-family:"JetBrains Mono",monospace;font-size:11px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:11px;display:flex;align-items:center;gap:6px;}
+.names-acc summary::-webkit-details-marker{display:none;}
+.names-acc summary::after{content:"▾";font-size:10px;transition:.2s;}
+.names-acc:not([open]) summary::after{transform:rotate(-90deg);}
+.names-acc summary:hover{color:var(--accent);}
+
+/* 인원수+버튼 한 줄 */
+.ctrl-line{display:flex;align-items:center;gap:9px;margin-top:16px;}
+.ctrl-line .lbl{font-size:13px;color:var(--ink-soft);flex:0 0 auto;}
+.ctrl-line .count-box{flex:0 0 auto;}
+.ctrl-line .btn.go{flex:1;}
+
+@media (max-width:880px){
+  .wrap{padding:48px 12px 56px;}
+  .layout{flex-direction:column;align-items:center;gap:10px;}
+  .panel,.results{max-width:540px;width:100%;}
+  .panel{order:0;padding:12px 14px;}
+  .board-wrap{order:1;}
+  .results{order:2;padding:10px 12px;}
+  .head{margin-bottom:10px;}
+  .head h1{font-size:23px;}
+  .kicker,.head p,.note,.hint{display:none;}
+  .panel h2,.panel-head{margin-bottom:7px;}
+  .mode-seg{margin-bottom:8px;}
+  .mode-seg button{padding:8px 6px;font-size:13px;}
+  #names{height:78px;}
+  .names-acc summary{margin-bottom:8px;}
+  .ctrl-line{margin-top:10px;}
+  .ctrl-line .btn{padding:10px;font-size:13px;}
+  .results-head{margin-bottom:8px;}
+  .results .rank-list{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:3px;-webkit-overflow-scrolling:touch;}
+  .rank-cell{flex:0 0 auto;min-width:92px;padding:6px 9px;min-height:38px;gap:7px;}
+  .rank-no{font-size:13px;width:auto;}
+  .rank-name{font-size:12.5px;white-space:nowrap;word-break:normal;}
+  .marble-dot{width:13px;height:13px;}
+  footer{padding:16px 14px 24px;}
+  .float-home{width:40px;height:40px;right:12px;bottom:12px;}
+}
 </style>
 </head>
 <body>
@@ -106,19 +154,22 @@ footer a:hover{text-decoration:underline;}
 
   <div class="layout">
     <div class="panel">
-      <h2>모드</h2>
+      <div class="panel-head">
+        <h2>모드</h2>
+        <button id="soundBtn" class="mini-btn" type="button" title="효과음 켜기/끄기">🔊 효과음</button>
+      </div>
       <div class="mode-seg" id="modeSeg">
         <button data-mode="race" class="on">레이스</button>
         <button data-mode="last">꼴찌뽑기</button>
       </div>
-      <h2>참가자</h2>
-      <textarea id="names" placeholder="한 줄에 한 명씩&#10;예)&#10;철수&#10;영희&#10;민준&#10;수아" spellcheck="false"></textarea>
-      <div class="hint">비워두면 인원수만큼 1·2·3… 번호로 진행돼요.</div>
-      <div class="row">
-        <label>인원수</label>
+      <details class="names-acc" id="namesAcc" open>
+        <summary>참가자</summary>
+        <textarea id="names" placeholder="한 줄에 한 명씩&#10;예)&#10;철수&#10;영희&#10;민준&#10;수아" spellcheck="false"></textarea>
+        <div class="hint">비워두면 인원수만큼 1·2·3… 번호로 진행돼요. 입력한 이름은 이 기기에 저장돼요.</div>
+      </details>
+      <div class="ctrl-line">
+        <span class="lbl">인원</span>
         <div class="count-box"><button id="minus">−</button><span id="countVal">6</span><button id="plus">+</button></div>
-      </div>
-      <div class="btns">
         <button class="btn go" id="goBtn">구슬 굴리기</button>
         <button class="btn reset" id="resetBtn">초기화</button>
       </div>
@@ -127,7 +178,10 @@ footer a:hover{text-decoration:underline;}
     <div class="board-wrap"><canvas id="board"></canvas></div>
 
     <div class="results">
-      <h2>순위</h2>
+      <div class="results-head">
+        <h2>순위</h2>
+        <button id="copyBtn" class="mini-btn" type="button" style="display:none">결과 복사</button>
+      </div>
       <div class="rank-list" id="rankList"></div>
     </div>
   </div>
@@ -154,6 +208,79 @@ footer a:hover{text-decoration:underline;}
   canvas.width=W*dpr; canvas.height=H*dpr; canvas.style.width=W+"px"; canvas.style.height=H+"px";
   ctx.setTransform(dpr,0,0,dpr,0,0);
 
+  /* ===== 보드 자동 스케일링: 모바일에서 한 화면에 맞춤 ===== */
+  function fitBoard(){
+    var vw=window.innerWidth, vh=window.innerHeight, scale;
+    if(vw<=880){
+      var head=document.querySelector(".head"), panel=document.querySelector(".panel"), res=document.querySelector(".results");
+      var used=(head?head.offsetHeight:0)+(panel?panel.offsetHeight:0)+(res?res.offsetHeight:0);
+      var availH=vh-used-92;            /* 상하 패딩·간격 여유 */
+      var availW=vw-28;
+      scale=Math.min(availW/W, availH/H, 1);
+      if(scale<0.34) scale=0.34;        /* 최소 가독 크기 */
+    } else {
+      scale=Math.min(1,(vh-150)/H);
+      if(scale<0.6) scale=0.6;
+    }
+    canvas.style.width=Math.round(W*scale)+"px";
+    canvas.style.height=Math.round(H*scale)+"px";
+  }
+  window.addEventListener("resize",fitBoard);
+  window.addEventListener("orientationchange",function(){ setTimeout(fitBoard,120); });
+
+  /* ===== 효과음 (Web Audio) ===== */
+  var SOUND_KEY="mywayMarbleRankSoundV1";
+  var soundOn=(localStorage.getItem(SOUND_KEY)!=="off");
+  var audioCtx=null, lastTickAt=0;
+  function beep(freq,dur,gain,type){
+    if(!soundOn) return;
+    try{
+      if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+      var o=audioCtx.createOscillator(), g=audioCtx.createGain();
+      o.type=type||"sine"; o.frequency.value=freq;
+      g.gain.setValueAtTime(gain||0.08,audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+dur);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(); o.stop(audioCtx.currentTime+dur);
+    }catch(e){}
+  }
+  function tickSound(){ var now=Date.now(); if(now-lastTickAt<38) return; lastTickAt=now; beep(1900+Math.random()*900,0.045,0.028,"triangle"); }
+  function popSound(){ beep(540,0.09,0.06,"square"); }
+  function thudSound(){ beep(200,0.16,0.1,"sine"); }
+  function chimeSound(){ beep(880,0.18,0.1); setTimeout(function(){beep(1175,0.22,0.1);},95); setTimeout(function(){beep(1568,0.32,0.12);},200); }
+  function syncSoundBtn(){
+    var b=document.getElementById("soundBtn");
+    b.textContent=soundOn?"🔊 효과음":"🔇 효과음";
+    b.classList.toggle("off",!soundOn);
+  }
+  document.getElementById("soundBtn").addEventListener("click",function(){
+    soundOn=!soundOn;
+    try{ localStorage.setItem(SOUND_KEY,soundOn?"on":"off"); }catch(e){}
+    syncSoundBtn(); if(soundOn) beep(880,0.1,0.08);
+  });
+  syncSoundBtn();
+
+  /* ===== 콘페티 ===== */
+  var confetti=[];
+  function burstConfetti(){
+    for(var i=0;i<70;i++){
+      confetti.push({x:W/2+(Math.random()-0.5)*140,y:H*0.32,vx:(Math.random()-0.5)*7,
+        vy:-Math.random()*7-2,life:80+Math.random()*50,c:COLORS[i%COLORS.length],
+        r:2.2+Math.random()*3,a:Math.random()*Math.PI});
+    }
+  }
+  function drawConfetti(){
+    for(var i=confetti.length-1;i>=0;i--){
+      var p=confetti[i];
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.18; p.a+=0.15; p.life--;
+      if(p.life<=0||p.y>H+10){ confetti.splice(i,1); continue; }
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a);
+      ctx.globalAlpha=Math.min(1,p.life/30);
+      ctx.fillStyle=p.c; ctx.fillRect(-p.r,-p.r*0.6,p.r*2,p.r*1.2);
+      ctx.restore(); ctx.globalAlpha=1;
+    }
+  }
+
   var M=null, engine=null, runner=null, pegs=[], marbles=[];
   var mode="race", running=false, countVal=6, participants=[], results=[];
   var releaseTimer=null, stuckFrames={};
@@ -167,7 +294,7 @@ footer a:hover{text-decoration:underline;}
   function clearEngine(){
     if(releaseTimer){ clearInterval(releaseTimer); releaseTimer=null; }
     if(runner){ M.Runner.stop(runner); runner=null; }
-    if(engine){ M.Events.off(engine,"afterUpdate",onUpdate); M.Engine.clear(engine); engine=null; }
+    if(engine){ M.Events.off(engine); M.Engine.clear(engine); engine=null; }
     marbles=[]; pegs=[]; lastMarble=null;
   }
   function baseWorld(grav){
@@ -192,7 +319,18 @@ footer a:hover{text-decoration:underline;}
       row++;
     }
   }
-  function startRunner(){ runner=M.Runner.create(); M.Events.on(engine,"afterUpdate",onUpdate); M.Runner.run(runner,engine); }
+  function startRunner(){
+    runner=M.Runner.create();
+    M.Events.on(engine,"afterUpdate",onUpdate);
+    M.Events.on(engine,"collisionStart",function(ev){
+      var pr=ev.pairs;
+      for(var i=0;i<pr.length;i++){
+        var a=pr[i].bodyA, b=pr[i].bodyB;
+        if((a._id&&b.isStatic)||(b._id&&a.isStatic)){ tickSound(); break; }
+      }
+    });
+    M.Runner.run(runner,engine);
+  }
 
   function makeMarble(label,color,x,r){
     var b=M.Bodies.circle(x,18,r,{restitution:0.43,friction:0.02,frictionAir:0.004,density:0.0016});
@@ -244,6 +382,7 @@ footer a:hover{text-decoration:underline;}
     selectedBin=bin; lastPhase="settled";
     var place=currentNames.length, loser=currentNames[bin];
     fillRank(place, loser, "#f0a020", true);
+    thudSound();
     currentNames.splice(bin,1);
     if(currentNames.length===1){
       lastPhase="done";
@@ -260,6 +399,7 @@ footer a:hover{text-decoration:underline;}
         if(!m._finished && m.position.y>=FINISH){
           m._finished=true; results.push(m._label);
           fillRank(results.length,m._label,m._color,false,results.length===1);
+          popSound();
           M.Composite.remove(engine.world,m); marbles.splice(i,1);
           if(results.length>=participants.length) finishGame();
           continue;
@@ -294,6 +434,7 @@ footer a:hover{text-decoration:underline;}
       ctx.fillStyle="rgba(240,160,32,0.85)"; ctx.font="600 11px 'JetBrains Mono',monospace"; ctx.fillText("FINISH",8,FINISH-6);
     } else { drawBins(); }
     for(var j=0;j<marbles.length;j++) drawMarble(marbles[j]);
+    drawConfetti();
   }
   function drawBins(){
     if(selectedBin>=0){ ctx.fillStyle="rgba(224,49,49,0.22)"; ctx.fillRect(BIN_MARGIN+selectedBin*binW, BIN_TOP, binW, H-BIN_TOP); }
@@ -335,6 +476,7 @@ footer a:hover{text-decoration:underline;}
       cell.innerHTML='<span class="rank-no">'+lab+'</span><span class="marble-dot" style="background:#e9e2d3"></span><span class="rank-name">대기</span>';
       list.appendChild(cell);
     }
+    setTimeout(fitBoard,0);
   }
   function fillRank(rank,label,color,isLastPick,isTop1){
     var cell=document.getElementById("rank"+rank); if(!cell) return;
@@ -350,13 +492,41 @@ footer a:hover{text-decoration:underline;}
     results=[]; selectedBin=-1; stuckFrames={};
     if(mode==="race") startRace(); else startLast();
   }
-  function finishGame(){ running=false; document.getElementById("goBtn").disabled=false; }
+  function finishGame(){
+    running=false; document.getElementById("goBtn").disabled=false;
+    burstConfetti(); chimeSound();
+    document.getElementById("copyBtn").style.display="";
+  }
+  function copyResults(){
+    var cells=document.querySelectorAll(".rank-cell.filled");
+    if(!cells.length) return;
+    var lines=["🎱 구슬 순위 결과 — myway.kr"];
+    cells.forEach(function(c){
+      lines.push(c.querySelector(".rank-no").textContent+" · "+c.querySelector(".rank-name").textContent);
+    });
+    var txt=lines.join("\n");
+    var btn=document.getElementById("copyBtn");
+    var done=function(){ var t=btn.textContent; btn.textContent="복사됨!"; setTimeout(function(){ btn.textContent=t; },1300); };
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done).catch(function(){ fallbackCopy(txt,done); });
+    } else fallbackCopy(txt,done);
+  }
+  function fallbackCopy(text,done){
+    var ta=document.createElement("textarea");
+    ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try{ document.execCommand("copy"); done(); }catch(e){}
+    document.body.removeChild(ta);
+  }
+  document.getElementById("copyBtn").addEventListener("click",copyResults);
+
   function reset(){
     running=false; clearEngine();
-    results=[]; currentNames=[]; selectedBin=-1; lastPhase="idle";
+    results=[]; currentNames=[]; selectedBin=-1; lastPhase="idle"; confetti=[];
     document.getElementById("goBtn").disabled=false;
     document.getElementById("rankList").innerHTML="";
-    paintIdle();
+    document.getElementById("copyBtn").style.display="none";
+    paintIdle(); setTimeout(fitBoard,0);
   }
   function paintIdle(){
     ctx.clearRect(0,0,W,H); ctx.fillStyle="#141a30"; ctx.fillRect(0,0,W,H);
@@ -365,7 +535,11 @@ footer a:hover{text-decoration:underline;}
     ctx.fillText(mode==="race"?"구슬 굴리기 ▶":"꼴찌 뽑기 ▶", W/2, H/2+14); ctx.textAlign="start";
   }
 
-  function setCount(v){ countVal=Math.max(2,Math.min(14,v)); document.getElementById("countVal").textContent=countVal; }
+  function setCount(v){
+    countVal=Math.max(2,Math.min(14,v));
+    document.getElementById("countVal").textContent=countVal;
+    try{ localStorage.setItem("mywayMarbleRankCountV1",String(countVal)); }catch(e){}
+  }
   document.getElementById("plus").addEventListener("click",function(){ setCount(countVal+1); });
   document.getElementById("minus").addEventListener("click",function(){ setCount(countVal-1); });
   document.getElementById("goBtn").addEventListener("click",start);
@@ -381,7 +555,26 @@ footer a:hover{text-decoration:underline;}
     reset();
   });
 
+  /* ===== 이름·인원 저장/복원 (이 기기에만 저장) ===== */
+  var NAMES_KEY="mywayMarbleRankNamesV1";
+  try{
+    var savedNames=localStorage.getItem(NAMES_KEY);
+    if(savedNames) document.getElementById("names").value=savedNames;
+    var savedCount=parseInt(localStorage.getItem("mywayMarbleRankCountV1"),10);
+    if(savedCount) setCount(savedCount);
+  }catch(e){}
+  document.getElementById("names").addEventListener("input",function(){
+    try{ localStorage.setItem(NAMES_KEY,this.value); }catch(e){}
+  });
+
+  /* 모바일에서는 참가자 입력을 접어 한 화면 확보 */
+  var acc=document.getElementById("namesAcc");
+  if(window.innerWidth<=880 && !document.getElementById("names").value.trim()) acc.removeAttribute("open");
+  acc.addEventListener("toggle",function(){ setTimeout(fitBoard,0); });
+
   paintIdle();
+  fitBoard();
+  setTimeout(fitBoard,250); /* 폰트 로드 후 재계산 */
 
   function inEditable(t){ return t&&t.closest&&(t.closest("input")||t.closest("textarea")); }
   ["contextmenu","selectstart","dragstart","copy","cut"].forEach(function(evt){
