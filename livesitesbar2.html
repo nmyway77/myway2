@@ -247,7 +247,7 @@ nav.insertBefore(openBtn, track);
   nav.addEventListener('wheel',e=>{ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ nav.scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
 })();
 
-/* 초기화: 저장된 마지막 화면 복원(없으면 기본 = Famelack) */
+/* 초기화: 저장된 마지막 화면 복원(없으면 기본 = 전체목록) */
 (function(){
   var saved='';
   try { saved = sessionStorage.getItem('mywayLive') || ''; } catch(_) {}
@@ -257,14 +257,13 @@ nav.insertBefore(openBtn, track);
     var i=parseInt(ms[1],10);
     var b=track.querySelector('button[data-site="'+i+'"]');
     if(b){
-      if(SITES[i] && SITES[i][2]==='newwin'){ var dbn=track.querySelector('button[data-site="'+DEFAULT_I+'"]'); loadSite(DEFAULT_I, dbn); return; }
+      if(SITES[i] && SITES[i][2]==='newwin'){ showGrid(gridBtn); return; }
       loadSite(i,b); return;
     }
   }
   var mu = /^url:(.+)$/.exec(saved);
   if(mu){ loadUrl(mu[1]); return; }
-  var db=track.querySelector('button[data-site="'+DEFAULT_I+'"]');
-  loadSite(DEFAULT_I, db);
+  showGrid(gridBtn);
 })();
 
 /* 복사 방지 */
