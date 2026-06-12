@@ -175,6 +175,64 @@
       margin:0 0 36px;
     }
 
+    /* 영상 메타(제목·채널) */
+    .video-meta{
+      width:100%;
+      max-width:640px;
+      margin:0 0 22px;
+      font-size:.92rem;
+      line-height:1.5;
+      color:var(--ink);
+      min-height:0;
+    }
+    .video-meta:empty{margin:0;}
+    .video-meta strong{font-family:var(--serif);font-weight:600;}
+    .video-meta span{color:var(--muted);font-size:.84rem;}
+
+    /* 최근 기록 칩 */
+    .history-chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      justify-content:center;
+      margin:-10px 0 26px;
+    }
+    .history-chips:empty{margin:0 0 10px;}
+    .history-chip{
+      font-family:var(--mono);
+      font-size:.7rem;
+      padding:5px 11px;
+      border:1.2px dashed var(--line);
+      border-radius:999px;
+      background:transparent;
+      color:var(--muted);
+      cursor:pointer;
+      transition:all .15s;
+    }
+    .history-chip:hover{border-color:var(--accent);color:var(--accent);}
+
+    /* 일괄 다운로드 바 */
+    .bulk-bar{
+      width:100%;
+      display:none;
+      justify-content:flex-end;
+      margin:0 0 14px;
+    }
+    .bulk-bar.show{display:flex;}
+    .bulk-bar button{
+      font-family:var(--sans);
+      font-size:.84rem;
+      font-weight:600;
+      padding:9px 16px;
+      border:1.5px solid var(--ink);
+      border-radius:10px;
+      background:var(--ink);
+      color:var(--paper);
+      cursor:pointer;
+      transition:background .18s,border-color .18s;
+    }
+    .bulk-bar button:hover{background:var(--accent);border-color:var(--accent);}
+
     /* 결과 리스트 */
     .thumbs-list{
       width:100%;
@@ -362,7 +420,15 @@
     </div>
 
     <div class="size-filters" id="sizeFilters"></div>
-    <p class="filter-hint">표시할 사이즈를 선택하세요 (YouTube)</p>
+    <p class="filter-hint">표시할 사이즈를 선택하세요 (YouTube · 장면 컷 / WebP 지원)</p>
+
+    <div class="history-chips" id="historyChips"></div>
+
+    <div class="video-meta" id="videoMeta"></div>
+
+    <div class="bulk-bar" id="bulkBar">
+      <button type="button" onclick="bulkDownload()">표시된 썸네일 일괄 다운로드</button>
+    </div>
 
     <div class="thumbs-list" id="thumbsList"></div>
   </main>
@@ -380,14 +446,19 @@
   <script>
     /* ===== YouTube 사이즈 정의 ===== */
     const YT_SIZES = [
-      { key:'maxresdefault', label:'HD',   dim:'1280×720' },
-      { key:'sddefault',     label:'SD',   dim:'640×480'  },
-      { key:'hqdefault',     label:'HQ',   dim:'480×360'  },
-      { key:'mqdefault',     label:'MQ',   dim:'320×180'  },
-      { key:'default',       label:'기본', dim:'120×90'   },
+      { key:'maxresdefault', label:'HD',    dim:'1280×720' },
+      { key:'sddefault',     label:'SD',    dim:'640×480'  },
+      { key:'hqdefault',     label:'HQ',    dim:'480×360'  },
+      { key:'mqdefault',     label:'MQ',    dim:'320×180'  },
+      { key:'default',       label:'기본',  dim:'120×90'   },
+      { key:'hq1',           label:'장면 1', dim:'480×360' },
+      { key:'hq2',           label:'장면 2', dim:'480×360' },
+      { key:'hq3',           label:'장면 3', dim:'480×360' },
     ];
-    // 사이즈별 표시 여부 (기본: 작은 기본썸네일 제외 모두 켜짐)
-    const sizeState = { maxresdefault:true, sddefault:true, hqdefault:true, mqdefault:true, default:false };
+    // 사이즈별 표시 여부 (기본: 작은 기본썸네일·장면 컷 제외 모두 켜짐)
+    const sizeState = { maxresdefault:true, sddefault:true, hqdefault:true, mqdefault:true, default:false, hq1:false, hq2:false, hq3:false };
+    // 포맷 상태 (jpg / webp)
+    let fmtState = 'jpg';
 
     /* 사이즈 선택 칩 생성 */
     (function buildFilters(){
@@ -405,6 +476,18 @@
         };
         box.appendChild(chip);
       });
+      // WebP 포맷 토글 칩
+      const webpChip = document.createElement('button');
+      webpChip.className = 'size-chip';
+      webpChip.type = 'button';
+      webpChip.textContent = 'WebP 포맷';
+      webpChip.setAttribute('aria-pressed', 'false');
+      webpChip.onclick = ()=>{
+        fmtState = (fmtState === 'jpg') ? 'webp' : 'jpg';
+        webpChip.setAttribute('aria-pressed', String(fmtState === 'webp'));
+        if (lastVideo && lastVideo.type === 'yt') getThumbnails();
+      };
+      box.appendChild(webpChip);
     })();
 
     let lastVideo = null; // {type, id}
@@ -419,11 +502,75 @@
       return m ? m[1] : null;
     }
 
+    /* ===== 썸네일 URL 빌더 ===== */
+    function ytThumbUrl(id, key){
+      return fmtState === 'webp'
+        ? `https://i.ytimg.com/vi_webp/${id}/${key}.webp`
+        : `https://img.youtube.com/vi/${id}/${key}.jpg`;
+    }
+
+    /* ===== 영상 제목·채널명 로드 (oEmbed) ===== */
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function loadMeta(type, id){
+      const box = document.getElementById('videoMeta');
+      box.innerHTML = '';
+      const api = type === 'yt'
+        ? `https://www.youtube.com/oembed?url=${encodeURIComponent('https://www.youtube.com/watch?v='+id)}&format=json`
+        : `https://vimeo.com/api/oembed.json?url=https://vimeo.com/${id}`;
+      fetch(api)
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+          if (!d || !d.title) return;
+          box.innerHTML = `<strong>${escapeHtml(d.title)}</strong>` +
+            (d.author_name ? ` · <span>${escapeHtml(d.author_name)}</span>` : '');
+        })
+        .catch(()=>{});
+    }
+
+    /* ===== 최근 추출 기록 ===== */
+    const HISTORY_KEY = 'mywayExtract7HistoryV1';
+    function saveHistory(url){
+      try{
+        let h = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+        h = h.filter(u => u !== url);
+        h.unshift(url);
+        h = h.slice(0, 5);
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(h));
+        renderHistory();
+      }catch(e){}
+    }
+    function renderHistory(){
+      const box = document.getElementById('historyChips');
+      box.innerHTML = '';
+      let h = [];
+      try{ h = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }catch(e){}
+      h.forEach(u=>{
+        const id = parseYouTubeId(u) || parseVimeoId(u) || u;
+        const chip = document.createElement('button');
+        chip.className = 'history-chip';
+        chip.type = 'button';
+        chip.textContent = id.length > 24 ? id.slice(0,24)+'…' : id;
+        chip.title = u;
+        chip.onclick = ()=>{
+          document.getElementById('videoUrl').value = u;
+          getThumbnails();
+        };
+        box.appendChild(chip);
+      });
+    }
+
+    let currentItems = []; // 일괄 다운로드 대상
+
     /* ===== 추출 ===== */
     function getThumbnails(){
       const url = document.getElementById('videoUrl').value.trim();
       const thumbsList = document.getElementById('thumbsList');
       thumbsList.innerHTML = '';
+      document.getElementById('videoMeta').innerHTML = '';
+      document.getElementById('bulkBar').classList.remove('show');
+      currentItems = [];
 
       if (!url){
         lastVideo = null;
@@ -437,13 +584,15 @@
         const items = YT_SIZES
           .filter(s => sizeState[s.key])
           .map(s => ({
-            url:`https://img.youtube.com/vi/${ytId}/${s.key}.jpg`,
+            url: ytThumbUrl(ytId, s.key),
             label:s.label, dim:s.dim
           }));
         if (items.length === 0){
           showMessage('최소 한 개 이상의 사이즈를 선택해 주세요.', true);
           return;
         }
+        saveHistory(url);
+        loadMeta('yt', ytId);
         renderThumbs(items);
         return;
       }
@@ -452,11 +601,26 @@
       if (vimeoId){
         lastVideo = { type:'vimeo', id:vimeoId };
         showMessage('Vimeo 썸네일을 불러오는 중…');
+        saveHistory(url);
         fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${vimeoId}`)
           .then(res => res.json())
           .then(data => {
             const w = data.thumbnail_width, h = data.thumbnail_height;
-            renderThumbs([{ url:data.thumbnail_url, label:'Vimeo', dim:(w&&h)?`${w}×${h}`:'원본' }]);
+            if (data.title){
+              document.getElementById('videoMeta').innerHTML =
+                `<strong>${escapeHtml(data.title)}</strong>` +
+                (data.author_name ? ` · <span>${escapeHtml(data.author_name)}</span>` : '');
+            }
+            const items = [{ url:data.thumbnail_url, label:'Vimeo', dim:(w&&h)?`${w}×${h}`:'원본' }];
+            // i.vimeocdn.com 패턴이면 대형 사이즈 변형 추가
+            const m = String(data.thumbnail_url||'').match(/_(\d+)x(\d+)/);
+            if (m){
+              items.unshift(
+                { url:data.thumbnail_url.replace(/_\d+x\d+/, '_1280x720'), label:'대형', dim:'1280×720' },
+                { url:data.thumbnail_url.replace(/_\d+x\d+/, '_640x360'),  label:'중형', dim:'640×360' }
+              );
+            }
+            renderThumbs(items);
           })
           .catch(() => showMessage('Vimeo 썸네일을 가져올 수 없습니다.', false));
         return;
@@ -475,6 +639,8 @@
     function renderThumbs(items){
       const thumbsList = document.getElementById('thumbsList');
       thumbsList.innerHTML = '';
+      currentItems = items;
+      document.getElementById('bulkBar').classList.toggle('show', items.length > 1);
 
       items.forEach(item=>{
         const card = document.createElement('div');
@@ -580,6 +746,12 @@
     }
 
     /* ===== 다운로드 (CORS 가능 시 blob, 아니면 새 탭) ===== */
+    function downloadFileName(item){
+      const ext = /\.webp(\?|$)/.test(item.url) ? 'webp' : 'jpg';
+      const base = lastVideo ? `${lastVideo.type}_${lastVideo.id}` : 'thumbnail';
+      const label = String(item.label).replace(/\s+/g, '');
+      return `${base}_${label}.${ext}`;
+    }
     function downloadImage(item){
       fetch(item.url)
         .then(r=>r.blob())
@@ -587,7 +759,7 @@
           const a = document.createElement('a');
           const obj = URL.createObjectURL(blob);
           a.href = obj;
-          a.download = `thumbnail_${item.label}.jpg`;
+          a.download = downloadFileName(item);
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
@@ -596,10 +768,41 @@
         .catch(()=>window.open(item.url, '_blank', 'noopener'));
     }
 
+    /* ===== 일괄 다운로드 (사용 불가 카드 제외, 순차 실행) ===== */
+    function bulkDownload(){
+      const cards = Array.from(document.querySelectorAll('.thumb-item'));
+      const targets = currentItems.filter((_, i) => cards[i] && !cards[i].classList.contains('unavailable'));
+      targets.forEach((item, i)=>{
+        setTimeout(()=>downloadImage(item), i * 450);
+      });
+    }
+
     /* Enter 키로 추출 */
     document.getElementById('videoUrl').addEventListener('keydown', e=>{
       if (e.key === 'Enter') getThumbnails();
     });
+
+    /* 붙여넣기 시 자동 추출 */
+    document.getElementById('videoUrl').addEventListener('paste', ()=>{
+      setTimeout(()=>{
+        const v = document.getElementById('videoUrl').value.trim();
+        if (parseYouTubeId(v) || parseVimeoId(v)) getThumbnails();
+      }, 60);
+    });
+
+    /* 초기화: 기록 렌더 + ?url= / ?v= 딥링크 지원 */
+    (function init(){
+      renderHistory();
+      try{
+        const p = new URLSearchParams(location.search);
+        const q = p.get('url') || p.get('v');
+        if (q){
+          const v = /^[\w-]{6,}$/.test(q) ? 'https://youtu.be/' + q : q;
+          document.getElementById('videoUrl').value = v;
+          getThumbnails();
+        }
+      }catch(e){}
+    })();
 
     /* ===== MYWAY.KR 복사 방지 정책 (input/textarea 예외) ===== */
     (function(){
