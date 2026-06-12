@@ -68,6 +68,8 @@ input,textarea{-webkit-user-select:text!important;user-select:text!important;}
 #board{display:block;border-radius:16px;box-shadow:0 18px 50px -22px rgba(20,26,48,.7);
   border:6px solid #1f2742;background:var(--board);max-width:100%;height:auto;touch-action:auto;}
 
+.side-col{display:flex;flex-direction:column;gap:16px;flex:1 1 280px;max-width:320px;min-width:240px;}
+.side-col .panel,.side-col .results{flex:none;max-width:none;min-width:0;width:100%;}
 .results{flex:1 1 220px;max-width:300px;min-width:200px;background:var(--panel);border:1px solid var(--line);
   border-radius:16px;padding:18px;box-shadow:0 14px 40px -24px rgba(20,26,48,.4);}
 .results h2{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:14px;}
@@ -116,6 +118,7 @@ footer a:hover{text-decoration:underline;}
 @media (max-width:880px){
   .wrap{padding:48px 12px 56px;}
   .layout{flex-direction:column;align-items:center;gap:10px;}
+  .side-col{display:contents;}
   .panel,.results{max-width:540px;width:100%;}
   .panel{order:0;padding:12px 14px;}
   .board-wrap{order:1;}
@@ -153,6 +156,7 @@ footer a:hover{text-decoration:underline;}
   </div>
 
   <div class="layout">
+    <div class="side-col">
     <div class="panel">
       <div class="panel-head">
         <h2>모드</h2>
@@ -175,8 +179,6 @@ footer a:hover{text-decoration:underline;}
       </div>
     </div>
 
-    <div class="board-wrap"><canvas id="board"></canvas></div>
-
     <div class="results">
       <div class="results-head">
         <h2>순위</h2>
@@ -184,6 +186,9 @@ footer a:hover{text-decoration:underline;}
       </div>
       <div class="rank-list" id="rankList"></div>
     </div>
+    </div>
+
+    <div class="board-wrap"><canvas id="board"></canvas></div>
   </div>
 
   <div class="note">사다리타기 대신 쓰는 랜덤 순위 게임이에요. 핀 튕김은 매번 달라서 결과도 매번 랜덤입니다.</div>
