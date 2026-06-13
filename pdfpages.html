@@ -209,6 +209,43 @@ header.site p{
   box-shadow:0 3px 8px rgba(224,69,90,.35);
 }
 .pcell.sel .pno{color:var(--danger)}
+
+/* 선택 시 플로팅 액션 바 */
+#float-act{
+  position:fixed;left:50%;bottom:24px;z-index:9998;
+  transform:translateX(-50%) translateY(8px);
+  display:flex;align-items:center;gap:10px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:8px 12px 8px 18px;
+  box-shadow:0 10px 28px rgba(42,36,56,.18);
+  opacity:0;pointer-events:none;
+  transition:.18s;
+}
+#float-act.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+#float-act .fa-count{font-size:13px;font-weight:600;color:var(--danger)}
+
+/* 우클릭 메뉴 */
+#ctxmenu{
+  position:fixed;z-index:10000;display:none;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:12px;
+  box-shadow:0 12px 30px rgba(42,36,56,.2);
+  padding:6px;min-width:170px;
+}
+#ctxmenu.show{display:block}
+#ctxmenu button{
+  display:block;width:100%;text-align:left;
+  font-family:'Pretendard',sans-serif;
+  font-size:13.5px;font-weight:600;
+  padding:9px 12px;border:none;border-radius:8px;
+  background:transparent;color:var(--ink);cursor:pointer;
+}
+#ctxmenu button:hover{background:#f3efff}
+#ctxmenu button[data-act="del"]{color:var(--danger)}
+#ctxmenu button:disabled{opacity:.4;cursor:not-allowed}
 .rangebox{
   display:flex;gap:8px;align-items:center;flex-wrap:wrap;
 }
@@ -303,7 +340,7 @@ footer a{color:var(--accent1);text-decoration:none;font-weight:600}
     <div class="drop" id="del-drop">
       <div class="ico">✂️</div>
       <div class="big">PDF 한 개를 끌어다 놓거나 클릭해서 선택</div>
-      <div class="small">페이지를 클릭하거나, 마우스로 드래그해서 여러 페이지를 한 번에 선택할 수 있어요</div>
+      <div class="small">클릭·드래그로 선택 → 화면에서 바로 삭제 → 원할 때 다운로드</div>
       <input type="file" id="del-input" accept="application/pdf,.pdf" hidden>
     </div>
 
@@ -317,10 +354,26 @@ footer a{color:var(--accent1);text-decoration:none;font-weight:600}
       <button class="btn" id="btn-sel-inv">선택 반전</button>
       <span class="spacer"></span>
       <span class="hint mono" id="del-count"></span>
-      <button class="btn danger" id="btn-delete">✕ 선택 페이지 삭제 후 다운로드</button>
+      <button class="btn danger" id="btn-delete">✕ 선택 삭제</button>
+      <button class="btn" id="btn-restore">↩ 원본 복원</button>
+      <button class="btn primary" id="btn-download" disabled>⬇ PDF 다운로드</button>
     </div>
 
     <div class="pgrid" id="pgrid"></div>
+
+    <!-- 선택 시 나타나는 플로팅 액션 바 -->
+    <div id="float-act">
+      <span class="fa-count mono" id="fa-count"></span>
+      <button class="btn danger" id="fa-delete">✕ 선택 삭제</button>
+      <button class="btn" id="fa-clear">해제</button>
+    </div>
+
+    <!-- 우클릭 메뉴 -->
+    <div id="ctxmenu">
+      <button data-act="del">✕ 선택 페이지 삭제</button>
+      <button data-act="clear">선택 해제</button>
+      <button data-act="all">전체 선택</button>
+    </div>
     <div class="status" id="del-status"></div>
     <div class="prog" id="del-prog"><div></div></div>
   </section>
@@ -533,8 +586,10 @@ document.getElementById('btn-merge').addEventListener('click',async()=>{
 /* ============================================================
    DELETE PAGES
 ============================================================ */
-let delBytes=null, delName='', delTotal=0;
-let selected=new Set();
+let delBytes=null, delName='', origTotal=0;
+let allCells=[];   /* 원본 전체 셀 {orig, el, pno} */
+let cells=[];      /* 현재 화면에 남아있는 셀 */
+let selected=new Set(); /* 원본 페이지 번호 기준 */
 
 const delDrop=document.getElementById('del-drop');
 const delInput=document.getElementById('del-input');
@@ -552,17 +607,18 @@ delDrop.addEventListener('drop',e=>{
 });
 
 async function loadDelFile(file){
-  selected.clear();
+  selected.clear();allCells=[];cells=[];
   pgrid.innerHTML='';
   delBar.style.display='none';
+  document.getElementById('btn-download').disabled=true;
   setStatus('del-status','busy','"'+file.name+'" 페이지 미리보기를 만드는 중이에요…');
   setProg('del-prog',2);
   try{
     delBytes=new Uint8Array(await file.arrayBuffer());
     delName=file.name;
     const doc=await pdfjsLib.getDocument({data:delBytes.slice()}).promise;
-    delTotal=doc.numPages;
-    for(let n=1;n<=delTotal;n++){
+    origTotal=doc.numPages;
+    for(let n=1;n<=origTotal;n++){
       const page=await doc.getPage(n);
       const vp=page.getViewport({scale:0.42});
       const c=document.createElement('canvas');
@@ -571,11 +627,10 @@ async function loadDelFile(file){
 
       const cell=document.createElement('div');
       cell.className='pcell';
-      cell.dataset.page=n;
+      cell.dataset.page=n; /* 원본 페이지 번호 */
       cell.appendChild(c);
       const pno=document.createElement('div');
       pno.className='pno';
-      pno.textContent='p.'+n;
       cell.appendChild(pno);
       cell.addEventListener('click',()=>{
         if(marqueeMoved)return; /* 드래그 선택 직후 클릭 무시 */
@@ -583,13 +638,17 @@ async function loadDelFile(file){
         cell.classList.toggle('sel',selected.has(n));
         updateDelCount();
       });
+      const item={orig:n,el:cell,pno};
+      allCells.push(item);
       pgrid.appendChild(cell);
-      setProg('del-prog',Math.round((n/delTotal)*100));
+      setProg('del-prog',Math.round((n/origTotal)*100));
     }
     doc.destroy();
+    cells=allCells.slice();
+    renumber();
     delBar.style.display='flex';
     updateDelCount();
-    setStatus('del-status','good','총 '+delTotal+'쪽이에요. 삭제할 페이지를 클릭해서 선택해 주세요.');
+    setStatus('del-status','good','총 '+origTotal+'쪽이에요. 클릭하거나 드래그해서 선택한 뒤, 선택 영역의 플로팅 버튼이나 우클릭 메뉴로 삭제해 주세요.');
   }catch(err){
     setStatus('del-status','bad','PDF를 열지 못했어요. 암호가 걸려 있거나 손상된 파일일 수 있어요.');
     delBytes=null;
@@ -598,28 +657,44 @@ async function loadDelFile(file){
   }
 }
 
+/* 화면에 남은 셀들 순서대로 번호 다시 매기기 */
+function renumber(){
+  cells.forEach((it,i)=>{
+    it.pno.textContent='p.'+(i+1)+(it.orig!==i+1?' (원본 '+it.orig+')':'');
+  });
+}
+
 function updateDelCount(){
+  const removed=origTotal-cells.length;
   document.getElementById('del-count').textContent=
-    '선택 '+selected.size+' / '+delTotal+'쪽';
+    '남은 '+cells.length+'쪽'+(removed?' · 삭제됨 '+removed+'쪽':'')+' · 선택 '+selected.size;
   document.getElementById('btn-delete').disabled=
-    selected.size===0||selected.size>=delTotal;
+    selected.size===0||selected.size>=cells.length;
+  document.getElementById('btn-restore').disabled=removed===0;
+  /* 플로팅 액션 바 */
+  const fa=document.getElementById('float-act');
+  if(selected.size>0){
+    document.getElementById('fa-count').textContent=selected.size+'쪽 선택됨';
+    document.getElementById('fa-delete').disabled=selected.size>=cells.length;
+    fa.classList.add('show');
+  }else{
+    fa.classList.remove('show');
+  }
 }
 function syncCells(){
-  pgrid.querySelectorAll('.pcell').forEach(c=>{
-    c.classList.toggle('sel',selected.has(Number(c.dataset.page)));
-  });
+  cells.forEach(it=>it.el.classList.toggle('sel',selected.has(it.orig)));
   updateDelCount();
 }
 
 document.getElementById('btn-sel-all').addEventListener('click',()=>{
-  selected=new Set(Array.from({length:delTotal},(_,i)=>i+1));syncCells();
+  selected=new Set(cells.map(it=>it.orig));syncCells();
 });
 document.getElementById('btn-sel-none').addEventListener('click',()=>{
   selected.clear();syncCells();
 });
 document.getElementById('btn-sel-inv').addEventListener('click',()=>{
   const next=new Set();
-  for(let n=1;n<=delTotal;n++)if(!selected.has(n))next.add(n);
+  cells.forEach(it=>{if(!selected.has(it.orig))next.add(it.orig);});
   selected=next;syncCells();
 });
 
@@ -643,9 +718,9 @@ function parseRange(str,max){
   return out;
 }
 document.getElementById('btn-range').addEventListener('click',()=>{
-  const parsed=parseRange(document.getElementById('range-input').value,delTotal);
-  if(!parsed.size){setStatus('del-status','bad','범위를 인식하지 못했어요. 예: 1,3,5-8');return;}
-  parsed.forEach(n=>selected.add(n));
+  const parsed=parseRange(document.getElementById('range-input').value,cells.length);
+  if(!parsed.size){setStatus('del-status','bad','범위를 인식하지 못했어요. 예: 1,3,5-8 (화면 번호 기준)');return;}
+  parsed.forEach(cur=>selected.add(cells[cur-1].orig)); /* 화면 번호 → 원본 번호 */
   syncCells();
   setStatus('del-status','good',parsed.size+'쪽을 선택 목록에 추가했어요.');
 });
@@ -689,7 +764,7 @@ let marqueeMoved=false;
 
   pgrid.addEventListener('pointerdown',e=>{
     if(e.pointerType!=='mouse'||e.button!==0)return; /* 모바일은 탭 선택 유지 */
-    if(!delTotal)return;
+    if(!cells.length)return;
     dragging=true;marqueeMoved=false;
     const p=gridPos(e);
     startX=p.x;startY=p.y;
@@ -740,19 +815,54 @@ let marqueeMoved=false;
   });
 })();
 
-document.getElementById('btn-delete').addEventListener('click',async()=>{
+/* ===== 삭제(화면에서만 제거 — 다운로드는 별도) ===== */
+function performDelete(){
   if(!delBytes||!selected.size)return;
-  if(selected.size>=delTotal){
+  if(selected.size>=cells.length){
     setStatus('del-status','bad','모든 페이지를 삭제할 수는 없어요. 최소 한 쪽은 남겨 주세요.');return;
   }
-  const btn=document.getElementById('btn-delete');
+  const delCount=selected.size;
+  cells=cells.filter(it=>{
+    if(selected.has(it.orig)){it.el.remove();return false;}
+    return true;
+  });
+  selected.clear();
+  renumber();
+  document.getElementById('btn-download').disabled=false;
+  hideCtx();
+  updateDelCount();
+  setStatus('del-status','good',
+    delCount+'쪽을 삭제했어요. 남은 '+cells.length+'쪽이 그대로 표시돼 있어요. 계속 편집하거나, 준비되면 "PDF 다운로드"를 눌러 주세요.');
+}
+document.getElementById('btn-delete').addEventListener('click',performDelete);
+document.getElementById('fa-delete').addEventListener('click',performDelete);
+document.getElementById('fa-clear').addEventListener('click',()=>{
+  selected.clear();syncCells();
+});
+
+/* ===== 원본 복원 ===== */
+document.getElementById('btn-restore').addEventListener('click',()=>{
+  if(!allCells.length)return;
+  pgrid.querySelectorAll('.pcell').forEach(c=>c.remove());
+  cells=allCells.slice();
+  selected.clear();
+  cells.forEach(it=>{it.el.classList.remove('sel');pgrid.appendChild(it.el);});
+  renumber();
+  document.getElementById('btn-download').disabled=true;
+  updateDelCount();
+  setStatus('del-status','good','원본 '+origTotal+'쪽으로 복원했어요.');
+});
+
+/* ===== 다운로드(원할 때만) ===== */
+document.getElementById('btn-download').addEventListener('click',async()=>{
+  if(!delBytes||!cells.length)return;
+  const btn=document.getElementById('btn-download');
   btn.disabled=true;
-  setStatus('del-status','busy',selected.size+'쪽을 삭제하는 중이에요…');
+  setStatus('del-status','busy','남은 '+cells.length+'쪽으로 PDF를 만드는 중이에요…');
   setProg('del-prog',10);
   try{
     const src=await PDFDocument.load(delBytes,{ignoreEncryption:true});
-    const keep=[];
-    for(let i=0;i<delTotal;i++)if(!selected.has(i+1))keep.push(i);
+    const keep=cells.map(it=>it.orig-1); /* 0-based 원본 인덱스 */
     const out=await PDFDocument.create();
     const pages=await out.copyPages(src,keep);
     pages.forEach(p=>out.addPage(p));
@@ -761,15 +871,45 @@ document.getElementById('btn-delete').addEventListener('click',async()=>{
     setProg('del-prog',100);
     const base=delName.replace(/\.pdf$/i,'');
     downloadBytes(bytes,base+'-edited.pdf');
-    setStatus('del-status','good',
-      '완료! '+selected.size+'쪽을 삭제하고 '+keep.length+'쪽짜리 PDF를 저장했어요.');
+    setStatus('del-status','good','완료! '+cells.length+'쪽짜리 PDF를 저장했어요.');
   }catch(err){
-    setStatus('del-status','bad','삭제 처리 중 오류가 발생했어요.');
+    setStatus('del-status','bad','PDF 저장 중 오류가 발생했어요.');
   }finally{
     btn.disabled=false;
     setTimeout(()=>setProg('del-prog',null),800);
   }
 });
+
+/* ===== 우클릭 메뉴 ===== */
+const ctx=document.getElementById('ctxmenu');
+function hideCtx(){ctx.classList.remove('show');}
+pgrid.addEventListener('contextmenu',e=>{
+  e.preventDefault();
+  if(!cells.length)return;
+  /* 선택이 없는데 페이지 위에서 우클릭하면 그 페이지를 선택에 추가 */
+  const cellEl=e.target.closest&&e.target.closest('.pcell');
+  if(cellEl&&!selected.has(Number(cellEl.dataset.page))){
+    selected.add(Number(cellEl.dataset.page));
+    syncCells();
+  }
+  ctx.querySelector('[data-act="del"]').disabled=
+    selected.size===0||selected.size>=cells.length;
+  ctx.classList.add('show');
+  /* 화면 밖으로 나가지 않게 위치 보정 */
+  const mw=ctx.offsetWidth||180, mh=ctx.offsetHeight||130;
+  ctx.style.left=Math.min(e.clientX,window.innerWidth-mw-8)+'px';
+  ctx.style.top=Math.min(e.clientY,window.innerHeight-mh-8)+'px';
+});
+ctx.addEventListener('click',e=>{
+  const act=e.target.dataset&&e.target.dataset.act;
+  if(act==='del')performDelete();
+  if(act==='clear'){selected.clear();syncCells();}
+  if(act==='all'){selected=new Set(cells.map(it=>it.orig));syncCells();}
+  if(act&&act!=='del')hideCtx();
+});
+document.addEventListener('click',e=>{if(!ctx.contains(e.target))hideCtx();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')hideCtx();});
+window.addEventListener('scroll',hideCtx,{passive:true});
 
 /* ============================================================
    복사 방지 (myway.kr 공통 정책)
