@@ -170,7 +170,7 @@ header.site p{
   position:relative;
   touch-action:pan-y;
 }
-#marquee{
+.marquee{
   position:absolute;z-index:5;display:none;
   border:1.5px solid var(--accent1);
   background:rgba(124,92,255,.12);
@@ -300,12 +300,42 @@ footer a{color:var(--accent1);text-decoration:none;font-weight:600}
   .fitem .thumb{width:42px;height:58px}
   .pgrid{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
 }
+
+/* ===== 선택 추출 탭 ===== */
+#extgrid .pcell.sel{border-color:var(--ok);background:#e8f7ef}
+#extgrid .pcell.sel::after{content:'✓ 추출';background:var(--ok);box-shadow:0 3px 8px rgba(47,158,110,.35)}
+#extgrid .pcell.sel .pno{color:var(--ok)}
+#ext-float-act{
+  position:fixed;left:50%;bottom:24px;z-index:9998;
+  transform:translateX(-50%) translateY(8px);
+  display:flex;align-items:center;gap:10px;
+  background:var(--card);border:1px solid var(--line);border-radius:999px;
+  padding:8px 12px 8px 18px;box-shadow:0 10px 28px rgba(42,36,56,.18);
+  opacity:0;pointer-events:none;transition:.18s;
+}
+#ext-float-act.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+#ext-float-act .fa-count{font-size:13px;font-weight:600;color:var(--ok)}
+#ext-ctxmenu{
+  position:fixed;z-index:10000;display:none;background:var(--card);
+  border:1px solid var(--line);border-radius:12px;
+  box-shadow:0 12px 30px rgba(42,36,56,.2);padding:6px;min-width:170px;
+}
+#ext-ctxmenu.show{display:block}
+#ext-ctxmenu button{
+  display:block;width:100%;text-align:left;
+  font-family:'Pretendard',sans-serif;font-size:13.5px;font-weight:600;
+  padding:9px 12px;border:none;border-radius:8px;
+  background:transparent;color:var(--ink);cursor:pointer;
+}
+#ext-ctxmenu button:hover{background:#eef9f1}
+#ext-ctxmenu button[data-act="ext"]{color:var(--ok)}
+#ext-ctxmenu button:disabled{opacity:.4;cursor:not-allowed}
 </style>
 </head>
 <body>
 
 <header class="site">
-  <h1>PDF <span class="grad">통합 · 페이지 삭제</span></h1>
+  <h1>PDF <span class="grad">통합 · 삭제 · 추출</span></h1>
   <p>파일은 서버로 전송되지 않고 브라우저 안에서만 처리돼요</p>
 </header>
 
@@ -314,6 +344,7 @@ footer a{color:var(--accent1);text-decoration:none;font-weight:600}
   <div class="tabs">
     <button class="tab-btn active" data-tab="merge">📚 PDF 통합</button>
     <button class="tab-btn" data-tab="delete">✂️ 페이지 삭제</button>
+    <button class="tab-btn" data-tab="extract">✦ 선택 추출</button>
   </div>
 
   <!-- ================= MERGE ================= -->
@@ -379,6 +410,47 @@ footer a{color:var(--accent1);text-decoration:none;font-weight:600}
     </div>
     <div class="status" id="del-status"></div>
     <div class="prog" id="del-prog"><div></div></div>
+  </section>
+
+  <!-- ================= EXTRACT ================= -->
+  <section class="panel" id="panel-extract">
+    <div class="drop" id="ext-drop">
+      <div class="ico">✦</div>
+      <div class="big">PDF 한 개를 끌어다 놓거나 클릭해서 선택</div>
+      <div class="small">추출할 페이지를 클릭·드래그로 선택 → 선택한 페이지만 모아서 다운로드</div>
+      <input type="file" id="ext-input" accept="application/pdf,.pdf" hidden>
+    </div>
+
+    <div class="bar" id="ext-bar" style="display:none">
+      <div class="rangebox">
+        <input type="text" id="ext-range-input" placeholder="예: 1,3,5-8" spellcheck="false">
+        <button class="btn" id="ext-btn-range">범위 선택</button>
+      </div>
+      <button class="btn" id="ext-btn-all">전체 선택</button>
+      <button class="btn" id="ext-btn-none">선택 해제</button>
+      <button class="btn" id="ext-btn-inv">선택 반전</button>
+      <span class="spacer"></span>
+      <span class="hint mono" id="ext-count"></span>
+      <button class="btn primary" id="ext-btn-extract" disabled>⬇ 선택 페이지 추출</button>
+    </div>
+
+    <div class="pgrid" id="extgrid"></div>
+
+    <!-- 선택 시 나타나는 플로팅 액션 바 -->
+    <div id="ext-float-act">
+      <span class="fa-count mono" id="ext-fa-count"></span>
+      <button class="btn primary" id="ext-fa-extract">⬇ 선택 추출</button>
+      <button class="btn" id="ext-fa-clear">해제</button>
+    </div>
+
+    <!-- 우클릭 메뉴 -->
+    <div id="ext-ctxmenu">
+      <button data-act="ext">✦ 선택 페이지 추출</button>
+      <button data-act="clear">선택 해제</button>
+      <button data-act="all">전체 선택</button>
+    </div>
+    <div class="status" id="ext-status"></div>
+    <div class="prog" id="ext-prog"><div></div></div>
   </section>
 
   <div class="divider"></div>
@@ -636,7 +708,7 @@ async function loadDelFile(file){
       pno.className='pno';
       cell.appendChild(pno);
       cell.addEventListener('click',()=>{
-        if(marqueeMoved)return; /* 드래그 선택 직후 클릭 무시 */
+        if(delMarq.moved)return; /* 드래그 선택 직후 클릭 무시 */
         if(selected.has(n))selected.delete(n);else selected.add(n);
         cell.classList.toggle('sel',selected.has(n));
         updateDelCount();
@@ -731,26 +803,28 @@ document.getElementById('range-input').addEventListener('keydown',e=>{
   if(e.key==='Enter')document.getElementById('btn-range').click();
 });
 
-/* ===== 드래그(마퀴) 다중 선택 ===== */
-let marqueeMoved=false;
-(function(){
+/* ===== 드래그(마퀴) 다중 선택 — 삭제·추출 그리드 공용 ===== */
+function makeMarquee(opt){
+  /* opt: {grid, getCells, getSelected, sync, statusId} */
+  const grid=opt.grid;
   const THRESH=3; /* 3px만 움직여도 즉시 드래그 시작 */
   let dragging=false,startX=0,startY=0,box=null,activePointerId=null;
   let cellRects=[];   /* 드래그 시작 시 1회 캐시 */
   let raf=0,lastX=0,lastY=0;
   let prevPreview=new Set();
+  const state={moved:false};
 
   function getBox(){
-    /* 파일 재업로드 시 pgrid.innerHTML='' 로 박스가 떨어져 나가므로 항상 연결 상태 확인 */
+    /* 파일 재업로드 시 그리드 비우면 박스가 떨어져 나가므로 항상 연결 상태 확인 */
     if(!box||!box.isConnected){
       box=document.createElement('div');
-      box.id='marquee';
-      pgrid.appendChild(box);
+      box.className='marquee';
+      grid.appendChild(box);
     }
     return box;
   }
   function gridPos(e){
-    const r=pgrid.getBoundingClientRect();
+    const r=grid.getBoundingClientRect();
     return {x:e.clientX-r.left,y:e.clientY-r.top};
   }
   function rectOf(x1,y1,x2,y2){
@@ -759,7 +833,7 @@ let marqueeMoved=false;
   }
   /* 드래그 시작 시 셀 위치를 grid 기준 좌표로 한 번만 계산 (스크롤 무관) */
   function cacheRects(){
-    cellRects=cells.map(it=>({
+    cellRects=opt.getCells().map(it=>({
       it,
       l:it.el.offsetLeft, t:it.el.offsetTop,
       r:it.el.offsetLeft+it.el.offsetWidth,
@@ -777,29 +851,30 @@ let marqueeMoved=false;
     b.style.left=rc.l+'px';b.style.top=rc.t+'px';
     b.style.width=(rc.r-rc.l)+'px';b.style.height=(rc.b-rc.t)+'px';
     /* 미리보기: 변경된 셀만 토글 */
+    const sel=opt.getSelected();
     const now=new Set();
     hitItems(rc).forEach(c=>{
-      if(!selected.has(c.it.orig))now.add(c.it);
+      if(!sel.has(c.it.orig))now.add(c.it);
     });
     prevPreview.forEach(it=>{if(!now.has(it))it.el.classList.remove('preview');});
     now.forEach(it=>{if(!prevPreview.has(it))it.el.classList.add('preview');});
     prevPreview=now;
   }
 
-  pgrid.addEventListener('pointerdown',e=>{
+  grid.addEventListener('pointerdown',e=>{
     if(e.pointerType!=='mouse'||e.button!==0)return; /* 모바일은 탭 선택 유지 */
-    if(!cells.length)return;
+    if(!opt.getCells().length)return;
     /* 이전 드래그 잔여 상태 초기화 */
     if(raf){cancelAnimationFrame(raf);raf=0;}
     prevPreview.forEach(it=>it.el.classList.remove('preview'));
     prevPreview=new Set();
-    dragging=true;marqueeMoved=false;
+    dragging=true;state.moved=false;
     const p=gridPos(e);
     startX=p.x;startY=p.y;lastX=p.x;lastY=p.y;
     cacheRects();
     /* 포인터 캡처: 셀(캔버스) 위에서 시작해도 네이티브 드래그/선택에 가로채이지 않게 */
     activePointerId=e.pointerId;
-    try{pgrid.setPointerCapture(e.pointerId);}catch(_){}
+    try{grid.setPointerCapture(e.pointerId);}catch(_){}
     e.preventDefault();
   });
 
@@ -807,9 +882,9 @@ let marqueeMoved=false;
     if(!dragging)return;
     const p=gridPos(e);
     lastX=p.x;lastY=p.y;
-    if(!marqueeMoved){
+    if(!state.moved){
       if(Math.abs(p.x-startX)<THRESH&&Math.abs(p.y-startY)<THRESH)return;
-      marqueeMoved=true;
+      state.moved=true;
       getBox().style.display='block';
     }
     if(!raf)raf=requestAnimationFrame(paint); /* 프레임당 1회만 갱신 */
@@ -818,31 +893,35 @@ let marqueeMoved=false;
   function finish(e){
     if(!dragging)return;
     dragging=false;
-    try{if(activePointerId!=null)pgrid.releasePointerCapture(activePointerId);}catch(_){}
+    try{if(activePointerId!=null)grid.releasePointerCapture(activePointerId);}catch(_){}
     activePointerId=null;
     if(raf){cancelAnimationFrame(raf);raf=0;}
-    if(marqueeMoved){
+    if(state.moved){
       const p=gridPos(e);
       const rc=rectOf(startX,startY,p.x,p.y);
       const hits=hitItems(rc);
+      const sel=opt.getSelected();
       /* 박스 안 전부 선택돼 있으면 → 해제(토글), 아니면 → 선택 */
-      const allSel=hits.length&&hits.every(c=>selected.has(c.it.orig));
+      const allSel=hits.length&&hits.every(c=>sel.has(c.it.orig));
       hits.forEach(c=>{
-        if(allSel)selected.delete(c.it.orig);else selected.add(c.it.orig);
+        if(allSel)sel.delete(c.it.orig);else sel.add(c.it.orig);
       });
       prevPreview.forEach(it=>it.el.classList.remove('preview'));
       prevPreview=new Set();
       if(box)box.style.display='none';
-      syncCells();
-      if(hits.length)setStatus('del-status','good',
+      opt.sync();
+      if(hits.length)setStatus(opt.statusId,'good',
         allSel?hits.length+'쪽 선택을 해제했어요.'
               :hits.length+'쪽을 드래그로 선택했어요.');
-      setTimeout(()=>{marqueeMoved=false;},0);
+      setTimeout(()=>{state.moved=false;},0);
     }
   }
   document.addEventListener('pointerup',finish);
   document.addEventListener('pointercancel',finish);
-})();
+  return state;
+}
+
+const delMarq=makeMarquee({grid:pgrid,getCells:()=>cells,getSelected:()=>selected,sync:syncCells,statusId:'del-status'});
 
 /* ===== 삭제(화면에서만 제거 — 다운로드는 별도) ===== */
 function performDelete(){
@@ -939,6 +1018,178 @@ ctx.addEventListener('click',e=>{
 document.addEventListener('click',e=>{if(!ctx.contains(e.target))hideCtx();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')hideCtx();});
 window.addEventListener('scroll',hideCtx,{passive:true});
+
+/* ============================================================
+   EXTRACT PAGES (선택 추출)
+   - 전체 페이지를 표시하고, 선택한 페이지만 모아 새 PDF로 다운로드
+============================================================ */
+let extBytes=null, extName='', extTotal=0;
+let extCells=[];            /* {orig, el, pno} — 전체 페이지(항상 유지) */
+let extSelected=new Set();  /* 추출할 원본 페이지 번호 */
+
+const extDrop=document.getElementById('ext-drop');
+const extInput=document.getElementById('ext-input');
+const extgrid=document.getElementById('extgrid');
+const extBar=document.getElementById('ext-bar');
+
+extDrop.addEventListener('click',()=>extInput.click());
+extInput.addEventListener('change',e=>{if(e.target.files[0])loadExtFile(e.target.files[0]);extInput.value='';});
+['dragover','dragenter'].forEach(ev=>extDrop.addEventListener(ev,e=>{e.preventDefault();extDrop.classList.add('over');}));
+['dragleave','drop'].forEach(ev=>extDrop.addEventListener(ev,e=>{e.preventDefault();extDrop.classList.remove('over');}));
+extDrop.addEventListener('drop',e=>{
+  const f=[...e.dataTransfer.files].find(x=>/\.pdf$/i.test(x.name)||x.type==='application/pdf');
+  if(f)loadExtFile(f);
+  else setStatus('ext-status','bad','PDF 파일을 올려 주세요.');
+});
+
+async function loadExtFile(file){
+  extSelected.clear();extCells=[];
+  extgrid.querySelectorAll('.pcell').forEach(c=>c.remove());
+  extBar.style.display='none';
+  document.getElementById('ext-btn-extract').disabled=true;
+  setStatus('ext-status','busy','"'+file.name+'" 페이지 미리보기를 만드는 중이에요…');
+  setProg('ext-prog',2);
+  try{
+    extBytes=new Uint8Array(await file.arrayBuffer());
+    extName=file.name;
+    const doc=await pdfjsLib.getDocument({data:extBytes.slice()}).promise;
+    extTotal=doc.numPages;
+    for(let n=1;n<=extTotal;n++){
+      const page=await doc.getPage(n);
+      const vp=page.getViewport({scale:0.42});
+      const c=document.createElement('canvas');
+      c.width=vp.width;c.height=vp.height;
+      await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+
+      const cell=document.createElement('div');
+      cell.className='pcell';
+      cell.dataset.page=n;
+      cell.appendChild(c);
+      const pno=document.createElement('div');
+      pno.className='pno';pno.textContent='p.'+n;
+      cell.appendChild(pno);
+      cell.addEventListener('click',()=>{
+        if(extMarq.moved)return; /* 드래그 선택 직후 클릭 무시 */
+        if(extSelected.has(n))extSelected.delete(n);else extSelected.add(n);
+        cell.classList.toggle('sel',extSelected.has(n));
+        updateExtCount();
+      });
+      extCells.push({orig:n,el:cell,pno});
+      extgrid.appendChild(cell);
+      setProg('ext-prog',Math.round((n/extTotal)*100));
+    }
+    doc.destroy();
+    extBar.style.display='flex';
+    updateExtCount();
+    setStatus('ext-status','good','총 '+extTotal+'쪽이에요. 추출할 페이지를 클릭하거나 드래그로 선택한 뒤, 추출 버튼을 눌러 주세요.');
+  }catch(err){
+    setStatus('ext-status','bad','PDF를 열지 못했어요. 암호가 걸려 있거나 손상된 파일일 수 있어요.');
+    extBytes=null;
+  }finally{
+    setTimeout(()=>setProg('ext-prog',null),800);
+  }
+}
+
+function updateExtCount(){
+  document.getElementById('ext-count').textContent=
+    '총 '+extCells.length+'쪽 · 선택 '+extSelected.size;
+  document.getElementById('ext-btn-extract').disabled=extSelected.size===0;
+  const fa=document.getElementById('ext-float-act');
+  if(extSelected.size>0){
+    document.getElementById('ext-fa-count').textContent=extSelected.size+'쪽 추출';
+    fa.classList.add('show');
+  }else{
+    fa.classList.remove('show');
+  }
+}
+function extSync(){
+  extCells.forEach(it=>it.el.classList.toggle('sel',extSelected.has(it.orig)));
+  updateExtCount();
+}
+
+document.getElementById('ext-btn-all').addEventListener('click',()=>{
+  extSelected=new Set(extCells.map(it=>it.orig));extSync();
+});
+document.getElementById('ext-btn-none').addEventListener('click',()=>{
+  extSelected.clear();extSync();
+});
+document.getElementById('ext-btn-inv').addEventListener('click',()=>{
+  const next=new Set();
+  extCells.forEach(it=>{if(!extSelected.has(it.orig))next.add(it.orig);});
+  extSelected=next;extSync();
+});
+document.getElementById('ext-btn-range').addEventListener('click',()=>{
+  const parsed=parseRange(document.getElementById('ext-range-input').value,extCells.length);
+  if(!parsed.size){setStatus('ext-status','bad','범위를 인식하지 못했어요. 예: 1,3,5-8');return;}
+  parsed.forEach(n=>extSelected.add(n)); /* 추출 탭은 화면 번호=원본 번호 */
+  extSync();
+  setStatus('ext-status','good',parsed.size+'쪽을 선택에 추가했어요.');
+});
+document.getElementById('ext-range-input').addEventListener('keydown',e=>{
+  if(e.key==='Enter')document.getElementById('ext-btn-range').click();
+});
+
+const extMarq=makeMarquee({grid:extgrid,getCells:()=>extCells,getSelected:()=>extSelected,sync:extSync,statusId:'ext-status'});
+
+document.getElementById('ext-fa-clear').addEventListener('click',()=>{
+  extSelected.clear();extSync();
+});
+
+async function performExtract(){
+  if(!extBytes||!extSelected.size)return;
+  const btn=document.getElementById('ext-btn-extract');
+  btn.disabled=true;
+  const pages=[...extSelected].sort((a,b)=>a-b); /* 원본 순서대로 */
+  setStatus('ext-status','busy',pages.length+'쪽을 추출해 PDF를 만드는 중이에요…');
+  setProg('ext-prog',10);
+  try{
+    const src=await PDFDocument.load(extBytes,{ignoreEncryption:true});
+    const out=await PDFDocument.create();
+    const copied=await out.copyPages(src,pages.map(n=>n-1)); /* 0-based */
+    copied.forEach(p=>out.addPage(p));
+    setProg('ext-prog',80);
+    const bytes=await out.save();
+    setProg('ext-prog',100);
+    const base=extName.replace(/\.pdf$/i,'');
+    downloadBytes(bytes,base+'-추출('+pages.length+'쪽).pdf');
+    setStatus('ext-status','good','완료! 선택한 '+pages.length+'쪽을 모아 저장했어요.');
+  }catch(err){
+    setStatus('ext-status','bad','PDF 저장 중 오류가 발생했어요.');
+  }finally{
+    btn.disabled=extSelected.size===0;
+    setTimeout(()=>setProg('ext-prog',null),800);
+  }
+}
+document.getElementById('ext-btn-extract').addEventListener('click',performExtract);
+document.getElementById('ext-fa-extract').addEventListener('click',performExtract);
+
+/* 추출 탭 우클릭 메뉴 */
+const extctx=document.getElementById('ext-ctxmenu');
+function hideExtCtx(){extctx.classList.remove('show');}
+extgrid.addEventListener('contextmenu',e=>{
+  e.preventDefault();
+  if(!extCells.length)return;
+  const cellEl=e.target.closest&&e.target.closest('.pcell');
+  if(cellEl&&!extSelected.has(Number(cellEl.dataset.page))){
+    extSelected.add(Number(cellEl.dataset.page));
+    extSync();
+  }
+  extctx.querySelector('[data-act="ext"]').disabled=extSelected.size===0;
+  extctx.classList.add('show');
+  const mw=extctx.offsetWidth||180, mh=extctx.offsetHeight||130;
+  extctx.style.left=Math.min(e.clientX,window.innerWidth-mw-8)+'px';
+  extctx.style.top=Math.min(e.clientY,window.innerHeight-mh-8)+'px';
+});
+extctx.addEventListener('click',e=>{
+  const act=e.target.dataset&&e.target.dataset.act;
+  if(act==='ext')performExtract();
+  if(act==='clear'){extSelected.clear();extSync();}
+  if(act==='all'){extSelected=new Set(extCells.map(it=>it.orig));extSync();}
+  if(act&&act!=='ext')hideExtCtx();
+});
+document.addEventListener('click',e=>{if(!extctx.contains(e.target))hideExtCtx();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')hideExtCtx();});
+window.addEventListener('scroll',hideExtCtx,{passive:true});
 
 /* ============================================================
    복사 방지 (myway.kr 공통 정책)
