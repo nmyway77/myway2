@@ -67,8 +67,16 @@
     .edit-btn:hover{background:#fff;}
     .edit-icon{width:14px;height:14px;fill:var(--ink-soft);pointer-events:none;}
 
-    /* 카드 미디어 */
+    /* 카드 미디어 + 하단 컨트롤(좌우 이동 · 디렉토리 이동) */
     .card-media{position:relative;display:block;}
+    .card-ctrl{display:flex;align-items:center;gap:4px;padding:5px 6px;background:var(--panel-2);border-top:1px solid var(--line);}
+    .card-ctrl .mv{flex:0 0 auto;width:25px;height:24px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.6rem;line-height:1;transition:.14s;padding:0;}
+    .card-ctrl .mv:hover:not(:disabled){background:var(--accent);color:#fff;border-color:var(--accent);transform:translateY(-1px);}
+    .card-ctrl .mv:disabled{opacity:.3;cursor:default;}
+    .card-ctrl .dir-sel{flex:1 1 auto;min-width:0;width:100%;font-family:var(--sans);font-size:.66rem;font-weight:700;letter-spacing:.02em;color:var(--ink);background-color:var(--panel);border:1px solid var(--line);border-radius:7px;padding:4px 17px 4px 7px;cursor:pointer;-webkit-appearance:none;appearance:none;outline:none;transition:.14s;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='%236b6353'><path d='M7 10l5 5 5-5z'/></svg>");background-repeat:no-repeat;background-position:right 4px center;}
+    .card-ctrl .dir-sel:hover{border-color:var(--accent);}
+    .card-ctrl .dir-sel:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft);}
+    body.viewer-mode .card-ctrl{display:none !important;}
 
     .side-foot{display:none;}
     .side-foot a{color:var(--accent);text-decoration:none;font-weight:600;}
@@ -104,41 +112,6 @@
     .btn-del{background:none;color:var(--accent);border:1px solid var(--accent)!important;flex:0 0 auto!important;padding:11px 16px!important;}
     .btn-del:hover{background:var(--accent-soft);}
 
-    /* 모달 섹션 구분 + 디렉토리 선택/추가/순서 */
-    .modal-section{font-family:var(--serif);font-weight:700;font-size:.95rem;color:var(--accent);margin:14px 0 9px;padding-bottom:5px;border-bottom:1px solid var(--line);}
-    .modal-section:first-of-type{margin-top:2px;}
-    .dir-pick-row{display:flex;gap:8px;align-items:stretch;}
-    .dir-pick-row .modal-select{flex:1 1 auto;width:auto;margin:0;}
-    .dir-new-btn{flex:0 0 auto;padding:0 13px;border-radius:10px;border:1px dashed var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:.82rem;font-family:var(--sans);cursor:pointer;white-space:nowrap;transition:.14s;}
-    .dir-new-btn:hover{background:var(--accent);color:#fff;border-style:solid;}
-    .dir-new-row{display:flex;gap:8px;margin-top:8px;}
-    .dir-new-row input{flex:1 1 auto;min-width:0;padding:10px 13px;border-radius:10px;border:1px solid var(--accent);font-size:.92rem;background:#fff;color:var(--ink);font-family:var(--sans);outline:none;}
-    .dir-new-row input:focus{box-shadow:0 0 0 2px var(--accent-soft);}
-    .dir-new-row button{flex:0 0 auto;padding:0 16px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-weight:600;font-family:var(--sans);cursor:pointer;transition:.14s;}
-    .dir-new-row button:hover{background:#bb3f2c;}
-    .order-row{display:flex;align-items:center;gap:8px;margin-top:10px;}
-    .order-label{flex:0 0 auto;font-size:.8rem;font-weight:600;color:var(--ink-soft);}
-    .order-btn{padding:7px 12px;border-radius:9px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);font-size:.8rem;font-weight:600;font-family:var(--sans);cursor:pointer;transition:.14s;}
-    .order-btn:hover:not(:disabled){background:var(--accent);color:#fff;border-color:var(--accent);}
-    .order-btn:disabled{opacity:.4;cursor:default;}
-
-    /* ===== 디렉토리 관리 모달 ===== */
-    .dir-list{display:flex;flex-direction:column;gap:7px;max-height:46vh;overflow-y:auto;margin-bottom:12px;}
-    .dir-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--paper);}
-    .dir-row.current{border-color:var(--accent);background:var(--accent-soft);}
-    .dir-name{flex:1 1 auto;min-width:0;font-weight:700;font-size:.9rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .dir-count{flex:0 0 auto;font-size:.72rem;font-weight:600;color:var(--ink-soft);}
-    .dir-row-btns{flex:0 0 auto;display:flex;gap:4px;}
-    .dir-row-btns button{width:28px;height:28px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);cursor:pointer;font-size:.78rem;font-weight:600;display:flex;align-items:center;justify-content:center;padding:0;transition:.14s;}
-    .dir-row-btns button:hover:not(:disabled){background:var(--accent);color:#fff;border-color:var(--accent);}
-    .dir-row-btns button:disabled{opacity:.3;cursor:default;}
-    .dir-row-btns button.del:hover:not(:disabled){background:#b23a26;border-color:#b23a26;}
-    .dir-add{display:flex;gap:8px;}
-    .dir-add input{flex:1 1 auto;min-width:0;padding:10px 13px;border-radius:10px;border:1px solid var(--line);font-size:.92rem;background:var(--paper);color:var(--ink);font-family:var(--sans);outline:none;transition:.15s;}
-    .dir-add input:focus{border-color:var(--accent);background:#fff;}
-    .dir-add button{flex:0 0 auto;padding:10px 16px;border-radius:10px;border:none;cursor:pointer;font-size:.9rem;font-weight:600;color:#fff;background:var(--accent);transition:.15s;}
-    .dir-add button:hover{background:#bb3f2c;}
-
     /* ===== 반응형 ===== */
     @media (max-width:900px){
       .side-bar{padding:6px 12px 0;gap:8px;}
@@ -171,7 +144,6 @@
       </select>
       <div class="nav-btns">
         <button class="primary" onclick="openAddModal()">+ 추가</button>
-        <button onclick="openDirModal()">디렉토리</button>
         <button id="codeToolBtn" onclick="showCode()">코드</button>
         <button onclick="importData()">가져오기</button>
         <button onclick="exportData()">내보내기</button>
@@ -200,29 +172,14 @@
 <div id="addModal" class="modal-bg">
   <div class="modal-inner">
     <h2 class="modal-title" id="modalTitle">영상 추가</h2>
-
-    <div class="modal-section">① 디렉토리 선택</div>
-    <div class="dir-pick-row">
-      <select id="addGroup" class="modal-select">
-        <option value="CCTV">CCTV</option>
-        <option value="NEWS">NEWS</option>
-        <option value="DRAMA">DRAMA</option>
-        <option value="MOVIE">MOVIE</option>
-        <option value="OTHERS">OTHERS</option>
-      </select>
-      <button type="button" class="dir-new-btn" id="newDirToggle">＋ 새 디렉토리</button>
-    </div>
-    <div class="dir-new-row" id="newDirRow" style="display:none;">
-      <input id="newDirInput" type="text" placeholder="새 디렉토리 이름 (예: SPORTS)" maxlength="20" autocomplete="off">
-      <button type="button" id="newDirConfirm">만들기</button>
-    </div>
-    <div class="order-row" id="orderRow" style="display:none;">
-      <span class="order-label">이 영상 순서</span>
-      <button type="button" class="order-btn" id="orderPrev" onclick="moveEditOrder(-1)">◀ 앞으로</button>
-      <button type="button" class="order-btn" id="orderNext" onclick="moveEditOrder(1)">뒤로 ▶</button>
-    </div>
-
-    <div class="modal-section">② 영상 정보</div>
+    <label>저장할 디렉토리</label>
+    <select id="addGroup" class="modal-select">
+      <option value="CCTV">CCTV</option>
+      <option value="NEWS">NEWS</option>
+      <option value="DRAMA">DRAMA</option>
+      <option value="MOVIE">MOVIE</option>
+      <option value="OTHERS">OTHERS</option>
+    </select>
     <label>유튜브 / 영상 주소</label>
     <input id="addUrl" type="text" placeholder="https://youtu.be/..." autocomplete="off" oninput="updatePreview()">
     <label>제목 (사진 아래 표시 · 비워도 됨)</label>
@@ -256,24 +213,6 @@
   </div>
 </div>
 
-<!-- 디렉토리 관리 모달 -->
-<div id="dirModal" class="modal-bg">
-  <div class="modal-inner">
-    <h2 class="modal-title">디렉토리 관리</h2>
-    <p style="font-size:.8rem;color:var(--ink-soft);line-height:1.5;margin:0 0 12px;">
-      디렉토리(세트)를 직접 만들고 이름·순서를 바꿀 수 있어요. 추가한 디렉토리를 위에서 고른 뒤 ‘+ 추가’로 영상을 넣으면 그 디렉토리에 담겨요.
-    </p>
-    <div id="dirList" class="dir-list"></div>
-    <div class="dir-add">
-      <input id="dirNewName" type="text" placeholder="새 디렉토리 이름 (예: SPORTS)" maxlength="20" autocomplete="off">
-      <button class="btn-save" id="dirAddBtn">＋ 추가</button>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeDirModal()">닫기</button>
-    </div>
-  </div>
-</div>
-
 <script>
   var DEFAULT_VIDEOS = [
     { url:'https://www.youtube.com/watch?v=DSgn-lTHJzM',                 name:'서울역',       color:'#c64f86' },
@@ -289,81 +228,71 @@
   /* 편집판(배포용) HTML로 내보낼 때 true가 됩니다 — 코드/전체삭제 버튼을 숨김 */
   var DIST_MODE = false;
 
-  var DEFAULT_GROUP_KEYS = ['CCTV','NEWS','DRAMA','MOVIE','OTHERS'];
-  var groupKeys = DEFAULT_GROUP_KEYS.slice();
-  var STORE_KEY = 'mywayVideoGroupsV3';
-  var V2_KEY = 'mywayVideoGroupsV2';
-  var LEGACY_KEY = 'mywayVideoGroupsV1';
+  var GROUP_KEYS = ['CCTV','NEWS','DRAMA','MOVIE','OTHERS'];
+  var STORE_KEY = 'mywayVideoGroupsV2';
   var OLD_KEY = 'mywayVideoImgV1';
+  var LEGACY_KEY = 'mywayVideoGroupsV1';
 
   function normalizeArr(arr){
     return (arr||[]).map(function(v){
       return { url:v.url||'', img:v.img||v.icon||v.thumb||'', name:v.name||v.title||'', color:v.color||'#5b6470' };
     });
   }
-  function coerceGroups(input){
-    if (!input || typeof input !== 'object') return null;
-    var order, data;
-    if (Array.isArray(input.order) && input.data && typeof input.data === 'object'){
-      order = input.order; data = input.data;
+  function defaultGroups(){
+    var g = {};
+    GROUP_KEYS.forEach(function(k){ g[k] = []; });
+    if (DEFAULT_GROUPS && typeof DEFAULT_GROUPS === 'object'){
+      GROUP_KEYS.forEach(function(k){
+        if (Array.isArray(DEFAULT_GROUPS[k])) g[k] = normalizeArr(DEFAULT_GROUPS[k]);
+      });
     } else {
-      order = Object.keys(input); data = input;
+      g['CCTV'] = normalizeArr(DEFAULT_VIDEOS);
     }
-    var outOrder = [], outData = {};
-    order.forEach(function(k){
-      if (typeof k === 'string' && k && outOrder.indexOf(k) < 0){
-        outOrder.push(k); outData[k] = normalizeArr(data[k]);
-      }
-    });
-    return outOrder.length ? {order:outOrder, data:outData} : null;
-  }
-  function defaultGroupsBundle(){
-    var dg = coerceGroups(DEFAULT_GROUPS);
-    if (dg) return dg;
-    var data = {};
-    DEFAULT_GROUP_KEYS.forEach(function(k){ data[k] = []; });
-    data['CCTV'] = normalizeArr(DEFAULT_VIDEOS);
-    return {order:DEFAULT_GROUP_KEYS.slice(), data:data};
+    return g;
   }
 
-  var bundle;
+  var groupsData;
   if (VIEWER_MODE && EMBEDDED_GROUPS && typeof EMBEDDED_GROUPS === 'object'){
-    bundle = coerceGroups(EMBEDDED_GROUPS) || defaultGroupsBundle();
+    groupsData = {};
+    GROUP_KEYS.forEach(function(k){ groupsData[k] = normalizeArr(EMBEDDED_GROUPS[k]); });
   } else {
   try {
     var rawNew = localStorage.getItem(STORE_KEY);
     if (rawNew){
-      bundle = coerceGroups(JSON.parse(rawNew)) || defaultGroupsBundle();
+      var parsed = JSON.parse(rawNew) || {};
+      groupsData = {};
+      GROUP_KEYS.forEach(function(k){ groupsData[k] = normalizeArr(parsed[k]); });
     } else {
-      bundle = defaultGroupsBundle();
-      var migratedAny = false;
-      var rawV2 = localStorage.getItem(V2_KEY);
-      if (rawV2){
-        var b2 = coerceGroups(JSON.parse(rawV2));
-        if (b2){ bundle = b2; migratedAny = true; }
-      } else {
-        // 더 옛 버전(방송사 분류 / 단일 목록) → OTHERS로 모음
-        var migrated = [];
-        var rawLegacy = localStorage.getItem(LEGACY_KEY);
-        if (rawLegacy){ try{ var lg = JSON.parse(rawLegacy)||{}; Object.keys(lg).forEach(function(k){ if(Array.isArray(lg[k])) migrated = migrated.concat(normalizeArr(lg[k])); }); }catch(e){} }
-        var rawOld = localStorage.getItem(OLD_KEY);
-        if (rawOld){ try{ var oa = JSON.parse(rawOld); if(Array.isArray(oa)) migrated = migrated.concat(normalizeArr(oa)); }catch(e){} }
-        if (migrated.length){
-          if (bundle.order.indexOf('OTHERS') < 0){ bundle.order.push('OTHERS'); bundle.data['OTHERS'] = []; }
-          bundle.data['OTHERS'] = bundle.data['OTHERS'].concat(migrated);
-          migratedAny = true;
-        }
+      // 신규 저장키 없음 → 구버전(방송사 분류) 데이터를 OTHERS로 모아 이전
+      groupsData = defaultGroups();
+      var migrated = [];
+      var rawLegacy = localStorage.getItem(LEGACY_KEY);
+      if (rawLegacy){
+        try{
+          var lg = JSON.parse(rawLegacy) || {};
+          Object.keys(lg).forEach(function(k){
+            if (Array.isArray(lg[k])) migrated = migrated.concat(normalizeArr(lg[k]));
+          });
+        }catch(e){}
       }
-      if (migratedAny){ try{ localStorage.setItem(STORE_KEY, JSON.stringify({order:bundle.order, data:bundle.data})); }catch(e){} }
+      var rawOld = localStorage.getItem(OLD_KEY);
+      if (rawOld){
+        try{
+          var oldArr = JSON.parse(rawOld);
+          if (Array.isArray(oldArr) && oldArr.length) migrated = migrated.concat(normalizeArr(oldArr));
+        }catch(e){}
+      }
+      if (migrated.length){
+        groupsData['OTHERS'] = (groupsData['OTHERS']||[]).concat(migrated);
+        try { localStorage.setItem(STORE_KEY, JSON.stringify(groupsData)); } catch(e){}
+      }
     }
   } catch(e){
-    bundle = defaultGroupsBundle();
+    groupsData = defaultGroups();
   }
   }
-  groupKeys = bundle.order.slice();
-  var groupsData = bundle.data;
 
-  var currentGroup = (groupKeys.indexOf('CCTV') >= 0) ? 'CCTV' : (groupKeys[0] || 'CCTV');
+  var currentGroup = 'CCTV';
   var videos = groupsData[currentGroup];
   var selectedIdx = videos.length>0 ? 0 : null;
   var editIdx = null;
@@ -467,6 +396,37 @@
       media.onclick = function(){ if(suppressClick) return; selectedIdx = i; renderList(); renderMain(); scrollActive(); };
       card.appendChild(media);
 
+      // 하단 컨트롤: 좌 이동 · 디렉토리 이동 · 우 이동
+      var ctrl = document.createElement('div');
+      ctrl.className = 'card-ctrl';
+
+      var left = document.createElement('button');
+      left.className = 'mv'; left.title = '왼쪽으로'; left.textContent = '\u25C0';
+      left.disabled = (i===0);
+      left.onclick = function(e){ e.stopPropagation(); moveCard(i,-1); };
+
+      var sel = document.createElement('select');
+      sel.className = 'dir-sel'; sel.title = '디렉토리 이동';
+      GROUP_KEYS.forEach(function(k){
+        var op = document.createElement('option');
+        op.value = k; op.textContent = k;
+        if (k===currentGroup) op.selected = true;
+        sel.appendChild(op);
+      });
+      sel.onmousedown = function(e){ e.stopPropagation(); };
+      sel.onclick = function(e){ e.stopPropagation(); };
+      sel.onchange = function(e){ e.stopPropagation(); moveCardToGroup(i, this.value); };
+
+      var right = document.createElement('button');
+      right.className = 'mv'; right.title = '오른쪽으로'; right.textContent = '\u25B6';
+      right.disabled = (i===videos.length-1);
+      right.onclick = function(e){ e.stopPropagation(); moveCard(i,1); };
+
+      ctrl.appendChild(left);
+      ctrl.appendChild(sel);
+      ctrl.appendChild(right);
+      card.appendChild(ctrl);
+
       list.appendChild(card);
     });
   }
@@ -484,126 +444,23 @@
     else if (from > selectedIdx && to <= selectedIdx) selectedIdx++;
     persist(); renderList(); renderMain();
   }
-  function moveEditOrder(dir){
-    if (editIdx===null) return;
-    var addSel = document.getElementById('addGroup');
-    if (addSel && addSel.value !== currentGroup) return; // 다른 디렉토리로 옮기는 중엔 순서변경 비활성
-    var to = editIdx + dir;
+  function moveCard(i, dir){
+    var to = i + dir;
     if (to < 0 || to >= videos.length) return;
-    reorder(editIdx, to);   // persist + renderList + renderMain
-    editIdx = to;
-    updateOrderBtns();
+    reorder(i, to);
+    scrollActive();
   }
-  function updateOrderBtns(){
-    var prev = document.getElementById('orderPrev'), next = document.getElementById('orderNext');
-    if (!prev || !next) return;
-    var addSel = document.getElementById('addGroup');
-    var same = addSel ? (addSel.value === currentGroup) : true;
-    prev.disabled = !same || editIdx===null || editIdx===0;
-    next.disabled = !same || editIdx===null || editIdx===videos.length-1;
-  }
-  function toggleOrderRow(){
-    var row = document.getElementById('orderRow');
-    if (!row) return;
-    if (editIdx===null){ row.style.display = 'none'; return; }
-    row.style.display = 'flex';
-    updateOrderBtns();
-  }
-
-  // ===== 디렉토리(세트) 관리 =====
-  function fillSelect(sel, selectedVal){
-    if (!sel) return;
-    sel.innerHTML = '';
-    groupKeys.forEach(function(k){
-      var op = document.createElement('option');
-      op.value = k; op.textContent = k;
-      if (k===selectedVal) op.selected = true;
-      sel.appendChild(op);
-    });
-  }
-  function rebuildGroupSelects(){
-    fillSelect(document.getElementById('groupSelect'), currentGroup);
-    fillSelect(document.getElementById('addGroup'), currentGroup);
-  }
-  function addGroupDir(name){
-    name = (name||'').trim();
-    if (!name){ return false; }
-    if (groupKeys.indexOf(name) >= 0){ alert('이미 있는 디렉토리예요.'); return false; }
-    groupKeys.push(name);
-    groupsData[name] = [];
-    persist(); rebuildGroupSelects(); renderDirManager();
-    return true;
-  }
-  function renameGroupDir(oldName, newName){
-    newName = (newName||'').trim();
-    if (!newName || newName===oldName) return;
-    if (groupKeys.indexOf(newName) >= 0){ alert('이미 있는 이름이에요.'); return; }
-    var idx = groupKeys.indexOf(oldName); if (idx < 0) return;
-    groupKeys[idx] = newName;
-    groupsData[newName] = groupsData[oldName] || [];
-    delete groupsData[oldName];
-    if (currentGroup===oldName){ currentGroup = newName; videos = groupsData[currentGroup]; }
-    persist(); rebuildGroupSelects(); renderDirManager(); renderList(); renderMain();
-  }
-  function deleteGroupDir(name){
-    if (groupKeys.length <= 1){ alert('디렉토리는 최소 1개가 필요해요.'); return; }
-    var cnt = (groupsData[name]||[]).length;
-    if (!confirm('\u2018'+name+'\u2019 디렉토리를 삭제할까요?' + (cnt ? '\n안의 영상 '+cnt+'개도 함께 삭제돼요.' : ''))) return;
-    var idx = groupKeys.indexOf(name); if (idx < 0) return;
-    groupKeys.splice(idx,1);
-    delete groupsData[name];
-    if (currentGroup===name){
-      currentGroup = groupKeys[Math.min(idx, groupKeys.length-1)];
-      videos = groupsData[currentGroup];
-      selectedIdx = videos.length>0 ? 0 : null;
+  function moveCardToGroup(i, target){
+    if (!target || target === currentGroup) return;
+    if (!groupsData[target]) groupsData[target] = [];
+    var item = videos.splice(i,1)[0];
+    groupsData[target].push(item);
+    if (videos.length===0) selectedIdx = null;
+    else if (selectedIdx!=null){
+      if (i < selectedIdx) selectedIdx--;
+      if (selectedIdx >= videos.length) selectedIdx = videos.length-1;
     }
-    persist(); rebuildGroupSelects(); renderDirManager(); renderList(); renderMain();
-  }
-  function moveGroupDir(name, dir){
-    var idx = groupKeys.indexOf(name); var to = idx + dir;
-    if (idx < 0 || to < 0 || to >= groupKeys.length) return;
-    var t = groupKeys[idx]; groupKeys[idx] = groupKeys[to]; groupKeys[to] = t;
-    persist(); rebuildGroupSelects(); renderDirManager();
-  }
-  function renderDirManager(){
-    var box = document.getElementById('dirList'); if (!box) return;
-    box.innerHTML = '';
-    groupKeys.forEach(function(k,i){
-      var row = document.createElement('div');
-      row.className = 'dir-row' + (k===currentGroup ? ' current' : '');
-      var nm = document.createElement('span'); nm.className = 'dir-name'; nm.textContent = k;
-      var cnt = document.createElement('span'); cnt.className = 'dir-count'; cnt.textContent = (groupsData[k]||[]).length + '개';
-      var btns = document.createElement('div'); btns.className = 'dir-row-btns';
-      function mk(label, title, disabled, fn, cls){
-        var b = document.createElement('button'); b.textContent = label; b.title = title;
-        if (disabled) b.disabled = true;
-        if (cls) b.className = cls;
-        b.onclick = fn;
-        return b;
-      }
-      btns.appendChild(mk('\u2191','위로', i===0, function(){ moveGroupDir(k,-1); }));
-      btns.appendChild(mk('\u2193','아래로', i===groupKeys.length-1, function(){ moveGroupDir(k,1); }));
-      btns.appendChild(mk('\u270E','이름변경', false, function(){ var nn = prompt('새 디렉토리 이름', k); if (nn!=null) renameGroupDir(k, nn); }));
-      btns.appendChild(mk('\u2715','삭제', false, function(){ deleteGroupDir(k); }, 'del'));
-      row.appendChild(nm); row.appendChild(cnt); row.appendChild(btns);
-      box.appendChild(row);
-    });
-  }
-  function openDirModal(){ renderDirManager(); document.getElementById('dirModal').style.display = 'flex';
-    setTimeout(function(){ var inp=document.getElementById('dirNewName'); if(inp) inp.focus(); }, 120); }
-  function closeDirModal(){ document.getElementById('dirModal').style.display = 'none'; }
-  // 영상 추가 모달 안에서 새 디렉토리 만들기
-  function createDirFromModal(){
-    var inp = document.getElementById('newDirInput');
-    var name = (inp.value||'').trim();
-    if (!name){ inp.focus(); return; }
-    if (addGroupDir(name)){
-      fillSelect(document.getElementById('addGroup'), name);  // 새 디렉토리 바로 선택
-      resetNewDirRow();
-      updateOrderBtns();
-    } else {
-      inp.focus(); inp.select();
-    }
+    persist(); renderList(); renderMain();
   }
   function scrollActive(){
     var act = document.querySelector('.video-card.active');
@@ -669,12 +526,6 @@
     else { pv.style.backgroundImage = 'none'; pv.textContent='미리보기'; }
   }
 
-  function resetNewDirRow(){
-    var row = document.getElementById('newDirRow');
-    var inp = document.getElementById('newDirInput');
-    if (row) row.style.display = 'none';
-    if (inp) inp.value = '';
-  }
   function openAddModal(){
     editIdx = null;
     document.getElementById('modalTitle').textContent = '영상 추가';
@@ -683,8 +534,6 @@
     document.getElementById('addUrl').value = '';
     document.getElementById('addName').value = '';
     document.getElementById('addImg').value = '';
-    resetNewDirRow();
-    toggleOrderRow();
     updatePreview();
     document.getElementById('addModal').style.display = 'flex';
     setTimeout(function(){ document.getElementById('addUrl').focus(); }, 150);
@@ -697,8 +546,6 @@
     document.getElementById('addUrl').value = videos[idx].url || '';
     document.getElementById('addName').value = videos[idx].name || '';
     document.getElementById('addImg').value = videos[idx].img || '';
-    resetNewDirRow();
-    toggleOrderRow();
     updatePreview();
     document.getElementById('addModal').style.display = 'flex';
     setTimeout(function(){ document.getElementById('addUrl').focus(); }, 150);
@@ -706,7 +553,7 @@
   function closeAddModal(){ document.getElementById('addModal').style.display = 'none'; editIdx = null; }
   function persist(){
     groupsData[currentGroup] = videos;
-    try { localStorage.setItem(STORE_KEY, JSON.stringify({order:groupKeys, data:groupsData})); } catch(e){}
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(groupsData)); } catch(e){}
   }
 
   function saveVideo(){
@@ -768,24 +615,23 @@
   }
 
   function escStr(s){ return "'" + String(s==null?'':s).replace(/\\/g,'\\\\').replace(/'/g,"\\'") + "'"; }
-  function buildGroupsCode(bundle){
-    var order = bundle.order, data = bundle.data;
-    var blocks = order.map(function(k){
+  function buildGroupsCode(data){
+    var blocks = GROUP_KEYS.map(function(k){
       var arr = data[k] || [];
-      if (!arr.length) return '      ' + escStr(k) + ': []';
+      if (!arr.length) return '    ' + escStr(k) + ': []';
       var lines = arr.map(function(v){
         var parts = ['url:'+escStr(v.url), 'name:'+escStr(v.name)];
         if (v.img) parts.push('img:'+escStr(v.img));
         parts.push('color:'+escStr(v.color||'#5b6470'));
-        return '        { ' + parts.join(', ') + ' }';
+        return '      { ' + parts.join(', ') + ' }';
       });
-      return '      ' + escStr(k) + ': [\n' + lines.join(',\n') + '\n      ]';
+      return '    ' + escStr(k) + ': [\n' + lines.join(',\n') + '\n    ]';
     });
-    return '  var DEFAULT_GROUPS = {\n    order: [' + order.map(escStr).join(', ') + '],\n    data: {\n' + blocks.join(',\n') + '\n    }\n  };';
+    return '  var DEFAULT_GROUPS = {\n' + blocks.join(',\n') + '\n  };';
   }
   function showCode(){
     groupsData[currentGroup] = videos;
-    document.getElementById('codeArea').value = buildGroupsCode({order:groupKeys, data:groupsData});
+    document.getElementById('codeArea').value = buildGroupsCode(groupsData);
     document.getElementById('codeModal').style.display = 'flex';
   }
   function closeCodeModal(){ document.getElementById('codeModal').style.display = 'none'; }
@@ -811,15 +657,14 @@
   }
   function clearAll(){
     if (!confirm('모든 디렉토리의 영상 목록을 초기화할까요?\n(이 브라우저에서 추가·수정한 내용이 사라지고 파일 기본값으로 돌아갑니다)')) return;
-    try { localStorage.removeItem(STORE_KEY); localStorage.removeItem(V2_KEY); localStorage.removeItem(LEGACY_KEY); localStorage.removeItem(OLD_KEY); } catch(e){}
-    var db = defaultGroupsBundle();
-    groupKeys = db.order.slice();
-    groupsData = db.data;
-    currentGroup = (groupKeys.indexOf('CCTV') >= 0) ? 'CCTV' : groupKeys[0];
-    rebuildGroupSelects();
+    try { localStorage.removeItem(STORE_KEY); localStorage.removeItem(LEGACY_KEY); localStorage.removeItem(OLD_KEY); } catch(e){}
+    groupsData = defaultGroups();
+    currentGroup = 'CCTV';
+    var sel = document.getElementById('groupSelect');
+    if (sel) sel.value = 'CCTV';
     videos = groupsData[currentGroup];
     selectedIdx = videos.length>0 ? 0 : null;
-    closeAddModal(); closeCodeModal(); closeDirModal();
+    closeAddModal(); closeCodeModal();
     renderList(); renderMain();
     var list = document.getElementById('videoList');
     if (list) list.scrollLeft = 0;
@@ -834,7 +679,7 @@
   function exportHtml(){
     try {
       groupsData[currentGroup] = videos;            // 현재 그룹 반영
-      var json = JSON.stringify({order:groupKeys, data:groupsData});
+      var json = JSON.stringify(groupsData);
       json = json.replace(/<\/script>/gi, '<\\/script>');
       var src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
       src = src.replace('var VIEWER_MODE = false;', 'var VIEWER_MODE = true;');
@@ -851,7 +696,7 @@
   function exportEditableHtml(){
     try {
       groupsData[currentGroup] = videos;            // 현재 그룹 반영
-      var json = JSON.stringify({order:groupKeys, data:groupsData});
+      var json = JSON.stringify(groupsData);
       json = json.replace(/<\/script>/gi, '<\\/script>');
       var src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
       // 현재 내용을 기본값(DEFAULT_GROUPS)으로 박음 · 편집 도구는 그대로 유지(VIEWER_MODE 손대지 않음)
@@ -907,43 +752,13 @@
       e.preventDefault();
     }
   });
-  document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeAddModal(); closeCodeModal(); closeDirModal(); } });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeAddModal(); closeCodeModal(); } });
 
   var groupSel = document.getElementById('groupSelect');
   if (groupSel) groupSel.addEventListener('change', onGroupChange);
 
-  var dirAddBtn = document.getElementById('dirAddBtn');
-  if (dirAddBtn) dirAddBtn.onclick = function(){
-    var inp = document.getElementById('dirNewName');
-    if (addGroupDir(inp.value)) inp.value = '';
-    inp.focus();
-  };
-  var dirNewInput = document.getElementById('dirNewName');
-  if (dirNewInput) dirNewInput.addEventListener('keydown', function(e){
-    if (e.key==='Enter'){ e.preventDefault(); if (addGroupDir(this.value)) this.value = ''; }
-  });
-
-  // 영상 추가 모달: 새 디렉토리 만들기 + 디렉토리 변경 시 순서버튼 토글
-  var newDirToggle = document.getElementById('newDirToggle');
-  if (newDirToggle) newDirToggle.onclick = function(){
-    var row = document.getElementById('newDirRow');
-    if (!row) return;
-    var show = (row.style.display === 'none' || !row.style.display);
-    row.style.display = show ? 'flex' : 'none';
-    if (show) setTimeout(function(){ document.getElementById('newDirInput').focus(); }, 50);
-  };
-  var newDirConfirm = document.getElementById('newDirConfirm');
-  if (newDirConfirm) newDirConfirm.onclick = createDirFromModal;
-  var newDirInput = document.getElementById('newDirInput');
-  if (newDirInput) newDirInput.addEventListener('keydown', function(e){
-    if (e.key==='Enter'){ e.preventDefault(); createDirFromModal(); }
-  });
-  var addGroupSel = document.getElementById('addGroup');
-  if (addGroupSel) addGroupSel.addEventListener('change', updateOrderBtns);
-
   if (VIEWER_MODE) document.body.classList.add('viewer-mode');
   if (DIST_MODE) document.body.classList.add('dist-mode');
-  rebuildGroupSelects();
   renderList();
   renderMain();
   enableDragScroll();
