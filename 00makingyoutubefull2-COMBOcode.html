@@ -273,6 +273,7 @@
       <button class="btn-save" id="dirAddBtn">＋ 추가</button>
     </div>
     <div class="modal-actions">
+      <button class="btn-cancel" onclick="dedupeAll()">중복 정리</button>
       <button class="btn-cancel" onclick="closeDirModal()">닫기</button>
     </div>
   </div>
@@ -305,6 +306,16 @@
       return { url:v.url||'', img:v.img||v.icon||v.thumb||'', name:v.name||v.title||'', color:v.color||'#5b6470' };
     });
   }
+  var _dupRemoved = 0;
+  function dedupeArr(arr){
+    var seen = {}, out = [];
+    (arr||[]).forEach(function(v){
+      var key = (v.url||'') + '\u0001' + (v.name||'') + '\u0001' + (v.img||'');
+      if (!seen[key]){ seen[key] = 1; out.push(v); }
+      else { _dupRemoved++; }
+    });
+    return out;
+  }
   function coerceGroups(input){
     if (!input || typeof input !== 'object') return null;
     var order, data;
@@ -316,7 +327,7 @@
     var outOrder = [], outData = {};
     order.forEach(function(k){
       if (typeof k === 'string' && k && outOrder.indexOf(k) < 0){
-        outOrder.push(k); outData[k] = normalizeArr(data[k]);
+        outOrder.push(k); outData[k] = dedupeArr(normalizeArr(data[k]));
       }
     });
     return outOrder.length ? {order:outOrder, data:outData} : null;
@@ -596,6 +607,14 @@
   function openDirModal(){ renderDirManager(); document.getElementById('dirModal').style.display = 'flex';
     setTimeout(function(){ var inp=document.getElementById('dirNewName'); if(inp) inp.focus(); }, 120); }
   function closeDirModal(){ document.getElementById('dirModal').style.display = 'none'; }
+  function dedupeAll(){
+    _dupRemoved = 0;
+    groupKeys.forEach(function(k){ groupsData[k] = dedupeArr(groupsData[k] || []); });
+    videos = groupsData[currentGroup];
+    if (selectedIdx!=null && selectedIdx >= videos.length) selectedIdx = videos.length>0 ? videos.length-1 : null;
+    persist(); rebuildGroupSelects(); renderDirManager(); renderList(); renderMain();
+    toast(_dupRemoved>0 ? ('중복 ' + _dupRemoved + '개를 정리했어요.') : '중복이 없어요.');
+  }
   // 영상 추가 모달 안에서 새 디렉토리 만들기
   function createDirFromModal(){
     var inp = document.getElementById('newDirInput');
@@ -887,7 +906,7 @@
         try{
           var json = JSON.parse(evt.target.result);
           if (Array.isArray(json) && json.length && json[0].url){
-            videos = json.map(function(v){ return {url:v.url||'',img:v.img||v.icon||v.thumb||'',name:v.name||v.title||'',color:v.color||'#5b6470'}; });
+            videos = dedupeArr(json.map(function(v){ return {url:v.url||'',img:v.img||v.icon||v.thumb||'',name:v.name||v.title||'',color:v.color||'#5b6470'}; }));
             selectedIdx = videos.length>0 ? 0 : null;
             persist(); renderList(); renderMain();
           } else { alert('올바른 데이터가 아닙니다.'); }
@@ -957,6 +976,12 @@
   renderList();
   renderMain();
   enableDragScroll();
+
+  // 이전 버전에서 누적된 중복 항목이 있으면 한 번 정리해 저장하고 알림
+  if (!VIEWER_MODE && _dupRemoved > 0){
+    persist();
+    setTimeout(function(){ toast('중복 ' + _dupRemoved + '개를 정리했어요.'); }, 350);
+  }
 </script>
 </body>
 </html>
