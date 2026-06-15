@@ -122,6 +122,10 @@
     .order-btn:hover:not(:disabled){background:var(--accent);color:#fff;border-color:var(--accent);}
     .order-btn:disabled{opacity:.4;cursor:default;}
 
+    /* 안내 토스트 */
+    .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:11px;font-size:.85rem;font-weight:600;font-family:var(--sans);box-shadow:0 6px 22px rgba(0,0,0,.28);z-index:300;opacity:0;transition:opacity .25s;pointer-events:none;max-width:80vw;text-align:center;}
+    .toast.show{opacity:.96;}
+
     /* ===== 디렉토리 관리 모달 ===== */
     .dir-list{display:flex;flex-direction:column;gap:7px;max-height:46vh;overflow-y:auto;margin-bottom:12px;}
     .dir-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--paper);}
@@ -704,6 +708,14 @@
     setTimeout(function(){ document.getElementById('addUrl').focus(); }, 150);
   }
   function closeAddModal(){ document.getElementById('addModal').style.display = 'none'; editIdx = null; }
+  function toast(msg){
+    var t = document.getElementById('toast');
+    if (!t){ t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function(){ t.classList.remove('show'); }, 1800);
+  }
   function persist(){
     groupsData[currentGroup] = videos;
     try { localStorage.setItem(STORE_KEY, JSON.stringify({order:groupKeys, data:groupsData})); } catch(e){}
@@ -717,9 +729,10 @@
     if (!url){ alert('영상 주소를 입력하세요.'); return; }
     if (!groupsData[targetGroup]) groupsData[targetGroup] = [];
 
+    var isAdd = (editIdx===null);
     var movedToOther = false;
 
-    if (editIdx===null){
+    if (isAdd){
       // 추가
       var item = { url:url, img:img, name:name, color:'#5b6470' };
       if (targetGroup === currentGroup){
@@ -734,29 +747,26 @@
       var cur = videos[editIdx];
       cur.url = url; cur.name = name; cur.img = img;
       if (targetGroup !== currentGroup){
-        // 다른 방송사로 이동
+        // 다른 디렉토리로 이동 — 작업 화면은 현재 디렉토리에 그대로 유지
         videos.splice(editIdx,1);
         groupsData[targetGroup].push(cur);
         if (videos.length===0) selectedIdx = null;
-        else if (selectedIdx >= videos.length) selectedIdx = videos.length-1;
+        else if (selectedIdx!=null){
+          if (editIdx < selectedIdx) selectedIdx--;
+          if (selectedIdx >= videos.length) selectedIdx = videos.length-1;
+        }
         movedToOther = true;
       }
     }
 
     persist();
     closeAddModal();
-
-    if (movedToOther){
-      // 저장한 방송사 그룹으로 화면 전환
-      currentGroup = targetGroup;
-      videos = groupsData[currentGroup];
-      selectedIdx = videos.length>0 ? videos.length-1 : null;
-      var topSel = document.getElementById('groupSelect');
-      if (topSel) topSel.value = currentGroup;
-      persist();
-    }
-
     renderList(); renderMain();
+
+    // 화면 전환 없이 현재 디렉토리 유지 · 다른 디렉토리로 갔을 때만 안내
+    if (movedToOther){
+      toast('\u2018'+targetGroup+'\u2019 디렉토리'+(isAdd ? '에 추가했어요.' : '(으)로 옮겼어요.'));
+    }
   }
   function deleteVideo(){
     if (editIdx===null) return;
