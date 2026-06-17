@@ -47,7 +47,6 @@
 
     /* ===== 사진 카드 (사이드 가로폭 꽉 채움) ===== */
     .video-card{position:relative;flex:0 0 150px;width:150px;overflow:hidden;border-radius:11px;cursor:pointer;background:#e9e2d3;border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s,border-color .2s;}
-    .video-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hi);}
     .video-card.active{box-shadow:0 0 0 2px var(--accent),var(--shadow-hi);border-color:var(--accent);}
     .video-card.dragging{opacity:.45;}
     .video-card.drag-over{border-color:var(--accent);box-shadow:0 -3px 0 -1px var(--accent),var(--shadow);}
@@ -63,9 +62,17 @@
     body.dist-mode #codeToolBtn{display:none !important;}
     body.dist-mode .nav-btns .danger{display:none !important;}
     body.dist-mode #codeModal{display:none !important;}
-    .video-card:hover .edit-btn{opacity:1;}
-    .edit-btn:hover{background:#fff;}
     .edit-icon{width:14px;height:14px;fill:var(--ink-soft);pointer-events:none;}
+    /* 마우스(hover 가능) 기기에서만 hover 효과 — 터치 기기 더블탭 방지 */
+    @media (hover: hover) and (pointer: fine){
+      .video-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hi);}
+      .video-card:hover .edit-btn{opacity:1;}
+      .edit-btn:hover{background:#fff;}
+    }
+    /* 터치 기기: 수정 버튼을 항상 보이게 (hover로만 노출되면 첫 탭이 hover로 소비됨) */
+    @media (hover: none), (pointer: coarse){
+      .edit-btn{opacity:.92;}
+    }
 
     /* 카드 미디어 */
     .card-media{position:relative;display:block;}
