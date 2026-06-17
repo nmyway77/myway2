@@ -296,7 +296,7 @@
 
   var DEFAULT_GROUP_KEYS = ['CCTV','NEWS','DRAMA','MOVIE','OTHERS'];
   var groupKeys = DEFAULT_GROUP_KEYS.slice();
-  var STORE_KEY = 'mywayVideoGroupsV3';
+  var STORE_KEY = DIST_MODE ? 'mywayVideoGroupsV3_dist' : 'mywayVideoGroupsV3';
   var V2_KEY = 'mywayVideoGroupsV2';
   var LEGACY_KEY = 'mywayVideoGroupsV1';
   var OLD_KEY = 'mywayVideoImgV1';
@@ -341,9 +341,25 @@
     return {order:DEFAULT_GROUP_KEYS.slice(), data:data};
   }
 
+  var DIST_SIG = '';
+  try { DIST_SIG = JSON.stringify(defaultGroupsBundle()); } catch(e){}
+
   var bundle;
   if (VIEWER_MODE && EMBEDDED_GROUPS && typeof EMBEDDED_GROUPS === 'object'){
     bundle = coerceGroups(EMBEDDED_GROUPS) || defaultGroupsBundle();
+  } else if (DIST_MODE){
+    // 편집판: 파일에 박힌 DEFAULT_GROUPS가 기준.
+    // 같은 박제본을 다시 열어 직접 편집한 경우(시그니처 일치)에만 저장된 편집본을 사용.
+    bundle = defaultGroupsBundle();
+    try {
+      var rawDist = localStorage.getItem(STORE_KEY);
+      if (rawDist){
+        var pd = JSON.parse(rawDist);
+        if (pd && pd.sig === DIST_SIG && pd.bundle){
+          bundle = coerceGroups(pd.bundle) || bundle;
+        }
+      }
+    } catch(e){}
   } else {
   try {
     var rawNew = localStorage.getItem(STORE_KEY);
@@ -737,7 +753,13 @@
   }
   function persist(){
     groupsData[currentGroup] = videos;
-    try { localStorage.setItem(STORE_KEY, JSON.stringify({order:groupKeys, data:groupsData})); } catch(e){}
+    try {
+      if (DIST_MODE){
+        localStorage.setItem(STORE_KEY, JSON.stringify({sig: DIST_SIG, bundle:{order:groupKeys, data:groupsData}}));
+      } else {
+        localStorage.setItem(STORE_KEY, JSON.stringify({order:groupKeys, data:groupsData}));
+      }
+    } catch(e){}
   }
 
   function saveVideo(){
