@@ -884,7 +884,9 @@
   }
 
   function exportData(){
-    var blob = new Blob([JSON.stringify(videos,null,2)], {type:'application/json'});
+    groupsData[currentGroup] = videos;                 // 현재 그룹 반영
+    var payload = { order: groupKeys, data: groupsData };  // 전체 디렉토리 내보내기
+    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a'); a.href = url; a.download = 'myway_videos.json'; a.click();
     URL.revokeObjectURL(url);
@@ -934,10 +936,27 @@
       reader.onload = function(evt){
         try{
           var json = JSON.parse(evt.target.result);
-          if (Array.isArray(json) && json.length && json[0].url){
-            videos = dedupeArr(json.map(function(v){ return {url:v.url||'',img:v.img||v.icon||v.thumb||'',name:v.name||v.title||'',color:v.color||'#5b6470'}; }));
-            selectedIdx = videos.length>0 ? 0 : null;
-            persist(); renderList(); renderMain();
+          if (Array.isArray(json)){
+            // 구버전 형식: 단일 목록(배열) → 현재 디렉토리에 적용
+            if (json.length && json[0] && json[0].url){
+              videos = dedupeArr(normalizeArr(json));
+              groupsData[currentGroup] = videos;
+              selectedIdx = videos.length>0 ? 0 : null;
+              persist(); renderList(); renderMain();
+            } else { alert('올바른 데이터가 아닙니다.'); }
+          } else if (json && typeof json === 'object'){
+            // 전체 번들 형식: 모든 디렉토리 복원
+            var b = coerceGroups(json);
+            if (b){
+              groupKeys = b.order.slice();
+              groupsData = b.data;
+              currentGroup = (groupKeys.indexOf(currentGroup) >= 0) ? currentGroup
+                            : (groupKeys.indexOf('CCTV') >= 0 ? 'CCTV' : groupKeys[0]);
+              videos = groupsData[currentGroup];
+              selectedIdx = videos.length>0 ? 0 : null;
+              rebuildGroupSelects();
+              persist(); renderList(); renderMain();
+            } else { alert('올바른 데이터가 아닙니다.'); }
           } else { alert('올바른 데이터가 아닙니다.'); }
         } catch(err){ alert('가져오기 실패: JSON 파싱 에러'); }
       };
