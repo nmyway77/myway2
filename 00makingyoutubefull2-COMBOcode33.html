@@ -1883,6 +1883,43 @@
     persist(); renderList(); renderMain(); applyGroupMode();
     alert('가져왔어요. 디렉토리 ' + added.length + '개 추가' + (added.length ? ('\n· ' + added.join(', ')) : ''));
   }
+  // 내보낸 파일을 그대로 복원: 현재 디렉토리 전체를 번들 내용으로 교체(삭제했던 디렉토리는 되살아나지 않음)
+  function replaceBundle(json){
+    var b = coerceGroups(json);
+    if (!b){ alert('올바른 데이터가 아닙니다.'); return; }
+    var embeds = json._embeds || {};
+    // 기존 디렉토리 전부 비우기 (참조 유지 위해 내용만 비움)
+    groupKeys.length = 0;
+    Object.keys(groupsData).forEach(function(k){ delete groupsData[k]; });
+    Object.keys(groupModes).forEach(function(k){ delete groupModes[k]; });
+    Object.keys(groupNsids).forEach(function(k){ delete groupNsids[k]; });
+    Object.keys(groupBuilders).forEach(function(k){ delete groupBuilders[k]; });
+    b.order.forEach(function(k){
+      groupKeys.push(k);
+      groupsData[k] = Array.isArray(b.data[k]) ? b.data[k] : [];
+      var mode = (b.modes && b.modes[k] === 'builder') ? 'builder' : 'video';
+      groupModes[k] = mode;
+      var newNs = genNs();
+      groupNsids[k] = newNs;
+      groupBuilders[k] = Array.isArray(b.builders && b.builders[k]) ? b.builders[k] : [];
+      if (mode === 'builder'){
+        var oldNs = (b.nsids && b.nsids[k]) ? b.nsids[k] : null;
+        var payload = null;
+        if (oldNs && embeds['mywayBuilderNested__ns_' + oldNs] != null) payload = embeds['mywayBuilderNested__ns_' + oldNs];
+        else if (json.builders && oldNs && json.builders[oldNs] != null) payload = json.builders[oldNs];
+        if (payload != null){
+          try { localStorage.setItem('mywayBuilderNested__ns_' + newNs, (typeof payload === 'string') ? payload : JSON.stringify(payload)); } catch(e){}
+        }
+      }
+    });
+    currentGroup = groupKeys[0] || '';
+    videos = groupsData[currentGroup] || [];
+    selectedIdx = videos.length ? 0 : null;
+    rebuildGroupSelects();
+    var gs = document.getElementById('groupSelect'); if (gs) gs.value = currentGroup;
+    persist(); renderList(); renderMain(); applyGroupMode();
+    alert('복원했어요. 디렉토리 ' + groupKeys.length + '개\n· ' + groupKeys.join(', '));
+  }
   function importData(){
     var input = document.createElement('input');
     input.type='file'; input.accept='.json,.html,.htm,application/json,text/html';
@@ -1892,8 +1929,12 @@
       reader.onload = function(evt){
         var text = evt.target.result;
         var json = null; try{ json = JSON.parse(text); }catch(_){}
-        // 1) 코드3 번들(order/data) → 기존 유지하며 병합
-        if (json && typeof json === 'object' && !Array.isArray(json) && json.order && json.data){ mergeBundle(json); return; }
+        // 1) 코드3 번들(order/data) → 복원(교체) / 합치기(병합) 선택
+        if (json && typeof json === 'object' && !Array.isArray(json) && json.order && json.data){
+          var doReplace = confirm('내보낸 파일을 복원할까요?\n\n[확인] 현재 디렉토리 전체를 이 파일 내용으로 교체 (백업 복원)\n[취소] 기존 디렉토리에 이어붙이기 (합치기)');
+          if (doReplace) replaceBundle(json); else mergeBundle(json);
+          return;
+        }
         // 2) 스마트 분류: 빌더면 빌더 디렉토리, 영상이면 영상 디렉토리로 새로 추가
         var cls = (window.B_classifyImport) ? window.B_classifyImport(text) : null;
         if (cls){
@@ -2023,7 +2064,21 @@
     function normalizeCats(d) {
       d = d || {};
       const out = emptyCats();
-      CATS.forEach(c => { if (Array.isArray(d[c.code])) out[c.code] = d[c.code]; });
+      const std = {}; CATS.forEach(c => { std[c.code] = true; });
+      // 1) 표준 코드(site/video/photoA~H)는 그대로 채움
+      CATS.forEach(c => { if (Array.isArray(d[c.code])) out[c.code] = d[c.code].slice(); });
+      // 2) 비표준 카테고리(한글 카테고리명·외부 JSON 등)는 버리지 않고
+      //    비어 있는 photo 슬롯에 카테고리 단위로 흡수 → 가져오기 후 카드가 보이도록
+      const slots = ['photoA','photoB','photoC','photoD','photoE','photoF','photoG','photoH'];
+      Object.keys(d).forEach(function(k){
+        if (std[k]) return;
+        var arr = d[k];
+        if (!Array.isArray(arr) || !arr.length) return;
+        var slot = null;
+        for (var i = 0; i < slots.length; i++){ if (out[slots[i]].length === 0){ slot = slots[i]; break; } }
+        if (slot) out[slot] = arr.slice();
+        else out.photoH = out.photoH.concat(arr);
+      });
       return out;
     }
     function normalizeSet(s, i) {
