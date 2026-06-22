@@ -535,7 +535,7 @@
     const NEWS_SHOW_EDIT = true;
     const NEWS_COPY_PROTECT = false;
     const NEWS_STORE_KEY = "mywayNewsEditV1";
-    const NEWS_DIST_SIG = "sig1782122198834";
+    const NEWS_DIST_SIG = "sig1782123452604";
     /* @CONFIG_END */
 
     /* ============ 복제방지 ============ */
@@ -1063,29 +1063,38 @@
         var pb = parentBody(); if (pb){ pb.style.overflow = pb.getAttribute('data-prevof') || ''; pb.removeAttribute('data-prevof'); }
         try { window.dispatchEvent(new Event('resize')); } catch(_){}
       }
+      function fsElNow(){ return document.fullscreenElement || document.webkitFullscreenElement || null; }
       btn.addEventListener('click', function(){
-        var fe = null; try { fe = window.frameElement; } catch (_) {}
-        if (fe) {
-          /* 같은 도메인(myway.kr) iframe: 부모의 이 iframe 요소를 직접 전체화면으로 */
-          try { if (on) exitFull(fe); else goFull(fe); on = !on; } catch (_) {}
-        } else if (window.parent !== window) {
-          /* 다른 도메인 iframe: 브라우저 Fullscreen API (부모 iframe에 allowfullscreen 필요) */
+        if (on) {
+          /* 나가기 */
+          if (fsElNow()) { try { (document.exitFullscreen || document.webkitExitFullscreen || function(){}).call(document); } catch (_) {} }
+          else { var fe0 = null; try { fe0 = window.frameElement; } catch (_) {} if (fe0) { try { exitFull(fe0); } catch (_) {} } }
+          on = false; setIcon(); return;
+        }
+        /* 들어가기 — Fullscreen API 우선.
+           부모 iframe에 allowfullscreen 이 있으면 부모의 transform 컨테이너와 무관하게
+           진짜 전체화면이 됩니다. (frameElement 직접 확대는 transform 조상에 갇혀 실패) */
+        var el = document.documentElement;
+        var req = el.requestFullscreen || el.webkitRequestFullscreen;
+        if (req) {
           try {
-            var fsEl1 = document.fullscreenElement || document.webkitFullscreenElement;
-            if (!fsEl1) { var el1 = document.documentElement; (el1.requestFullscreen || el1.webkitRequestFullscreen || function(){}).call(el1); on = true; }
-            else { (document.exitFullscreen || document.webkitExitFullscreen || function(){}).call(document); on = false; }
-          } catch (_) {}
-        } else {
-          /* 단독 페이지: 브라우저 Fullscreen API */
-          try {
-            var fsEl2 = document.fullscreenElement || document.webkitFullscreenElement;
-            if (!fsEl2) { var el2 = document.documentElement; (el2.requestFullscreen || el2.webkitRequestFullscreen || function(){}).call(el2); on = true; }
-            else { (document.exitFullscreen || document.webkitExitFullscreen || function(){}).call(document); on = false; }
+            var p = req.call(el);
+            on = true; setIcon();
+            if (p && p.catch) p.catch(function(){
+              /* Fullscreen 실패(allowfullscreen 없음 등) → frameElement 직접 확대로 대체 */
+              on = false; var fe1 = null; try { fe1 = window.frameElement; } catch (_) {}
+              if (fe1) { try { goFull(fe1); on = true; setIcon(); } catch (_) {} }
+            });
+            return;
           } catch (_) {}
         }
-        setIcon();
+        /* requestFullscreen 미지원 → frameElement 직접 확대 */
+        var fe2 = null; try { fe2 = window.frameElement; } catch (_) {}
+        if (fe2) { try { goFull(fe2); on = true; setIcon(); } catch (_) {} }
       });
-      document.addEventListener('fullscreenchange', function(){ var fe = null; try { fe = window.frameElement; } catch (_) {} if (!fe && !document.fullscreenElement) { on = false; setIcon(); } });
+      function onFsChange(){ if (!fsElNow() && on) { on = false; setIcon(); } }
+      document.addEventListener('fullscreenchange', onFsChange);
+      document.addEventListener('webkitfullscreenchange', onFsChange);
     })();
   </script>
 
