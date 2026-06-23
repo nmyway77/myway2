@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
+<html lang="ko"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>LIVE TV · 실시간 방송 | MYWAY.KR</title>
@@ -117,13 +116,13 @@
 
 <nav class="topnav" id="topnav">
   <a class="nav-home" href="https://myway.kr" aria-label="MYWAY.KR 홈">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5 10v9h14v-9"></path></svg>
   </a>
   <div class="nav-track" id="navTrack"></div>
 </nav>
 
 <div class="viewer">
-  <div id="viewerBox"></div>
+  <div id="viewerBox" style=""></div>
   <div class="grid-panel" id="gridPanel"></div>
 </div>
 
@@ -196,20 +195,19 @@
 
 <script>
 /* @CONFIG */
-const IS_DIST = false;        // 편집판 파일이면 true
-const SHOW_EDIT = true;       // 편집 도구 표시 (배포용은 false)
-const COPY_PROTECT = true;    // 복사방지 (편집판은 false)
-const STORE_KEY = 'mywayLiveDirV1';
-const DIST_SIG = '';
+const IS_DIST = true;
+const SHOW_EDIT = true;
+const COPY_PROTECT = false;
+const STORE_KEY = "mywayLiveDirV1_dist";
+const DIST_SIG = "sig1782247996776";
 /* @CONFIG_END */
 
 /* === 상단 채널 버튼 (iframe에 바로 재생) — livesitesbar2 채널 === */
 /* @SITES_START */
-const DEFAULT_SITES=[
-  ['Famelack','https://famelack.com/'],
-   ['MLB','https://mlblive.net/'],
-   ['TVAPP','https://thetvapp.to/','newwin'],
-  
+const DEFAULT_SITES = [
+  ["Famelack","https://famelack.com/"],
+  ["MLB","https://mlblive.net/"],
+  ["TVAPP","https://thetvapp.to/","newwin"],
 ];
 /* @SITES_END */
 function coerceSites(p){
@@ -242,37 +240,37 @@ const DEFAULT_I = Math.max(0, SITES.findIndex(s=>s[0]==='Famelack'));
 /* === 전체목록 디렉터리 (카테고리별) — livetv 데이터 === */
 /* @DIR_START */
 const DEFAULT_DIRECTORY = [
-  { label:'실시간 스트리밍', items:[
-    ['쿠팡플레이','coupangplay.com','https://www.coupangplay.com/catalog'],
-    ['넷플릭스','netflix.com','https://www.netflix.com/kr/'],
-    ['디즈니+','disneyplus.com','https://www.disneyplus.com/ko-kr'],
-    ['치지직','CHZZK · chzzk.naver.com','https://chzzk.naver.com/'],
-  
+  { label:"실시간 스트리밍", items:[
+    ["CCTV EDITER","CCTV","https://myway.kr/CCTV-EDIT.html"],
+    ["갤러리 EDITER","","https://myway.kr/gallery-edit.html"],
+    ["VOD-EDITER","","https://myway.kr/00maindramainner2-edit.html"],
+    ["잡지-EDIITER","","https://myway.kr/news-edit1.html"],
   ]},
-  { label:'지상파·종합편성 LIVE', items:[
-    ['KBS1','onair.kbs.co.kr','https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList'],
-    ['KBS2','onair.kbs.co.kr','https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList'],
-    ['MBC','onair.imbc.com','https://onair.imbc.com/'],
-    ['SBS','sbs.co.kr/live','https://www.sbs.co.kr/live/S01?div=main_live'],
-   
+  { label:"지상파·종합편성 LIVE", items:[
+    ["USEFUL-EDIT","","https://myway.kr/USEFUL-EDIT.html"],
+    ["TV-EDITER","","https://myway.kr/livesitesbar2-edit.html"],
+    ["갤러리2-EDITER","","https://myway.kr/00makingyoutubefull2-COMBOcode777211.html"],
+    ["SBS","sbs.co.kr/live","https://www.sbs.co.kr/live/S01?div=main_live"],
+    ["구grid -top big","","https://myway.kr/000010top.html"],
+    ["grid-topmiddle","","https://myway.kr/00making10dtype.html"],
+    ["grid-big","","https://myway.kr/00makingbigpic.html"],
+    ["웹에디터","","https://myway.kr/htmledit.html"],
   ]},
-  { label:'뉴스 LIVE', items:[
-    ['YTN','ytn.co.kr','https://www.ytn.co.kr/_hd/hd_live.html'],
-    ['연합뉴스TV','yonhapnewstv.co.kr','https://www.yonhapnewstv.co.kr/live'],
-    ['KBS NEWS','news.kbs.co.kr','https://news.kbs.co.kr/news/pc/news24/news24.html?ref=pGnb'],
-   
+  { label:"뉴스 LIVE", items:[
+    ["YTN","ytn.co.kr","https://www.ytn.co.kr/_hd/hd_live.html"],
+    ["연합뉴스TV","yonhapnewstv.co.kr","https://www.yonhapnewstv.co.kr/live"],
+    ["KBS NEWS","news.kbs.co.kr","https://news.kbs.co.kr/news/pc/news24/news24.html?ref=pGnb"],
   ]},
-  { label:'경제·증권 LIVE', items:[
-    ['한국경제TV','wowtv.co.kr','https://www.wowtv.co.kr/LiveCenter/Live/Index?liveID=1'],
-    ['매일경제TV','MBN머니 · mbnmoney','https://mbnmoney.mbn.co.kr/tv/onair'],
-    ['서울경제TV','sentv.co.kr','https://www.sentv.co.kr/onair'],
-    ['이데일리TV','tv.edaily.co.kr','https://tv.edaily.co.kr/Live/HighVod'],
-    ['MTN','머니투데이방송 · mtn.co.kr','https://www.mtn.co.kr/'],
+  { label:"경제·증권 LIVE", items:[
+    ["한국경제TV","wowtv.co.kr","https://www.wowtv.co.kr/LiveCenter/Live/Index?liveID=1"],
+    ["매일경제TV","MBN머니 · mbnmoney","https://mbnmoney.mbn.co.kr/tv/onair"],
+    ["서울경제TV","sentv.co.kr","https://www.sentv.co.kr/onair"],
+    ["이데일리TV","tv.edaily.co.kr","https://tv.edaily.co.kr/Live/HighVod"],
+    ["MTN","머니투데이방송 · mtn.co.kr","https://www.mtn.co.kr/"],
   ]},
-  { label:'해외 LIVE TV', items:[
-    ['NHK World','일본 · nhk.or.jp','https://www3.nhk.or.jp/nhkworld/'],
-    ['ABC','미국 · abc.com','https://abc.com/'],
-  
+  { label:"해외 LIVE TV", items:[
+    ["NHK World","일본 · nhk.or.jp","https://www3.nhk.or.jp/nhkworld/"],
+    ["ABC","미국 · abc.com","https://abc.com/"],
   ]},
 ];
 /* @DIR_END */
@@ -744,5 +742,6 @@ nav.insertBefore(openBtn, track);
   };
 })();
 </script>
-</body>
-</html>
+
+
+</body></html>
