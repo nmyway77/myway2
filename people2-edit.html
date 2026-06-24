@@ -824,29 +824,33 @@
         const f=inp.files[0]; if(!f) return;
         const r=new FileReader();
         r.onload=()=>{
-          let arr=null, cats=null; const txt=String(r.result);
+          let arr=null, cats=null, foreignKind=null;
+          const txt=String(r.result).replace(/^\uFEFF/, '').trim();   // BOM 제거
+          // 1) JSON 우선
           try{
             const p=JSON.parse(txt);
-            if(p && typeof p==='object' && !Array.isArray(p)){
-              if(p.kind && p.kind!==DATA_KIND){ alert('다른 도구에서 만든 JSON이에요. (종류: '+p.kind+')\n이 파일에는 가져올 수 없어요.'); return; }
-              arr=coercePeople(p.people || p.items || p.data);
-              cats=coerceCats(p.cats);
-            } else { arr=coercePeople(p); }
+            if(Array.isArray(p)){
+              // 배열만 온 경우: code만 있으면 카테고리, 아니면 인물로 추정
+              if(p.length && p[0] && p[0].code && !p[0].name && !p[0].url && !p[0].img) cats=coerceCats(p);
+              else arr=coercePeople(p);
+            } else if(p && typeof p==='object'){
+              if(p.kind && p.kind!==DATA_KIND) foreignKind=p.kind;   // 거부 대신 표시만
+              arr  = coercePeople(p.people || p.items || p.data || p.list);
+              cats = coerceCats(p.cats || p.categories || p.nav);
+            }
           }catch(_){}
-          if(!arr){
-            const m=txt.match(/DEFAULT_PEOPLE\s*=\s*(\[[\s\S]*?\])\s*;\s*\/\* @DATA_END/);
-            if(m){ try{ arr=coercePeople(eval('('+m[1]+')')); }catch(_){} }
+          // 2) HTML 파일에서 추출 (마커 유무와 무관하게)
+          if(!arr){ const m=txt.match(/DEFAULT_PEOPLE\s*=\s*(\[[\s\S]*?\])\s*;/); if(m){ try{ arr=coercePeople(eval('('+m[1]+')')); }catch(_){} } }
+          if(!cats){ const mc=txt.match(/DEFAULT_CATS\s*=\s*(\[[\s\S]*?\])\s*;/); if(mc){ try{ cats=coerceCats(eval('('+mc[1]+')')); }catch(_){} } }
+          if(!arr && !cats){ alert('읽을 수 있는 인물/카테고리 데이터가 없어요.'); return; }
+          if(foreignKind){
+            if(!confirm('다른 도구에서 만든 JSON일 수 있어요. (종류: '+foreignKind+')\n그래도 가져올까요?')) return;
           }
-          if(!cats){
-            const mc=txt.match(/DEFAULT_CATS\s*=\s*(\[[\s\S]*?\])\s*;\s*\/\* @CATS_END/);
-            if(mc){ try{ cats=coerceCats(eval('('+mc[1]+')')); }catch(_){} }
-          }
-          if(!arr && !cats){ alert('읽을 수 있는 데이터가 없어요.'); return; }
           let msg=[];
           if(cats){ CATS=cats; saveCats(); curFilter='all'; msg.push('카테고리 '+CATS.length+'개'); }
           if(arr){ people=arr; savePeople(); msg.push('항목 '+people.length+'개'); }
           buildCatNav(); renderGallery();
-          alert('가져왔어요. '+msg.join(' · '));
+          alert('가져왔어요. '+(msg.join(' · ')||'(변경 없음)'));
         };
         r.readAsText(f);
       };
