@@ -461,7 +461,7 @@
 
   </style>
 </head>
-<body class="">
+<body>
   <!-- SEO: 한글 브랜드명 명시 (화면 비표시, 검색엔진 인식용) -->
   <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">마이웨이(MYWAY.KR) 주식·코인 차트 - 코인, 미국주식, 한국주식, 지수선물, 공포탐욕지수 한자리</h1>
 
@@ -518,7 +518,7 @@
   <!-- TODAY 카드 추가/수정 모달 -->
   <div class="modal-back" id="infoBack">
     <div class="modal">
-      <h3 id="infoTitle">카드 수정</h3>
+      <h3 id="infoTitle">카드 추가</h3>
       <label>이름(국문)</label>
       <input id="infName" type="text" placeholder="예: 뉴스">
       <label>영문 라벨</label>
@@ -562,7 +562,7 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayStockV1_dist";
-    const DIST_SIG = "sig1782286595563";
+    const DIST_SIG = "sig1782290935348";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-stock-v1';   // JSON 식별자 — 다른 도구 JSON과 섞임 방지
     let _distChecked = false;
@@ -1001,8 +1001,8 @@
         { name:"국채", en:"Bonds", url:"https://kr.tradingview.com/markets/bonds/", c:"#7c3aed", c2:"#a855f7", icon:"bond" },
         { name:"환율", en:"Exchange", url:"https://kr.tradingview.com/markets/currencies/", c:"#0d9488", c2:"#14b8a6", icon:"fx" },
         { name:"공시", en:"Disclosure", url:"https://dart.fss.or.kr/main.do", c:"#475569", c2:"#64748b", icon:"disclosure" },
-        { name:"CME 나스닥 미선물 실시간", en:"", url:"https://kr.tradingview.com/chart/HCbTtlL9/?symbol=CME_MINI%3AMNQ1%21", c:"#d31717", c2:"#7793b6", icon:"index" },
-        { name:"스페이스X-챠트", en:"", url:"https://kr.tradingview.com/chart/HCbTtlL9/?symbol=BCBA%3ASPCX", c:"#0cdfa0", c2:"#60a5fa", icon:"krstock" },
+        { name:"CME  미선물", en:"", url:"https://kr.tradingview.com/chart/HCbTtlL9/?symbol=CME_MINI%3AMNQ1%21", c:"#0ce425", c2:"#7793b6", icon:"index" },
+        { name:"스페이스X-", en:"", url:"https://kr.tradingview.com/chart/HCbTtlL9/?symbol=BCBA%3ASPCX", c:"#0cdfa0", c2:"#60a5fa", icon:"krstock" },
       ] },
       { title:"바로보기", desc:"LIVETV · 잡지 · 라디오 · BBS ·", cards: [
         { name:"LIVETV", en:"Live TV", url:"https://myway.kr/livesitesbar2.html", c:"#ef4444", c2:"#f87171", icon:"livetv" },
@@ -1011,7 +1011,7 @@
         { name:"BBS", en:"BBS", url:"https://myway.kr/bbssitesbar2.html", c:"#6366f1", c2:"#818cf8", icon:"bbs" },
         { name:"FREE VOD", en:"Free VOD", url:"https://myway.kr/00maindramainner2.html", c:"#ec4899", c2:"#f472b6", icon:"freevod" },
         { name:"CCTV", en:"CCTV", url:"https://myway.kr/00makingyoutubefull2.html", c:"#475569", c2:"#64748b", icon:"cctv" },
-        { name:"PEOPLE", en:"People", url:"https://myway.kr/people2.html", c:"#16a34a", c2:"#10b981", icon:"people" },
+        { name:"PEOPLE", en:"People", url:"https://myway.kr/indexmainpeople.html", c:"#16a34a", c2:"#10b981", icon:"people" },
         { name:"MOVIE", en:"Movie", url:"https://myway.kr/00mainmovieinner2.html", c:"#7c3aed", c2:"#a855f7", icon:"movie" },
       ] },
       { title:"생활정보", desc:"날씨 · 운세 · 달력 ·", cards: [
