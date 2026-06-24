@@ -1,5 +1,7 @@
+
 <!DOCTYPE html>
-<html lang="ko" style=""><head>
+<html lang="ko">
+<head>
   <meta charset="UTF-8">
   <title>내 즐겨찾기 - 사이트·영상·사진 | MYWAY.KR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -495,12 +497,12 @@
     .fav-mempty{font-size:.8rem;color:#9aa2c0;text-align:center;padding:8px;}
   </style>
 </head>
-<body class="fav-edit-show" style="">
+<body>
 
   <!-- 상단 sticky 헤더 -->
   <header class="topbar">
     <div class="topbar-row">
-      <nav class="cat-nav" id="catNav"><button class="cat-btn" data-cat="all">전체 <span class="count" id="cnt-all">1</span></button><button class="cat-btn is-active" data-cat="photoA">사진 A <span class="count" id="cnt-photoA">1</span></button><button class="cat-btn" data-cat="photoB">사진 B <span class="count" id="cnt-photoB">0</span></button><button class="cat-btn" data-cat="photoC">사진 C <span class="count" id="cnt-photoC">0</span></button><button class="cat-btn" data-cat="photoD">사진 D <span class="count" id="cnt-photoD">0</span></button><button class="cat-btn" data-cat="photoE">사진 E <span class="count" id="cnt-photoE">0</span></button><button class="cat-btn" data-cat="photoF">사진 F <span class="count" id="cnt-photoF">0</span></button><button class="cat-btn" data-cat="photoG">사진 G <span class="count" id="cnt-photoG">0</span></button><button class="cat-btn" data-cat="photoH">사진 H <span class="count" id="cnt-photoH">0</span></button></nav>
+      <nav class="cat-nav" id="catNav"></nav>
       <div class="topbar-tools">
         <button class="primary" id="addBtn" type="button" title="추가" aria-label="추가">+</button>
         <button id="importBtn" type="button" title="불러오기 (IN)" aria-label="불러오기"><span class="io-label">IN</span></button>
@@ -515,18 +517,18 @@
   <section class="gallery-section">
     <div class="gallery-head">
       <div class="head-left">
-        <h2 class="gallery-title">내 즐겨찾기 <span class="sub" id="filterSub">사진 A</span></h2>
+        <h2 class="gallery-title">내 즐겨찾기 <span class="sub" id="filterSub">전체</span></h2>
         <button class="help-btn" id="helpBtn" type="button">이용법</button>
       </div>
       <input type="file" id="importFile" accept="application/json,.json,.html,.htm,text/html" style="display:none">
     </div>
-    <div class="masonry" id="masonryGallery" data-filter="photoA"><a class="card" href="https://images.khan.co.kr/article/2025/05/22/news-p.v1.20250522.7f979f162c0a439c8c8b3bf60b9740e9_P1.jpg" target="_blank" rel="noopener" data-cats="photoA" aria-label="2" draggable="true"><span class="card-corner" role="button" aria-label="수정 또는 삭제"></span><img src="https://images.khan.co.kr/article/2025/05/22/news-p.v1.20250522.7f979f162c0a439c8c8b3bf60b9740e9_P1.jpg" alt="2" loading="lazy" decoding="async" referrerpolicy="no-referrer" draggable="false"><span class="multi-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 15l5-5 4 4 3-3 6 6"></path></svg>4</span><div class="split-hint"><span class="sh-left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.35-4.35"></path></svg>전체</span><span class="sh-right">페이지<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"></path><path d="M9 7h8v8"></path></svg></span></div><div class="cap">2</div></a><div class="card add-card" data-cats="site video photoA photoB photoC photoD photoE" role="button" aria-label="즐겨찾기 추가"><span class="plus">+</span></div></div>
+    <div class="masonry" id="masonryGallery" data-filter="all"></div>
   </section>
 
   <!-- MYWAY.KR 공통: 푸터 (홈 버튼 포함) -->
   <footer class="myway-footer">
     <a href="https://myway.kr/" class="foot-home" aria-label="MYWAY.KR 홈" title="MYWAY.KR 홈">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 2.5 11.4l1.3 1.5L5 11.85V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-8.15l1.2 1.05 1.3-1.5L12 3.2Z"></path></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 2.5 11.4l1.3 1.5L5 11.85V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-8.15l1.2 1.05 1.3-1.5L12 3.2Z"/></svg>
     </a>
     <span class="foot-meta">
       <a href="https://myway.kr/" class="foot-link">myway.kr</a>
@@ -538,37 +540,37 @@
   <!-- 추가/수정 모달 -->
   <div class="modal-overlay" id="addModal">
     <div class="modal">
-      <h3 class="modal-title" id="modalTitle">즐겨찾기 수정</h3>
+      <h3 class="modal-title" id="modalTitle">즐겨찾기 추가</h3>
       <label class="field">
         <span>분류</span>
-        <select id="inCat"><option value="photoA">사진 A</option><option value="photoB">사진 B</option><option value="photoC">사진 C</option><option value="photoD">사진 D</option><option value="photoE">사진 E</option><option value="photoF">사진 F</option><option value="photoG">사진 G</option><option value="photoH">사진 H</option></select>
+        <select id="inCat"></select>
       </label>
       <label class="field">
         <span>텍스트 (이름)</span>
         <input id="inName" type="text" placeholder="예) 네이버" autocomplete="off">
       </label>
       <label class="field">
-        <span id="lblUrl">연결 주소 (선택)</span>
-        <input id="inUrl" type="text" placeholder="비우면 클릭해도 이동 안 함" autocomplete="off">
+        <span id="lblUrl">사이트 주소</span>
+        <input id="inUrl" type="text" placeholder="예) https://www.naver.com" autocomplete="off">
       </label>
       <div class="field">
-        <span id="lblImg">사진 주소 (여러 장 가능)</span>
-        <textarea id="inImg" rows="1" placeholder="이미지 URL · 비우면 이름 카드로 표시" autocomplete="off" style="display: none;"></textarea>
-        <div id="photoRows" style="display: flex;"><div class="prow"><div class="prow-top"><span class="p-num">1</span><input type="text" class="p-img" placeholder="사진 주소"><button type="button" class="p-del" title="이 사진 삭제">×</button></div><input type="text" class="p-link" placeholder="눌렀을 때 이동할 주소 (선택)"></div><div class="prow"><div class="prow-top"><span class="p-num">2</span><input type="text" class="p-img" placeholder="사진 주소"><button type="button" class="p-del" title="이 사진 삭제">×</button></div><input type="text" class="p-link" placeholder="눌렀을 때 이동할 주소 (선택)"></div><div class="prow"><div class="prow-top"><span class="p-num">3</span><input type="text" class="p-img" placeholder="사진 주소"><button type="button" class="p-del" title="이 사진 삭제">×</button></div><input type="text" class="p-link" placeholder="눌렀을 때 이동할 주소 (선택)"></div><div class="prow"><div class="prow-top"><span class="p-num">4</span><input type="text" class="p-img" placeholder="사진 주소"><button type="button" class="p-del" title="이 사진 삭제">×</button></div><input type="text" class="p-link" placeholder="눌렀을 때 이동할 주소 (선택)"></div></div>
-        <button type="button" id="addRowBtn" class="add-row-btn" style="display: block;">+ 사진 추가</button>
-        <span class="img-hint" id="imgHint" style="display: block;">사진마다 <b>사진 주소</b>와, 그 사진을 눌렀을 때 이동할 <b>페이지 주소(선택)</b>를 적으세요. 맨 위 사진이 대표로 카드에 떠요.</span>
+        <span id="lblImg">사진 주소 (선택)</span>
+        <textarea id="inImg" rows="1" placeholder="이미지 URL · 비우면 이름 카드로 표시" autocomplete="off"></textarea>
+        <div id="photoRows" style="display:none;"></div>
+        <button type="button" id="addRowBtn" class="add-row-btn" style="display:none;">+ 사진 추가</button>
+        <span class="img-hint" id="imgHint" style="display:none;">사진마다 <b>사진 주소</b>와, 그 사진을 눌렀을 때 이동할 <b>페이지 주소(선택)</b>를 적으세요. 맨 위 사진이 대표로 카드에 떠요.</span>
       </div>
-      <div class="field" id="pasteField" style="display: block;">
+      <div class="field" id="pasteField" style="display:none;">
         <span>내용 붙여넣기 (선택)</span>
         <div id="pasteArea" class="paste-area" contenteditable="true" data-ph="다른 페이지에서 복사한 내용(사진·글)을 여기에 붙여넣으세요"></div>
         <span class="img-hint">붙여넣은 내용은 이 항목의 <b>전체 보기 화면</b>에 사진들과 함께 나와요.</span>
       </div>
       <div class="modal-actions">
-        <button type="button" class="btn-danger" id="delBtn" style="">삭제</button>
+        <button type="button" class="btn-danger" id="delBtn" style="display:none">삭제</button>
         <button type="button" class="btn-ghost" id="addCancel">취소</button>
-        <button type="button" class="btn-primary" id="addSubmit">저장</button>
+        <button type="button" class="btn-primary" id="addSubmit">등록</button>
       </div>
-      <div class="fav-mlist" id="favMList"><div class="fav-mrow"><img src="https://images.khan.co.kr/article/2025/05/22/news-p.v1.20250522.7f979f162c0a439c8c8b3bf60b9740e9_P1.jpg" alt="" referrerpolicy="no-referrer"><span class="nm">2</span><button class="e" title="수정">✎</button><button class="d" title="삭제">✕</button></div></div>
+      <div class="fav-mlist" id="favMList"></div>
     </div>
   </div>
 
@@ -596,7 +598,7 @@
     <div class="modal help-modal">
       <h3 class="modal-title">파일에 넣을 코드</h3>
       <p style="font-size:.8rem;color:#8a92b5;line-height:1.55;margin:0 0 10px;">아래 코드를 복사해 HTML 파일의 <b>const DEFAULTS = { … };</b> 부분을 교체하면 영구 적용됩니다. 또는 <b>편집용 HTML로 저장</b>(편집 가능·코드 버튼 없음) / <b>보기전용 HTML로 저장</b>(편집 불가)을 누르면 지금 내용이 담긴 완성 페이지를 받을 수 있어요.</p>
-      <textarea id="codeArea" readonly="" spellcheck="false" style="width:100%;height:300px;border:1.5px solid #e2e6f3;border-radius:10px;padding:11px;font-family:'Courier New',monospace;font-size:.76rem;color:#2a2a3a;background:#fafbff;outline:none;resize:vertical;white-space:pre;box-sizing:border-box;"></textarea>
+      <textarea id="codeArea" readonly spellcheck="false" style="width:100%;height:300px;border:1.5px solid #e2e6f3;border-radius:10px;padding:11px;font-family:'Courier New',monospace;font-size:.76rem;color:#2a2a3a;background:#fafbff;outline:none;resize:vertical;white-space:pre;box-sizing:border-box;"></textarea>
       <div class="modal-actions">
         <button type="button" class="btn-ghost" id="codeClose">닫기</button>
         <button type="button" class="btn-primary" id="exportEditBtn" style="background:#5b6bff;">편집용 HTML로 저장</button>
@@ -626,7 +628,7 @@
   </div>
 
   <!-- ＋연필 도구 FAB -->
-  <div class="fav-toolbar" id="favToolbar"><button type="button" class="fav-fab" title="도구"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path></svg></button><div class="fav-menu"><button type="button">＋ 추가</button><button type="button">📐 네비(탭) 편집</button><button type="button">📥 가져오기</button><button type="button">📤 내보내기</button><button type="button" class="code">&lt;/&gt; 코드</button><button type="button" class="danger">🗑 전체삭제</button></div></div>
+  <div class="fav-toolbar" id="favToolbar"></div>
 
   <!-- 네비(사진 카테고리) 편집 모달 -->
   <div class="modal-overlay" id="navModal">
@@ -643,7 +645,7 @@
 
   <!-- 사진 원본 라이트박스 (여러 장 세로 나열) -->
   <div class="lightbox" id="lightbox">
-    <button type="button" class="lb-close" id="lbClose" aria-label="닫기">×</button>
+    <button type="button" class="lb-close" id="lbClose" aria-label="닫기">&times;</button>
     <div class="lb-scroll" id="lbScroll"></div>
   </div>
 
@@ -658,7 +660,7 @@
     /* 보기 전용 HTML로 내보낼 때 아래 두 줄이 자동으로 바뀝니다 (편집기에서는 false/null) */
     var VIEWER_MODE = false;
     var EMBEDDED_DATA = null;
-    var SHOW_CODE = false;
+    var SHOW_CODE = true;
 
     const STORAGE_KEY = 'mywayFavoritesV5';
 
@@ -667,7 +669,16 @@
       { code: 'site',  label: '사이트' },
       { code: 'video', label: '영상' }
     ];
-    var PHOTO_CATS_DEFAULT = [{"code":"photoA","label":"사진 A"},{"code":"photoB","label":"사진 B"},{"code":"photoC","label":"사진 C"},{"code":"photoD","label":"사진 D"},{"code":"photoE","label":"사진 E"},{"code":"photoF","label":"사진 F"},{"code":"photoG","label":"사진 G"},{"code":"photoH","label":"사진 H"}];
+    var PHOTO_CATS_DEFAULT = [
+      { code: 'photoA', label: '사진 A' },
+      { code: 'photoB', label: '사진 B' },
+      { code: 'photoC', label: '사진 C' },
+      { code: 'photoD', label: '사진 D' },
+      { code: 'photoE', label: '사진 E' },
+      { code: 'photoF', label: '사진 F' },
+      { code: 'photoG', label: '사진 G' },
+      { code: 'photoH', label: '사진 H' }
+    ];
     const CATS_KEY = 'mywayFavCatsV1';
     function loadCats() {
       if (VIEWER_MODE) return PHOTO_CATS_DEFAULT.map(function (c) { return { code: c.code, label: c.label }; });
@@ -690,18 +701,14 @@
     function escHtml(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
     const DEFAULTS = {
-      site: [],
-      video: [],
-      photoA: [
-        { name: "2", url: "https://images.khan.co.kr/article/2025/05/22/news-p.v1.20250522.7f979f162c0a439c8c8b3bf60b9740e9_P1.jpg", img: "https://images.khan.co.kr/article/2025/05/22/news-p.v1.20250522.7f979f162c0a439c8c8b3bf60b9740e9_P1.jpg", imgs: ["https://images.khan.co.kr/article/2025/05/22/news-p.v1.20250522.7f979f162c0a439c8c8b3bf60b9740e9_P1.jpg|https://images.khan.co.kr/article/2025/05/22/news-p.v1.20250522.7f979f162c0a439c8c8b3bf60b9740e9_P1.jpg","https://images.khan.co.kr/article/2026/06/16/news-p.v1.20260616.f3a5a65a1afd486bb82154be16087b5c_P1.jpg","https://cf.asiaartistawards.com/news/21/2025/12/2025123108064213754_2.jpg","https://sports.hankooki.com/news/photo/202310/6842055_1048080_1231.jpg"] }
+      site: [
+       
       ],
-      photoB: [],
-      photoC: [],
-      photoD: [],
-      photoE: [],
-      photoF: [],
-      photoG: [],
-      photoH: []
+      video: [
+    ],
+      photoA: [
+     ],
+      photoB: [], photoC: [], photoD: [], photoE: [], photoF: [], photoG: [], photoH: []
     };
 
     function loadData() {
@@ -1687,6 +1694,5 @@
     document.addEventListener('click', function (e) { if (favToolOpen && !e.target.closest('.fav-toolbar')) closeFavTool(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeFavTool(); });
   </script>
-
-
-</body></html>
+</body>
+</html>
