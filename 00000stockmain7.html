@@ -518,7 +518,7 @@
   <!-- TODAY 카드 추가/수정 모달 -->
   <div class="modal-back" id="infoBack">
     <div class="modal">
-      <h3 id="infoTitle">카드 추가</h3>
+      <h3 id="infoTitle">카드 수정</h3>
       <label>이름(국문)</label>
       <input id="infName" type="text" placeholder="예: 뉴스">
       <label>영문 라벨</label>
@@ -562,7 +562,7 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayStockV1_dist";
-    const DIST_SIG = "sig1782304855293";
+    const DIST_SIG = "sig1782305221137";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-stock-v1';   // JSON 식별자 — 다른 도구 JSON과 섞임 방지
     let _distChecked = false;
@@ -1001,6 +1001,7 @@
         { name:"국채", en:"Bonds", url:"https://kr.tradingview.com/markets/bonds/", c:"#7c3aed", c2:"#a855f7", icon:"bond" },
         { name:"환율", en:"Exchange", url:"https://kr.tradingview.com/markets/currencies/", c:"#0d9488", c2:"#14b8a6", icon:"fx" },
         { name:"공시", en:"Disclosure", url:"https://dart.fss.or.kr/main.do", c:"#475569", c2:"#64748b", icon:"disclosure" },
+        { name:"미선물 실시간", en:"", url:"https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=NQ&title=Chart+-+Sep+2026+E-mini+Nasdaq-100&venue=0&monthYear=U6&year=2026&exchangeCode=XCME&interval=1", c:"#1fd91c", c2:"#60a5fa", icon:"index" },
       ] },
       { title:"바로보기", desc:"LIVETV · 잡지 · 라디오 · BBS ·", cards: [
         { name:"LIVETV", en:"Live TV", url:"https://myway.kr/livesitesbar2.html", c:"#ef4444", c2:"#f87171", icon:"livetv" },
