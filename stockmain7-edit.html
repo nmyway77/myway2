@@ -89,16 +89,49 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      justify-content: center;
+      justify-content: safe center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
     }
+    .topbar::-webkit-scrollbar { display: none; }
 
     /* 탭 네비 (다크 톤) */
+    .hcs-switch {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex: 0 0 auto;
+      padding-right: 11px;
+      border-right: 1.5px solid rgba(0,0,0,0.10);
+      position: sticky;
+      left: 0;
+      z-index: 5;
+      background: rgba(255,255,255,0.97);
+    }
+    .hcs-switch a {
+      font-weight: 800;
+      font-size: .9rem;
+      text-decoration: none;
+      color: var(--text-sub);
+      padding: 6px 11px;
+      border-radius: 999px;
+      letter-spacing: -0.2px;
+      transition: all .15s;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hcs-switch a:hover { color: var(--text-main); }
+    .hcs-switch a.active { color: #5b4bdb; background: rgba(108,92,231,0.13); }
     .tab-nav {
-      flex: 1 1 auto;
+      flex: 0 0 auto;
       min-width: 0;
       display: flex;
       gap: 8px;
       justify-content: safe center;  /* 데스크탑: 중앙정렬 / 모바일 좁은 화면: 자동 좌측 폴백 */
-      overflow-x: auto;
+      overflow-x: visible;
       scrollbar-width: none;
       -ms-overflow-style: none;
       padding: 2px 0;
@@ -1725,6 +1758,40 @@
   document.querySelectorAll('.info-card').forEach(function(a){
     a.addEventListener('click', function(e){ if(a.getAttribute('href')==='#') e.preventDefault(); });
   });
+})();
+</script>
+<script>
+/* 화면 네비(H·C&S): 부모(index)가 postMessage로 항목을 보내면 탭바 앞에 토글 생성.
+   네비 항목은 부모에서만 관리하므로 이 파일은 손댈 필요 없음. file://·배포 모두 동작. */
+(function(){
+  function buildSwitch(items, current){
+    var topbar = document.querySelector('.topbar');
+    var tabNav = document.getElementById('tabNav');
+    if(!topbar || !tabNav || !items || !items.length) return;
+    var old = document.getElementById('hcsSwitch');
+    if(old && old.parentNode) old.parentNode.removeChild(old);
+    var sw = document.createElement('div');
+    sw.className = 'hcs-switch'; sw.id = 'hcsSwitch';
+    items.forEach(function(s){
+      var a = document.createElement('a');
+      a.href = '#'; a.textContent = s.label;
+      if((current || '').indexOf(s.url) !== -1) a.className = 'active';
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        try { parent.postMessage({ type:'MYWAY_SCREEN_SWITCH', url: s.url }, '*'); } catch(_){}
+      });
+      sw.appendChild(a);
+    });
+    topbar.insertBefore(sw, tabNav);
+  }
+  window.addEventListener('message', function(e){
+    var d = e.data || {};
+    if(d.type === 'MYWAY_SCREEN_NAV'){ buildSwitch(d.items, d.current); }
+  });
+  function announce(){ try { if(parent !== window) parent.postMessage({ type:'MYWAY_SCREEN_READY' }, '*'); } catch(_){} }
+  if(document.readyState !== 'loading') announce();
+  else document.addEventListener('DOMContentLoaded', announce);
+  window.addEventListener('load', announce);
 })();
 </script>
 </body>
