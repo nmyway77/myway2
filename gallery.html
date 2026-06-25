@@ -132,6 +132,8 @@
     /* 보기 전용(뷰어) 모드: 편집 도구 일체 숨김 */
     body.viewer-mode .topbar-tools { display: none !important; }
     body.viewer-mode .modal-overlay { display: none !important; }
+    /* 사진 전체보기(라이트박스)가 열려 있는 동안 펜 FAB 숨김 → X 닫기 버튼과 겹침 방지 */
+    body.lightbox-open .fav-toolbar { display: none !important; }
     body.viewer-mode .card-corner { display: none !important; }
     body.viewer-mode .card.add-card { display: none !important; }
     body.viewer-mode .card { cursor: pointer; }
@@ -661,7 +663,7 @@
     var SHOW_CODE = false;
     /* 배포 버전 스탬프: 편집용 HTML로 저장할 때마다 자동으로 새 값이 박혀,
        기존에 빈 값이 저장된 기기(폰 등)도 새 배포본 내용으로 자동 갱신됩니다. */
-    var DEFAULTS_SIG = 'g1782342374264';
+    var DEFAULTS_SIG = 'g1782353844144';
 
     const STORAGE_KEY = 'mywayFavoritesV5';
 
@@ -1604,11 +1606,13 @@
       var lb = document.getElementById('lightbox');
       lb.scrollTop = 0;
       lb.classList.add('open');
+      document.body.classList.add('lightbox-open');
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
     }
     function closeLightbox(){
       document.getElementById('lightbox').classList.remove('open');
+      document.body.classList.remove('lightbox-open');
       document.getElementById('lbScroll').innerHTML = '';
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
