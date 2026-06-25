@@ -94,7 +94,13 @@
       align-items: center;
       gap: 12px;
       justify-content: center;
+      justify-content: safe center;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
     }
+    .topbar::-webkit-scrollbar { display: none; }
 
     /* 탭 네비 (다크 톤) */
     .hcs-switch {
@@ -104,6 +110,10 @@
       flex: 0 0 auto;
       padding-right: 11px;
       border-right: 1.5px solid rgba(0,0,0,0.10);
+      position: sticky;
+      left: 0;
+      z-index: 5;
+      background: rgba(255,255,255,0.97);
     }
     .hcs-switch a {
       font-weight: 800;
@@ -120,11 +130,11 @@
     .hcs-switch a:hover { color: var(--text-main); }
     .hcs-switch a.active { color: #5b4bdb; background: rgba(108,92,231,0.13); }
     .tab-nav {
-      flex: 0 1 auto;
+      flex: 0 0 auto;
       min-width: 0;
       display: flex;
       gap: 8px;
-      overflow-x: auto;
+      overflow-x: visible;
       scrollbar-width: none;
       -ms-overflow-style: none;
       padding: 2px 0;
