@@ -93,11 +93,34 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      justify-content: center;
     }
 
     /* 탭 네비 (다크 톤) */
+    .hcs-switch {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex: 0 0 auto;
+      padding-right: 11px;
+      border-right: 1.5px solid rgba(0,0,0,0.10);
+    }
+    .hcs-switch a {
+      font-weight: 800;
+      font-size: .9rem;
+      text-decoration: none;
+      color: var(--text-sub);
+      padding: 6px 11px;
+      border-radius: 999px;
+      letter-spacing: -0.2px;
+      transition: all .15s;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hcs-switch a:hover { color: var(--text-main); }
+    .hcs-switch a.active { color: #5b4bdb; background: rgba(108,92,231,0.13); }
     .tab-nav {
-      flex: 1 1 auto;
+      flex: 0 1 auto;
       min-width: 0;
       display: flex;
       gap: 8px;
@@ -1045,6 +1068,10 @@
   <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">마이웨이(MYWAY.KR) - 자주가는 사이트 모음 한국 종합 포털, 뉴스·VOD·라디오·게시판·주식 차트 한자리</h1>
 
   <header class="topbar">
+    <div class="hcs-switch" id="hcsSwitch">
+      <a href="#" data-screen="indexmain7.html" class="active">H</a>
+      <a href="#" data-screen="00000stockmain7.html">C&amp;S</a>
+    </div>
     <nav class="tab-nav" id="tabNav"></nav>
   </header>
 
@@ -2455,4 +2482,38 @@
 </script>
 
 
+<script>
+/* H·C&S 토글 → 부모(index) iframe 화면 전환. 단독 열람 시 직접 이동 */
+(function(){
+  var sw = document.getElementById('hcsSwitch');
+  if(!sw) return;
+  sw.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('a[data-screen]') : null;
+    if(!a) return;
+    e.preventDefault();
+    if(a.classList.contains('active')) return;
+    var url = a.getAttribute('data-screen');
+    var inIframe = false;
+    try { inIframe = (window.parent && window.parent !== window); } catch(_){ inIframe = false; }
+    if(inIframe){
+      try{
+        var f = parent.document.getElementById('main-frame');
+        if(f){
+          try { f.contentWindow.location.replace(url); } catch(__){ f.src = url; }
+          f.setAttribute('data-current-url', url);
+          try { parent.sessionStorage.setItem('mywayScreen', url); } catch(e3){}
+          try {
+            parent.document.querySelectorAll('#parent-links a').forEach(function(x){
+              var oc = x.getAttribute('onclick') || '';
+              x.classList.toggle('active', oc.indexOf(url) !== -1);
+            });
+          } catch(e4){}
+          return;
+        }
+      } catch(e5){}
+    }
+    location.href = url;
+  });
+})();
+</script>
 </body></html>

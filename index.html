@@ -730,8 +730,8 @@
 
     
 
-    <!-- 네비게이션 텍스트 -->
-    <div class="screen-links-wrap">
+    <!-- 네비게이션 텍스트 (통합본: H·C&S는 각 화면 탭바로 이동, 이 줄은 숨김) -->
+    <div class="screen-links-wrap" style="display:none">
       <div class="screen-links" id="parent-links">
         <a href="#" onclick="showScreenParent(event, 'indexmain7.html')">H</a>
        
@@ -2079,8 +2079,13 @@
       document.documentElement.style.setProperty('--header-height', actualHeight + 'px');
     }
 
-    // 초기 1회만 측정 + 화면 회전/크기 변경 시 측정
+    // 초기: 즉시 + 다음 프레임 + DOM 준비 + 완전 로드 (iframe eager 로드로 load가 늦어도 여백이 안 남도록)
+    adjustHeaderHeight();
+    requestAnimationFrame(adjustHeaderHeight);
+    setTimeout(adjustHeaderHeight, 0);
+    document.addEventListener('DOMContentLoaded', adjustHeaderHeight);
     window.addEventListener('load', adjustHeaderHeight);
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(adjustHeaderHeight); }
     let widthCache = window.innerWidth;
     window.addEventListener('resize', () => {
       // 너비 변경 시에만 재측정 (모바일 주소창 변화로 인한 height 변화는 무시)
@@ -2098,6 +2103,8 @@
       var saved;
       try { saved = sessionStorage.getItem('mywayScreen'); } catch(_) {}
       if(!saved) return;
+      /* 통합본 파일명만 복원 (구버전 값이 남아 있으면 무시) */
+      if(['indexmain7.html','00000stockmain7.html'].indexOf(saved) === -1) return;
       var frame = document.getElementById('main-frame');
       if(!frame) return;
       if(frame.getAttribute('data-current-url') !== saved){
