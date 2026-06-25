@@ -2128,6 +2128,46 @@
       try { f.contentWindow.location.reload(); }
       catch(_) { f.src = f.src; }
     });
+
+    /* ========== 화면 네비(H·C&S 등) ==========
+       네비를 추가/수정하려면 아래 SCREEN_NAV 배열만 고치면 됨.
+       자식(indexmain7/00000stockmain7)은 손댈 필요 없음.
+       부모↔자식이 메시지(postMessage)로 통신하므로 로컬(file://)에서도 동작한다. */
+    var SCREEN_NAV = [
+      { label: 'H',   url: 'indexmain7.html' },
+      { label: 'C&S', url: '00000stockmain7.html' }
+      // 네비 추가 예: { label: 'C&S2', url: '다른파일.html' },
+    ];
+    function currentScreenUrl(){
+      var f = document.getElementById('main-frame');
+      return f ? (f.getAttribute('data-current-url') || '') : '';
+    }
+    function sendScreenNav(){
+      var f = document.getElementById('main-frame');
+      if(!f || !f.contentWindow) return;
+      try {
+        f.contentWindow.postMessage({ type:'MYWAY_SCREEN_NAV', items: SCREEN_NAV, current: currentScreenUrl() }, '*');
+      } catch(_){}
+    }
+    function switchScreen(url){
+      var f = document.getElementById('main-frame');
+      if(!f) return;
+      if((f.getAttribute('data-current-url') || '') === url) return;
+      try { f.contentWindow.location.replace(url); } catch(_){ f.src = url; }
+      f.setAttribute('data-current-url', url);
+      try { sessionStorage.setItem('mywayScreen', url); } catch(e){}
+    }
+    window.addEventListener('message', function(e){
+      var d = e.data || {};
+      if(d.type === 'MYWAY_SCREEN_READY'){ sendScreenNav(); }
+      else if(d.type === 'MYWAY_SCREEN_SWITCH' && d.url){ switchScreen(d.url); }
+    });
+    (function(){
+      var f = document.getElementById('main-frame');
+      if(!f) return;
+      f.addEventListener('load', function(){ sendScreenNav(); setTimeout(sendScreenNav, 150); });
+      [200, 600, 1200, 2400].forEach(function(t){ setTimeout(sendScreenNav, t); });
+    })();
   </script>
 
   <!-- GoatCounter 방문자 카운터 (같은 IP 8시간 내 1회 집계) -->

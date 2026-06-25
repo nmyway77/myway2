@@ -499,10 +499,6 @@
   <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">마이웨이(MYWAY.KR) 주식·코인 차트 - 코인, 미국주식, 한국주식, 지수선물, 공포탐욕지수 한자리</h1>
 
   <header class="topbar">
-    <div class="hcs-switch" id="hcsSwitch">
-      <a href="#" data-screen="indexmain7.html">H</a>
-      <a href="#" data-screen="00000stockmain7.html" class="active">C&amp;S</a>
-    </div>
     <nav class="tab-nav" id="tabNav"></nav>
   </header>
 
@@ -1680,37 +1676,37 @@
 
 
 <script>
-/* H·C&S 토글 → 부모(index) iframe 화면 전환. 단독 열람 시 직접 이동 */
+/* 화면 네비(H·C&S): 부모(index)가 postMessage로 항목을 보내면 탭바 앞에 토글 생성.
+   네비 항목은 부모에서만 관리하므로 이 파일은 손댈 필요 없음. file://·배포 모두 동작. */
 (function(){
-  var sw = document.getElementById('hcsSwitch');
-  if(!sw) return;
-  sw.addEventListener('click', function(e){
-    var a = e.target.closest ? e.target.closest('a[data-screen]') : null;
-    if(!a) return;
-    e.preventDefault();
-    if(a.classList.contains('active')) return;
-    var url = a.getAttribute('data-screen');
-    var inIframe = false;
-    try { inIframe = (window.parent && window.parent !== window); } catch(_){ inIframe = false; }
-    if(inIframe){
-      try{
-        var f = parent.document.getElementById('main-frame');
-        if(f){
-          try { f.contentWindow.location.replace(url); } catch(__){ f.src = url; }
-          f.setAttribute('data-current-url', url);
-          try { parent.sessionStorage.setItem('mywayScreen', url); } catch(e3){}
-          try {
-            parent.document.querySelectorAll('#parent-links a').forEach(function(x){
-              var oc = x.getAttribute('onclick') || '';
-              x.classList.toggle('active', oc.indexOf(url) !== -1);
-            });
-          } catch(e4){}
-          return;
-        }
-      } catch(e5){}
-    }
-    location.href = url;
+  function buildSwitch(items, current){
+    var topbar = document.querySelector('.topbar');
+    var tabNav = document.getElementById('tabNav');
+    if(!topbar || !tabNav || !items || !items.length) return;
+    var old = document.getElementById('hcsSwitch');
+    if(old && old.parentNode) old.parentNode.removeChild(old);
+    var sw = document.createElement('div');
+    sw.className = 'hcs-switch'; sw.id = 'hcsSwitch';
+    items.forEach(function(s){
+      var a = document.createElement('a');
+      a.href = '#'; a.textContent = s.label;
+      if((current || '').indexOf(s.url) !== -1) a.className = 'active';
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        try { parent.postMessage({ type:'MYWAY_SCREEN_SWITCH', url: s.url }, '*'); } catch(_){}
+      });
+      sw.appendChild(a);
+    });
+    topbar.insertBefore(sw, tabNav);
+  }
+  window.addEventListener('message', function(e){
+    var d = e.data || {};
+    if(d.type === 'MYWAY_SCREEN_NAV'){ buildSwitch(d.items, d.current); }
   });
+  function announce(){ try { if(parent !== window) parent.postMessage({ type:'MYWAY_SCREEN_READY' }, '*'); } catch(_){} }
+  if(document.readyState !== 'loading') announce();
+  else document.addEventListener('DOMContentLoaded', announce);
+  window.addEventListener('load', announce);
 })();
 </script>
 </body></html>
