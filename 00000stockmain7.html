@@ -518,7 +518,7 @@
   <!-- TODAY 카드 추가/수정 모달 -->
   <div class="modal-back" id="infoBack">
     <div class="modal">
-      <h3 id="infoTitle">카드 추가</h3>
+      <h3 id="infoTitle">카드 수정</h3>
       <label>이름(국문)</label>
       <input id="infName" type="text" placeholder="예: 뉴스">
       <label>영문 라벨</label>
@@ -562,7 +562,7 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayStockV1_dist";
-    const DIST_SIG = "sig1782356633377";
+    const DIST_SIG = "sig1782384678241";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-stock-v1';   // JSON 식별자 — 다른 도구 JSON과 섞임 방지
     let _distChecked = false;
@@ -993,7 +993,7 @@
     /* @INFO_START */
     const DEFAULT_INFO = [
       { title:"종합정보", desc:"뉴스 · 지수 · 주식 · 코인 ·", cards: [
-        { name:"뉴스", en:"News", url:"https://myway.kr/00mainstocknews.html", c:"#ef4444", c2:"#f97316", icon:"news" },
+        { name:"코인뉴스", en:"News", url:"https://myway.kr/00mainstocknews.html", c:"#ef4444", c2:"#f97316", icon:"news" },
         { name:"지수", en:"Index", url:"https://alphasquare.co.kr/home/market-indicator?code=005930&factor=index", c:"#3b82f6", c2:"#06b6d4", icon:"index" },
         { name:"국내주식", en:"Korea", url:"https://alphasquare.co.kr/home/special-factor?code=005930&factor=returns_top&market-key=kr-markets-all", c:"#16a34a", c2:"#10b981", icon:"krstock" },
         { name:"해외주식", en:"Global", url:"https://kr.tradingview.com/markets/stocks-usa/", c:"#6366f1", c2:"#818cf8", icon:"globalstock" },
@@ -1021,6 +1021,7 @@
         { name:"MOVIE", en:"Movie", url:"https://myway.kr/00mainmovieinner2.html", c:"#7c3aed", c2:"#a855f7", icon:"movie" },
         { name:"갤러리", en:"", url:"https://myway.kr/gallery.html", c:"#21c49b", c2:"#f860fb", icon:"movie" },
         { name:"바사이트", en:"", url:"https://myway.kr/BARSITE.html", c:"#3bf76a", c2:"#60a5fa", icon:"radio" },
+        { name:"일반뉴스사이트", en:"", url:"https://myway.kr/newsitesbar2.html", c:"#1fa01c", c2:"#60a5fa", icon:"news" },
       ] },
       { title:"생활정보", desc:"날씨 · 운세 · 달력 ·", cards: [
         { name:"날씨", en:"Weather", url:"https://myway.kr/00mainweather.html", c:"#0ea5e9", c2:"#38bdf8", icon:"weather" },
