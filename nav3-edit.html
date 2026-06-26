@@ -81,6 +81,16 @@
   .edit-handle{position:absolute;top:-6px;right:-6px;width:26px;height:26px;border-radius:50%;background:#fff;border:1px solid var(--line);box-shadow:0 2px 8px rgba(30,40,80,.25);color:var(--ink-sub);display:none;align-items:center;justify-content:center;font-size:.8rem;z-index:3}
   body.editing .logo-cell .edit-handle,body.editing .people-cell .edit-handle{display:flex}
   body.editing .gal-cell .edit-handle{display:flex;top:8px;right:8px}
+  body.editing .gal2-cell .edit-handle{display:flex;top:8px;right:8px}
+  /* 갤러리형2: 표지 원본비율(마소너리) + 가로 열 수 지정 */
+  .grid-gallery2{column-count:var(--g2cols,3);column-gap:14px}
+  .gal2-cell{break-inside:avoid;margin-bottom:14px;border-radius:var(--r);overflow:hidden;background:var(--card);border:1px solid var(--line-soft);box-shadow:0 2px 10px -4px rgba(30,40,80,.18);cursor:pointer;position:relative;display:block;transition:transform .15s,box-shadow .15s}
+  .gal2-cell:hover{transform:translateY(-3px);box-shadow:0 12px 24px -8px rgba(30,40,80,.32)}
+  .gal2-cell img{width:100%;height:auto;display:block}
+  .gal2-cell .count{position:absolute;top:9px;left:9px;background:rgba(33,29,24,.82);color:#fff;font-size:.7rem;font-weight:800;font-family:var(--mono);padding:3px 8px;border-radius:999px;display:flex;align-items:center;gap:4px}
+  .gal2-cell .corner{position:absolute;top:0;right:0;border-style:solid;border-width:0 34px 34px 0;border-color:transparent var(--accent) transparent transparent;opacity:0;transition:opacity .15s}
+  body.editing .gal2-cell .corner{opacity:1}
+  .gal2-cell .ttl{position:absolute;left:0;right:0;bottom:0;margin:0;padding:24px 12px 11px;background:linear-gradient(to top,rgba(0,0,0,.74),transparent);color:#fff;font-size:.9rem;font-weight:700;letter-spacing:-.01em;text-shadow:0 1px 4px rgba(0,0,0,.5)}
   .add-cell{border:2px dashed var(--line);border-radius:var(--r);min-height:120px;display:none;align-items:center;justify-content:center;color:var(--ink-mute);font-size:2rem;cursor:pointer;transition:all .15s}
   body.editing .add-cell{display:flex}
   .add-cell:hover{border-color:var(--accent);color:var(--accent)}
@@ -155,10 +165,12 @@
   .lb-top .lb-x{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.14);border:none;color:#fff;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
   .lb-scroll{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding:10px 0 60px;text-align:center}
   .lb-scroll img{max-width:100%;height:auto;margin:0 auto 10px;display:block;border-radius:4px}
+  .lb-body{color:#ece7db;font-size:.95rem;line-height:1.7;white-space:pre-wrap;text-align:left;max-width:760px;margin:0 auto 16px;padding:6px 18px 14px;word-break:break-word}
 
   @media (max-width:560px){
     .grid-people{column-count:2}
     .grid-gallery{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+    .grid-gallery2{column-count:2 !important}
     .vtype-row{grid-template-columns:1fr;}
   }
   @media (hover:hover) and (pointer:fine){}
@@ -218,6 +230,11 @@
         <div class="vtype-opt" data-v="logo"><div class="ic">🔵</div><div class="t">로고형</div><div class="d">원형 아이콘</div></div>
         <div class="vtype-opt" data-v="people"><div class="ic">🖼️</div><div class="t">피플형</div><div class="d">사진+이름</div></div>
         <div class="vtype-opt" data-v="gallery"><div class="ic">🗂️</div><div class="t">갤러리형</div><div class="d">여러 장 묶음</div></div>
+        <div class="vtype-opt" data-v="gallery2"><div class="ic">🖽</div><div class="t">갤러리형2</div><div class="d">원본비율·열지정</div></div>
+      </div>
+      <div class="fld" id="fldCols" style="display:none">
+        <label>가로 개수 (열 수)</label>
+        <input id="tabCols" type="number" min="1" max="8" value="3">
       </div>
       <div class="btns">
         <button class="btn-danger" id="tabDelete">삭제</button>
@@ -241,6 +258,11 @@
         <div class="gimg-list" id="gimgList"></div>
         <button class="gimg-add" id="gimgAdd">＋ 사진 URL 추가</button>
         <div class="fld"><div class="hint">첫 번째 사진이 대표(표지)로 쓰여요. 카드를 누르면 전체가 펼쳐집니다.</div></div>
+        <div class="fld">
+          <label>내용 붙여넣기 (선택)</label>
+          <textarea id="itBody" placeholder="여기에 내용을 붙여넣으세요"></textarea>
+          <div class="hint">붙여넣은 내용은 이 항목의 전체 보기(라이트박스)에 사진과 함께 나와요.</div>
+        </div>
       </div>
       <div class="btns">
         <button class="btn-danger" id="itemDelete">삭제</button>
@@ -260,6 +282,23 @@
         <button class="code-opt" id="copyData"><div class="ct">📋 데이터 코드 복사</div><div class="cs">현재 데이터(JSON)를 클립보드로</div></button>
       </div>
       <div class="btns"><button class="btn-ghost btn-row-full" id="codeClose">닫기</button></div>
+    </div>
+  </div>
+
+  <!-- 가져오기 수동 매핑 모달 -->
+  <div class="ov" id="mapOv">
+    <div class="modal">
+      <h3>가져오기 — 항목 연결</h3>
+      <div class="sub">자동으로 알아보지 못했어요. 어떤 항목을 주소·이름·사진으로 쓸지 골라 주세요.</div>
+      <div class="fld"><label>주소(링크)</label><select id="mapUrl"></select></div>
+      <div class="fld"><label>이름</label><select id="mapName"></select></div>
+      <div class="fld"><label>사진(이미지)</label><select id="mapImg"></select></div>
+      <div class="fld"><label>가져올 탭</label><select id="mapTab"></select></div>
+      <div class="fld"><div class="hint" id="mapPreview"></div></div>
+      <div class="btns">
+        <button class="btn-ghost" id="mapCancel">취소</button>
+        <button class="btn-primary" id="mapApply">가져오기</button>
+      </div>
     </div>
   </div>
 
@@ -305,7 +344,8 @@ const DEFAULT_TABS = [
 const VIEW_META = {
   logo:    { label:'로고형',  grid:'grid-logo' },
   people:  { label:'피플형',  grid:'grid-people' },
-  gallery: { label:'갤러리형', grid:'grid-gallery' }
+  gallery: { label:'갤러리형', grid:'grid-gallery' },
+  gallery2:{ label:'갤러리형2', grid:'grid-gallery2' }
 };
 
 /* ====== 상태 ====== */
@@ -349,6 +389,7 @@ function renderStage(){
   if(t.view==='logo')    return renderLogo(t, stage);
   if(t.view==='people')  return renderPeople(t, stage);
   if(t.view==='gallery') return renderGallery(t, stage);
+  if(t.view==='gallery2') return renderGallery2(t, stage);
 }
 
 function handle(idx){
@@ -417,6 +458,29 @@ function renderGallery(t, stage){
   stage.innerHTML=''; stage.appendChild(wrap);
 }
 
+function renderGallery2(t, stage){
+  const wrap = document.createElement('div'); wrap.className='grid-gallery2';
+  const cols = Math.max(1, Math.min(8, parseInt(t.cols)||3));
+  wrap.style.setProperty('--g2cols', cols);
+  t.items.forEach((it,i)=>{
+    const imgs = it.images||[];
+    const cover = imgs[0]||'';
+    const cell = document.createElement('div'); cell.className='gal2-cell';
+    cell.innerHTML =
+      '<img src="'+esc(cover)+'" alt="" onerror="this.style.minHeight=\'120px\';this.style.background=\'#ece7db\'">'+
+      '<span class="count">▦ '+imgs.length+'</span><span class="corner"></span>'+handle(i)+
+      (it.title?'<div class="ttl">'+esc(it.title)+'</div>':'');
+    cell.addEventListener('click', ()=>{ if(editing){ openItem(i); } else { openLightbox(it); } });
+    wrap.appendChild(cell);
+  });
+  stage.innerHTML=''; stage.appendChild(wrap);
+  if(editing){
+    const add = document.createElement('div'); add.className='add-cell'; add.style.marginTop='14px'; add.textContent='＋';
+    add.addEventListener('click', ()=>openItem(null));
+    stage.appendChild(add);
+  }
+}
+
 function bindCell(el, t, i){
   el.addEventListener('click', (e)=>{
     const h = e.target.closest('[data-edit]');
@@ -427,10 +491,13 @@ function bindCell(el, t, i){
 /* ====== 라이트박스 (세로 연속, 원본 크기) ====== */
 function openLightbox(it){
   var imgs = it.images||[];
-  if(!imgs.length) return;
+  if(!imgs.length && !it.body) return;
   document.getElementById('lbTtl').textContent = it.title||'';
   var sc = document.getElementById('lbScroll');
-  sc.innerHTML = imgs.map(function(s){ return '<img src="'+esc(s)+'" alt="" loading="lazy">'; }).join('');
+  var html = '';
+  if(it.body){ html += '<div class="lb-body">'+esc(it.body)+'</div>'; }
+  html += imgs.map(function(s){ return '<img src="'+esc(s)+'" alt="" loading="lazy">'; }).join('');
+  sc.innerHTML = html;
   sc.scrollTop = 0;
   document.getElementById('lb').classList.add('show');
   document.body.style.overflow='hidden';
@@ -477,11 +544,13 @@ function openTab(id){
   document.getElementById('tabModalTitle').textContent = t? '탭 설정' : '탭 추가';
   document.getElementById('tabName').value = t? t.label : '';
   setVtype(t? t.view : 'logo');
+  document.getElementById('tabCols').value = (t&&t.cols)?t.cols:3;
   document.getElementById('tabDelete').style.display = t? '' : 'none';
   document.getElementById('tabOv').classList.add('show');
 }
 function setVtype(v){
   document.querySelectorAll('#vtypeRow .vtype-opt').forEach(o=>o.classList.toggle('on', o.dataset.v===v));
+  document.getElementById('fldCols').style.display = (v==='gallery2')?'':'none';
 }
 function getVtype(){ const on=document.querySelector('#vtypeRow .vtype-opt.on'); return on?on.dataset.v:'logo'; }
 document.getElementById('vtypeRow').addEventListener('click',(e)=>{ const o=e.target.closest('.vtype-opt'); if(o) setVtype(o.dataset.v); });
@@ -490,11 +559,12 @@ document.getElementById('tabCancel').addEventListener('click', ()=>document.getE
 document.getElementById('tabSave').addEventListener('click', ()=>{
   const name=document.getElementById('tabName').value.trim()||'새 탭';
   const view=getVtype();
+  const cols=Math.max(1, Math.min(8, parseInt(document.getElementById('tabCols').value)||3));
   if(tabEditId){
     const t=tabs.find(x=>x.id===tabEditId);
-    t.label=name; t.view=view;
+    t.label=name; t.view=view; t.cols=cols;
   }else{
-    const t={ id:uid(), label:name, view, items:[] };
+    const t={ id:uid(), label:name, view, cols, items:[] };
     tabs.push(t); curTabId=t.id;
   }
   saveTabs(); renderTabs(); renderStage();
@@ -514,7 +584,7 @@ let itemEditIdx = null;
 function openItem(idx){
   const t=curTab(); if(!t) return;
   itemEditIdx = idx;
-  const isGal = t.view==='gallery';
+  const isGal = t.view==='gallery' || t.view==='gallery2';
   const it = (idx!=null) ? t.items[idx] : null;
   document.getElementById('itemModalTitle').textContent = (idx!=null?'항목 수정':'항목 추가');
   document.getElementById('itemModalSub').textContent = VIEW_META[t.view].label + ' · ' + t.label;
@@ -533,6 +603,7 @@ function openItem(idx){
     document.getElementById('fldName').style.display = '';
     document.getElementById('fldName').querySelector('label').textContent = '제목';
     document.getElementById('itName').value = it?(it.title||''):'';
+    document.getElementById('itBody').value = it?(it.body||''):'';
     renderGimgList(it?it.images:[]);
   }else{
     document.getElementById('itName').value = it?(it.name||''):'';
@@ -555,9 +626,9 @@ document.getElementById('gimgAdd').addEventListener('click', ()=>addGimgRow(''))
 document.getElementById('itemCancel').addEventListener('click', ()=>document.getElementById('itemOv').classList.remove('show'));
 document.getElementById('itemSave').addEventListener('click', ()=>{
   const t=curTab(); if(!t) return;
-  if(t.view==='gallery'){
+  if(t.view==='gallery' || t.view==='gallery2'){
     const imgs=[...document.querySelectorAll('#gimgList input')].map(i=>i.value.trim()).filter(Boolean);
-    const obj={ title:document.getElementById('itName').value.trim(), url:document.getElementById('itUrl').value.trim(), images:imgs };
+    const obj={ title:document.getElementById('itName').value.trim(), url:document.getElementById('itUrl').value.trim(), images:imgs, body:document.getElementById('itBody').value.trim() };
     if(itemEditIdx!=null) t.items[itemEditIdx]=obj; else t.items.push(obj);
   }else{
     const obj={ name:document.getElementById('itName').value.trim(), img:document.getElementById('itImg').value.trim(), url:document.getElementById('itUrl').value.trim() };
@@ -580,22 +651,125 @@ function doExport(){
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=EXPORT_NAME; a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 }
+/* ====== 폭넓은 가져오기 (gallery-edit 방식 이식) ====== */
+var URL_KEYS  = ['url','link','href','uri','addr','address','permalink','page','site','linkurl','linkhref','pageurl','weburl','siteurl','targeturl','desturl','gotourl','웹주소','주소','링크','사이트','링크주소','이동주소'];
+var NAME_KEYS = ['name','title','label','text','caption','heading','desc','description','alt','이름','제목','타이틀','설명','이름표'];
+var IMG_KEYS  = ['img','image','imageurl','imgurl','thumbnail','thumb','thumburl','icon','photo','picture','pic','cover','poster','preview','이미지','썸네일','사진'];
+function lc(s){ return String(s==null?'':s).toLowerCase().replace(/[\s_\-]/g,''); }
+function isUrlLike(s){ s=String(s||'').trim(); return /^https?:\/\//i.test(s)||/^\/\//.test(s)||/^www\./i.test(s)||/^[\w-]+\.[a-z]{2,}([\/?#]|$)/i.test(s); }
+function isImageUrl(s){ return /\.(png|jpe?g|gif|webp|avif|svg|bmp)([?#]|$)/i.test(String(s||'').trim()); }
+function guessKey(keyList, aliases){
+  for(var i=0;i<keyList.length;i++){ for(var j=0;j<aliases.length;j++){ if(lc(aliases[j])===lc(keyList[i])) return keyList[i]; } }
+  return '';
+}
+function findRecordArrays(node, out){
+  if(Array.isArray(node)){
+    if(node.length && node.some(function(x){ return x && typeof x==='object' && !Array.isArray(x); })) out.push(node);
+    node.forEach(function(x){ findRecordArrays(x, out); });
+  } else if(node && typeof node==='object'){
+    Object.keys(node).forEach(function(k){ findRecordArrays(node[k], out); });
+  }
+}
+function asNativeTabs(parsed){
+  var arr = Array.isArray(parsed) ? parsed : (parsed && Array.isArray(parsed.tabs) ? parsed.tabs : null);
+  if(!arr || !arr.length) return null;
+  var ok = arr.some(function(t){ return t && typeof t==='object' && (t.view || Array.isArray(t.items)); });
+  return ok ? arr : null;
+}
+function parseHtmlTabs(text){
+  var sm = /(?:const|let|var)\s+DEFAULT_TABS\s*=\s*\[/.exec(text);
+  if(!sm) return null;
+  var open = text.indexOf('[', sm.index);
+  var depth=0, end=-1;
+  for(var i=open;i<text.length;i++){ var ch=text[i]; if(ch==='[')depth++; else if(ch===']'){depth--; if(depth===0){end=i;break;}} }
+  if(end<0) return null;
+  try{ var a=JSON.parse(text.slice(open, end+1)); return Array.isArray(a)?a:null; }catch(e){ return null; }
+}
+function smartParse(text){
+  text = String(text).replace(/^\uFEFF/,'');
+  var parsed=null;
+  try{ parsed=JSON.parse(text); }catch(e){}
+  if(parsed==null){
+    var viaHtml = parseHtmlTabs(text);
+    if(viaHtml) return { tabs:viaHtml, parsed:null };
+    return null;
+  }
+  var native = asNativeTabs(parsed);
+  if(native) return { tabs:native, parsed:parsed };
+  return { tabs:null, parsed:parsed };
+}
+function applyNativeTabs(arr){
+  tabs = arr.map(function(t){ return { id:t.id||uid(), label:t.label||'탭', view:VIEW_META[t.view]?t.view:'logo', cols:t.cols, items:Array.isArray(t.items)?t.items:[] }; });
+  curTabId = tabs.length?tabs[0].id:null;
+  saveTabs(); renderTabs(); renderStage();
+  alert('가져왔어요 — 탭 '+tabs.length+'개를 불러왔어요.');
+}
+/* 수동 매핑 */
+var pendingArray=null;
+function fillSel(id, keyList, guess){
+  var s=document.getElementById(id); s.innerHTML='';
+  var o0=document.createElement('option'); o0.value=''; o0.textContent='(없음)'; s.appendChild(o0);
+  keyList.forEach(function(k){ var op=document.createElement('option'); op.value=k; op.textContent=k; if(k===guess)op.selected=true; s.appendChild(op); });
+  if(guess && s.value!==guess) s.value=guess;
+}
+function openMapModal(arr){
+  pendingArray=arr;
+  var keySet={};
+  arr.forEach(function(o){ if(o&&typeof o==='object'&&!Array.isArray(o)) Object.keys(o).forEach(function(k){keySet[k]=1;}); });
+  var keyList=Object.keys(keySet);
+  if(!keyList.length){ alert('가져올 항목을 찾지 못했어요.'); return; }
+  var gUrl=guessKey(keyList,URL_KEYS), gImg=guessKey(keyList,IMG_KEYS), gName=guessKey(keyList,NAME_KEYS);
+  var first=arr.find(function(o){return o&&typeof o==='object';})||{};
+  if(!gUrl) keyList.forEach(function(k){ if(!gUrl&&isUrlLike(first[k])&&!isImageUrl(first[k])) gUrl=k; });
+  if(!gImg) keyList.forEach(function(k){ if(!gImg&&isImageUrl(first[k])) gImg=k; });
+  fillSel('mapUrl',keyList,gUrl);
+  fillSel('mapName',keyList,gName);
+  fillSel('mapImg',keyList,gImg);
+  var ts=document.getElementById('mapTab'); ts.innerHTML='';
+  tabs.forEach(function(t){ var op=document.createElement('option'); op.value=t.id; op.textContent=t.label+' · '+(VIEW_META[t.view]?VIEW_META[t.view].label:''); if(t.id===curTabId)op.selected=true; ts.appendChild(op); });
+  document.getElementById('mapPreview').textContent='예시 항목: '+JSON.stringify(first).slice(0,140);
+  document.getElementById('mapOv').classList.add('show');
+}
+function applyMapping(){
+  if(!pendingArray) return;
+  var uk=document.getElementById('mapUrl').value;
+  var nk=document.getElementById('mapName').value;
+  var ik=document.getElementById('mapImg').value;
+  var tid=document.getElementById('mapTab').value;
+  var t=tabs.find(function(x){return x.id===tid;}); if(!t) return;
+  var isGal = t.view==='gallery'||t.view==='gallery2';
+  var added=0;
+  pendingArray.forEach(function(o){
+    if(!o||typeof o!=='object') return;
+    var url=uk?String(o[uk]==null?'':o[uk]).trim():'';
+    var name=nk?String(o[nk]==null?'':o[nk]).trim():'';
+    var img=ik?String(o[ik]==null?'':o[ik]).trim():'';
+    if(!img && isImageUrl(url)){ img=url; url=''; }
+    if(!url&&!img&&!name) return;
+    if(isGal){ t.items.push({ title:name, url:url, images:img?[img]:[], body:'' }); }
+    else { t.items.push({ name:name, img:img, url:url }); }
+    added++;
+  });
+  document.getElementById('mapOv').classList.remove('show'); pendingArray=null;
+  if(!added){ alert('연결한 항목으로 가져올 데이터가 없어요.'); return; }
+  curTabId=t.id; saveTabs(); renderTabs(); renderStage();
+  alert('가져왔어요 — '+added+'개를 "'+t.label+'" 탭에 추가했어요.');
+}
+document.getElementById('mapCancel').addEventListener('click', ()=>{ document.getElementById('mapOv').classList.remove('show'); pendingArray=null; });
+document.getElementById('mapApply').addEventListener('click', applyMapping);
 function doImport(){
-  const inp=document.createElement('input'); inp.type='file'; inp.accept='.json,application/json';
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='.json,.html,.htm,.txt,application/json,text/html,text/plain';
   inp.addEventListener('change',()=>{
     const f=inp.files[0]; if(!f) return;
     const r=new FileReader();
     r.onload=()=>{
-      try{
-        let txt=String(r.result).replace(/^\uFEFF/,'');
-        const o=JSON.parse(txt);
-        const arr = Array.isArray(o)?o:(o.tabs||[]);
-        if(!Array.isArray(arr)||!arr.length){ alert('탭 데이터를 찾지 못했어요.'); return; }
-        if(o.kind && o.kind!==DATA_KIND && !confirm('다른 종류의 파일 같아요. 그래도 불러올까요?')) return;
-        tabs=arr.map(t=>({ id:t.id||uid(), label:t.label||'탭', view:VIEW_META[t.view]?t.view:'logo', items:Array.isArray(t.items)?t.items:[] }));
-        curTabId=tabs.length?tabs[0].id:null;
-        saveTabs(); renderTabs(); renderStage();
-      }catch(e){ alert('불러오기 실패: 올바른 JSON이 아니에요.'); }
+      const res=smartParse(r.result);
+      if(!res){ alert('가져오기 실패: JSON, 또는 데이터가 들어 있는 HTML 파일이 아니에요.'); return; }
+      if(res.tabs){ applyNativeTabs(res.tabs); return; }
+      const arrs=[]; findRecordArrays(res.parsed, arrs);
+      if(!arrs.length){ alert('가져올 항목을 찾지 못했어요. 파일 내용을 확인해 주세요.'); return; }
+      arrs.sort((a,b)=>b.length-a.length);
+      openMapModal(arrs[0]);
     };
     r.readAsText(f);
   });
