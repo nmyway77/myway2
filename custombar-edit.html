@@ -24,7 +24,7 @@
   .nav-home{flex:none;order:0;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-sub);padding:8px;border-radius:10px;transition:color .15s,background .15s}
   .nav-home:hover{color:var(--accent);background:#f5f6f8}
   .nav-home svg{width:20px;height:20px;display:block}
-  .nav-track{flex:none;order:3;display:flex;align-items:center;gap:8px;margin:0 auto}
+  .nav-track{flex:none;order:3;display:flex;align-items:center;gap:8px;margin:0}
   .topnav button{flex:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-family:var(--body);font-size:14px;font-weight:700;color:var(--ink-sub);cursor:pointer;transition:all .16s}
   .topnav button:hover{border-color:#cfd3da;color:var(--ink)}
   .topnav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
@@ -85,9 +85,6 @@
 <body>
 
 <nav class="topnav" id="topnav">
-  <a class="nav-home" href="https://myway.kr" aria-label="MYWAY.KR 홈">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
-  </a>
   <div class="nav-track" id="navTrack"></div>
 </nav>
 
@@ -273,7 +270,6 @@ function loadSite(i, btn){
   if(s[2]){ window.open(s[1],'_blank','noopener'); if(btn) centerNavBtn(btn); return; }
   currentUrl=s[1];
   setViewerSrc(currentUrl);
-  openBtn.style.display='';
   clearActive();
   try{ sessionStorage.setItem(SESS_KEY,'site:'+i); }catch(_){}
   if(btn){ btn.classList.add('active'); centerNavBtn(btn); }
@@ -289,11 +285,6 @@ function renderNav(){
   });
 }
 renderNav();
-
-/* 새 탭 버튼 */
-var openBtn=document.createElement('button'); openBtn.className='open-btn'; openBtn.textContent='↗ 새 탭';
-openBtn.addEventListener('click',function(){window.open(currentUrl,'_blank','noopener');});
-nav.insertBefore(openBtn, track);
 
 /* 네비 드래그 스크롤 */
 (function(){
