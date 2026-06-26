@@ -40,7 +40,7 @@
   .tab-add:hover{border-color:var(--accent);color:var(--accent)}
 
   /* ===== 본문 ===== */
-  main{max-width:1180px;margin:0 auto;padding:22px 16px 0}
+  main{max-width:1320px;margin:0 auto;padding:22px 14px 0}
   .sec-head{display:none}
   .move-row{display:flex;align-items:center;gap:8px;padding:8px 22px 2px}
   .move-label{font-size:.78rem;font-weight:700;color:var(--ink-sub);margin-right:auto}
@@ -207,9 +207,9 @@
 
   <main>
     <div class="sec-head">
-      <h2 id="secTitle">갤러리</h2>
-      <span class="cnt" id="secCount">4개</span>
-      <span class="vlabel" id="secVlabel">갤러리형</span>
+      <h2 id="secTitle">PEOPLE</h2>
+      <span class="cnt" id="secCount">184개</span>
+      <span class="vlabel" id="secVlabel">피플형</span>
     </div>
     <div id="stage"></div>
   </main>
@@ -237,7 +237,7 @@
   <!-- 탭 편집 모달 -->
   <div class="ov" id="tabOv">
     <div class="modal">
-      <h3 id="tabModalTitle">탭 설정</h3>
+      <h3 id="tabModalTitle">탭 추가</h3>
       <div class="sub">탭 이름과 표시 방식을 정하세요.</div>
       <div class="fld">
         <label>탭 이름</label>
@@ -254,13 +254,13 @@
         <label>가로 개수 (열 수)</label>
         <input id="tabCols" type="number" min="1" max="8" value="3">
       </div>
-      <div class="move-row" id="tabMoveRow" style="">
+      <div class="move-row" id="tabMoveRow" style="display:none">
         <span class="move-label">탭 순서</span>
         <button class="move-btn" data-mv="left" title="왼쪽으로">◀</button>
         <button class="move-btn" data-mv="right" title="오른쪽으로">▶</button>
       </div>
       <div class="btns">
-        <button class="btn-danger" id="tabDelete">삭제</button>
+        <button class="btn-danger" id="tabDelete" style="display: none;">삭제</button>
         <button class="btn-ghost" id="tabCancel">취소</button>
         <button class="btn-primary" id="tabSave">저장</button>
       </div>
@@ -320,11 +320,11 @@
     <div class="modal">
       <h3>가져오기 — 항목 연결</h3>
       <div class="sub">자동으로 알아보지 못했어요. 어떤 항목을 주소·이름·사진으로 쓸지 골라 주세요.</div>
-      <div class="fld"><label>주소(링크)</label><select id="mapUrl"></select></div>
-      <div class="fld"><label>이름</label><select id="mapName"></select></div>
-      <div class="fld"><label>사진(이미지)</label><select id="mapImg"></select></div>
-      <div class="fld"><label>가져올 탭</label><select id="mapTab"></select></div>
-      <div class="fld"><div class="hint" id="mapPreview"></div></div>
+      <div class="fld"><label>주소(링크)</label><select id="mapUrl"><option value="">(없음)</option><option value="name">name</option><option value="url">url</option><option value="img">img</option><option value="imgs">imgs</option></select></div>
+      <div class="fld"><label>이름</label><select id="mapName"><option value="">(없음)</option><option value="name">name</option><option value="url">url</option><option value="img">img</option><option value="imgs">imgs</option></select></div>
+      <div class="fld"><label>사진(이미지)</label><select id="mapImg"><option value="">(없음)</option><option value="name">name</option><option value="url">url</option><option value="img">img</option><option value="imgs">imgs</option></select></div>
+      <div class="fld"><label>가져올 탭</label><select id="mapTab"><option value="t_people">PEOPLE · 피플형</option><option value="t_gallery">갤러리 · 갤러리형</option><option value="t_j31heh">연예뉴스 · 갤러리형2</option><option value="t_pry7vv">MAGAZINE · 피플형</option><option value="t_gg793c">A · 갤러리형2</option></select></div>
+      <div class="fld"><div class="hint" id="mapPreview">예시 항목: {"name":".","url":"https://javhd.com/ko/model/Yuna-Shiratori","img":"https://c4.cdnjhd.com/content-01/models/750x1000/3046v.jpg","imgs":["ht</div></div>
       <div class="btns">
         <button class="btn-ghost" id="mapCancel">취소</button>
         <button class="btn-primary" id="mapApply">가져오기</button>
