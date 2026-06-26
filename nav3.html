@@ -41,7 +41,7 @@
 
   /* ===== 본문 ===== */
   main{max-width:1180px;margin:0 auto;padding:22px 16px 0}
-  .sec-head{display:flex;align-items:baseline;gap:10px;margin:6px 2px 16px}
+  .sec-head{display:none}
   .sec-head h2{font-size:1.28rem;font-weight:800;letter-spacing:-.02em;margin:0;display:flex;align-items:center;gap:9px}
   .sec-head h2::before{content:"";width:5px;height:19px;border-radius:3px;background:var(--grad)}
   .sec-head .cnt{font-size:.82rem;color:var(--ink-mute);font-weight:700;font-family:var(--mono)}
@@ -203,9 +203,9 @@
 
   <main>
     <div class="sec-head">
-      <h2 id="secTitle">갤러리</h2>
-      <span class="cnt" id="secCount">2개</span>
-      <span class="vlabel" id="secVlabel">갤러리형</span>
+      <h2 id="secTitle">주요사이트</h2>
+      <span class="cnt" id="secCount">4개</span>
+      <span class="vlabel" id="secVlabel">로고형</span>
     </div>
     <div id="stage"></div>
   </main>
@@ -244,14 +244,14 @@
         <div class="vtype-opt" data-v="logo"><div class="ic">🔵</div><div class="t">로고형</div><div class="d">원형 아이콘</div></div>
         <div class="vtype-opt" data-v="people"><div class="ic">🖼️</div><div class="t">피플형</div><div class="d">사진+이름</div></div>
         <div class="vtype-opt" data-v="gallery"><div class="ic">🗂️</div><div class="t">갤러리형</div><div class="d">여러 장 묶음</div></div>
-        <div class="vtype-opt on" data-v="gallery2"><div class="ic">🖽</div><div class="t">갤러리형2</div><div class="d">원본비율·열지정</div></div>
+        <div class="vtype-opt" data-v="gallery2"><div class="ic">🖽</div><div class="t">갤러리형2</div><div class="d">원본비율·열지정</div></div>
       </div>
-      <div class="fld" id="fldCols" style="">
+      <div class="fld" id="fldCols" style="display:none">
         <label>가로 개수 (열 수)</label>
         <input id="tabCols" type="number" min="1" max="8" value="3">
       </div>
       <div class="btns">
-        <button class="btn-danger" id="tabDelete" style="display: none;">삭제</button>
+        <button class="btn-danger" id="tabDelete">삭제</button>
         <button class="btn-ghost" id="tabCancel">취소</button>
         <button class="btn-primary" id="tabSave">저장</button>
       </div>
@@ -261,13 +261,13 @@
   <!-- 항목 편집 모달 -->
   <div class="ov" id="itemOv">
     <div class="modal">
-      <h3 id="itemModalTitle">항목 수정</h3>
-      <div class="sub" id="itemModalSub">갤러리형 · 갤러리</div>
-      <div class="fld" id="fldName" style=""><label id="lblName">제목</label><input id="itName" placeholder="이름"></div>
-      <div class="fld" id="fldImg" style="display: none;"><label id="lblImg">이미지 URL</label><input id="itImg" placeholder="https://..."><div class="hint">로고형은 정사각 투명 PNG, 피플형은 세로 사진이 잘 어울려요.</div></div>
+      <h3 id="itemModalTitle">항목 추가</h3>
+      <div class="sub" id="itemModalSub"></div>
+      <div class="fld" id="fldName"><label id="lblName">이름</label><input id="itName" placeholder="이름"></div>
+      <div class="fld" id="fldImg"><label id="lblImg">이미지 URL</label><input id="itImg" placeholder="https://..."><div class="hint">로고형은 정사각 투명 PNG, 피플형은 세로 사진이 잘 어울려요.</div></div>
       <div class="fld" id="fldUrl"><label>링크 URL (선택)</label><input id="itUrl" placeholder="https://..."></div>
       <!-- 갤러리 전용 -->
-      <div id="galFields" style="">
+      <div id="galFields" style="display:none">
         <label style="display:block;padding:0 22px 6px;font-size:.78rem;font-weight:700;color:var(--ink-sub)">사진들 (여러 장)</label>
         <div class="gimg-list" id="gimgList"></div>
         <button class="gimg-add" id="gimgAdd">＋ 사진 URL 추가</button>
@@ -279,7 +279,7 @@
         </div>
       </div>
       <div class="btns">
-        <button class="btn-danger" id="itemDelete" style="">삭제</button>
+        <button class="btn-danger" id="itemDelete">삭제</button>
         <button class="btn-ghost" id="itemCancel">취소</button>
         <button class="btn-primary" id="itemSave">저장</button>
       </div>
@@ -344,12 +344,12 @@ const DEFAULT_TABS = [
     "items": [
       {
         "name": "ChatGPT",
-        "img": "https://www.google.com/s2/favicons?domain=openai.com&sz=128",
+        "img": "https://i.namu.wiki/i/Trhh3NbX78ZqUJyFblACvejsfPNdAXXN8jQtPo10nSVq7Bk1ZvDKB9d1balCxMLeWXDbZ8U_R1XWhuIwI1dVFA.svg",
         "url": "https://chat.openai.com"
       },
       {
         "name": "YouTube",
-        "img": "https://www.google.com/s2/favicons?domain=youtube.com&sz=128",
+        "img": "https://i.namu.wiki/i/96PzWjU0X4PJWSDG6rRFFgG3dkGLIw06-YMpHg_CVHnURSIHuxA9sF9CrJoXsZISwWeo19Y3LgIQnL1krbrcOg.svg",
         "url": "https://youtube.com"
       },
       {
@@ -359,7 +359,7 @@ const DEFAULT_TABS = [
       },
       {
         "name": "네이버",
-        "img": "https://www.google.com/s2/favicons?domain=naver.com&sz=128",
+        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3-dZWj7CHFepg8tOKHl3btm2IRvSqdfHRAg&s",
         "url": "https://naver.com"
       }
     ]
@@ -372,7 +372,7 @@ const DEFAULT_TABS = [
       {
         "name": "인물 A",
         "img": "https://picsum.photos/seed/p1/400/520",
-        "url": "https://i.namu.wiki/i/a9OCARA0wo1W82RgE-GnU-IMbD3ff9HLncoHsdxCf2ZOwP7kZMOceYvS208IMNf0u7QDlB5OG5xBRGZ1HE6ERg.webp"
+        "url": ""
       },
       {
         "name": "인물 B",
@@ -383,6 +383,11 @@ const DEFAULT_TABS = [
         "name": "인물 C",
         "img": "https://picsum.photos/seed/p3/400/480",
         "url": ""
+      },
+      {
+        "name": "",
+        "img": "https://cdnweb01.wikitree.co.kr/webdata/editor/202505/21/img_20250521104056_3e8c6ac4.webp",
+        "url": "https://cdnweb01.wikitree.co.kr/webdata/editor/202505/21/img_20250521104056_3e8c6ac4.webp"
       }
     ]
   },
@@ -393,13 +398,12 @@ const DEFAULT_TABS = [
     "items": [
       {
         "title": "모음 1",
-        "url": "https://i.namu.wiki/i/a9OCARA0wo1W82RgE-GnU-IMbD3ff9HLncoHsdxCf2ZOwP7kZMOceYvS208IMNf0u7QDlB5OG5xBRGZ1HE6ERg.webp",
+        "url": "",
         "images": [
-          "https://picsum.photos/seed/g1/600/800|https://i.namu.wiki/i/a9OCARA0wo1W82RgE-GnU-IMbD3ff9HLncoHsdxCf2ZOwP7kZMOceYvS208IMNf0u7QDlB5OG5xBRGZ1HE6ERg.webp",
+          "https://picsum.photos/seed/g1/600/800",
           "https://picsum.photos/seed/g2/600/800",
           "https://picsum.photos/seed/g3/600/800"
-        ],
-        "body": ""
+        ]
       },
       {
         "title": "모음 2",
@@ -408,24 +412,29 @@ const DEFAULT_TABS = [
           "https://picsum.photos/seed/g4/600/800",
           "https://picsum.photos/seed/g5/600/800"
         ]
+      },
+      {
+        "title": "1",
+        "url": "https://plus.unsplash.com/premium_photo-1661847643150-4e06569d2ec1?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8JUVEJTk4JUI4JUVCJTlFJTkxJUVDJTlEJUI0JTIwJUVDJTlEJUI0JUVCJUFGJUI4JUVDJUE3JTgwfGVufDB8fDB8fHww",
+        "images": [
+          "https://plus.unsplash.com/premium_photo-1661847643150-4e06569d2ec1?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8JUVEJTk4JUI4JUVCJTlFJTkxJUVDJTlEJUI0JTIwJUVDJTlEJUI0JUVCJUFGJUI4JUVDJUE3JTgwfGVufDB8fDB8fHww"
+        ]
+      },
+      {
+        "title": "2",
+        "url": "https://cdnweb01.wikitree.co.kr/webdata/editor/202505/21/img_20250521104056_3e8c6ac4.webp",
+        "images": [
+          "https://cdnweb01.wikitree.co.kr/webdata/editor/202505/21/img_20250521104056_3e8c6ac4.webp"
+        ]
       }
     ]
   },
   {
-    "id": "t_m2kd63",
-    "label": "뉴스",
+    "id": "t_j31heh",
+    "label": "연예뉴스",
     "view": "gallery2",
-    "cols": 3,
-    "items": [
-      {
-        "title": "",
-        "url": "https://i.namu.wiki/i/a9OCARA0wo1W82RgE-GnU-IMbD3ff9HLncoHsdxCf2ZOwP7kZMOceYvS208IMNf0u7QDlB5OG5xBRGZ1HE6ERg.webp",
-        "images": [
-          "https://i.namu.wiki/i/a9OCARA0wo1W82RgE-GnU-IMbD3ff9HLncoHsdxCf2ZOwP7kZMOceYvS208IMNf0u7QDlB5OG5xBRGZ1HE6ERg.webp|https://i.namu.wiki/i/a9OCARA0wo1W82RgE-GnU-IMbD3ff9HLncoHsdxCf2ZOwP7kZMOceYvS208IMNf0u7QDlB5OG5xBRGZ1HE6ERg.webp"
-        ],
-        "body": ""
-      }
-    ]
+    "cols": 4,
+    "items": []
   }
 ];
 /* @DATA_END */
@@ -462,7 +471,7 @@ function renderTabs(){
   tabs.forEach(t=>{
     const b = document.createElement('button');
     b.className = 'tab-btn' + (t.id===curTabId?' active':'');
-    b.innerHTML = esc(t.label) + (editing ? ' <span class="vt">'+(VIEW_META[t.view]?.label||'')+'</span>' : '');
+    b.innerHTML = esc(t.label);
     b.addEventListener('click', ()=>{ curTabId = t.id; renderTabs(); renderStage(); });
     nav.appendChild(b);
   });

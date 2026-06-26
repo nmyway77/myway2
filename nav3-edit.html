@@ -42,7 +42,7 @@
 
   /* ===== 본문 ===== */
   main{max-width:1180px;margin:0 auto;padding:22px 16px 0}
-  .sec-head{display:flex;align-items:baseline;gap:10px;margin:6px 2px 16px}
+  .sec-head{display:none}
   .sec-head h2{font-size:1.28rem;font-weight:800;letter-spacing:-.02em;margin:0;display:flex;align-items:center;gap:9px}
   .sec-head h2::before{content:"";width:5px;height:19px;border-radius:3px;background:var(--grad)}
   .sec-head .cnt{font-size:.82rem;color:var(--ink-mute);font-weight:700;font-family:var(--mono)}
@@ -388,7 +388,7 @@ function renderTabs(){
   tabs.forEach(t=>{
     const b = document.createElement('button');
     b.className = 'tab-btn' + (t.id===curTabId?' active':'');
-    b.innerHTML = esc(t.label) + (editing ? ' <span class="vt">'+(VIEW_META[t.view]?.label||'')+'</span>' : '');
+    b.innerHTML = esc(t.label);
     b.addEventListener('click', ()=>{ curTabId = t.id; renderTabs(); renderStage(); });
     nav.appendChild(b);
   });
