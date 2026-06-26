@@ -143,9 +143,15 @@
   .btn-row-full{flex-basis:100%!important}
 
   .gimg-list{padding:0 22px 8px;display:flex;flex-direction:column;gap:8px}
-  .gimg-item{display:flex;gap:8px;align-items:center}
-  .gimg-item input{flex:1;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-family:var(--mono);font-size:.78rem;background:#fafbff}
+  .gimg-item{display:flex;flex-direction:column;gap:5px;background:#f5f7fc;border:1px solid var(--line-soft);border-radius:11px;padding:8px}
+  .gimg-top{display:flex;gap:6px;align-items:center}
+  .gimg-item .gi-img{flex:1;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-family:var(--mono);font-size:.78rem;background:#fafbff}
+  .gimg-item .gi-link{width:100%;border:1px solid var(--line);border-radius:9px;padding:8px 11px;font-family:var(--mono);font-size:.74rem;background:#fff;color:var(--ink-sub)}
   .gimg-item button{flex:0 0 auto;width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:#fff;color:#d3392b;cursor:pointer;font-size:1rem}
+  .paste-area{width:100%;min-height:96px;max-height:260px;overflow-y:auto;border:1px solid var(--line);border-radius:11px;padding:11px 13px;background:#fafbff;color:var(--ink);font-size:.92rem;line-height:1.55}
+  .paste-area:focus{outline:none;border-color:var(--accent)}
+  .paste-area:empty::before{content:attr(data-ph);color:#a8afc6}
+  .paste-area img{max-width:100%;height:auto;border-radius:6px;margin:4px 0}
   .gimg-add{margin:2px 22px 14px;border:1.5px dashed var(--line);border-radius:10px;padding:9px;width:calc(100% - 44px);background:transparent;color:var(--ink-mute);font-weight:700;font-size:.82rem;cursor:pointer}
   .gimg-add:hover{border-color:var(--accent);color:var(--accent)}
 
@@ -164,7 +170,9 @@
   .lb-top .lb-x{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.14);border:none;color:#fff;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
   .lb-scroll{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding:10px 0 60px;text-align:center}
   .lb-scroll img{max-width:100%;height:auto;margin:0 auto 10px;display:block;border-radius:4px}
-  .lb-body{color:#ece7db;font-size:.95rem;line-height:1.7;white-space:pre-wrap;text-align:left;max-width:760px;margin:0 auto 16px;padding:6px 18px 14px;word-break:break-word}
+  .lb-body{color:#ece7db;font-size:1rem;line-height:1.65;text-align:center;max-width:760px;margin:14px auto 0;padding:0 18px 14px;word-break:break-word}
+  .lb-body img{max-width:100%;height:auto;border-radius:8px;display:block;margin:8px auto}
+  .lb-body a{color:#9db4ff}
 
   @media (max-width:560px){
     .grid-people{column-count:2}
@@ -188,9 +196,9 @@
 
   <main>
     <div class="sec-head">
-      <h2 id="secTitle">주요사이트</h2>
-      <span class="cnt" id="secCount">4개</span>
-      <span class="vlabel" id="secVlabel">로고형</span>
+      <h2 id="secTitle">PEOPLE</h2>
+      <span class="cnt" id="secCount">3개</span>
+      <span class="vlabel" id="secVlabel">피플형</span>
     </div>
     <div id="stage"></div>
   </main>
@@ -229,14 +237,14 @@
         <div class="vtype-opt" data-v="logo"><div class="ic">🔵</div><div class="t">로고형</div><div class="d">원형 아이콘</div></div>
         <div class="vtype-opt" data-v="people"><div class="ic">🖼️</div><div class="t">피플형</div><div class="d">사진+이름</div></div>
         <div class="vtype-opt" data-v="gallery"><div class="ic">🗂️</div><div class="t">갤러리형</div><div class="d">여러 장 묶음</div></div>
-        <div class="vtype-opt" data-v="gallery2"><div class="ic">🖽</div><div class="t">갤러리형2</div><div class="d">원본비율·열지정</div></div>
+        <div class="vtype-opt on" data-v="gallery2"><div class="ic">🖽</div><div class="t">갤러리형2</div><div class="d">원본비율·열지정</div></div>
       </div>
-      <div class="fld" id="fldCols" style="display:none">
+      <div class="fld" id="fldCols" style="">
         <label>가로 개수 (열 수)</label>
         <input id="tabCols" type="number" min="1" max="8" value="3">
       </div>
       <div class="btns">
-        <button class="btn-danger" id="tabDelete">삭제</button>
+        <button class="btn-danger" id="tabDelete" style="display: none;">삭제</button>
         <button class="btn-ghost" id="tabCancel">취소</button>
         <button class="btn-primary" id="tabSave">저장</button>
       </div>
@@ -246,25 +254,25 @@
   <!-- 항목 편집 모달 -->
   <div class="ov" id="itemOv">
     <div class="modal">
-      <h3 id="itemModalTitle">항목 추가</h3>
-      <div class="sub" id="itemModalSub"></div>
-      <div class="fld" id="fldName"><label id="lblName">이름</label><input id="itName" placeholder="이름"></div>
-      <div class="fld" id="fldImg"><label id="lblImg">이미지 URL</label><input id="itImg" placeholder="https://..."><div class="hint">로고형은 정사각 투명 PNG, 피플형은 세로 사진이 잘 어울려요.</div></div>
+      <h3 id="itemModalTitle">항목 수정</h3>
+      <div class="sub" id="itemModalSub">피플형 · PEOPLE</div>
+      <div class="fld" id="fldName" style=""><label id="lblName">이름</label><input id="itName" placeholder="이름"></div>
+      <div class="fld" id="fldImg" style=""><label id="lblImg">이미지 URL</label><input id="itImg" placeholder="https://..."><div class="hint">로고형은 정사각 투명 PNG, 피플형은 세로 사진이 잘 어울려요.</div></div>
       <div class="fld" id="fldUrl"><label>링크 URL (선택)</label><input id="itUrl" placeholder="https://..."></div>
       <!-- 갤러리 전용 -->
-      <div id="galFields" style="display:none">
+      <div id="galFields" style="display: none;">
         <label style="display:block;padding:0 22px 6px;font-size:.78rem;font-weight:700;color:var(--ink-sub)">사진들 (여러 장)</label>
         <div class="gimg-list" id="gimgList"></div>
         <button class="gimg-add" id="gimgAdd">＋ 사진 URL 추가</button>
         <div class="fld"><div class="hint">첫 번째 사진이 대표(표지)로 쓰여요. 카드를 누르면 전체가 펼쳐집니다.</div></div>
         <div class="fld">
           <label>내용 붙여넣기 (선택)</label>
-          <textarea id="itBody" placeholder="여기에 내용을 붙여넣으세요"></textarea>
-          <div class="hint">붙여넣은 내용은 이 항목의 전체 보기(라이트박스)에 사진과 함께 나와요.</div>
+          <div id="itBody" class="paste-area" contenteditable="true" data-ph="다른 페이지에서 복사한 내용(사진·글)을 여기에 붙여넣으세요"></div>
+          <div class="hint">사진과 글을 함께 붙여넣을 수 있어요. 전체 보기(라이트박스)에서 사진 아래에 나와요.</div>
         </div>
       </div>
       <div class="btns">
-        <button class="btn-danger" id="itemDelete">삭제</button>
+        <button class="btn-danger" id="itemDelete" style="">삭제</button>
         <button class="btn-ghost" id="itemCancel">취소</button>
         <button class="btn-primary" id="itemSave">저장</button>
       </div>
@@ -357,7 +365,7 @@ const DEFAULT_TABS = [
       {
         "name": "인물 A",
         "img": "https://picsum.photos/seed/p1/400/520",
-        "url": ""
+        "url": "NAVER.COM"
       },
       {
         "name": "인물 B",
@@ -394,6 +402,13 @@ const DEFAULT_TABS = [
         ]
       }
     ]
+  },
+  {
+    "id": "t_6o3lc9",
+    "label": "뉴스",
+    "view": "gallery2",
+    "cols": 4,
+    "items": []
   }
 ];
 /* @DATA_END */
@@ -495,7 +510,7 @@ function renderGallery(t, stage){
   const wrap = document.createElement('div'); wrap.className='grid-gallery';
   t.items.forEach((it,i)=>{
     const imgs = it.images||[];
-    const cover = imgs[0]||'';
+    const cover = parseImgEntry(imgs[0]||'').img;
     const cell = document.createElement('div'); cell.className='gal-cell';
     cell.innerHTML =
       '<div class="cover"><img src="'+esc(cover)+'" alt="" onerror="this.style.opacity=.2">'+
@@ -521,7 +536,7 @@ function renderGallery2(t, stage){
   wrap.style.setProperty('--g2cols', cols);
   t.items.forEach((it,i)=>{
     const imgs = it.images||[];
-    const cover = imgs[0]||'';
+    const cover = parseImgEntry(imgs[0]||'').img;
     const cell = document.createElement('div'); cell.className='gal2-cell';
     cell.innerHTML =
       '<img src="'+esc(cover)+'" alt="" onerror="this.style.minHeight=\'120px\';this.style.background=\'#ece7db\'">'+
@@ -547,14 +562,26 @@ function bindCell(el, t, i){
 
 /* ====== 라이트박스 (세로 연속, 원본 크기) ====== */
 function openLightbox(it){
-  var imgs = it.images||[];
-  if(!imgs.length && !it.body) return;
+  var list = (it.images||[]).map(parseImgEntry).filter(function(e){ return e.img; });
+  if(!list.length && !it.body) return;
   document.getElementById('lbTtl').textContent = it.title||'';
   var sc = document.getElementById('lbScroll');
-  var html = '';
-  if(it.body){ html += '<div class="lb-body">'+esc(it.body)+'</div>'; }
-  html += imgs.map(function(s){ return '<img src="'+esc(s)+'" alt="" loading="lazy">'; }).join('');
-  sc.innerHTML = html;
+  sc.innerHTML = '';
+  list.forEach(function(e){
+    var im=document.createElement('img');
+    im.src=e.img; im.alt=''; im.loading='lazy'; im.referrerPolicy='no-referrer';
+    if(e.link){
+      im.style.cursor='pointer'; im.title='이 사진의 페이지로 이동';
+      im.addEventListener('click', function(ev){ ev.stopPropagation(); window.open(e.link,'_blank','noopener'); });
+    }
+    sc.appendChild(im);
+  });
+  if(it.body){
+    var box=document.createElement('div'); box.className='lb-body';
+    box.innerHTML=sanitizeHtml(it.body);
+    box.addEventListener('click', function(ev){ ev.stopPropagation(); });
+    sc.appendChild(box);
+  }
   sc.scrollTop = 0;
   document.getElementById('lb').classList.add('show');
   document.body.style.overflow='hidden';
@@ -660,7 +687,7 @@ function openItem(idx){
     document.getElementById('fldName').style.display = '';
     document.getElementById('fldName').querySelector('label').textContent = '제목';
     document.getElementById('itName').value = it?(it.title||''):'';
-    document.getElementById('itBody').value = it?(it.body||''):'';
+    document.getElementById('itBody').innerHTML = it?(it.body||''):'';
     renderGimgList(it?it.images:[]);
   }else{
     document.getElementById('itName').value = it?(it.name||''):'';
@@ -669,13 +696,31 @@ function openItem(idx){
   }
   document.getElementById('itemOv').classList.add('show');
 }
+function parseImgEntry(s){
+  if(s && typeof s==='object') return { img:(s.img||'').trim(), link:(s.link||'').trim() };
+  s=String(s||''); var p=s.indexOf('|');
+  if(p>=0) return { img:s.slice(0,p).trim(), link:s.slice(p+1).trim() };
+  return { img:s.trim(), link:'' };
+}
+function entryToStr(e){ return e.link ? (e.img+'|'+e.link) : e.img; }
+function sanitizeHtml(h){
+  return String(h||'')
+    .replace(/<script[\s\S]*?<\/script>/gi,'')
+    .replace(/<style[\s\S]*?<\/style>/gi,'')
+    .replace(/<iframe[\s\S]*?<\/iframe>/gi,'')
+    .replace(/\son\w+\s*=\s*"[^"]*"/gi,'')
+    .replace(/\son\w+\s*=\s*'[^']*'/gi,'')
+    .replace(/javascript:/gi,'');
+}
 function renderGimgList(imgs){
   const list=document.getElementById('gimgList'); list.innerHTML='';
-  (imgs&&imgs.length?imgs:['']).forEach(src=>addGimgRow(src));
+  const arr=(imgs&&imgs.length)?imgs:[''];
+  arr.forEach(function(s){ var e=parseImgEntry(s); addGimgRow(e.img, e.link); });
 }
-function addGimgRow(src){
+function addGimgRow(img, link){
   const row=document.createElement('div'); row.className='gimg-item';
-  row.innerHTML='<input placeholder="https://... 사진 URL" value="'+esc(src||'')+'"><button title="삭제">×</button>';
+  row.innerHTML='<div class="gimg-top"><input class="gi-img" placeholder="사진 주소 (URL)" value="'+esc(img||'')+'"><button title="삭제">×</button></div>'+
+    '<input class="gi-link" placeholder="눌렀을 때 이동할 주소 (선택)" value="'+esc(link||'')+'">';
   row.querySelector('button').addEventListener('click',()=>row.remove());
   document.getElementById('gimgList').appendChild(row);
 }
@@ -684,8 +729,12 @@ document.getElementById('itemCancel').addEventListener('click', ()=>document.get
 document.getElementById('itemSave').addEventListener('click', ()=>{
   const t=curTab(); if(!t) return;
   if(t.view==='gallery' || t.view==='gallery2'){
-    const imgs=[...document.querySelectorAll('#gimgList input')].map(i=>i.value.trim()).filter(Boolean);
-    const obj={ title:document.getElementById('itName').value.trim(), url:document.getElementById('itUrl').value.trim(), images:imgs, body:document.getElementById('itBody').value.trim() };
+    const imgs=[...document.querySelectorAll('#gimgList .gimg-item')].map(function(row){
+      var img=row.querySelector('.gi-img').value.trim();
+      var link=row.querySelector('.gi-link').value.trim();
+      return img ? entryToStr({img:img, link:link}) : '';
+    }).filter(Boolean);
+    const obj={ title:document.getElementById('itName').value.trim(), url:document.getElementById('itUrl').value.trim(), images:imgs, body:sanitizeHtml(document.getElementById('itBody').innerHTML).trim() };
     if(itemEditIdx!=null) t.items[itemEditIdx]=obj; else t.items.push(obj);
   }else{
     const obj={ name:document.getElementById('itName').value.trim(), img:document.getElementById('itImg').value.trim(), url:document.getElementById('itUrl').value.trim() };
