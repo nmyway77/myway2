@@ -43,6 +43,10 @@
   /* ===== 본문 ===== */
   main{max-width:1180px;margin:0 auto;padding:22px 16px 0}
   .sec-head{display:none}
+  .move-row{display:flex;align-items:center;gap:8px;padding:8px 22px 2px}
+  .move-label{font-size:.78rem;font-weight:700;color:var(--ink-sub);margin-right:auto}
+  .move-btn{min-width:42px;height:36px;border-radius:9px;border:1px solid var(--line);background:#fafbff;color:var(--ink);font-size:1rem;cursor:pointer;font-weight:700}
+  .move-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
   .sec-head h2{font-size:1.28rem;font-weight:800;letter-spacing:-.02em;margin:0;display:flex;align-items:center;gap:9px}
   .sec-head h2::before{content:"";width:5px;height:19px;border-radius:3px;background:var(--grad)}
   .sec-head .cnt{font-size:.82rem;color:var(--ink-mute);font-weight:700;font-family:var(--mono)}
@@ -251,6 +255,11 @@
         <label>가로 개수 (열 수)</label>
         <input id="tabCols" type="number" min="1" max="8" value="3">
       </div>
+      <div class="move-row" id="tabMoveRow" style="display:none">
+        <span class="move-label">탭 순서</span>
+        <button class="move-btn" data-mv="left" title="왼쪽으로">◀</button>
+        <button class="move-btn" data-mv="right" title="오른쪽으로">▶</button>
+      </div>
       <div class="btns">
         <button class="btn-danger" id="tabDelete">삭제</button>
         <button class="btn-ghost" id="tabCancel">취소</button>
@@ -278,6 +287,13 @@
           <div id="itBody" class="paste-area" contenteditable="true" data-ph="다른 페이지에서 복사한 내용(사진·글)을 여기에 붙여넣으세요"></div>
           <div class="hint">사진과 글을 함께 붙여넣을 수 있어요. 전체 보기(라이트박스)에서 사진 아래에 나와요.</div>
         </div>
+      </div>
+      <div class="move-row" id="itemMoveRow" style="display:none">
+        <span class="move-label">순서 이동</span>
+        <button class="move-btn" data-mv="left" title="왼쪽">◀</button>
+        <button class="move-btn" data-mv="up" title="위로">▲</button>
+        <button class="move-btn" data-mv="down" title="아래로">▼</button>
+        <button class="move-btn" data-mv="right" title="오른쪽">▶</button>
       </div>
       <div class="btns">
         <button class="btn-danger" id="itemDelete">삭제</button>
@@ -590,6 +606,7 @@ function openTab(id){
   setVtype(t? t.view : 'logo');
   document.getElementById('tabCols').value = (t&&t.cols)?t.cols:3;
   document.getElementById('tabDelete').style.display = t? '' : 'none';
+  document.getElementById('tabMoveRow').style.display = (t && tabs.length>1)? '' : 'none';
   document.getElementById('tabOv').classList.add('show');
 }
 function setVtype(v){
@@ -633,6 +650,7 @@ function openItem(idx){
   document.getElementById('itemModalTitle').textContent = (idx!=null?'항목 수정':'항목 추가');
   document.getElementById('itemModalSub').textContent = VIEW_META[t.view].label + ' · ' + t.label;
   document.getElementById('itemDelete').style.display = (idx!=null)?'':'none';
+  document.getElementById('itemMoveRow').style.display = (idx!=null && curTab() && curTab().items.length>1)?'':'none';
 
   // 공통/타입별 필드 표시
   document.getElementById('galFields').style.display = isGal?'':'none';
@@ -686,6 +704,35 @@ function addGimgRow(img, link){
 }
 document.getElementById('gimgAdd').addEventListener('click', ()=>addGimgRow(''));
 document.getElementById('itemCancel').addEventListener('click', ()=>document.getElementById('itemOv').classList.remove('show'));
+
+/* ====== 순서 이동 (탭 좌우 / 항목 좌우상하) ====== */
+function colsOf(){
+  var stage=document.getElementById('stage');
+  var cells=stage.querySelectorAll('.logo-cell,.people-cell,.gal-cell,.gal2-cell');
+  if(cells.length<2) return 1;
+  var top0=cells[0].offsetTop, c=0;
+  for(var i=0;i<cells.length;i++){ if(cells[i].offsetTop===top0) c++; else break; }
+  return c||1;
+}
+function moveTab(dir){
+  var i=tabs.findIndex(function(t){return t.id===tabEditId;}); if(i<0) return;
+  var j = dir==='left'? i-1 : i+1;
+  if(j<0||j>=tabs.length) return;
+  var tmp=tabs[i]; tabs[i]=tabs[j]; tabs[j]=tmp;
+  saveTabs(); renderTabs();
+}
+function moveItem(dir){
+  var t=curTab(); if(!t||itemEditIdx==null) return;
+  var n=t.items.length, c=colsOf(), j=itemEditIdx;
+  if(dir==='left') j--; else if(dir==='right') j++;
+  else if(dir==='up') j-=c; else if(dir==='down') j+=c;
+  if(j<0||j>=n) return;
+  var a=t.items, tmp=a[itemEditIdx]; a[itemEditIdx]=a[j]; a[j]=tmp;
+  itemEditIdx=j;
+  saveTabs(); renderStage();
+}
+document.getElementById('tabMoveRow').addEventListener('click', function(e){ var b=e.target.closest('button'); if(b) moveTab(b.dataset.mv); });
+document.getElementById('itemMoveRow').addEventListener('click', function(e){ var b=e.target.closest('button'); if(b) moveItem(b.dataset.mv); });
 document.getElementById('itemSave').addEventListener('click', ()=>{
   const t=curTab(); if(!t) return;
   if(t.view==='gallery' || t.view==='gallery2'){

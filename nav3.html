@@ -42,6 +42,10 @@
   /* ===== 본문 ===== */
   main{max-width:1180px;margin:0 auto;padding:22px 16px 0}
   .sec-head{display:none}
+  .move-row{display:flex;align-items:center;gap:8px;padding:8px 22px 2px}
+  .move-label{font-size:.78rem;font-weight:700;color:var(--ink-sub);margin-right:auto}
+  .move-btn{min-width:42px;height:36px;border-radius:9px;border:1px solid var(--line);background:#fafbff;color:var(--ink);font-size:1rem;cursor:pointer;font-weight:700}
+  .move-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
   .sec-head h2{font-size:1.28rem;font-weight:800;letter-spacing:-.02em;margin:0;display:flex;align-items:center;gap:9px}
   .sec-head h2::before{content:"";width:5px;height:19px;border-radius:3px;background:var(--grad)}
   .sec-head .cnt{font-size:.82rem;color:var(--ink-mute);font-weight:700;font-family:var(--mono)}
@@ -203,9 +207,9 @@
 
   <main>
     <div class="sec-head">
-      <h2 id="secTitle">주요사이트</h2>
+      <h2 id="secTitle">갤러리</h2>
       <span class="cnt" id="secCount">4개</span>
-      <span class="vlabel" id="secVlabel">로고형</span>
+      <span class="vlabel" id="secVlabel">갤러리형</span>
     </div>
     <div id="stage"></div>
   </main>
@@ -233,7 +237,7 @@
   <!-- 탭 편집 모달 -->
   <div class="ov" id="tabOv">
     <div class="modal">
-      <h3 id="tabModalTitle">탭 추가</h3>
+      <h3 id="tabModalTitle">탭 설정</h3>
       <div class="sub">탭 이름과 표시 방식을 정하세요.</div>
       <div class="fld">
         <label>탭 이름</label>
@@ -244,11 +248,16 @@
         <div class="vtype-opt" data-v="logo"><div class="ic">🔵</div><div class="t">로고형</div><div class="d">원형 아이콘</div></div>
         <div class="vtype-opt" data-v="people"><div class="ic">🖼️</div><div class="t">피플형</div><div class="d">사진+이름</div></div>
         <div class="vtype-opt" data-v="gallery"><div class="ic">🗂️</div><div class="t">갤러리형</div><div class="d">여러 장 묶음</div></div>
-        <div class="vtype-opt" data-v="gallery2"><div class="ic">🖽</div><div class="t">갤러리형2</div><div class="d">원본비율·열지정</div></div>
+        <div class="vtype-opt on" data-v="gallery2"><div class="ic">🖽</div><div class="t">갤러리형2</div><div class="d">원본비율·열지정</div></div>
       </div>
-      <div class="fld" id="fldCols" style="display:none">
+      <div class="fld" id="fldCols" style="">
         <label>가로 개수 (열 수)</label>
         <input id="tabCols" type="number" min="1" max="8" value="3">
+      </div>
+      <div class="move-row" id="tabMoveRow" style="">
+        <span class="move-label">탭 순서</span>
+        <button class="move-btn" data-mv="left" title="왼쪽으로">◀</button>
+        <button class="move-btn" data-mv="right" title="오른쪽으로">▶</button>
       </div>
       <div class="btns">
         <button class="btn-danger" id="tabDelete">삭제</button>
@@ -277,6 +286,13 @@
           <div id="itBody" class="paste-area" contenteditable="true" data-ph="다른 페이지에서 복사한 내용(사진·글)을 여기에 붙여넣으세요"></div>
           <div class="hint">사진과 글을 함께 붙여넣을 수 있어요. 전체 보기(라이트박스)에서 사진 아래에 나와요.</div>
         </div>
+      </div>
+      <div class="move-row" id="itemMoveRow" style="display:none">
+        <span class="move-label">순서 이동</span>
+        <button class="move-btn" data-mv="left" title="왼쪽">◀</button>
+        <button class="move-btn" data-mv="up" title="위로">▲</button>
+        <button class="move-btn" data-mv="down" title="아래로">▼</button>
+        <button class="move-btn" data-mv="right" title="오른쪽">▶</button>
       </div>
       <div class="btns">
         <button class="btn-danger" id="itemDelete">삭제</button>
@@ -338,56 +354,1042 @@ const COPY_PROTECT = false;
 /* @DATA_START */
 const DEFAULT_TABS = [
   {
-    "id": "t_logo",
-    "label": "주요사이트",
-    "view": "logo",
-    "items": [
-      {
-        "name": "ChatGPT",
-        "img": "https://i.namu.wiki/i/Trhh3NbX78ZqUJyFblACvejsfPNdAXXN8jQtPo10nSVq7Bk1ZvDKB9d1balCxMLeWXDbZ8U_R1XWhuIwI1dVFA.svg",
-        "url": "https://chat.openai.com"
-      },
-      {
-        "name": "YouTube",
-        "img": "https://i.namu.wiki/i/96PzWjU0X4PJWSDG6rRFFgG3dkGLIw06-YMpHg_CVHnURSIHuxA9sF9CrJoXsZISwWeo19Y3LgIQnL1krbrcOg.svg",
-        "url": "https://youtube.com"
-      },
-      {
-        "name": "Google",
-        "img": "https://www.google.com/s2/favicons?domain=google.com&sz=128",
-        "url": "https://google.com"
-      },
-      {
-        "name": "네이버",
-        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3-dZWj7CHFepg8tOKHl3btm2IRvSqdfHRAg&s",
-        "url": "https://naver.com"
-      }
-    ]
-  },
-  {
     "id": "t_people",
     "label": "PEOPLE",
     "view": "people",
     "items": [
       {
-        "name": "인물 A",
-        "img": "https://picsum.photos/seed/p1/400/520",
-        "url": ""
+        "name": "1theK 원더케이",
+        "img": "https://pimg.mk.co.kr/meet/neds/2011/11/image_readtop_2011_736156_1321232205512452.jpg",
+        "url": "https://www.youtube.com/watch?v=kMRLzSQorK0&ab_channel=1theK%28%EC%9B%90%EB%8D%94%EC%BC%80%EC%9D%B4%29"
       },
       {
-        "name": "인물 B",
-        "img": "https://picsum.photos/seed/p2/400/600",
-        "url": ""
+        "name": "1theK 원더케이",
+        "img": "https://flexible.img.hani.co.kr/flexible/normal/600/814/imgdb/original/2025/0303/20250303501438.jpg",
+        "url": "https://www.youtube.com/watch?v=tfmwbxBKPh0&list=RDtfmwbxBKPh0&start_radio=1&ab_channel=1theK%28%EC%9B%90%EB%8D%94%EC%BC%80%EC%9D%B4%29"
       },
       {
-        "name": "인물 C",
-        "img": "https://picsum.photos/seed/p3/400/480",
-        "url": ""
+        "name": "iwee",
+        "img": "https://img.hankyung.com/photo/201912/PCM20190602000043005_P2.jpg",
+        "url": "https://www.youtube.com/watch?v=TaSP-AinD9U&list=RDTaSP-AinD9U&start_radio=1&ab_channel=iwee"
       },
       {
-        "name": "",
-        "img": "https://cdnweb01.wikitree.co.kr/webdata/editor/202505/21/img_20250521104056_3e8c6ac4.webp",
-        "url": "https://cdnweb01.wikitree.co.kr/webdata/editor/202505/21/img_20250521104056_3e8c6ac4.webp"
+        "name": "JTBC 엔터테인먼트",
+        "img": "https://img9.yna.co.kr/etc/inner/KR/2024/07/24/AKR20240724151800005_06_i_P4.jpg",
+        "url": "https://www.youtube.com/watch?v=0dKRWz3EDug&list=PLAeW92KkLNuK353JrtkYN74ehcGOl1KN-&index=5&ab_channel=JTBCEntertainment"
+      },
+      {
+        "name": "전람회",
+        "img": "https://i.namu.wiki/i/8PC6sroonFXOkhd-bWOM0KvWuEjYt9eWr5PUYOzmbKWQ5Su339bGcbhjVEkKZWkJNLsTxuxxRJZbgehYC1M5Aw.webp",
+        "url": "https://soundcloud.com/search?q=%EC%A0%84%EB%9E%8C%ED%9A%8C"
+      },
+      {
+        "name": "김현식",
+        "img": "https://img.khan.co.kr/news/2007/10/11/7j11k08a.jpg",
+        "url": "https://soundcloud.com/search?q=%EA%B9%80%ED%98%84%EC%8B%9D"
+      },
+      {
+        "name": "들국화",
+        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS691HmQnMioY8bm-8atkaENVsWEvCDfXrBNQ&s",
+        "url": "https://soundcloud.com/search?q=%EB%93%A4%EA%B5%AD%ED%99%94"
+      },
+      {
+        "name": "IPIN",
+        "img": "https://img3.yna.co.kr/photo/yna/YH/2017/04/18/PYH2017041832300001300_P4.jpg",
+        "url": "https://www.youtube.com/watch?v=Ccpx0pRrzAs&list=PLAeW92KkLNuJl-nR4smaq2JubVN_z6TkM&index=3&ab_channel=IPIN"
+      },
+      {
+        "name": "토이",
+        "img": "https://img.etoday.co.kr/pto_db/2022/06/600/20220617155057_1765604_647_970.jpg",
+        "url": "https://soundcloud.com/search?q=%ED%86%A0%EC%9D%B4"
+      },
+      {
+        "name": "sg워너비",
+        "img": "https://image.yes24.com/momo/TopCate52/MidCate05/5148490.jpg",
+        "url": "https://soundcloud.com/search?q=sg%EC%9B%8C%EB%84%88%EB%B9%84"
+      },
+      {
+        "name": "감성네비",
+        "img": "https://cdnweb01.wikitree.co.kr/webdata/editor/202408/26/img_20240826134816_3f10e0d5.webp",
+        "url": "https://www.youtube.com/watch?v=m8ILCZk6FLU&list=PLV2M-6ANYqSwU7yiIN2hOoBsRazx84zT7&ab_channel=%EA%B0%90%EC%84%B1%EB%84%A4%EB%B9%84"
+      },
+      {
+        "name": "김필",
+        "img": "https://talkimg.imbc.com/TVianUpload/tvian/TViews/image/2019/12/13/cHSISW3DxtP3637118505394636347.jpg",
+        "url": "https://www.youtube.com/@KIMFEELofficial/videos"
+      },
+      {
+        "name": "김태우",
+        "img": "https://newsimg.sedaily.com/2017/07/03/1OIBY96Z4P_1.jpg",
+        "url": "https://soundcloud.com/search?q=%EA%B9%80%ED%83%9C%EC%9A%B0"
+      },
+      {
+        "name": "허각",
+        "img": "https://img.sbs.co.kr/newsnet/etv/upload/2013/11/04/30000330433_500.jpg",
+        "url": "https://soundcloud.com/search?q=%ED%97%88%EA%B0%81"
+      },
+      {
+        "name": "KBS 레전드 케이팝",
+        "img": "https://dimg.donga.com/wps/NEWS/IMAGE/2013/04/08/54259502.11.jpg",
+        "url": "https://www.youtube.com/watch?v=ZHRLtOqESmw&list=RDZHRLtOqESmw&start_radio=1&ab_channel=KBS%EB%A0%88%EC%A0%84%EB%93%9C%EC%BC%80%EC%9D%B4%ED%8C%9D"
+      },
+      {
+        "name": "박효신",
+        "img": "https://pbs.twimg.com/media/D_mr4MQVAAA0V4z?format=jpg&name=4096x4096",
+        "url": "https://soundcloud.com/search?q=%EB%B0%95%ED%9A%A8%EC%8B%A0"
+      },
+      {
+        "name": "KBS Kpop",
+        "img": "https://dimg.donga.com/wps/NEWS/IMAGE/2012/10/26/50405551.4.jpg",
+        "url": "https://www.youtube.com/watch?v=WABhOy9wm3c&list=RDWABhOy9wm3c&start_radio=1&ab_channel=KBSKpop"
+      },
+      {
+        "name": "박상민",
+        "img": "https://ojsfile.ohmynews.com/STD_IMG_FILE/2012/0117/IE001390962_STD.jpg",
+        "url": "https://soundcloud.com/search?q=%EB%B0%95%EC%83%81%EB%AF%BC"
+      },
+      {
+        "name": "여행스케치",
+        "img": "https://images.khan.co.kr/article/2011/05/31/20110601.02500119060056.01L.jpg",
+        "url": "https://soundcloud.com/search?q=%EC%97%AC%ED%96%89%EC%8A%A4%EC%BC%80%EC%B9%98"
+      },
+      {
+        "name": "서태지와 아이들",
+        "img": "https://www.seotaiji-archive.com/xe/files/attach/images/43635/542/160/9caebdba006965ee9a35e7c3ee25f6e4.jpg",
+        "url": "https://soundcloud.com/search?q=%EC%84%9C%ED%83%9C%EC%A7%80%EC%99%80%20%EC%95%84%EC%9D%B4%EB%93%A4&query_urn=soundcloud%3Asearch-autocomplete%3A5d7e6faf6a7d4f3b8ad34c6e2be31e4f"
+      },
+      {
+        "name": "신승훈",
+        "img": "https://cdn.stardailynews.co.kr/news/photo/201711/172168_204239_3425.jpg",
+        "url": "https://soundcloud.com/search?q=%EC%8B%A0%EC%8A%B9%ED%9B%88"
+      },
+      {
+        "name": "김건모",
+        "img": "https://cdn.todaykorea.co.kr/news/photo/200907/75182_60140_1917.jpg",
+        "url": "https://soundcloud.com/search?q=%EA%B9%80%EA%B1%B4%EB%AA%A8"
+      },
+      {
+        "name": "조성모",
+        "img": "https://img.hankyung.com/photo/201703/01.13602750.1.jpg",
+        "url": "https://soundcloud.com/search?q=%EC%A1%B0%EC%84%B1%EB%AA%A8"
+      },
+      {
+        "name": "성시경",
+        "img": "https://ticketimage.interpark.com/PlayDictionary/DATA/PlayDic/PlayDicUpload/040004/07/01/0400040701_1039_01.505.jpg",
+        "url": "https://soundcloud.com/search?q=%EC%84%B1%EC%8B%9C%EA%B2%BD"
+      },
+      {
+        "name": "김광석",
+        "img": "https://img.sbs.co.kr/newsnet/etv/upload/2017/09/20/30000580828_500.jpg",
+        "url": "https://soundcloud.com/search?q=%EA%B9%80%EA%B4%91%EC%84%9D"
+      },
+      {
+        "name": "김정호 하얀나비",
+        "img": "https://i.namu.wiki/i/SmknbOcUyU8dten1_NFBL2MZg8WrcnMZzLpvyGUHdXGM4vs1VV6gwG1-Gn10RDbpjFtZkVL9oqqcqkQxqP3Pow.webp",
+        "url": "https://soundcloud.com/search?q=%EA%B9%80%EC%A0%95%ED%98%B8%20%ED%95%98%EC%96%80%EB%82%98%EB%B9%84"
+      },
+      {
+        "name": "jamescho",
+        "img": "https://i.namu.wiki/i/OHs3TheNGPogoE3mv_xHb44BWH9PEOTSuhjKgDuDCH3qTwSaLAnq8JJNnLGp1kupedR5ib6JKjKLeRvhx0mrsQ.webp",
+        "url": "https://www.youtube.com/watch?v=D47SFEgqlBM&list=RDD47SFEgqlBM&start_radio=1&ab_channel=jamescho"
+      },
+      {
+        "name": "김범수",
+        "img": "https://cdn.emetro.co.kr/data2/content/image/2015/02/24/0540/20150224000185.jpg",
+        "url": "https://soundcloud.com/search?q=%EA%B9%80%EB%B2%94%EC%88%98"
+      },
+      {
+        "name": "김연우",
+        "img": "https://i.namu.wiki/i/77BJgfK7PrJCYa3tt3gS_wHENUIfwgtI4CDn0ySgUlE4qSd03NkvvMn96JGjFCsPLXw5nm-WoCA1pLA3qB_-0A.webp",
+        "url": "https://soundcloud.com/search?q=%EA%B9%80%EC%97%B0%EC%9A%B0"
+      },
+      {
+        "name": "유재하",
+        "img": "https://i.namu.wiki/i/bcUmsG95AGbAYa18wtWbzaFDGxGgrNJWxhWECHrQ3S9jvmT0t50_dCxWK6pN2Sg-IFFmFCeBzVMx76R_B8csDw.webp",
+        "url": "https://soundcloud.com/search?q=%EC%9C%A0%EC%9E%AC%ED%95%98"
+      },
+      {
+        "name": "이소라",
+        "img": "https://dimg.donga.com/wps/NEWS/IMAGE/2011/03/31/36044389.3.jpg",
+        "url": "https://soundcloud.com/search?q=%EC%9D%B4%EC%86%8C%EB%9D%BC"
+      },
+      {
+        "name": "SBS 엔터테인먼트",
+        "img": "https://cdn.ksilbo.co.kr/news/photo/200810/P200706230116011M.jpg",
+        "url": "https://www.youtube.com/watch?v=LXAmpAMzMsc&list=RDLXAmpAMzMsc&start_radio=1&ab_channel=SBSEntertainment"
+      },
+      {
+        "name": "아이유",
+        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGnZ-BXL4PWsJyIyFM7AhxrcNm_WQjZ7Rp2w4jBF5w_4OiIqJMt-h5aQgxSFZkS2n94Bg&usqp=CAU",
+        "url": "https://soundcloud.com/search?q=%EC%95%84%EC%9D%B4%EC%9C%A0"
+      },
+      {
+        "name": "양희은",
+        "img": "https://image.yes24.com/images/chyes/music/musicspecial/20110720/03.jpg",
+        "url": "https://soundcloud.com/search?q=%EC%96%91%ED%9D%AC%EC%9D%80"
+      },
+      {
+        "name": "소찬휘",
+        "img": "https://file2.nocutnews.co.kr/newsroom/image/2015/01/10/20150110173012341999.jpg",
+        "url": "https://soundcloud.com/search?q=%EC%86%8C%EC%B0%AC%ED%9C%98"
+      },
+      {
+        "name": "린애",
+        "img": "https://d3tvwjfge35btc.cloudfront.net/Assets/13/448/L_p1002744813.jpg",
+        "url": "https://soundcloud.com/search?q=%EB%A6%B0%EC%95%A0"
+      },
+      {
+        "name": "임재범",
+        "img": "https://img.seoul.co.kr/img/upload/2022/06/16/SSI_2022061616305101_O2.jpg",
+        "url": "https://soundcloud.com/search?q=%EC%9E%84%EC%9E%AC%EB%B2%94"
+      },
+      {
+        "name": "부활",
+        "img": "https://i.namu.wiki/i/6ykw3GOcToixeXVaB4-FFHHicOJItMl7J30ScCqGpVUl9O7hsN1ZRu3guK1_hMnMJMJa-OEgm8R-jimiefATxw.webp",
+        "url": "https://soundcloud.com/search?q=%EB%B6%80%ED%99%9C"
+      },
+      {
+        "name": "이승철",
+        "img": "https://pimg.mk.co.kr/meet/neds/2010/05/image_readtop_2010_237755_1273438744271284.jpg",
+        "url": "https://soundcloud.com/search?q=%EC%9D%B4%EC%8A%B9%EC%B2%A0"
+      },
+      {
+        "name": "신해철",
+        "img": "https://i.namu.wiki/i/0D49dSHeRpc4xYsyhzUOpd73wgnIiowpfaUMw8SRgY8nzuPzBxXIeZrcpez_EPiSlIyMGu_NqxnLlf8DyzZW3A.webp",
+        "url": "https://soundcloud.com/search?q=%EC%8B%A0%ED%95%B4%EC%B2%A0"
+      },
+      {
+        "name": "싸이",
+        "img": "https://i.namu.wiki/i/efChuAmzQ4wRRKTv5edXs35NUTr_tDd2fKeR3r2Kj5Itl8gRy4SxRIdpNX1grSFiXLw__A0R94M_2qS9AzK4vg.webp",
+        "url": "https://soundcloud.com/search?q=%EC%8B%B8%EC%9D%B4"
+      },
+      {
+        "name": "타샤니",
+        "img": "https://image.bugsm.co.kr/album/images/500/53/5376.jpg",
+        "url": "https://soundcloud.com/search?q=%ED%83%80%EC%83%A4%EB%8B%88"
+      },
+      {
+        "name": "자자 버스안에서",
+        "img": "https://flexible.img.hani.co.kr/flexible/normal/640/640/imgdb/original/2020/0607/20200607501716.jpg",
+        "url": "https://soundcloud.com/search?q=%EC%9E%90%EC%9E%90%20%EB%B2%84%EC%8A%A4%EC%95%88%EC%97%90%EC%84%9C&query_urn=soundcloud%3Asearch-autocomplete%3A9a2e371774094d6dbc003d7fca1c7d41"
+      },
+      {
+        "name": "양파",
+        "img": "https://daily.hankooki.com/news/photo/201501/20150113_1_bodyFimg_143405.jpg",
+        "url": "https://soundcloud.com/search?q=%EC%96%91%ED%8C%8C"
+      },
+      {
+        "name": "dj doc",
+        "img": "https://image.genie.co.kr/Y/IMAGE/IMG_ALBUM/015/035/475/15035475_1312529055225_1_600x600.JPG",
+        "url": "https://soundcloud.com/search?q=dj%20doc"
+      },
+      {
+        "name": "조관우",
+        "img": "https://i.namu.wiki/i/l-Ufh_ILKSSdunh0snsG9JBbt74nwvk7OW-hRVM4sgdI7pManGqGY7DVhllVAW8NYVyffGl5vcuUXn13lWDdrA.webp",
+        "url": "https://soundcloud.com/search?q=%EC%A1%B0%EA%B4%80%EC%9A%B0"
+      },
+      {
+        "name": "강수지",
+        "img": "https://dimg.donga.com/wps/NEWS/IMAGE/2009/01/05/7104972.1.jpg",
+        "url": "https://soundcloud.com/search?q=%EA%B0%95%EC%88%98%EC%A7%80"
+      },
+      {
+        "name": "거미",
+        "img": "https://newsimg.sedaily.com/2017/06/05/1OH2Y7I0OK_1.jpg",
+        "url": "https://soundcloud.com/search?q=%EA%B1%B0%EB%AF%B8"
+      },
+      {
+        "name": "터보",
+        "img": "https://i.namu.wiki/i/T5BuKEIrRgPHcI7jIQ7AsRwLsdos4nMaJxe3hSGzkWFfarK_-U1dLNjAIWGKyMY1FUUmb9VJpxJBjesyQc5z8Q.webp",
+        "url": "https://soundcloud.com/search?q=%ED%84%B0%EB%B3%B4"
+      },
+      {
+        "name": "변진섭",
+        "img": "https://m.sportsworldi.com/content/image/2012/11/07/20121107020519_0.jpg",
+        "url": "https://soundcloud.com/search?q=%EB%B3%80%EC%A7%84%EC%84%AD"
+      },
+      {
+        "name": "조덕배",
+        "img": "https://mblogthumb-phinf.pstatic.net/20151018_67/yessok104_1445150119801bLG3k_PNG/%B4%D9%BF%EE%B7%CE%B5%E5.png?type=w420",
+        "url": "https://soundcloud.com/search?q=%EC%A1%B0%EB%8D%95%EB%B0%B0"
+      },
+      {
+        "name": "이문세",
+        "img": "https://i.namu.wiki/i/1brAEa-jZI2CzeYT5kA9q_F9Os4UR7STVcD2u1wjYiWybiEquFUkSGhwJlW8PW_KU-vvq-dp6FrXrmpqY4bZEg.webp",
+        "url": "https://soundcloud.com/search?q=%EC%9D%B4%EB%AC%B8%EC%84%B8"
+      },
+      {
+        "name": "더원",
+        "img": "https://i.namu.wiki/i/5ZmBPyMZ-dydAPCkaWB_r286OtxDsNnXynol5uHVsrTPAWuEqW7a3_F0CzjVTDL3Z6HNN7DE5UcrGaiRCWlHQA.webp",
+        "url": "https://soundcloud.com/search?q=%EB%8D%94%EC%9B%90"
+      },
+      {
+        "name": "김현정",
+        "img": "https://cdn.incheonilbo.com/news/photo/202007/1047519_321960_5859.jpg",
+        "url": "https://soundcloud.com/search?q=%EA%B9%80%ED%98%84%EC%A0%95"
+      },
+      {
+        "name": "오현란",
+        "img": "https://is1-ssl.mzstatic.com/image/thumb/Music/0e/47/74/mzi.ldpeizab.jpg/486x486bb.png",
+        "url": "https://soundcloud.com/search?q=%EC%98%A4%ED%98%84%EB%9E%80"
+      },
+      {
+        "name": "민해경",
+        "img": "https://i.namu.wiki/i/GvJcoVxwZG9PwzLeBXnnJP6VECFVAYbOb9nGHXTpO43FwxTdfkeXU8JSLf3T37oT3h7crJTQieKmhZHeG8KdiA.webp",
+        "url": "https://soundcloud.com/search?q=%EB%AF%BC%ED%95%B4%EA%B2%BD"
+      },
+      {
+        "name": "나얼",
+        "img": "https://i.namu.wiki/i/oXd8AbVY9zA2Ymzbs4uKRQebT73NeX6j2138vjU1EOZi4tSktjORXjcn7wGMteGH7B3akbG2maemmpWHc-ZPBQ.webp",
+        "url": "https://soundcloud.com/search?q=%EB%82%98%EC%96%BC"
+      },
+      {
+        "name": "VIBE",
+        "img": "https://music-phinf.pstatic.net/20240923_133/1727094084949jVo7k_PNG/vibe_og_tag_square3x.png",
+        "url": "https://vibe.naver.com/today"
+      },
+      {
+        "name": "VEVO",
+        "img": "https://play-lh.googleusercontent.com/S3Wc8RcjrGvFwn6y8Q6xQRVGxO2FJr9HIaN7pxO-uG9i6D8ijNXAtoEwkBk0JLc69w",
+        "url": "https://www.youtube.com/@VEVO"
+      },
+      {
+        "name": "SoundCloud",
+        "img": "https://cdn.iconsumer.or.kr/news/photo/202103/15608_20188_542.jpg",
+        "url": "https://soundcloud.com/SOundCloud"
+      },
+      {
+        "name": "멜론",
+        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXV_WBvi-G9LwPKbyh8x5qBPDEhYyzis24fiy9qNtEzlkUCPYduyZ6PyYMQuzBcjgjBVg&usqp=CAU",
+        "url": "https://www.melon.com/"
+      },
+      {
+        "name": "벅스",
+        "img": "https://lh3.ggpht.com/M6UXPC-jncjtUd020iWikIdSaQ80Q1je3-uyTy-NkdOHme0X518DuYGsG3ftxTi5-w",
+        "url": "https://music.bugs.co.kr/"
+      },
+      {
+        "name": "김선태",
+        "img": "https://i.namu.wiki/i/XFixUOxnll15Q4ZIyT9pFKStgsOcf5dFLC0AFMXTnH_9d2C6uncLLpBlZXKi_6ckl2y1zn_EbhKN7FO-XCmYcQ.webp",
+        "url": "https://www.youtube.com/@kimseontae/videos"
+      },
+      {
+        "name": "웅진고웨이",
+        "img": "https://i.namu.wiki/i/HcOondTE3e2lST0kOmwuv_0VsFFWnt4iy7J-PEPEuAhHy1uqBRMQ541KWldpq7rskLNFWdFjOb7lbRE6yBvmew.webp",
+        "url": "https://www.youtube.com/@woongjingoway/videos"
+      },
+      {
+        "name": "영알남",
+        "img": "https://yt3.googleusercontent.com/ytc/AIdro_kx1aIc6M5ebBut6EgAZCSxqaS5dFKqVK6bO034ziceiw=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@Youngalnam/videos"
+      },
+      {
+        "name": "보겸",
+        "img": "https://yt3.googleusercontent.com/x7lu2QBmrohyLIgdPeFU6L8O7GIqSU_rc58CTbjA0wT0kcomBYLEIw0Drovikw7vG1UvaeYrvQ=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@bokyem_s/videos"
+      },
+      {
+        "name": "김숙",
+        "img": "https://yt3.googleusercontent.com/ytc/AIdro_n0H9ya88w_O39s3WbC3ZsG5bYN_M0yaFW_Mq89TZ4ojXI=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@kimsookTV/videos"
+      },
+      {
+        "name": "Traveler Jay",
+        "img": "https://i.ytimg.com/vi/gLLmuS_EAeo/hqdefault.jpg",
+        "url": "https://www.youtube.com/@traveler_Jay/videos"
+      },
+      {
+        "name": "모던타잔",
+        "img": "https://yt3.googleusercontent.com/ytc/AIdro_lIwCDb8KEtOw_6zFy8LSL7ajD48cie8K0VotjjUJo_lA=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@moderntarzan/videos"
+      },
+      {
+        "name": "허당그레이스",
+        "img": "https://yt3.googleusercontent.com/jwQV796ZaVWYbfF-2GkNdT1TLBT2kGnzD0ghO5N50bu_5kaxgKGDelV6l1wZmV7KZvsZT6pX8g=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@huhdangrace/videos"
+      },
+      {
+        "name": "Guzal TV",
+        "img": "https://yt3.googleusercontent.com/t6u9kgd2FLl-YyvJe_HBUoEUOvZGqgIL9nazbUxxvrv7VX-mXZAobY-LIV4PsAW_v8RDusr7=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@guzaltv/videos"
+      },
+      {
+        "name": "상화남편",
+        "img": "https://yt3.googleusercontent.com/Sa0yhz5nyb7Io2iFnJKRoELq0xEZd_m7BJuKgccAPj6pIxmvQhDxXLjFHCN-O5a1WzEojJaR=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@sanghwahusband/videos"
+      },
+      {
+        "name": "안젤리나리 여행",
+        "img": "https://i.ytimg.com/vi/nR_ACqWb39s/hqdefault.jpg",
+        "url": "https://www.youtube.com/@AngelinaleeTravel/videos"
+      },
+      {
+        "name": "잇섭 ITSub",
+        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBMMUO-V90o0zAP6Ue3jjCuxVeX9rnIiBKpw&s",
+        "url": "https://www.youtube.com/@ITSUB/videos"
+      },
+      {
+        "name": "박나래",
+        "img": "https://yt3.ggpht.com/dyLSGM6Sk6Cw37avahkaZuaDjoYbiaJr2tGmz05tdnSAoSeQp4vaK-h30c-ZjCdXtAH0INT78uo_EA=s1024-nd-v1",
+        "url": "https://www.youtube.com/@%EB%82%98%EB%9E%98%EC%8B%9D/videos"
+      },
+      {
+        "name": "차박차박",
+        "img": "https://yt3.googleusercontent.com/VYggJzli2YlVpxYXEeWh_kkJ8tAaLuzrRjk_pxy38p6lFq0hAhkkrL0NsL5ZUrlhISXoUG4m=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@chabakchabak/videos"
+      },
+      {
+        "name": "Shark Chang",
+        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKN7LcG96ySYw5epS9u-59gAGhUxrfWfNtjg&s",
+        "url": "https://www.youtube.com/@Sharkchang/videos"
+      },
+      {
+        "name": "에너림",
+        "img": "https://yt3.googleusercontent.com/_NmXKL-AHo84uXNV1I3LbO7EcHWipC4ePuQYVviYZ73EEbUbKut2fO5HLN0H-KgwUtocnSHj=s160-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@Enerlym_s2/videos"
+      },
+      {
+        "name": "PlanB 연욱",
+        "img": "https://yt3.googleusercontent.com/92HarGZubEdBsz58_ggM4Q_OX60TKO6NfXplyHkvOpyJlIsMaZiEGNjqKNtBj1Yvv34HF8mG3A=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@PlanBYeonguk/videos"
+      },
+      {
+        "name": "한혜진",
+        "img": "https://i.namu.wiki/i/uuWhL8RsqvJ5AYpYH_Dhyxs1Zj4qTh4Ba9Vv3j3VZ3Z4zuUFaMuDoBoaSEL9NyxFck5MO-wL91so-TAn5-iIng.webp",
+        "url": "https://www.youtube.com/@realhanie/videos"
+      },
+      {
+        "name": "빠니보틀",
+        "img": "https://cdn.slist.kr/news/photo/202503/628228_982165_5647.jpg",
+        "url": "https://www.youtube.com/@PaniBottle/videos"
+      },
+      {
+        "name": "RyJoon",
+        "img": "https://yt3.googleusercontent.com/JZ817-BfZ5gIXwDxZCc7E8sg8NOZBgMO9SeNcyQoo3HGB1EHmCCpmVfUl0UIzjrTyJ8iC1ACXA=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@RyJoon/videos"
+      },
+      {
+        "name": "Changori",
+        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMAIAtp31496so1mtY7AYYBWx0eW_OvKqSig&s",
+        "url": "https://www.youtube.com/@changori/videos"
+      },
+      {
+        "name": "트레킹코리아",
+        "img": "https://yt3.googleusercontent.com/93rjsRdti5IFM7ykAo42W2fUY_6obsok73TSg1C0YqXhMUUmhOt0Arb-p2_qTuxjKC3srVt9zg=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@trekking-korea/videos"
+      },
+      {
+        "name": "제이 여행",
+        "img": "https://thumbnews.nateimg.co.kr/view610///news.nateimg.co.kr/orgImg/fn/2023/10/11/202310110639131162_l.jpg",
+        "url": "https://www.youtube.com/@jaytravelvid/videos"
+      },
+      {
+        "name": "Cure",
+        "img": "https://i.namu.wiki/i/eQ6EfZy5W4vur_O_qNoLTu5Ya7RZ400lkoX-Y5kPnmjZGDeLjeMDELp2e8k30bYhBc8P8Y2igfqO4h9IIFZ-kQ.webp",
+        "url": "https://www.youtube.com/@cure0721/videos"
+      },
+      {
+        "name": "데프콘",
+        "img": "https://yt3.googleusercontent.com/rDqC3szROAPSO0OYb-Iwes5dtj8TP4TtDsvnohS47ycahFOwdgFtIScz1TEssXg8N57RSEtO=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@%EB%8D%B0%ED%94%84%EC%BD%98TV/videos"
+      },
+      {
+        "name": "Hunter F. Wang",
+        "img": "https://yt3.googleusercontent.com/ytc/AIdro_mWQEimJUHq5Y-wmqshgIjIklFeJvDpFJBsQq_Og7CKwNY=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@hunterfwang91/videos"
+      },
+      {
+        "name": "나캉",
+        "img": "https://yt3.googleusercontent.com/OWzcwKXkXOG-7ZQEje-1D0Lf4ppMb6qGA9anzF_gtUIkYPVGyJJW_vaPpC9OzHq8GL7xohg1vEU=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@nakang/videos"
+      },
+      {
+        "name": "빈틈여행",
+        "img": "https://yt3.googleusercontent.com/cosT3zpqVG54zdmofd6mel086ZKqf5Xd0NNvPlN9hXS0F62522bu0oLBYbYPBlcL7d0Ksdhl=s160-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@%EB%B9%88%ED%8B%88%EC%97%AC%ED%96%89Bintmytravel/videos"
+      },
+      {
+        "name": "임원기",
+        "img": "https://www.ftimes.kr/news/photo/202501/29301_36429_3557.jpg",
+        "url": "https://www.youtube.com/@im1G/videos"
+      },
+      {
+        "name": "흙심인대호",
+        "img": "https://cdn.sisanews.kr/news/photo/202504/114617_100362_4518.png",
+        "url": "https://www.youtube.com/@%ED%9D%99%EC%8B%AC%EC%9D%B8%EB%8C%80%ED%98%B8/videos"
+      },
+      {
+        "name": "서부남",
+        "img": "https://yt3.googleusercontent.com/wB4CAkiUqejs_uIN4PuuEyQSqGzRcbYn0zL9PkSPH9cDBH3ST5g6lcTI-4SuKasPTwLgLfbg=s160-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@%EC%84%9C%EB%B6%80%EB%82%A8/videos"
+      },
+      {
+        "name": "Traveler Yong",
+        "img": "https://i.ytimg.com/vi/N4TYT5o5F_s/hqdefault.jpg",
+        "url": "https://www.youtube.com/@TravelerYong/videos"
+      },
+      {
+        "name": "리나랑나",
+        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWsKrpFXfBYJvS6asKoizhFBWoiH7oMOtdrA&s",
+        "url": "https://www.youtube.com/@rinarangna/videos"
+      },
+      {
+        "name": "고재영",
+        "img": "https://img1.newsis.com/2024/04/25/NISI20240425_0020318705_web.jpg",
+        "url": "https://www.youtube.com/@%EA%B3%A0%EC%9E%AC%EC%98%81"
+      },
+      {
+        "name": "김영수TV",
+        "img": "https://yt3.googleusercontent.com/CuCfj7fmpuEPl8LZq0t42NwLI4EkLleDIBjIJKmparsp-T4qQxwUplWHk49xpCx8wIYu1Hgjob8=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@%EA%B9%80%EC%98%81%EC%88%98TV-%EC%97%AC%ED%96%89%EA%B3%BC%EC%82%B0%ED%96%89/videos"
+      },
+      {
+        "name": "문커플",
+        "img": "https://yt3.googleusercontent.com/dNuXhJQ3awdzOZpAue8j6-3SqyU7Ee7p9235stTzF4LWo7c7b0vl4wWPgtDEETpKVAfRrLf6KA=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@moon_couple/videos"
+      },
+      {
+        "name": "Song Forest",
+        "img": "https://yt3.googleusercontent.com/M07T3Ij-HkCPdrnxcX4U4crL6mhtuqjRtNnQW76TfioXyxpKj9mk4OSdDX1GGhdEm8Bx2HDZ=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@song_forest/videos"
+      },
+      {
+        "name": "아재여행",
+        "img": "https://yt3.googleusercontent.com/3g96LTh7mja6kk9-bGwF6jbRij_tvBKFAOhwy6C4JSF1FXCP5mydRgLaGjlOBZ7GuCabKYvuDQ=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@ajaetravel/videos"
+      },
+      {
+        "name": "곽튜브",
+        "img": "https://economist.co.kr/data/isp/image/2024/10/10/isp20241010000060.800x.0.png",
+        "url": "https://www.youtube.com/@JBKWAK/videos"
+      },
+      {
+        "name": "Hangai",
+        "img": "https://yt3.googleusercontent.com/5PJ475g_NWzTbohWC7oKXEctCFyrSgk83dhZBYFcAq4bigYRiEOugreMe8OKyEkSpf2WbRhArg=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@hangainisfree/videos"
+      },
+      {
+        "name": "한예슬",
+        "img": "https://yt3.googleusercontent.com/NengV-lJtMN5HvpVIdpciE_9xhtyPSx-EHMkG9Er979wMrV3AAQYCMGYdsV-4SWlWSKJRuaK=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@han_ye_seul_/videos"
+      },
+      {
+        "name": "Korean Crying Guy",
+        "img": "https://cdn.joongboo.com/news/photo/201804/1242776_1107059_5259.jpg",
+        "url": "https://www.youtube.com/@KoreanCryingGuy/videos"
+      },
+      {
+        "name": "sjkuksee",
+        "img": "https://yt3.googleusercontent.com/ytc/AIdro_msKLPHR2VGmhyx0SZJWKHC_wN-mPhWPHqxPBabNA2s_w=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@sjkuksee/videos"
+      },
+      {
+        "name": "JFla",
+        "img": "https://wimg.heraldcorp.com/content/default/2023/07/13/20230713000417_0.jpg",
+        "url": "https://www.youtube.com/@JFlaMusic/videos"
+      },
+      {
+        "name": "모칠레로",
+        "img": "https://yt3.googleusercontent.com/exy_ve5D0k4VDtOxy1Yv8p-N3yns0ys9iVYrQ2A0IR8GzhtiF0Ztd21X0z3ElCOsGAaR2KeRqi0=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@Mochilero_korean/videos"
+      },
+      {
+        "name": "쏘영",
+        "img": "https://yt3.googleusercontent.com/ytc/AIdro_n1eVcavGdPI70m8fVwMWEDzSrX6rqZ8HOwf5gtPxYShmc=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@Ssoyoung/videos"
+      },
+      {
+        "name": "현승승장구",
+        "img": "https://yt3.googleusercontent.com/B4JvwCxEx1xDjyjyALBXatxzuft66aLB_Ds9U6xDbHl9aE9g_rx_4KK_S4mnxXneLz8Uv9r1=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@%ED%98%84%EC%8A%B9%EC%8A%B9%EC%9E%A5%EA%B5%AC/videos"
+      },
+      {
+        "name": "Korea Travel",
+        "img": "https://yt3.googleusercontent.com/Ex0gFq5aJiyC6MhQAe3iTwq-gIyjdn3J8-3vSVk6ETPN8N4yIK4hrc0XWZHOEOS8c7_PRRZe=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@korea_travel/videos"
+      },
+      {
+        "name": "관종언니",
+        "img": "https://yt3.googleusercontent.com/TnW_kLV6ARRvWTfH9f6eZCgy5ZvtGshGpWrhERIOYyY4KCfuNdL8aWtnx393xJj1Pu2Qg6BXDw=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@GwanjongUn-ni/videos"
+      },
+      {
+        "name": "레온마 여행",
+        "img": "https://i.namu.wiki/i/ILrpWB6mttCE3NLjT6b2oDhQWG3962lVsJT7ML-i9XOlTFdgleL_Bu38p3j8hU_FlobTtX_CZP5sLNFM8eAQLg.webp",
+        "url": "https://www.youtube.com/@leonma_travel/videos"
+      },
+      {
+        "name": "I am Mingki",
+        "img": "https://pimg.mk.co.kr/meet/neds/2019/02/image_readtop_2019_95626_15502959873638650.jpg",
+        "url": "https://www.youtube.com/@iammingki"
+      },
+      {
+        "name": "JKP",
+        "img": "https://i.namu.wiki/i/CRqcMalFXx3G3r9fNptKzFafy86wNb2Ta-iYqXWvqOn4-Wi7u7arHwWPCT3tdfrFwxAOW1tiTyCOIMkQ9ITmLw.webp",
+        "url": "https://www.youtube.com/@JKP1004/videos"
+      },
+      {
+        "name": "용숙용숙",
+        "img": "https://yt3.ggpht.com/D5zfOWvsQjSrjG9jKXu1R4m1tYbQCyNHy6VrKDP-coEeEzMWBsc3rDRLnfzzugBwki3f1aJFOvJPSA=s1350-nd-v1",
+        "url": "https://www.youtube.com/@%EC%9A%A9%EC%88%99%EC%9A%A9%EC%88%99/videos"
+      },
+      {
+        "name": "이슬 구욱",
+        "img": "https://yt3.googleusercontent.com/yWvY0nmV8iccNhESmtc5QHdCosB-crW449sLAndRApJxKMB4htBITlaxQsEy_a-zyVSkMAXDkio=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@eesle.gooook/videos"
+      },
+      {
+        "name": "Soy The World",
+        "img": "https://i.namu.wiki/i/Jd7ws0TxMrpl1S4lBPjUcpG6i25CNEYbTeIbQ_yHspFkFj60GGh-eL2ImukdfeHiefkF8gpDSy83ei3N1-CjgA.webp",
+        "url": "https://www.youtube.com/@soy_the_world/videos"
+      },
+      {
+        "name": "노마드샨",
+        "img": "https://www.fashionbiz.co.kr/images/articleImg/listImg/1717403801136-%EC%A7%80%ED%94%84.jpg",
+        "url": "https://www.youtube.com/@NomadShaun/videos"
+      },
+      {
+        "name": "조튜브",
+        "img": "https://yt3.googleusercontent.com/yf1q-VSg4JEqygxes5xWBsnc7tBmfgSFTFxIxuFYPpxlPoyB4e8U2u-V8Zy3XeS0fODJ8Vhpcg=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@%EC%A1%B0%ED%8A%9C%EB%B8%8C/videos"
+      },
+      {
+        "name": "공삼테이블",
+        "img": "https://www.famousbirthdays.com/headshots/gongsam-table-6.jpg",
+        "url": "https://www.youtube.com/@gongsam_table203/videos"
+      },
+      {
+        "name": "Traveler Yo",
+        "img": "https://i.ytimg.com/vi/UO2Asr4QAIg/hqdefault.jpg",
+        "url": "https://www.youtube.com/@traveleryo/videos"
+      },
+      {
+        "name": "김수박",
+        "img": "https://i.ytimg.com/vi/ux2QnbLW4EY/hqdefault.jpg",
+        "url": "https://www.youtube.com/@kim_subak/videos"
+      },
+      {
+        "name": "지무비",
+        "img": "https://yt3.googleusercontent.com/ytc/AIdro_nLr4j1MqKUus9uB2RADncMRaC__c2D6MKj4x4YbA4IwcU=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/results?search_query=%EC%A7%80%EB%AC%B4%EB%B9%84"
+      },
+      {
+        "name": "Waterfall Jang",
+        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_awPTptdEue9ReUtQniHX2zkTdA2Pxm5K5g&s",
+        "url": "https://www.youtube.com/@waterfall_jang/videos"
+      },
+      {
+        "name": "Korean Jay",
+        "img": "https://news.nateimg.co.kr/orgImg/is/2025/02/05/isp20250205000112.800x.8.jpg",
+        "url": "https://www.youtube.com/@koreanjay/videos"
+      },
+      {
+        "name": "최화정",
+        "img": "https://yt3.googleusercontent.com/rVY0Mx4YNzTP2leHbZQnM9ajCpMD2f8H1qvYESQEILAfRvNNH9LUfK0szOcsofan5ZYPcVI=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@hellochoihwajung/videos"
+      },
+      {
+        "name": "CHOMAD",
+        "img": "https://yt3.googleusercontent.com/ytc/AIdro_kOvt9wOxgQkO09TqXc3oBx6r4alOrnL6sp1gknN-wmnoI=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@CHOMAD/videos"
+      },
+      {
+        "name": "Seobro Jay",
+        "img": "https://yt3.googleusercontent.com/zMVDFDqlOn3FZepSNvle-2lX0HkXto4c1AmltSk0mqpSH78oL6oPqq6wN7fo24nkpuVs2PXJVw=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@Seobrojay/videos"
+      },
+      {
+        "name": "솔라 (마마무)",
+        "img": "https://yt3.googleusercontent.com/zzwpqO-L9MCphvNQ63TdGFaQ4jUQA-p_N1sTY59ZJFEQ_1rCFNbqx0U53Fu2rLu-F15yQy-z=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@solarsido/videos"
+      },
+      {
+        "name": "캐럿맨",
+        "img": "https://yt3.googleusercontent.com/cOxmc12zG9zYHIL_r4LReE6xQwiJKFqsCTgBXIEp5jQk47nNRB5WYdTCeNd9Cl1EgGIAFdZoURc=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@carrotman1198/videos"
+      },
+      {
+        "name": "쑤걸",
+        "img": "https://i.namu.wiki/i/hA5cazhI1jToEyeVfTXdJ7uQE1LRvduAKzHCJdKeSlP3n9XtBcjjD-CqZAv875nlqBZel1B_QaQJt8Jor-7JLA.webp",
+        "url": "https://www.youtube.com/@ssugirit/videos"
+      },
+      {
+        "name": "Jangsin",
+        "img": "https://i.namu.wiki/i/RV75er7pJp29halVLkNInNtxIvLO6Ye3xst7VtXcgfixBpjt6qKCs_gI9XkD8vgAOTB4KdSRHT77ZKHVzRKBOA.webp",
+        "url": "https://www.youtube.com/@jangsin/videos"
+      },
+      {
+        "name": "Trankilo",
+        "img": "https://blogger.googleusercontent.com/img/a/AVvXsEjHm1hvzA5r79-lpksHpLuMAKuTCxM0rPCjlAmsdCWX77jySx_zWrBds5Vnn4k3YePlgzv3CLAMRR7QCSSgtIXUcFXe4mRSqroWcOONnKKLPVnfCLbXXCAv2QqEgsKVo7Af8Cskjxa9rupKyVTcqkqw99hPy89YiMgxUuxHOqYX8oOIRQyEv3eKJv8Y6suw=w400-h368",
+        "url": "https://www.youtube.com/@trankilo/videos"
+      },
+      {
+        "name": "캡틴브라더",
+        "img": "https://yt3.ggpht.com/DXk0HlYUksWw3QTm9uoKmJYWA1QCh9cipUtAxb6cxHMSR_LyC_dS9NW_uk-9l6RH2BvxYDywFzWsUHQ=s1600-nd-v1",
+        "url": "https://www.youtube.com/@captainbrother/videos"
+      },
+      {
+        "name": "노필터TV",
+        "img": "https://i.ytimg.com/vi/_3s0VZREZaQ/hqdefault.jpg",
+        "url": "https://www.youtube.com/@nofilterTV/videos"
+      },
+      {
+        "name": "또또남",
+        "img": "https://yt3.googleusercontent.com/jRokwv8WoOY1cIwSEEHIabSA8X14raqB3h2rwFSVXrOcQzuSx5pzqxTEuCYCXzQO6lia1q2yEg=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@ddoddunam/videos"
+      },
+      {
+        "name": "Jay World Traveler",
+        "img": "https://yt3.googleusercontent.com/ytc/AIdro_ncU2OOiLOtChH1QtKXYoegcUsOD1t1barO7jUWt0bR99o=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@Jayworldtraveler/videos"
+      },
+      {
+        "name": "삐맨",
+        "img": "https://yt3.googleusercontent.com/ytc/AIdro_mtkN4YfxiRYrroG8Sdq9XwJNgs5Dn0TdeNlAdrzIF5tsU=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/results?search_query=%EC%82%90%EB%A7%A8"
+      },
+      {
+        "name": "드림텔러",
+        "img": "https://yt3.googleusercontent.com/gjtbY0LqxuQNNC3wwon3jf8HmnGOSWo5sEt5XTsSFHiTPERK9xVk0ohumOtJTgGdT7Hu6S3A=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/results?search_query=%EB%93%9C%EB%A6%BC%ED%85%94%EB%9F%AC"
+      },
+      {
+        "name": "aespa",
+        "img": "https://img9.yna.co.kr/etc/inner/KR/2025/05/23/AKR20250523069300005_01_i_P4.jpg",
+        "url": "https://www.youtube.com/@aespa/videos"
+      },
+      {
+        "name": "미니멀 유목민",
+        "img": "https://i.namu.wiki/i/TGvJjC504d_S9b2wa3XLdCo9B6alg49EuMzOXwhQkYxNgxxE633oterGDjYZuDyLuHjqW5CDAYVHve0eYdCQ5Q.webp",
+        "url": "https://www.youtube.com/@%EB%AF%B8%EB%8B%88%EB%A9%80%EC%9C%A0%EB%AA%A9%EB%AF%BC/videos"
+      },
+      {
+        "name": "서재로36",
+        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjVFKumsIoZzF4hmhvOdd9A9D3uyIZnjBF5w&s",
+        "url": "https://www.youtube.com/@%EC%84%9C%EC%9E%AC%EB%A1%9C36/videos"
+      },
+      {
+        "name": "브루스리TV",
+        "img": "https://yt3.googleusercontent.com/Dk4j4nbuJMAihMjPkJslFzE5FB9B99lUXUBdu-qwL3cHG1B1Od3GZAWY967ER7yOob_o3AMTvA=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@%EB%B8%8C%EB%A3%A8%EC%8A%A4%EB%A6%ACTV/videos"
+      },
+      {
+        "name": "아이유 IU",
+        "img": "https://yt3.googleusercontent.com/Ud8Q_DK5ghWgVm_Vq-A7ZukY8aVQv9k_oEmUdShNaBa6GmfUMUS2Igmw02E7qGEk3MSbYS-Q=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@dlwlrma/videos"
+      },
+      {
+        "name": "Island Traveler",
+        "img": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiyyjsNzaNllXN8Fvdcl9vpnR-93-0hUHRqUP8yxHGkfpFuP5ejLS_m9PEURIGfkG4RAdA3tvImfVa-ZZqQzASA2ns3tSZ2vJ7qyoiLY7GEn_LcvyZzamTDa2mB2pUssxgS5k5SjS7jVJ4/s757/8_1%25EC%2595%2584%25EC%259D%25BC%25EB%259E%259C%25EB%2593%259C%25ED%258A%25B8%25EB%259E%2598%25EB%25B8%2594%25EB%259F%25AC%25403x.png",
+        "url": "https://www.youtube.com/@islandtraveler"
+      },
+      {
+        "name": "재연",
+        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCzR5GmIBwoz_RpRlpiRrK-eInHyVaW1wbTw&s",
+        "url": "https://www.youtube.com/@jaeye0nyy/videos"
+      },
+      {
+        "name": "MindCPR",
+        "img": "https://i.namu.wiki/i/Q3dYektqTCEBtSynJDPSSGsYX63gskcggMdUX961euORPECk8fVgjNhhq9oYPGmsUzJq_zf1reodpnsgneT6nQ.webp",
+        "url": "https://www.youtube.com/@mindcpr/videos"
+      },
+      {
+        "name": "홍진경",
+        "img": "https://wimg.dt.co.kr/news/legacy/contents/images/202312/2023120502101970821002[3].jpg",
+        "url": "https://www.youtube.com/@honggogo/videos"
+      },
+      {
+        "name": "파파트래블",
+        "img": "https://yt3.googleusercontent.com/cr95htuRuWoqS-BEvp8fzc8Orc85-_4dPP5duDz1b0hPBPWUoV3C1hjIJ348uTew-jnod4Fb_l8=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@%ED%8C%8C%ED%8C%8C%ED%8A%B8%EB%9E%98%EB%B8%94/videos"
+      },
+      {
+        "name": "이수현",
+        "img": "https://i.namu.wiki/i/FlGiu8Go0nQRBWbgPMNnvdWoq43itFi21voo8m40Pb-3sixTw_DTH0tw2AbrnAqEIsZoUZnB78ki5BqFiqQ9uw.webp",
+        "url": "https://www.youtube.com/@Leesuhyun/videos"
+      },
+      {
+        "name": "김종국",
+        "img": "https://yt3.googleusercontent.com/dQpGedX7jQIIQ-BJcj3dGroHLb_cY5Mx8bDvmyD-oJO5_NQkR6W5OlsCuqmNrWh3cGq3KvyxmYA=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@GYMJONGKOOK/videos"
+      },
+      {
+        "name": "JJ 커플",
+        "img": "https://i.ytimg.com/vi/yHUqnC4nfQA/oar2.jpg?sqp=-oaymwEYCJUDENAFSFqQAgHyq4qpAwcIARUAAIhC&rs=AOn4CLB8ebpO6vhvQOmZEJ8hZH_9mtTj1Q",
+        "url": "https://www.youtube.com/@JJ_%EC%BB%A4%ED%94%8C/videos"
+      },
+      {
+        "name": "고몽",
+        "img": "https://yt3.googleusercontent.com/ytc/AIdro_n2VEZCHj55JE9Ppw79uhETNd-JVDibC-WBxWnLXQSUIMs=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/results?search_query=%EA%B3%A0%EB%AA%BD"
+      },
+      {
+        "name": "침착맨",
+        "img": "https://i.namu.wiki/i/StlDlvF6vyn1SBNhPTDlNWdrZcl5Z_cIGEiQhab3GVYDmWWb5lr8Lv8nIpbSpyNtM--vD5uAxqJRnNmY7OiFLQ.webp",
+        "url": "https://www.youtube.com/@zzanbro/videos"
+      },
+      {
+        "name": "Uiland",
+        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXtjGHb5p98spFoRW2NpzfT68OMjnxlBkPF9kqw_6pNgauUFYCdZGMWIwDTAWl9gpwEZU&usqp=CAU",
+        "url": "https://www.youtube.com/@Uiland/videos"
+      },
+      {
+        "name": "수길따라",
+        "img": "https://i.namu.wiki/i/5CdnLHd8f0OUCPKMWlwsktlZfkP63qET5PsaPzNd5KFV2abX0oTmrN_nBYJZ7EH06l83LVSfdIeathCFiP5RXg.webp",
+        "url": "https://www.youtube.com/@%EC%88%98%EA%B8%B8%EB%94%B0%EB%9D%BC/videos"
+      },
+      {
+        "name": "Walk Traveler",
+        "img": "https://yt3.googleusercontent.com/Dcx0T2VmbEhRdGsOT80WGLEXcSztE3cHgf7aXEX62EiMZxza0AttcrDGlmyzLKg6Qbo9o8DHL3c=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@WalkTraveler/videos"
+      },
+      {
+        "name": "민짱TV",
+        "img": "https://profile.img.sooplive.co.kr/LOGO/ry/ryuri79/ryuri79.jpg",
+        "url": "https://www.youtube.com/@minzzangtv/videos"
+      },
+      {
+        "name": "MrBeast",
+        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS2EntOCdE0yEaIfacfxiU1ZyRi8RSeT-eu_HDeQSq6J_veZZesXpwlcxkWxM2NKMpWRb4CRyw9WdUGOQV7ZqK8g",
+        "url": "https://www.youtube.com/@MrBeast/videos"
+      },
+      {
+        "name": "BABYMONSTER",
+        "img": "https://file2.nocutnews.co.kr/newsroom/image/2024/04/01/202404011407257278_0.jpg",
+        "url": "https://www.youtube.com/@BABYMONSTER/videos"
+      },
+      {
+        "name": "무비방",
+        "img": "https://yt3.googleusercontent.com/YIMP_GsUjkgGnUo3Lfq94csM7fm6HIyRBMTr1JvX4mC8rCw0nPHT8PAOIPd-oRKru4eEBdnd=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@%EB%AC%B4%EB%B9%84%EB%B0%A9/videos"
+      },
+      {
+        "name": "성시경",
+        "img": "https://i.namu.wiki/i/6KSrtQ4NViTFQ9FzEWFAEsZMlshA9mDck2cDK3Or-XU_nbgncPE0Ydx_ujECrMmz6yRyKMCnZ7p9JzPVysfuqw.webp",
+        "url": "https://www.youtube.com/@sungsikyung/videos"
+      },
+      {
+        "name": "Kim's Travel",
+        "img": "https://yt3.googleusercontent.com/ytc/AIdro_kf5L0GUSPUyoQ5icXJgN7LHMyBgNLOkCbMd0_lYPpR-qa6=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@kimstravel/videos"
+      },
+      {
+        "name": "보키 Boki",
+        "img": "https://i.ytimg.com/vi/CyQlwJDE_uk/maxresdefault.jpg",
+        "url": "https://www.youtube.com/@EatwithBoki/videos"
+      },
+      {
+        "name": "햄지 Hamzy",
+        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvxZiH-EYkdAg0-K8gx4pH8DpNEC9KjNVRpw&s",
+        "url": "https://www.youtube.com/@hamzymukbang/videos"
+      },
+      {
+        "name": "침착맨",
+        "img": "https://www.chosun.com/resizer/v2/FELDQIUY6T6GLQUS4DIQKHTAWE.jpg?auth=5c4226972605a896a8788513cf1ce3c15848c203c7fd6589ef47a914e21e350a&width=530&height=634&smart=true",
+        "url": "https://www.youtube.com/results?search_query=%EC%B9%A8%EC%B0%A9%EB%A7%A8"
+      },
+      {
+        "name": "보겸TV",
+        "img": "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDEwMzFfOTAg%2FMDAxNzMwMzMwMzc4NTA3.hmz8_nPYYug9Z8kwoqvRI6tTl0Knbu_h-pOIGr9KvAcg.Gq-L_zCh0BmQwoB7Ksx5CQzQOGNnS5PZhZkLBVhWSLAg.JPEG%2FScreenshot%25A3%25DF20241031%25A3%25DF081749%25A3%25DFInstagram.jpg&type=sc960_832",
+        "url": "https://www.youtube.com/@bokyemtv/videos"
+      },
+      {
+        "name": "꾸준",
+        "img": "https://i.namu.wiki/i/F39A-PXHCBr2ABo2FhTtfpk3dJeKR383grFFpH37dRRu_Bt4KE0cYwcVpVj9b-LmAGSF6yey2IaIgTeuvMe70Q.webp",
+        "url": "https://www.youtube.com/@kkujun/videos"
+      },
+      {
+        "name": "기안84",
+        "img": "https://www.news1.kr/_next/image?url=https%3A%2F%2Fi3n.news1.kr%2Fsystem%2Fphotos%2F2023%2F12%2F4%2F6361299%2Fhigh.jpg&w=1920&q=75",
+        "url": "https://www.youtube.com/@geean84/videos"
+      },
+      {
+        "name": "추성훈",
+        "img": "https://dimg.donga.com/wps/SPORTS/IMAGE/2025/05/20/131645368.1.jpg",
+        "url": "https://www.youtube.com/results?search_query=%EC%B6%94%EC%84%B1%ED%9B%88"
+      },
+      {
+        "name": "순풍선우용여",
+        "img": "https://res-kol.noxgroup.com/noxinfluencer/youtube/avatar/007a6e26946ce18f211e775fe3289ec7.png",
+        "url": "https://www.youtube.com/@%EC%88%9C%ED%92%8D%EC%84%A0%EC%9A%B0%EC%9A%A9%EC%97%AC/videos"
+      },
+      {
+        "name": "이홍철",
+        "img": "https://cdn.spotvnews.co.kr/news/photo/202308/625058_890647_021.jpg",
+        "url": "https://www.youtube.com/@luckyhongchul/videos"
+      },
+      {
+        "name": "쯔양",
+        "img": "https://res-kol.noxgroup.com/noxinfluencer/youtube/avatar/8fa85a5847acbfcf82d75c791b427d47.png",
+        "url": "https://www.youtube.com/@tzuyang6145/videos"
+      },
+      {
+        "name": "광마니",
+        "img": "https://yt3.googleusercontent.com/XIhr-d-4t3DfdBl5wB8SdpushGD6Z88ZwCUPMiaNVIcK5avbEfS61wC8ZRtoxjKNuwNISVgVMQ=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@kwangmani/videos"
+      },
+      {
+        "name": "따거",
+        "img": "https://yt3.googleusercontent.com/QtUQRLkKCvAc8fLEBAbzpvKxyeL3qnIY3rOPzI8N8IjIaGs05rP2lcL2c43yfiBAOFCQlKJOVQ=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/results?search_query=%EB%94%B0%EA%B1%B0"
+      },
+      {
+        "name": "JaehoCance",
+        "img": "https://yt3.googleusercontent.com/g-RMSCfYZyWbP4zmaBYP-yvY-Q61CBFhHq3khzTrYfVkT5DI5wSo76vDhlL7wEdS-BjBtrPFjQ=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@jaehocance/videos"
+      },
+      {
+        "name": "장영란",
+        "img": "https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F609%2F2025%2F03%2F11%2F202503110902200810_1_20250311091510316.jpg&type=sc960_832",
+        "url": "https://www.youtube.com/results?search_query=%EC%9E%A5%EC%98%81%EB%9E%80"
+      },
+      {
+        "name": "Wander Suzie",
+        "img": "https://yt3.googleusercontent.com/nx1i6k0SCb3ny6MXWdyes8nh78TNrpygv7-9UT_1Ac8kV2wSYpdsyH-WwcYYimZyANo7_1YDAg=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@wandersuzie/videos"
+      },
+      {
+        "name": "Seop2",
+        "img": "https://yt3.googleusercontent.com/ytc/AIdro_n-F3VjkwYzCSnsUuM5i5RJK6Hx6_bWxhLPKybrpRzpwQ=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@seop2/videos"
+      },
+      {
+        "name": "김희철",
+        "img": "https://yt3.googleusercontent.com/ytc/AIdro_lBe4uMfH7z7j6xEcGiJ2McjzZW6qHcEEWv_xPo_gq7R80=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@HeechulismTV/videos"
+      },
+      {
+        "name": "길거남",
+        "img": "https://yt3.googleusercontent.com/X1JhpcnzbBEVh1qsyu9-XuKV2v0XVS6n2BFvFyjIaIFT09DyJiOaaOf-3WobCIazFtL8UEGshg=s900-c-k-c0x00ffffff-no-rj",
+        "url": "https://www.youtube.com/@gilgeodnam/videos"
+      },
+      {
+        "name": "덱스",
+        "img": "https://i.namu.wiki/i/2NdOwf3Hy-AoVppNz4JhPULzn7lcsoMuDErOpLt514UcIQyMbwjGxsSGG8wRToB7leZbtv-DxJxWSxdZeD57Aw.webp",
+        "url": "https://www.youtube.com/@dex101/videos"
+      },
+      {
+        "name": "빠니보틀",
+        "img": "https://i.namu.wiki/i/yNrlDsNmVoMjz1t8816MqSb53Ovcf2yTr4-mrsN0K55SLjSJomyb6CPBKcE-a8UsiKSbR0gN6qZQcD-Tct7AmnJSID5QZdNuz8rbJi1CXObcX31hX93XYBN6RDqYZEcWrDFPjGO9PqOLhvaLdxDROw.webp",
+        "url": "https://www.youtube.com/results?search_query=%EB%B9%A0%EB%8B%88%EB%B3%B4%ED%8B%80"
+      },
+      {
+        "name": "예스준",
+        "img": "https://i.ytimg.com/vi/fni68F7ygOY/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLA3wxyzFrmb1bRRTCV74Vbn7OKcvg",
+        "url": "https://www.youtube.com/@%EC%98%88%EC%8A%A4%EC%A4%80/videos"
+      }
+    ]
+  },
+  {
+    "id": "t_pry7vv",
+    "label": "MAGAZINE",
+    "view": "people",
+    "cols": 3,
+    "items": [
+      {
+        "name": "보그",
+        "img": "https://img.vogue.co.kr/vogue/2024/02/style_65ceef66858de-1116x1400.jpg",
+        "url": "https://www.vogue.co.kr/"
+      },
+      {
+        "name": "엘르",
+        "img": "https://www.elle.co.kr/resources_old/online/org_online_image/el/12fec014-92f2-4883-9983-6b0daff4b157.jpg",
+        "url": "https://www.elle.co.kr/"
+      },
+      {
+        "name": "마리끌레르",
+        "img": "https://image.aladin.co.kr/product/16870/23/cover500/k032534972_1.jpg",
+        "url": "https://www.marieclairekorea.com/"
+      },
+      {
+        "name": "코스모폴리",
+        "img": "https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000588834.jpg",
+        "url": "https://www.cosmopolitan.co.kr/"
+      },
+      {
+        "name": "하퍼스바자",
+        "img": "https://image.yes24.com/goods/103932601/XL",
+        "url": "https://www.harpersbazaar.co.kr/"
+      },
+      {
+        "name": "우먼센스",
+        "img": "https://i.ytimg.com/vi/DTQjqK4_Ml4/hq720_2.jpg?sqp=-oaymwEiCLQEENAFSFryq4qpAxQIARUAAAAAJQAAyEI9AICiQ9ABAQ==&rs=AOn4CLBlZcELGfCcm06hnVjMfWxNO1fDZg",
+        "url": "https://www.womansense.co.kr/"
+      },
+      {
+        "name": "우먼동",
+        "img": "https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000558677.jpg",
+        "url": "https://woman.donga.com/"
+      },
+      {
+        "name": "우먼조선",
+        "img": "https://img.ridicdn.net/cover/486000697/xxlarge#1",
+        "url": "https://woman.chosun.com/"
+      },
+      {
+        "name": "씨네21",
+        "img": "https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000550336.jpg",
+        "url": "https://cine21.com/"
+      },
+      {
+        "name": "레이디경향",
+        "img": "https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/3904000116365.jpg",
+        "url": "https://lady.khan.co.kr/"
+      },
+      {
+        "name": "gq코리아",
+        "img": "https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000525754.jpg",
+        "url": "https://www.gqkorea.co.kr/"
+      },
+      {
+        "name": "주부생활",
+        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJyp4rG7vBXQD6Dz6xKQSZPK0G2cwzGwpBKg&s",
+        "url": "https://www.ju-bu.co.kr/"
+      },
+      {
+        "name": "에스콰이어",
+        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShE9H0xMGtDrQkbk8bKv2i2JKic-drYXTw7Q&s",
+        "url": "https://www.esquirekorea.co.kr/"
+      },
+      {
+        "name": "텐아시아",
+        "img": "https://image.aladin.co.kr/product/24342/92/cover500/k492630706_1.jpg",
+        "url": "https://www.tenasia.co.kr/"
+      },
+      {
+        "name": "메종",
+        "img": "https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/9771227846009.jpg",
+        "url": "https://www.maisonkorea.com/"
+      },
+      {
+        "name": "싱글즈",
+        "img": "https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000468310.jpg",
+        "url": "https://m.singleskorea.com/"
+      },
+      {
+        "name": "theneighbor",
+        "img": "https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000589312.jpg",
+        "url": "https://www.theneighbor.co.kr/"
+      },
+      {
+        "name": "디스패치",
+        "img": "https://pds.joongang.co.kr//news/component/htmlphoto_mmdata/201808/08/f94b6284-1f62-4dbe-8e78-77ab858e93fc.jpg",
+        "url": "https://www.dispatch.co.kr/"
+      },
+      {
+        "name": "스포츠조선",
+        "img": "sportscho.png",
+        "url": "https://www.sportschosun.com/"
+      },
+      {
+        "name": "스포츠서울",
+        "img": "sportsseoul.png",
+        "url": "https://www.sportsseoul.com/"
+      },
+      {
+        "name": "일간스포츠",
+        "img": "1sports.jpg",
+        "url": "https://isplus.com/"
       }
     ]
   },
@@ -431,7 +1433,7 @@ const DEFAULT_TABS = [
   },
   {
     "id": "t_j31heh",
-    "label": "연예뉴스",
+    "label": "뉴스",
     "view": "gallery2",
     "cols": 4,
     "items": []
@@ -673,6 +1675,7 @@ function openTab(id){
   setVtype(t? t.view : 'logo');
   document.getElementById('tabCols').value = (t&&t.cols)?t.cols:3;
   document.getElementById('tabDelete').style.display = t? '' : 'none';
+  document.getElementById('tabMoveRow').style.display = (t && tabs.length>1)? '' : 'none';
   document.getElementById('tabOv').classList.add('show');
 }
 function setVtype(v){
@@ -716,6 +1719,7 @@ function openItem(idx){
   document.getElementById('itemModalTitle').textContent = (idx!=null?'항목 수정':'항목 추가');
   document.getElementById('itemModalSub').textContent = VIEW_META[t.view].label + ' · ' + t.label;
   document.getElementById('itemDelete').style.display = (idx!=null)?'':'none';
+  document.getElementById('itemMoveRow').style.display = (idx!=null && curTab() && curTab().items.length>1)?'':'none';
 
   // 공통/타입별 필드 표시
   document.getElementById('galFields').style.display = isGal?'':'none';
@@ -769,6 +1773,35 @@ function addGimgRow(img, link){
 }
 document.getElementById('gimgAdd').addEventListener('click', ()=>addGimgRow(''));
 document.getElementById('itemCancel').addEventListener('click', ()=>document.getElementById('itemOv').classList.remove('show'));
+
+/* ====== 순서 이동 (탭 좌우 / 항목 좌우상하) ====== */
+function colsOf(){
+  var stage=document.getElementById('stage');
+  var cells=stage.querySelectorAll('.logo-cell,.people-cell,.gal-cell,.gal2-cell');
+  if(cells.length<2) return 1;
+  var top0=cells[0].offsetTop, c=0;
+  for(var i=0;i<cells.length;i++){ if(cells[i].offsetTop===top0) c++; else break; }
+  return c||1;
+}
+function moveTab(dir){
+  var i=tabs.findIndex(function(t){return t.id===tabEditId;}); if(i<0) return;
+  var j = dir==='left'? i-1 : i+1;
+  if(j<0||j>=tabs.length) return;
+  var tmp=tabs[i]; tabs[i]=tabs[j]; tabs[j]=tmp;
+  saveTabs(); renderTabs();
+}
+function moveItem(dir){
+  var t=curTab(); if(!t||itemEditIdx==null) return;
+  var n=t.items.length, c=colsOf(), j=itemEditIdx;
+  if(dir==='left') j--; else if(dir==='right') j++;
+  else if(dir==='up') j-=c; else if(dir==='down') j+=c;
+  if(j<0||j>=n) return;
+  var a=t.items, tmp=a[itemEditIdx]; a[itemEditIdx]=a[j]; a[j]=tmp;
+  itemEditIdx=j;
+  saveTabs(); renderStage();
+}
+document.getElementById('tabMoveRow').addEventListener('click', function(e){ var b=e.target.closest('button'); if(b) moveTab(b.dataset.mv); });
+document.getElementById('itemMoveRow').addEventListener('click', function(e){ var b=e.target.closest('button'); if(b) moveItem(b.dataset.mv); });
 document.getElementById('itemSave').addEventListener('click', ()=>{
   const t=curTab(); if(!t) return;
   if(t.view==='gallery' || t.view==='gallery2'){
