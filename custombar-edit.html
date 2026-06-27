@@ -22,9 +22,10 @@
     user-select:none;-webkit-user-select:none}
 
   /* ── 상단 네비 ── */
-  .topnav{flex:none;display:flex;gap:8px;align-items:center;justify-content:safe center;flex-wrap:nowrap;
-    overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:10px 14px;background:#fff;
-    border-bottom:1px solid var(--line);cursor:grab;scrollbar-width:none}
+  .navbar{flex:none;position:relative;display:flex;align-items:stretch;background:#fff;border-bottom:1px solid var(--line)}
+  .topnav{flex:1;min-width:0;display:flex;gap:8px;align-items:center;justify-content:safe center;flex-wrap:nowrap;
+    overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:10px 14px;background:transparent;
+    cursor:grab;scrollbar-width:none}
   .topnav::-webkit-scrollbar{display:none}
   .topnav.dragging{cursor:grabbing}
   .nav-track{flex:none;display:flex;align-items:center;gap:8px;margin:0}
@@ -33,6 +34,10 @@
     font-weight:700;color:var(--sub);cursor:pointer;transition:all .16s}
   .topnav button.ch:hover{border-color:#cbc6f0;color:var(--ink)}
   .topnav button.ch.active{background:var(--grad);border-color:transparent;color:#fff}
+  .topnav button.ch.add{flex:none;padding:0;width:32px;height:32px;justify-content:center;border-radius:50%;
+    color:#fff;background:var(--grad);border-color:transparent;box-shadow:0 2px 8px rgba(91,79,196,.3)}
+  .topnav button.ch.add:hover{transform:scale(1.08);color:#fff}
+  .topnav button.ch.add svg{width:16px;height:16px;display:block}
 
   /* 포털 화면 토글 (index.html이 주입) */
   .screen-nav{flex:none;display:flex;align-items:center;gap:2px;margin-right:4px}
@@ -57,15 +62,10 @@
   .home-fab:hover{transform:scale(1.07)}
   .home-fab svg{width:21px;height:21px;display:block}
 
-  /* ── 편집 도구 (연필 FAB) ── */
-  .pentool-bar{position:fixed;top:60px;right:16px;z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
-  .pentool-fab{width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;display:flex;
-    align-items:center;justify-content:center;color:#fff;background:var(--grad);
-    box-shadow:0 4px 14px rgba(91,79,196,.4);transition:transform .15s}
-  .pentool-fab:hover{transform:scale(1.06)}
-  .pentool-fab svg{width:19px;height:19px;display:block}
-  .pentool-menu{display:none;flex-direction:column;gap:4px;background:#fff;border:1px solid var(--line);
-    border-radius:12px;padding:6px;box-shadow:0 8px 26px rgba(40,40,70,.18);min-width:158px}
+  /* ── 편집 메뉴 (+ 버튼이 열림) ── */
+  .pentool-menu{display:none;position:fixed;top:0;left:0;z-index:110;flex-direction:column;gap:4px;
+    background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px;
+    box-shadow:0 8px 26px rgba(40,40,70,.18);min-width:170px}
   .pentool-menu.show{display:flex}
   .pentool-menu button{border:none;background:transparent;text-align:left;padding:9px 12px;border-radius:8px;
     font-family:var(--body);font-size:13.5px;font-weight:700;color:var(--ink);cursor:pointer}
@@ -114,9 +114,22 @@
 </head>
 <body>
 
-<nav class="topnav" id="topnav">
-  <div class="nav-track" id="navTrack"></div>
-</nav>
+<div class="navbar" id="navbar">
+  <nav class="topnav" id="topnav">
+    <div class="nav-track" id="navTrack"></div>
+  </nav>
+</div>
+
+<!-- 편집 메뉴 (네비의 + 버튼이 열고, + 위치 기준으로 펼침) -->
+<div class="pentool-menu" id="pentoolMenu">
+  <button id="mNav">📋 상단 채널 편집</button>
+  <div class="sep"></div>
+  <button id="mImport">📥 가져오기</button>
+  <button id="mExport">📤 내보내기</button>
+  <button id="mCode" data-code="1">&lt;/&gt; HTML로 저장</button>
+  <div class="sep"></div>
+  <button id="mReset" class="danger">↺ 기본값 복원</button>
+</div>
 
 <div class="viewer">
   <div class="viewer-hint" id="viewerHint"><b>위에서 채널을 선택하면</b>여기에서 바로 열려요</div>
@@ -129,22 +142,6 @@
 <a class="home-fab" id="homeFab" href="https://myway.kr" target="_top" title="MYWAY 홈" aria-label="MYWAY 홈으로">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 10v10h14V10"/></svg>
 </a>
-
-<!-- 편집 도구 -->
-<div class="pentool-bar" id="pentoolBar" style="display:none">
-  <div class="pentool-menu" id="pentoolMenu">
-    <button id="mNav">📋 상단 채널 편집</button>
-    <div class="sep"></div>
-    <button id="mImport">📥 가져오기</button>
-    <button id="mExport">📤 내보내기</button>
-    <button id="mCode" data-code="1">&lt;/&gt; HTML로 저장</button>
-    <div class="sep"></div>
-    <button id="mReset" class="danger">↺ 기본값 복원</button>
-  </div>
-  <button class="pentool-fab" id="pentoolFab" aria-label="편집 도구">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-  </button>
-</div>
 
 <!-- 상단 채널 편집 모달 -->
 <div class="modal-back" id="navBack">
@@ -328,6 +325,14 @@ function renderNav(){
     b.addEventListener('click',function(){loadSite(i,b);});
     track.appendChild(b);
   });
+  if(SHOW_EDIT){
+    var add=document.createElement('button');
+    add.className='ch add'; add.id='chAddBtn'; add.type='button';
+    add.setAttribute('aria-label','편집 메뉴'); add.title='편집';
+    add.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>';
+    add.addEventListener('click',function(e){ e.stopPropagation(); toggleEditMenu(add); });
+    track.appendChild(add);
+  }
 }
 renderNav();
 
@@ -432,7 +437,7 @@ function buildHTML(mode){
   var nl=q('#navList'); if(nl) nl.innerHTML='';
   clone.querySelectorAll('.modal-back').forEach(function(m){m.classList.remove('show');});
   var ifr=q('#viewer'); if(ifr){ ifr.removeAttribute('src'); }
-  var pb=q('#pentoolBar'); if(pb) pb.style.display='none';
+  var pm=q('#pentoolMenu'); if(pm){ pm.classList.remove('show'); pm.removeAttribute('style'); }
   var sn=q('#screenNav'); if(sn) sn.remove();  /* 포털 토글은 런타임 주입 → 빌드에서 제거 */
   var vh=q('#viewerHint'); if(vh) vh.classList.remove('gone');
 
@@ -466,30 +471,46 @@ document.getElementById('buildEdit').addEventListener('click',function(){buildHT
 document.getElementById('buildView').addEventListener('click',function(){buildHTML('view');});
 document.getElementById('codeClose').addEventListener('click',function(){codeBack.classList.remove('show');});
 
-/* ===== FAB 메뉴 ===== */
-var pentoolBar=document.getElementById('pentoolBar');
+/* ===== 편집 메뉴 (네비의 + 버튼으로 열기) ===== */
 var pentoolMenu=document.getElementById('pentoolMenu');
-document.getElementById('pentoolFab').addEventListener('click',function(){ pentoolMenu.classList.toggle('show'); });
-document.addEventListener('click',function(e){ if(!pentoolBar.contains(e.target)) pentoolMenu.classList.remove('show'); });
-document.getElementById('mNav').addEventListener('click',function(){ renderNavList(); navBack.classList.add('show'); pentoolMenu.classList.remove('show'); });
-document.getElementById('mImport').addEventListener('click',function(){ impBack.classList.add('show'); pentoolMenu.classList.remove('show'); });
-document.getElementById('mExport').addEventListener('click',function(){ doExport(); pentoolMenu.classList.remove('show'); });
-document.getElementById('mCode').addEventListener('click',function(){ codeBack.classList.add('show'); pentoolMenu.classList.remove('show'); });
+function positionEditMenu(btn){
+  if(!btn) return;
+  var r=btn.getBoundingClientRect();
+  var mw=pentoolMenu.offsetWidth||170, mh=pentoolMenu.offsetHeight||0;
+  var left=Math.min(r.right-mw, window.innerWidth-mw-8); left=Math.max(8,left);
+  var top=r.bottom+6;
+  if(top+mh>window.innerHeight-8) top=Math.max(8, r.top-mh-6); /* 아래 공간 부족하면 위로 */
+  pentoolMenu.style.left=left+'px';
+  pentoolMenu.style.top=top+'px';
+}
+function closeEditMenu(){ pentoolMenu.classList.remove('show'); }
+function toggleEditMenu(btn){
+  if(pentoolMenu.classList.contains('show')){ closeEditMenu(); return; }
+  pentoolMenu.classList.add('show');   /* 먼저 표시해야 크기 측정 가능 */
+  positionEditMenu(btn);
+}
+document.addEventListener('click',function(e){
+  if(pentoolMenu.contains(e.target)) return;
+  if(e.target.closest && e.target.closest('#chAddBtn')) return;
+  closeEditMenu();
+});
+window.addEventListener('resize',closeEditMenu);
+document.getElementById('mNav').addEventListener('click',function(){ renderNavList(); navBack.classList.add('show'); closeEditMenu(); });
+document.getElementById('mImport').addEventListener('click',function(){ impBack.classList.add('show'); closeEditMenu(); });
+document.getElementById('mExport').addEventListener('click',function(){ doExport(); closeEditMenu(); });
+document.getElementById('mCode').addEventListener('click',function(){ codeBack.classList.add('show'); closeEditMenu(); });
 document.getElementById('mReset').addEventListener('click',function(){
   if(!confirm('편집 내용을 모두 지우고 기본값으로 되돌릴까요?')) return;
   try{ localStorage.removeItem(STORE_KEY); }catch(_){}
   data=cloneData(DEFAULT_DATA);
   renderNav();
   var fi=firstPlayable(); var fb=track.querySelector('button[data-site="'+fi+'"]'); if(fb) loadSite(fi,fb);
-  pentoolMenu.classList.remove('show');
+  closeEditMenu();
 });
 
-/* FAB 노출 제어 */
+/* 편집 메뉴 항목 노출 제어 (코드 버튼 숨김) */
 if(SHOW_EDIT){
-  pentoolBar.style.display='';
   if(!SHOW_CODE){ var mc=document.getElementById('mCode'); if(mc) mc.style.display='none'; }
-}else{
-  pentoolBar.style.display='none';
 }
 
 /* ===== 초기화: 마지막 채널 복원 → 없으면 첫 채널 자동 표시 ===== */
