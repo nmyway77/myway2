@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ko"><head>
+<html lang="ko">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>사이트 바 | MYWAY.KR</title>
@@ -132,12 +133,14 @@
 
 <div class="viewer">
   <div class="viewer-hint" id="viewerHint"><b>위에서 채널을 선택하면</b>여기에서 바로 열려요</div>
-  <iframe id="viewer" title="사이트 뷰어" referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation allow-modals allow-downloads" allowfullscreen=""></iframe>
+  <iframe id="viewer" title="사이트 뷰어" referrerpolicy="no-referrer"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation allow-modals allow-downloads"
+    allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
 </div>
 
 <!-- 우하단 홈 버튼 (정책) -->
 <a class="home-fab" id="homeFab" href="https://myway.kr" target="_top" title="MYWAY 홈" aria-label="MYWAY 홈으로">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"></path><path d="M5 10v10h14V10"></path></svg>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 10v10h14V10"/></svg>
 </a>
 
 <!-- 상단 채널 편집 모달 -->
@@ -153,7 +156,7 @@
 <!-- 채널 추가/수정 -->
 <div class="modal-back" id="chBack">
   <div class="modal">
-    <h3 id="chTitle">채널 수정</h3>
+    <h3 id="chTitle">채널 추가</h3>
     <label>이름</label>
     <input id="chName" type="text" placeholder="예: 사이트 이름">
     <label>URL</label>
@@ -174,7 +177,7 @@
     <button class="tb-btn" id="impFileBtn">📁 파일 선택</button>
     <input id="impFile" type="file" accept=".json,application/json" style="display:none">
     <label>또는 JSON 붙여넣기</label>
-    <textarea id="impText" placeholder="{&quot;kind&quot;:&quot;myway-sitebar-v2&quot;, ...}"></textarea>
+    <textarea id="impText" placeholder='{"kind":"myway-sitebar-v2", ...}'></textarea>
     <div class="modal-row">
       <button class="btn-cancel" id="impCancel">취소</button>
       <button class="btn-ok" id="impApply">적용</button>
@@ -195,10 +198,10 @@
 
 <script>
 /* ========= @CONFIG (빌드 시 통째 교체) ========= */
-var IS_DIST      = false;
-var SHOW_EDIT    = true;
-var SHOW_CODE    = false;
-var COPY_PROTECT = false;
+var IS_DIST      = false;   /* 보기전용(배포) 모드 */
+var SHOW_EDIT    = true;    /* 편집 도구 노출 */
+var SHOW_CODE    = true;    /* HTML로 저장 버튼 노출 */
+var COPY_PROTECT = false;   /* 복사방지 활성 */
 /* ========= @CONFIG_END ========= */
 
 /* ▼ 전용 저장 네임스페이스 (다른 바와 충돌 방지) ▼ */
@@ -209,33 +212,16 @@ var SESS_KEY    = 'mywaySiteBar2';
 
 /* ========= @DEFAULTS (빌드 시 통째 교체) ========= */
 var DEFAULT_DATA = {
-  "sites": [
-    [
-      "A",
-      "https://myway.kr/00barmagazine.html"
-    ],
-    [
-      "B",
-      "https://myway.kr/indexmainpeople.html"
-    ],
-    [
-      "C",
-      "https://myway.kr/00mainmovieinner2.html"
-    ],
-    [
-      "D",
-      "https://myway.kr/nav3.html"
-    ],
-    [
-      "U",
-      "https://myway.kr/U2.html"
-    ]
+  sites: [
+    ['위키백과','https://ko.wikipedia.org/'],
+    ['지도','https://www.openstreetmap.org/'],
+    ['날씨','https://www.weather.go.kr/w/index.do'],
   ]
 };
 /* ========= @DEFAULTS_END ========= */
 
 /* ========= @DEFAULTS_SIG (빌드 시 통째 교체) ========= */
-var DEFAULTS_SIG = 'bmqvq27p2';
+var DEFAULTS_SIG = 'src';
 /* ========= @DEFAULTS_SIG_END ========= */
 
 /* ===== 무한 중첩(프레임 폭탄) 방어 — 컴 멈춤 원인 원천 차단 =====
@@ -599,6 +585,5 @@ if(COPY_PROTECT){(function(){
   }
 })();
 </script>
-
-
-</body></html>
+</body>
+</html>
