@@ -4,82 +4,112 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>사이트 바 | MYWAY.KR</title>
-<meta name="description" content="원하는 사이트를 골라 한 화면에서 바로 보세요.">
+<meta name="description" content="원하는 사이트를 골라 한 화면에서 바로 보세요. 마이웨이 사이트 바.">
 <meta name="robots" content="index, follow">
-<!-- 배포 경로 정해지면 아래 canonical 수정하세요 -->
 <link rel="canonical" href="https://myway.kr/">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <style>
-  :root{ --line:#ececec;--ink:#1a1a1a;--ink-sub:#8a8f99;--accent:#0b6b53;--body:"Pretendard",-apple-system,sans-serif; }
+  :root{
+    --paper:#f7f3eb; --line:#e6e2d8; --ink:#1f1c17; --sub:#8a8478;
+    --accent:#5b4fc4; --grad:linear-gradient(135deg,#6b5bd6,#4f7fd4);
+    --body:"Pretendard",-apple-system,BlinkMacSystemFont,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,monospace;
+  }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0;height:100%}
-  body{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:#fff;color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
+  body{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;
+    background:#fff;color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased;
+    user-select:none;-webkit-user-select:none}
 
-  .topnav{flex:none;display:flex;gap:8px;align-items:center;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:10px 14px;background:#fff;border-bottom:1px solid var(--line);cursor:grab;scrollbar-width:none}
+  /* ── 상단 네비 ── */
+  .topnav{flex:none;display:flex;gap:8px;align-items:center;justify-content:safe center;flex-wrap:nowrap;
+    overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:10px 14px;background:#fff;
+    border-bottom:1px solid var(--line);cursor:grab;scrollbar-width:none}
   .topnav::-webkit-scrollbar{display:none}
   .topnav.dragging{cursor:grabbing}
-  .nav-home{flex:none;order:0;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-sub);padding:8px;border-radius:10px;transition:color .15s,background .15s}
-  .nav-home:hover{color:var(--accent);background:#f5f6f8}
-  .nav-home svg{width:20px;height:20px;display:block}
-  .nav-track{flex:none;order:3;display:flex;align-items:center;gap:8px;margin:0}
-  .topnav button{flex:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-family:var(--body);font-size:14px;font-weight:700;color:var(--ink-sub);cursor:pointer;transition:all .16s}
-  .topnav button:hover{border-color:#cfd3da;color:var(--ink)}
-  .topnav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
-  .open-btn{flex:none;order:1;color:var(--ink-sub);font-weight:700}
-  /* MYWAY 포털 화면 토글 (index.html이 주입) */
-  .screen-nav{flex:none;order:0;display:flex;align-items:center;gap:2px;margin-right:4px}
-  .screen-nav button{flex:none;border:none;background:transparent;font-family:var(--body);font-size:14px;font-weight:800;color:#3a3f4a;padding:7px 12px;border-radius:999px;cursor:pointer;transition:all .15s;line-height:1}
+  .nav-track{flex:none;display:flex;align-items:center;gap:8px;margin:0}
+  .topnav button.ch{flex:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);
+    background:#fff;border-radius:999px;padding:9px 16px;font-family:var(--body);font-size:14px;
+    font-weight:700;color:var(--sub);cursor:pointer;transition:all .16s}
+  .topnav button.ch:hover{border-color:#cbc6f0;color:var(--ink)}
+  .topnav button.ch.active{background:var(--grad);border-color:transparent;color:#fff}
+
+  /* 포털 화면 토글 (index.html이 주입) */
+  .screen-nav{flex:none;display:flex;align-items:center;gap:2px;margin-right:4px}
+  .screen-nav button{flex:none;border:none;background:transparent;font-family:var(--body);font-size:14px;
+    font-weight:800;color:#3a3f4a;padding:7px 12px;border-radius:999px;cursor:pointer;transition:all .15s;line-height:1}
   .screen-nav button:hover{background:#f0f0f5;color:var(--ink)}
-  .screen-nav button.active{background:#ece9fd;color:#5b4fc4}
+  .screen-nav button.active{background:#ece9fd;color:var(--accent)}
 
-  .viewer{flex:1;position:relative;overflow:hidden;background:#0d0f12}
-  .viewer iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+  /* ── 뷰어 ── */
+  .viewer{flex:1;position:relative;overflow:hidden;background:var(--paper)}
+  .viewer iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .viewer-hint{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;text-align:center;gap:6px;padding:24px;color:#a8a294;font-size:14px;
+    font-weight:700;line-height:1.6;pointer-events:none}
+  .viewer-hint.gone{display:none}
+  .viewer-hint b{font-size:15px;color:#8a8478}
 
-  /* ===== 편집 머신러리 ===== */
+  /* ── 우하단 홈 버튼 (정책) ── */
+  .home-fab{position:fixed;right:16px;bottom:16px;z-index:50;width:46px;height:46px;border-radius:50%;
+    background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 6px 18px rgba(91,79,196,.4);text-decoration:none;transition:transform .15s}
+  .home-fab:hover{transform:scale(1.07)}
+  .home-fab svg{width:21px;height:21px;display:block}
+
+  /* ── 편집 도구 (연필 FAB) ── */
   .pentool-bar{position:fixed;top:60px;right:16px;z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
-  .pentool-fab{width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,#0b8f6f,#0b6b53);box-shadow:0 4px 14px rgba(11,107,83,.4);transition:transform .15s}
+  .pentool-fab{width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;display:flex;
+    align-items:center;justify-content:center;color:#fff;background:var(--grad);
+    box-shadow:0 4px 14px rgba(91,79,196,.4);transition:transform .15s}
   .pentool-fab:hover{transform:scale(1.06)}
   .pentool-fab svg{width:19px;height:19px;display:block}
-  .pentool-menu{display:none;flex-direction:column;gap:4px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px;box-shadow:0 8px 26px rgba(40,40,70,.18);min-width:150px}
+  .pentool-menu{display:none;flex-direction:column;gap:4px;background:#fff;border:1px solid var(--line);
+    border-radius:12px;padding:6px;box-shadow:0 8px 26px rgba(40,40,70,.18);min-width:158px}
   .pentool-menu.show{display:flex}
-  .pentool-menu button{border:none;background:transparent;text-align:left;padding:9px 12px;border-radius:8px;font-family:var(--body);font-size:13.5px;font-weight:700;color:var(--ink);cursor:pointer}
-  .pentool-menu button:hover{background:#f0f7f4;color:var(--accent)}
+  .pentool-menu button{border:none;background:transparent;text-align:left;padding:9px 12px;border-radius:8px;
+    font-family:var(--body);font-size:13.5px;font-weight:700;color:var(--ink);cursor:pointer}
+  .pentool-menu button:hover{background:#f3f1fb;color:var(--accent)}
   .pentool-menu button.danger:hover{background:#fdecec;color:#c0392b}
   .pentool-menu .sep{height:1px;background:var(--line);margin:4px 2px}
 
-  .mini-btn{width:24px;height:24px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--ink-sub);font-size:12px;font-weight:800;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.12);padding:0}
+  .mini-btn{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--sub);
+    font-size:12px;font-weight:800;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
   .mini-btn:hover{color:var(--accent);border-color:var(--accent)}
   .mini-btn.del:hover{color:#c0392b;border-color:#c0392b}
 
-  .modal-back{position:fixed;inset:0;z-index:120;background:rgba(20,24,30,.5);display:none;align-items:center;justify-content:center;padding:18px}
+  /* ── 모달 ── */
+  .modal-back{position:fixed;inset:0;z-index:120;background:rgba(20,24,30,.5);display:none;
+    align-items:center;justify-content:center;padding:18px}
   .modal-back.show{display:flex}
-  .modal{width:100%;max-width:430px;max-height:86vh;overflow-y:auto;background:#fff;border-radius:16px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.3);scrollbar-width:none}
+  .modal{width:100%;max-width:430px;max-height:86vh;overflow-y:auto;background:#fff;border-radius:16px;
+    padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.3);scrollbar-width:none}
   .modal::-webkit-scrollbar{display:none}
   .modal h3{margin:0 0 14px;font-size:17px;font-weight:800;color:var(--ink)}
-  .modal label{display:block;font-size:12px;font-weight:700;color:var(--ink-sub);margin:12px 0 5px}
-  .modal input[type=text],.modal input[type=url],.modal textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-family:var(--body);font-size:14px;color:var(--ink);background:#fafbfc;-webkit-user-select:text;user-select:text}
+  .modal label{display:block;font-size:12px;font-weight:700;color:var(--sub);margin:12px 0 5px}
+  .modal input[type=text],.modal input[type=url],.modal textarea{width:100%;border:1px solid var(--line);
+    border-radius:9px;padding:10px 12px;font-family:var(--body);font-size:14px;color:var(--ink);
+    background:#fafbfc;-webkit-user-select:text;user-select:text}
   .modal input:focus,.modal textarea:focus{outline:none;border-color:var(--accent);background:#fff}
-  .modal textarea{min-height:140px;resize:vertical;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px}
+  .modal textarea{min-height:140px;resize:vertical;font-family:var(--mono);font-size:12px}
   .chk-row{display:flex;align-items:center;gap:8px;margin-top:12px}
   .chk-row input{width:17px;height:17px}
   .chk-row span{font-size:13px;font-weight:700;color:var(--ink)}
   .modal-row{display:flex;gap:8px;margin-top:18px}
-  .modal-row button{flex:1;border:none;border-radius:9px;padding:11px;font-family:var(--body);font-size:14px;font-weight:800;cursor:pointer}
-  .btn-ok{background:var(--accent);color:#fff}
-  .btn-ok:hover{background:#0a5c47}
-  .btn-cancel{background:#eef0f3;color:var(--ink-sub)}
+  .modal-row button{flex:1;border:none;border-radius:9px;padding:11px;font-family:var(--body);
+    font-size:14px;font-weight:800;cursor:pointer}
+  .btn-ok{background:var(--grad);color:#fff}
+  .btn-cancel{background:#eef0f3;color:var(--sub)}
   .btn-cancel:hover{background:#e3e6ea}
-  .tb-btn{width:100%;border:1px solid var(--line);background:#fafbfc;border-radius:9px;padding:11px;font-family:var(--body);font-size:13.5px;font-weight:800;color:var(--accent);cursor:pointer}
-  .tb-btn:hover{background:#f0f7f4;border-color:var(--accent)}
+  .tb-btn{width:100%;border:1px solid var(--line);background:#fafbfc;border-radius:9px;padding:11px;
+    font-family:var(--body);font-size:13.5px;font-weight:800;color:var(--accent);cursor:pointer;text-align:left}
+  .tb-btn:hover{background:#f3f1fb;border-color:var(--accent)}
   .ch-list{display:flex;flex-direction:column;gap:6px}
   .ch-row{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:9px;padding:7px 9px;background:#fafbfc}
   .ch-row .nm{flex:1;font-size:13.5px;font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .ch-row .tag{font-size:10px;font-weight:800;color:#0b6b53;background:#e3f3ee;border-radius:5px;padding:1px 5px}
-  .ch-row .mini-btn{width:26px;height:26px}
-  .hint{font-size:11.5px;color:var(--ink-sub);line-height:1.5;margin-top:10px}
+  .ch-row .tag{font-size:10px;font-weight:800;color:var(--accent);background:#ece9fd;border-radius:5px;padding:1px 5px}
+  .hint{font-size:11.5px;color:var(--sub);line-height:1.5;margin-top:10px}
+  .empty{padding:20px 4px;text-align:center;color:var(--sub);font-size:13px;font-weight:700}
 </style>
 </head>
 <body>
@@ -89,17 +119,25 @@
 </nav>
 
 <div class="viewer">
-  <iframe id="viewer" title="사이트 뷰어" referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+  <div class="viewer-hint" id="viewerHint"><b>위에서 채널을 선택하면</b>여기에서 바로 열려요</div>
+  <iframe id="viewer" title="사이트 뷰어" referrerpolicy="no-referrer"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation allow-modals allow-downloads"
+    allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
 </div>
 
-<!-- 연필 FAB -->
+<!-- 우하단 홈 버튼 (정책) -->
+<a class="home-fab" id="homeFab" href="https://myway.kr" target="_top" title="MYWAY 홈" aria-label="MYWAY 홈으로">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 10v10h14V10"/></svg>
+</a>
+
+<!-- 편집 도구 -->
 <div class="pentool-bar" id="pentoolBar" style="display:none">
   <div class="pentool-menu" id="pentoolMenu">
     <button id="mNav">📋 상단 채널 편집</button>
     <div class="sep"></div>
     <button id="mImport">📥 가져오기</button>
     <button id="mExport">📤 내보내기</button>
-    <button id="mCode" data-code="1">&lt;/&gt; 코드</button>
+    <button id="mCode" data-code="1">&lt;/&gt; HTML로 저장</button>
     <div class="sep"></div>
     <button id="mReset" class="danger">↺ 기본값 복원</button>
   </div>
@@ -118,7 +156,7 @@
   </div>
 </div>
 
-<!-- 채널 추가/수정 입력폼 -->
+<!-- 채널 추가/수정 -->
 <div class="modal-back" id="chBack">
   <div class="modal">
     <h3 id="chTitle">채널 추가</h3>
@@ -126,7 +164,7 @@
     <input id="chName" type="text" placeholder="예: 사이트 이름">
     <label>URL</label>
     <input id="chUrl" type="url" placeholder="https://...">
-    <div class="chk-row"><input id="chNewtab" type="checkbox"><span>새 탭으로만 열기 (iframe 재생 안 함)</span></div>
+    <div class="chk-row"><input id="chNewtab" type="checkbox"><span>새 탭으로만 열기 (화면에 안 띄움)</span></div>
     <div class="modal-row">
       <button class="btn-cancel" id="chCancel">취소</button>
       <button class="btn-ok" id="chSave">저장</button>
@@ -134,7 +172,7 @@
   </div>
 </div>
 
-<!-- 가져오기 모달 -->
+<!-- 가져오기 -->
 <div class="modal-back" id="impBack">
   <div class="modal">
     <h3>가져오기</h3>
@@ -142,7 +180,7 @@
     <button class="tb-btn" id="impFileBtn">📁 파일 선택</button>
     <input id="impFile" type="file" accept=".json,application/json" style="display:none">
     <label>또는 JSON 붙여넣기</label>
-    <textarea id="impText" placeholder='{"kind":"myway-custombar-v1", ...}'></textarea>
+    <textarea id="impText" placeholder='{"kind":"myway-sitebar-v2", ...}'></textarea>
     <div class="modal-row">
       <button class="btn-cancel" id="impCancel">취소</button>
       <button class="btn-ok" id="impApply">적용</button>
@@ -150,13 +188,13 @@
   </div>
 </div>
 
-<!-- 코드(빌드) 모달 -->
+<!-- 빌드 -->
 <div class="modal-back" id="codeBack">
   <div class="modal">
     <h3>HTML로 저장</h3>
-    <p class="hint" style="margin-top:0">현재 채널 목록을 기본값으로 박아 새 HTML 파일을 만들어요.</p>
-    <button class="tb-btn" id="buildEdit" style="margin-top:10px">📝 편집용 HTML 저장 <span style="color:var(--ink-sub);font-weight:700">— 받는 사람도 편집·가져오기 가능, 코드 버튼 숨김</span></button>
-    <button class="tb-btn" id="buildView" style="margin-top:8px">🔒 보기전용 HTML 저장 <span style="color:var(--ink-sub);font-weight:700">— 편집 불가, 복사방지 ON</span></button>
+    <p class="hint" style="margin-top:0">지금 채널 목록을 기본값으로 박아 새 HTML 파일을 만들어요.</p>
+    <button class="tb-btn" id="buildEdit" style="margin-top:10px">📝 편집용 HTML 저장 <span style="color:var(--sub);font-weight:700">— 받는 사람도 편집·가져오기 가능</span></button>
+    <button class="tb-btn" id="buildView" style="margin-top:8px">🔒 보기전용 HTML 저장 <span style="color:var(--sub);font-weight:700">— 편집 불가, 복사방지 ON</span></button>
     <div class="modal-row"><button class="btn-cancel" id="codeClose">닫기</button></div>
   </div>
 </div>
@@ -165,28 +203,22 @@
 /* ========= @CONFIG (빌드 시 통째 교체) ========= */
 var IS_DIST      = false;   /* 보기전용(배포) 모드 */
 var SHOW_EDIT    = true;    /* 편집 도구 노출 */
-var SHOW_CODE    = true;    /* 코드(빌드) 버튼 노출 */
+var SHOW_CODE    = true;    /* HTML로 저장 버튼 노출 */
 var COPY_PROTECT = false;   /* 복사방지 활성 */
 /* ========= @CONFIG_END ========= */
 
-/* ▼▼ 용도가 정해지면 이 네 줄만 바꾸세요 (라디오바와 충돌 방지용 전용 키) ▼▼ */
-var STORE_KEY   = 'mywayCustomBarV1';
-var DATA_KIND   = 'myway-custombar-v1';
-var EXPORT_NAME = 'myway-custombar.json';
-var SESS_KEY    = 'mywayCustomBar';
-/* ▲▲ 빌드 파일명은 buildHTML 안의 fname 도 함께 바꾸면 됩니다 ▲▲ */
+/* ▼ 전용 저장 네임스페이스 (다른 바와 충돌 방지) ▼ */
+var STORE_KEY   = 'mywaySiteBarV2';
+var DATA_KIND   = 'myway-sitebar-v2';
+var EXPORT_NAME = 'myway-sitebar.json';
+var SESS_KEY    = 'mywaySiteBar2';
 
 /* ========= @DEFAULTS (빌드 시 통째 교체) ========= */
 var DEFAULT_DATA = {
   sites: [
-    ['KBS','https://radio.kbs.co.kr/'],
-    ['KBS1','https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=21&ch_type=radioList&bora=on&chat=on'],
-    ['KBS2','https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=22&ch_type=radioList&bora=on&chat=on'],
-    ['MBC RADIO','https://www.imbc.com/broad/radio/'],
-    ['SBS러브FM','https://www.sbs.co.kr/live/S08?div=live_list'],
-    ['CBS','https://www.cbs.co.kr/radio'],
-    ['CNN Radio','https://edition.cnn.com/audio'],
-    ['BBC Radio','https://www.bbc.co.uk/sounds/stations'],
+    ['위키백과','https://ko.wikipedia.org/'],
+    ['지도','https://www.openstreetmap.org/'],
+    ['날씨','https://www.weather.go.kr/w/index.do'],
   ]
 };
 /* ========= @DEFAULTS_END ========= */
@@ -195,7 +227,18 @@ var DEFAULT_DATA = {
 var DEFAULTS_SIG = 'src';
 /* ========= @DEFAULTS_SIG_END ========= */
 
-/* ---- 데이터 로드/저장 ---- */
+/* ===== 무한 중첩(프레임 폭탄) 방어 — 컴 멈춤 원인 원천 차단 =====
+   띄울 주소가 이 페이지 자신이거나, 이미 프레임이 너무 깊이 중첩됐으면
+   절대 화면(iframe)에 안 띄우고 새 탭으로만 연다. */
+var FRAME_LIMIT = 3;
+function sameDoc(url){
+  try{ var a=new URL(url,location.href), h=new URL(location.href);
+       return a.origin===h.origin && a.pathname===h.pathname; }catch(_){ return false; }
+}
+function frameDepth(){ var d=0,w=window; try{ while(w!==w.parent && d<12){ w=w.parent; d++; } }catch(_){} return d; }
+function blockedInFrame(url){ return sameDoc(url) || frameDepth()>=FRAME_LIMIT; }
+
+/* ===== 데이터 로드/저장 ===== */
 function cloneData(d){ return JSON.parse(JSON.stringify(d)); }
 function coerceData(o){
   if(!o || typeof o!=='object' || !Array.isArray(o.sites)) return null;
@@ -205,8 +248,7 @@ function coerceData(o){
       var row=[s[0],s[1]]; if(s[2]===true) row.push(true); d.sites.push(row);
     }
   });
-  if(!d.sites.length) return null;
-  return d;
+  return d.sites.length ? d : null;
 }
 function loadData(){
   if(IS_DIST) return cloneData(DEFAULT_DATA);
@@ -215,7 +257,7 @@ function loadData(){
     var raw=localStorage.getItem(STORE_KEY);
     if(raw){
       var obj=JSON.parse(raw);
-      /* 서명 불일치(=다른/새 빌드) + 구운 기본값 있음 → 새 기본값으로 재시딩(오래된 캐시 무시) */
+      /* 서명 불일치(=새 빌드) + 기본값 있음 → 새 기본값으로 재시딩(낡은 캐시 무시) */
       if(hasDefault && ((obj && obj.sig) || '') !== DEFAULTS_SIG){
         var rd=cloneData(DEFAULT_DATA);
         try{ localStorage.setItem(STORE_KEY, JSON.stringify({kind:DATA_KIND, sig:DEFAULTS_SIG, sites:rd.sites})); }catch(_){}
@@ -224,7 +266,6 @@ function loadData(){
       var c=coerceData(obj); if(c) return c;
     }
   }catch(_){}
-  /* 저장된 게 없으면 기본값 시딩 */
   var d0=cloneData(DEFAULT_DATA);
   try{ localStorage.setItem(STORE_KEY, JSON.stringify({kind:DATA_KIND, sig:DEFAULTS_SIG, sites:d0.sites})); }catch(_){}
   return d0;
@@ -234,52 +275,56 @@ function saveData(){
   try{ localStorage.setItem(STORE_KEY, JSON.stringify({kind:DATA_KIND, sig:DEFAULTS_SIG, sites:data.sites})); }catch(_){}
 }
 var data = loadData();
+
 function firstPlayable(){
-  for(var i=0;i<data.sites.length;i++){ if(data.sites[i] && !data.sites[i][2]) return i; }
-  return 0;
+  /* 새 탭 전용 / 자기참조 / 과다중첩 채널은 자동표시 후보에서 제외 */
+  for(var i=0;i<data.sites.length;i++){
+    var s=data.sites[i];
+    if(s && !s[2] && !blockedInFrame(s[1])) return i;
+  }
+  return -1;
 }
 
-/* ---- 뷰어 ---- */
+/* ===== 뷰어 ===== */
 var viewer=document.getElementById('viewer');
 function setViewerSrc(url){
+  if(blockedInFrame(url)){ try{ window.open(url,'_blank','noopener'); }catch(_){} return; }
   var fresh=document.createElement('iframe');
   fresh.id='viewer'; fresh.title='사이트 뷰어';
   fresh.setAttribute('referrerpolicy','no-referrer');
   fresh.setAttribute('allow','autoplay; encrypted-media; fullscreen');
+  /* 외부 사이트가 포털(top)을 날리는 프레임버스팅 차단 — 상단이동 권한 미부여 */
+  fresh.setAttribute('sandbox','allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation allow-modals allow-downloads');
   fresh.setAttribute('allowfullscreen','');
   fresh.src=url;
   viewer.parentNode.replaceChild(fresh, viewer);
   viewer=fresh;
+  var h=document.getElementById('viewerHint'); if(h) h.classList.add('gone');
 }
 
 var nav=document.getElementById('topnav');
 var track=document.getElementById('navTrack');
-var currentUrl=(data.sites[firstPlayable()]||['',''])[1];
 
 function centerNavBtn(btn){
-  var navRect=nav.getBoundingClientRect();
-  var btnRect=btn.getBoundingClientRect();
+  var navRect=nav.getBoundingClientRect(), btnRect=btn.getBoundingClientRect();
   var target=nav.scrollLeft + (btnRect.left - navRect.left) - (nav.clientWidth/2) + (btnRect.width/2);
   nav.scrollTo({left:Math.max(0,target),behavior:'smooth'});
 }
-function clearActive(){ nav.querySelectorAll('button[data-site]').forEach(function(b){b.classList.remove('active');}); }
+function clearActive(){ track.querySelectorAll('button[data-site]').forEach(function(b){b.classList.remove('active');}); }
 
-/* ---- 채널 로드 ---- */
 function loadSite(i, btn){
   var s=data.sites[i]; if(!s) return;
-  if(s[2]){ window.open(s[1],'_blank','noopener'); if(btn) centerNavBtn(btn); return; }
-  currentUrl=s[1];
-  setViewerSrc(currentUrl);
+  if(s[2] || blockedInFrame(s[1])){ window.open(s[1],'_blank','noopener'); if(btn) centerNavBtn(btn); return; }
+  setViewerSrc(s[1]);
   clearActive();
   try{ sessionStorage.setItem(SESS_KEY,'site:'+i); }catch(_){}
   if(btn){ btn.classList.add('active'); centerNavBtn(btn); }
 }
 
-/* ---- 상단 채널 버튼 렌더 (재실행 가능) ---- */
 function renderNav(){
   track.innerHTML='';
   data.sites.forEach(function(s,i){
-    var b=document.createElement('button'); b.textContent=s[0]; b.dataset.site=i;
+    var b=document.createElement('button'); b.className='ch'; b.textContent=s[0]; b.dataset.site=i;
     b.addEventListener('click',function(){loadSite(i,b);});
     track.appendChild(b);
   });
@@ -292,15 +337,12 @@ renderNav();
   nav.addEventListener('pointerdown',function(e){ if(e.button!==0) return; down=true;moved=false;startX=e.clientX;startL=nav.scrollLeft;nav.classList.add('dragging'); });
   nav.addEventListener('pointermove',function(e){ if(!down) return; var dx=e.clientX-startX; if(Math.abs(dx)>4) moved=true; nav.scrollLeft=startL-dx; });
   var end=function(){ down=false; nav.classList.remove('dragging'); };
-  nav.addEventListener('pointerup',end);
-  nav.addEventListener('pointercancel',end);
-  nav.addEventListener('pointerleave',end);
+  nav.addEventListener('pointerup',end); nav.addEventListener('pointercancel',end); nav.addEventListener('pointerleave',end);
   nav.addEventListener('click',function(e){ if(moved){ e.stopPropagation(); e.preventDefault(); moved=false; } },true);
   nav.addEventListener('wheel',function(e){ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ nav.scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
 })();
 
-/* ================= 편집 기능 ================= */
-/* 상단 채널 편집 */
+/* ===== 상단 채널 편집 ===== */
 var navBack=document.getElementById('navBack'), navList=document.getElementById('navList');
 function miniBtn(txt,title,fn){
   var b=document.createElement('button'); b.className='mini-btn'; b.textContent=txt; b.title=title;
@@ -308,6 +350,7 @@ function miniBtn(txt,title,fn){
 }
 function renderNavList(){
   navList.innerHTML='';
+  if(!data.sites.length){ var e=document.createElement('div'); e.className='empty'; e.textContent='아직 채널이 없어요. 아래에서 추가하세요.'; navList.appendChild(e); return; }
   data.sites.forEach(function(s,i){
     var row=document.createElement('div'); row.className='ch-row';
     var nm=document.createElement('div'); nm.className='nm'; nm.textContent=s[0]; row.appendChild(nm);
@@ -341,12 +384,13 @@ document.getElementById('chSave').addEventListener('click',function(){
   var u=document.getElementById('chUrl').value.trim();
   var nt=document.getElementById('chNewtab').checked;
   if(!nm||!u){ alert('이름과 URL을 모두 입력하세요'); return; }
+  if(!/^https?:\/\//i.test(u)){ u='https://'+u; }
   var row=[nm,u]; if(nt) row.push(true);
   if(chEdit<0) data.sites.push(row); else data.sites[chEdit]=row;
   saveData(); chBack.classList.remove('show'); renderNav(); renderNavList();
 });
 
-/* 가져오기 / 내보내기 */
+/* ===== 가져오기 / 내보내기 ===== */
 var impBack=document.getElementById('impBack');
 function doExport(){
   var payload={kind:DATA_KIND, sites:data.sites};
@@ -360,7 +404,7 @@ function applyImport(text){
   if(!raw){ alert('가져올 내용이 없어요'); return; }
   var obj; try{ obj=JSON.parse(raw); }catch(e){ alert('JSON 형식이 아니에요'); return; }
   if(obj && obj.kind && obj.kind!==DATA_KIND){
-    if(!confirm('다른 도구의 데이터(' + obj.kind + ')로 보여요. 그래도 가져올까요?')) return;
+    if(!confirm('다른 도구의 데이터('+obj.kind+')로 보여요. 그래도 가져올까요?')) return;
   }
   var c=coerceData(obj);
   if(!c){ alert('데이터 형식이 아니에요'); return; }
@@ -380,36 +424,24 @@ document.getElementById('impFile').addEventListener('change',function(e){
 document.getElementById('impCancel').addEventListener('click',function(){impBack.classList.remove('show');});
 document.getElementById('impApply').addEventListener('click',function(){ applyImport(document.getElementById('impText').value); });
 
-/* ---- buildHTML (코드 빌드) ---- */
+/* ===== HTML로 저장 (빌드) ===== */
 function buildHTML(mode){
   var clone=document.documentElement.cloneNode(true);
   var q=function(sel){ return clone.querySelector(sel); };
   var nt=q('#navTrack'); if(nt) nt.innerHTML='';
   var nl=q('#navList'); if(nl) nl.innerHTML='';
-  var tn=q('#topnav'); if(tn){ tn.querySelectorAll('button[data-site],.open-btn').forEach(function(b){b.remove();}); tn.classList.remove('dragging'); }
   clone.querySelectorAll('.modal-back').forEach(function(m){m.classList.remove('show');});
-  var ifr=q('#viewer'); if(ifr){ ifr.removeAttribute('src'); ifr.style.display=''; }
+  var ifr=q('#viewer'); if(ifr){ ifr.removeAttribute('src'); }
   var pb=q('#pentoolBar'); if(pb) pb.style.display='none';
-  var sn=q('#screenNav'); if(sn) sn.remove();  /* 포털 화면 토글은 런타임 주입 → 빌드에서 제거 */
+  var sn=q('#screenNav'); if(sn) sn.remove();  /* 포털 토글은 런타임 주입 → 빌드에서 제거 */
+  var vh=q('#viewerHint'); if(vh) vh.classList.remove('gone');
 
   var html='<!DOCTYPE html>\n'+clone.outerHTML;
 
-  var cfg;
-  if(mode==='view'){
-    cfg='/* ========= @CONFIG (빌드 시 통째 교체) ========= */\n'+
-        'var IS_DIST      = true;\n'+
-        'var SHOW_EDIT    = false;\n'+
-        'var SHOW_CODE    = false;\n'+
-        'var COPY_PROTECT = true;\n'+
-        '/* ========= @CONFIG_END ========= */';
-  }else{
-    cfg='/* ========= @CONFIG (빌드 시 통째 교체) ========= */\n'+
-        'var IS_DIST      = false;\n'+
-        'var SHOW_EDIT    = true;\n'+
-        'var SHOW_CODE    = false;\n'+
-        'var COPY_PROTECT = false;\n'+
-        '/* ========= @CONFIG_END ========= */';
-  }
+  var cfg = (mode==='view')
+    ? 'var IS_DIST      = true;\nvar SHOW_EDIT    = false;\nvar SHOW_CODE    = false;\nvar COPY_PROTECT = true;'
+    : 'var IS_DIST      = false;\nvar SHOW_EDIT    = true;\nvar SHOW_CODE    = false;\nvar COPY_PROTECT = false;';
+  cfg='/* ========= @CONFIG (빌드 시 통째 교체) ========= */\n'+cfg+'\n/* ========= @CONFIG_END ========= */';
   html=html.replace(/\/\* ========= @CONFIG \(빌드 시 통째 교체\) ========= \*\/[\s\S]*?\/\* ========= @CONFIG_END ========= \*\//, cfg);
 
   var defBlock='/* ========= @DEFAULTS (빌드 시 통째 교체) ========= */\n'+
@@ -417,14 +449,13 @@ function buildHTML(mode){
     '/* ========= @DEFAULTS_END ========= */';
   html=html.replace(/\/\* ========= @DEFAULTS \(빌드 시 통째 교체\) ========= \*\/[\s\S]*?\/\* ========= @DEFAULTS_END ========= \*\//, defBlock);
 
-  /* 빌드마다 새 서명 → 재방문 기기의 오래된 localStorage 캐시를 새 기본값으로 교체 */
   var sig='b'+Date.now().toString(36);
   var sigBlock='/* ========= @DEFAULTS_SIG (빌드 시 통째 교체) ========= */\n'+
     "var DEFAULTS_SIG = '"+sig+"';\n"+
     '/* ========= @DEFAULTS_SIG_END ========= */';
   html=html.replace(/\/\* ========= @DEFAULTS_SIG \(빌드 시 통째 교체\) ========= \*\/[\s\S]*?\/\* ========= @DEFAULTS_SIG_END ========= \*\//, sigBlock);
 
-  var fname = mode==='view' ? 'custombar-view.html' : 'barsite.html';
+  var fname = mode==='view' ? 'sitebar.html' : 'sitebar-edit.html';
   var blob=new Blob([html],{type:'text/html'});
   var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fname;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
@@ -435,7 +466,7 @@ document.getElementById('buildEdit').addEventListener('click',function(){buildHT
 document.getElementById('buildView').addEventListener('click',function(){buildHTML('view');});
 document.getElementById('codeClose').addEventListener('click',function(){codeBack.classList.remove('show');});
 
-/* ---- FAB 메뉴 ---- */
+/* ===== FAB 메뉴 ===== */
 var pentoolBar=document.getElementById('pentoolBar');
 var pentoolMenu=document.getElementById('pentoolMenu');
 document.getElementById('pentoolFab').addEventListener('click',function(){ pentoolMenu.classList.toggle('show'); });
@@ -461,14 +492,13 @@ if(SHOW_EDIT){
   pentoolBar.style.display='none';
 }
 
-/* ---- 초기화: 마지막 화면 복원 → 없으면 첫 채널 ---- */
+/* ===== 초기화: 마지막 채널 복원 → 없으면 첫 채널 자동 표시 ===== */
 (function(){
-  var saved='';
-  try{ saved=sessionStorage.getItem(SESS_KEY)||''; }catch(_){}
+  var saved=''; try{ saved=sessionStorage.getItem(SESS_KEY)||''; }catch(_){}
   var ms=/^site:(\d+)$/.exec(saved);
   if(ms){
-    var i=parseInt(ms[1],10);
-    if(data.sites[i] && !data.sites[i][2]){
+    var i=parseInt(ms[1],10), s=data.sites[i];
+    if(s && !s[2] && !blockedInFrame(s[1])){
       var b=track.querySelector('button[data-site="'+i+'"]');
       if(b){ loadSite(i,b); return; }
     }
@@ -478,7 +508,7 @@ if(SHOW_EDIT){
   if(fb) loadSite(fi,fb);
 })();
 
-/* ---- 복사 방지 (보기전용에서만) ---- */
+/* ===== 복사 방지 (보기전용에서만) ===== */
 if(COPY_PROTECT){(function(){
   var isField=function(el){ return el&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA'||el.tagName==='SELECT'||el.isContentEditable); };
   ['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){
@@ -492,12 +522,12 @@ if(COPY_PROTECT){(function(){
   });
 })();}
 </script>
+
 <script>
 /* ===== MYWAY 포털 화면 토글 (index.html ↔ 자식 통신) =====
    부모(index.html)가 MYWAY_SCREEN_NAV 로 H·C&S·P 항목을 보내면
-   상단 네비 왼쪽(홈 다음)에 토글 버튼을 그려넣고,
-   클릭 시 MYWAY_SCREEN_SWITCH 로 화면 전환을 요청한다.
-   로컬(file://)·배포 모두에서 동작하도록 postMessage 만 사용. */
+   상단 네비 왼쪽(홈 다음)에 토글을 그려넣고, 클릭 시 전환을 요청한다.
+   로컬(file://)·배포 모두 동작하도록 postMessage 만 사용. */
 (function(){
   var topnav=document.getElementById('topnav');
   if(!topnav) return;
@@ -527,29 +557,11 @@ if(COPY_PROTECT){(function(){
     var d=e.data || {};
     if(d.type==='MYWAY_SCREEN_NAV'){ renderScreenNav(d.items, d.current); }
   });
-  /* 부모에게 준비 완료 알림 → 부모가 NAV 전송 (iframe 안일 때만) */
   if(window.parent && window.parent!==window){
     var ping=function(){ postParent({ type:'MYWAY_SCREEN_READY' }); };
     ping();
     [120,400,1000,2000].forEach(function(t){ setTimeout(ping,t); });
   }
-})();
-(function(){
-  if(!/Mobi/i.test(navigator.userAgent)) return;
-  document.addEventListener("click", function(e){
-    var a = e.target.closest ? e.target.closest("a[href]") : null;
-    if(!a) return;
-    var href = a.getAttribute("href") || "";
-    if(!href || href.charAt(0) === "#" || /^javascript:/i.test(href)) return;
-    e.preventDefault();
-    try { (window.top || window).location.href = a.href; }
-    catch(_) { window.open(a.href, "_blank"); }
-  }, true);
-  var _open = window.open.bind(window);
-  window.open = function(url, name, feat){
-    if(url){ try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
-    return _open(url, name, feat);
-  };
 })();
 </script>
 </body>
