@@ -112,7 +112,7 @@
   .nav-row button.del:hover{border-color:#d33;color:#d33}
 </style>
 </head>
-<body>
+<body class="">
 
 <div class="edit-toolbar" id="editToolbar"></div>
 
@@ -131,9 +131,9 @@
 <!-- 항목 추가/수정 모달 -->
 <div class="modal-back" id="dlgBack">
   <div class="modal">
-    <h3 id="dlgTitle">항목 추가</h3>
+    <h3 id="dlgTitle">항목 수정</h3>
     <label>섹션</label>
-    <select id="dlgSection"></select>
+    <select id="dlgSection"><option value="0">실시간 스트리밍</option><option value="1">지상파·종합편성 LIVE</option><option value="2">뉴스 LIVE</option><option value="3">경제·증권 LIVE</option><option value="4">해외 LIVE TV</option><option value="__new">➕ 새 섹션…</option></select>
     <div id="dlgNewSecWrap" style="display:none">
       <label>새 섹션 이름</label>
       <input id="dlgNewSec" type="text" placeholder="예: 스포츠 LIVE">
@@ -201,7 +201,7 @@ const IS_DIST = true;
 const SHOW_EDIT = true;
 const COPY_PROTECT = false;
 const STORE_KEY = "mywayUsefulDirV1_dist";
-const DIST_SIG = "sig1782536662459";
+const DIST_SIG = "sig1782641331652";
 /* @CONFIG_END */
 const DATA_KIND = 'myway-useful-v1';   // JSON 식별자 — 다른 도구 JSON과 섞임 방지
 
@@ -252,7 +252,7 @@ const DEFAULT_DIRECTORY = [
     ["Radio -EDITER","","https://myway.kr/radiositesbar2-edit.html"],
     ["뉴스사이트-EDITER","","https://myway.kr/newsitesbar2-edit.html"],
     ["nav3-EDITER","","https://myway.kr/nav3-edit.html"],
-    ["바사이트-EDITER2","","https://myway.kr/GAL3-EDIT.html"],
+    ["GAL3-EDITER","","https://myway.kr/GAL3-EDIT.html"],
   ]},
   { label:"지상파·종합편성 LIVE", items:[
     ["USEFUL-EDIT","","https://myway.kr/USEFUL-EDIT2.html"],
@@ -261,7 +261,7 @@ const DEFAULT_DIRECTORY = [
     ["BBS-EDITER","","https://myway.kr/bbssitesbar2-edit.html"],
     ["갤러리2-EDITER","","https://myway.kr/00makingyoutubefull2-COMBOcode777211.html"],
     ["갤러리2-EDITER","","https://myway.kr/00makingyoutubefull2-COMBOcode7772.html"],
-    ["바사이트-EDITER","","https://myway.kr/custombar-edit.html"],
+    ["바사이트-EDITER","","https://myway.kr/barsite-edit.html"],
     ["grid -top big","","https://myway.kr/000010top.html"],
     ["grid-topmiddle","","https://myway.kr/00making10dtype.html"],
     ["grid-big","","https://myway.kr/00makingbigpic.html"],
