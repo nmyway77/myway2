@@ -2,9 +2,9 @@
 <html lang="ko"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>네비 빌더 · 로고/피플/갤러리 | MYWAY.KR</title>
+<title>네비 빌더 2 · 로고/피플/갤러리 | MYWAY.KR</title>
 <meta name="description" content="로고형·피플형·갤러리형 세 가지 표시 방식을 탭마다 골라 만드는 네비 편집기.">
-<link rel="canonical" href="https://myway.kr/nav3.html">
+<link rel="canonical" href="https://myway.kr/nav4.html">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <style>
   :root{
@@ -208,8 +208,8 @@
   <main>
     <div class="sec-head">
       <h2 id="secTitle">갤러리1</h2>
-      <span class="cnt" id="secCount">4개</span>
-      <span class="vlabel" id="secVlabel">갤러리형</span>
+      <span class="cnt" id="secCount">3개</span>
+      <span class="vlabel" id="secVlabel">피플형</span>
     </div>
     <div id="stage"></div>
   </main>
@@ -237,7 +237,7 @@
   <!-- 탭 편집 모달 -->
   <div class="ov" id="tabOv">
     <div class="modal">
-      <h3 id="tabModalTitle">탭 설정</h3>
+      <h3 id="tabModalTitle">탭 추가</h3>
       <div class="sub">탭 이름과 표시 방식을 정하세요.</div>
       <div class="fld">
         <label>탭 이름</label>
@@ -248,13 +248,13 @@
         <div class="vtype-opt" data-v="logo"><div class="ic">🔵</div><div class="t">로고형</div><div class="d">원형 아이콘</div></div>
         <div class="vtype-opt" data-v="people"><div class="ic">🖼️</div><div class="t">피플형</div><div class="d">사진+이름</div></div>
         <div class="vtype-opt" data-v="gallery"><div class="ic">🗂️</div><div class="t">갤러리형</div><div class="d">여러 장 묶음</div></div>
-        <div class="vtype-opt on" data-v="gallery2"><div class="ic">🖽</div><div class="t">갤러리형2</div><div class="d">원본비율·열지정</div></div>
+        <div class="vtype-opt" data-v="gallery2"><div class="ic">🖽</div><div class="t">갤러리형2</div><div class="d">원본비율·열지정</div></div>
       </div>
-      <div class="fld" id="fldCols" style="">
+      <div class="fld" id="fldCols" style="display:none">
         <label>가로 개수 (열 수)</label>
         <input id="tabCols" type="number" min="1" max="8" value="3">
       </div>
-      <div class="move-row" id="tabMoveRow" style="">
+      <div class="move-row" id="tabMoveRow" style="display:none">
         <span class="move-label">탭 순서</span>
         <button class="move-btn" data-mv="left" title="왼쪽으로">◀</button>
         <button class="move-btn" data-mv="right" title="오른쪽으로">▶</button>
@@ -270,13 +270,13 @@
   <!-- 항목 편집 모달 -->
   <div class="ov" id="itemOv">
     <div class="modal">
-      <h3 id="itemModalTitle">항목 수정</h3>
-      <div class="sub" id="itemModalSub">갤러리형 · 갤러리1</div>
-      <div class="fld" id="fldName" style=""><label id="lblName">제목</label><input id="itName" placeholder="이름"></div>
-      <div class="fld" id="fldImg" style="display: none;"><label id="lblImg">이미지 URL</label><input id="itImg" placeholder="https://..."><div class="hint">로고형은 정사각 투명 PNG, 피플형은 세로 사진이 잘 어울려요.</div></div>
+      <h3 id="itemModalTitle">항목 추가</h3>
+      <div class="sub" id="itemModalSub"></div>
+      <div class="fld" id="fldName"><label id="lblName">이름</label><input id="itName" placeholder="이름"></div>
+      <div class="fld" id="fldImg"><label id="lblImg">이미지 URL</label><input id="itImg" placeholder="https://..."><div class="hint">로고형은 정사각 투명 PNG, 피플형은 세로 사진이 잘 어울려요.</div></div>
       <div class="fld" id="fldUrl"><label>링크 URL (선택)</label><input id="itUrl" placeholder="https://..."></div>
       <!-- 갤러리 전용 -->
-      <div id="galFields" style="">
+      <div id="galFields" style="display:none">
         <label style="display:block;padding:0 22px 6px;font-size:.78rem;font-weight:700;color:var(--ink-sub)">사진들 (여러 장)</label>
         <div class="gimg-list" id="gimgList"></div>
         <button class="gimg-add" id="gimgAdd">＋ 사진 URL 추가</button>
@@ -287,7 +287,7 @@
           <div class="hint">사진과 글을 함께 붙여넣을 수 있어요. 전체 보기(라이트박스)에서 사진 아래에 나와요.</div>
         </div>
       </div>
-      <div class="move-row" id="itemMoveRow" style="">
+      <div class="move-row" id="itemMoveRow" style="display:none">
         <span class="move-label">순서 이동</span>
         <button class="move-btn" data-mv="left" title="왼쪽">◀</button>
         <button class="move-btn" data-mv="up" title="위로">▲</button>
@@ -295,7 +295,7 @@
         <button class="move-btn" data-mv="right" title="오른쪽">▶</button>
       </div>
       <div class="btns">
-        <button class="btn-danger" id="itemDelete" style="">삭제</button>
+        <button class="btn-danger" id="itemDelete">삭제</button>
         <button class="btn-ghost" id="itemCancel">취소</button>
         <button class="btn-primary" id="itemSave">저장</button>
       </div>
@@ -341,10 +341,10 @@
 <script>
 /* ====== 설정 ====== */
 /* @CONFIG */
-const STORE_KEY = "mywayNav3V1_dist";
-const DATA_KIND = 'myway-nav3-v1';
-const EXPORT_NAME = 'myway-nav3.json';
-const PAGE_TITLE = '네비 빌더';
+const STORE_KEY = "mywayNav4V1_dist";
+const DATA_KIND = 'myway-nav4-v1';
+const EXPORT_NAME = 'myway-nav4.json';
+const PAGE_TITLE = '네비 빌더 2';
 const IS_DIST = true;
 const SHOW_EDIT = true;
 const COPY_PROTECT = false;
@@ -354,8 +354,31 @@ const COPY_PROTECT = false;
 /* @DATA_START */
 const DEFAULT_TABS = [
   {
-    "id": "t_gallery",
+    "id": "t_people",
     "label": "갤러리1",
+    "view": "people",
+    "cols": 3,
+    "items": [
+      {
+        "name": "인물 A",
+        "img": "https://picsum.photos/seed/p1/400/520",
+        "url": ""
+      },
+      {
+        "name": "인물 B",
+        "img": "https://picsum.photos/seed/p2/400/600",
+        "url": ""
+      },
+      {
+        "name": "인물 C",
+        "img": "https://picsum.photos/seed/p3/400/480",
+        "url": ""
+      }
+    ]
+  },
+  {
+    "id": "t_gallery",
+    "label": "갤러리2",
     "view": "gallery",
     "cols": 3,
     "items": [
@@ -363,11 +386,10 @@ const DEFAULT_TABS = [
         "title": "모음 1",
         "url": "",
         "images": [
-          "https://picsum.photos/seed/g1/600/800|https://i.namu.wiki/i/kktHEXrlPrvADCROlee_SQuEfwKFPJdYp-LRZqQ79mqh6pESZgktlZ5GAaO_yVfsqv_McIzg7gY-gZcvVrdmvQ.jpg",
+          "https://picsum.photos/seed/g1/600/800",
           "https://picsum.photos/seed/g2/600/800",
           "https://picsum.photos/seed/g3/600/800"
-        ],
-        "body": ""
+        ]
       },
       {
         "title": "모음 2",
@@ -376,47 +398,20 @@ const DEFAULT_TABS = [
           "https://picsum.photos/seed/g4/600/800",
           "https://picsum.photos/seed/g5/600/800"
         ]
-      },
-      {
-        "title": "1",
-        "url": "https://plus.unsplash.com/premium_photo-1661847643150-4e06569d2ec1?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8JUVEJTk4JUI4JUVCJTlFJTkxJUVDJTlEJUI0JTIwJUVDJTlEJUI0JUVCJUFGJUI4JUVDJUE3JTgwfGVufDB8fDB8fHww",
-        "images": [
-          "https://plus.unsplash.com/premium_photo-1661847643150-4e06569d2ec1?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8JUVEJTk4JUI4JUVCJTlFJTkxJUVDJTlEJUI0JTIwJUVDJTlEJUI0JUVCJUFGJUI4JUVDJUE3JTgwfGVufDB8fDB8fHww"
-        ]
-      },
-      {
-        "title": "2",
-        "url": "https://cdnweb01.wikitree.co.kr/webdata/editor/202505/21/img_20250521104056_3e8c6ac4.webp",
-        "images": [
-          "https://cdnweb01.wikitree.co.kr/webdata/editor/202505/21/img_20250521104056_3e8c6ac4.webp"
-        ]
       }
     ]
   },
   {
-    "id": "t_j31heh",
-    "label": "갤러리2",
-    "view": "people",
-    "cols": 4,
-    "items": [
-      {
-        "name": "카리나",
-        "img": "https://cdn.spotvnews.co.kr/news/photo/202602/799402_1300535_3730.jpg",
-        "url": "https://cdn.spotvnews.co.kr/news/photo/202602/799402_1300535_3730.jpg"
-      }
-    ]
-  },
-  {
-    "id": "t_x4iqpq",
+    "id": "t_z49br6",
     "label": "갤러리3",
     "view": "gallery2",
     "cols": 4,
     "items": [
       {
-        "title": "카리나",
-        "url": "https://i.namu.wiki/i/kktHEXrlPrvADCROlee_SQuEfwKFPJdYp-LRZqQ79mqh6pESZgktlZ5GAaO_yVfsqv_McIzg7gY-gZcvVrdmvQ.jpg",
+        "title": "",
+        "url": "https://thumbnews.nateimg.co.kr/view610///news.nateimg.co.kr/orgImg/sw/2025/11/19/20251119503395.jpg",
         "images": [
-          "https://i.namu.wiki/i/kktHEXrlPrvADCROlee_SQuEfwKFPJdYp-LRZqQ79mqh6pESZgktlZ5GAaO_yVfsqv_McIzg7gY-gZcvVrdmvQ.jpg|https://i.namu.wiki/i/kktHEXrlPrvADCROlee_SQuEfwKFPJdYp-LRZqQ79mqh6pESZgktlZ5GAaO_yVfsqv_McIzg7gY-gZcvVrdmvQ.jpg"
+          "https://image.news1.kr/system/photos/2026/2/19/7757197/high.jpg|https://image.news1.kr/system/photos/2026/2/19/7757197/high.jpg"
         ],
         "body": ""
       }
@@ -904,7 +899,7 @@ function applyMapping(){
   var tid=document.getElementById('mapTab').value;
   var t=tabs.find(function(x){return x.id===tid;}); if(!t) return;
   var isGal = t.view==='gallery'||t.view==='gallery2';
-  var added=0;
+  var newItems=[];
   pendingArray.forEach(function(o){
     if(!o||typeof o!=='object') return;
     var url=uk?String(o[uk]==null?'':o[uk]).trim():'';
@@ -912,14 +907,14 @@ function applyMapping(){
     var img=ik?String(o[ik]==null?'':o[ik]).trim():'';
     if(!img && isImageUrl(url)){ img=url; url=''; }
     if(!url&&!img&&!name) return;
-    if(isGal){ t.items.push({ title:name, url:url, images:img?[img]:[], body:'' }); }
-    else { t.items.push({ name:name, img:img, url:url }); }
-    added++;
+    if(isGal){ newItems.push({ title:name, url:url, images:img?[img]:[], body:'' }); }
+    else { newItems.push({ name:name, img:img, url:url }); }
   });
+  t.items = newItems;
   document.getElementById('mapOv').classList.remove('show'); pendingArray=null;
-  if(!added){ alert('연결한 항목으로 가져올 데이터가 없어요.'); return; }
+  if(!newItems.length){ alert('연결한 항목으로 가져올 데이터가 없어요.'); return; }
   curTabId=t.id; saveTabs(); renderTabs(); renderStage();
-  alert('가져왔어요 — '+added+'개를 "'+t.label+'" 탭에 추가했어요.');
+  alert('가져왔어요 — "'+t.label+'" 탭을 '+newItems.length+'개로 교체했어요.');
 }
 document.getElementById('mapCancel').addEventListener('click', ()=>{ document.getElementById('mapOv').classList.remove('show'); pendingArray=null; });
 document.getElementById('mapApply').addEventListener('click', applyMapping);
@@ -972,8 +967,8 @@ function downloadHTML(cfg, fname){
 function openCode(){ document.getElementById('codeOv').classList.add('show'); }
 function closeCode(){ document.getElementById('codeOv').classList.remove('show'); }
 document.getElementById('codeClose').addEventListener('click', closeCode);
-document.getElementById('saveEdit').addEventListener('click', ()=>{ downloadHTML({dist:true, edit:true, prot:false, key:'mywayNav3V1_dist'}, 'nav3-edit.html'); closeCode(); });
-document.getElementById('saveDist').addEventListener('click', ()=>{ downloadHTML({dist:false, edit:false, prot:true, key:'mywayNav3V1'}, 'nav3.html'); closeCode(); });
+document.getElementById('saveEdit').addEventListener('click', ()=>{ downloadHTML({dist:true, edit:true, prot:false, key:'mywayNav4V1_dist'}, 'nav4-edit.html'); closeCode(); });
+document.getElementById('saveDist').addEventListener('click', ()=>{ downloadHTML({dist:false, edit:false, prot:true, key:'mywayNav4V1'}, 'nav4.html'); closeCode(); });
 document.getElementById('copyData').addEventListener('click', ()=>{
   const txt=JSON.stringify({kind:DATA_KIND,tabs},null,2);
   let ok=false;

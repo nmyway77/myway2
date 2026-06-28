@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>네비 빌더 · 로고/피플/갤러리 | MYWAY.KR</title>
+<title>네비 빌더 2 · 로고/피플/갤러리 | MYWAY.KR</title>
 <meta name="description" content="로고형·피플형·갤러리형 세 가지 표시 방식을 탭마다 골라 만드는 네비 편집기.">
-<link rel="canonical" href="https://myway.kr/nav3.html">
+<link rel="canonical" href="https://myway.kr/nav4.html">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <style>
   :root{
@@ -342,10 +342,10 @@
 <script>
 /* ====== 설정 ====== */
 /* @CONFIG */
-const STORE_KEY = 'mywayNav3V1';
-const DATA_KIND = 'myway-nav3-v1';
-const EXPORT_NAME = 'myway-nav3.json';
-const PAGE_TITLE = '네비 빌더';
+const STORE_KEY = 'mywayNav4V1';
+const DATA_KIND = 'myway-nav4-v1';
+const EXPORT_NAME = 'myway-nav4.json';
+const PAGE_TITLE = '네비 빌더 2';
 const IS_DIST = false;        // 편집판 파일이면 true → '코드 보기' 메뉴 숨김
 const SHOW_EDIT = true;       // 편집 도구 표시 (배포용은 false)
 const COPY_PROTECT = false;   // 복사방지 (배포용 true)
@@ -851,7 +851,7 @@ function applyMapping(){
   var tid=document.getElementById('mapTab').value;
   var t=tabs.find(function(x){return x.id===tid;}); if(!t) return;
   var isGal = t.view==='gallery'||t.view==='gallery2';
-  var added=0;
+  var newItems=[];
   pendingArray.forEach(function(o){
     if(!o||typeof o!=='object') return;
     var url=uk?String(o[uk]==null?'':o[uk]).trim():'';
@@ -859,14 +859,14 @@ function applyMapping(){
     var img=ik?String(o[ik]==null?'':o[ik]).trim():'';
     if(!img && isImageUrl(url)){ img=url; url=''; }
     if(!url&&!img&&!name) return;
-    if(isGal){ t.items.push({ title:name, url:url, images:img?[img]:[], body:'' }); }
-    else { t.items.push({ name:name, img:img, url:url }); }
-    added++;
+    if(isGal){ newItems.push({ title:name, url:url, images:img?[img]:[], body:'' }); }
+    else { newItems.push({ name:name, img:img, url:url }); }
   });
+  t.items = newItems;
   document.getElementById('mapOv').classList.remove('show'); pendingArray=null;
-  if(!added){ alert('연결한 항목으로 가져올 데이터가 없어요.'); return; }
+  if(!newItems.length){ alert('연결한 항목으로 가져올 데이터가 없어요.'); return; }
   curTabId=t.id; saveTabs(); renderTabs(); renderStage();
-  alert('가져왔어요 — '+added+'개를 "'+t.label+'" 탭에 추가했어요.');
+  alert('가져왔어요 — "'+t.label+'" 탭을 '+newItems.length+'개로 교체했어요.');
 }
 document.getElementById('mapCancel').addEventListener('click', ()=>{ document.getElementById('mapOv').classList.remove('show'); pendingArray=null; });
 document.getElementById('mapApply').addEventListener('click', applyMapping);
@@ -919,8 +919,8 @@ function downloadHTML(cfg, fname){
 function openCode(){ document.getElementById('codeOv').classList.add('show'); }
 function closeCode(){ document.getElementById('codeOv').classList.remove('show'); }
 document.getElementById('codeClose').addEventListener('click', closeCode);
-document.getElementById('saveEdit').addEventListener('click', ()=>{ downloadHTML({dist:true, edit:true, prot:false, key:'mywayNav3V1_dist'}, 'nav3-edit.html'); closeCode(); });
-document.getElementById('saveDist').addEventListener('click', ()=>{ downloadHTML({dist:false, edit:false, prot:true, key:'mywayNav3V1'}, 'nav3.html'); closeCode(); });
+document.getElementById('saveEdit').addEventListener('click', ()=>{ downloadHTML({dist:true, edit:true, prot:false, key:'mywayNav4V1_dist'}, 'nav4-edit.html'); closeCode(); });
+document.getElementById('saveDist').addEventListener('click', ()=>{ downloadHTML({dist:false, edit:false, prot:true, key:'mywayNav4V1'}, 'nav4.html'); closeCode(); });
 document.getElementById('copyData').addEventListener('click', ()=>{
   const txt=JSON.stringify({kind:DATA_KIND,tabs},null,2);
   let ok=false;
