@@ -130,6 +130,9 @@
     }
     .hcs-switch a:hover { color: var(--text-main); }
     .hcs-switch a.active { color: #5b4bdb; background: rgba(108,92,231,0.13); }
+    /* 활성 토글 재클릭 시 본문 접기 */
+    body.hcs-collapsed #main,
+    body.hcs-collapsed #extraLogoSection { display: none !important; }
     .tab-nav {
       flex: 0 0 auto;
       min-width: 0;
@@ -2307,7 +2310,7 @@
       ['#dlgBack','#codeBack','#navBack'].forEach(id=>{ const x=clone.querySelector(id); if(x) x.classList.remove('show'); });
       const ds=clone.querySelector('#dlgSec'); if(ds) ds.innerHTML='';
       const ca=clone.querySelector('#codeArea'); if(ca) ca.value='';
-      const b=clone.querySelector('body'); if(b){ b.classList.remove('editing'); b.removeAttribute('data-active-tab'); }
+      const b=clone.querySelector('body'); if(b){ b.classList.remove('editing'); b.classList.remove('hcs-collapsed'); b.removeAttribute('data-active-tab'); }
       let html='<!DOCTYPE html>\n'+clone.outerHTML;
       html=html.replace(/\/\* @DATA_START \*\/[\s\S]*?\/\* @DATA_END \*\//,
         '/* @DATA_START */\n    const DEFAULT_TABS = '+serializeTabs(tabs)+';\n    /* @DATA_END */');
@@ -2698,6 +2701,15 @@
 /* 화면 네비(H·C&S): 부모(index)가 postMessage로 항목을 보내면 탭바 앞에 토글 생성.
    네비 항목은 부모에서만 관리하므로 이 파일은 손댈 필요 없음. file://·배포 모두 동작. */
 (function(){
+  /* 활성(현재 화면) 토글을 다시 누르면 본문 접기/펼치기. 상태는 기기에 기억. */
+  var HCS_KEY = 'mywayHcsCollapse_index';
+  function applyHcsCollapse(on){ if(document.body) document.body.classList.toggle('hcs-collapsed', !!on); }
+  function toggleHcsCollapse(){
+    var on = !document.body.classList.contains('hcs-collapsed');
+    applyHcsCollapse(on);
+    try { localStorage.setItem(HCS_KEY, on ? '1' : '0'); } catch(_){}
+  }
+  try { if(localStorage.getItem(HCS_KEY) === '1') applyHcsCollapse(true); } catch(_){}
   function buildSwitch(items, current){
     var topbar = document.querySelector('.topbar');
     var tabNav = document.getElementById('tabNav');
@@ -2712,6 +2724,7 @@
       if((current || '').indexOf(s.url) !== -1) a.className = 'active';
       a.addEventListener('click', function(e){
         e.preventDefault();
+        if(a.classList.contains('active')){ toggleHcsCollapse(); return; }
         try { parent.postMessage({ type:'MYWAY_SCREEN_SWITCH', url: s.url }, '*'); } catch(_){}
       });
       sw.appendChild(a);
