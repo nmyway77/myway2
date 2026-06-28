@@ -207,16 +207,16 @@
 
   <main>
     <div class="sec-head">
-      <h2 id="secTitle">A</h2>
-      <span class="cnt" id="secCount">0개</span>
-      <span class="vlabel" id="secVlabel">갤러리형2</span>
+      <h2 id="secTitle">갤러리1</h2>
+      <span class="cnt" id="secCount">1개</span>
+      <span class="vlabel" id="secVlabel">갤러리형</span>
     </div>
     <div id="stage"></div>
   </main>
 
   <!-- 펜 메뉴 -->
   <div class="pen-menu" id="penMenu">
-    <button data-act="toggleEdit" id="btnToggleEdit">✓ 편집 끝 (정상화면)</button>
+    <button data-act="toggleEdit" id="btnToggleEdit">✎ 편집 시작</button>
     <button data-act="addItem">＋ 항목 추가</button>
     <button data-act="editTab">⚙ 현재 탭 설정</button>
     <button data-act="addTab">＋ 탭 추가</button>
@@ -237,7 +237,7 @@
   <!-- 탭 편집 모달 -->
   <div class="ov" id="tabOv">
     <div class="modal">
-      <h3 id="tabModalTitle">탭 설정</h3>
+      <h3 id="tabModalTitle">탭 추가</h3>
       <div class="sub">탭 이름과 표시 방식을 정하세요.</div>
       <div class="fld">
         <label>탭 이름</label>
@@ -248,19 +248,19 @@
         <div class="vtype-opt" data-v="logo"><div class="ic">🔵</div><div class="t">로고형</div><div class="d">원형 아이콘</div></div>
         <div class="vtype-opt" data-v="people"><div class="ic">🖼️</div><div class="t">피플형</div><div class="d">사진+이름</div></div>
         <div class="vtype-opt" data-v="gallery"><div class="ic">🗂️</div><div class="t">갤러리형</div><div class="d">여러 장 묶음</div></div>
-        <div class="vtype-opt on" data-v="gallery2"><div class="ic">🖽</div><div class="t">갤러리형2</div><div class="d">원본비율·열지정</div></div>
+        <div class="vtype-opt" data-v="gallery2"><div class="ic">🖽</div><div class="t">갤러리형2</div><div class="d">원본비율·열지정</div></div>
       </div>
-      <div class="fld" id="fldCols" style="">
+      <div class="fld" id="fldCols" style="display:none">
         <label>가로 개수 (열 수)</label>
         <input id="tabCols" type="number" min="1" max="8" value="3">
       </div>
-      <div class="move-row" id="tabMoveRow" style="">
+      <div class="move-row" id="tabMoveRow" style="display:none">
         <span class="move-label">탭 순서</span>
         <button class="move-btn" data-mv="left" title="왼쪽으로">◀</button>
         <button class="move-btn" data-mv="right" title="오른쪽으로">▶</button>
       </div>
       <div class="btns">
-        <button class="btn-danger" id="tabDelete" style="">삭제</button>
+        <button class="btn-danger" id="tabDelete">삭제</button>
         <button class="btn-ghost" id="tabCancel">취소</button>
         <button class="btn-primary" id="tabSave">저장</button>
       </div>
@@ -343,8 +343,9 @@
 /* @CONFIG */
 const STORE_KEY = "mywayNav3V1_dist";
 const DATA_KIND = 'myway-nav3-v1';
-const EXPORT_NAME = 'myway-nav3.json';
+const EXPORT_NAME = 'myway-gal3.json';
 const PAGE_TITLE = '네비 빌더';
+const DEFAULTS_SIG = 'gmqxmf5xa';
 const IS_DIST = true;
 const SHOW_EDIT = true;
 const COPY_PROTECT = false;
@@ -354,25 +355,51 @@ const COPY_PROTECT = false;
 /* @DATA_START */
 const DEFAULT_TABS = [
   {
-    "id": "t_9vq8cy",
-    "label": "A",
+    "id": "t_gallery",
+    "label": "갤러리1",
+    "view": "gallery",
+    "cols": 3,
+    "items": [
+      {
+        "title": "모음 1",
+        "url": "",
+        "images": [
+          "https://picsum.photos/seed/g1/600/800|https://i.namu.wiki/i/kktHEXrlPrvADCROlee_SQuEfwKFPJdYp-LRZqQ79mqh6pESZgktlZ5GAaO_yVfsqv_McIzg7gY-gZcvVrdmvQ.jpg",
+          "https://picsum.photos/seed/g2/600/800",
+          "https://picsum.photos/seed/g3/600/800"
+        ],
+        "body": ""
+      }
+    ]
+  },
+  {
+    "id": "t_j31heh",
+    "label": "갤러리2",
+    "view": "people",
+    "cols": 4,
+    "items": [
+      {
+        "name": "카리나",
+        "img": "https://cdn.spotvnews.co.kr/news/photo/202602/799402_1300535_3730.jpg",
+        "url": "https://cdn.spotvnews.co.kr/news/photo/202602/799402_1300535_3730.jpg"
+      }
+    ]
+  },
+  {
+    "id": "t_x4iqpq",
+    "label": "갤러리3",
     "view": "gallery2",
     "cols": 4,
-    "items": []
-  },
-  {
-    "id": "t_j16ks8",
-    "label": "B",
-    "view": "gallery2",
-    "cols": 5,
-    "items": []
-  },
-  {
-    "id": "t_jz8ioy",
-    "label": "C",
-    "view": "gallery2",
-    "cols": 6,
-    "items": []
+    "items": [
+      {
+        "title": "카리나",
+        "url": "https://i.namu.wiki/i/kktHEXrlPrvADCROlee_SQuEfwKFPJdYp-LRZqQ79mqh6pESZgktlZ5GAaO_yVfsqv_McIzg7gY-gZcvVrdmvQ.jpg",
+        "images": [
+          "https://i.namu.wiki/i/kktHEXrlPrvADCROlee_SQuEfwKFPJdYp-LRZqQ79mqh6pESZgktlZ5GAaO_yVfsqv_McIzg7gY-gZcvVrdmvQ.jpg|https://i.namu.wiki/i/kktHEXrlPrvADCROlee_SQuEfwKFPJdYp-LRZqQ79mqh6pESZgktlZ5GAaO_yVfsqv_McIzg7gY-gZcvVrdmvQ.jpg"
+        ],
+        "body": ""
+      }
+    ]
   }
 ];
 /* @DATA_END */
@@ -392,12 +419,23 @@ let editing = false;
 function loadTabs(){
   try{
     const raw = localStorage.getItem(STORE_KEY);
-    if(raw){ const o = JSON.parse(raw); if(o && Array.isArray(o.tabs)) return o.tabs; }
+    if(raw){
+      const o = JSON.parse(raw);
+      // 서명 불일치(= 새로 빌드된 파일) → 낡은 캐시 버리고 새 기본값으로 재시딩
+      if(typeof DEFAULTS_SIG!=='undefined' && ((o && o.sig) || '') !== DEFAULTS_SIG){
+        const fresh = JSON.parse(JSON.stringify(DEFAULT_TABS));
+        try{ localStorage.setItem(STORE_KEY, JSON.stringify({ kind:DATA_KIND, sig:DEFAULTS_SIG, tabs:fresh })); }catch(_){}
+        return fresh;
+      }
+      if(o && Array.isArray(o.tabs)) return o.tabs;
+    }
   }catch(_){}
-  return JSON.parse(JSON.stringify(DEFAULT_TABS));
+  const d0 = JSON.parse(JSON.stringify(DEFAULT_TABS));
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify({ kind:DATA_KIND, sig:(typeof DEFAULTS_SIG!=='undefined'?DEFAULTS_SIG:'src'), tabs:d0 })); }catch(_){}
+  return d0;
 }
 function saveTabs(){
-  try{ localStorage.setItem(STORE_KEY, JSON.stringify({ kind:DATA_KIND, tabs })); }catch(_){}
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify({ kind:DATA_KIND, sig:(typeof DEFAULTS_SIG!=='undefined'?DEFAULTS_SIG:'src'), tabs })); }catch(_){}
 }
 function curTab(){ return tabs.find(t=>t.id===curTabId) || null; }
 function uid(){ return 't_'+Math.random().toString(36).slice(2,8); }
@@ -912,8 +950,9 @@ function buildHTML(cfg){
   html=html.replace(/\/\* @DATA_START \*\/[\s\S]*?\/\* @DATA_END \*\//,
     '/* @DATA_START */\nconst DEFAULT_TABS = '+JSON.stringify(tabs,null,2)+';\n/* @DATA_END */');
   // @CONFIG 치환: 편집용 {dist:true,edit:true,prot:false} / 배포용 {dist:false,edit:false,prot:true}
+  const _sig = 'g'+Date.now().toString(36);   // 빌드마다 새 서명 → 받는 기기의 낡은 캐시 강제 무시
   html=html.replace(/\/\* @CONFIG \*\/[\s\S]*?\/\* @CONFIG_END \*\//,
-    '/* @CONFIG */\nconst STORE_KEY = '+JSON.stringify(cfg.key)+';\nconst DATA_KIND = \''+DATA_KIND+'\';\nconst EXPORT_NAME = \''+EXPORT_NAME+'\';\nconst PAGE_TITLE = \''+PAGE_TITLE+'\';\nconst IS_DIST = '+cfg.dist+';\nconst SHOW_EDIT = '+cfg.edit+';\nconst COPY_PROTECT = '+cfg.prot+';\n/* @CONFIG_END */');
+    '/* @CONFIG */\nconst STORE_KEY = '+JSON.stringify(cfg.key)+';\nconst DATA_KIND = \''+DATA_KIND+'\';\nconst EXPORT_NAME = \''+EXPORT_NAME+'\';\nconst PAGE_TITLE = \''+PAGE_TITLE+'\';\nconst DEFAULTS_SIG = \''+_sig+'\';\nconst IS_DIST = '+cfg.dist+';\nconst SHOW_EDIT = '+cfg.edit+';\nconst COPY_PROTECT = '+cfg.prot+';\n/* @CONFIG_END */');
   return html;
 }
 function downloadHTML(cfg, fname){
@@ -924,7 +963,7 @@ function downloadHTML(cfg, fname){
 function openCode(){ document.getElementById('codeOv').classList.add('show'); }
 function closeCode(){ document.getElementById('codeOv').classList.remove('show'); }
 document.getElementById('codeClose').addEventListener('click', closeCode);
-document.getElementById('saveEdit').addEventListener('click', ()=>{ downloadHTML({dist:true, edit:true, prot:false, key:'mywayNav3V1_dist'}, 'nav3-edit.html'); closeCode(); });
+document.getElementById('saveEdit').addEventListener('click', ()=>{ downloadHTML({dist:true, edit:true, prot:false, key:'mywayNav3V1_dist'}, 'gal3-edit.html'); closeCode(); });
 document.getElementById('saveDist').addEventListener('click', ()=>{ downloadHTML({dist:false, edit:false, prot:true, key:'mywayNav3V1'}, 'nav3.html'); closeCode(); });
 document.getElementById('copyData').addEventListener('click', ()=>{
   const txt=JSON.stringify({kind:DATA_KIND,tabs},null,2);

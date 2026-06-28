@@ -344,8 +344,9 @@
 /* @CONFIG */
 const STORE_KEY = 'mywayNav3V1';
 const DATA_KIND = 'myway-nav3-v1';
-const EXPORT_NAME = 'myway-nav3.json';
+const EXPORT_NAME = 'myway-gal3.json';
 const PAGE_TITLE = '네비 빌더';
+const DEFAULTS_SIG = 'src';   // 빌드마다 새 서명 → 낡은 localStorage 캐시 무시
 const IS_DIST = false;        // 편집판 파일이면 true → '코드 보기' 메뉴 숨김
 const SHOW_EDIT = true;       // 편집 도구 표시 (배포용은 false)
 const COPY_PROTECT = false;   // 복사방지 (배포용 true)
@@ -387,12 +388,23 @@ let editing = false;
 function loadTabs(){
   try{
     const raw = localStorage.getItem(STORE_KEY);
-    if(raw){ const o = JSON.parse(raw); if(o && Array.isArray(o.tabs)) return o.tabs; }
+    if(raw){
+      const o = JSON.parse(raw);
+      // 서명 불일치(= 새로 빌드된 파일) → 낡은 캐시 버리고 새 기본값으로 재시딩
+      if(typeof DEFAULTS_SIG!=='undefined' && ((o && o.sig) || '') !== DEFAULTS_SIG){
+        const fresh = JSON.parse(JSON.stringify(DEFAULT_TABS));
+        try{ localStorage.setItem(STORE_KEY, JSON.stringify({ kind:DATA_KIND, sig:DEFAULTS_SIG, tabs:fresh })); }catch(_){}
+        return fresh;
+      }
+      if(o && Array.isArray(o.tabs)) return o.tabs;
+    }
   }catch(_){}
-  return JSON.parse(JSON.stringify(DEFAULT_TABS));
+  const d0 = JSON.parse(JSON.stringify(DEFAULT_TABS));
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify({ kind:DATA_KIND, sig:(typeof DEFAULTS_SIG!=='undefined'?DEFAULTS_SIG:'src'), tabs:d0 })); }catch(_){}
+  return d0;
 }
 function saveTabs(){
-  try{ localStorage.setItem(STORE_KEY, JSON.stringify({ kind:DATA_KIND, tabs })); }catch(_){}
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify({ kind:DATA_KIND, sig:(typeof DEFAULTS_SIG!=='undefined'?DEFAULTS_SIG:'src'), tabs })); }catch(_){}
 }
 function curTab(){ return tabs.find(t=>t.id===curTabId) || null; }
 function uid(){ return 't_'+Math.random().toString(36).slice(2,8); }
@@ -907,8 +919,9 @@ function buildHTML(cfg){
   html=html.replace(/\/\* @DATA_START \*\/[\s\S]*?\/\* @DATA_END \*\//,
     '/* @DATA_START */\nconst DEFAULT_TABS = '+JSON.stringify(tabs,null,2)+';\n/* @DATA_END */');
   // @CONFIG 치환: 편집용 {dist:true,edit:true,prot:false} / 배포용 {dist:false,edit:false,prot:true}
+  const _sig = 'g'+Date.now().toString(36);   // 빌드마다 새 서명 → 받는 기기의 낡은 캐시 강제 무시
   html=html.replace(/\/\* @CONFIG \*\/[\s\S]*?\/\* @CONFIG_END \*\//,
-    '/* @CONFIG */\nconst STORE_KEY = '+JSON.stringify(cfg.key)+';\nconst DATA_KIND = \''+DATA_KIND+'\';\nconst EXPORT_NAME = \''+EXPORT_NAME+'\';\nconst PAGE_TITLE = \''+PAGE_TITLE+'\';\nconst IS_DIST = '+cfg.dist+';\nconst SHOW_EDIT = '+cfg.edit+';\nconst COPY_PROTECT = '+cfg.prot+';\n/* @CONFIG_END */');
+    '/* @CONFIG */\nconst STORE_KEY = '+JSON.stringify(cfg.key)+';\nconst DATA_KIND = \''+DATA_KIND+'\';\nconst EXPORT_NAME = \''+EXPORT_NAME+'\';\nconst PAGE_TITLE = \''+PAGE_TITLE+'\';\nconst DEFAULTS_SIG = \''+_sig+'\';\nconst IS_DIST = '+cfg.dist+';\nconst SHOW_EDIT = '+cfg.edit+';\nconst COPY_PROTECT = '+cfg.prot+';\n/* @CONFIG_END */');
   return html;
 }
 function downloadHTML(cfg, fname){
@@ -919,7 +932,7 @@ function downloadHTML(cfg, fname){
 function openCode(){ document.getElementById('codeOv').classList.add('show'); }
 function closeCode(){ document.getElementById('codeOv').classList.remove('show'); }
 document.getElementById('codeClose').addEventListener('click', closeCode);
-document.getElementById('saveEdit').addEventListener('click', ()=>{ downloadHTML({dist:true, edit:true, prot:false, key:'mywayNav3V1_dist'}, 'nav3-edit.html'); closeCode(); });
+document.getElementById('saveEdit').addEventListener('click', ()=>{ downloadHTML({dist:true, edit:true, prot:false, key:'mywayNav3V1_dist'}, 'gal3-edit.html'); closeCode(); });
 document.getElementById('saveDist').addEventListener('click', ()=>{ downloadHTML({dist:false, edit:false, prot:true, key:'mywayNav3V1'}, 'nav3.html'); closeCode(); });
 document.getElementById('copyData').addEventListener('click', ()=>{
   const txt=JSON.stringify({kind:DATA_KIND,tabs},null,2);
