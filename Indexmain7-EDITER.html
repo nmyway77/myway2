@@ -437,8 +437,16 @@
     .favm-row { display: flex; align-items: center; gap: 10px; }
     .favm-row img { width: 26px; height: 26px; border-radius: 50%; object-fit: contain; border: 1px solid #eef0f7; flex: 0 0 auto; background: #fff; }
     .favm-row .nm { flex: 1; font-size: .85rem; color: #39406a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .favm-row .edit { flex: 0 0 auto; border: none; background: #eef2ff; color: #4757f5; width: 26px; height: 26px; border-radius: 8px; cursor: pointer; font-size: .9rem; line-height: 1; }
+    .favm-row .edit:hover { background: #e2e8ff; }
     .favm-row .del { flex: 0 0 auto; border: none; background: #fdecec; color: #e0483a; width: 26px; height: 26px; border-radius: 8px; cursor: pointer; font-size: 1rem; line-height: 1; }
     .favm-row .del:hover { background: #fbdcdc; }
+    .favm-row.is-editing { background: #f3f6ff; border-radius: 9px; padding: 4px 6px; margin: -4px -6px; box-shadow: inset 0 0 0 1.5px #aeb9ea; }
+    .favm-add-btn.is-editing { background: #2e7d4f; }
+    .favm-add-btn.is-editing:hover { background: #276b43; }
+    .favm-edit-cancel { display: none; width: 100%; margin-top: 8px; padding: 9px; border: 1.5px solid #dfe3f2; border-radius: 11px; background: #f7f9ff; color: #6a749c; font-weight: 700; font-size: .84rem; cursor: pointer; }
+    .favm-edit-cancel.show { display: block; }
+    .favm-edit-cancel:hover { border-color: #a9b4e8; background: #eef2ff; }
     .favm-empty { font-size: .8rem; color: #9aa2c0; text-align: center; padding: 8px 0; }
     .favm-io { display: flex; gap: 9px; margin-top: 14px; border-top: 1px solid #eef0f7; padding-top: 14px; }
     .favm-io button { flex: 1; padding: 10px; border: 1.5px solid #dfe3f2; border-radius: 11px; background: #f7f9ff; color: #4a5478; font-weight: 700; font-size: .84rem; cursor: pointer; transition: .15s; }
@@ -1046,7 +1054,8 @@
     body.editing .card .card-ctrl, body.editing .logo-tile .card-ctrl { display: flex; }
     body.editing .card:hover, body.editing .logo-tile:hover { transform: none; }
     .logo-tile { position: relative; }
-    .logo-tile .card-ctrl { border-radius: 50%; }
+    .logo-tile .card-ctrl { border-radius: 50%; gap: 4px; }
+    .logo-tile .card-ctrl button { width: 26px; height: 26px; font-size: 12px; }
     .card-ctrl button { border: 1px solid #dfe3ec; background: #fff; border-radius: 8px; width: 30px; height: 30px; font-size: 13px; line-height: 1; cursor: pointer; color: #444; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
     .card-ctrl button:hover { border-color: var(--accent); color: var(--accent); }
     .card-ctrl button.del:hover { border-color: #e0456b; color: #e0456b; }
@@ -1095,7 +1104,7 @@
   <!-- 즐겨찾기 추가 모달 -->
   <div class="favm-bg" id="favmBg">
     <div class="favm" role="dialog" aria-modal="true">
-      <h3>즐겨찾기 추가</h3>
+      <h3 id="favmTitle">즐겨찾기 추가</h3>
       <button class="favm-paste" id="favPasteBtn">
         <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         복사한 주소 붙여넣기
@@ -1108,6 +1117,7 @@
       <label>아이콘 주소 (선택 · 비우면 자동)</label>
       <input type="text" id="favImg" placeholder="https://.../icon.png" autocomplete="off">
       <button class="favm-add-btn" id="favAddBtn">추가하기</button>
+      <button class="favm-edit-cancel" id="favEditCancelBtn">편집 취소</button>
       <div class="favm-list" id="favList"></div>
       <div class="favm-io">
         <button id="favExportBtn">내보내기</button>
@@ -2545,7 +2555,7 @@
         return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
       }
 
-      function favTile(f) {
+      function favTile(f, idx) {
         const a = document.createElement('a');
         a.className = 'logo-tile fav-item';
         a.href = f.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
@@ -2554,6 +2564,18 @@
         img.src = tileImg(f); img.alt = f.name || ''; img.loading = 'lazy'; img.decoding = 'async';
         img.onerror = function () { img.onerror = null; img.src = fallbackImg(f); };
         a.appendChild(img);
+        /* 편집 모드(body.editing)에서 타일 위에 ✏ 수정 · × 삭제 — 차트 카드와 동일 패턴 */
+        const ctrl = document.createElement('div'); ctrl.className = 'card-ctrl';
+        const mk = (t, title, fn, cls) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = t; b.title = title; if (cls) b.className = cls; b.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); fn(); }); return b; };
+        ctrl.appendChild(mk('\u270f', '수정', () => { openFavModal(); startEdit(idx); }));
+        ctrl.appendChild(mk('\u00d7', '삭제', () => {
+          if (!confirm('이 즐겨찾기를 삭제할까요?\n' + (f.name || f.url))) return;
+          const arr = loadFavs(); arr.splice(idx, 1); saveFavs(arr);
+          if (editIdx === idx) { exitEdit(); clearInputs(); } else if (editIdx > idx) { editIdx--; }
+          renderFavList(); mountFavGrid();
+        }, 'del'));
+        a.appendChild(ctrl);
+        a.addEventListener('click', e => { if (document.body.classList.contains('editing')) e.preventDefault(); }, true);
         return a;
       }
       function addTile() {
@@ -2574,7 +2596,7 @@
         const grids = root.querySelectorAll('.logo-grid');
         let grid = grids.length ? grids[grids.length - 1] : null;
         if (!grid) { grid = document.createElement('div'); grid.className = 'logo-grid'; root.appendChild(grid); }
-        loadFavs().forEach(f => grid.appendChild(favTile(f)));
+        loadFavs().forEach((f, i) => grid.appendChild(favTile(f, i)));
         grid.appendChild(addTile());
       }
 
@@ -2583,9 +2605,35 @@
       const elUrl = document.getElementById('favUrl');
       const elName = document.getElementById('favName');
       const elImg = document.getElementById('favImg');
+      let editIdx = -1;
+      const addBtn = document.getElementById('favAddBtn');
+      const titleEl = document.getElementById('favmTitle');
+      const cancelBtn = document.getElementById('favEditCancelBtn');
       function clearInputs() { elUrl.value = ''; elName.value = ''; elImg.value = ''; }
-      function openFavModal() { clearInputs(); renderFavList(); bg.classList.add('show'); setTimeout(() => elUrl.focus(), 30); }
-      function closeFavModal() { bg.classList.remove('show'); clearInputs(); }
+      function exitEdit() {
+        editIdx = -1;
+        addBtn.textContent = '추가하기';
+        addBtn.classList.remove('is-editing');
+        titleEl.textContent = '즐겨찾기 추가';
+        cancelBtn.classList.remove('show');
+      }
+      function startEdit(idx) {
+        const favs = loadFavs();
+        const f = favs[idx]; if (!f) return;
+        editIdx = idx;
+        elUrl.value = f.url || '';
+        elName.value = f.name || '';
+        elImg.value = f.img || '';
+        addBtn.textContent = '수정 완료';
+        addBtn.classList.add('is-editing');
+        titleEl.textContent = '즐겨찾기 수정';
+        cancelBtn.classList.add('show');
+        renderFavList();
+        elUrl.focus();
+      }
+      cancelBtn.addEventListener('click', () => { exitEdit(); clearInputs(); elUrl.focus(); });
+      function openFavModal() { exitEdit(); clearInputs(); renderFavList(); bg.classList.add('show'); setTimeout(() => elUrl.focus(), 30); }
+      function closeFavModal() { bg.classList.remove('show'); exitEdit(); clearInputs(); }
       bg.addEventListener('click', e => { if (e.target === bg) closeFavModal(); });
       document.getElementById('favDoneBtn').addEventListener('click', closeFavModal);
 
@@ -2598,13 +2646,20 @@
           list.appendChild(e); return;
         }
         favs.forEach((f, idx) => {
-          const row = document.createElement('div'); row.className = 'favm-row';
+          const row = document.createElement('div'); row.className = 'favm-row' + (idx === editIdx ? ' is-editing' : '');
           const im = document.createElement('img'); im.src = tileImg(f); im.alt = '';
           im.onerror = function () { im.onerror = null; im.src = fallbackImg(f); };
           const nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = f.name || f.url;
+          const edit = document.createElement('button'); edit.className = 'edit'; edit.textContent = '\u270f'; edit.title = '수정';
+          edit.addEventListener('click', () => startEdit(idx));
           const del = document.createElement('button'); del.className = 'del'; del.textContent = '\u00d7'; del.title = '삭제';
-          del.addEventListener('click', () => { const a = loadFavs(); a.splice(idx, 1); saveFavs(a); renderFavList(); mountFavGrid(); });
-          row.appendChild(im); row.appendChild(nm); row.appendChild(del);
+          del.addEventListener('click', () => {
+            const a = loadFavs(); a.splice(idx, 1); saveFavs(a);
+            if (editIdx === idx) { exitEdit(); clearInputs(); }
+            else if (editIdx > idx) { editIdx--; }
+            renderFavList(); mountFavGrid();
+          });
+          row.appendChild(im); row.appendChild(nm); row.appendChild(edit); row.appendChild(del);
           list.appendChild(row);
         });
       }
@@ -2631,9 +2686,13 @@
         let name = elName.value.trim();
         if (!name) name = hostName(url);
         const favs = loadFavs();
-        favs.push({ name: name, url: url, img: elImg.value.trim() });
-        saveFavs(favs);
-        clearInputs();
+        const rec = { name: name, url: url, img: elImg.value.trim() };
+        if (editIdx >= 0 && editIdx < favs.length) {
+          favs[editIdx] = rec; saveFavs(favs);
+          exitEdit(); clearInputs();
+        } else {
+          favs.push(rec); saveFavs(favs); clearInputs();
+        }
         renderFavList(); mountFavGrid();
         elUrl.focus();
       });
