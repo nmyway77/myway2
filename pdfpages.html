@@ -165,11 +165,32 @@ header.site p{
 /* delete page grid */
 .pgrid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(132px,1fr));
-  gap:14px;
+  grid-template-columns:repeat(3,1fr);   /* 기본: 한 줄에 3개 (내용 파악 가능) */
+  gap:16px;
   position:relative;
   touch-action:pan-y;
 }
+.pgrid.cols-2{grid-template-columns:repeat(2,1fr)}
+.pgrid.cols-3{grid-template-columns:repeat(3,1fr)}
+.pgrid.cols-4{grid-template-columns:repeat(4,1fr)}
+.pgrid.cols-auto{grid-template-columns:repeat(auto-fill,minmax(132px,1fr))}
+
+/* 보기 크기 토글 버튼 그룹 */
+.viewsize{
+  display:inline-flex;gap:4px;align-items:center;
+  background:var(--card);border:1px solid var(--line);
+  border-radius:12px;padding:4px;
+}
+.viewsize .vs-lbl{font-size:12px;color:var(--sub);font-weight:600;padding:0 6px}
+.vs-btn{
+  font-family:'Pretendard',sans-serif;
+  font-size:13px;font-weight:600;
+  padding:6px 12px;border-radius:8px;
+  border:none;background:transparent;color:var(--sub);
+  cursor:pointer;transition:.15s;
+}
+.vs-btn:hover{background:#f3efff}
+.vs-btn.active{background:var(--grad);color:#fff;box-shadow:0 4px 10px rgba(92,92,255,.25)}
 .marquee{
   position:absolute;z-index:5;display:none;
   border:1.5px solid var(--accent1);
@@ -298,7 +319,11 @@ footer a{color:var(--accent1);text-decoration:none;font-weight:600}
 #home-btn:hover{transform:translateY(-3px)}
 @media (max-width:560px){
   .fitem .thumb{width:42px;height:58px}
-  .pgrid{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
+  .pgrid{grid-template-columns:repeat(2,1fr)}
+  .pgrid.cols-2{grid-template-columns:repeat(1,1fr)}
+  .pgrid.cols-3{grid-template-columns:repeat(2,1fr)}
+  .pgrid.cols-4{grid-template-columns:repeat(2,1fr)}
+  .pgrid.cols-auto{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
 }
 
 /* ===== 선택 추출 탭 ===== */
@@ -386,6 +411,13 @@ footer a{color:var(--accent1);text-decoration:none;font-weight:600}
       <button class="btn" id="btn-sel-all">전체 선택</button>
       <button class="btn" id="btn-sel-none">선택 해제</button>
       <button class="btn" id="btn-sel-inv">선택 반전</button>
+      <div class="viewsize" id="del-viewsize" data-grid="pgrid">
+        <span class="vs-lbl">보기</span>
+        <button class="vs-btn" data-cols="2">2개</button>
+        <button class="vs-btn active" data-cols="3">3개</button>
+        <button class="vs-btn" data-cols="4">4개</button>
+        <button class="vs-btn" data-cols="auto">촘촘히</button>
+      </div>
       <span class="spacer"></span>
       <span class="hint mono" id="del-count"></span>
       <button class="btn danger" id="btn-delete">✕ 선택 삭제</button>
@@ -429,6 +461,13 @@ footer a{color:var(--accent1);text-decoration:none;font-weight:600}
       <button class="btn" id="ext-btn-all">전체 선택</button>
       <button class="btn" id="ext-btn-none">선택 해제</button>
       <button class="btn" id="ext-btn-inv">선택 반전</button>
+      <div class="viewsize" id="ext-viewsize" data-grid="extgrid">
+        <span class="vs-lbl">보기</span>
+        <button class="vs-btn" data-cols="2">2개</button>
+        <button class="vs-btn active" data-cols="3">3개</button>
+        <button class="vs-btn" data-cols="4">4개</button>
+        <button class="vs-btn" data-cols="auto">촘촘히</button>
+      </div>
       <span class="spacer"></span>
       <span class="hint mono" id="ext-count"></span>
       <button class="btn primary" id="ext-btn-extract" disabled>⬇ 선택 페이지 추출</button>
@@ -695,7 +734,7 @@ async function loadDelFile(file){
     origTotal=doc.numPages;
     for(let n=1;n<=origTotal;n++){
       const page=await doc.getPage(n);
-      const vp=page.getViewport({scale:0.42});
+      const vp=page.getViewport({scale:1.0});
       const c=document.createElement('canvas');
       c.width=vp.width;c.height=vp.height;
       await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
@@ -1056,7 +1095,7 @@ async function loadExtFile(file){
     extTotal=doc.numPages;
     for(let n=1;n<=extTotal;n++){
       const page=await doc.getPage(n);
-      const vp=page.getViewport({scale:0.42});
+      const vp=page.getViewport({scale:1.0});
       const c=document.createElement('canvas');
       c.width=vp.width;c.height=vp.height;
       await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
@@ -1190,6 +1229,23 @@ extctx.addEventListener('click',e=>{
 document.addEventListener('click',e=>{if(!extctx.contains(e.target))hideExtCtx();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')hideExtCtx();});
 window.addEventListener('scroll',hideExtCtx,{passive:true});
+
+/* ============================================================
+   보기 크기 토글 (삭제·추출 탭 공통) — 세션 내에서만 동작
+============================================================ */
+document.querySelectorAll('.viewsize').forEach(vs=>{
+  const grid=document.getElementById(vs.dataset.grid);
+  if(!grid)return;
+  grid.classList.add('cols-3'); /* 기본 3개 */
+  vs.addEventListener('click',e=>{
+    const b=e.target.closest('.vs-btn');
+    if(!b)return;
+    vs.querySelectorAll('.vs-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    grid.classList.remove('cols-2','cols-3','cols-4','cols-auto');
+    grid.classList.add('cols-'+b.dataset.cols);
+  });
+});
 
 /* ============================================================
    복사 방지 (myway.kr 공통 정책)
