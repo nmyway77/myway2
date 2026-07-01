@@ -497,7 +497,7 @@
 
   </style>
 </head>
-<body>
+<body class="">
   <!-- SEO: 한글 브랜드명 명시 (화면 비표시, 검색엔진 인식용) -->
   <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">마이웨이(MYWAY.KR) 주식·코인 차트 - 코인, 미국주식, 한국주식, 지수선물, 공포탐욕지수 한자리</h1>
 
@@ -554,7 +554,7 @@
   <!-- TODAY 카드 추가/수정 모달 -->
   <div class="modal-back" id="infoBack">
     <div class="modal">
-      <h3 id="infoTitle">카드 추가</h3>
+      <h3 id="infoTitle">카드 수정</h3>
       <label>이름(국문)</label>
       <input id="infName" type="text" placeholder="예: 뉴스">
       <label>영문 라벨</label>
@@ -598,7 +598,7 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayStockV1_dist";
-    const DIST_SIG = "sig1782781049695";
+    const DIST_SIG = "sig1782949635832";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-stock-v1';   // JSON 식별자 — 다른 도구 JSON과 섞임 방지
     let _distChecked = false;
@@ -1059,12 +1059,14 @@
         { name:"갤러리2", en:"", url:"https://myway.kr/nav3.html", c:"#3b82f6", c2:"#60a5fa", icon:"magazine" },
         { name:"바사이트", en:"", url:"https://myway.kr/BARSITE.html", c:"#3bf76a", c2:"#60a5fa", icon:"radio" },
         { name:"뉴스", en:"", url:"https://myway.kr/newsitesbar2.html", c:"#3b82f6", c2:"#60a5fa", icon:"news" },
+        { name:"날씨", en:"", url:"https://myway.kr/00mainweather.html", c:"#3b82f6", c2:"#60a5fa", icon:"news" },
+        { name:"운세", en:"", url:"https://myway.kr/00mainfortune.html", c:"#3b82f6", c2:"#60a5fa", icon:"news" },
+        { name:"시사만평", en:"", url:"https://myway.kr/00barmp.html", c:"#3b82f6", c2:"#60a5fa", icon:"news" },
+        { name:"공연정보", en:"", url:"https://myway.kr/00mainmovieday.html", c:"#3b82f6", c2:"#60a5fa", icon:"news" },
+        { name:"KTX 조회", en:"", url:"https://myway.kr/00mainbus.html", c:"#3b82f6", c2:"#60a5fa", icon:"news" },
       ] },
       { title:"생활정보", desc:"날씨 · 운세 · 달력 ·", cards: [
-        { name:"날씨", en:"Weather", url:"https://myway.kr/00mainweather.html", c:"#0ea5e9", c2:"#38bdf8", icon:"weather" },
-        { name:"운세", en:"Fortune", url:"https://myway.kr/00mainfortune.html", c:"#8b5cf6", c2:"#a78bfa", icon:"fortune" },
         { name:"달력", en:"Calendar", url:"https://search.daum.net/search?w=tot&t__nil_searchbox=suggest&sug=&q=%EB%8B%AC%EB%A0%A5", c:"#f43f5e", c2:"#fb7185", icon:"calendar" },
-        { name:"만평", en:"Cartoon", url:"https://myway.kr/00barmp.html", c:"#f97316", c2:"#fb923c", icon:"cartoon" },
         { name:"전세계시간", en:"World Clock", url:"https://myway.kr/00barwatch.html", c:"#0891b2", c2:"#06b6d4", icon:"worldtime" },
         { name:"스탑워치", en:"Stopwatch", url:"https://myway.kr/stopwatch.html", c:"#d97706", c2:"#f59e0b", icon:"stopwatch" },
         { name:"티케팅보조도구", en:"Ticketing", url:"https://myway.kr/servertime.html", c:"#e8533f", c2:"#f0712e", icon:"ticketing" },
@@ -1083,8 +1085,6 @@
         { name:"단위계산기", en:"Unit", url:"https://myway.kr/0b-unit.html", c:"#3b82f6", c2:"#60a5fa", icon:"unit" },
         { name:"속도측정", en:"Speed", url:"https://sightmap.co.kr/%ec%9d%b8%ed%84%b0%eb%84%b7-%ec%86%8d%eb%8f%84-%ec%b8%a1%ec%a0%95-%ec%82%ac%ec%9d%b4%ed%8a%b8-%eb%aa%a8%ec%9d%8c-top-7/", c:"#f97316", c2:"#fb923c", icon:"speed" },
         { name:"디데이계산기", en:"D-Day", url:"https://myway.kr/ddaytool.html", c:"#e11d48", c2:"#fb7185", icon:"dday" },
-        { name:"공연정보", en:"Show", url:"https://myway.kr/00mainmovieday.html", c:"#7c3aed", c2:"#a855f7", icon:"show" },
-        { name:"열차정보", en:"Train", url:"https://myway.kr/00mainbus.html", c:"#0d9488", c2:"#14b8a6", icon:"travel" },
         { name:"순위결정게임", en:"Rank Game", url:"https://myway.kr/marblerank.html", c:"#eab308", c2:"#facc15", icon:"rankgame" },
         { name:"GIF만들기", en:"Make GIF", url:"https://www.freeconvert.com/ko/image-to-gif", c:"#8b5cf6", c2:"#a78bfa", icon:"gif" },
         { name:"펜쓰기모드", en:"Pen Mode", url:"https://myway.kr/pentool.html", c:"#0ea5e9", c2:"#6366f1", icon:"pen" },
