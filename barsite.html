@@ -24,7 +24,7 @@
   .navbar{flex:none;position:relative;display:flex;align-items:stretch;background:#fff;border-bottom:1px solid var(--line)}
   .topnav{flex:1;min-width:0;display:flex;gap:8px;align-items:center;justify-content:safe center;flex-wrap:nowrap;
     overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:10px 14px;background:transparent;
-    cursor:grab;scrollbar-width:none}
+    cursor:grab;scrollbar-width:none;touch-action:pan-x}
   .topnav::-webkit-scrollbar{display:none}
   .topnav.dragging{cursor:grabbing}
   .nav-track{flex:none;display:flex;align-items:center;gap:8px;margin:0}
@@ -235,7 +235,7 @@ var DEFAULT_DATA = {
 /* ========= @DEFAULTS_END ========= */
 
 /* ========= @DEFAULTS_SIG (빌드 시 통째 교체) ========= */
-var DEFAULTS_SIG = 'bmqxmlaro';
+var DEFAULTS_SIG = 'bmr2vh1bh';
 /* ========= @DEFAULTS_SIG_END ========= */
 
 /* ===== 무한 중첩(프레임 폭탄) 방어 — 컴 멈춤 원인 원천 차단 =====
@@ -352,11 +352,29 @@ renderNav();
 
 /* 네비 드래그 스크롤 */
 (function(){
+  /* 마우스 전용 드래그 스크롤 — 터치는 네이티브 스크롤(touch-action:pan-x) 사용 */
   var down=false,startX=0,startL=0,moved=false;
-  nav.addEventListener('pointerdown',function(e){ if(e.button!==0) return; down=true;moved=false;startX=e.clientX;startL=nav.scrollLeft;nav.classList.add('dragging'); });
-  nav.addEventListener('pointermove',function(e){ if(!down) return; var dx=e.clientX-startX; if(Math.abs(dx)>4) moved=true; nav.scrollLeft=startL-dx; });
-  var end=function(){ down=false; nav.classList.remove('dragging'); };
-  nav.addEventListener('pointerup',end); nav.addEventListener('pointercancel',end); nav.addEventListener('pointerleave',end);
+  nav.addEventListener('pointerdown',function(e){
+    if(e.pointerType!=='mouse' || e.button!==0) return;
+    down=true;moved=false;startX=e.clientX;startL=nav.scrollLeft;
+    /* 주의: 여기서 setPointerCapture 하면 버튼 click이 죽음 — 드래그 확정 후에만 캡처 */
+  });
+  nav.addEventListener('pointermove',function(e){
+    if(!down) return;
+    var dx=e.clientX-startX;
+    if(!moved && Math.abs(dx)>8){            /* 8px 이상 움직여야 드래그로 판정 */
+      moved=true;
+      try{ nav.setPointerCapture(e.pointerId); }catch(_){}
+      nav.classList.add('dragging');
+    }
+    if(moved) nav.scrollLeft=startL-dx;      /* 판정 전에는 스크롤 안 건드림 */
+  });
+  var end=function(e){
+    if(!down) return;
+    down=false; nav.classList.remove('dragging');
+    try{ if(e && e.pointerId!=null) nav.releasePointerCapture(e.pointerId); }catch(_){}
+  };
+  nav.addEventListener('pointerup',end); nav.addEventListener('pointercancel',end);
   nav.addEventListener('click',function(e){ if(moved){ e.stopPropagation(); e.preventDefault(); moved=false; } },true);
   nav.addEventListener('wheel',function(e){ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ nav.scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
 })();
