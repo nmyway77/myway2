@@ -1085,7 +1085,7 @@
 
   </style>
 </head>
-<body>
+<body class="">
   <!-- SEO: 한글 브랜드명 명시 (화면 비표시, 검색엔진 인식용) -->
   <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">마이웨이(MYWAY.KR) - 자주가는 사이트 모음 한국 종합 포털, 뉴스·VOD·라디오·게시판·주식 차트 한자리</h1>
 
@@ -1141,12 +1141,12 @@
       <h3 id="dlgTitle">항목 추가</h3>
       <label>이름</label>
       <input id="dlgTicker" type="text" placeholder="예: 네이버 / 삼성전자">
-      <label>보조 라벨 <span class="hint">(카드형 탭용 · 도메인/설명)</span></label>
-      <input id="dlgKo" type="text" placeholder="예: naver.com">
+      <label style="display: none;">보조 라벨 <span class="hint">(카드형 탭용 · 도메인/설명)</span></label>
+      <input id="dlgKo" type="text" placeholder="예: naver.com" style="display: none;">
       <label>URL</label>
       <input id="dlgUrl" type="text" placeholder="https://...">
-      <label id="dlgImgLabel">로고 이미지 URL <span class="hint">(로고형 탭용)</span></label>
-      <input id="dlgImg" type="text" placeholder="https://....png">
+      <label id="dlgImgLabel" style="display: block;">로고 이미지 URL <span class="hint">(로고형 탭용)</span></label>
+      <input id="dlgImg" type="text" placeholder="https://....png" style="display: block;">
       <label>섹션</label>
       <select id="dlgSec"></select>
       <div class="modal-row">
@@ -1186,7 +1186,7 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayIndexV1_dist";
-    const DIST_SIG = "sig1783045694219";
+    const DIST_SIG = "sig1783047104671";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-index-v1';
     const DATA_VERSION = '3';
@@ -1242,6 +1242,7 @@
           { ticker:"디즈니+", ko:"", url:"https://href.li/?https://www.disneyplus.com/ko-kr", name:"디즈니+", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Disney%2B_logo.svg" },
           { ticker:"쿠팡플레이", ko:"", url:"https://www.coupangplay.com/catalog", name:"쿠팡플레이", img:"https://d2juy7qzamcf56.cloudfront.net/2024-11-26/09738456-1277-4953-80fb-fc9c9d2df777.png" },
           { ticker:"google", ko:"", url:"https://www.google.com/webhp?hl=en&gl=au", name:"google", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYMMskKN9Ql1Ep4wG_vEW01t98DUBVXeXE8A&s" },
+          { ticker:"얀덱스", ko:"", url:"https://yandex.com/", name:"얀덱스", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLy84_udbZnEZ2XLBOIdZjgGfKkzZJiL17sSIKF1UuVg&s=10" },
           { ticker:"naver", ko:"", url:"https://www.naver.com/", name:"naver", img:"https://play-lh.googleusercontent.com/jYtnK__ibJh9emODIgTyjZdbKym1iAj4RfoVhQZcfbG-DuTSHR5moHVx9CQnqg1yoco9" },
           { ticker:"daum", ko:"", url:"https://www.daum.net/", name:"daum", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTm-uCPPoWEDsQjRWs3MrM1nkrcqxygYAXbvg&s" },
           { ticker:"nate", ko:"", url:"https://www.nate.com/", name:"nate", img:"https://m1.nateimg.co.kr/n3main/newBI/nate_ogt.png" },
