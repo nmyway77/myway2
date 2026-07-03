@@ -436,8 +436,16 @@
     .favm-row { display: flex; align-items: center; gap: 10px; }
     .favm-row img { width: 26px; height: 26px; border-radius: 50%; object-fit: contain; border: 1px solid #eef0f7; flex: 0 0 auto; background: #fff; }
     .favm-row .nm { flex: 1; font-size: .85rem; color: #39406a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .favm-row .edit { flex: 0 0 auto; border: none; background: #eef2ff; color: #4757f5; width: 26px; height: 26px; border-radius: 8px; cursor: pointer; font-size: .9rem; line-height: 1; }
+    .favm-row .edit:hover { background: #e2e8ff; }
     .favm-row .del { flex: 0 0 auto; border: none; background: #fdecec; color: #e0483a; width: 26px; height: 26px; border-radius: 8px; cursor: pointer; font-size: 1rem; line-height: 1; }
     .favm-row .del:hover { background: #fbdcdc; }
+    .favm-row.is-editing { background: #f3f6ff; border-radius: 9px; padding: 4px 6px; margin: -4px -6px; box-shadow: inset 0 0 0 1.5px #aeb9ea; }
+    .favm-add-btn.is-editing { background: #2e7d4f; }
+    .favm-add-btn.is-editing:hover { background: #276b43; }
+    .favm-edit-cancel { display: none; width: 100%; margin-top: 8px; padding: 9px; border: 1.5px solid #dfe3f2; border-radius: 11px; background: #f7f9ff; color: #6a749c; font-weight: 700; font-size: .84rem; cursor: pointer; }
+    .favm-edit-cancel.show { display: block; }
+    .favm-edit-cancel:hover { border-color: #a9b4e8; background: #eef2ff; }
     .favm-empty { font-size: .8rem; color: #9aa2c0; text-align: center; padding: 8px 0; }
     .favm-io { display: flex; gap: 9px; margin-top: 14px; border-top: 1px solid #eef0f7; padding-top: 14px; }
     .favm-io button { flex: 1; padding: 10px; border: 1.5px solid #dfe3f2; border-radius: 11px; background: #f7f9ff; color: #4a5478; font-weight: 700; font-size: .84rem; cursor: pointer; transition: .15s; }
@@ -1045,7 +1053,8 @@
     body.editing .card .card-ctrl, body.editing .logo-tile .card-ctrl { display: flex; }
     body.editing .card:hover, body.editing .logo-tile:hover { transform: none; }
     .logo-tile { position: relative; }
-    .logo-tile .card-ctrl { border-radius: 50%; }
+    .logo-tile .card-ctrl { border-radius: 50%; gap: 4px; }
+    .logo-tile .card-ctrl button { width: 26px; height: 26px; font-size: 12px; }
     .card-ctrl button { border: 1px solid #dfe3ec; background: #fff; border-radius: 8px; width: 30px; height: 30px; font-size: 13px; line-height: 1; cursor: pointer; color: #444; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
     .card-ctrl button:hover { border-color: var(--accent); color: var(--accent); }
     .card-ctrl button.del:hover { border-color: #e0456b; color: #e0456b; }
@@ -1076,7 +1085,7 @@
 
   </style>
 </head>
-<body>
+<body class="">
   <!-- SEO: 한글 브랜드명 명시 (화면 비표시, 검색엔진 인식용) -->
   <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">마이웨이(MYWAY.KR) - 자주가는 사이트 모음 한국 종합 포털, 뉴스·VOD·라디오·게시판·주식 차트 한자리</h1>
 
@@ -1094,7 +1103,7 @@
   <!-- 즐겨찾기 추가 모달 -->
   <div class="favm-bg" id="favmBg">
     <div class="favm" role="dialog" aria-modal="true">
-      <h3>즐겨찾기 추가</h3>
+      <h3 id="favmTitle">즐겨찾기 추가</h3>
       <button class="favm-paste" id="favPasteBtn">
         <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
         복사한 주소 붙여넣기
@@ -1107,6 +1116,7 @@
       <label>아이콘 주소 (선택 · 비우면 자동)</label>
       <input type="text" id="favImg" placeholder="https://.../icon.png" autocomplete="off">
       <button class="favm-add-btn" id="favAddBtn">추가하기</button>
+      <button class="favm-edit-cancel" id="favEditCancelBtn">편집 취소</button>
       <div class="favm-list" id="favList"></div>
       <div class="favm-io">
         <button id="favExportBtn">내보내기</button>
@@ -1176,7 +1186,7 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayIndexV1_dist";
-    const DIST_SIG = "sig1782620379827";
+    const DIST_SIG = "sig1783038739106";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-index-v1';
     const DATA_VERSION = '3';
@@ -1227,29 +1237,30 @@
           { ticker:"Gemini", ko:"", url:"https://gemini.google.com/", name:"Gemini", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSm5xNOdkOwTDL9cxAWHDDyjK-6HcM-qHCxhw&s" },
           { ticker:"Perplexity", ko:"", url:"https://www.perplexity.ai/", name:"Perplexity", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpPv1KMnK1H9jPpIRzMvNRjyGSauDIOsOONQ&s" },
           { ticker:"Copilot", ko:"", url:"https://copilot.microsoft.com/", name:"Copilot", img:"https://www.shutterstock.com/image-vector/colorful-logo-design-on-white-600nw-2504051213.jpg" },
-          { ticker:"youtube", ko:"", url:"https://www.youtube.com/", name:"youtube", img:"https://img.freepik.com/premium-vector/youtube-app-icon_676644-281.jpg?w=360" },
-          { ticker:"yt-channel", ko:"", url:"https://www.youtube.com/channel/UC4R8DWoMoI7CAwX8_LjQHig", name:"yt-channel", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_gzn6qNSlITI312FAL8_qQFD2SuVkeeUrJA&s" },
-          { ticker:"soundcloud", ko:"", url:"https://soundcloud.com/search?q=%EC%9E%84%EC%9E%AC%EB%B2%94", name:"soundcloud", img:"https://cdn.simpleicons.org/soundcloud/FF5500" },
+          { ticker:"youtube", ko:"", url:"https://www.youtube.com/", name:"youtube", img:"https://i.namu.wiki/i/nFpEwvOC3osgEryYjpr0dDIX8x3I25n3TghiV636cJIQSYyVp2cFORD9oBKHC2CvuHEGdPWW_VSrTlSzkE9pBQ.svg" },
+          { ticker:"넷플릭스", ko:"", url:"https://href.li/?https://www.netflix.com/", name:"넷플릭스", img:"https://cdn.simpleicons.org/netflix/E50914" },
+          { ticker:"디즈니+", ko:"", url:"https://href.li/?https://www.disneyplus.com/ko-kr", name:"디즈니+", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Disney%2B_logo.svg" },
+          { ticker:"쿠팡플레이", ko:"", url:"https://www.coupangplay.com/catalog", name:"쿠팡플레이", img:"https://d2juy7qzamcf56.cloudfront.net/2024-11-26/09738456-1277-4953-80fb-fc9c9d2df777.png" },
           { ticker:"google", ko:"", url:"https://www.google.com/webhp?hl=en&gl=au", name:"google", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYMMskKN9Ql1Ep4wG_vEW01t98DUBVXeXE8A&s" },
           { ticker:"naver", ko:"", url:"https://www.naver.com/", name:"naver", img:"https://play-lh.googleusercontent.com/jYtnK__ibJh9emODIgTyjZdbKym1iAj4RfoVhQZcfbG-DuTSHR5moHVx9CQnqg1yoco9" },
           { ticker:"daum", ko:"", url:"https://www.daum.net/", name:"daum", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTm-uCPPoWEDsQjRWs3MrM1nkrcqxygYAXbvg&s" },
           { ticker:"nate", ko:"", url:"https://www.nate.com/", name:"nate", img:"https://m1.nateimg.co.kr/n3main/newBI/nate_ogt.png" },
+          { ticker:"줌", ko:"", url:"https://zum.com/", name:"줌", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKq7knDLDDQnrP-vD1YN8TTFHNNXUkFLfZ0P4rnftOsw&s=10" },
+          { ticker:"이글루스", ko:"", url:"https://egloos.com/", name:"이글루스", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1-c91K0GS5oKZY7h3-GDzCD_VvFAFuMm8gDF2oNJe8VlY4UhqiyMaBSQc&s=10" },
           { ticker:"bing", ko:"", url:"https://www.bing.com/", name:"bing", img:"https://play-lh.googleusercontent.com/kmxAt02yG8Hp-TzZHDoRGFtB70QFz7njpWQzQp8KANztd-DozlJipu8tprSn80Q8pw" },
           { ticker:"msn", ko:"", url:"https://www.msn.com/", name:"msn", img:"https://images.icon-icons.com/1488/PNG/512/5307-msn_102525.png" },
+          { ticker:"soundcloud", ko:"", url:"https://soundcloud.com/search?q=%EC%9E%84%EC%9E%AC%EB%B2%94", name:"soundcloud", img:"https://cdn.simpleicons.org/soundcloud/FF5500" },
           { ticker:"nexon", ko:"", url:"https://www.nexon.com/", name:"nexon", img:"https://i0.wp.com/data.infowos.com/wp-content/uploads/2023/10/image-80.png?fit=379%2C280&ssl=1" },
-          { ticker:"넷플릭스", ko:"", url:"https://href.li/?https://www.netflix.com/", name:"넷플릭스", img:"https://cdn.simpleicons.org/netflix/E50914" },
-          { ticker:"디즈니+", ko:"", url:"https://href.li/?https://www.disneyplus.com/ko-kr", name:"디즈니+", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Disney%2B_logo.svg" },
-          { ticker:"쿠팡플레이", ko:"", url:"https://www.coupangplay.com/catalog", name:"쿠팡플레이", img:"https://d2juy7qzamcf56.cloudfront.net/2024-11-26/09738456-1277-4953-80fb-fc9c9d2df777.png" },
-          { ticker:"핀터레스트", ko:"", url:"https://kr.pinterest.com/ideas/", name:"핀터레스트", img:"https://upload.wikimedia.org/wikipedia/commons/0/08/Pinterest-logo.png" },
-          { ticker:"인스타그램", ko:"", url:"https://www.instagram.com/", name:"인스타그램", img:"https://img.freepik.com/free-vector/instagram-logo_1199-122.jpg?semt=ais_hybrid&w=740" },
-          { ticker:"네이버클립", ko:"", url:"https://m.naver.com/", name:"네이버클립", img:"https://www.navercorp.com/img/pc/service-contents-app-4.png" },
+          { ticker:"유튜브쇼츠", ko:"", url:"https://www.youtube.com/shorts", name:"유튜브쇼츠", img:"https://www.edigitalagency.com.au/wp-content/uploads/new-YouTube-Shorts-logo-png-large-size.png" },
+          { ticker:"네이버클립", ko:"", url:"https://m.naver.com/", name:"네이버클립", img:"https://cloudreview.co.kr/assets/img/sns/clip.png" },
           { ticker:"x", ko:"", url:"https://x.com/", name:"x", img:"https://freepnglogo.com/images/all_img/1725374683twitter-x-logo.png" },
           { ticker:"틱톡", ko:"", url:"https://www.tiktok.com/explore", name:"틱톡", img:"https://image.zdnet.co.kr/2021/10/14/5cc59f54b5f3bffe52c47c3ba645d514.png" },
-          { ticker:"유튜브쇼츠", ko:"", url:"https://www.youtube.com/shorts", name:"유튜브쇼츠", img:"https://static.vecteezy.com/system/resources/previews/042/127/237/non_2x/app-style-red-and-white-youtube-shorts-outline-logo-with-long-shadow-on-transparent-background-icons-free-png.png" },
+          { ticker:"핀터레스트", ko:"", url:"https://kr.pinterest.com/ideas/", name:"핀터레스트", img:"https://upload.wikimedia.org/wikipedia/commons/0/08/Pinterest-logo.png" },
+          { ticker:"인스타그램", ko:"", url:"https://www.instagram.com/", name:"인스타그램", img:"https://img.freepik.com/free-vector/instagram-logo_1199-122.jpg?semt=ais_hybrid&w=740" },
           { ticker:"podcast", ko:"", url:"https://podcasts.apple.com/kr/browse", name:"podcast", img:"https://www.apple.com/v/apple-podcasts/e/images/meta/apple-podcasts_wechat__cq3l3kjucay6_og.png" },
           { ticker:"github", ko:"", url:"https://github.com/", name:"github", img:"https://images.icon-icons.com/3685/PNG/512/github_logo_icon_229278.png" },
-          { ticker:"safevisit", ko:"", url:"https://www.safevisit.org/", name:"safevisit", img:"https://cdn6.aptoide.com/imgs/e/a/8/ea81ef0732f97269e9bd21a81ac68d31_icon.png" },
           { ticker:"unicorn", ko:"", url:"https://getunicorn.app/ko/product/unicorn-https/windows", name:"unicorn", img:"https://play-lh.googleusercontent.com/MBxbMGKKsNBbswAVWydz4Xy3ccEvDACHG8x_iun0nhUCe8H5NRdZgbw_A0kCHNBEuw" },
+          { ticker:"safevisit", ko:"", url:"https://www.safevisit.org/", name:"safevisit", img:"https://cdn6.aptoide.com/imgs/e/a/8/ea81ef0732f97269e9bd21a81ac68d31_icon.png" },
           { ticker:"noxinfluencer", ko:"", url:"https://kr.noxinfluencer.com/youtube-channel-rank/top-100-all-all-youtuber-sorted-by-subs-weekly", name:"noxinfluencer", img:"https://cdn.shopify.com/app-store/listing_images/f98a4fd90e4dd3a77daf9eb09a443698/icon/CLzJ98-74YwDEAE=.png" },
           { ticker:"semrush", ko:"", url:"https://ko.semrush.com/trending-websites/kr/all", name:"semrush", img:"https://cdn.brandfetch.io/idt3n8W3ef/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1667587193513" },
         ] },
@@ -2337,7 +2348,7 @@
         return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
       }
 
-      function favTile(f) {
+      function favTile(f, idx) {
         const a = document.createElement('a');
         a.className = 'logo-tile fav-item';
         a.href = f.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
@@ -2346,6 +2357,18 @@
         img.src = tileImg(f); img.alt = f.name || ''; img.loading = 'lazy'; img.decoding = 'async';
         img.onerror = function () { img.onerror = null; img.src = fallbackImg(f); };
         a.appendChild(img);
+        /* 편집 모드(body.editing)에서 타일 위에 ✏ 수정 · × 삭제 — 차트 카드와 동일 패턴 */
+        const ctrl = document.createElement('div'); ctrl.className = 'card-ctrl';
+        const mk = (t, title, fn, cls) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = t; b.title = title; if (cls) b.className = cls; b.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); fn(); }); return b; };
+        ctrl.appendChild(mk('\u270f', '수정', () => { openFavModal(); startEdit(idx); }));
+        ctrl.appendChild(mk('\u00d7', '삭제', () => {
+          if (!confirm('이 즐겨찾기를 삭제할까요?\n' + (f.name || f.url))) return;
+          const arr = loadFavs(); arr.splice(idx, 1); saveFavs(arr);
+          if (editIdx === idx) { exitEdit(); clearInputs(); } else if (editIdx > idx) { editIdx--; }
+          renderFavList(); mountFavGrid();
+        }, 'del'));
+        a.appendChild(ctrl);
+        a.addEventListener('click', e => { if (document.body.classList.contains('editing')) e.preventDefault(); }, true);
         return a;
       }
       function addTile() {
@@ -2366,7 +2389,7 @@
         const grids = root.querySelectorAll('.logo-grid');
         let grid = grids.length ? grids[grids.length - 1] : null;
         if (!grid) { grid = document.createElement('div'); grid.className = 'logo-grid'; root.appendChild(grid); }
-        loadFavs().forEach(f => grid.appendChild(favTile(f)));
+        loadFavs().forEach((f, i) => grid.appendChild(favTile(f, i)));
         grid.appendChild(addTile());
       }
 
@@ -2375,9 +2398,35 @@
       const elUrl = document.getElementById('favUrl');
       const elName = document.getElementById('favName');
       const elImg = document.getElementById('favImg');
+      let editIdx = -1;
+      const addBtn = document.getElementById('favAddBtn');
+      const titleEl = document.getElementById('favmTitle');
+      const cancelBtn = document.getElementById('favEditCancelBtn');
       function clearInputs() { elUrl.value = ''; elName.value = ''; elImg.value = ''; }
-      function openFavModal() { clearInputs(); renderFavList(); bg.classList.add('show'); setTimeout(() => elUrl.focus(), 30); }
-      function closeFavModal() { bg.classList.remove('show'); clearInputs(); }
+      function exitEdit() {
+        editIdx = -1;
+        addBtn.textContent = '추가하기';
+        addBtn.classList.remove('is-editing');
+        titleEl.textContent = '즐겨찾기 추가';
+        cancelBtn.classList.remove('show');
+      }
+      function startEdit(idx) {
+        const favs = loadFavs();
+        const f = favs[idx]; if (!f) return;
+        editIdx = idx;
+        elUrl.value = f.url || '';
+        elName.value = f.name || '';
+        elImg.value = f.img || '';
+        addBtn.textContent = '수정 완료';
+        addBtn.classList.add('is-editing');
+        titleEl.textContent = '즐겨찾기 수정';
+        cancelBtn.classList.add('show');
+        renderFavList();
+        elUrl.focus();
+      }
+      cancelBtn.addEventListener('click', () => { exitEdit(); clearInputs(); elUrl.focus(); });
+      function openFavModal() { exitEdit(); clearInputs(); renderFavList(); bg.classList.add('show'); setTimeout(() => elUrl.focus(), 30); }
+      function closeFavModal() { bg.classList.remove('show'); exitEdit(); clearInputs(); }
       bg.addEventListener('click', e => { if (e.target === bg) closeFavModal(); });
       document.getElementById('favDoneBtn').addEventListener('click', closeFavModal);
 
@@ -2390,13 +2439,20 @@
           list.appendChild(e); return;
         }
         favs.forEach((f, idx) => {
-          const row = document.createElement('div'); row.className = 'favm-row';
+          const row = document.createElement('div'); row.className = 'favm-row' + (idx === editIdx ? ' is-editing' : '');
           const im = document.createElement('img'); im.src = tileImg(f); im.alt = '';
           im.onerror = function () { im.onerror = null; im.src = fallbackImg(f); };
           const nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = f.name || f.url;
+          const edit = document.createElement('button'); edit.className = 'edit'; edit.textContent = '\u270f'; edit.title = '수정';
+          edit.addEventListener('click', () => startEdit(idx));
           const del = document.createElement('button'); del.className = 'del'; del.textContent = '\u00d7'; del.title = '삭제';
-          del.addEventListener('click', () => { const a = loadFavs(); a.splice(idx, 1); saveFavs(a); renderFavList(); mountFavGrid(); });
-          row.appendChild(im); row.appendChild(nm); row.appendChild(del);
+          del.addEventListener('click', () => {
+            const a = loadFavs(); a.splice(idx, 1); saveFavs(a);
+            if (editIdx === idx) { exitEdit(); clearInputs(); }
+            else if (editIdx > idx) { editIdx--; }
+            renderFavList(); mountFavGrid();
+          });
+          row.appendChild(im); row.appendChild(nm); row.appendChild(edit); row.appendChild(del);
           list.appendChild(row);
         });
       }
@@ -2423,9 +2479,13 @@
         let name = elName.value.trim();
         if (!name) name = hostName(url);
         const favs = loadFavs();
-        favs.push({ name: name, url: url, img: elImg.value.trim() });
-        saveFavs(favs);
-        clearInputs();
+        const rec = { name: name, url: url, img: elImg.value.trim() };
+        if (editIdx >= 0 && editIdx < favs.length) {
+          favs[editIdx] = rec; saveFavs(favs);
+          exitEdit(); clearInputs();
+        } else {
+          favs.push(rec); saveFavs(favs); clearInputs();
+        }
         renderFavList(); mountFavGrid();
         elUrl.focus();
       });
