@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>사이트 바 | MYWAY.KR</title>
+<meta name="description" content="원하는 사이트를 골라 한 화면에서 바로 보세요.">
+<meta name="robots" content="index, follow">
+<!-- 배포 경로 정해지면 아래 canonical 수정하세요 -->
+<link rel="canonical" href="https://myway.kr/">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{ --line:#ececec;--ink:#1a1a1a;--ink-sub:#8a8f99;--accent:#0b6b53;--body:"Pretendard",-apple-system,sans-serif; }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;height:100%}
+  body{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:#fff;color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
+
+  .topnav{flex:none;display:flex;gap:8px;align-items:center;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:10px 14px;background:#fff;border-bottom:1px solid var(--line);cursor:grab;scrollbar-width:none}
+  .topnav::-webkit-scrollbar{display:none}
+  .topnav.dragging{cursor:grabbing}
+  .nav-home{flex:none;order:0;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-sub);padding:8px;border-radius:10px;transition:color .15s,background .15s}
+  .nav-home:hover{color:var(--accent);background:#f5f6f8}
+  .nav-home svg{width:20px;height:20px;display:block}
+  .nav-track{flex:none;order:3;display:flex;align-items:center;gap:8px;margin:0 auto}
+  .topnav button{flex:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-family:var(--body);font-size:14px;font-weight:700;color:var(--ink-sub);cursor:pointer;transition:all .16s}
+  .topnav button:hover{border-color:#cfd3da;color:var(--ink)}
+  .topnav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .open-btn{flex:none;order:1;color:var(--ink-sub);font-weight:700}
+
+  .viewer{flex:1;position:relative;overflow:hidden;background:#0d0f12}
+  .viewer iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+
+  /* ===== 편집 머신러리 ===== */
+  .pentool-bar{position:fixed;top:60px;right:16px;z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+  .pentool-fab{width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,#0b8f6f,#0b6b53);box-shadow:0 4px 14px rgba(11,107,83,.4);transition:transform .15s}
+  .pentool-fab:hover{transform:scale(1.06)}
+  .pentool-fab svg{width:19px;height:19px;display:block}
+  .pentool-menu{display:none;flex-direction:column;gap:4px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px;box-shadow:0 8px 26px rgba(40,40,70,.18);min-width:150px}
+  .pentool-menu.show{display:flex}
+  .pentool-menu button{border:none;background:transparent;text-align:left;padding:9px 12px;border-radius:8px;font-family:var(--body);font-size:13.5px;font-weight:700;color:var(--ink);cursor:pointer}
+  .pentool-menu button:hover{background:#f0f7f4;color:var(--accent)}
+  .pentool-menu button.danger:hover{background:#fdecec;color:#c0392b}
+  .pentool-menu .sep{height:1px;background:var(--line);margin:4px 2px}
+
+  .mini-btn{width:24px;height:24px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--ink-sub);font-size:12px;font-weight:800;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.12);padding:0}
+  .mini-btn:hover{color:var(--accent);border-color:var(--accent)}
+  .mini-btn.del:hover{color:#c0392b;border-color:#c0392b}
+
+  .modal-back{position:fixed;inset:0;z-index:120;background:rgba(20,24,30,.5);display:none;align-items:center;justify-content:center;padding:18px}
+  .modal-back.show{display:flex}
+  .modal{width:100%;max-width:430px;max-height:86vh;overflow-y:auto;background:#fff;border-radius:16px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.3);scrollbar-width:none}
+  .modal::-webkit-scrollbar{display:none}
+  .modal h3{margin:0 0 14px;font-size:17px;font-weight:800;color:var(--ink)}
+  .modal label{display:block;font-size:12px;font-weight:700;color:var(--ink-sub);margin:12px 0 5px}
+  .modal input[type=text],.modal input[type=url],.modal textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-family:var(--body);font-size:14px;color:var(--ink);background:#fafbfc;-webkit-user-select:text;user-select:text}
+  .modal input:focus,.modal textarea:focus{outline:none;border-color:var(--accent);background:#fff}
+  .modal textarea{min-height:140px;resize:vertical;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px}
+  .chk-row{display:flex;align-items:center;gap:8px;margin-top:12px}
+  .chk-row input{width:17px;height:17px}
+  .chk-row span{font-size:13px;font-weight:700;color:var(--ink)}
+  .modal-row{display:flex;gap:8px;margin-top:18px}
+  .modal-row button{flex:1;border:none;border-radius:9px;padding:11px;font-family:var(--body);font-size:14px;font-weight:800;cursor:pointer}
+  .btn-ok{background:var(--accent);color:#fff}
+  .btn-ok:hover{background:#0a5c47}
+  .btn-cancel{background:#eef0f3;color:var(--ink-sub)}
+  .btn-cancel:hover{background:#e3e6ea}
+  .tb-btn{width:100%;border:1px solid var(--line);background:#fafbfc;border-radius:9px;padding:11px;font-family:var(--body);font-size:13.5px;font-weight:800;color:var(--accent);cursor:pointer}
+  .tb-btn:hover{background:#f0f7f4;border-color:var(--accent)}
+  .ch-list{display:flex;flex-direction:column;gap:6px}
+  .ch-row{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:9px;padding:7px 9px;background:#fafbfc}
+  .ch-row .nm{flex:1;font-size:13.5px;font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ch-row .tag{font-size:10px;font-weight:800;color:#0b6b53;background:#e3f3ee;border-radius:5px;padding:1px 5px}
+  .ch-row .mini-btn{width:26px;height:26px}
+  .hint{font-size:11.5px;color:var(--ink-sub);line-height:1.5;margin-top:10px}
+</style>
+</head>
+<body>
+
+<nav class="topnav" id="topnav">
+  <a class="nav-home" href="https://myway.kr" aria-label="MYWAY.KR 홈">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5 10v9h14v-9"></path></svg>
+  </a>
+  <div class="nav-track" id="navTrack"></div>
+</nav>
+
+<div class="viewer">
+  <iframe id="viewer" title="사이트 뷰어" referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen=""></iframe>
+</div>
+
+<!-- 연필 FAB -->
+<div class="pentool-bar" id="pentoolBar" style="display: none;">
+  <div class="pentool-menu" id="pentoolMenu">
+    <button id="mNav">📋 상단 채널 편집</button>
+    <div class="sep"></div>
+    <button id="mImport">📥 가져오기</button>
+    <button id="mExport">📤 내보내기</button>
+    <button id="mCode" data-code="1">&lt;/&gt; 코드</button>
+    <div class="sep"></div>
+    <button id="mReset" class="danger">↺ 기본값 복원</button>
+  </div>
+  <button class="pentool-fab" id="pentoolFab" aria-label="편집 도구">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+  </button>
+</div>
+
+<!-- 상단 채널 편집 모달 -->
+<div class="modal-back" id="navBack">
+  <div class="modal">
+    <h3>상단 채널 편집</h3>
+    <div id="navList" class="ch-list"></div>
+    <button class="tb-btn" id="navAdd" style="margin-top:12px">＋ 채널 추가</button>
+    <div class="modal-row"><button class="btn-cancel" id="navClose">닫기</button></div>
+  </div>
+</div>
+
+<!-- 채널 추가/수정 입력폼 -->
+<div class="modal-back" id="chBack">
+  <div class="modal">
+    <h3 id="chTitle">채널 추가</h3>
+    <label>이름</label>
+    <input id="chName" type="text" placeholder="예: 사이트 이름">
+    <label>URL</label>
+    <input id="chUrl" type="url" placeholder="https://...">
+    <div class="chk-row"><input id="chNewtab" type="checkbox"><span>새 탭으로만 열기 (iframe 재생 안 함)</span></div>
+    <div class="modal-row">
+      <button class="btn-cancel" id="chCancel">취소</button>
+      <button class="btn-ok" id="chSave">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 가져오기 모달 -->
+<div class="modal-back" id="impBack">
+  <div class="modal">
+    <h3>가져오기</h3>
+    <p class="hint" style="margin-top:0">내보낸 JSON 파일을 선택하거나, 아래에 붙여넣어 적용하세요.</p>
+    <button class="tb-btn" id="impFileBtn">📁 파일 선택</button>
+    <input id="impFile" type="file" accept=".json,application/json" style="display:none">
+    <label>또는 JSON 붙여넣기</label>
+    <textarea id="impText" placeholder="{&quot;kind&quot;:&quot;myway-custombar-v1&quot;, ...}"></textarea>
+    <div class="modal-row">
+      <button class="btn-cancel" id="impCancel">취소</button>
+      <button class="btn-ok" id="impApply">적용</button>
+    </div>
+  </div>
+</div>
+
+<!-- 코드(빌드) 모달 -->
+<div class="modal-back" id="codeBack">
+  <div class="modal">
+    <h3>HTML로 저장</h3>
+    <p class="hint" style="margin-top:0">현재 채널 목록을 기본값으로 박아 새 HTML 파일을 만들어요.</p>
+    <button class="tb-btn" id="buildMaster" style="margin-top:10px">📄 마스터 HTML 저장 <span style="color:var(--ink-sub);font-weight:700">— 코드 버튼 포함, 계속 재빌드 가능</span></button>
+    <button class="tb-btn" id="buildEdit" style="margin-top:8px">📝 편집용 HTML 저장 <span style="color:var(--ink-sub);font-weight:700">— 받는 사람도 편집·가져오기 가능, 코드 버튼 숨김</span></button>
+    <button class="tb-btn" id="buildView" style="margin-top:8px">🔒 보기전용 HTML 저장 <span style="color:var(--ink-sub);font-weight:700">— 편집 불가, 복사방지 ON</span></button>
+    <div class="modal-row"><button class="btn-cancel" id="codeClose">닫기</button></div>
+  </div>
+</div>
+
+<script>
+/* ========= @CONFIG (빌드 시 통째 교체) ========= */
+var IS_DIST      = false;
+var SHOW_EDIT    = true;
+var SHOW_CODE    = true;
+var COPY_PROTECT = false;
+/* ========= @CONFIG_END ========= */
+
+/* ▼▼ 용도가 정해지면 이 네 줄만 바꾸세요 (라디오바와 충돌 방지용 전용 키) ▼▼ */
+var STORE_KEY   = 'mywayCustomBarV1';
+var DATA_KIND   = 'myway-custombar-v1';
+var EXPORT_NAME = 'myway-custombar.json';
+var SESS_KEY    = 'mywayCustomBar';
+/* ▲▲ 빌드 파일명은 buildHTML 안의 fname 도 함께 바꾸면 됩니다 ▲▲ */
+
+/* ========= @DEFAULTS (빌드 시 통째 교체) ========= */
+var DEFAULT_DATA = {
+  "sites": [
+    [
+      "대한민국 구석구석",
+      "https://korean.visitkorea.or.kr/main/main.do"
+    ],
+    [
+      "구글항공권정보",
+      "https://www.google.com/travel/flights?hl=ko",
+      true
+    ],
+    [
+      "네이버여행정보",
+      "https://travel.naver.com/domestic",
+      true
+    ],
+    [
+      "일본여행",
+      "https://www.japan.travel/ko/kr/",
+      true
+    ],
+    [
+      "참조은여행",
+      "https://www.verygoodtour.com/",
+      true
+    ],
+    [
+      "하나투어",
+      "https://www.hanatour.com/",
+      true
+    ],
+    [
+      "모두투어",
+      "https://www.modetour.com/",
+      true
+    ],
+    [
+      "노란풍선",
+      "https://www.ybtour.co.kr/",
+      true
+    ],
+    [
+      "땡처리닷컴",
+      "https://www.ttang.com/index.do",
+      true
+    ]
+  ]
+};
+/* ========= @DEFAULTS_END ========= */
+
+/* ---- 데이터 로드/저장 ---- */
+function cloneData(d){ return JSON.parse(JSON.stringify(d)); }
+function coerceData(o){
+  if(!o || typeof o!=='object' || !Array.isArray(o.sites)) return null;
+  var d={ sites:[] };
+  o.sites.forEach(function(s){
+    if(Array.isArray(s) && typeof s[0]==='string' && typeof s[1]==='string'){
+      var row=[s[0],s[1]]; if(s[2]===true) row.push(true); d.sites.push(row);
+    }
+  });
+  if(!d.sites.length) return null;
+  return d;
+}
+function loadData(){
+  if(IS_DIST) return cloneData(DEFAULT_DATA);
+  try{
+    var raw=localStorage.getItem(STORE_KEY);
+    if(raw){ var c=coerceData(JSON.parse(raw)); if(c) return c; }
+  }catch(_){}
+  return cloneData(DEFAULT_DATA);
+}
+function saveData(){
+  if(IS_DIST) return;
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify({kind:DATA_KIND, sites:data.sites})); }catch(_){}
+}
+var data = loadData();
+function firstPlayable(){
+  for(var i=0;i<data.sites.length;i++){ if(data.sites[i] && !data.sites[i][2]) return i; }
+  return 0;
+}
+
+/* ---- 뷰어 ---- */
+var viewer=document.getElementById('viewer');
+function setViewerSrc(url){
+  var fresh=document.createElement('iframe');
+  fresh.id='viewer'; fresh.title='사이트 뷰어';
+  fresh.setAttribute('referrerpolicy','no-referrer');
+  fresh.setAttribute('allow','autoplay; encrypted-media; fullscreen');
+  fresh.setAttribute('allowfullscreen','');
+  fresh.src=url;
+  viewer.parentNode.replaceChild(fresh, viewer);
+  viewer=fresh;
+}
+
+var nav=document.getElementById('topnav');
+var track=document.getElementById('navTrack');
+var currentUrl=(data.sites[firstPlayable()]||['',''])[1];
+
+function centerNavBtn(btn){
+  var navRect=nav.getBoundingClientRect();
+  var btnRect=btn.getBoundingClientRect();
+  var target=nav.scrollLeft + (btnRect.left - navRect.left) - (nav.clientWidth/2) + (btnRect.width/2);
+  nav.scrollTo({left:Math.max(0,target),behavior:'smooth'});
+}
+function clearActive(){ nav.querySelectorAll('button[data-site]').forEach(function(b){b.classList.remove('active');}); }
+
+/* ---- 채널 로드 ---- */
+function loadSite(i, btn){
+  var s=data.sites[i]; if(!s) return;
+  if(s[2]){ window.open(s[1],'_blank','noopener'); if(btn) centerNavBtn(btn); return; }
+  currentUrl=s[1];
+  setViewerSrc(currentUrl);
+  openBtn.style.display='';
+  clearActive();
+  try{ sessionStorage.setItem(SESS_KEY,'site:'+i); }catch(_){}
+  if(btn){ btn.classList.add('active'); centerNavBtn(btn); }
+}
+
+/* ---- 상단 채널 버튼 렌더 (재실행 가능) ---- */
+function renderNav(){
+  track.innerHTML='';
+  data.sites.forEach(function(s,i){
+    var b=document.createElement('button'); b.textContent=s[0]; b.dataset.site=i;
+    b.addEventListener('click',function(){loadSite(i,b);});
+    track.appendChild(b);
+  });
+}
+renderNav();
+
+/* 새 탭 버튼 */
+var openBtn=document.createElement('button'); openBtn.className='open-btn'; openBtn.textContent='↗ 새 탭';
+openBtn.addEventListener('click',function(){window.open(currentUrl,'_blank','noopener');});
+nav.insertBefore(openBtn, track);
+
+/* 네비 드래그 스크롤 */
+(function(){
+  var down=false,startX=0,startL=0,moved=false;
+  nav.addEventListener('pointerdown',function(e){ if(e.button!==0) return; down=true;moved=false;startX=e.clientX;startL=nav.scrollLeft;nav.classList.add('dragging'); });
+  nav.addEventListener('pointermove',function(e){ if(!down) return; var dx=e.clientX-startX; if(Math.abs(dx)>4) moved=true; nav.scrollLeft=startL-dx; });
+  var end=function(){ down=false; nav.classList.remove('dragging'); };
+  nav.addEventListener('pointerup',end);
+  nav.addEventListener('pointercancel',end);
+  nav.addEventListener('pointerleave',end);
+  nav.addEventListener('click',function(e){ if(moved){ e.stopPropagation(); e.preventDefault(); moved=false; } },true);
+  nav.addEventListener('wheel',function(e){ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ nav.scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
+})();
+
+/* ================= 편집 기능 ================= */
+/* 상단 채널 편집 */
+var navBack=document.getElementById('navBack'), navList=document.getElementById('navList');
+function miniBtn(txt,title,fn){
+  var b=document.createElement('button'); b.className='mini-btn'; b.textContent=txt; b.title=title;
+  b.addEventListener('click',fn); return b;
+}
+function renderNavList(){
+  navList.innerHTML='';
+  data.sites.forEach(function(s,i){
+    var row=document.createElement('div'); row.className='ch-row';
+    var nm=document.createElement('div'); nm.className='nm'; nm.textContent=s[0]; row.appendChild(nm);
+    if(s[2]){ var tg=document.createElement('span'); tg.className='tag'; tg.textContent='새탭'; row.appendChild(tg); }
+    row.appendChild(miniBtn('✎','수정',function(){openChModal(i);}));
+    row.appendChild(miniBtn('▲','위로',function(){moveSite(i,-1);}));
+    row.appendChild(miniBtn('▼','아래로',function(){moveSite(i,1);}));
+    var dl=miniBtn('✕','삭제',function(){delSite(i);}); dl.classList.add('del'); row.appendChild(dl);
+    navList.appendChild(row);
+  });
+}
+function moveSite(i,dir){ var j=i+dir; if(j<0||j>=data.sites.length)return; var t=data.sites[i];data.sites[i]=data.sites[j];data.sites[j]=t; saveData(); renderNav(); renderNavList(); }
+function delSite(i){ if(!confirm('이 채널을 삭제할까요?'))return; data.sites.splice(i,1); saveData(); renderNav(); renderNavList(); }
+document.getElementById('navClose').addEventListener('click',function(){navBack.classList.remove('show');});
+document.getElementById('navAdd').addEventListener('click',function(){openChModal(-1);});
+
+/* 채널 입력폼 */
+var chBack=document.getElementById('chBack'), chEdit=-1;
+function openChModal(i){
+  chEdit=i;
+  document.getElementById('chTitle').textContent = i<0?'채널 추가':'채널 수정';
+  var s = i<0?['','',false]:data.sites[i];
+  document.getElementById('chName').value=s[0]||'';
+  document.getElementById('chUrl').value=s[1]||'';
+  document.getElementById('chNewtab').checked = !!s[2];
+  chBack.classList.add('show');
+}
+document.getElementById('chCancel').addEventListener('click',function(){chBack.classList.remove('show');});
+document.getElementById('chSave').addEventListener('click',function(){
+  var nm=document.getElementById('chName').value.trim();
+  var u=document.getElementById('chUrl').value.trim();
+  var nt=document.getElementById('chNewtab').checked;
+  if(!nm||!u){ alert('이름과 URL을 모두 입력하세요'); return; }
+  var row=[nm,u]; if(nt) row.push(true);
+  if(chEdit<0) data.sites.push(row); else data.sites[chEdit]=row;
+  saveData(); chBack.classList.remove('show'); renderNav(); renderNavList();
+});
+
+/* 가져오기 / 내보내기 */
+var impBack=document.getElementById('impBack');
+function doExport(){
+  var payload={kind:DATA_KIND, sites:data.sites};
+  var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=EXPORT_NAME;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(a.href);},1500);
+}
+function applyImport(text){
+  var raw=(text||'').replace(/^\uFEFF/,'').trim();
+  if(!raw){ alert('가져올 내용이 없어요'); return; }
+  var obj; try{ obj=JSON.parse(raw); }catch(e){ alert('JSON 형식이 아니에요'); return; }
+  if(obj && obj.kind && obj.kind!==DATA_KIND){
+    if(!confirm('다른 도구의 데이터(' + obj.kind + ')로 보여요. 그래도 가져올까요?')) return;
+  }
+  var c=coerceData(obj);
+  if(!c){ alert('데이터 형식이 아니에요'); return; }
+  data=c; saveData();
+  impBack.classList.remove('show');
+  document.getElementById('impText').value='';
+  renderNav();
+  var fi=firstPlayable(); var fb=track.querySelector('button[data-site="'+fi+'"]'); if(fb) loadSite(fi,fb);
+  alert('가져왔어요');
+}
+document.getElementById('impFileBtn').addEventListener('click',function(){document.getElementById('impFile').click();});
+document.getElementById('impFile').addEventListener('change',function(e){
+  var f=e.target.files&&e.target.files[0]; if(!f)return;
+  var r=new FileReader(); r.onload=function(){ applyImport(r.result); }; r.readAsText(f);
+  e.target.value='';
+});
+document.getElementById('impCancel').addEventListener('click',function(){impBack.classList.remove('show');});
+document.getElementById('impApply').addEventListener('click',function(){ applyImport(document.getElementById('impText').value); });
+
+/* ---- buildHTML (코드 빌드) ---- */
+function buildHTML(mode){
+  var clone=document.documentElement.cloneNode(true);
+  var q=function(sel){ return clone.querySelector(sel); };
+  var nt=q('#navTrack'); if(nt) nt.innerHTML='';
+  var nl=q('#navList'); if(nl) nl.innerHTML='';
+  var tn=q('#topnav'); if(tn){ tn.querySelectorAll('button[data-site],.open-btn').forEach(function(b){b.remove();}); tn.classList.remove('dragging'); }
+  clone.querySelectorAll('.modal-back').forEach(function(m){m.classList.remove('show');});
+  var ifr=q('#viewer'); if(ifr){ ifr.removeAttribute('src'); ifr.style.display=''; }
+  var pb=q('#pentoolBar'); if(pb) pb.style.display='none';
+
+  var html='<!DOCTYPE html>\n'+clone.outerHTML;
+
+  var cfg;
+  if(mode==='view'){
+    cfg='/* ========= @CONFIG (빌드 시 통째 교체) ========= */\n'+
+        'var IS_DIST      = true;\n'+
+        'var SHOW_EDIT    = false;\n'+
+        'var SHOW_CODE    = false;\n'+
+        'var COPY_PROTECT = true;\n'+
+        '/* ========= @CONFIG_END ========= */';
+  }else if(mode==='master'){
+    cfg='/* ========= @CONFIG (빌드 시 통째 교체) ========= */\n'+
+        'var IS_DIST      = false;\n'+
+        'var SHOW_EDIT    = true;\n'+
+        'var SHOW_CODE    = true;\n'+
+        'var COPY_PROTECT = false;\n'+
+        '/* ========= @CONFIG_END ========= */';
+  }else{
+    cfg='/* ========= @CONFIG (빌드 시 통째 교체) ========= */\n'+
+        'var IS_DIST      = false;\n'+
+        'var SHOW_EDIT    = true;\n'+
+        'var SHOW_CODE    = false;\n'+
+        'var COPY_PROTECT = false;\n'+
+        '/* ========= @CONFIG_END ========= */';
+  }
+  html=html.replace(/\/\* ========= @CONFIG \(빌드 시 통째 교체\) ========= \*\/[\s\S]*?\/\* ========= @CONFIG_END ========= \*\//, cfg);
+
+  var defBlock='/* ========= @DEFAULTS (빌드 시 통째 교체) ========= */\n'+
+    'var DEFAULT_DATA = '+JSON.stringify({sites:data.sites},null,2)+';\n'+
+    '/* ========= @DEFAULTS_END ========= */';
+  html=html.replace(/\/\* ========= @DEFAULTS \(빌드 시 통째 교체\) ========= \*\/[\s\S]*?\/\* ========= @DEFAULTS_END ========= \*\//, defBlock);
+
+  var fname = mode==='view' ? 'custombar-view.html' : (mode==='master' ? 'custombar-master.html' : 'custombar-edit.html');
+  var blob=new Blob([html],{type:'text/html'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fname;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(a.href);},1500);
+}
+var codeBack=document.getElementById('codeBack');
+document.getElementById('buildMaster').addEventListener('click',function(){buildHTML('master');});
+document.getElementById('buildEdit').addEventListener('click',function(){buildHTML('edit');});
+document.getElementById('buildView').addEventListener('click',function(){buildHTML('view');});
+document.getElementById('codeClose').addEventListener('click',function(){codeBack.classList.remove('show');});
+
+/* ---- FAB 메뉴 ---- */
+var pentoolBar=document.getElementById('pentoolBar');
+var pentoolMenu=document.getElementById('pentoolMenu');
+document.getElementById('pentoolFab').addEventListener('click',function(){ pentoolMenu.classList.toggle('show'); });
+document.addEventListener('click',function(e){ if(!pentoolBar.contains(e.target)) pentoolMenu.classList.remove('show'); });
+document.getElementById('mNav').addEventListener('click',function(){ renderNavList(); navBack.classList.add('show'); pentoolMenu.classList.remove('show'); });
+document.getElementById('mImport').addEventListener('click',function(){ impBack.classList.add('show'); pentoolMenu.classList.remove('show'); });
+document.getElementById('mExport').addEventListener('click',function(){ doExport(); pentoolMenu.classList.remove('show'); });
+document.getElementById('mCode').addEventListener('click',function(){ codeBack.classList.add('show'); pentoolMenu.classList.remove('show'); });
+document.getElementById('mReset').addEventListener('click',function(){
+  if(!confirm('편집 내용을 모두 지우고 기본값으로 되돌릴까요?')) return;
+  try{ localStorage.removeItem(STORE_KEY); }catch(_){}
+  data=cloneData(DEFAULT_DATA);
+  renderNav();
+  var fi=firstPlayable(); var fb=track.querySelector('button[data-site="'+fi+'"]'); if(fb) loadSite(fi,fb);
+  pentoolMenu.classList.remove('show');
+});
+
+/* FAB 노출 제어 */
+if(SHOW_EDIT){
+  pentoolBar.style.display='';
+  if(!SHOW_CODE){ var mc=document.getElementById('mCode'); if(mc) mc.style.display='none'; }
+}else{
+  pentoolBar.style.display='none';
+}
+
+/* ---- 초기화: 마지막 화면 복원 → 없으면 첫 채널 ---- */
+(function(){
+  var saved='';
+  try{ saved=sessionStorage.getItem(SESS_KEY)||''; }catch(_){}
+  var ms=/^site:(\d+)$/.exec(saved);
+  if(ms){
+    var i=parseInt(ms[1],10);
+    if(data.sites[i] && !data.sites[i][2]){
+      var b=track.querySelector('button[data-site="'+i+'"]');
+      if(b){ loadSite(i,b); return; }
+    }
+  }
+  var fi=firstPlayable();
+  var fb=track.querySelector('button[data-site="'+fi+'"]');
+  if(fb) loadSite(fi,fb);
+})();
+
+/* ---- 복사 방지 (보기전용에서만) ---- */
+if(COPY_PROTECT){(function(){
+  var isField=function(el){ return el&&(el.tagName==='INPUT'||el.tagName==='TEXTAREA'||el.tagName==='SELECT'||el.isContentEditable); };
+  ['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){
+    document.addEventListener(ev,function(e){ if(isField(e.target)) return; e.preventDefault(); });
+  });
+  document.addEventListener('keydown',function(e){
+    var k=(e.key||'').toLowerCase();
+    if(e.key==='F12'){e.preventDefault();return;}
+    if(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(k)){e.preventDefault();return;}
+    if(e.ctrlKey&&['u','s','c','x','a'].includes(k)){ if(isField(e.target)&&['c','x','a'].includes(k)) return; e.preventDefault(); }
+  });
+})();}
+</script>
+<script>
+/* 모바일: 외부 링크를 최상위 창에서 열어 뒤로가기로 MYWAY 복귀. PC·태블릿은 새 탭. */
+(function(){
+  if(!/Mobi/i.test(navigator.userAgent)) return;
+  document.addEventListener("click", function(e){
+    var a = e.target.closest ? e.target.closest("a[href]") : null;
+    if(!a) return;
+    var href = a.getAttribute("href") || "";
+    if(!href || href.charAt(0) === "#" || /^javascript:/i.test(href)) return;
+    e.preventDefault();
+    try { (window.top || window).location.href = a.href; }
+    catch(_) { window.open(a.href, "_blank"); }
+  }, true);
+  var _open = window.open.bind(window);
+  window.open = function(url, name, feat){
+    if(url){ try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
+    return _open(url, name, feat);
+  };
+})();
+</script>
+
+
+</body></html>
