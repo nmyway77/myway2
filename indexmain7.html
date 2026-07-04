@@ -1186,10 +1186,10 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayIndexV1_dist";
-    const DIST_SIG = "sig1783141877023";
+    const DIST_SIG = "sig1783168823727";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-index-v1';
-    const DATA_VERSION = '4';
+    const DATA_VERSION = '3';
     let _distChecked = false;
     function ensureDistFresh(){
       if(_distChecked || !IS_DIST) return; _distChecked = true;
@@ -1250,7 +1250,6 @@
           { ticker:"bing", ko:"", url:"https://www.bing.com/", name:"bing", img:"https://play-lh.googleusercontent.com/kmxAt02yG8Hp-TzZHDoRGFtB70QFz7njpWQzQp8KANztd-DozlJipu8tprSn80Q8pw" },
           { ticker:"msn", ko:"", url:"https://www.msn.com/", name:"msn", img:"https://images.icon-icons.com/1488/PNG/512/5307-msn_102525.png" },
           { ticker:"이글루스", ko:"", url:"https://egloos.com/", name:"이글루스", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1-c91K0GS5oKZY7h3-GDzCD_VvFAFuMm8gDF2oNJe8VlY4UhqiyMaBSQc&s=10" },
-          { ticker:"블로그", ko:"", url:"https://section.blog.naver.com/home#", name:"블로그", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZJ3doskUO62ZGLgPkynUcQ5xOBeRxXYk7W0oKhP_Uw9fbJqLarEfTPTwx&s=10" },
           { ticker:"네이버카페", ko:"", url:"https://section.cafe.naver.com/ca-fe/home/powers/popular", name:"네이버카페", img:"https://i.namu.wiki/i/enhRFSl24PP34o2i61sIOaWBIGlsJHdrlP6_l2Q9JYxbzIcHDvykqgPm5LF3Zp6c6T7S_KpnWS67kDDhz94JIg.svg" },
           { ticker:"유튜브쇼츠", ko:"", url:"https://www.youtube.com/shorts", name:"유튜브쇼츠", img:"https://www.edigitalagency.com.au/wp-content/uploads/new-YouTube-Shorts-logo-png-large-size.png" },
           { ticker:"틱톡", ko:"", url:"https://www.tiktok.com/explore", name:"틱톡", img:"https://image.zdnet.co.kr/2021/10/14/5cc59f54b5f3bffe52c47c3ba645d514.png" },
@@ -2150,12 +2149,7 @@
           if(!tb && !mt){ alert('읽을 수 있는 데이터가 없어요.'); return; }
           if(foreignKind){ if(!confirm('다른 도구에서 만든 JSON일 수 있어요. (종류: '+foreignKind+')\n그래도 가져올까요?')) return; }
           var msg=[];
-          if(mt){
-            // 이전 버전 JSON 호환: 이 파일의 기본 네비에 새로 생긴 탭(예: 쇼핑몰)이 가져온 네비에 없으면 뒤에 보강
-            var added=0;
-            DEFAULT_TABS_META.forEach(function(d){ if(!mt.some(function(t){ return t.id===d.id; })){ mt.push({id:d.id,label:d.label}); added++; } });
-            TABS_META=mt; saveMeta(); if(!TABS_META.some(t=>t.id===curTab)) curTab=(TABS_META[0]&&TABS_META[0].id)||'daily'; renderNav(); msg.push('네비 '+TABS_META.length+'개'+(added?(' (기본탭 '+added+'개 보강)'):''));
-          }
+          if(mt){ TABS_META=mt; saveMeta(); if(!TABS_META.some(t=>t.id===curTab)) curTab=(TABS_META[0]&&TABS_META[0].id)||'daily'; renderNav(); msg.push('네비 '+TABS_META.length+'개'); }
           if(tb){ Object.keys(tb).forEach(k=>{ tabs[k]=tb[k]; }); saveTabs(); msg.push('탭 '+Object.keys(tb).length+'개'); }
           renderTab(curTab);
           alert('가져왔어요. '+msg.join(' · '));
@@ -2245,20 +2239,7 @@
 
     /* ===== 상단 네비(탭) 데이터/편집 ===== */
     function coerceMeta(p){ if(!Array.isArray(p)) return null; var out=p.filter(t=>t&&typeof t==='object'&&t.id).map(t=>({id:String(t.id),label:String(t.label||t.id)})); return out.length?out:null; }
-    function loadMeta(){
-      ensureDistFresh();
-      try{ var raw=localStorage.getItem(STORE_KEY+'_tabsmeta'); if(raw){ var c=coerceMeta(JSON.parse(raw)); if(c){
-        // 버전 업 시 1회: 기본 네비에 새로 생긴 탭(예: 쇼핑몰)을 저장본 뒤에 추가 (기존 순서·이름은 유지)
-        try{ if(localStorage.getItem(STORE_KEY+'_mv') !== DATA_VERSION){
-          DEFAULT_TABS_META.forEach(function(d){ if(!c.some(function(t){ return t.id===d.id; })) c.push({id:d.id,label:d.label}); });
-          localStorage.setItem(STORE_KEY+'_tabsmeta', JSON.stringify(c));
-          localStorage.setItem(STORE_KEY+'_mv', DATA_VERSION);
-        } }catch(_){}
-        return c;
-      } } }catch(_){}
-      try{ localStorage.setItem(STORE_KEY+'_mv', DATA_VERSION); }catch(_){}
-      return DEFAULT_TABS_META.map(t=>({id:t.id,label:t.label}));
-    }
+    function loadMeta(){ ensureDistFresh(); try{ var raw=localStorage.getItem(STORE_KEY+'_tabsmeta'); if(raw){ var c=coerceMeta(JSON.parse(raw)); if(c) return c; } }catch(_){} return DEFAULT_TABS_META.map(t=>({id:t.id,label:t.label})); }
     function saveMeta(){ try{ localStorage.setItem(STORE_KEY+'_tabsmeta', JSON.stringify(TABS_META)); }catch(_){} }
     let TABS_META = loadMeta();
     function selectTab(id){
