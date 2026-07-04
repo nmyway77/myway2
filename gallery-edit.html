@@ -347,12 +347,14 @@
     .map-row select { flex: 1; min-width: 0; max-width: 230px; padding: 8px 10px; border: 1.5px solid #e2e6f3; border-radius: 9px; background: #fafbff; font-size: .85rem; color: #2a2a3a; outline: none; }
     .map-row select:focus { border-color: #8a92b5; }
 
-    /* 사진 원본 라이트박스 (여러 장 세로 나열 · 화면 우측 스크롤바 · 전체 너비) */
-    .lightbox { position: fixed; inset: 0; background: #ffffff; display: none; z-index: 1000; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; touch-action: pan-y; -webkit-user-select: none; user-select: none; }
+    /* 사진 원본 라이트박스 (여러 장 세로 나열 · 원본 크기 그대로 · 화면보다 크면 드래그/스크롤 이동) */
+    .lightbox { position: fixed; inset: 0; background: #ffffff; display: none; z-index: 1000; overflow: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y pinch-zoom; -webkit-user-select: none; user-select: none; }
     .lightbox.open { display: block; }
-    .lb-scroll { width: 100%; min-height: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px 14px 70px; }
-    .lb-photos { width: 100%; display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; align-content: flex-start; gap: 12px; }
-    .lb-photos img { width: auto; max-width: 100%; height: auto; display: block; touch-action: pan-y pinch-zoom; border-radius: 10px; }
+    .lightbox.lb-dragging { cursor: grabbing !important; }
+    .lightbox.lb-dragging * { cursor: grabbing !important; }
+    .lb-scroll { min-width: 100%; width: max-content; min-height: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px 14px 70px; cursor: grab; }
+    .lb-photos { min-width: 100%; width: max-content; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; gap: 12px; }
+    .lb-photos img { width: auto; max-width: none; height: auto; display: block; touch-action: pan-x pan-y pinch-zoom; border-radius: 10px; }
     .lightbox .lb-close { position: fixed; top: 14px; right: 16px; width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(20,24,38,.55); color: #fff; font-size: 1.5rem; line-height: 1; cursor: pointer; z-index: 1001; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,.18); }
     .lightbox .lb-close:hover { background: rgba(20,24,38,.78); }
 
@@ -391,8 +393,8 @@
     .paste-area:focus { border-color: #7e94ff; outline: none; }
     .paste-area:empty::before { content: attr(data-ph); color: #a8afc6; }
     .paste-area img { max-width: 100%; height: auto; border-radius: 6px; }
-    .lb-scroll .lb-content { width: 100%; max-width: none; margin: 14px 0 0; color: #1f2740; line-height: 1.65; font-size: 1rem; word-break: break-word; text-align: center; }
-    .lb-scroll .lb-content img { max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 8px auto; }
+    .lb-scroll .lb-content { align-self: stretch; width: auto; max-width: none; margin: 14px 0 0; color: #1f2740; line-height: 1.65; font-size: 1rem; word-break: break-word; text-align: center; }
+    .lb-scroll .lb-content img { max-width: none; width: auto; height: auto; border-radius: 8px; display: block; margin: 8px auto; touch-action: pan-x pan-y pinch-zoom; }
     .lb-scroll .lb-content a { color: #3b6fe0; }
     .prow { background: #f5f7fc; border: 1px solid #e2e6f3; border-radius: 11px; padding: 9px; }
     .prow-top { display: flex; gap: 7px; margin-bottom: 6px; }
@@ -1606,6 +1608,21 @@
         var box = document.createElement('div');
         box.className = 'lb-content';
         box.innerHTML = sanitizeHtml(content);
+        // 붙여넣은 사진도 원본 크기 + 드래그 이동 대상: 네이티브 이미지 드래그 차단
+        var cimgs = box.querySelectorAll('img');
+        cimgs.forEach(function(ci){ ci.draggable = false; });
+        // 콘텐츠 박스 최소폭을 내부 최대 이미지 폭에 맞춤
+        // → 스크롤 영역이 사진 폭만큼 확보되어 좌측 잘림 없이 auto 마진 중앙정렬이 성립
+        function fitContentWidth(){
+          var mw = 0;
+          cimgs.forEach(function(ci){ if (ci.naturalWidth > mw) mw = ci.naturalWidth; });
+          box.style.minWidth = mw > 0 ? mw + 'px' : '';
+        }
+        cimgs.forEach(function(ci){
+          if (ci.complete) return;
+          ci.addEventListener('load', fitContentWidth);
+        });
+        fitContentWidth();
         box.addEventListener('click', function(ev){ ev.stopPropagation(); });
         sc.appendChild(box);
       }
@@ -1627,6 +1644,52 @@
     document.getElementById('lbClose').addEventListener('click', closeLightbox);
     document.getElementById('lightbox').addEventListener('click', function(e){ if (e.target.id === 'lightbox' || e.target.id === 'lbScroll') closeLightbox(); });
     document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeLightbox(); });
+    /* 라이트박스 마우스 드래그 이동 (사진이 화면보다 클 때 잡아서 끌기)
+       · 터치는 네이티브 스크롤 사용 (마우스만 처리)
+       · 8px 임계값 통과 후에만 setPointerCapture → 사진 링크/닫기 버튼 클릭 보존
+       · 드래그 직후 발생하는 click은 캡처 단계에서 1회 차단 → 배경클릭 닫힘/링크 오발동 방지 */
+    (function(){
+      var lb = document.getElementById('lightbox');
+      var dragging = false, moved = false, justDragged = false;
+      var sx = 0, sy = 0, sl = 0, st = 0, pid = null;
+      lb.addEventListener('pointerdown', function(e){
+        if (e.pointerType !== 'mouse' || e.button !== 0) return;
+        if (e.target.closest('.lb-close')) return;
+        dragging = true; moved = false; pid = e.pointerId;
+        sx = e.clientX; sy = e.clientY; sl = lb.scrollLeft; st = lb.scrollTop;
+      });
+      lb.addEventListener('pointermove', function(e){
+        if (!dragging || e.pointerId !== pid) return;
+        var dx = e.clientX - sx, dy = e.clientY - sy;
+        if (!moved && Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+        if (!moved){ moved = true; try{ lb.setPointerCapture(pid); }catch(_){} lb.classList.add('lb-dragging'); }
+        lb.scrollLeft = sl - dx;
+        lb.scrollTop  = st - dy;
+        e.preventDefault();
+      });
+      function endDrag(e){
+        if (!dragging) return;
+        if (e && pid !== null && e.pointerId !== pid) return;
+        dragging = false;
+        if (moved){
+          moved = false;
+          justDragged = true;
+          lb.classList.remove('lb-dragging');
+          try{ lb.releasePointerCapture(pid); }catch(_){}
+          setTimeout(function(){ justDragged = false; }, 0);
+        }
+        pid = null;
+      }
+      lb.addEventListener('pointerup', endDrag);
+      lb.addEventListener('pointercancel', endDrag);
+      // 라이트박스 내부 모든 이미지의 네이티브 드래그 차단 (붙여넣기 콘텐츠 등 동적 요소 포함 안전망)
+      lb.addEventListener('dragstart', function(e){
+        if (e.target && e.target.tagName === 'IMG') e.preventDefault();
+      });
+      lb.addEventListener('click', function(e){
+        if (justDragged){ e.stopPropagation(); e.preventDefault(); justDragged = false; }
+      }, true);
+    })();
     function openCodeModal() { document.getElementById('codeArea').value = buildCode(); document.getElementById('codeModal').classList.add('open'); }
     function closeCodeModal() { document.getElementById('codeModal').classList.remove('open'); }
     document.getElementById('codeBtn').addEventListener('click', openCodeModal);
