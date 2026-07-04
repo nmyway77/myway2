@@ -1190,7 +1190,7 @@
     const DIST_SIG = '';
     /* @CONFIG_END */
     const DATA_KIND = 'myway-index-v1';
-    const DATA_VERSION = '3';
+    const DATA_VERSION = '4';
     let _distChecked = false;
     function ensureDistFresh(){
       if(_distChecked || !IS_DIST) return; _distChecked = true;
@@ -1998,6 +1998,153 @@
             ]
           }
         ]
+      },
+      shopping: {
+        sections: [
+          {
+            label: '종합 오픈마켓',
+            sub: 'Open Market',
+            items: [
+              { ticker: '쿠팡',           ko: 'coupang.com',        url: 'https://www.coupang.com/' },
+              { ticker: '네이버쇼핑',     ko: 'shopping.naver.com', url: 'https://shopping.naver.com/' },
+              { ticker: 'G마켓',          ko: 'gmarket.co.kr',      url: 'https://www.gmarket.co.kr/' },
+              { ticker: '옥션',           ko: 'auction.co.kr',      url: 'https://www.auction.co.kr/' },
+              { ticker: '11번가',         ko: '11st.co.kr',         url: 'https://www.11st.co.kr/' },
+              { ticker: '롯데온',         ko: 'lotteon.com',        url: 'https://www.lotteon.com/' },
+              { ticker: 'SSG닷컴',        ko: 'ssg.com',            url: 'https://www.ssg.com/' },
+              { ticker: '인터파크쇼핑',   ko: 'shopping.interpark.com', url: 'https://shopping.interpark.com/' },
+              { ticker: '티몬',           ko: 'tmon.co.kr',         url: 'https://www.tmon.co.kr/' }
+            ]
+          },
+          {
+            label: '백화점 · 홈쇼핑',
+            sub: 'Dept & Home Shopping',
+            items: [
+              { ticker: '더현대닷컴',     ko: 'thehyundai.com',     url: 'https://www.thehyundai.com/' },
+              { ticker: '현대H몰',        ko: 'hmall.com',          url: 'https://www.hmall.com/' },
+              { ticker: 'GS샵',           ko: 'gsshop.com',         url: 'https://www.gsshop.com/' },
+              { ticker: 'CJ온스타일',     ko: 'cjonstyle.com',      url: 'https://www.cjonstyle.com/' },
+              { ticker: '롯데홈쇼핑',     ko: 'lotteimall.com',     url: 'https://www.lotteimall.com/' },
+              { ticker: 'NS홈쇼핑',       ko: 'nsmall.com',         url: 'https://www.nsmall.com/' },
+              { ticker: '홈앤쇼핑',       ko: 'hnsmall.com',        url: 'https://www.hnsmall.com/' },
+              { ticker: '공영쇼핑',       ko: 'gongyoungshop.kr',   url: 'https://www.gongyoungshop.kr/' }
+            ]
+          },
+          {
+            label: '패션',
+            sub: 'Fashion',
+            items: [
+              { ticker: '무신사',         ko: 'musinsa.com',        url: 'https://www.musinsa.com/' },
+              { ticker: '29CM',           ko: '29cm.co.kr',         url: 'https://www.29cm.co.kr/' },
+              { ticker: 'W컨셉',          ko: 'wconcept.co.kr',     url: 'https://www.wconcept.co.kr/' },
+              { ticker: '지그재그',       ko: 'zigzag.kr',          url: 'https://zigzag.kr/' },
+              { ticker: '에이블리',       ko: 'a-bly.com',          url: 'https://a-bly.com/' },
+              { ticker: 'LF몰',           ko: 'lfmall.co.kr',       url: 'https://www.lfmall.co.kr/' },
+              { ticker: 'SSF샵',          ko: 'ssfshop.com',        url: 'https://www.ssfshop.com/' },
+              { ticker: '코오롱몰',       ko: 'kolonmall.com',      url: 'https://www.kolonmall.com/' },
+              { ticker: '하프클럽',       ko: 'halfclub.com',       url: 'https://www.halfclub.com/' }
+            ]
+          },
+          {
+            label: '명품 · 리셀',
+            sub: 'Luxury & Resell',
+            items: [
+              { ticker: 'KREAM',          ko: 'kream.co.kr',        url: 'https://kream.co.kr/' },
+              { ticker: '발란',           ko: 'balaan.co.kr',       url: 'https://www.balaan.co.kr/' },
+              { ticker: '트렌비',         ko: 'trenbe.com',         url: 'https://www.trenbe.com/' },
+              { ticker: '머스트잇',       ko: 'mustit.co.kr',       url: 'https://www.mustit.co.kr/' }
+            ]
+          },
+          {
+            label: '뷰티',
+            sub: 'Beauty',
+            items: [
+              { ticker: '올리브영',       ko: 'oliveyoung.co.kr',   url: 'https://www.oliveyoung.co.kr/' },
+              { ticker: '아모레몰',       ko: 'amoremall.com',      url: 'https://www.amoremall.com/' },
+              { ticker: '이니스프리',     ko: 'innisfree.com',      url: 'https://www.innisfree.com/kr/ko/' },
+              { ticker: '에뛰드',         ko: 'etude.com',          url: 'https://www.etude.com/' },
+              { ticker: '화해',           ko: 'hwahae.co.kr',       url: 'https://www.hwahae.co.kr/' }
+            ]
+          },
+          {
+            label: '식품 · 신선',
+            sub: 'Fresh Food',
+            items: [
+              { ticker: '마켓컬리',       ko: 'kurly.com',          url: 'https://www.kurly.com/' },
+              { ticker: '오아시스마켓',   ko: 'oasis.co.kr',        url: 'https://www.oasis.co.kr/' },
+              { ticker: '이마트몰',       ko: 'emart.ssg.com',      url: 'https://emart.ssg.com/' },
+              { ticker: '홈플러스',       ko: 'homeplus.co.kr',     url: 'https://www.homeplus.co.kr/' },
+              { ticker: '정육각',         ko: 'jeongyookgak.com',   url: 'https://www.jeongyookgak.com/' },
+              { ticker: '더반찬',         ko: 'thebanchan.co.kr',   url: 'https://www.thebanchan.co.kr/' }
+            ]
+          },
+          {
+            label: '가전 · 디지털',
+            sub: 'Electronics',
+            items: [
+              { ticker: '다나와',         ko: 'danawa.com',         url: 'https://www.danawa.com/' },
+              { ticker: '에누리',         ko: 'enuri.com',          url: 'https://www.enuri.com/' },
+              { ticker: '롯데하이마트',   ko: 'himart.co.kr',       url: 'https://www.himart.co.kr/' },
+              { ticker: '전자랜드',       ko: 'etland.co.kr',       url: 'https://www.etland.co.kr/' },
+              { ticker: '삼성스토어',     ko: 'samsung.com',        url: 'https://www.samsung.com/sec/' },
+              { ticker: 'LG전자',         ko: 'lge.co.kr',          url: 'https://www.lge.co.kr/' },
+              { ticker: '애플',           ko: 'apple.com/kr',       url: 'https://www.apple.com/kr/' }
+            ]
+          },
+          {
+            label: '가구 · 인테리어',
+            sub: 'Living',
+            items: [
+              { ticker: '오늘의집',       ko: 'ohou.se',            url: 'https://ohou.se/' },
+              { ticker: '이케아',         ko: 'ikea.com/kr',        url: 'https://www.ikea.com/kr/ko/' },
+              { ticker: '한샘몰',         ko: 'mall.hanssem.com',   url: 'https://mall.hanssem.com/' },
+              { ticker: '현대리바트',     ko: 'hyundailivart.co.kr', url: 'https://www.hyundailivart.co.kr/' },
+              { ticker: '일룸',           ko: 'iloom.com',          url: 'https://www.iloom.com/' }
+            ]
+          },
+          {
+            label: '스포츠 · 신발',
+            sub: 'Sports',
+            items: [
+              { ticker: '나이키',         ko: 'nike.com/kr',        url: 'https://www.nike.com/kr/' },
+              { ticker: '아디다스',       ko: 'adidas.co.kr',       url: 'https://www.adidas.co.kr/' },
+              { ticker: '뉴발란스',       ko: 'nbkorea.com',        url: 'https://www.nbkorea.com/' },
+              { ticker: 'ABC마트',        ko: 'abcmart.a-rt.com',   url: 'https://abcmart.a-rt.com/' }
+            ]
+          },
+          {
+            label: '도서',
+            sub: 'Books',
+            items: [
+              { ticker: '예스24',         ko: 'yes24.com',          url: 'https://www.yes24.com/' },
+              { ticker: '교보문고',       ko: 'kyobobook.co.kr',    url: 'https://www.kyobobook.co.kr/' },
+              { ticker: '알라딘',         ko: 'aladin.co.kr',       url: 'https://www.aladin.co.kr/' }
+            ]
+          },
+          {
+            label: '중고거래',
+            sub: 'Secondhand',
+            items: [
+              { ticker: '당근',           ko: 'daangn.com',         url: 'https://www.daangn.com/' },
+              { ticker: '번개장터',       ko: 'bunjang.co.kr',      url: 'https://m.bunjang.co.kr/' },
+              { ticker: '중고나라',       ko: 'joongna.com',        url: 'https://web.joongna.com/' }
+            ]
+          },
+          {
+            label: '해외직구',
+            sub: 'Global',
+            items: [
+              { ticker: '아마존',         ko: 'amazon.com',         url: 'https://www.amazon.com/' },
+              { ticker: '알리익스프레스', ko: 'aliexpress.com',     url: 'https://ko.aliexpress.com/' },
+              { ticker: '테무',           ko: 'temu.com',           url: 'https://www.temu.com/kr' },
+              { ticker: '쉬인',           ko: 'shein.com',          url: 'https://kr.shein.com/' },
+              { ticker: '아이허브',       ko: 'iherb.com',          url: 'https://kr.iherb.com/' },
+              { ticker: '이베이',         ko: 'ebay.com',           url: 'https://www.ebay.com/' },
+              { ticker: '라쿠텐',         ko: 'rakuten.co.jp',      url: 'https://www.rakuten.co.jp/' },
+              { ticker: '타오바오',       ko: 'taobao.com',         url: 'https://world.taobao.com/' }
+            ]
+          }
+        ]
       }
     };
     /* @DATA_END */
@@ -2031,7 +2178,7 @@
     let curTab = 'daily';
     let editMode = false, toolOpen = false;
     /* @TABSMETA_START */
-    const DEFAULT_TABS_META = [{id:'daily',label:'생활정보'},{id:'radio',label:'라디오'},{id:'livetv',label:'LIVE TV'},{id:'portal',label:'포털'},{id:'news',label:'뉴스'},{id:'bbs',label:'BBS'},{id:'broadcast',label:'방송사'},{id:'magazine',label:'잡지'},{id:'cafe',label:'카페'},{id:'blog',label:'블로그'},{id:'movie',label:'영화'},{id:'music',label:'음악'}];
+    const DEFAULT_TABS_META = [{id:'daily',label:'생활정보'},{id:'radio',label:'라디오'},{id:'livetv',label:'LIVE TV'},{id:'portal',label:'포털'},{id:'news',label:'뉴스'},{id:'bbs',label:'BBS'},{id:'broadcast',label:'방송사'},{id:'magazine',label:'잡지'},{id:'cafe',label:'카페'},{id:'blog',label:'블로그'},{id:'movie',label:'영화'},{id:'music',label:'음악'},{id:'shopping',label:'쇼핑몰'}];
     /* @TABSMETA_END */
 
     /* ============ 렌더 ============ */
@@ -2254,7 +2401,12 @@
           if(!tb && !mt){ alert('읽을 수 있는 데이터가 없어요.'); return; }
           if(foreignKind){ if(!confirm('다른 도구에서 만든 JSON일 수 있어요. (종류: '+foreignKind+')\n그래도 가져올까요?')) return; }
           var msg=[];
-          if(mt){ TABS_META=mt; saveMeta(); if(!TABS_META.some(t=>t.id===curTab)) curTab=(TABS_META[0]&&TABS_META[0].id)||'daily'; renderNav(); msg.push('네비 '+TABS_META.length+'개'); }
+          if(mt){
+            // 이전 버전 JSON 호환: 이 파일의 기본 네비에 새로 생긴 탭(예: 쇼핑몰)이 가져온 네비에 없으면 뒤에 보강
+            var added=0;
+            DEFAULT_TABS_META.forEach(function(d){ if(!mt.some(function(t){ return t.id===d.id; })){ mt.push({id:d.id,label:d.label}); added++; } });
+            TABS_META=mt; saveMeta(); if(!TABS_META.some(t=>t.id===curTab)) curTab=(TABS_META[0]&&TABS_META[0].id)||'daily'; renderNav(); msg.push('네비 '+TABS_META.length+'개'+(added?(' (기본탭 '+added+'개 보강)'):''));
+          }
           if(tb){ Object.keys(tb).forEach(k=>{ tabs[k]=tb[k]; }); saveTabs(); msg.push('탭 '+Object.keys(tb).length+'개'); }
           renderTab(curTab);
           alert('가져왔어요. '+msg.join(' · '));
@@ -2344,7 +2496,20 @@
 
     /* ===== 상단 네비(탭) 데이터/편집 ===== */
     function coerceMeta(p){ if(!Array.isArray(p)) return null; var out=p.filter(t=>t&&typeof t==='object'&&t.id).map(t=>({id:String(t.id),label:String(t.label||t.id)})); return out.length?out:null; }
-    function loadMeta(){ ensureDistFresh(); try{ var raw=localStorage.getItem(STORE_KEY+'_tabsmeta'); if(raw){ var c=coerceMeta(JSON.parse(raw)); if(c) return c; } }catch(_){} return DEFAULT_TABS_META.map(t=>({id:t.id,label:t.label})); }
+    function loadMeta(){
+      ensureDistFresh();
+      try{ var raw=localStorage.getItem(STORE_KEY+'_tabsmeta'); if(raw){ var c=coerceMeta(JSON.parse(raw)); if(c){
+        // 버전 업 시 1회: 기본 네비에 새로 생긴 탭(예: 쇼핑몰)을 저장본 뒤에 추가 (기존 순서·이름은 유지)
+        try{ if(localStorage.getItem(STORE_KEY+'_mv') !== DATA_VERSION){
+          DEFAULT_TABS_META.forEach(function(d){ if(!c.some(function(t){ return t.id===d.id; })) c.push({id:d.id,label:d.label}); });
+          localStorage.setItem(STORE_KEY+'_tabsmeta', JSON.stringify(c));
+          localStorage.setItem(STORE_KEY+'_mv', DATA_VERSION);
+        } }catch(_){}
+        return c;
+      } } }catch(_){}
+      try{ localStorage.setItem(STORE_KEY+'_mv', DATA_VERSION); }catch(_){}
+      return DEFAULT_TABS_META.map(t=>({id:t.id,label:t.label}));
+    }
     function saveMeta(){ try{ localStorage.setItem(STORE_KEY+'_tabsmeta', JSON.stringify(TABS_META)); }catch(_){} }
     let TABS_META = loadMeta();
     function selectTab(id){
