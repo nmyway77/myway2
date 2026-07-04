@@ -1186,10 +1186,10 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayIndexV1_dist";
-    const DIST_SIG = "sig1783168823727";
+    const DIST_SIG = "sig1783198508053";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-index-v1';
-    const DATA_VERSION = '3';
+    const DATA_VERSION = '4';
     let _distChecked = false;
     function ensureDistFresh(){
       if(_distChecked || !IS_DIST) return; _distChecked = true;
@@ -1914,6 +1914,7 @@
     /* @TABSMETA_START */
     const DEFAULT_TABS_META = [
       { id:"daily", label:"즐겨찾기" },
+      { id:"shopping", label:"쇼핑몰" },
       { id:"radio", label:"라디오" },
       { id:"livetv", label:"LIVE TV" },
       { id:"portal", label:"포털" },
@@ -1925,7 +1926,6 @@
       { id:"blog", label:"블로그" },
       { id:"movie", label:"영화" },
       { id:"music", label:"음악" },
-      { id:"shopping", label:"쇼핑몰" },
     ];
     /* @TABSMETA_END */
 
@@ -2149,7 +2149,12 @@
           if(!tb && !mt){ alert('읽을 수 있는 데이터가 없어요.'); return; }
           if(foreignKind){ if(!confirm('다른 도구에서 만든 JSON일 수 있어요. (종류: '+foreignKind+')\n그래도 가져올까요?')) return; }
           var msg=[];
-          if(mt){ TABS_META=mt; saveMeta(); if(!TABS_META.some(t=>t.id===curTab)) curTab=(TABS_META[0]&&TABS_META[0].id)||'daily'; renderNav(); msg.push('네비 '+TABS_META.length+'개'); }
+          if(mt){
+            // 이전 버전 JSON 호환: 이 파일의 기본 네비에 새로 생긴 탭(예: 쇼핑몰)이 가져온 네비에 없으면 뒤에 보강
+            var added=0;
+            DEFAULT_TABS_META.forEach(function(d){ if(!mt.some(function(t){ return t.id===d.id; })){ mt.push({id:d.id,label:d.label}); added++; } });
+            TABS_META=mt; saveMeta(); if(!TABS_META.some(t=>t.id===curTab)) curTab=(TABS_META[0]&&TABS_META[0].id)||'daily'; renderNav(); msg.push('네비 '+TABS_META.length+'개'+(added?(' (기본탭 '+added+'개 보강)'):''));
+          }
           if(tb){ Object.keys(tb).forEach(k=>{ tabs[k]=tb[k]; }); saveTabs(); msg.push('탭 '+Object.keys(tb).length+'개'); }
           renderTab(curTab);
           alert('가져왔어요. '+msg.join(' · '));
@@ -2239,7 +2244,20 @@
 
     /* ===== 상단 네비(탭) 데이터/편집 ===== */
     function coerceMeta(p){ if(!Array.isArray(p)) return null; var out=p.filter(t=>t&&typeof t==='object'&&t.id).map(t=>({id:String(t.id),label:String(t.label||t.id)})); return out.length?out:null; }
-    function loadMeta(){ ensureDistFresh(); try{ var raw=localStorage.getItem(STORE_KEY+'_tabsmeta'); if(raw){ var c=coerceMeta(JSON.parse(raw)); if(c) return c; } }catch(_){} return DEFAULT_TABS_META.map(t=>({id:t.id,label:t.label})); }
+    function loadMeta(){
+      ensureDistFresh();
+      try{ var raw=localStorage.getItem(STORE_KEY+'_tabsmeta'); if(raw){ var c=coerceMeta(JSON.parse(raw)); if(c){
+        // 버전 업 시 1회: 기본 네비에 새로 생긴 탭(예: 쇼핑몰)을 저장본 뒤에 추가 (기존 순서·이름은 유지)
+        try{ if(localStorage.getItem(STORE_KEY+'_mv') !== DATA_VERSION){
+          DEFAULT_TABS_META.forEach(function(d){ if(!c.some(function(t){ return t.id===d.id; })) c.push({id:d.id,label:d.label}); });
+          localStorage.setItem(STORE_KEY+'_tabsmeta', JSON.stringify(c));
+          localStorage.setItem(STORE_KEY+'_mv', DATA_VERSION);
+        } }catch(_){}
+        return c;
+      } } }catch(_){}
+      try{ localStorage.setItem(STORE_KEY+'_mv', DATA_VERSION); }catch(_){}
+      return DEFAULT_TABS_META.map(t=>({id:t.id,label:t.label}));
+    }
     function saveMeta(){ try{ localStorage.setItem(STORE_KEY+'_tabsmeta', JSON.stringify(TABS_META)); }catch(_){} }
     let TABS_META = loadMeta();
     function selectTab(id){
