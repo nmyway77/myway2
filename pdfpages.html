@@ -544,8 +544,15 @@ footer a{color:var(--accent1);text-decoration:none;font-weight:600}
     <div class="drop" id="split-drop">
       <div class="ico">⚡</div>
       <div class="big">PDF 한 개를 끌어다 놓거나 클릭해서 선택</div>
-      <div class="small">용량이 큰 PDF를 5등분·10등분 등 원하는 개수로 나눠서 저장해요 · 미리보기 없이 바로 처리돼 대용량도 빨라요</div>
+      <div class="small">용량이 큰 PDF를 5등분·10등분 또는 1쪽씩 낱장으로 나눠서 저장해요 · 미리보기 없이 바로 처리돼 대용량도 빨라요</div>
       <input type="file" id="split-input" accept="application/pdf,.pdf" hidden>
+    </div>
+
+    <div class="split-opts" id="split-each-box" style="display:none">
+      <span class="lbl">파일을 올렸으면 버튼 한 번으로 끝 —</span>
+      <button class="btn primary" id="btn-split-each">📑 전체분할 (1쪽씩 모두 나누기)</button>
+      <span class="spacer"></span>
+      <span class="hint mono" id="split-count"></span>
     </div>
 
     <div class="split-opts" id="split-opts" style="display:none">
@@ -560,7 +567,6 @@ footer a{color:var(--accent1);text-decoration:none;font-weight:600}
       <button class="preset-btn" data-n="10">10</button>
       <input type="number" class="split-num" id="split-num" min="1" value="5" spellcheck="false">
       <span class="spacer"></span>
-      <span class="hint mono" id="split-count"></span>
       <button class="btn primary" id="btn-split">⚡ 분할 실행</button>
     </div>
 
@@ -1340,6 +1346,7 @@ let splitParts=[]; // [{no,from,to,bytes,name}]
 const splitDrop=document.getElementById('split-drop');
 const splitInput=document.getElementById('split-input');
 const splitOpts=document.getElementById('split-opts');
+const splitEachBox=document.getElementById('split-each-box');
 const splitNum=document.getElementById('split-num');
 const splitPreview=document.getElementById('split-preview');
 const splitResults=document.getElementById('split-results');
@@ -1360,7 +1367,7 @@ splitDrop.addEventListener('drop',e=>{
 async function loadSplitFile(file){
   splitParts=[];splitResults.innerHTML='';splitDlbar.style.display='none';
   splitPreview.innerHTML='';
-  splitOpts.style.display='none';
+  splitOpts.style.display='none';splitEachBox.style.display='none';
   setStatus('split-status','busy','"'+file.name+'" 파일을 읽는 중이에요…');
   setProg('split-prog',15);
   try{
@@ -1371,7 +1378,7 @@ async function loadSplitFile(file){
     const doc=await PDFDocument.load(splitBytes,{ignoreEncryption:true});
     splitTotal=doc.getPageCount();
     setProg('split-prog',100);
-    splitOpts.style.display='flex';
+    splitOpts.style.display='flex';splitEachBox.style.display='flex';
     document.getElementById('split-count').textContent=
       '총 '+splitTotal+'쪽 · '+fmtSize(file.size);
     renderSplitPreview();
@@ -1455,14 +1462,16 @@ function renderSplitPreview(){
   });
 }
 
-async function performSplit(){
+async function performSplit(customPlan){
   if(!splitBytes)return;
-  const plan=splitPlan();
+  const plan=Array.isArray(customPlan)?customPlan:splitPlan();
   if(!plan.length){setStatus('split-status','bad','분할 개수를 확인해 주세요.');return;}
   const btn=document.getElementById('btn-split');
-  btn.disabled=true;
+  const btnEach=document.getElementById('btn-split-each');
+  btn.disabled=true;btnEach.disabled=true;
   splitParts=[];splitResults.innerHTML='';splitDlbar.style.display='none';
   const base=splitName.replace(/\.pdf$/i,'');
+  const onePer=plan.every(r=>r.from===r.to); /* 1쪽씩 분할이면 파일명에 쪽 번호만 */
   setStatus('split-status','busy',plan.length+'개 파일로 나누는 중이에요…');
   setProg('split-prog',3);
   try{
@@ -1477,7 +1486,9 @@ async function performSplit(){
       const bytes=await out.save();
       splitParts.push({
         no:i+1,from:r.from,to:r.to,bytes,
-        name:base+'-'+(i+1)+'of'+plan.length+'(p'+r.from+'-'+r.to+').pdf'
+        name:onePer
+          ? base+'-p'+String(r.from).padStart(String(splitTotal).length,'0')+'.pdf'
+          : base+'-'+(i+1)+'of'+plan.length+'(p'+r.from+'-'+r.to+').pdf'
       });
       setProg('split-prog',Math.round(((i+1)/plan.length)*100));
       /* UI가 멈추지 않도록 잠깐 양보 */
@@ -1488,11 +1499,20 @@ async function performSplit(){
   }catch(err){
     setStatus('split-status','bad','분할 중 오류가 발생했어요. 파일이 손상됐거나 메모리가 부족할 수 있어요.');
   }finally{
-    btn.disabled=false;
+    btn.disabled=false;btnEach.disabled=false;
     setTimeout(()=>setProg('split-prog',null),800);
   }
 }
-document.getElementById('btn-split').addEventListener('click',performSplit);
+document.getElementById('btn-split').addEventListener('click',()=>performSplit());
+
+/* 1쪽씩 전체 분할 — 버튼 한 번으로 모든 페이지를 각각의 PDF로 */
+document.getElementById('btn-split-each').addEventListener('click',()=>{
+  if(!splitBytes||!splitTotal)return;
+  if(splitTotal>300&&!window.confirm('총 '+splitTotal+'쪽이라 파일이 '+splitTotal+'개 만들어져요. 계속할까요?'))return;
+  const plan=[];
+  for(let p=1;p<=splitTotal;p++)plan.push({from:p,to:p});
+  performSplit(plan);
+});
 
 function renderSplitResults(){
   splitPreview.innerHTML='';
@@ -1502,7 +1522,7 @@ function renderSplitResults(){
     row.className='part-row';
     row.innerHTML=
       '<span class="pnum">'+p.no+' / '+splitParts.length+'</span>'+
-      '<span class="prange">p.'+p.from+' – p.'+p.to+'</span>'+
+      '<span class="prange">'+(p.from===p.to?'p.'+p.from:'p.'+p.from+' – p.'+p.to)+'</span>'+
       '<span class="pmeta">'+(p.to-p.from+1)+'쪽 · '+fmtSize(p.bytes.length)+'</span>'+
       '<span class="spacer"></span>';
     const dl=document.createElement('button');
