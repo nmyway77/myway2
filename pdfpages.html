@@ -1001,9 +1001,9 @@ function makeMarquee(opt){
     const p=gridPos(e);
     startX=p.x;startY=p.y;lastX=p.x;lastY=p.y;
     cacheRects();
-    /* 포인터 캡처: 셀(캔버스) 위에서 시작해도 네이티브 드래그/선택에 가로채이지 않게 */
+    /* 포인터 캡처는 여기서 하지 않음 — 조기 캡처 시 셀 클릭(토글)이 차단됨.
+       실제 드래그로 판정된 뒤(pointermove 임계값 통과) 캡처한다. */
     activePointerId=e.pointerId;
-    try{grid.setPointerCapture(e.pointerId);}catch(_){}
     e.preventDefault();
   });
 
@@ -1014,6 +1014,8 @@ function makeMarquee(opt){
     if(!state.moved){
       if(Math.abs(p.x-startX)<THRESH&&Math.abs(p.y-startY)<THRESH)return;
       state.moved=true;
+      /* 진짜 드래그로 확정된 지금 캡처 — 셀 클릭 이벤트는 살아 있음 */
+      try{if(activePointerId!=null)grid.setPointerCapture(activePointerId);}catch(_){}
       getBox().style.display='block';
     }
     if(!raf)raf=requestAnimationFrame(paint); /* 프레임당 1회만 갱신 */
@@ -1210,7 +1212,7 @@ async function loadExtFile(file){
     doc.destroy();
     extBar.style.display='flex';
     updateExtCount();
-    setStatus('ext-status','good','총 '+extTotal+'쪽이에요. 추출할 페이지를 클릭하거나 드래그로 선택한 뒤, 추출 버튼을 눌러 주세요.');
+    setStatus('ext-status','good','총 '+extTotal+'쪽이에요. 클릭·드래그로 선택하고, 선택된 페이지(✓ 추출)를 다시 클릭하면 그 페이지만 해제돼요.');
   }catch(err){
     setStatus('ext-status','bad','PDF를 열지 못했어요. 암호가 걸려 있거나 손상된 파일일 수 있어요.');
     extBytes=null;
