@@ -87,6 +87,29 @@
     .yt-frame-box{position:absolute;inset:0;background:#000;overflow:hidden;}
     iframe,video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;display:block;}
 
+    /* ===== 재생목록 사이드 패널 ===== */
+    .pl-wrap{position:absolute;inset:0;display:flex;background:#000;}
+    .pl-main{flex:1;position:relative;min-width:0;}
+    .pl-main iframe{position:absolute;inset:0;width:100% !important;height:100% !important;}
+    .pl-side{width:320px;flex:none;background:#0f1115;border-left:1px solid #23262d;display:flex;flex-direction:column;}
+    .pl-side.hide{display:none;}
+    .pl-head{flex:none;padding:10px 14px;color:#eee;font-size:13px;font-weight:700;border-bottom:1px solid #23262d;display:flex;justify-content:space-between;align-items:center;}
+    .pl-head .cnt{color:#8a8f99;font-weight:600;font-size:12px;}
+    .pl-items{flex:1;overflow-y:auto;scrollbar-width:thin;}
+    .pl-item{display:flex;gap:8px;padding:8px 10px;cursor:pointer;align-items:center;}
+    .pl-item:hover{background:#1a1e26;}
+    .pl-item.cur{background:#26303f;}
+    .pl-item img{width:84px;height:47px;object-fit:cover;border-radius:6px;flex:none;background:#222;position:static;display:block;}
+    .pl-item .ti{font-size:12px;color:#ddd;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-all;}
+    .pl-item.cur .ti{color:#fff;font-weight:700;}
+    .pl-item .no{flex:none;width:18px;text-align:center;color:#8a8f99;font-size:11px;}
+    .pl-item.cur .no{color:#4da3ff;}
+    .pl-toggle{position:absolute;top:10px;right:10px;z-index:5;border:0;border-radius:8px;background:rgba(20,22,28,.78);color:#fff;font-size:12px;font-weight:700;padding:7px 11px;cursor:pointer;}
+    .pl-toggle:hover{background:rgba(40,46,58,.9);}
+    @media(max-width:760px){
+      .pl-side{position:absolute;right:0;top:0;bottom:0;width:min(78vw,320px);z-index:4;box-shadow:-8px 0 24px rgba(0,0,0,.5);}
+    }
+
     /* 전체화면 버튼 */
     .expand-btn{position:absolute;right:16px;bottom:16px;z-index:60;width:42px;height:42px;border:none;border-radius:11px;cursor:pointer;background:rgba(20,18,16,.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.35);transition:.16s;opacity:.85;}
     .expand-btn:hover{background:rgba(20,18,16,.8);opacity:1;transform:translateY(-1px);}
@@ -1272,10 +1295,26 @@
     var id = getYouTubeId(v.url);
     return id ? 'https://i.ytimg.com/vi/'+id+'/hqdefault.jpg' : '';
   }
+  function getYouTubeList(input){
+    /* 재생목록(list=...) 파라미터 추출 — 있으면 재생목록 전체가 이어서 자동재생됨 */
+    var m = (input||'').match(/[?&]list=([A-Za-z0-9_-]+)/);
+    return m ? m[1] : null;
+  }
   function parseToEmbed(input){
     input = (input||'').trim();
     var id = getYouTubeId(input);
-    if (id) return {type:'youtube', code:'https://www.youtube.com/embed/'+id+'?autoplay=1&mute=1&playsinline=1&enablejsapi=1'};
+    var list = getYouTubeList(input);
+    var baseQ = 'autoplay=1&mute=1&playsinline=1&enablejsapi=1';
+    if (id){
+      /* URL에 재생목록(list=)이 붙어 있으면 그대로 살려서
+         현재 곡이 끝나면 목록의 다음 곡이 자동으로 이어 재생되게 함 */
+      var q = baseQ + (list ? '&list='+list : '');
+      return {type:'youtube', code:'https://www.youtube.com/embed/'+id+'?'+q};
+    }
+    if (list){
+      /* 곡 없이 재생목록 주소만 넣은 경우 → 목록 첫 곡부터 자동재생 */
+      return {type:'youtube', code:'https://www.youtube.com/embed/videoseries?list='+list+'&'+baseQ};
+    }
     if (input.match(/^https:\/\/www\.youtube\.com\/embed\/[a-zA-Z0-9_-]{11}/)){
       var eu = input.indexOf('autoplay=1')>=0 ? input : input + (input.indexOf('?')>=0?'&autoplay=1':'?autoplay=1');
       if (eu.indexOf('enablejsapi=1')<0) eu += '&enablejsapi=1';
@@ -1583,15 +1622,112 @@
     document.addEventListener('keydown', firstTouch, true);
   })();
 
+  /* ===== 유튜브 IFrame API + 재생목록 패널 ===== */
+  var ytPlayer = null;
+  var _ytApiCbs = [], _ytApiLoading = false;
+  function ensureYTApi(ok, fail){
+    if (window.YT && window.YT.Player){ ok(); return; }
+    _ytApiCbs.push(ok);
+    if (_ytApiLoading) return;
+    _ytApiLoading = true;
+    window.onYouTubeIframeAPIReady = function(){
+      var cbs = _ytApiCbs; _ytApiCbs = [];
+      cbs.forEach(function(f){ try{ f(); }catch(e){} });
+    };
+    var s = document.createElement('script');
+    s.src = 'https://www.youtube.com/iframe_api';
+    s.onerror = function(){ _ytApiLoading = false; _ytApiCbs = []; if (fail) fail(); };
+    document.head.appendChild(s);
+  }
+  var _plTitleCache = {};
+  function plFetchTitle(id, el){
+    if (_plTitleCache[id]){ el.textContent = _plTitleCache[id]; return; }
+    /* 곡 제목 조회 (noembed) — 실패해도 썸네일과 번호로 구분 가능 */
+    fetch('https://noembed.com/embed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D'+id)
+      .then(function(r){ return r.json(); })
+      .then(function(j){ if (j && j.title){ _plTitleCache[id] = j.title; el.textContent = j.title; } })
+      .catch(function(){});
+  }
+  function plHighlight(){
+    if (!ytPlayer || !ytPlayer.getPlaylistIndex) return;
+    var idx = -1; try{ idx = ytPlayer.getPlaylistIndex(); }catch(e){}
+    var wrap = document.getElementById('plItems'); if (!wrap) return;
+    Array.prototype.forEach.call(wrap.children, function(ch, i){ ch.classList.toggle('cur', i===idx); });
+    var cur = wrap.children[idx];
+    if (cur){ try{ cur.scrollIntoView({block:'nearest'}); }catch(e){} }
+  }
+  function buildPlPanel(tries){
+    var wrap = document.getElementById('plItems'); if (!wrap || !ytPlayer) return;
+    var ids = []; try{ ids = ytPlayer.getPlaylist() || []; }catch(e){}
+    if (!ids.length){ if ((tries||0) < 10) setTimeout(function(){ buildPlPanel((tries||0)+1); }, 700); return; }
+    var cnt = document.getElementById('plCount'); if (cnt) cnt.textContent = ids.length + '곡';
+    wrap.innerHTML = '';
+    ids.forEach(function(id, i){
+      var it = document.createElement('div'); it.className = 'pl-item';
+      it.innerHTML = '<span class="no">'+(i+1)+'</span><img loading="lazy" src="https://i.ytimg.com/vi/'+id+'/mqdefault.jpg" alt=""><span class="ti">곡 '+(i+1)+'</span>';
+      it.addEventListener('click', function(){
+        try{ ytPlayer.playVideoAt(i); ytPlayer.unMute(); ytPlayer.setVolume(DEFAULT_VOLUME); }catch(e){}
+      });
+      wrap.appendChild(it);
+      plFetchTitle(id, it.querySelector('.ti'));
+    });
+    plHighlight();
+  }
+  function mountYouTube(box, code){
+    var vid = (code.match(/embed\/([A-Za-z0-9_-]{11})/)||[])[1] || null;
+    var lid = (code.match(/[?&]list=([A-Za-z0-9_-]+)/)||[])[1] || null;
+    function plainIframe(){
+      box.innerHTML = '<iframe src="'+code+'" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
+      autoUnmute(box.querySelector('iframe'), 'youtube');
+    }
+    if (!lid){ plainIframe(); return; }   /* 단일 곡은 기존 방식 그대로 */
+    /* 재생목록: 플레이어 + 우측 곡 리스트 패널 */
+    box.innerHTML =
+      '<div class="pl-wrap">'+
+        '<div class="pl-main" id="plMain"><div id="plHost"></div>'+
+          '<button type="button" class="pl-toggle" id="plToggle">♪ 목록</button>'+
+        '</div>'+
+        '<div class="pl-side" id="plSide">'+
+          '<div class="pl-head"><span>재생목록</span><span class="cnt" id="plCount"></span></div>'+
+          '<div class="pl-items" id="plItems"></div>'+
+        '</div>'+
+      '</div>';
+    var tg = document.getElementById('plToggle');
+    if (tg) tg.addEventListener('click', function(){
+      var sd = document.getElementById('plSide'); if (sd) sd.classList.toggle('hide');
+    });
+    /* 모바일(좁은 화면)은 목록을 접어둔 상태로 시작 */
+    if (window.innerWidth <= 760){ var sd0 = document.getElementById('plSide'); if (sd0) sd0.classList.add('hide'); }
+    ensureYTApi(function(){
+      var host = document.getElementById('plHost'); if (!host) return;
+      try{
+        ytPlayer = new YT.Player('plHost', {
+          width:'100%', height:'100%',
+          videoId: vid || undefined,
+          playerVars: { autoplay:1, mute:1, playsinline:1, listType:'playlist', list:lid },
+          events: {
+            onReady: function(e){
+              try{ e.target.setVolume(DEFAULT_VOLUME); e.target.unMute(); e.target.playVideo(); }catch(err){}
+              setTimeout(function(){ buildPlPanel(0); }, 500);
+            },
+            onStateChange: function(){ plHighlight(); }
+          }
+        });
+      }catch(e){ plainIframe(); }
+    }, plainIframe);
+  }
   function renderMain(){
     if (groupModes[currentGroup]==='builder') return;
     var v = (selectedIdx!=null && videos[selectedIdx]) ? videos[selectedIdx] : null;
     var box = document.getElementById('ytFrameBox');
+    if (ytPlayer){ try{ ytPlayer.destroy(); }catch(e){} ytPlayer = null; }
     if (v){
       var p = parseToEmbed(v.url);
-      if (p.type==='youtube' || p.type==='vimeo' || p.type==='link'){
+      if (p.type==='youtube'){
+        mountYouTube(box, p.code);
+      } else if (p.type==='vimeo' || p.type==='link'){
         box.innerHTML = '<iframe src="'+p.code+'" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
-        if (p.type==='youtube' || p.type==='vimeo') autoUnmute(box.querySelector('iframe'), p.type);
+        if (p.type==='vimeo') autoUnmute(box.querySelector('iframe'), p.type);
       } else if (p.type==='video'){
         box.innerHTML = '<video src="'+p.code+'" controls autoplay playsinline></video>';
         var vid = box.querySelector('video');
