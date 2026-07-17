@@ -765,14 +765,14 @@
         <button class="danger" onclick="clearAll()">전체삭제</button>
       </div>
     </div>
-    <div class="video-list" id="videoList"><div class="video-card"><div class="card-media"><img class="card-img" alt="" referrerpolicy="no-referrer" src="https://i.ytimg.com/vi/kMRLzSQorK0/hqdefault.jpg"><div class="card-name">서울역</div><div class="play-flag"></div><button class="edit-btn" title="수정"><svg class="edit-icon" viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 0 1 2.828 2.828l-8.586 8.586-3.536.707.707-3.536 8.587-8.585zm2.121-2.121a4 4 0 0 0-5.657 0l-8.586 8.586A2 2 0 0 0 1 12.414V17a1 1 0 0 0 1 1h4.586a2 2 0 0 0 1.414-.586l8.586-8.586a4 4 0 0 0 0-5.657z"></path></svg></button></div></div><div class="video-card active"><div class="card-media"><img class="card-img" alt="" referrerpolicy="no-referrer" src="https://i.ytimg.com/vi/h65fuE2XdNs/hqdefault.jpg"><div class="play-flag"></div><button class="edit-btn" title="수정"><svg class="edit-icon" viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 0 1 2.828 2.828l-8.586 8.586-3.536.707.707-3.536 8.587-8.585zm2.121-2.121a4 4 0 0 0-5.657 0l-8.586 8.586A2 2 0 0 0 1 12.414V17a1 1 0 0 0 1 1h4.586a2 2 0 0 0 1.414-.586l8.586-8.586a4 4 0 0 0 0-5.657z"></path></svg></button></div></div></div>
+    <div class="video-list" id="videoList"><div class="video-card active"><div class="card-media"><img class="card-img" alt="" referrerpolicy="no-referrer" src="https://i.ytimg.com/vi/kMRLzSQorK0/hqdefault.jpg"><div class="card-name">서울역</div><div class="play-flag"></div><button class="edit-btn" title="수정"><svg class="edit-icon" viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 0 1 2.828 2.828l-8.586 8.586-3.536.707.707-3.536 8.587-8.585zm2.121-2.121a4 4 0 0 0-5.657 0l-8.586 8.586A2 2 0 0 0 1 12.414V17a1 1 0 0 0 1 1h4.586a2 2 0 0 0 1.414-.586l8.586-8.586a4 4 0 0 0 0-5.657z"></path></svg></button></div></div><div class="video-card"><div class="card-media"><img class="card-img" alt="" referrerpolicy="no-referrer" src="https://i.ytimg.com/vi/C59vTl-5pnA/hqdefault.jpg"><div class="play-flag"></div><button class="edit-btn" title="수정"><svg class="edit-icon" viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 0 1 2.828 2.828l-8.586 8.586-3.536.707.707-3.536 8.587-8.585zm2.121-2.121a4 4 0 0 0-5.657 0l-8.586 8.586A2 2 0 0 0 1 12.414V17a1 1 0 0 0 1 1h4.586a2 2 0 0 0 1.414-.586l8.586-8.586a4 4 0 0 0 0-5.657z"></path></svg></button></div></div></div>
     <div class="side-foot"><a href="https://myway.kr" target="_top">myway.kr</a></div>
   </aside>
 
   <div class="main">
     <div class="yt-container">
       <div class="yt-inner">
-        <div class="yt-frame-box" id="ytFrameBox"><iframe src="https://www.youtube.com/embed/h65fuE2XdNs?autoplay=1&amp;mute=1&amp;playsinline=1&amp;enablejsapi=1" allowfullscreen="" allow="autoplay; encrypted-media"></iframe></div>
+        <div class="yt-frame-box" id="ytFrameBox"><iframe src="https://www.youtube.com/embed/kMRLzSQorK0?autoplay=1&amp;mute=1&amp;playsinline=1&amp;enablejsapi=1" allowfullscreen="" allow="autoplay; encrypted-media"></iframe></div>
       </div>
     </div>
 
@@ -989,7 +989,7 @@
 </div>
 
 <!-- 추가/수정 모달 -->
-<div id="addModal" class="modal-bg" style="display: none;">
+<div id="addModal" class="modal-bg">
   <div class="modal-inner">
     <h2 class="modal-title" id="modalTitle">영상 추가</h2>
 
@@ -1002,10 +1002,10 @@
       <input id="newDirInput" type="text" placeholder="새 디렉토리 이름 (예: SPORTS)" maxlength="20" autocomplete="off">
       <button type="button" id="newDirConfirm">만들기</button>
     </div>
-    <div class="order-row" id="orderRow" style="display: none;">
+    <div class="order-row" id="orderRow" style="display:none;">
       <span class="order-label">이 영상 순서</span>
-      <button type="button" class="order-btn" id="orderPrev" onclick="moveEditOrder(-1)" disabled="">◀ 앞으로</button>
-      <button type="button" class="order-btn" id="orderNext" onclick="moveEditOrder(1)" disabled="">뒤로 ▶</button>
+      <button type="button" class="order-btn" id="orderPrev" onclick="moveEditOrder(-1)">◀ 앞으로</button>
+      <button type="button" class="order-btn" id="orderNext" onclick="moveEditOrder(1)">뒤로 ▶</button>
     </div>
 
     <div class="modal-section">② 영상 정보</div>
@@ -1015,9 +1015,9 @@
     <input id="addName" type="text" placeholder="카드에 표시할 제목" autocomplete="off">
     <label>사진 주소 (이미지 URL · 비우면 자동)</label>
     <input id="addImg" type="text" placeholder="https://...jpg" autocomplete="off" oninput="updatePreview()">
-    <div class="img-preview" id="imgPreview" style="background-image: url(&quot;https://i.ytimg.com/vi/h65fuE2XdNs/hqdefault.jpg&quot;);"></div>
+    <div class="img-preview" id="imgPreview">미리보기</div>
     <div class="modal-actions">
-      <button class="btn-del" id="delBtn" onclick="deleteVideo()" style="display: none;">삭제</button>
+      <button class="btn-del" id="delBtn" onclick="deleteVideo()" style="display:none;">삭제</button>
       <button class="btn-cancel" onclick="closeAddModal()">취소</button>
       <button class="btn-save" onclick="saveVideo()">저장</button>
     </div>
@@ -1071,7 +1071,7 @@
     ];
 
   /* ▼▼▼ 「코드」 버튼으로 만든 코드를 여기에 통째로 붙여넣으세요 (없으면 null 유지) ▼▼▼ */
-  var DEFAULT_GROUPS = {"order":["CCTV","NEWS","DRAMA","MOVIE","OTHERS"],"data":{"CCTV":[{"url":"https://www.youtube.com/watch?v=kMRLzSQorK0&ab_channel=1theK%28%EC%9B%90%EB%8D%94%EC%BC%80%EC%9D%B4%29","img":"","name":"서울역","color":"#c64f86"},{"url":"https://www.youtube.com/watch?v=h65fuE2XdNs","img":"","name":"","color":"#5b6470"}],"NEWS":[],"DRAMA":[],"MOVIE":[],"OTHERS":[]},"modes":{"CCTV":"video","NEWS":"video","DRAMA":"video","MOVIE":"video","OTHERS":"video"},"nsids":{"CCTV":"d_mrockzma_zz7lt","NEWS":"d_mrockzma_fh2l9","DRAMA":"d_mrockzma_epsaq","MOVIE":"d_mrockzma_01nm9","OTHERS":"d_mrockzma_v9qox"}};
+  var DEFAULT_GROUPS = {"order":["CCTV","NEWS","DRAMA","MOVIE","OTHERS"],"data":{"CCTV":[{"url":"https://www.youtube.com/watch?v=kMRLzSQorK0&ab_channel=1theK%28%EC%9B%90%EB%8D%94%EC%BC%80%EC%9D%B4%29","img":"","name":"서울역","color":"#c64f86"},{"url":"https://www.youtube.com/watch?v=C59vTl-5pnA&list=RDC59vTl-5pnA&start_radio=1","img":"","name":"","color":"#5b6470"}],"NEWS":[],"DRAMA":[],"MOVIE":[],"OTHERS":[]},"modes":{"CCTV":"video","NEWS":"video","DRAMA":"video","MOVIE":"video","OTHERS":"video"},"nsids":{"CCTV":"d_mrocww6m_h7jb3","NEWS":"d_mrocww6m_tztu8","DRAMA":"d_mrocww6m_mcs84","MOVIE":"d_mrocww6m_w30al","OTHERS":"d_mrocww6m_j0bdc"}};
   /* ▲▲▲ 여기까지 ▲▲▲ */
 
   /* 빌더식 디렉토리 데이터(편집용/보기전용 HTML로 내보낼 때 자동으로 채워짐) */
