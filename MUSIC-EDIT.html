@@ -1794,6 +1794,7 @@
     }
     ensureYTApi(function(){
       var host = document.getElementById('plHost'); if (!host) return;
+      var errStreak = 0;   /* 연속 재생실패 카운트 (전곡 실패 시 무한루프 방지) */
       try{
         ytPlayer = new YT.Player('plHost', {
           width:'100%', height:'100%',
@@ -1801,7 +1802,18 @@
           playerVars: { autoplay:1, mute:1, playsinline:1 },
           events: {
             onReady: function(e){ try{ e.target.setVolume(DEFAULT_VOLUME); e.target.unMute(); e.target.playVideo(); }catch(err){} },
-            onStateChange: function(e){ if (e.data === YT.PlayerState.ENDED){ playAt(cur+1); } }
+            onStateChange: function(e){
+              if (e.data === YT.PlayerState.PLAYING) errStreak = 0;
+              if (e.data === YT.PlayerState.ENDED) playAt(cur+1);
+            },
+            /* 임베드 차단·삭제·비공개 영상 → 표시해 두고 다음 곡으로 자동 건너뜀 */
+            onError: function(){
+              errStreak++;
+              var it = wrap.children[cur];
+              if (it){ it.style.opacity = '.45'; it.title = '재생 불가(임베드 차단·삭제됨) — 자동 건너뜀'; }
+              if (errStreak >= tracks.length) return;   /* 전곡 재생 불가면 정지 */
+              setTimeout(function(){ playAt(cur+1); }, 800);
+            }
           }
         });
       }catch(e){ plainIframe(); }
