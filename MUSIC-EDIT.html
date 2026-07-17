@@ -107,8 +107,9 @@
     .pl-addsong{border:0;border-radius:7px;background:#2b6cb0;color:#fff;font-size:11.5px;font-weight:700;padding:5px 10px;cursor:pointer;}
     .pl-addsong:hover{background:#3182ce;}
     /* 유튜브 설정(⚙)과 겹치지 않게 왼쪽 위(전체화면 버튼 옆)에 배치 */
-    .pl-toggle{position:absolute;top:16px;left:66px;z-index:5;border:0;border-radius:8px;background:rgba(20,22,28,.78);color:#fff;font-size:12px;font-weight:700;padding:10px 12px;cursor:pointer;}
-    @media (max-width:760px){ .pl-toggle{top:12px;left:56px;padding:9px 11px;} }
+    .pl-toggle{position:absolute !important;top:16px !important;left:66px !important;right:auto !important;bottom:auto !important;z-index:5;border:0;border-radius:8px;background:#0b6b53;color:#fff;font-size:12px;font-weight:700;padding:10px 12px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.35);}
+    .pl-toggle:hover{background:#14a37f;}
+    @media (max-width:760px){ .pl-toggle{top:12px !important;left:56px !important;padding:9px 11px;} }
     .pl-toggle:hover{background:rgba(40,46,58,.9);}
     @media(max-width:760px){
       .pl-side{position:absolute;right:0;top:0;bottom:0;width:min(78vw,320px);z-index:4;box-shadow:-8px 0 24px rgba(0,0,0,.5);}
