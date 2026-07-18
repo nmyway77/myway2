@@ -2,19 +2,19 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>유튜브 썸네일 추출기 - 동영상 썸네일 다운로드 | MYWAY.KR</title>
-  <meta name="description" content="유튜브 동영상의 썸네일을 다양한 사이즈(HD, SD, HQ, MQ)로 무료 추출. URL만 입력하면 즉시 표시. Vimeo도 지원.">
-  <meta name="keywords" content="유튜브 썸네일, 썸네일 추출, 동영상 썸네일, 유튜브 이미지 다운로드, vimeo 썸네일, 썸네일 다운로드">
+  <title>썸네일 추출기 - 모든 사이트 썸네일 다운로드 | MYWAY.KR</title>
+  <meta name="description" content="유튜브·비메오·데일리모션은 물론, 대표 이미지가 있는 거의 모든 사이트의 썸네일을 URL만 입력하면 즉시 추출·다운로드. 유튜브는 HD/SD/HQ/MQ 사이즈별 지원.">
+  <meta name="keywords" content="썸네일 추출, 유튜브 썸네일, 동영상 썸네일, og:image 추출, 대표 이미지 추출, vimeo 썸네일, dailymotion 썸네일, 썸네일 다운로드">
   <link rel="canonical" href="https://myway.kr/extract7.html">
-  <meta property="og:title" content="유튜브 썸네일 추출기 - 동영상 썸네일 다운로드 | MYWAY.KR">
-  <meta property="og:description" content="유튜브 동영상의 썸네일을 다양한 사이즈(HD, SD, HQ, MQ)로 무료 추출. URL만 입력하면 즉시 표시. Vimeo도 지원.">
+  <meta property="og:title" content="썸네일 추출기 - 모든 사이트 썸네일 다운로드 | MYWAY.KR">
+  <meta property="og:description" content="유튜브·비메오·데일리모션은 물론, 대표 이미지가 있는 거의 모든 사이트의 썸네일을 URL만 입력하면 즉시 추출·다운로드.">
   <meta property="og:url" content="https://myway.kr/extract7.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="MYWAY.KR">
   <meta property="og:locale" content="ko_KR">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="유튜브 썸네일 추출기 - 동영상 썸네일 다운로드 | MYWAY.KR">
-  <meta name="twitter:description" content="유튜브 동영상의 썸네일을 다양한 사이즈(HD, SD, HQ, MQ)로 무료 추출. URL만 입력하면 즉시 표시. Vimeo도 지원.">
+  <meta name="twitter:title" content="썸네일 추출기 - 모든 사이트 썸네일 다운로드 | MYWAY.KR">
+  <meta name="twitter:description" content="유튜브·비메오·데일리모션은 물론, 대표 이미지가 있는 거의 모든 사이트의 썸네일을 URL만 입력하면 즉시 추출·다운로드.">
   <meta name="robots" content="index, follow">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -412,15 +412,15 @@
   <main class="wrap">
     <div class="eyebrow">Thumbnail Extractor</div>
     <h1>썸네일 추출기</h1>
-    <p class="lede">YouTube · Vimeo 동영상 URL을 붙여넣으면 사이즈별 썸네일과 이미지 주소를 바로 보여드려요.</p>
+    <p class="lede">YouTube · Vimeo · Dailymotion은 물론, 대표 이미지(썸네일)가 있는 거의 모든 사이트의 URL을 붙여넣으면 썸네일과 이미지 주소를 바로 보여드려요.</p>
 
     <div class="url-input-group">
-      <input type="text" id="videoUrl" placeholder="동영상 URL 입력 (YouTube / Vimeo)" autocomplete="off" spellcheck="false">
+      <input type="text" id="videoUrl" placeholder="URL 입력 (YouTube · Vimeo · 일반 사이트)" autocomplete="off" spellcheck="false">
       <button onclick="getThumbnails()">추출</button>
     </div>
 
     <div class="size-filters" id="sizeFilters"></div>
-    <p class="filter-hint">표시할 사이즈를 선택하세요 (YouTube · 장면 컷 / WebP 지원)</p>
+    <p class="filter-hint">사이즈 선택은 YouTube 전용 (장면 컷 / WebP 지원) · 일반 사이트는 대표 이미지를 자동 추출</p>
 
     <div class="history-chips" id="historyChips"></div>
 
@@ -501,6 +501,13 @@
       const m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
       return m ? m[1] : null;
     }
+    function parseDailymotionId(url){
+      const m = url.match(/(?:dailymotion\.com\/video\/|dai\.ly\/)([a-zA-Z0-9]+)/);
+      return m ? m[1] : null;
+    }
+    function hostOf(url){
+      try{ return new URL(url).hostname.replace(/^www\./,''); }catch(e){ return 'web'; }
+    }
 
     /* ===== 썸네일 URL 빌더 ===== */
     function ytThumbUrl(id, key){
@@ -512,6 +519,12 @@
     /* ===== 영상 제목·채널명 로드 (oEmbed) ===== */
     function escapeHtml(s){
       return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function setMetaText(title, sub){
+      if (!title) return;
+      document.getElementById('videoMeta').innerHTML =
+        `<strong>${escapeHtml(title)}</strong>` +
+        (sub ? ` · <span>${escapeHtml(sub)}</span>` : '');
     }
     function loadMeta(type, id){
       const box = document.getElementById('videoMeta');
@@ -547,7 +560,7 @@
       let h = [];
       try{ h = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }catch(e){}
       h.forEach(u=>{
-        const id = parseYouTubeId(u) || parseVimeoId(u) || u;
+        const id = parseYouTubeId(u) || parseVimeoId(u) || parseDailymotionId(u) || (hostOf(u) !== 'web' ? hostOf(u) : u);
         const chip = document.createElement('button');
         chip.className = 'history-chip';
         chip.type = 'button';
@@ -626,8 +639,154 @@
         return;
       }
 
+      const dmId = parseDailymotionId(url);
+      if (dmId){
+        lastVideo = { type:'dm', id:dmId };
+        showMessage('Dailymotion 썸네일을 불러오는 중…');
+        saveHistory(url);
+        fetch(`https://api.dailymotion.com/video/${dmId}?fields=title,owner.screenname,thumbnail_1080_url,thumbnail_720_url,thumbnail_480_url,thumbnail_360_url`)
+          .then(r => r.json())
+          .then(d => {
+            setMetaText(d.title, d['owner.screenname']);
+            const items = [];
+            if (d.thumbnail_1080_url) items.push({ url:d.thumbnail_1080_url, label:'대형', dim:'1080p' });
+            if (d.thumbnail_720_url)  items.push({ url:d.thumbnail_720_url,  label:'중형', dim:'720p'  });
+            if (d.thumbnail_480_url)  items.push({ url:d.thumbnail_480_url,  label:'소형', dim:'480p'  });
+            if (d.thumbnail_360_url)  items.push({ url:d.thumbnail_360_url,  label:'미니', dim:'360p'  });
+            if (items.length) renderThumbs(items);
+            else showMessage('Dailymotion 썸네일을 가져올 수 없습니다.', false);
+          })
+          .catch(() => showMessage('Dailymotion 썸네일을 가져올 수 없습니다.', false));
+        return;
+      }
+
+      /* 그 외 모든 사이트: 대표 이미지(og:image) 추출 */
+      let generic = url;
+      if (!/^https?:\/\//i.test(generic)){
+        if (/^[\w.-]+\.[a-z]{2,}([\/?#]|$)/i.test(generic)) generic = 'https://' + generic;
+        else {
+          lastVideo = null;
+          showMessage('올바른 URL을 입력해 주세요.', true);
+          return;
+        }
+      }
+      extractGeneric(generic);
+    }
+
+    /* ===== 일반 사이트 대표 이미지 추출 ===== */
+    async function extractGeneric(url){
+      lastVideo = { type:'web', id:hostOf(url) };
+      showMessage('썸네일을 찾는 중… 일반 사이트는 몇 초 걸릴 수 있어요.');
+
+      /* 1) noembed — 동영상·SNS 등 100여 개 사이트 oEmbed 통합 */
+      try{
+        const r = await fetch('https://noembed.com/embed?url=' + encodeURIComponent(url));
+        if (r.ok){
+          const d = await r.json();
+          if (d && d.thumbnail_url && !d.error){
+            setMetaText(d.title, d.author_name || d.provider_name);
+            saveHistory(url);
+            renderThumbs([{
+              url: d.thumbnail_url,
+              label: d.provider_name || hostOf(url),
+              dim: (d.thumbnail_width && d.thumbnail_height) ? `${d.thumbnail_width}×${d.thumbnail_height}` : ''
+            }]);
+            return;
+          }
+        }
+      }catch(e){}
+
+      /* 2) 공개 CORS 프록시로 페이지 HTML을 받아 og:image 파싱 */
+      showMessage('페이지에서 대표 이미지를 찾는 중…');
+      const proxies = [
+        u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+        u => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
+        u => 'https://corsproxy.io/?url=' + encodeURIComponent(u),
+      ];
+      for (const makeProxy of proxies){
+        try{
+          const r = await fetch(makeProxy(url));
+          if (!r.ok) continue;
+          const html = await r.text();
+          if (!html || html.length < 40) continue;
+          const found = parseOgImages(html, url);
+          if (found.images.length){
+            setMetaText(found.title, found.site || hostOf(url));
+            saveHistory(url);
+            renderThumbs(found.images.map((imgUrl, i) => ({
+              url: imgUrl,
+              label: i === 0 ? '대표 이미지' : `이미지 ${i + 1}`,
+              dim: ''
+            })));
+            return;
+          }
+        }catch(e){}
+      }
+
+      /* 3) Microlink — JS로 화면을 그리는 SPA 사이트(KBS·방송사 VOD 등) 대응.
+            헤드리스 브라우저로 실제 렌더링 후 대표 이미지를 찾아줌 (무료: IP당 1일 약 50회) */
+      try{
+        showMessage('페이지를 실제로 렌더링해서 찾는 중… (동적 사이트 대응, 최대 20초)');
+        const r = await fetch('https://api.microlink.io/?url=' + encodeURIComponent(url) + '&prerender=auto');
+        if (r.ok){
+          const d = await r.json();
+          if (d && d.status === 'success' && d.data){
+            const imgs = [];
+            if (d.data.image && d.data.image.url){
+              imgs.push({
+                url: d.data.image.url,
+                label: '대표 이미지',
+                dim: (d.data.image.width && d.data.image.height) ? `${d.data.image.width}×${d.data.image.height}` : ''
+              });
+            }
+            if (d.data.logo && d.data.logo.url && !imgs.some(x => x.url === d.data.logo.url)){
+              imgs.push({ url: d.data.logo.url, label: '로고', dim: '' });
+            }
+            if (imgs.length){
+              setMetaText(d.data.title, d.data.publisher || hostOf(url));
+              saveHistory(url);
+              renderThumbs(imgs);
+              return;
+            }
+          }
+        }
+      }catch(e){}
+
       lastVideo = null;
-      showMessage('아직 이 사이트는 지원하지 않습니다.<br>YouTube · Vimeo URL을 입력해 주세요.', false);
+      showMessage('이 페이지에서 썸네일(대표 이미지)을 찾지 못했습니다.<br>로그인이 필요한 페이지, 봇 접근을 차단하는 사이트는 지원되지 않을 수 있어요.', false);
+    }
+
+    /* HTML에서 og:image·twitter:image 등 대표 이미지 후보 추출 */
+    function parseOgImages(html, baseUrl){
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const selectors = [
+        'meta[property="og:image:secure_url"]',
+        'meta[property="og:image"]',
+        'meta[name="og:image"]',
+        'meta[name="twitter:image"]',
+        'meta[name="twitter:image:src"]',
+        'meta[property="twitter:image"]',
+        'meta[itemprop="image"]',
+        'link[rel="image_src"]'
+      ];
+      const urls = [];
+      selectors.forEach(sel=>{
+        doc.querySelectorAll(sel).forEach(el=>{
+          const v = el.getAttribute('content') || el.getAttribute('href');
+          if (!v) return;
+          try{
+            const abs = new URL(v.trim(), baseUrl).href;
+            if (/^https?:/.test(abs) && !urls.includes(abs)) urls.push(abs);
+          }catch(e){}
+        });
+      });
+      const ogTitle = doc.querySelector('meta[property="og:title"]');
+      const siteName = doc.querySelector('meta[property="og:site_name"]');
+      return {
+        images: urls.slice(0, 6),
+        title: (ogTitle && ogTitle.getAttribute('content')) || (doc.title || '').trim(),
+        site: siteName ? siteName.getAttribute('content') : ''
+      };
     }
 
     function showMessage(html, neutral){
@@ -662,12 +821,18 @@
         // 유튜브 maxres 등 없는 썸네일(120×90 회색 플레이스홀더) 자동 감지
         const img = fig.querySelector('img');
         img.addEventListener('load', ()=>{
-          if (img.naturalWidth <= 120 && item.label !== '기본'){
+          if (lastVideo && lastVideo.type === 'yt' && img.naturalWidth <= 120 && item.label !== '기본'){
             card.classList.add('unavailable');
             const na = document.createElement('div');
             na.className = 'na-note';
             na.textContent = '이 영상은 미지원 사이즈';
             fig.appendChild(na);
+            return;
+          }
+          // 크기 미상(일반 사이트)이면 실제 해상도 표시
+          if (!item.dim && img.naturalWidth){
+            const dimEl = fig.querySelector('.size-badge .dim');
+            if (dimEl) dimEl.textContent = `${img.naturalWidth}×${img.naturalHeight}`;
           }
         });
         img.addEventListener('error', ()=>{
@@ -747,8 +912,8 @@
 
     /* ===== 다운로드 (CORS 가능 시 blob, 아니면 새 탭) ===== */
     function downloadFileName(item){
-      const ext = /\.webp(\?|$)/.test(item.url) ? 'webp' : 'jpg';
-      const base = lastVideo ? `${lastVideo.type}_${lastVideo.id}` : 'thumbnail';
+      const ext = /\.webp(\?|$)/.test(item.url) ? 'webp' : (/\.png(\?|$)/.test(item.url) ? 'png' : 'jpg');
+      const base = lastVideo ? `${lastVideo.type}_${String(lastVideo.id).replace(/[^\w-]+/g,'_')}` : 'thumbnail';
       const label = String(item.label).replace(/\s+/g, '');
       return `${base}_${label}.${ext}`;
     }
@@ -786,7 +951,7 @@
     document.getElementById('videoUrl').addEventListener('paste', ()=>{
       setTimeout(()=>{
         const v = document.getElementById('videoUrl').value.trim();
-        if (parseYouTubeId(v) || parseVimeoId(v)) getThumbnails();
+        if (parseYouTubeId(v) || parseVimeoId(v) || parseDailymotionId(v) || /^https?:\/\//i.test(v)) getThumbnails();
       }, 60);
     });
 
