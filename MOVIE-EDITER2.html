@@ -140,6 +140,23 @@
     .modal-inner select.modal-select{padding:11px 38px 11px 14px;border-radius:10px;border:1px solid var(--line);font-size:.95rem;background-color:var(--paper);color:var(--ink);font-family:var(--sans);font-weight:600;outline:none;transition:.15s;width:100%;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='%236b6353'><path d='M7 10l5 5 5-5z'/></svg>");background-repeat:no-repeat;background-position:right 13px center;}
     .modal-inner select.modal-select:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft);}
     .img-preview{margin-top:8px;width:100%;aspect-ratio:16/9;border-radius:10px;border:1px dashed var(--line);background:#f1ece0 center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:.82rem;overflow:hidden;}
+    /* 자동으로 찾은 썸네일 후보 선택 줄 */
+    .thumb-picks{display:none;flex-wrap:wrap;gap:6px;margin-top:8px;}
+    .thumb-picks .tp-cap{flex:1 1 100%;font-size:.72rem;font-weight:600;color:var(--ink-soft);margin:0 0 2px;}
+    .thumb-pick{flex:0 0 auto;width:76px;height:43px;padding:0;border:2px solid var(--line);border-radius:8px;overflow:hidden;cursor:pointer;background:#e9e2d3;transition:border-color .15s,box-shadow .15s;}
+    .thumb-pick img{width:100%;height:100%;object-fit:cover;display:block;}
+    .thumb-pick.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft);}
+    .thumb-pick:hover{border-color:var(--accent);}
+    /* 일반 사이트가 임베드 차단일 때를 위한 새 탭 열기 버튼 */
+    .open-site-btn{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:6;background:rgba(20,18,16,.78);color:#fff;font-size:.8rem;font-weight:600;padding:9px 15px;border-radius:999px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.35);backdrop-filter:blur(3px);white-space:nowrap;}
+    .open-site-btn:hover{background:var(--accent);}
+    /* 임베드 차단 사이트(EBS·네이버 등) 안내 화면 */
+    .site-cushion{position:absolute;inset:0;background:#14110e center/cover no-repeat;display:flex;align-items:center;justify-content:center;}
+    .site-cushion .sc-dim{position:absolute;inset:0;background:rgba(15,12,10,.62);backdrop-filter:blur(4px);}
+    .site-cushion .sc-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:16px;padding:20px;text-align:center;}
+    .site-cushion .sc-note{color:#e8e2d6;font-size:.92rem;line-height:1.6;max-width:420px;text-shadow:0 1px 6px rgba(0,0,0,.5);}
+    .site-cushion .sc-open{border:none;border-radius:14px;background:var(--accent);color:#fff;font-family:var(--sans);font-size:1.05rem;font-weight:700;padding:15px 30px;cursor:pointer;box-shadow:0 8px 26px rgba(198,61,46,.45);transition:.16s;}
+    .site-cushion .sc-open:hover{background:#bb3f2c;transform:translateY(-2px);}
     .modal-actions{display:flex;gap:9px;margin-top:18px;}
     .modal-actions button{flex:1;padding:11px 0;border-radius:11px;border:none;cursor:pointer;font-size:.95rem;font-weight:600;font-family:var(--sans);transition:.15s;}
     .btn-save{background:var(--accent);color:#fff;}
@@ -1071,9 +1088,10 @@
     <button type="button" class="song-add-btn" id="songAddBtn">＋ 추가등록</button>
     <label>카드 제목 (영화·시리즈 이름 · 사진 아래 표시 · 비워도 됨)</label>
     <input id="addName" type="text" placeholder="예: 성룡 영화모음" autocomplete="off">
-    <label>사진 주소 (이미지 URL · 비우면 자동)</label>
+    <label>사진 주소 (비우면 어느 사이트든 썸네일 자동 추출)</label>
     <input id="addImg" type="text" placeholder="https://...jpg" autocomplete="off" oninput="updatePreview()">
     <div class="img-preview" id="imgPreview">미리보기</div>
+    <div class="thumb-picks" id="thumbPicks"></div>
     <div class="modal-actions">
       <button class="btn-del" id="delBtn" onclick="deleteVideo()" style="display:none;">삭제</button>
       <button class="btn-cancel" onclick="closeAddModal()">취소</button>
@@ -1856,9 +1874,16 @@
         host.appendChild(vd);
         vd.play().catch(function(){ vd.muted = true; vd.play().catch(function(){}); });
       } else {
-        /* 일반 사이트 → iframe으로 표시 (사이트가 자체 재생) */
+        /* 일반 사이트 → iframe으로 표시 (사이트가 자체 재생)
+           단, 임베드 차단이 확실한 사이트(EBS·네이버 등)는 새 창 안내 화면 */
         var host2 = resetHost();
-        host2.innerHTML = '<iframe src="'+String(t.url).replace(/"/g,'%22')+'" allowfullscreen allow="autoplay; encrypted-media; fullscreen" referrerpolicy="no-referrer"></iframe>';
+        if (isEmbedBlocked(t.url)){
+          mountBlockedSite(host2, t.url, trackThumb(t) || '');
+        } else {
+          var su = String(t.url).replace(/"/g,'%22');
+          host2.innerHTML = '<iframe src="'+su+'" allowfullscreen allow="autoplay; encrypted-media; fullscreen" referrerpolicy="no-referrer"></iframe>'+
+            '<a class="open-site-btn" href="'+su+'" target="_blank" rel="noopener">화면이 안 보이면 새 탭에서 열기 ↗</a>';
+        }
       }
     }
     tracks.forEach(function(t,i){
@@ -1877,6 +1902,28 @@
     });
     playAt(0);
   }
+  /* 임베드(iframe 내장)를 차단하는 걸로 알려진 사이트들 — 새 창 재생으로 안내 */
+  var EMBED_BLOCKED_RE = /(^|\.)(ebsi\.co\.kr|ebs\.co\.kr|naver\.com|daum\.net|kakao\.com|kbs\.co\.kr|imbc\.com|sbs\.co\.kr|wavve\.com|tving\.com|coupangplay\.com|watcha\.com|netflix\.com|google\.com|youtube\.com|instagram\.com|facebook\.com|x\.com|twitter\.com)$/i;
+  function isEmbedBlocked(u){
+    try{ return EMBED_BLOCKED_RE.test(new URL(u).hostname); }catch(e){ return false; }
+  }
+  function mountBlockedSite(container, url, bgImg){
+    var wrap = document.createElement('div');
+    wrap.className = 'site-cushion';
+    if (bgImg) wrap.style.backgroundImage = 'url("' + String(bgImg).replace(/"/g,'%22') + '")';
+    wrap.innerHTML =
+      '<div class="sc-dim"></div>'+
+      '<div class="sc-inner">'+
+        '<div class="sc-note">이 사이트는 다른 페이지 안에 내장(임베드)되는 것을 차단하고 있어요.<br>새 창으로 열면 로그인 상태 그대로 바로 재생됩니다.</div>'+
+        '<button type="button" class="sc-open">▶ 새 창에서 열기</button>'+
+      '</div>';
+    wrap.querySelector('.sc-open').onclick = function(){
+      window.open(url, '_blank', 'noopener,width=1280,height=820');
+    };
+    container.innerHTML = '';
+    container.appendChild(wrap);
+  }
+
   function renderMain(){
     if (groupModes[currentGroup]==='builder') return;
     var v = (selectedIdx!=null && videos[selectedIdx]) ? videos[selectedIdx] : null;
@@ -1888,8 +1935,21 @@
       if (p.type==='youtube'){
         mountYouTube(box, p.code);
       } else if (p.type==='vimeo' || p.type==='link'){
+        /* 임베드 차단이 확실한 사이트(EBS·네이버·방송사 등)는 iframe 대신 새 창 안내 화면 */
+        if (p.type==='link' && isEmbedBlocked(p.code)){
+          mountBlockedSite(box, p.code, cardImage(v));
+          return;
+        }
         box.innerHTML = '<iframe src="'+p.code+'" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
         if (p.type==='vimeo') autoUnmute(box.querySelector('iframe'), p.type);
+        /* 그 외 일반 사이트: 혹시 차단이면 화면이 비므로 새 탭 열기 버튼 제공 */
+        if (p.type==='link'){
+          var osb = document.createElement('a');
+          osb.className = 'open-site-btn';
+          osb.href = p.code; osb.target = '_blank'; osb.rel = 'noopener';
+          osb.textContent = '화면이 안 보이면 새 탭에서 열기 ↗';
+          box.appendChild(osb);
+        }
       } else if (p.type==='video'){
         box.innerHTML = '<video src="'+p.code+'" controls autoplay playsinline></video>';
         var vid = box.querySelector('video');
@@ -1938,7 +1998,7 @@
       '<button type="button" class="song-del" title="이 칸 삭제">✕</button>';
     row.querySelector('.song-name').value = name || '';
     var u = row.querySelector('.song-url'); u.value = url || '';
-    u.addEventListener('input', updatePreview);
+    u.addEventListener('input', function(){ updatePreview(); scheduleAutoThumb(); });
     row.querySelector('.song-del').addEventListener('click', function(){
       var rows = wrap.querySelectorAll('.song-row');
       if (rows.length <= 1){ row.querySelector('.song-name').value = ''; u.value = ''; }
@@ -1985,6 +2045,7 @@
     resetSongRows(null);
     resetNewDirRow();
     toggleOrderRow();
+    clearThumbPicks();
     updatePreview();
     document.getElementById('addModal').style.display = 'flex';
     setTimeout(function(){ var f = document.querySelector('#songRows .song-url'); if (f) f.focus(); }, 150);
@@ -2003,7 +2064,10 @@
     else resetSongRows(null);
     resetNewDirRow();
     toggleOrderRow();
+    clearThumbPicks();
     updatePreview();
+    /* 기존 카드 수정 시에도 후보를 미리 검색해 바꿔 고를 수 있게 */
+    scheduleAutoThumb();
     document.getElementById('addModal').style.display = 'flex';
     if (focusNew){
       var row = addSongRow('', '');
@@ -2046,6 +2110,216 @@
   function tracksToText(tracks){
     return (tracks||[]).map(function(t){ return (t.name ? t.name+' | ' : '') + (t.url||''); }).join('\n');
   }
+
+  /* ============================================================
+     범용 썸네일 자동 추출 엔진 (모든 사이트)
+     ① 유튜브 → 즉시  ② noembed(100여 개 사이트)  ③ CORS 프록시로 og:image
+     ④ 페이지 이미지 스캔(옛날 사이트)  ⑤ Microlink 실제 렌더링(SPA 사이트)
+     결과는 localStorage에 캐시되어 같은 주소는 재검색하지 않음
+     ============================================================ */
+  (function(){
+    var CACHE_KEY = 'mwThumbCacheV1';
+    var cache = {};
+    try{ cache = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}') || {}; }catch(e){}
+    function saveCache(){
+      try{
+        var keys = Object.keys(cache);
+        if (keys.length > 150) keys.slice(0, keys.length - 150).forEach(function(k){ delete cache[k]; });
+        localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+      }catch(e){}
+    }
+    function ytIdOf(u){
+      var m = String(u||'').match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{11})/);
+      return m ? m[1] : null;
+    }
+    function pathOf(u){ try{ var x = new URL(u); return x.pathname + x.search; }catch(e){ return String(u); } }
+    var GOOD_RE = /(thumb|poster|program|prog|vod|still|cover|snapshot|capture|episode)/i;
+    var JUNK_RE = /(icon|sprite|logo|badge|btn|button|blank|spacer|pixel|loading|lock|arrow|bullet|banner|_ad[._\/]|\/ad\/|emoticon|emoji|captcha|bg[._\/-]|_bg)/i;
+
+    function ogImages(html, baseUrl){
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      var sels = ['meta[property="og:image:secure_url"]','meta[property="og:image"]','meta[name="og:image"]',
+                  'meta[name="twitter:image"]','meta[name="twitter:image:src"]','meta[property="twitter:image"]',
+                  'meta[itemprop="image"]','link[rel="image_src"]'];
+      var urls = [];
+      sels.forEach(function(sel){
+        doc.querySelectorAll(sel).forEach(function(el){
+          var v = el.getAttribute('content') || el.getAttribute('href');
+          if (!v) return;
+          try{
+            var abs = new URL(v.trim(), baseUrl).href;
+            if (/^https?:/.test(abs) && urls.indexOf(abs) < 0) urls.push(abs);
+          }catch(e){}
+        });
+      });
+      return urls;
+    }
+    function scanImages(html, baseUrl){
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      var urls = [];
+      function push(v){
+        if (!v) return;
+        try{
+          var abs = new URL(String(v).trim(), baseUrl).href;
+          if (!/^https?:/.test(abs)) return;
+          if (!/\.(jpe?g|png|webp)(\?|$)/i.test(abs)) return;
+          if (JUNK_RE.test(pathOf(abs))) return;
+          if (urls.indexOf(abs) < 0) urls.push(abs);
+        }catch(e){}
+      }
+      doc.querySelectorAll('video[poster]').forEach(function(v){ push(v.getAttribute('poster')); });
+      doc.querySelectorAll('img[src]').forEach(function(i){ push(i.getAttribute('src')); });
+      doc.querySelectorAll('img[data-src]').forEach(function(i){ push(i.getAttribute('data-src')); });
+      (html.match(/https?:\/\/[^"'\\\s<>()]+?\.(?:jpe?g|png|webp)(?:\?[^"'\\\s<>()]*)?/gi) || []).forEach(push);
+      urls.sort(function(a,b){ return (GOOD_RE.test(pathOf(b))?1:0) - (GOOD_RE.test(pathOf(a))?1:0); });
+      return urls.slice(0, 8);
+    }
+
+    /* 썸네일 '후보 목록'을 반환 (첫 번째가 가장 유력한 후보) */
+    window.mwFindThumbList = async function(url){
+      url = String(url||'').trim();
+      if (!url) return [];
+      if (!/^https?:\/\//i.test(url)){
+        if (/^[\w.-]+\.[a-z]{2,}([\/?#]|$)/i.test(url)) url = 'https://' + url;
+        else return [];
+      }
+      var yid = ytIdOf(url);
+      if (yid) return ['https://i.ytimg.com/vi/' + yid + '/hqdefault.jpg'];
+      var hit = cache[url];
+      if (hit) return Array.isArray(hit) ? hit : [hit];
+
+      var out = [];
+      function add(u){ if (u && out.indexOf(u) < 0) out.push(u); }
+
+      /* 1) noembed — 비메오·데일리모션·틱톡 등 oEmbed 통합 */
+      try{
+        var r = await fetch('https://noembed.com/embed?url=' + encodeURIComponent(url));
+        if (r.ok){
+          var d = await r.json();
+          if (d && d.thumbnail_url && !d.error) add(d.thumbnail_url);
+        }
+      }catch(e){}
+
+      /* 2) CORS 프록시로 HTML 확보 → og:image + 페이지 이미지 스캔 (후보를 함께 수집) */
+      if (!out.length){
+        var proxies = [
+          function(u){ return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); },
+          function(u){ return 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u); },
+          function(u){ return 'https://corsproxy.io/?url=' + encodeURIComponent(u); }
+        ];
+        for (var i = 0; i < proxies.length; i++){
+          try{
+            var r2 = await fetch(proxies[i](url));
+            if (!r2.ok) continue;
+            var html = await r2.text();
+            if (!html || html.length < 40) continue;
+            ogImages(html, url).forEach(add);
+            scanImages(html, url).forEach(add);
+            if (out.length) break;
+          }catch(e){}
+        }
+      }
+
+      /* 3) Microlink — JS로 화면을 그리는 SPA 사이트(방송사 VOD 등) 렌더링 */
+      if (!out.length){
+        try{
+          var r3 = await fetch('https://api.microlink.io/?url=' + encodeURIComponent(url) + '&prerender=auto');
+          if (r3.ok){
+            var d3 = await r3.json();
+            if (d3 && d3.status === 'success' && d3.data){
+              if (d3.data.image && d3.data.image.url) add(d3.data.image.url);
+              if (d3.data.logo && d3.data.logo.url) add(d3.data.logo.url);
+            }
+          }
+        }catch(e){}
+      }
+
+      out = out.slice(0, 8);
+      if (out.length){ cache[url] = out; saveCache(); }
+      return out;
+    };
+    /* 가장 유력한 후보 1개만 (저장 후 백그라운드 자동 채움용) */
+    window.mwFindThumb = async function(url){
+      var list = await window.mwFindThumbList(url);
+      return (list && list[0]) || '';
+    };
+  })();
+
+  /* 모달 입력 중: 유튜브가 아닌 주소면 썸네일 자동 검색해서 사진 칸 채우기 */
+  var _thumbTimer = null, _thumbSeq = 0;
+  function scheduleAutoThumb(){
+    clearTimeout(_thumbTimer);
+    _thumbTimer = setTimeout(autoThumbLookup, 700);
+  }
+  function clearThumbPicks(){
+    var box = document.getElementById('thumbPicks');
+    if (box){ box.innerHTML = ''; box.style.display = 'none'; }
+  }
+  function renderThumbPicks(list){
+    var box = document.getElementById('thumbPicks');
+    if (!box) return;
+    box.innerHTML = '';
+    if (!list || !list.length){ box.style.display = 'none'; return; }
+    box.style.display = 'flex';
+    var cap = document.createElement('div');
+    cap.className = 'tp-cap';
+    cap.textContent = '자동으로 찾은 썸네일 후보 — 눌러서 선택하세요';
+    box.appendChild(cap);
+    var im = document.getElementById('addImg');
+    list.forEach(function(u){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'thumb-pick' + (im && im.value.trim() === u ? ' on' : '');
+      b.title = '이 썸네일 사용';
+      var pic = document.createElement('img');
+      pic.loading = 'lazy'; pic.src = u; pic.alt = '';
+      pic.referrerPolicy = 'no-referrer';
+      pic.onerror = function(){ b.remove(); };   /* 안 열리는 후보는 숨김 */
+      b.appendChild(pic);
+      b.onclick = function(){
+        if (im){ im.value = u; updatePreview(); }
+        box.querySelectorAll('.thumb-pick').forEach(function(x){ x.classList.remove('on'); });
+        b.classList.add('on');
+      };
+      box.appendChild(b);
+    });
+  }
+  function autoThumbLookup(){
+    var songs = collectSongRows();
+    var u = songs[0] && songs[0].url;
+    if (!u || getYouTubeId(u)){ clearThumbPicks(); return; }   /* 유튜브는 기존 자동 처리 */
+    if (!/^(https?:\/\/)/i.test(u) && !/^[\w.-]+\.[a-z]{2,}([\/?#]|$)/i.test(u)) return;
+    var pv = document.getElementById('imgPreview');
+    var seq = ++_thumbSeq;
+    if (pv && pv.textContent === '미리보기') pv.textContent = '썸네일 검색 중…';
+    window.mwFindThumbList(u).then(function(list){
+      if (seq !== _thumbSeq) return;            /* 그 사이 다른 검색이 시작됨 */
+      var im = document.getElementById('addImg');
+      var pv2 = document.getElementById('imgPreview');
+      if (list && list.length){
+        /* 사진 칸이 비어 있을 때만 1순위 후보를 채워줌 — 이후엔 후보에서 선택 */
+        if (im && !im.value.trim()) im.value = list[0];
+        updatePreview();
+        renderThumbPicks(list);
+      } else if (pv2 && pv2.textContent === '썸네일 검색 중…'){
+        pv2.textContent = '미리보기';
+      }
+    });
+  }
+  /* 저장 후: 사진이 비었으면 백그라운드에서 자동 추출해 카드에 반영 */
+  function autoFillThumb(v){
+    if (!v || (v.img && String(v.img).trim())) return;
+    var u = v.url || (Array.isArray(v.tracks) && v.tracks[0] && v.tracks[0].url) || '';
+    if (!u || getYouTubeId(u)) return;
+    window.mwFindThumb(u).then(function(found){
+      if (!found || (v.img && String(v.img).trim())) return;
+      v.img = found;
+      persist();
+      renderList();
+      toast('썸네일을 자동으로 찾아 카드에 넣었어요.');
+    });
+  }
+
   function saveVideo(){
     var name = document.getElementById('addName').value.trim();
     var img = document.getElementById('addImg').value.trim();
@@ -2096,6 +2370,9 @@
     persist();
     closeAddModal();
     renderList(); renderMain();
+
+    /* 사진이 비어 있고 유튜브도 아니면 백그라운드에서 썸네일 자동 추출 */
+    autoFillThumb(isAdd ? item : cur);
 
     // 화면 전환 없이 현재 디렉토리 유지 · 다른 디렉토리로 갔을 때만 안내
     if (movedToOther){
@@ -2813,7 +3090,7 @@
       } else {
         lbl.textContent = '사이트 주소';
         inp.placeholder = '예) https://www.naver.com';
-        lblImg.textContent = '사진 주소 (선택)';
+        lblImg.textContent = '사진 주소 (비우면 자동 추출)';
       }
       img.placeholder = isPhoto ? '이미지 URL · 비우면 이름 카드로 표시' : '이미지 URL · 비우면 이름 카드로 표시';
       img.rows = 1;
@@ -2959,8 +3236,10 @@
         if (editRef.cat === cat) { data[cat][editRef.idx] = rec; }
         else { data[editRef.cat].splice(editRef.idx, 1); data[cat].push(rec); }
         saveData(data); render(); closeAddModal(); setActiveTab(cat);
+        b_autoFillThumb(rec, cat);
       } else {
         data[cat].push(rec); saveData(data); render();
+        b_autoFillThumb(rec, cat);
         document.getElementById('b_inName').value = '';
         document.getElementById('b_inUrl').value = '';
         document.getElementById('b_inImg').value = '';
@@ -2969,6 +3248,19 @@
         renderModalList();
         document.getElementById('b_inName').focus();
       }
+    }
+    /* 빌더: 사진이 비어 있으면 범용 엔진으로 썸네일 자동 추출 (사진 분류는 제외) */
+    function b_autoFillThumb(rec, cat){
+      if (!rec || cat.indexOf('photo') === 0) return;
+      if (rec.img && String(rec.img).trim()) return;
+      if (!rec.url || ytId(rec.url)) return;   /* 유튜브는 기존 자동 처리 */
+      if (!window.mwFindThumb) return;
+      window.mwFindThumb(rec.url).then(function(found){
+        if (!found || (rec.img && String(rec.img).trim())) return;
+        rec.img = found;
+        saveData(data);
+        render();
+      });
     }
     function deleteCurrent() {
       if (!editRef) return;
