@@ -129,10 +129,13 @@
     .modal-inner input[type=text]{padding:11px 14px;border-radius:10px;border:1px solid var(--line);font-size:.95rem;background:var(--paper);color:var(--ink);font-family:var(--sans);outline:none;transition:.15s;width:100%;}
     .modal-inner input[type=text]:focus{border-color:var(--accent);background:#fff;}
     /* 곡 등록 칸 (추가등록으로 늘어남) */
-    .song-row{display:flex;gap:6px;margin-bottom:7px;align-items:center;}
-    .song-row .song-name{flex:0 0 32%;}
-    .song-row .song-url{flex:1;min-width:0;}
+    .song-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px;align-items:center;}
+    .song-row .song-url{flex:1 1 100%;min-width:0;}
+    .song-row .song-name{flex:1 1 28%;min-width:96px;}
+    .song-row .song-img{flex:3 1 40%;min-width:130px;}
     .song-row input[type=text]{width:100%;}
+    .song-row .song-thumb{flex:none;width:48px;height:34px;border-radius:7px;border:1px dashed var(--line);background:#f1ece0 center/cover no-repeat;}
+    .song-row .song-thumb.has{border-style:solid;border-color:var(--line);}
     .song-row .song-del{flex:none;width:34px;height:38px;border:1px solid var(--line);border-radius:9px;background:#fff;color:#b55;font-size:14px;line-height:1;cursor:pointer;}
     .song-row .song-del:hover{border-color:#d33;color:#d33;}
     .song-add-btn{display:block;width:100%;margin:2px 0 10px;padding:10px;border:1.5px dashed var(--accent,#4a7);border-radius:10px;background:transparent;color:var(--accent,#4a7);font-size:.88rem;font-weight:700;cursor:pointer;font-family:var(--sans);}
@@ -1176,7 +1179,7 @@
       var o = { url:v.url||'', img:v.img||v.icon||v.thumb||'', name:v.name||v.title||'', color:v.color||'#5b6470' };
       /* 곡 목록(가수 카드): [{name, url}, ...] */
       if (Array.isArray(v.tracks) && v.tracks.length){
-        o.tracks = v.tracks.map(function(t){ return { name:(t&&t.name)||'', url:(t&&t.url)||'' }; }).filter(function(t){ return !!t.url; });
+        o.tracks = v.tracks.map(function(t){ return { name:(t&&t.name)||'', url:(t&&t.url)||'', img:(t&&t.img)||'' }; }).filter(function(t){ return !!t.url; });
       }
       return o;
     });
@@ -1328,6 +1331,7 @@
   }
   function cardImage(v){
     if (v.img) return v.img;
+    if (Array.isArray(v.tracks) && v.tracks.length && v.tracks[0] && v.tracks[0].img) return v.tracks[0].img;
     var id = getYouTubeId(v.url);
     if (!id && Array.isArray(v.tracks) && v.tracks.length) id = getYouTubeId(v.tracks[0].url);
     return id ? 'https://i.ytimg.com/vi/'+id+'/hqdefault.jpg' : '';
@@ -1784,7 +1788,7 @@
     var tracks = (v.tracks||[]).map(function(t){
       var id = getYouTubeId(t.url);
       var kind = id ? 'yt' : (/\.(mp4|webm|ogg)(\?|$)/i.test(t.url||'') ? 'file' : 'page');
-      return { name:t.name||'', url:t.url||'', id:id, kind:kind };
+      return { name:t.name||'', url:t.url||'', img:(t.img||''), id:id, kind:kind };
     }).filter(function(t){ return !!t.url; });
     if (!tracks.length){
       box.innerHTML = '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#a89e8c;text-align:center;font-size:.92rem;line-height:1.7;">아직 영상이 없습니다.<br>카드의 ✏ 수정을 열어 ＋ 추가등록으로 영상을 넣어주세요.</div>';
@@ -1820,6 +1824,7 @@
       var c = wrap.children[cur]; if (c){ try{ c.scrollIntoView({block:'nearest'}); }catch(e){} }
     }
     function trackThumb(t){
+      if (t.img) return t.img;
       if (t.id) return 'https://i.ytimg.com/vi/'+t.id+'/mqdefault.jpg';
       var m = String(t.url).match(/^https?:\/\/([^\/]+)/i);
       return m ? 'https://www.google.com/s2/favicons?domain='+m[1]+'&sz=64' : '';
@@ -1911,7 +1916,7 @@
     tracks.forEach(function(t,i){
       var it = document.createElement('div'); it.className = 'pl-item' + (i===0?' cur':'');
       var th = trackThumb(t);
-      var imgStyle = (t.kind==='yt') ? '' : ' style="object-fit:contain;padding:8px;box-sizing:border-box;background:#1a1e26;"';
+      var imgStyle = (t.img || t.kind==='yt') ? '' : ' style="object-fit:contain;padding:8px;box-sizing:border-box;background:#1a1e26;"';
       it.innerHTML = '<span class="no">'+(i+1)+'</span>'+
         (th ? '<img loading="lazy"'+imgStyle+' src="'+th+'" alt="">' : '<img alt="">')+
         '<span class="ti"></span>';
@@ -2011,19 +2016,30 @@
     if (inp) inp.value = '';
   }
   /* ── 곡 등록 칸 (＋ 추가등록을 누를 때마다 한 칸씩 늘어남) ── */
-  function addSongRow(name, url){
+  function addSongRow(name, url, img){
     var wrap = document.getElementById('songRows');
     var row = document.createElement('div'); row.className = 'song-row';
     row.innerHTML =
       '<input class="song-url" type="text" placeholder="https://... 영상·사이트 주소 (유튜브 아니어도 됨)" autocomplete="off">'+
       '<input class="song-name" type="text" placeholder="영상 제목 (선택)" autocomplete="off">'+
+      '<input class="song-img" type="text" placeholder="사진 주소 (선택) https://...jpg" autocomplete="off">'+
+      '<span class="song-thumb" title="사진 미리보기"></span>'+
       '<button type="button" class="song-del" title="이 칸 삭제">✕</button>';
     row.querySelector('.song-name').value = name || '';
     var u = row.querySelector('.song-url'); u.value = url || '';
+    var im = row.querySelector('.song-img'); im.value = img || '';
+    var thumb = row.querySelector('.song-thumb');
+    function refreshThumb(){
+      var val = im.value.trim();
+      if (val){ thumb.style.backgroundImage = 'url("' + val.replace(/"/g,'%22') + '")'; thumb.classList.add('has'); }
+      else { thumb.style.backgroundImage = ''; thumb.classList.remove('has'); }
+    }
+    refreshThumb();
     u.addEventListener('input', function(){ updatePreview(); scheduleAutoThumb(); });
+    im.addEventListener('input', function(){ refreshThumb(); updatePreview(); });
     row.querySelector('.song-del').addEventListener('click', function(){
       var rows = wrap.querySelectorAll('.song-row');
-      if (rows.length <= 1){ row.querySelector('.song-name').value = ''; u.value = ''; }
+      if (rows.length <= 1){ row.querySelector('.song-name').value = ''; u.value = ''; im.value = ''; refreshThumb(); }
       else row.remove();
       updatePreview();
     });
@@ -2033,7 +2049,7 @@
   function resetSongRows(list){
     var wrap = document.getElementById('songRows'); if (!wrap) return;
     wrap.innerHTML = '';
-    if (list && list.length){ list.forEach(function(t){ addSongRow(t.name, t.url); }); }
+    if (list && list.length){ list.forEach(function(t){ addSongRow(t.name, t.url, t.img); }); }
     else addSongRow('', '');
   }
   function collectSongRows(){
@@ -2042,10 +2058,12 @@
     Array.prototype.forEach.call(rows, function(r){
       var n = r.querySelector('.song-name').value.trim();
       var u = r.querySelector('.song-url').value.trim();
+      var imEl = r.querySelector('.song-img');
+      var im = imEl ? imEl.value.trim() : '';
       /* 제목 칸에 주소를 넣었어도 알아서 인식 */
       if (!u && /^(https?:\/\/|www\.)/i.test(n)){ u = n; n = ''; }
       if (u && /^(https?:\/\/|www\.)/i.test(n)){ n = ''; }
-      if (u) out.push({ name:n, url:u });
+      if (u) out.push({ name:n, url:u, img:im });
     });
     return out;
   }
@@ -2356,7 +2374,7 @@
     /* 곡 1개 → 단일 카드(url), 곡 2개 이상 → 목록 카드(tracks, 우측 세로 나열) */
     var oneUrl = '', trackList = null;
     if (songs.length >= 2){ trackList = songs; }
-    else if (songs.length === 1){ oneUrl = songs[0].url; if (!name) name = songs[0].name; }
+    else if (songs.length === 1){ oneUrl = songs[0].url; if (!name) name = songs[0].name; if (!img && songs[0].img) img = songs[0].img; }
 
     var movedToOther = false;
 
