@@ -1747,7 +1747,8 @@
               try{ e.target.setVolume(DEFAULT_VOLUME); e.target.unMute(); e.target.playVideo(); }catch(err){}
               setTimeout(function(){ buildPlPanel(0); }, 500);
             },
-            onStateChange: function(){ plHighlight(); }
+            onStateChange: function(){ plHighlight(); },
+            onError: function(e){ try{ e.target.nextVideo(); }catch(_){} }   /* 죽은 영상은 다음으로 자동 넘김 */
           }
         });
       }catch(e){ plainIframe(); }
@@ -1798,6 +1799,22 @@
     var cnt = document.getElementById('plCount'); if (cnt) cnt.textContent = tracks.length + '편';
     var cur = 0;
     var errStreak = 0;   /* 연속 재생실패 카운트 (전체 실패 시 무한루프 방지) */
+    /* ── 재생 감시(watchdog): 죽은(삭제/차단) 영상이 onError를 안 쏘고 멈춰도
+       일정 시간 안에 재생이 시작되지 않으면 자동으로 다음 곡으로 넘어감 ── */
+    var watchdog = null;
+    function clearWatchdog(){ if (watchdog){ clearTimeout(watchdog); watchdog = null; } }
+    function stillMounted(){ return document.body.contains(wrap); }
+    function armWatchdog(forCur){
+      clearWatchdog();
+      watchdog = setTimeout(function(){
+        if (!stillMounted() || cur !== forCur) return;
+        var s = -99;
+        try{ if (ytPlayer && ytPlayer.getPlayerState) s = ytPlayer.getPlayerState(); }catch(e){}
+        /* 1=재생중, 3=버퍼링 이면 정상 → 넘기지 않음. 그 외(멈춤/미시작/오류)면 건너뜀 */
+        if (s === 1 || s === 3) return;
+        skipNext();
+      }, 8000);
+    }
     function highlight(){
       Array.prototype.forEach.call(wrap.children, function(ch,i){ ch.classList.toggle('cur', i===cur); });
       var c = wrap.children[cur]; if (c){ try{ c.scrollIntoView({block:'nearest'}); }catch(e){} }
@@ -1822,11 +1839,13 @@
       return host;
     }
     function skipNext(){
+      clearWatchdog();
       errStreak++;
       var it = wrap.children[cur];
       if (it){ it.style.opacity = '.45'; it.title = '재생 불가 — 자동 건너뜀'; }
       if (errStreak >= tracks.length) return;   /* 전체 재생 불가면 정지 */
-      setTimeout(function(){ playAt(cur+1); }, 800);
+      var from = cur;
+      setTimeout(function(){ if (stillMounted() && cur === from) playAt(cur+1, true); }, 700);
     }
     function createYtPlayer(vid){
       ensureYTApi(function(){
@@ -1839,7 +1858,7 @@
             events: {
               onReady: function(e){ try{ e.target.setVolume(DEFAULT_VOLUME); e.target.unMute(); e.target.playVideo(); }catch(err){} },
               onStateChange: function(e){
-                if (e.data === YT.PlayerState.PLAYING) errStreak = 0;
+                if (e.data === YT.PlayerState.PLAYING){ errStreak = 0; clearWatchdog(); }
                 if (e.data === YT.PlayerState.ENDED) playAt(cur+1);
               },
               onError: skipNext
@@ -1853,16 +1872,19 @@
         autoUnmute(host.querySelector('iframe'), 'youtube');
       });
     }
-    function playAt(i){
+    function playAt(i, rebuild){
+      clearWatchdog();
       cur = ((i % tracks.length) + tracks.length) % tracks.length;   /* 마지막 다음엔 처음으로 (반복) */
       var t = tracks[cur];
       highlight();
       if (t.kind === 'yt'){
-        /* 이미 유튜브 플레이어가 떠 있으면 곡만 교체 (빠름) */
-        if (ytPlayer && ytPlayer.loadVideoById){
-          try{ ytPlayer.loadVideoById(t.id); ytPlayer.unMute(); ytPlayer.setVolume(DEFAULT_VOLUME); return; }catch(e){}
+        /* 이미 유튜브 플레이어가 떠 있으면 곡만 교체 (빠름).
+           단, 직접 클릭·건너뜀(rebuild) 시엔 멈춘 플레이어를 재사용하지 않고
+           새로 만들어 항상 복구되게 함 */
+        if (!rebuild && ytPlayer && ytPlayer.loadVideoById){
+          try{ ytPlayer.loadVideoById(t.id); ytPlayer.unMute(); ytPlayer.setVolume(DEFAULT_VOLUME); armWatchdog(cur); return; }catch(e){}
         }
-        resetHost(); createYtPlayer(t.id);
+        resetHost(); createYtPlayer(t.id); armWatchdog(cur);
       } else if (t.kind === 'file'){
         var host = resetHost();
         var vd = document.createElement('video');
@@ -1897,7 +1919,7 @@
       ti.textContent = trackLabel(t, i);
       if (!t.name && t.kind==='yt') plFetchTitle(t.id, ti);
       if (t.kind === 'page') it.title = '사이트 주소 — 클릭해서 재생 (자동 다음 넘김은 안 됨)';
-      it.addEventListener('click', function(){ errStreak = 0; playAt(i); });
+      it.addEventListener('click', function(){ errStreak = 0; playAt(i, true); });
       wrap.appendChild(it);
     });
     playAt(0);
