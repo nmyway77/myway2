@@ -1327,7 +1327,13 @@
   function getYouTubeId(input){
     input = (input||'').trim();
     var m = input.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/|youtube\.com\/live\/)([a-zA-Z0-9_-]{11})/);
-    return m ? m[1] : null;
+    if (m) return m[1];
+    /* a1 방식의 느슨한 인식: 유튜브 주소라면 v= 파라미터가 어디에 있어도 영상으로 인식 */
+    if (/youtube\.com|youtu\.be/i.test(input)){
+      m = input.match(/[?&]v=([a-zA-Z0-9_-]{11})/) || input.match(/(?:\.be\/|embed\/|shorts\/|live\/)([a-zA-Z0-9_-]{11})/);
+      if (m) return m[1];
+    }
+    return null;
   }
   function cardImage(v){
     if (v.img) return v.img;
@@ -1787,8 +1793,10 @@
   function mountTracks(box, v){
     var tracks = (v.tracks||[]).map(function(t){
       var id = getYouTubeId(t.url);
-      var kind = id ? 'yt' : (/\.(mp4|webm|ogg)(\?|$)/i.test(t.url||'') ? 'file' : 'page');
-      return { name:t.name||'', url:t.url||'', img:(t.img||''), id:id, kind:kind };
+      var list = !id ? getYouTubeList(t.url) : null;
+      var vm = (!id && !list) ? String(t.url||'').match(/vimeo\.com\/(\d+)/) : null;
+      var kind = (id || list) ? 'yt' : (vm ? 'vimeo' : (/\.(mp4|webm|ogg)(\?|$)/i.test(t.url||'') ? 'file' : 'page'));
+      return { name:t.name||'', url:t.url||'', img:(t.img||''), id:id, list:list, vid:(vm?vm[1]:null), kind:kind };
     }).filter(function(t){ return !!t.url; });
     if (!tracks.length){
       box.innerHTML = '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#a89e8c;text-align:center;font-size:.92rem;line-height:1.7;">아직 영상이 없습니다.<br>카드의 ✏ 수정을 열어 ＋ 추가등록으로 영상을 넣어주세요.</div>';
@@ -1882,7 +1890,17 @@
       cur = ((i % tracks.length) + tracks.length) % tracks.length;   /* 마지막 다음엔 처음으로 (반복) */
       var t = tracks[cur];
       highlight();
-      if (t.kind === 'yt'){
+      if (t.kind === 'yt' && !t.id && t.list){
+        /* 재생목록 주소만 있는 곡: a1 방식 순수 임베드로 영상만 표시 */
+        var hostL = resetHost();
+        hostL.innerHTML = '<iframe src="https://www.youtube.com/embed/videoseries?list='+t.list+'&autoplay=1&mute=1&playsinline=1&enablejsapi=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
+        autoUnmute(hostL.querySelector('iframe'), 'youtube');
+      } else if (t.kind === 'vimeo'){
+        /* 비메오 주소: 페이지가 아니라 플레이어(영상만) 임베드 */
+        var hostV = resetHost();
+        hostV.innerHTML = '<iframe src="https://player.vimeo.com/video/'+t.vid+'?autoplay=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
+        autoUnmute(hostV.querySelector('iframe'), 'vimeo');
+      } else if (t.kind === 'yt'){
         /* 이미 유튜브 플레이어가 떠 있으면 곡만 교체 (빠름).
            단, 직접 클릭·건너뜀(rebuild) 시엔 멈춘 플레이어를 재사용하지 않고
            새로 만들어 항상 복구되게 함 */
@@ -1916,7 +1934,7 @@
     tracks.forEach(function(t,i){
       var it = document.createElement('div'); it.className = 'pl-item' + (i===0?' cur':'');
       var th = trackThumb(t);
-      var imgStyle = (t.img || t.kind==='yt') ? '' : ' style="object-fit:contain;padding:8px;box-sizing:border-box;background:#1a1e26;"';
+      var imgStyle = (t.img || t.kind==='yt' || t.kind==='vimeo') ? '' : ' style="object-fit:contain;padding:8px;box-sizing:border-box;background:#1a1e26;"';
       it.innerHTML = '<span class="no">'+(i+1)+'</span>'+
         (th ? '<img loading="lazy"'+imgStyle+' src="'+th+'" alt="">' : '<img alt="">')+
         '<span class="ti"></span>';

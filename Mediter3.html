@@ -1,0 +1,346 @@
+ <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>유튜브 채널 디렉토리 뷰어 - 편집판</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {margin:0; font-family:'Montserrat','Apple SD Gothic Neo',sans-serif; background:linear-gradient(135deg,#23243a 0%,#314a6a 100%); color:#fff; min-height:100vh;}
+    .container {display: flex; min-height: 100vh;}
+    .sidebar {width: 240px; min-width: 140px; background:rgba(27,35,52,0.98); padding:22px 10px 14px 15px; box-sizing: border-box; display: flex; flex-direction: column; border-top-right-radius:26px; border-bottom-right-radius:26px; box-shadow:4px 0 26px #0006; border-right:1.5px solid #3e5c8888; z-index:3;}
+    .sidebar-title {font-size:1.2rem; font-weight:700; margin-bottom:12px; letter-spacing:0.5px; text-shadow:0 2px 12px #0005; text-align:left; padding-left:7px;}
+    .side-btns {display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap;}
+    .side-btns button {flex:1 1 auto; background:rgba(53,118,237,0.25); color:#cfe4ff; border:1px solid #3576ed66; border-radius:9px; padding:7px 8px; font-size:0.82rem; font-weight:600; cursor:pointer; font-family:inherit; white-space:nowrap;}
+    .side-btns button:hover {background:linear-gradient(90deg,#3576ed 10%,#65e0f6 95%); color:#1b2334;}
+    .side-btns button.primary {background:linear-gradient(90deg,#3576ed 10%,#65e0f6 95%); color:#1b2334; border-color:#63c6ff;}
+    .directory-list {
+      display:flex; flex-direction:column; gap:11px; flex:1; overflow-y:auto;
+      scrollbar-width: none !important;
+      max-height:84vh; padding-right:2px;
+    }
+    .directory-list::-webkit-scrollbar { width: 0 !important; background: transparent !important; display: none !important; }
+    .directory-list::-webkit-scrollbar-thumb { background: transparent !important; }
+    .directory-list::-webkit-scrollbar-track { background: transparent !important; }
+    .directory-item {position:relative; display:flex; align-items:center; gap:6px; padding:13px 10px; border-radius:12px; cursor:pointer; font-size:1.02rem; background:rgba(37,55,90,0.82); box-shadow:0 2px 9px #0002; transition:background 0.16s, box-shadow 0.16s, color 0.13s; border:1px solid transparent; font-weight:600; user-select:none; min-height:28px; white-space:nowrap;}
+    .directory-item.selected, .directory-item:hover {background:linear-gradient(90deg,#3576ed 10%,#65e0f6 95%); color:#222e4c; border:1.2px solid #63c6ff; box-shadow:0 4px 16px #1588c844, 0 1px 5px #63e0ff11; z-index:2;}
+    .directory-label {flex:1; letter-spacing:0.01em; font-size:1.06em; font-weight:600; overflow:hidden; text-overflow:ellipsis;}
+    .item-tools {display:none; gap:2px; flex:none;}
+    .directory-item:hover .item-tools {display:inline-flex;}
+    .item-tools button {background:rgba(255,255,255,0.75); border:0; border-radius:7px; width:24px; height:24px; font-size:12px; line-height:1; cursor:pointer; color:#243; padding:0;}
+    .item-tools button:hover {background:#fff;}
+    .empty-hint {color:#9fb3d9; font-size:0.9rem; text-align:center; line-height:1.8; margin-top:30px;}
+    .main {flex: 1 1 auto; min-width: 0; background: linear-gradient(120deg,#242a39 0%,#3a5975 90%); position: relative; overflow-y: auto;}
+    .yt-container {min-height:100vh; width:100%; display:flex; align-items:flex-start; justify-content:center; background:none; padding-bottom:190px; box-sizing:border-box;}
+    .yt-inner {width:92vw; max-width:980px; display:flex; flex-direction:column; align-items:center; gap:18px; margin-top:48px;}
+    .yt-frame-box {width:100%; aspect-ratio:16/9; background:#000; border-radius:18px; box-shadow:0 4px 40px #2232ab55; overflow:hidden; display:flex; align-items:center; justify-content:center;}
+    .video-frame {width:100%; height:100%; border:0; border-radius:18px; background:#000; display:block; min-height:180px;}
+
+    /* ── 영상만 보기 모드: 목록·여백을 모두 숨기고 화면 전체가 영상 ── */
+    body.video-only .sidebar {display:none;}
+    body.video-only .main {background:#000;}
+    body.video-only .yt-container {min-height:100vh; padding:0; align-items:stretch;}
+    body.video-only .yt-inner {width:100vw; max-width:none; margin:0; gap:0; height:100vh;}
+    body.video-only .yt-frame-box {aspect-ratio:auto; height:100vh; border-radius:0; box-shadow:none;}
+    body.video-only .video-frame {border-radius:0;}
+    #exitOnly {display:none; position:fixed; top:12px; left:12px; z-index:50; background:rgba(20,26,40,0.55); color:#fff; border:1px solid #ffffff33; border-radius:10px; padding:8px 14px; font-size:0.85rem; font-weight:600; cursor:pointer; font-family:inherit; opacity:0.35; transition:opacity .2s;}
+    #exitOnly:hover {opacity:1;}
+    body.video-only #exitOnly {display:block;}
+
+    /* ── 추가/수정 모달 ── */
+    .modal-bg {display:none; position:fixed; inset:0; background:rgba(10,14,24,0.72); z-index:100; align-items:center; justify-content:center;}
+    .modal-bg.show {display:flex;}
+    .modal {width:min(480px, 92vw); background:#1e2740; border:1px solid #3e5c88; border-radius:16px; padding:22px; box-sizing:border-box; box-shadow:0 10px 50px #000a;}
+    .modal h3 {margin:0 0 16px; font-size:1.05rem;}
+    .modal label {display:block; font-size:0.8rem; color:#9fb3d9; margin:12px 0 5px;}
+    .modal input[type=text] {width:100%; box-sizing:border-box; background:#141b2e; color:#fff; border:1px solid #3e5c88; border-radius:9px; padding:10px 11px; font-size:0.95rem; font-family:inherit; outline:none;}
+    .modal input[type=text]:focus {border-color:#65e0f6;}
+    .modal .m-btns {display:flex; gap:8px; margin-top:20px;}
+    .modal .m-btns button {flex:1; border:0; border-radius:9px; padding:11px 0; font-size:0.92rem; font-weight:700; cursor:pointer; font-family:inherit;}
+    .m-save {background:linear-gradient(90deg,#3576ed,#65e0f6); color:#14203a;}
+    .m-cancel {background:#2c3a55; color:#cfe4ff;}
+    .m-del {background:#5a2733; color:#ffb9c4; flex:0 0 90px !important;}
+    .toast {position:fixed; left:50%; bottom:26px; transform:translateX(-50%); background:#101828ee; color:#fff; padding:10px 18px; border-radius:10px; font-size:0.88rem; opacity:0; pointer-events:none; transition:opacity .25s; z-index:200; border:1px solid #3e5c88;}
+    .toast.show {opacity:1;}
+
+    @media (max-width:900px) {
+      .container { flex-direction:column;}
+      .sidebar { width:100vw; min-width:0; border-radius:0 0 20px 20px; border-right:none; box-shadow:none; padding:8px 0 7px 0; position:relative;}
+      .sidebar-title { font-size:1.1rem; padding-left:17px; margin-bottom:6px;}
+      .side-btns {padding:0 10px; margin-bottom:8px;}
+      .directory-list { flex-direction:row; gap:6px; overflow-x:auto; overflow-y:hidden; max-height:none; height:46px; padding:0 8px 0 8px; align-items:center;}
+      .directory-item { font-size:0.93rem; padding:10px 11px; min-width:120px; min-height:30px; border-radius:11px; white-space:nowrap; margin-bottom:0;}
+      .item-tools {display:inline-flex;}
+      .main { padding:0;}
+      .yt-container { min-height:90vh; padding-bottom:120px;}
+      .yt-inner { width:99vw; max-width:99vw; margin-top:16px;}
+      .yt-frame-box { border-radius:12px;}
+      .video-frame { border-radius:12px; min-height:100px;}
+      body.video-only .yt-inner {height:100vh; margin-top:0;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="sidebar-title">채널 디렉토리</div>
+      <div class="side-btns">
+        <button class="primary" id="btnAdd">＋ 추가</button>
+        <button id="btnOnly">영상만 보기</button>
+        <button id="btnExport">내보내기</button>
+        <button id="btnImport">가져오기</button>
+      </div>
+      <div class="directory-list" id="dirList"></div>
+    </div>
+    <div class="main">
+      <div class="yt-container">
+        <div class="yt-inner">
+          <div class="yt-frame-box">
+            <iframe class="video-frame" id="videoFrame"
+              src="about:blank"
+              allow="autoplay; encrypted-media"
+              allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button id="exitOnly">☰ 목록 보기</button>
+
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <h3 id="modalTitle">영상 추가</h3>
+      <label>이름 (목록에 표시)</label>
+      <input type="text" id="mName" placeholder="예: 서울역" autocomplete="off">
+      <label>영상 주소 (유튜브 watch / youtu.be / embed 모두 가능)</label>
+      <input type="text" id="mUrl" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off">
+      <div class="m-btns">
+        <button class="m-del" id="mDel" style="display:none;">삭제</button>
+        <button class="m-cancel" id="mCancel">취소</button>
+        <button class="m-save" id="mSave">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <input type="file" id="importFile" accept=".json,application/json" style="display:none;">
+
+  <script>
+    /* ══ 데이터: localStorage에 저장, 처음엔 a1 기본 목록 ══ */
+    var STORE_KEY = 'mywayA1DirV1';
+    var DEFAULT_ITEMS = [
+      {name:'서울역', url:'https://www.youtube.com/watch?v=2--j0SVYmRY'},
+      {name:'반포대교 분수쇼', url:'https://www.youtube.com/watch?v=-JhoMGoAfFc'},
+      {name:'한강공원', url:'https://www.youtube.com/watch?v=m0bJROup7iE'},
+      {name:'서울시청', url:'https://www.youtube.com/embed/UWPxEmIYc2E'},
+      {name:'광화문 대로', url:'https://www.youtube.com/watch?v=zuWxsbV-mlA'},
+      {name:'롯데월드', url:'https://www.youtube.com/embed/_694GtePH-Y'},
+      {name:'동대문DDP', url:'https://www.youtube.com/watch?v=GOt7UVVp-5Y'},
+      {name:'대림역', url:'https://www.youtube.com/watch?v=L2HfapWhknI'},
+      {name:'잠실대교', url:'https://youtu.be/ZopiySgQjsc'},
+      {name:'한강 올림픽대로', url:'https://www.youtube.com/watch?v=3Uf3w-UHB4U'},
+      {name:'UN빌리지 앞', url:'https://www.youtube.com/embed/HmzyLbRtRRw'},
+      {name:'국회의사당전망', url:'https://youtu.be/ahSMyLJcp48'},
+      {name:'YTN남산공원', url:'https://www.youtube.com/watch?v=J_vNwxaOtTs'},
+      {name:'롯데월드타워', url:'https://www.youtube.com/watch?v=W6ci31Rx2W0'}
+    ];
+    var items = [];
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      if (raw) items = JSON.parse(raw) || [];
+    } catch(e){}
+    if (!Array.isArray(items) || !items.length) items = DEFAULT_ITEMS.slice();
+    var selected = 0;
+    var editIdx = null;   /* null=추가, 숫자=수정 */
+
+    function persist(){
+      try{ localStorage.setItem(STORE_KEY, JSON.stringify(items)); }catch(e){}
+    }
+
+    /* ══ 주소 변환: a1과 동일한 방식 (watch / youtu.be / embed 전부 처리) ══ */
+    function toYouTubeEmbed(url) {
+      if(!url) return "";
+      if (url.includes('/embed/')) return url;
+      let match = url.match(/(?:v=|embed\/|\.be\/|shorts\/|live\/)([a-zA-Z0-9_-]{11})/);
+      if (match) return 'https://www.youtube.com/embed/' + match[1];
+      return url;
+    }
+    function getAutoPlayUrl(url) {
+      if (!url) return "";
+      url = toYouTubeEmbed(url);
+      return url.includes('?') ? url + '&autoplay=1' : url + '?autoplay=1';
+    }
+
+    var frame = document.getElementById('videoFrame');
+    var listEl = document.getElementById('dirList');
+
+    function play(i){
+      if (!items[i]) return;
+      selected = i;
+      frame.src = getAutoPlayUrl(items[i].url);
+      Array.prototype.forEach.call(listEl.children, function(ch, k){
+        ch.classList.toggle('selected', k === selected);
+      });
+    }
+
+    function render(){
+      listEl.innerHTML = '';
+      if (!items.length){
+        listEl.innerHTML = '<div class="empty-hint">아직 영상이 없습니다.<br>＋ 추가 버튼으로 등록해 보세요.</div>';
+        frame.src = 'about:blank';
+        return;
+      }
+      if (selected >= items.length) selected = items.length - 1;
+      items.forEach(function(v, i){
+        var it = document.createElement('div');
+        it.className = 'directory-item' + (i === selected ? ' selected' : '');
+        var lab = document.createElement('span');
+        lab.className = 'directory-label';
+        lab.textContent = v.name || ('영상 ' + (i+1));
+        it.appendChild(lab);
+
+        var tools = document.createElement('span');
+        tools.className = 'item-tools';
+        function toolBtn(txt, title, fn){
+          var b = document.createElement('button');
+          b.type = 'button'; b.textContent = txt; b.title = title;
+          b.addEventListener('click', function(e){ e.stopPropagation(); fn(); });
+          tools.appendChild(b);
+        }
+        toolBtn('▲', '위로', function(){ moveItem(i, -1); });
+        toolBtn('▼', '아래로', function(){ moveItem(i, 1); });
+        toolBtn('✏', '수정', function(){ openModal(i); });
+        it.appendChild(tools);
+
+        it.addEventListener('click', function(){ play(i); });
+        listEl.appendChild(it);
+      });
+    }
+
+    function moveItem(i, dir){
+      var j = i + dir;
+      if (j < 0 || j >= items.length) return;
+      var t = items[i]; items[i] = items[j]; items[j] = t;
+      if (selected === i) selected = j;
+      else if (selected === j) selected = i;
+      persist(); render();
+    }
+
+    /* ══ 추가/수정 모달 ══ */
+    var modalBg = document.getElementById('modalBg');
+    function openModal(idx){
+      editIdx = (typeof idx === 'number') ? idx : null;
+      document.getElementById('modalTitle').textContent = editIdx === null ? '영상 추가' : '영상 수정';
+      document.getElementById('mName').value = editIdx === null ? '' : (items[editIdx].name || '');
+      document.getElementById('mUrl').value  = editIdx === null ? '' : (items[editIdx].url || '');
+      document.getElementById('mDel').style.display = editIdx === null ? 'none' : '';
+      modalBg.classList.add('show');
+      setTimeout(function(){ document.getElementById(editIdx === null ? 'mName' : 'mName').focus(); }, 60);
+    }
+    function closeModal(){ modalBg.classList.remove('show'); editIdx = null; }
+    document.getElementById('mCancel').addEventListener('click', closeModal);
+    modalBg.addEventListener('click', function(e){ if (e.target === modalBg) closeModal(); });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape'){
+        if (modalBg.classList.contains('show')) closeModal();
+        else if (document.body.classList.contains('video-only')) setOnly(false);
+      }
+    });
+
+    document.getElementById('mSave').addEventListener('click', function(){
+      var name = document.getElementById('mName').value.trim();
+      var url  = document.getElementById('mUrl').value.trim();
+      /* 이름 칸에 주소를 넣었어도 알아서 인식 */
+      if (!url && /^(https?:\/\/|www\.)/i.test(name)){ url = name; name = ''; }
+      if (!url){ alert('영상 주소를 입력하세요.'); return; }
+      if (!name) name = '영상 ' + (items.length + 1);
+      if (editIdx === null){
+        items.push({name:name, url:url});
+        selected = items.length - 1;
+        toast('추가되었습니다.');
+      } else {
+        items[editIdx].name = name;
+        items[editIdx].url = url;
+        toast('수정되었습니다.');
+      }
+      persist(); render(); play(selected);
+      closeModal();
+    });
+    document.getElementById('mDel').addEventListener('click', function(){
+      if (editIdx === null) return;
+      if (!confirm('「' + (items[editIdx].name || '이 영상') + '」을(를) 삭제할까요?')) return;
+      items.splice(editIdx, 1);
+      if (selected >= items.length) selected = Math.max(0, items.length - 1);
+      persist(); render();
+      if (items.length) play(selected);
+      toast('삭제되었습니다.');
+      closeModal();
+    });
+
+    /* 엔터로 저장 */
+    ['mName','mUrl'].forEach(function(id){
+      document.getElementById(id).addEventListener('keydown', function(e){
+        if (e.key === 'Enter') document.getElementById('mSave').click();
+      });
+    });
+
+    document.getElementById('btnAdd').addEventListener('click', function(){ openModal(null); });
+
+    /* ══ 영상만 보기 모드 ══ */
+    function setOnly(on){
+      document.body.classList.toggle('video-only', on);
+    }
+    document.getElementById('btnOnly').addEventListener('click', function(){ setOnly(true); });
+    document.getElementById('exitOnly').addEventListener('click', function(){ setOnly(false); });
+    /* 주소에 #only 를 붙여 열면 처음부터 영상만 나옴 (예: 파일.html#only) */
+    function applyHash(){ setOnly(/#only/.test(location.hash)); }
+    if (/#only/.test(location.hash)) setOnly(true);
+    window.addEventListener('hashchange', applyHash);
+
+    /* ══ 내보내기 / 가져오기 (JSON 파일) ══ */
+    document.getElementById('btnExport').addEventListener('click', function(){
+      var blob = new Blob([JSON.stringify(items, null, 2)], {type:'application/json'});
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'directory_videos.json';
+      a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 500);
+      toast('목록을 파일로 저장했습니다.');
+    });
+    var importFile = document.getElementById('importFile');
+    document.getElementById('btnImport').addEventListener('click', function(){ importFile.click(); });
+    importFile.addEventListener('change', function(){
+      var f = importFile.files && importFile.files[0];
+      if (!f) return;
+      var rd = new FileReader();
+      rd.onload = function(){
+        try{
+          var arr = JSON.parse(rd.result);
+          if (!Array.isArray(arr)) throw 0;
+          items = arr.map(function(v){ return {name:String(v.name||''), url:String(v.url||'')}; })
+                     .filter(function(v){ return !!v.url; });
+          selected = 0;
+          persist(); render();
+          if (items.length) play(0);
+          toast('목록을 가져왔습니다. (' + items.length + '개)');
+        }catch(e){ alert('가져올 수 없는 파일입니다. 내보내기로 만든 JSON 파일을 선택하세요.'); }
+      };
+      rd.readAsText(f);
+      importFile.value = '';
+    });
+
+    function toast(msg){
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(t._tm);
+      t._tm = setTimeout(function(){ t.classList.remove('show'); }, 1800);
+    }
+
+    /* 시작: 목록 그리고 첫 영상 재생 */
+    render();
+    if (items.length) play(0);
+  </script>
+</body>
+</html>
