@@ -4421,12 +4421,19 @@
     }
     window.addEventListener('message', onMsg);
 
-    /* infoDelivery 스트림 시작 핸드셰이크 */
-    var hsTries = 0;
-    var hsTimer = setInterval(function(){
-      try{ iframe.contentWindow.postMessage('{"event":"listening"}', '*'); }catch(e){}
-      if (++hsTries > 25) clearInterval(hsTimer);
-    }, 400);
+    /* infoDelivery 스트림 시작 핸드셰이크
+       — 재생목록 iframe은 YT.Player(공식 API)가 이미 통신 채널을 열어둔 상태.
+         여기에 원시 listening 메시지를 다시 보내면 채널이 재바인딩되어
+         getPlaylist() 등이 빈 값을 돌려주는 문제가 생기므로 반드시 생략.
+         (컨트롤 바는 공식 API 채널로 흘러오는 infoDelivery를 그대로 수신함) */
+    var hsTimer = null;
+    if (!inPlaylist){
+      var hsTries = 0;
+      hsTimer = setInterval(function(){
+        try{ iframe.contentWindow.postMessage('{"event":"listening"}', '*'); }catch(e){}
+        if (++hsTries > 25) clearInterval(hsTimer);
+      }, 400);
+    }
 
     function toggle(){
       if (st.playerState === 1){ cmd(iframe,'pauseVideo'); st.playerState=2; }
