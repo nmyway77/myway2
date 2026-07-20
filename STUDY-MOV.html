@@ -1704,6 +1704,7 @@
   var _plBuilt = false;  /* 현재 세대에서 패널 빌드 완료 여부 */
   var _plForceLid = null;/* 강제 로드용 재생목록 ID */
   var _plStartVid = null;/* 카드 URL에 지정된 시작 영상 ID (목록 확보 후 이 위치로 점프) */
+  var _plMounted = false;/* 재생목록 플레이어가 살아있는지 (재사용 판단용) */
   function buildPlPanel(tries, gen){
     if (gen === undefined) gen = _plGen;
     if (gen !== _plGen || _plBuilt) return;   /* 플레이어가 바뀌었거나 이미 완료 */
@@ -1747,6 +1748,22 @@
       autoUnmute(box.querySelector('iframe'), 'youtube');
     }
     if (!lid){ plainIframe(); return; }   /* 단일 곡은 기존 방식 그대로 */
+    /* 기존 재생목록 플레이어가 살아 있으면 부수지 않고 재생목록만 교체 (재사용) */
+    if (ytPlayer && _plMounted && document.getElementById('plHost')){
+      _plGen++; _plBuilt = false; _plForceLid = lid; _plStartVid = vid;
+      var rWrap = document.getElementById('plItems'); if (rWrap) rWrap.innerHTML = '';
+      var rCnt = document.getElementById('plCount'); if (rCnt) rCnt.textContent = '';
+      var rGen = _plGen;
+      try{
+        ytPlayer.loadPlaylist({listType:'playlist', list:lid});
+        ytPlayer.unMute(); ytPlayer.setVolume(DEFAULT_VOLUME);
+        setTimeout(function(){ buildPlPanel(0, rGen); }, 300);
+        return;
+      }catch(e){
+        /* 재사용 실패 시에만 완전 재생성으로 진행 */
+        try{ ytPlayer.destroy(); }catch(_){} ytPlayer = null; _plMounted = false;
+      }
+    }
     /* 재생목록: 플레이어 + 우측 곡 리스트 패널 */
     box.innerHTML =
       '<div class="pl-wrap">'+
@@ -1767,7 +1784,6 @@
     ensureYTApi(function(){
       var host = document.getElementById('plHost'); if (!host) return;
       _plGen++; _plBuilt = false; _plForceLid = lid; _plStartVid = vid;   /* 새 플레이어 세대 시작 */
-      var myGen = _plGen;
       try{
         /* 공식 문서가 보장하는 방식: videoId 없이 재생목록(listType+list)만으로 생성.
            videoId를 함께 넘기면 유튜브 쪽 변경에 따라 목록이 안 붙는 문제가 생김.
@@ -1778,13 +1794,15 @@
           events: {
             onReady: function(e){
               try{ e.target.setVolume(DEFAULT_VOLUME); e.target.unMute(); e.target.playVideo(); }catch(err){}
-              setTimeout(function(){ buildPlPanel(0, myGen); }, 300);
+              setTimeout(function(){ buildPlPanel(0); }, 300);
             },
-            /* 재생이 시작되면 목록이 뒤늦게 붙는 경우가 많음 → 미완이면 즉시 재시도 */
-            onStateChange: function(){ if (!_plBuilt) buildPlPanel(39, myGen); plHighlight(); },
+            /* 재생이 시작되면 목록이 뒤늦게 붙는 경우가 많음 → 미완이면 즉시 재시도.
+               플레이어가 재사용되므로 세대는 항상 현재(_plGen) 기준으로 판단 */
+            onStateChange: function(){ if (!_plBuilt) buildPlPanel(39); plHighlight(); },
             onError: function(e){ try{ e.target.nextVideo(); }catch(_){} }   /* 죽은 영상은 다음으로 자동 넘김 */
           }
         });
+        _plMounted = true;
       }catch(e){ plainIframe(); }
     }, plainIframe);
   }
@@ -1868,6 +1886,7 @@
     /* 플레이어 영역 비우기 (♪ 목록 버튼은 유지) */
     function resetHost(){
       if (ytPlayer){ try{ ytPlayer.destroy(); }catch(e){} ytPlayer = null; }
+      _plMounted = false;   /* 트랙용 플레이어는 재생목록 재사용 대상이 아님 */
       Array.prototype.slice.call(plMain.children).forEach(function(ch){ if (ch.id !== 'plToggle') ch.remove(); });
       var host = document.createElement('div'); host.id = 'plHost';
       plMain.insertBefore(host, plMain.firstChild);
@@ -1985,7 +2004,11 @@
     if (groupModes[currentGroup]==='builder') return;
     var v = (selectedIdx!=null && videos[selectedIdx]) ? videos[selectedIdx] : null;
     var box = document.getElementById('ytFrameBox');
-    if (ytPlayer){ try{ ytPlayer.destroy(); }catch(e){} ytPlayer = null; }
+    /* 재생목록 → 재생목록 전환은 플레이어를 부수지 않고 재사용.
+       (플레이어를 반복 재생성하면 3번째쯤부터 재생목록이 안 붙는 유튜브 API 버그 회피) */
+    var _nx = (v && v.url && !(Array.isArray(v.tracks) && v.tracks.length)) ? parseToEmbed(v.url) : null;
+    var _reuse = !!(_nx && _nx.type==='youtube' && /[?&]list=/.test(_nx.code) && ytPlayer && _plMounted && document.getElementById('plHost'));
+    if (!_reuse && ytPlayer){ try{ ytPlayer.destroy(); }catch(e){} ytPlayer = null; _plMounted = false; }
     if (v){
       if ((Array.isArray(v.tracks) && v.tracks.length) || !v.url){ mountTracks(box, v); return; }
       var p = parseToEmbed(v.url);
