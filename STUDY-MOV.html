@@ -1697,10 +1697,28 @@
     var cur = wrap.children[idx];
     if (cur){ try{ cur.scrollIntoView({block:'nearest'}); }catch(e){} }
   }
-  function buildPlPanel(tries){
+  /* 재생목록 패널 빌드 — 플레이어가 목록을 늦게 붙이는 경우가 잦아
+     (1) 재시도 시간을 넉넉히 늘리고 (2) 중간에 한 번 loadPlaylist로 목록을 강제 부착하며
+     (3) 카드 전환으로 플레이어가 교체되면 이전 재시도 루프는 세대 토큰으로 즉시 중단 */
+  var _plGen = 0;        /* 플레이어 세대 토큰 (mountYouTube마다 증가) */
+  var _plBuilt = false;  /* 현재 세대에서 패널 빌드 완료 여부 */
+  var _plForceLid = null;/* 강제 로드용 재생목록 ID */
+  function buildPlPanel(tries, gen){
+    if (gen === undefined) gen = _plGen;
+    if (gen !== _plGen || _plBuilt) return;   /* 플레이어가 바뀌었거나 이미 완료 */
     var wrap = document.getElementById('plItems'); if (!wrap || !ytPlayer) return;
     var ids = []; try{ ids = ytPlayer.getPlaylist() || []; }catch(e){}
-    if (!ids.length){ if ((tries||0) < 10) setTimeout(function(){ buildPlPanel((tries||0)+1); }, 700); return; }
+    if (!ids.length){
+      tries = tries||0;
+      /* 8번째 시도(약 5초)에도 목록이 없으면 재생목록을 한 번 강제 로드
+         (목록이 안 붙으면 이어재생도 안 되므로 이 시점엔 강제 로드가 이득) */
+      if (tries === 8 && _plForceLid){
+        try{ ytPlayer.loadPlaylist({listType:'playlist', list:_plForceLid}); }catch(e){}
+      }
+      if (tries < 40) setTimeout(function(){ buildPlPanel(tries+1, gen); }, 700);
+      return;
+    }
+    _plBuilt = true;
     var cnt = document.getElementById('plCount'); if (cnt) cnt.textContent = ids.length + '편';
     wrap.innerHTML = '';
     ids.forEach(function(id, i){
@@ -1741,6 +1759,8 @@
     if (window.innerWidth <= 760){ var sd0 = document.getElementById('plSide'); if (sd0) sd0.classList.add('hide'); }
     ensureYTApi(function(){
       var host = document.getElementById('plHost'); if (!host) return;
+      _plGen++; _plBuilt = false; _plForceLid = lid;   /* 새 플레이어 세대 시작 */
+      var myGen = _plGen;
       try{
         ytPlayer = new YT.Player('plHost', {
           width:'100%', height:'100%',
@@ -1749,9 +1769,10 @@
           events: {
             onReady: function(e){
               try{ e.target.setVolume(DEFAULT_VOLUME); e.target.unMute(); e.target.playVideo(); }catch(err){}
-              setTimeout(function(){ buildPlPanel(0); }, 500);
+              setTimeout(function(){ buildPlPanel(0, myGen); }, 500);
             },
-            onStateChange: function(){ plHighlight(); },
+            /* 재생이 시작되면 목록이 뒤늦게 붙는 경우가 많음 → 미완이면 즉시 재시도 */
+            onStateChange: function(){ if (!_plBuilt) buildPlPanel(39, myGen); plHighlight(); },
             onError: function(e){ try{ e.target.nextVideo(); }catch(_){} }   /* 죽은 영상은 다음으로 자동 넘김 */
           }
         });
