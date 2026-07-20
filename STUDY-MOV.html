@@ -1703,6 +1703,7 @@
   var _plGen = 0;        /* 플레이어 세대 토큰 (mountYouTube마다 증가) */
   var _plBuilt = false;  /* 현재 세대에서 패널 빌드 완료 여부 */
   var _plForceLid = null;/* 강제 로드용 재생목록 ID */
+  var _plStartVid = null;/* 카드 URL에 지정된 시작 영상 ID (목록 확보 후 이 위치로 점프) */
   function buildPlPanel(tries, gen){
     if (gen === undefined) gen = _plGen;
     if (gen !== _plGen || _plBuilt) return;   /* 플레이어가 바뀌었거나 이미 완료 */
@@ -1719,6 +1720,12 @@
       return;
     }
     _plBuilt = true;
+    /* 카드 URL에 특정 영상(v=)이 지정돼 있고 그게 목록 첫 곡이 아니면 해당 위치로 점프 */
+    if (_plStartVid){
+      var sIdx = ids.indexOf(_plStartVid);
+      if (sIdx > 0){ try{ ytPlayer.playVideoAt(sIdx); ytPlayer.unMute(); ytPlayer.setVolume(DEFAULT_VOLUME); }catch(e){} }
+      _plStartVid = null;   /* 1회만 점프 (이후 이어재생 흐름 방해 금지) */
+    }
     var cnt = document.getElementById('plCount'); if (cnt) cnt.textContent = ids.length + '편';
     wrap.innerHTML = '';
     ids.forEach(function(id, i){
@@ -1759,17 +1766,19 @@
     if (window.innerWidth <= 760){ var sd0 = document.getElementById('plSide'); if (sd0) sd0.classList.add('hide'); }
     ensureYTApi(function(){
       var host = document.getElementById('plHost'); if (!host) return;
-      _plGen++; _plBuilt = false; _plForceLid = lid;   /* 새 플레이어 세대 시작 */
+      _plGen++; _plBuilt = false; _plForceLid = lid; _plStartVid = vid;   /* 새 플레이어 세대 시작 */
       var myGen = _plGen;
       try{
+        /* 공식 문서가 보장하는 방식: videoId 없이 재생목록(listType+list)만으로 생성.
+           videoId를 함께 넘기면 유튜브 쪽 변경에 따라 목록이 안 붙는 문제가 생김.
+           카드에 지정된 특정 영상(vid)은 목록 확보 후 해당 위치로 점프해서 재생. */
         ytPlayer = new YT.Player('plHost', {
           width:'100%', height:'100%',
-          videoId: vid || undefined,
           playerVars: { autoplay:1, mute:1, playsinline:1, listType:'playlist', list:lid, controls:0, rel:0, modestbranding:1, iv_load_policy:3, fs:0, disablekb:1 },
           events: {
             onReady: function(e){
               try{ e.target.setVolume(DEFAULT_VOLUME); e.target.unMute(); e.target.playVideo(); }catch(err){}
-              setTimeout(function(){ buildPlPanel(0, myGen); }, 500);
+              setTimeout(function(){ buildPlPanel(0, myGen); }, 300);
             },
             /* 재생이 시작되면 목록이 뒤늦게 붙는 경우가 많음 → 미완이면 즉시 재시도 */
             onStateChange: function(){ if (!_plBuilt) buildPlPanel(39, myGen); plHighlight(); },
