@@ -31,6 +31,10 @@
     .group-select{flex:0 0 auto;font-family:var(--sans);font-size:.82rem;font-weight:600;color:var(--ink);background-color:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:6px 30px 6px 11px;cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-appearance:none;appearance:none;outline:none;transition:.16s;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%236b6353'><path d='M7 10l5 5 5-5z'/></svg>");background-repeat:no-repeat;background-position:right 9px center;}
     .group-select:hover{border-color:var(--accent);}
     .group-select:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft);}
+    /* 팝업차단 토글 — 보기전용(viewer) 모드에서도 항상 보임 */
+    .popup-block-btn{flex:0 0 auto;padding:6px 11px;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:var(--sans);transition:.16s;border:1px solid var(--line);background:var(--panel-2);color:var(--ink-soft);white-space:nowrap;}
+    .popup-block-btn.on{background:#0b6b53;border-color:#0b6b53;color:#fff;box-shadow:0 2px 6px rgba(11,107,83,.3);}
+    .popup-block-btn:hover{filter:brightness(1.06);}
     .nav-btns{display:flex;gap:6px;margin-left:auto;flex-wrap:nowrap;}
     .nav-btns button{flex:0 0 auto;padding:6px 11px;border-radius:9px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:var(--sans);transition:.16s;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);white-space:nowrap;}
     .nav-btns button:hover{background:#e9e2d3;}
@@ -821,6 +825,7 @@
         <option value="MOVIE">MOVIE</option>
         <option value="OTHERS">OTHERS</option>
       </select>
+      <button id="popupBlockBtn" class="popup-block-btn" onclick="togglePopupBlock()" type="button">🛡 팝업차단 ON</button>
       <div class="nav-btns">
         <button class="primary" onclick="openAddModal()">+ 추가</button>
         <button onclick="openDirModal()">디렉토리</button>
@@ -1173,6 +1178,52 @@
   var V2_KEY = 'mywayDir2GroupsV0_unused';
   var LEGACY_KEY = 'mywayDir2GroupsLegacy_unused';
   var OLD_KEY = 'mywayDir2ImgV0_unused';
+
+  /* ============================================================
+     ★ 팝업차단 — 아이프레임으로 띄운 외부 사이트가
+       · 팝업(새 창)을 띄우는 것
+       · 페이지 전체를 광고 사이트로 강제 이동시키는 것
+     을 iframe sandbox 속성으로 차단합니다. (기본: 켜짐)
+     유튜브·비메오 등 정식 플레이어는 사이드바 토글과 무관하게 그대로 동작.
+     ============================================================ */
+  var POPUP_BLOCK_KEY = 'mywayDir2PopupBlockV1';
+  var POPUP_BLOCK = true;
+  try { POPUP_BLOCK = localStorage.getItem(POPUP_BLOCK_KEY) !== '0'; } catch(e){}
+  /* allow-popups·allow-top-navigation을 뺀 것이 핵심 — 새 창·강제이동이 차단됨 */
+  var SANDBOX_FLAGS = 'allow-scripts allow-same-origin allow-forms allow-modals allow-presentation allow-pointer-lock';
+  function siteSandboxAttr(){ return POPUP_BLOCK ? ' sandbox="' + SANDBOX_FLAGS + '"' : ''; }
+  function isTrustedEmbed(u){
+    try { var h = new URL(u, location.href).hostname;
+      return /(^|\.)(youtube\.com|youtube-nocookie\.com|vimeo\.com)$/i.test(h);
+    } catch(e){ return false; }
+  }
+  function applySandboxIn(container){
+    /* 붙여넣은 embed 코드 등 임의 iframe에 sandbox를 적용 (유튜브·비메오는 제외) */
+    if (!POPUP_BLOCK || !container) return;
+    try{
+      Array.prototype.forEach.call(container.querySelectorAll('iframe'), function(f){
+        var src = f.getAttribute('src') || '';
+        if (!src || isTrustedEmbed(src)) return;
+        f.setAttribute('sandbox', SANDBOX_FLAGS);
+        f.setAttribute('src', src);   /* 로딩이 이미 시작됐으면 sandbox 적용을 위해 다시 로드 */
+      });
+    }catch(e){}
+  }
+  function updatePopupBlockBtn(){
+    var b = document.getElementById('popupBlockBtn'); if (!b) return;
+    b.classList.toggle('on', POPUP_BLOCK);
+    b.textContent = '🛡 팝업차단 ' + (POPUP_BLOCK ? 'ON' : 'OFF');
+    b.title = POPUP_BLOCK
+      ? '켜짐: 아이프레임 안 사이트가 팝업 창을 띄우거나 페이지를 강제 이동시키지 못합니다. (유튜브·비메오는 영향 없음)'
+      : '꺼짐: 사이트가 팝업 창을 띄울 수 있습니다. 클릭하면 다시 차단합니다.';
+  }
+  function togglePopupBlock(){
+    POPUP_BLOCK = !POPUP_BLOCK;
+    try { localStorage.setItem(POPUP_BLOCK_KEY, POPUP_BLOCK ? '1' : '0'); } catch(e){}
+    updatePopupBlockBtn();
+    try { renderMain(); } catch(e){}
+    toast(POPUP_BLOCK ? '팝업차단 켜짐 — 아이프레임 사이트가 새 창을 띄우지 못합니다.' : '팝업차단 꺼짐');
+  }
 
   function normalizeArr(arr){
     return (arr||[]).map(function(v){
@@ -1908,7 +1959,7 @@
           mountBlockedSite(host2, t.url, trackThumb(t) || '');
         } else {
           var su = String(t.url).replace(/"/g,'%22');
-          host2.innerHTML = '<iframe src="'+su+'" allowfullscreen allow="autoplay; encrypted-media; fullscreen" referrerpolicy="no-referrer"></iframe>'+
+          host2.innerHTML = '<iframe src="'+su+'"'+siteSandboxAttr()+' allowfullscreen allow="autoplay; encrypted-media; fullscreen" referrerpolicy="no-referrer"></iframe>'+
             '<a class="open-site-btn" href="'+su+'" target="_blank" rel="noopener">화면이 안 보이면 새 탭에서 열기 ↗</a>';
         }
       }
@@ -1967,7 +2018,7 @@
           mountBlockedSite(box, p.code, cardImage(v));
           return;
         }
-        box.innerHTML = '<iframe src="'+p.code+'" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
+        box.innerHTML = '<iframe src="'+p.code+'"'+(p.type==='link' ? siteSandboxAttr() : '')+' allowfullscreen allow="autoplay; encrypted-media"></iframe>';
         if (p.type==='vimeo') autoUnmute(box.querySelector('iframe'), p.type);
         /* 그 외 일반 사이트: 혹시 차단이면 화면이 비므로 새 탭 열기 버튼 제공 */
         if (p.type==='link'){
@@ -1986,6 +2037,7 @@
         }
       } else if (p.type==='embed'){
         box.innerHTML = p.code;
+        applySandboxIn(box);   /* 팝업차단: 붙여넣은 embed 코드에도 적용 (유튜브·비메오 제외) */
         /* 붙여넣은 embed 코드가 유튜브라면 자동 소리 재생 적용 */
         var ef = box.querySelector('iframe');
         if (ef && /youtube\.com\/embed\//.test(ef.src||'')){
@@ -2761,6 +2813,7 @@
 
   if (VIEWER_MODE) document.body.classList.add('viewer-mode');
   if (DIST_MODE) document.body.classList.add('dist-mode');
+  updatePopupBlockBtn();
   rebuildGroupSelects();
   renderList();
   renderMain();
