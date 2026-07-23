@@ -497,6 +497,13 @@
     .fav-mrow .e{background:#eef2ff;color:#4757f5;}
     .fav-mrow .d{background:#fdecec;color:#e0483a;}
     .fav-mempty{font-size:.8rem;color:#9aa2c0;text-align:center;padding:8px;}
+    /* 자동으로 찾은 썸네일 후보 선택 줄 */
+    .thumb-picks{display:none;flex-wrap:wrap;gap:6px;margin-top:8px;}
+    .thumb-picks .tp-cap{flex:1 1 100%;font-size:.72rem;font-weight:600;color:#8a92b5;margin:0 0 2px;}
+    .thumb-pick{flex:0 0 auto;width:76px;height:43px;padding:0;border:2px solid #e2e6f3;border-radius:8px;overflow:hidden;cursor:pointer;background:#f2f4fb;transition:border-color .15s,box-shadow .15s;}
+    .thumb-pick img{width:100%;height:100%;object-fit:cover;display:block;}
+    .thumb-pick:hover{border-color:#9fb0e8;}
+    .thumb-pick.on{border-color:#3b6fe0;box-shadow:0 0 0 2px rgba(59,111,224,.25);}
   </style>
 </head>
 <body>
@@ -561,6 +568,7 @@
         <div id="photoRows" style="display:none;"></div>
         <button type="button" id="addRowBtn" class="add-row-btn" style="display:none;">+ 사진 추가</button>
         <span class="img-hint" id="imgHint" style="display:none;">사진마다 <b>사진 주소</b>와, 그 사진을 눌렀을 때 이동할 <b>페이지 주소(선택)</b>를 적으세요. 맨 위 사진이 대표로 카드에 떠요.</span>
+        <div class="thumb-picks" id="thumbPicks"></div>
       </div>
       <div class="field" id="pasteField" style="display:none;">
         <span>내용 붙여넣기 (선택)</span>
@@ -1719,6 +1727,236 @@
     buildFavToolbar();
     document.addEventListener('click', function (e) { if (favToolOpen && !e.target.closest('.fav-toolbar')) closeFavTool(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeFavTool(); });
+  </script>
+
+  <script>
+  /* ============================================================
+     범용 썸네일 자동 추출 엔진 (모든 사이트)
+     ① 유튜브 → 즉시  ② noembed(100여 개 사이트)  ③ CORS 프록시로 og:image
+     ④ 페이지 이미지 스캔(옛날 사이트)  ⑤ Microlink 실제 렌더링(SPA 사이트)
+     결과는 localStorage에 캐시되어 같은 주소는 재검색하지 않음
+     ============================================================ */
+  (function(){
+    var CACHE_KEY = 'mwFavThumbCacheV1';
+    var cache = {};
+    try{ cache = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}') || {}; }catch(e){}
+    function saveCache(){
+      try{
+        var keys = Object.keys(cache);
+        if (keys.length > 150) keys.slice(0, keys.length - 150).forEach(function(k){ delete cache[k]; });
+        localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+      }catch(e){}
+    }
+    function ytIdOf(u){
+      var m = String(u||'').match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{11})/);
+      return m ? m[1] : null;
+    }
+    function pathOf(u){ try{ var x = new URL(u); return x.pathname + x.search; }catch(e){ return String(u); } }
+    var GOOD_RE = /(thumb|poster|program|prog|vod|still|cover|snapshot|capture|episode)/i;
+    var JUNK_RE = /(icon|sprite|logo|badge|btn|button|blank|spacer|pixel|loading|lock|arrow|bullet|banner|_ad[._\/]|\/ad\/|emoticon|emoji|captcha|bg[._\/-]|_bg)/i;
+
+    function ogImages(html, baseUrl){
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      var sels = ['meta[property="og:image:secure_url"]','meta[property="og:image"]','meta[name="og:image"]',
+                  'meta[name="twitter:image"]','meta[name="twitter:image:src"]','meta[property="twitter:image"]',
+                  'meta[itemprop="image"]','link[rel="image_src"]'];
+      var urls = [];
+      sels.forEach(function(sel){
+        doc.querySelectorAll(sel).forEach(function(el){
+          var v = el.getAttribute('content') || el.getAttribute('href');
+          if (!v) return;
+          try{
+            var abs = new URL(v.trim(), baseUrl).href;
+            if (/^https?:/.test(abs) && urls.indexOf(abs) < 0) urls.push(abs);
+          }catch(e){}
+        });
+      });
+      return urls;
+    }
+    function scanImages(html, baseUrl){
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+      var urls = [];
+      function push(v){
+        if (!v) return;
+        try{
+          var abs = new URL(String(v).trim(), baseUrl).href;
+          if (!/^https?:/.test(abs)) return;
+          if (!/\.(jpe?g|png|webp)(\?|$)/i.test(abs)) return;
+          if (JUNK_RE.test(pathOf(abs))) return;
+          if (urls.indexOf(abs) < 0) urls.push(abs);
+        }catch(e){}
+      }
+      doc.querySelectorAll('video[poster]').forEach(function(v){ push(v.getAttribute('poster')); });
+      doc.querySelectorAll('img[src]').forEach(function(i){ push(i.getAttribute('src')); });
+      doc.querySelectorAll('img[data-src]').forEach(function(i){ push(i.getAttribute('data-src')); });
+      (html.match(/https?:\/\/[^"'\\\s<>()]+?\.(?:jpe?g|png|webp)(?:\?[^"'\\\s<>()]*)?/gi) || []).forEach(push);
+      urls.sort(function(a,b){ return (GOOD_RE.test(pathOf(b))?1:0) - (GOOD_RE.test(pathOf(a))?1:0); });
+      return urls.slice(0, 8);
+    }
+
+    /* 썸네일 '후보 목록'을 반환 (첫 번째가 가장 유력한 후보) */
+    window.mwFindThumbList = async function(url){
+      url = String(url||'').trim();
+      if (!url) return [];
+      if (!/^https?:\/\//i.test(url)){
+        if (/^[\w.-]+\.[a-z]{2,}([\/?#]|$)/i.test(url)) url = 'https://' + url;
+        else return [];
+      }
+      var yid = ytIdOf(url);
+      if (yid) return ['https://i.ytimg.com/vi/' + yid + '/hqdefault.jpg'];
+      var hit = cache[url];
+      if (hit) return Array.isArray(hit) ? hit : [hit];
+
+      var out = [];
+      function add(u){ if (u && out.indexOf(u) < 0) out.push(u); }
+
+      /* 1) noembed — 비메오·데일리모션·틱톡 등 oEmbed 통합 */
+      try{
+        var r = await fetch('https://noembed.com/embed?url=' + encodeURIComponent(url));
+        if (r.ok){
+          var d = await r.json();
+          if (d && d.thumbnail_url && !d.error) add(d.thumbnail_url);
+        }
+      }catch(e){}
+
+      /* 2) CORS 프록시로 HTML 확보 → og:image + 페이지 이미지 스캔 (후보를 함께 수집) */
+      if (!out.length){
+        var proxies = [
+          function(u){ return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); },
+          function(u){ return 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u); },
+          function(u){ return 'https://corsproxy.io/?url=' + encodeURIComponent(u); }
+        ];
+        for (var i = 0; i < proxies.length; i++){
+          try{
+            var r2 = await fetch(proxies[i](url));
+            if (!r2.ok) continue;
+            var html = await r2.text();
+            if (!html || html.length < 40) continue;
+            ogImages(html, url).forEach(add);
+            scanImages(html, url).forEach(add);
+            if (out.length) break;
+          }catch(e){}
+        }
+      }
+
+      /* 3) Microlink — JS로 화면을 그리는 SPA 사이트(방송사 VOD 등) 렌더링 */
+      if (!out.length){
+        try{
+          var r3 = await fetch('https://api.microlink.io/?url=' + encodeURIComponent(url) + '&prerender=auto');
+          if (r3.ok){
+            var d3 = await r3.json();
+            if (d3 && d3.status === 'success' && d3.data){
+              if (d3.data.image && d3.data.image.url) add(d3.data.image.url);
+              if (d3.data.logo && d3.data.logo.url) add(d3.data.logo.url);
+            }
+          }
+        }catch(e){}
+      }
+
+      out = out.slice(0, 8);
+      if (out.length){ cache[url] = out; saveCache(); }
+      return out;
+    };
+  })();
+
+  /* ============================================================
+     썸네일 후보 UI 연결 (즐겨찾기 추가/수정 모달)
+     · 주소(#inUrl)를 넣으면 후보를 찾아 보여주고,
+       누르면 사진 칸(#inImg 또는 사진 행)에 들어감 — 직접 입력도 그대로 가능
+     ============================================================ */
+  (function(){
+    function looksLikeUrl(u){ return /^(https?:\/\/)/i.test(u) || /^[\w.-]+\.[a-z]{2,}([\/?#]|$)/i.test(u); }
+    var seq = 0, timer = null;
+    function clearPicks(){
+      var box = document.getElementById('thumbPicks');
+      if (box){ box.innerHTML = ''; box.style.display = 'none'; }
+      seq++;
+    }
+    function pickTo(u){
+      var cat = document.getElementById('inCat').value;
+      if (cat.indexOf('photo') === 0){
+        /* 사진 분류: 비어 있는 첫 사진 행에 채우고, 없으면 새 행 추가 */
+        var imgs = document.querySelectorAll('#photoRows .prow .p-img');
+        for (var i = 0; i < imgs.length; i++){
+          if (!imgs[i].value.trim()){ imgs[i].value = u; return; }
+        }
+        addPhotoRow(u, '');
+      } else {
+        document.getElementById('inImg').value = u;
+      }
+    }
+    function autoFillIfEmpty(first){
+      /* 사진 칸이 비어 있을 때만 1순위 후보를 채워줌 — 이후엔 후보에서 선택 */
+      var cat = document.getElementById('inCat').value;
+      if (cat.indexOf('photo') === 0){
+        var imgs = document.querySelectorAll('#photoRows .prow .p-img');
+        var any = false;
+        imgs.forEach(function(x){ if (x.value.trim()) any = true; });
+        if (!any && imgs.length) imgs[0].value = first;
+      } else {
+        var im = document.getElementById('inImg');
+        if (im && !im.value.trim()) im.value = first;
+      }
+    }
+    function renderPicks(list){
+      var box = document.getElementById('thumbPicks');
+      if (!box) return;
+      box.innerHTML = '';
+      if (!list || !list.length){ box.style.display = 'none'; return; }
+      box.style.display = 'flex';
+      var cap = document.createElement('div');
+      cap.className = 'tp-cap';
+      cap.textContent = '자동으로 찾은 썸네일 후보 — 눌러서 선택하세요';
+      box.appendChild(cap);
+      list.forEach(function(u){
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'thumb-pick';
+        b.title = '이 썸네일 사용';
+        var pic = document.createElement('img');
+        pic.loading = 'lazy'; pic.src = u; pic.alt = '';
+        pic.referrerPolicy = 'no-referrer';
+        pic.onerror = function(){ b.remove(); };   /* 안 열리는 후보는 숨김 */
+        b.appendChild(pic);
+        b.onclick = function(){
+          pickTo(u);
+          box.querySelectorAll('.thumb-pick').forEach(function(x){ x.classList.remove('on'); });
+          b.classList.add('on');
+        };
+        box.appendChild(b);
+      });
+    }
+    function urlChanged(){
+      var u = document.getElementById('inUrl').value.trim();
+      var cat = document.getElementById('inCat').value;
+      if (!u || !looksLikeUrl(u)){ clearPicks(); return; }
+      if (cat === 'video' && ytId(u)){ clearPicks(); return; }   /* 유튜브 영상은 기존 자동 썸네일 그대로 */
+      clearTimeout(timer);
+      var my = ++seq;
+      timer = setTimeout(function(){
+        window.mwFindThumbList(u).then(function(list){
+          if (my !== seq) return;                  /* 그 사이 다른 검색이 시작됨 */
+          renderPicks(list);
+          if (list && list.length) autoFillIfEmpty(list[0]);
+        });
+      }, 700);
+    }
+    var inUrlEl = document.getElementById('inUrl');
+    if (inUrlEl){
+      inUrlEl.addEventListener('input', urlChanged);
+      inUrlEl.addEventListener('blur', urlChanged);
+    }
+    /* 모달을 열 때마다 이전 후보 지움 (open 클래스 변화 감시) */
+    var mod = document.getElementById('addModal');
+    if (mod && window.MutationObserver){
+      var was = mod.classList.contains('open');
+      new MutationObserver(function(){
+        var now = mod.classList.contains('open');
+        if (now && !was) clearPicks();
+        was = now;
+      }).observe(mod, { attributes: true, attributeFilter: ['class'] });
+    }
+  })();
   </script>
 </body>
 </html>
