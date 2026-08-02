@@ -497,7 +497,7 @@
 
   </style>
 </head>
-<body>
+<body class="">
   <!-- SEO: 한글 브랜드명 명시 (화면 비표시, 검색엔진 인식용) -->
   <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">마이웨이(MYWAY.KR) 주식·코인 차트 - 코인, 미국주식, 한국주식, 지수선물, 공포탐욕지수 한자리</h1>
 
@@ -554,7 +554,7 @@
   <!-- TODAY 카드 추가/수정 모달 -->
   <div class="modal-back" id="infoBack">
     <div class="modal">
-      <h3 id="infoTitle">카드 추가</h3>
+      <h3 id="infoTitle">카드 수정</h3>
       <label>이름(국문)</label>
       <input id="infName" type="text" placeholder="예: 뉴스">
       <label>영문 라벨</label>
@@ -598,7 +598,7 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayStockV1_dist";
-    const DIST_SIG = "sig1785454102747";
+    const DIST_SIG = "sig1785704856303";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-stock-v1';   // JSON 식별자 — 다른 도구 JSON과 섞임 방지
     let _distChecked = false;
@@ -1033,7 +1033,7 @@
         { name:"지수", en:"Index", url:"https://alphasquare.co.kr/home/market-indicator?code=005930&factor=index", c:"#3b82f6", c2:"#06b6d4", icon:"index" },
         { name:"국내주식", en:"Korea", url:"https://alphasquare.co.kr/home/special-factor?code=005930&factor=returns_top&market-key=kr-markets-all", c:"#16a34a", c2:"#10b981", icon:"krstock" },
         { name:"해외주식", en:"Global", url:"https://kr.tradingview.com/markets/stocks-usa/", c:"#6366f1", c2:"#818cf8", icon:"globalstock" },
-        { name:"코인", en:"Crypto", url:"https://coinone.co.kr/exchange/trade/xrp/krw", c:"#f59e0b", c2:"#fbbf24", icon:"coin" },
+        { name:"코인", en:"Crypto", url:"https://www.bithumb.com/react/trade/order/BTC-KRW", c:"#f59e0b", c2:"#fbbf24", icon:"coin" },
         { name:"국채", en:"Bonds", url:"https://kr.tradingview.com/markets/bonds/", c:"#7c3aed", c2:"#a855f7", icon:"bond" },
         { name:"환율", en:"Exchange", url:"https://kr.tradingview.com/markets/currencies/", c:"#0d9488", c2:"#14b8a6", icon:"fx" },
         { name:"공시", en:"Disclosure", url:"https://myway.kr/notice.html", c:"#475569", c2:"#64748b", icon:"disclosure" },
