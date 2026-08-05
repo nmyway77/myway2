@@ -40,6 +40,30 @@
     z-index:4;height:44px;border-radius:16px;margin-right:7px;appearance:none;-webkit-appearance:none;-moz-appearance:none;
   }
   .searchbar-select option{color:#4b2dbd;background:#ffffff;}
+  /* ── 멀티검색 체크 버튼 (엔진 선택 앞의 작은 칸) ── */
+  .multi-btn{
+    flex:0 0 auto;height:36px;min-width:44px;padding:0 10px;margin-right:6px;border:1px solid rgba(255,255,255,.45);
+    border-radius:12px;background:rgba(255,255,255,.16);color:#fff;font-size:.88rem;font-weight:700;cursor:pointer;
+    display:flex;align-items:center;gap:4px;white-space:nowrap;z-index:4;transition:.15s;
+  }
+  .multi-btn:hover{background:rgba(255,255,255,.3);}
+  .multi-btn.on{background:#ffffff;color:#4b2dbd;}
+  /* 엔진 체크 목록 패널 — 검색바 바로 아래에 펼쳐짐 */
+  .multi-panel{
+    display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);
+    width:96%;max-width:640px;margin-top:8px;background:#fff;border-radius:16px;z-index:200;
+    box-shadow:0 12px 36px rgba(50,60,120,.22),0 4px 12px rgba(177,118,243,.15);
+    border:1px solid rgba(177,118,243,.18);padding:12px 14px;max-height:340px;overflow-y:auto;
+  }
+  .multi-panel.open{display:block;}
+  .mp-head{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:.78rem;color:#8a92b5;line-height:1.5;}
+  .mp-head button{margin-left:auto;border:1px solid #e2e6f3;background:#fff;border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;color:#4b2dbd;cursor:pointer;flex:none;}
+  .mp-head button:hover{border-color:#7d6fe8;}
+  .mp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:2px 10px;}
+  .mp-item{display:flex;align-items:center;gap:7px;padding:6px 7px;border-radius:8px;cursor:pointer;font-size:.84rem;color:#232356;font-weight:500;user-select:none;}
+  .mp-item:hover{background:linear-gradient(95deg,rgba(126,214,251,.18) 0%,rgba(177,118,243,.18) 100%);}
+  .mp-item input{width:16px;height:16px;accent-color:#7d6fe8;cursor:pointer;flex:none;}
+  .mp-item.checked{font-weight:700;color:#4b2dbd;}
   .searchbar-input{
     flex:1 1 auto;min-width:80px;border:none;background:transparent;color:#ffffff;outline:none;
     font-size:1.14rem;padding:0 13px;height:44px;z-index:4;font-family:inherit;
@@ -145,6 +169,7 @@
       <div class="searchbar-wrap">
         <form class="searchbar-form" id="searchForm" autocomplete="off">
           <div class="searchbar-box">
+            <button type="button" class="multi-btn" id="multiBtn" title="여러 엔진을 골라 한 번에 검색 (각각 새 탭으로 열림)">☑</button>
             <select class="searchbar-select" id="engineSel"></select>
             <input class="searchbar-input" id="queryInput" type="text" placeholder="검색어를 입력하세요  Myway.kr" autocomplete="off">
             <button class="searchbar-btn" type="submit" title="검색" aria-label="검색">
@@ -152,10 +177,18 @@
             </button>
           </div>
         </form>
+        <!-- 멀티검색 엔진 체크 패널 -->
+        <div class="multi-panel" id="multiPanel">
+          <div class="mp-head">
+            <span>체크한 엔진이 검색할 때 <b>각각 새 탭</b>으로 한꺼번에 열립니다. (체크 없으면 위에서 고른 엔진 1개만)<br>※ 여러 탭이 안 열리면 브라우저의 팝업 허용을 눌러 주세요.</span>
+            <button type="button" id="mpClear">모두 해제</button>
+          </div>
+          <div class="mp-grid" id="mpGrid"></div>
+        </div>
       </div>
       <button type="button" class="edit-fab" id="editToggleBtn" onclick="toggleEditMode()" title="검색엔진 목록 편집">✏ 편집</button>
     </div>
-    <div class="bar-note">✏ 편집 버튼을 누르면 검색엔진 목록을 고칠 수 있어요 · 검색어 없이 누르면 홈으로 이동</div>
+    <div class="bar-note">맨 앞 ☑ 칸에서 엔진을 여러 개 체크하면 검색 한 번에 각각 새 탭으로 열려요 · ✏ 편집 버튼으로 엔진 목록 수정</div>
   </div>
 
   <div class="main">
@@ -329,20 +362,99 @@ function renderSelect(){
   });
   if (cur && engines.some(function(e){ return e.key === cur; })) sel.value = cur;
   else { try { var last = localStorage.getItem('mywaySearchEngine'); if (last && engines.some(function(e){ return e.key === last; })) sel.value = last; } catch(e){} }
+  renderMultiPanel();
+}
+
+/* ── 멀티검색: 엔진 앞 ☑ 칸에서 여러 엔진을 체크 → 검색 시 각각 새 탭 ── */
+var MULTI_KEY = 'mywayMultiChecksV1';
+var multiChecks = [];
+try { var _mm = JSON.parse(localStorage.getItem(MULTI_KEY) || '[]'); if (Array.isArray(_mm)) multiChecks = _mm; } catch(e){}
+function saveMultiChecks(){
+  multiChecks = multiChecks.filter(function(k){ return engines.some(function(e){ return e.key === k; }); });
+  try { localStorage.setItem(MULTI_KEY, JSON.stringify(multiChecks)); } catch(e){}
+}
+function updateMultiBtn(){
+  var b = document.getElementById('multiBtn');
+  if (!b) return;
+  var n = multiChecks.filter(function(k){ return engines.some(function(e){ return e.key === k; }); }).length;
+  b.textContent = n > 0 ? ('☑ ' + n) : '☑';
+  b.classList.toggle('on', n > 0);
+  b.title = n > 0 ? ('멀티검색: ' + n + '개 엔진이 각각 새 탭으로 열립니다') : '여러 엔진을 골라 한 번에 검색 (각각 새 탭으로 열림)';
+}
+function renderMultiPanel(){
+  var grid = document.getElementById('mpGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  engines.forEach(function(e){
+    var lab = document.createElement('label');
+    lab.className = 'mp-item' + (multiChecks.indexOf(e.key) >= 0 ? ' checked' : '');
+    var cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.checked = multiChecks.indexOf(e.key) >= 0;
+    cb.addEventListener('change', function(){
+      var i = multiChecks.indexOf(e.key);
+      if (cb.checked && i < 0) multiChecks.push(e.key);
+      if (!cb.checked && i >= 0) multiChecks.splice(i, 1);
+      saveMultiChecks();
+      lab.classList.toggle('checked', cb.checked);
+      updateMultiBtn();
+    });
+    var sp = document.createElement('span');
+    sp.textContent = e.label || e.key;
+    lab.appendChild(cb); lab.appendChild(sp);
+    grid.appendChild(lab);
+  });
+  updateMultiBtn();
+}
+document.getElementById('multiBtn').addEventListener('click', function(ev){
+  ev.stopPropagation();
+  document.getElementById('multiPanel').classList.toggle('open');
+});
+document.getElementById('mpClear').addEventListener('click', function(){
+  multiChecks = [];
+  saveMultiChecks();
+  renderMultiPanel();
+});
+document.addEventListener('click', function(ev){
+  var p = document.getElementById('multiPanel');
+  if (p && p.classList.contains('open') && !ev.target.closest('#multiPanel') && !ev.target.closest('#multiBtn')) p.classList.remove('open');
+});
+function searchUrlOf(engine, query){
+  if (!engine) return '';
+  if (query && engine.search) return engine.search + encodeURIComponent(query) + (engine.postfix || '');
+  return engine.home || engine.search || '';
 }
 function runSearch(engine, query){
-  if (!engine) return;
-  var url;
-  if (query && engine.search) url = engine.search + encodeURIComponent(query) + (engine.postfix || '');
-  else url = engine.home || engine.search || '';
+  var url = searchUrlOf(engine, query);
   if (url) window.open(url, '_blank', 'noopener,noreferrer');
 }
 document.getElementById('searchForm').addEventListener('submit', function(ev){
   ev.preventDefault();
+  var query = document.getElementById('queryInput').value.trim();
   var key = document.getElementById('engineSel').value;
   try { localStorage.setItem('mywaySearchEngine', key); } catch(e){}
-  var eng = engines.find(function(e){ return e.key === key; });
-  runSearch(eng, document.getElementById('queryInput').value.trim());
+  document.getElementById('multiPanel').classList.remove('open');
+
+  /* 체크된 엔진들 (엔진 목록 순서대로) */
+  var checked = engines.filter(function(e){ return multiChecks.indexOf(e.key) >= 0; });
+
+  if (!checked.length){
+    /* 체크 없음 → 기존처럼 위에서 고른 엔진 1개 */
+    var eng = engines.find(function(e){ return e.key === key; });
+    runSearch(eng, query);
+    return;
+  }
+  /* 체크된 엔진들을 각각 브라우저 새 탭으로 한꺼번에 열기 */
+  var blocked = 0;
+  checked.forEach(function(e){
+    var url = searchUrlOf(e, query);
+    if (!url) return;
+    var w = window.open(url, '_blank', 'noopener,noreferrer');
+    if (!w) blocked++;
+  });
+  if (blocked > 0){
+    alert('브라우저가 팝업을 막아 ' + blocked + '개 탭이 안 열렸어요.\n주소창 옆의 팝업 차단 아이콘을 눌러 이 사이트의 팝업을 [허용]하면 다음부터 모두 열립니다.');
+  }
 });
 
 /* ===== 편집 열기/닫기 (초기 화면은 검색바만) ===== */
@@ -506,6 +618,7 @@ function cleanSnapshot(src){
   /* 내보내는 순간의 화면 상태(열린 모달·수정 모드)가 저장본에 남지 않도록 정리 */
   return src
     .replace(/class="modal-bg open"/g, 'class="modal-bg"')
+    .replace(/class="multi-panel open"/g, 'class="multi-panel"')
     .replace('<body class="edit-mode">', '<body>');
 }
 function exportEditableHtml(){
