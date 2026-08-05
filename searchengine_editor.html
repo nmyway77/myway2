@@ -81,6 +81,10 @@
   .main{display:none;max-width:760px;margin:0 auto;padding:18px 14px 60px;}
   body.edit-mode .main{display:block;}
   body.viewer-mode .main{display:none !important;}
+  /* 편집판(배포판): 코드·기본값복원 버튼과 코드 모달 숨김 */
+  body.dist-mode #codeToolBtn{display:none !important;}
+  body.dist-mode #resetToolBtn{display:none !important;}
+  body.dist-mode #codeModal{display:none !important;}
   body.viewer-mode .modal-bg{display:none !important;}
   .tool-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px;}
   .tool-row h2{font-size:1.05rem;margin:0;margin-right:auto;}
@@ -159,8 +163,8 @@
       <h2>검색엔진 목록 편집</h2>
       <button onclick="exportJson()">📤 내보내기</button>
       <button onclick="importJson()">📥 가져오기</button>
-      <button onclick="openCode()">&lt;/&gt; 코드</button>
-      <button class="danger" onclick="resetAll()">기본값 복원</button>
+      <button id="codeToolBtn" onclick="openCode()">&lt;/&gt; 코드</button>
+      <button id="resetToolBtn" class="danger" onclick="resetAll()">기본값 복원</button>
     </div>
     <p class="hint">
       행을 <b>드래그</b>하거나 ↑↓ 버튼으로 순서를 바꾸고, 이름·주소를 바로 고치면 자동 저장됩니다.
@@ -205,6 +209,8 @@
 /* 보기전용 HTML로 내보낼 때 아래 두 줄이 자동으로 바뀝니다 (편집기에서는 false/null) */
 var VIEWER_MODE = false;
 var EMBEDDED_ENGINES = null;
+/* 편집판(배포용) HTML로 내보낼 때 true가 됩니다 — 코드/기본값복원 버튼을 숨김 */
+var DIST_MODE = false;
 
 /* ▼▼▼ 편집판 HTML로 저장하면 현재 목록이 여기에 자동으로 박힙니다 (없으면 null 유지) ▼▼▼ */
 var USER_DEFAULT_ENGINES = null;
@@ -508,6 +514,7 @@ function exportEditableHtml(){
     var replaced = false;
     src = src.replace(/^(\s*)var USER_DEFAULT_ENGINES = .*;\s*$/m, function(_, sp){ replaced = true; return sp + 'var USER_DEFAULT_ENGINES = ' + enginesJson() + ';'; });
     if (!replaced){ alert('내보내기 표식을 찾지 못했어요. 페이지를 새로고침한 뒤 다시 시도해 주세요.'); return; }
+    src = src.replace('var DIST_MODE = false;', 'var DIST_MODE = true;');   /* 배포판: 코드/기본값복원 숨김 */
     download('myway-search-editable.html', src, 'text/html;charset=utf-8');
     toast('편집판 HTML을 저장했어요.');
   }catch(e){ alert('HTML 내보내기 오류: ' + e.message); }
@@ -559,6 +566,7 @@ document.getElementById('codeModal').addEventListener('click', function(e){ if (
 document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeCode(); });
 
 if (VIEWER_MODE) document.body.classList.add('viewer-mode');
+if (DIST_MODE) document.body.classList.add('dist-mode');
 renderSelect();
 renderAll();
 </script>
