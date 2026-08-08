@@ -485,13 +485,16 @@ document.getElementById('searchForm').addEventListener('submit', function(ev){
     runSearch(eng, query);
     return;
   }
-  /* 체크된 엔진들을 각각 브라우저 새 탭으로 한꺼번에 열기 */
+  /* 체크된 엔진들을 각각 브라우저 새 탭으로 한꺼번에 열기
+     ※ 'noopener' 옵션을 주면 성공해도 반환값이 null이라(브라우저 규격)
+        차단 여부를 알 수 없음 → 열고 나서 opener만 직접 끊는다 */
   var blocked = 0;
   checked.forEach(function(e){
     var url = searchUrlOf(e, query);
     if (!url) return;
-    var w = window.open(url, '_blank', 'noopener,noreferrer');
-    if (!w) blocked++;
+    var w = window.open(url, '_blank');
+    if (w){ try{ w.opener = null; }catch(err){} }
+    else blocked++;
   });
   if (blocked > 0){
     alert('브라우저가 팝업을 막아 ' + blocked + '개 탭이 안 열렸어요.\n주소창 옆의 팝업 차단 아이콘을 눌러 이 사이트의 팝업을 [허용]하면 다음부터 모두 열립니다.');
