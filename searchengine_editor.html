@@ -146,6 +146,7 @@
   .eng-urls{display:flex;flex-wrap:wrap;gap:6px;padding-left:32px;}
   .eng-urls input{flex:1 1 46%;min-width:180px;font-size:.78rem;font-family:'Courier New',monospace;}
   .eng-urls input.postfix{flex:0 1 130px;min-width:90px;}
+  .eng-urls input.spacechar{flex:0 1 110px;min-width:84px;}
   .eng-badge{flex:0 0 auto;font-size:.68rem;font-weight:700;color:#9a6b12;background:#fdf3dd;border:1px solid #f0dcb0;border-radius:6px;padding:2px 7px;white-space:nowrap;}
   .eng-btns{flex:0 0 auto;display:flex;gap:4px;}
   .eng-btns button{width:30px;height:30px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;font-size:.8rem;color:var(--ink-soft);}
@@ -182,7 +183,7 @@
         <form class="searchbar-form" id="searchForm" autocomplete="off">
           <div class="searchbar-box">
             <button type="button" class="engine-btn" id="engineBtn" title="검색엔진 선택 · 체크하면 여러 엔진이 동시에 열려요">
-              <span class="ebl" id="engineBtnLabel"></span><span class="arw">▼</span>
+              <span class="ebl" id="engineBtnLabel"></span><span class="cnt" id="engineBtnCnt" style="display:none;"></span><span class="arw">▼</span>
             </button>
             <input class="searchbar-input" id="queryInput" type="text" placeholder="검색어를 입력하세요  Myway.kr" autocomplete="off">
             <button class="searchbar-btn" type="submit" title="검색" aria-label="검색">
@@ -215,8 +216,9 @@
       <button id="resetToolBtn" class="danger" onclick="resetAll()">기본값 복원</button>
     </div>
     <p class="hint">
-      행을 <b>드래그</b>하거나 ↑↓ 버튼으로 순서를 바꾸고, 이름·주소를 바로 고치면 자동 저장됩니다.
+      번호를 <b>드래그</b>하거나 ↑↓ 버튼으로 순서를 바꾸고, 이름·주소를 바로 고치면 자동 저장됩니다.
       <b>검색 URL</b> 뒤에 검색어가 붙어서 열립니다 (비우면 항상 홈으로). <b>▶</b>로 그 엔진을 바로 테스트할 수 있어요.
+      <b>공백→</b> 칸에 문자를 넣으면 검색어의 띄어쓰기가 그 문자로 바뀝니다 (예: <b>-</b> 를 넣으면 "마운틴 뷰" → "마운틴-뷰" 로 검색).
       노란 <b>특수</b> 표시 엔진은 홈페이지(index.html) 전용 기능(차트 매핑·자동완성 등)을 쓰는 항목이라 이름·순서만 바꾸는 것을 권장합니다.
       다 고쳤으면 상단의 <b>✕ 편집 닫기</b>를 누르세요.
     </p>
@@ -281,7 +283,7 @@ var DEFAULT_ENGINES = [
   { key:"stockchart", label:"📈 주식차트 Ⓝ", home:"https://finance.naver.com/", search:"https://search.naver.com/search.naver?where=nexearch&query=", postfix:"+주가" },
   { key:"alphasquare", label:"📈 알파스퀘어 차트", home:"https://alphasquare.co.kr/", search:"" },
   { key:"coinone", label:"🪙 코인챠트검색", home:"https://coinone.co.kr/exchange", search:"https://coinone.co.kr/chart?site=coinone" },
-  { key:"cfgi", label:"📊 공포탐욕지수", home:"https://cfgi.io/", search:"https://cfgi.io/", postfix:"-fear-greed-index/" },
+  { key:"cfgi", label:"📊 공포탐욕지수", home:"https://cfgi.io/", search:"https://cfgi.io/", postfix:"-fear-greed-index/", space:"-" },
   { key:"coupang", label:"쿠팡", home:"https://www.coupang.com", search:"https://www.coupang.com/np/search?q=" },
   { key:"naver_shopping", label:"네이버 쇼핑", home:"https://shopping.naver.com/", search:"https://search.shopping.naver.com/ns/search?query=" },
   { key:"danawa", label:"다나와", home:"https://www.danawa.com/", search:"https://search.danawa.com/dsearch.php?k1=" },
@@ -336,7 +338,8 @@ function normEngine(e, i){
     label: String(e.label || e.name || ('엔진 ' + (i+1))).trim(),
     home: String(e.home || '').trim(),
     search: String(e.search || '').trim(),
-    postfix: String(e.postfix || e.searchPostfix || '').trim()
+    postfix: String(e.postfix || e.searchPostfix || '').trim(),
+    space: String(e.space || e.searchSpace || '').trim()
   };
 }
 function baseDefaults(){
@@ -453,7 +456,12 @@ document.addEventListener('click', function(ev){
 });
 function searchUrlOf(engine, query){
   if (!engine) return '';
-  if (query && engine.search) return engine.search + encodeURIComponent(query) + (engine.postfix || '');
+  if (query && engine.search){
+    var q = query;
+    /* 공백 대체 문자: 예) '-' 지정 시 "마운틴 뷰" → "마운틴-뷰" (슬러그형 주소 엔진용) */
+    if (engine.space) q = q.trim().replace(/\s+/g, engine.space);
+    return engine.search + encodeURIComponent(q) + (engine.postfix || '');
+  }
   return engine.home || engine.search || '';
 }
 function runSearch(engine, query){
@@ -560,9 +568,13 @@ function renderList(){
     var postfix = document.createElement('input'); postfix.className = 'postfix'; postfix.value = e.postfix || ''; postfix.placeholder = '뒤에 붙는 값 (선택)';
     postfix.title = '검색어 뒤에 덧붙는 문자열 (예: .html)';
     postfix.addEventListener('input', function(){ e.postfix = postfix.value.trim(); persistSoon(); });
+    var spacech = document.createElement('input'); spacech.className = 'spacechar'; spacech.value = e.space || ''; spacech.placeholder = '공백→ (선택)';
+    spacech.title = '검색어의 띄어쓰기를 이 문자로 바꿔서 검색합니다. 예: - 를 넣으면 "마운틴 뷰" → "마운틴-뷰"';
+    spacech.maxLength = 3;
+    spacech.addEventListener('input', function(){ e.space = spacech.value.trim(); persistSoon(); });
     var home = document.createElement('input'); home.value = e.home; home.placeholder = '홈 URL (검색어 없이 검색 시 이동)';
     home.addEventListener('input', function(){ e.home = home.value.trim(); persistSoon(); });
-    urls.appendChild(search); urls.appendChild(postfix); urls.appendChild(home);
+    urls.appendChild(search); urls.appendChild(postfix); urls.appendChild(spacech); urls.appendChild(home);
 
     row.appendChild(top); row.appendChild(urls);
 
@@ -710,6 +722,7 @@ function openCode(){
   var arr = engines.filter(function(e){ return SPECIAL_KEYS.indexOf(e.key) < 0; }).map(function(e){
     var s = '      { key: ' + jstr(e.key) + ', home: ' + jstr(e.home) + ', search: ' + jstr(e.search);
     if (e.postfix) s += ', searchPostfix: ' + jstr(e.postfix);
+    if (e.space) s += ', searchSpace: ' + jstr(e.space);
     return s + ' }';
   }).join(',\n');
   var code =
