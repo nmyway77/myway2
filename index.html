@@ -2482,8 +2482,16 @@ var DEFAULT_ENGINES = [
         });
       }
       if (qEl){
-        qEl.addEventListener('focus', maybeOpenQueryPanel);
-        qEl.addEventListener('click', maybeOpenQueryPanel);
+        /* 검색창: 처음 누르면 열리고, 열린 상태에서 다시 누르면 닫힘 (토글) */
+        var _qpJustFocused = false;
+        qEl.addEventListener('focus', function(){ _qpJustFocused = true; maybeOpenQueryPanel(); });
+        qEl.addEventListener('blur', function(){ _qpJustFocused = false; });
+        qEl.addEventListener('click', function(){
+          if (_qpJustFocused){ _qpJustFocused = false; return; }   /* 포커스 직후 첫 클릭은 무시 */
+          var p = document.getElementById('queryPanel');
+          if (p && p.classList.contains('open')) closeQueryPanel();
+          else maybeOpenQueryPanel();
+        });
         qEl.addEventListener('input', function(){
           if (isAutocEngine()){ closeQueryPanel(); return; }
           var p = document.getElementById('queryPanel');
