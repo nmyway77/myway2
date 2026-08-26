@@ -727,7 +727,7 @@
             <span><b>검색어를 누르면</b> 입력창에 채워집니다. <b>▶</b>를 누르면 그 검색어로 바로 검색해요.<br>직접 입력하면 목록이 좁혀집니다. 목록 관리는 오른쪽 ✎ 편집에서.</span>
             <button type="button" id="qpSave" title="지금 입력창에 있는 검색어를 목록에 저장">＋ 현재 검색어 저장</button>
           </div>
-          <div class="qp-list" id="qpList"></div>
+          <div class="qp-list" id="qpList"><div class="qp-item"><span class="qp-ic">🔖</span><span class="qp-q" title="누르면 입력창에 채워집니다">환율</span><button type="button" class="qp-go" title="이 검색어로 바로 검색">▶</button></div><div class="qp-item"><span class="qp-ic">🔖</span><span class="qp-q" title="누르면 입력창에 채워집니다">오늘 날씨</span><button type="button" class="qp-go" title="이 검색어로 바로 검색">▶</button></div><div class="qp-item"><span class="qp-ic">🔖</span><span class="qp-q" title="누르면 입력창에 채워집니다">비트코인 시세</span><button type="button" class="qp-go" title="이 검색어로 바로 검색">▶</button></div></div>
         </div>
       </div>
       <button type="button" class="edit-fab" id="editToggleBtn" onclick="toggleEditMode()" title="검색엔진·검색어 편집" aria-label="검색엔진·검색어 편집"><svg viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path></svg></button>
@@ -2392,17 +2392,19 @@ var DEFAULT_ENGINES = [
 
     /* ── 자주쓰는 검색어 콤보박스 ── */
     function isAutocEngine(){ return AUTOC_KEYS.indexOf(curEngine) >= 0; }
+    var _qpSuppressOpen = false;   /* 항목 선택 직후 focus()로 패널이 되열리는 것 방지 */
     function maybeOpenQueryPanel(){
       if (isAutocEngine()){ closeQueryPanel(); return; }   /* 주식/코인 모드는 자동완성 우선 */
       closePanel();
       renderQueryPanel();
       var p = document.getElementById('queryPanel'); if (p) p.classList.add('open');
     }
-    function renderQueryPanel(){
+    function renderQueryPanel(useFilter){
       var list = document.getElementById('qpList');
       if (!list) return;
       var inp = document.getElementById('queryParent');
-      var filter = (inp ? inp.value : '').trim().toLowerCase();
+      /* 패널을 열 때는 전체 목록, 타이핑하는 동안에만 좁혀서 표시 */
+      var filter = useFilter ? (inp ? inp.value : '').trim().toLowerCase() : '';
       var exact = queries.some(function(q){ return q.toLowerCase() === filter; });
       list.innerHTML = '';
       var shown = 0;
@@ -2432,7 +2434,9 @@ var DEFAULT_ENGINES = [
           var i2 = document.getElementById('queryParent');
           i2.value = q;
           closeQueryPanel();
+          _qpSuppressOpen = true;
           i2.focus();
+          _qpSuppressOpen = false;
         });
         list.appendChild(it);
       });
@@ -2484,7 +2488,7 @@ var DEFAULT_ENGINES = [
       if (qEl){
         /* 검색창: 처음 누르면 열리고, 열린 상태에서 다시 누르면 닫힘 (토글) */
         var _qpJustFocused = false;
-        qEl.addEventListener('focus', function(){ _qpJustFocused = true; maybeOpenQueryPanel(); });
+        qEl.addEventListener('focus', function(){ if (_qpSuppressOpen) return; _qpJustFocused = true; maybeOpenQueryPanel(); });
         qEl.addEventListener('blur', function(){ _qpJustFocused = false; });
         qEl.addEventListener('click', function(){
           if (_qpJustFocused){ _qpJustFocused = false; return; }   /* 포커스 직후 첫 클릭은 무시 */
@@ -2495,7 +2499,7 @@ var DEFAULT_ENGINES = [
         qEl.addEventListener('input', function(){
           if (isAutocEngine()){ closeQueryPanel(); return; }
           var p = document.getElementById('queryPanel');
-          if (p && p.classList.contains('open')) renderQueryPanel();
+          if (p && p.classList.contains('open')) renderQueryPanel(true);
         });
       }
       var qs = document.getElementById('qpSave');
@@ -2513,6 +2517,7 @@ var DEFAULT_ENGINES = [
         });
       }
       document.addEventListener('click', function(ev){
+        if (ev.target && ev.target.isConnected === false) return;   /* 재렌더로 분리된 요소 클릭은 무시 */
         var p = document.getElementById('multiPanel');
         if (p && p.classList.contains('open') && !ev.target.closest('#multiPanel') && !ev.target.closest('#engineBtn')) p.classList.remove('open');
         var qp = document.getElementById('queryPanel');
