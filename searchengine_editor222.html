@@ -500,17 +500,19 @@ document.getElementById('engineBtn').addEventListener('click', function(ev){
 });
 
 /* ── 검색어 콤보박스: 검색창을 누르면 저장 검색어 목록이 열림 ── */
+var _qpSuppressOpen = false;   /* 항목 선택 직후 focus()로 패널이 되열리는 것 방지 */
 function closeQueryPanel(){ var p = document.getElementById('queryPanel'); if (p) p.classList.remove('open'); }
 function openQueryPanel(){
   closePanel();
   renderQueryPanel();
   var p = document.getElementById('queryPanel'); if (p) p.classList.add('open');
 }
-function renderQueryPanel(){
+function renderQueryPanel(useFilter){
   var list = document.getElementById('qpList');
   if (!list) return;
   var inp = document.getElementById('queryInput');
-  var filter = (inp ? inp.value : '').trim().toLowerCase();
+  /* 패널을 열 때는 전체 목록, 타이핑하는 동안에만 좁혀서 표시 */
+  var filter = useFilter ? (inp ? inp.value : '').trim().toLowerCase() : '';
   /* 방금 목록에서 골라 입력창과 완전히 같은 경우에는 전체 목록을 보여줌 */
   var exact = queries.some(function(q){ return q.toLowerCase() === filter; });
   list.innerHTML = '';
@@ -538,7 +540,9 @@ function renderQueryPanel(){
       var i2 = document.getElementById('queryInput');
       i2.value = q;
       closeQueryPanel();
+      _qpSuppressOpen = true;
       i2.focus();
+      _qpSuppressOpen = false;
     });
     list.appendChild(it);
   });
@@ -552,7 +556,7 @@ function renderQueryPanel(){
 }
 /* 검색창: 처음 누르면 열리고, 열린 상태에서 다시 누르면 닫힘 (토글) */
 var _qpJustFocused = false;
-document.getElementById('queryInput').addEventListener('focus', function(){ _qpJustFocused = true; openQueryPanel(); });
+document.getElementById('queryInput').addEventListener('focus', function(){ if (_qpSuppressOpen) return; _qpJustFocused = true; openQueryPanel(); });
 document.getElementById('queryInput').addEventListener('blur', function(){ _qpJustFocused = false; });
 document.getElementById('queryInput').addEventListener('click', function(ev){
   ev.stopPropagation();
@@ -563,7 +567,7 @@ document.getElementById('queryInput').addEventListener('click', function(ev){
 });
 document.getElementById('queryInput').addEventListener('input', function(){
   var p = document.getElementById('queryPanel');
-  if (p && p.classList.contains('open')) renderQueryPanel();
+  if (p && p.classList.contains('open')) renderQueryPanel(true);
 });
 document.getElementById('qpSave').addEventListener('click', function(ev){
   ev.stopPropagation();
@@ -583,6 +587,7 @@ document.getElementById('mpClear').addEventListener('click', function(ev){
   renderMultiPanel();
 });
 document.addEventListener('click', function(ev){
+  if (ev.target && ev.target.isConnected === false) return;   /* 재렌더로 분리된 요소 클릭은 무시 */
   var p = document.getElementById('multiPanel');
   if (p && p.classList.contains('open') && !ev.target.closest('#multiPanel') && !ev.target.closest('#engineBtn')) p.classList.remove('open');
   var qp = document.getElementById('queryPanel');
