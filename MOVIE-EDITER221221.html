@@ -794,14 +794,8 @@ div[data-google-query-id],
 #builderMount .paste-area:focus{ border-color: #7e94ff; outline: none; }
 #builderMount .paste-area:empty::before{ content: attr(data-ph); color: #a8afc6; }
 #builderMount .paste-area img{ max-width: 100%; height: auto; border-radius: 6px; }
-/* 붙여넣은 내용: 화면 가로 꽉 채움(양옆 여백 제거) + 모든 요소 중앙정렬 */
-.lb-scroll .lb-content{ align-self: stretch; width: auto; max-width: none; margin: 14px -14px 0; padding: 0 8px; color: #1f2740; line-height: 1.7; font-size: 1.05rem; word-break: break-word; text-align: center !important; box-sizing: border-box; overflow-x: hidden; }
-.lb-scroll .lb-content *{ max-width: 100% !important; text-align: center !important; float: none !important; box-sizing: border-box; }
-.lb-scroll .lb-content div, .lb-scroll .lb-content p, .lb-scroll .lb-content section, .lb-scroll .lb-content article, .lb-scroll .lb-content figure, .lb-scroll .lb-content table, .lb-scroll .lb-content ul, .lb-scroll .lb-content ol, .lb-scroll .lb-content blockquote, .lb-scroll .lb-content h1, .lb-scroll .lb-content h2, .lb-scroll .lb-content h3, .lb-scroll .lb-content h4{ width: 100% !important; min-width: 0 !important; margin-left: auto !important; margin-right: auto !important; padding-left: 0 !important; padding-right: 0 !important; position: static !important; }
-.lb-scroll .lb-content ul, .lb-scroll .lb-content ol{ list-style-position: inside; padding-left: 0 !important; }
-.lb-scroll .lb-content table{ border-collapse: collapse; }
-.lb-scroll .lb-content td, .lb-scroll .lb-content th{ text-align: center !important; }
-.lb-scroll .lb-content img, .lb-scroll .lb-content video{ width: 100% !important; max-width: 100% !important; height: auto !important; border-radius: 8px; display: block; margin: 8px auto !important; }
+.lb-scroll .lb-content{ width: 100%; max-width: none; margin: 14px 0 0; color: #1f2740; line-height: 1.65; font-size: 1rem; word-break: break-word; text-align: center; box-sizing: border-box; }
+.lb-scroll .lb-content img{ max-width: none; height: auto; border-radius: 8px; display: block; margin: 8px auto; }
 .lb-scroll .lb-content a{ color: #3b6fe0; }
 #builderMount .prow{ background: #f5f7fc; border: 1px solid #e2e6f3; border-radius: 11px; padding: 9px; }
 #builderMount .prow-top{ display: flex; gap: 7px; margin-bottom: 6px; }
@@ -1189,7 +1183,7 @@ div[data-google-query-id],
 </div>
 
 <!-- 코드 출력 모달 -->
-<div id="codeModal" class="modal-bg" style="display: none;">
+<div id="codeModal" class="modal-bg" style="display: flex;">
   <div class="modal-inner" style="max-width:600px;">
     <h2 class="modal-title">전체 디렉토리 코드</h2>
     <p style="font-size:.82rem;color:var(--ink-soft);line-height:1.55;margin:0 0 10px;">
@@ -4077,12 +4071,6 @@ div[data-google-query-id],
         var box = document.createElement('div');
         box.className = 'lb-content';
         box.innerHTML = sanitizeHtml(content);
-        /* 원본 페이지에서 딸려온 인라인 폭·정렬·여백·위치 스타일 제거 → 중앙정렬·화면 꽉 채움 보장 */
-        box.querySelectorAll('*').forEach(function(el){
-          ['width','min-width','max-width','float','text-align','margin','margin-left','margin-right','padding-left','padding-right','position','left','right','transform','display'].forEach(function(prop){ try{ el.style.removeProperty(prop); }catch(_){} });
-          if (el.getAttribute) { ['width','height','align','valign','hspace','vspace'].forEach(function(a){ el.removeAttribute(a); }); }
-          if (el.tagName === 'TABLE' || el.tagName === 'IMG' || el.tagName === 'VIDEO') el.style.width = '100%';
-        });
         box.addEventListener('click', function(ev){ ev.stopPropagation(); });
         sc.appendChild(box);
       }
