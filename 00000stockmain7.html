@@ -497,7 +497,7 @@
 
   </style>
 </head>
-<body class="">
+<body>
   <!-- SEO: 한글 브랜드명 명시 (화면 비표시, 검색엔진 인식용) -->
   <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">마이웨이(MYWAY.KR) 주식·코인 차트 - 코인, 미국주식, 한국주식, 지수선물, 공포탐욕지수 한자리</h1>
 
@@ -506,13 +506,13 @@
   </header>
 
 
-  <section id="chartTop" class="chart-top">
+  <section id="chartTop" class="chart-top" style="display: none;">
     <div class="chart-top-inner">
       <div id="infoWrap"></div>
     </div>
   </section>
 
-  <main class="main" id="main" data-tab="today"></main>
+  <main class="main" id="main" data-tab="chart"></main>
 
   <footer class="myway-footer">
     <a href="https://myway.kr/" target="_top">마이웨이 myway.kr</a>
@@ -598,7 +598,7 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayStockV1_dist";
-    const DIST_SIG = "sig1785971170516";
+    const DIST_SIG = "sig1790140143160";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-stock-v1';   // JSON 식별자 — 다른 도구 JSON과 섞임 방지
     let _distChecked = false;
@@ -646,6 +646,7 @@
           { ticker:"러셀 2000", ko:"RTY Futures", url:"https://kr.tradingview.com/chart/?symbol=CME_MINI%3ARTY1!" },
           { ticker:"VIX", ko:"변동성 지수", url:"https://kr.tradingview.com/chart/?symbol=TVC%3AVIX" },
           { ticker:"DXY", ko:"달러 인덱스", url:"https://kr.tradingview.com/chart/?symbol=TVC%3ADXY" },
+          { ticker:"코인원 챠트", ko:"", url:"https://coinone.co.kr/exchange/trade/xrp/krw" },
         ] },
         { label:"코인 주요 차트", sub:"UPBIT", items: [
           { ticker:"BTC", ko:"비트코인", url:"https://www.upbit.com/exchange?code=CRIX.UPBIT.KRW-BTC" },
