@@ -483,6 +483,21 @@ div[data-google-query-id],
     .info-arrow{ position:absolute; top:16px; right:14px; width:16px; height:16px; color:var(--c); opacity:0; transform:translateX(-4px); transition:.2s; }
     .info-card:hover .info-arrow{ opacity:1; transform:translateX(0); }
     @keyframes infoIn{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;} }
+    /* ===== 코인 공포지수 라이브 게이지 스트립 (cfgi.io 공식 위젯 축소) ===== */
+    .cfgi-strip{ margin-top:1.6rem; }
+    .cfgi-grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:10px; }
+    .cfgi-item{ border-radius:14px; overflow:hidden; background:#fff; border:1px solid var(--card-border); box-shadow:0 1px 2px rgba(16,24,40,.05); }
+    .cfgi-nm{ display:flex; align-items:center; gap:6px; padding:8px 10px 6px; font-size:.82rem; font-weight:800; color:var(--text-main); letter-spacing:-.3px; text-decoration:none; border-bottom:1px solid var(--card-border); transition:background .15s,color .15s; }
+    .cfgi-nm:hover{ background:#eef4ff; color:#2563eb; }
+    .cfgi-nm small{ font-size:.62rem; font-weight:700; color:var(--text-muted); background:#f1f4f9; border-radius:6px; padding:1px 6px; letter-spacing:.4px; }
+    .cfgi-go{ margin-left:auto; font-size:.62rem; font-weight:700; color:#3b82f6; }
+    .cfgi-box{ position:relative; display:block; width:100%; aspect-ratio:360/306; overflow:hidden; cursor:pointer; }
+    .cfgi-box:hover{ background:#f5f8ff; }
+    .cfgi-box iframe{ position:absolute; left:0; top:0; width:360px; height:306px; border:0; transform-origin:0 0; pointer-events:none; }
+    .cfgi-credit{ margin-top:6px; padding:0 4px; font-size:.64rem; color:var(--text-muted); text-align:right; }
+    .cfgi-credit a{ color:#7a86a8; text-decoration:none; }
+    @media (max-width:980px){ .cfgi-grid{ grid-template-columns:repeat(3,1fr); } }
+    @media (max-width:520px){ .cfgi-grid{ grid-template-columns:repeat(2,1fr); } }
     @media (max-width:980px){ .info-grid{ grid-template-columns:repeat(4,1fr); } #chartTop .chart-top-inner{ padding:18px 14px 2px; } }
     @media (max-width:520px){ .info-grid{ grid-template-columns:repeat(2,1fr); gap:10px; } .info-card{ padding:16px 14px; } }
 
@@ -1233,8 +1248,45 @@ div[data-google-query-id],
           grid.appendChild(a);
         });
         block.appendChild(grid); wrap.appendChild(block);
+        if(bi===0) wrap.appendChild(buildCfgiStrip());
+      });
+      fitCfgi();
+    }
+    /* ===== 코인 공포지수 라이브 게이지 (cfgi.io 공식 임베드 위젯, 1D, 360x306 원본을 칸 너비에 맞춰 축소) ===== */
+    var CFGI_COINS=[
+      ['\uBE44\uD2B8\uCF54\uC778','BTC','bitcoin'],['\uC774\uB354\uB9AC\uC6C0','ETH','ethereum'],['\uB9AC\uD50C','XRP','ripple'],
+      ['\uC194\uB77C\uB098','SOL','solana'],['\uB3C4\uC9C0\uCF54\uC778','DOGE','doge'],['\uD2B8\uB860','TRX','tron']
+    ];
+    function buildCfgiStrip(){
+      var box=document.createElement('div'); box.className='cfgi-strip';
+      var head=document.createElement('div'); head.className='info-head';
+      var h2=document.createElement('h2'); h2.className='info-title'; h2.textContent='\uCF54\uC778\uACF5\uD3EC\uC9C0\uC218';
+      var ds=document.createElement('span'); ds.className='info-desc'; ds.textContent='cfgi.io \u00B7 1D \u00B7 15\uBD84\uB9C8\uB2E4 \uAC31\uC2E0';
+      head.appendChild(h2); head.appendChild(ds); box.appendChild(head);
+      var grid=document.createElement('div'); grid.className='cfgi-grid';
+      CFGI_COINS.forEach(function(c){
+        var it=document.createElement('div'); it.className='cfgi-item';
+        var nm=document.createElement('a'); nm.className='cfgi-nm'; nm.textContent=c[0];
+        nm.href='https://coinone.co.kr/chart?site=coinone'+c[1].toLowerCase(); nm.target='_blank'; nm.rel='noopener'; nm.title=c[0]+' \uCF54\uC778\uC6D0 \uCC28\uD2B8';
+        var sm=document.createElement('small'); sm.textContent=c[1]; nm.appendChild(sm);
+        var lk=document.createElement('span'); lk.className='cfgi-go'; lk.textContent='\uCC28\uD2B8 \u2197'; nm.appendChild(lk);
+        var fb=document.createElement('a'); fb.className='cfgi-box'; fb.href='https://cfgi.io/'+c[2]+'-fear-greed-index/'; fb.target='_blank'; fb.rel='noopener'; fb.title=c[0]+' cfgi.io \uC0C1\uC138';
+        var f=document.createElement('iframe'); f.loading='lazy'; f.title=c[0]+' Fear and Greed'; f.setAttribute('scrolling','no');
+        f.src='https://cfgi.io/widget/embed/?symbol='+c[1]+'&theme=light&timeframe=1d';
+        fb.appendChild(f); it.appendChild(nm); it.appendChild(fb); grid.appendChild(it);
+      });
+      box.appendChild(grid);
+      var cr=document.createElement('div'); cr.className='cfgi-credit'; cr.innerHTML='<a href="https://cfgi.io/crypto-fear-greed-index/" target="_blank" rel="noopener">Fear and Greed Index by CFGI</a>';
+      box.appendChild(cr);
+      return box;
+    }
+    function fitCfgi(){
+      document.querySelectorAll('.cfgi-box').forEach(function(b){
+        var f=b.querySelector('iframe'); if(!f) return;
+        var w=b.clientWidth||360; f.style.transform='scale('+(w/360)+')';
       });
     }
+    window.addEventListener('resize',fitCfgi);
     function moveInfoCard(bi,ci,dir){ var cards=INFO[bi].cards; var ni=ci+dir; if(ni<0||ni>=cards.length) return; var t=cards[ci]; cards[ci]=cards[ni]; cards[ni]=t; saveInfo(); renderInfo(); }
     function deleteInfoCard(bi,ci){ var cards=INFO[bi].cards; if(!confirm('\uC774 \uCE74\uB4DC\uB97C \uC0AD\uC81C\uD560\uAE4C\uC694?\n'+cards[ci].name)) return; cards.splice(ci,1); saveInfo(); renderInfo(); }
     function moveInfoBlock(bi,dir){ var ni=bi+dir; if(ni<0||ni>=INFO.length) return; var t=INFO[bi]; INFO[bi]=INFO[ni]; INFO[ni]=t; saveInfo(); renderInfo(); }
