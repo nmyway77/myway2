@@ -109,6 +109,9 @@
   .nav-row button{border:1px solid var(--line);background:#fff;border-radius:7px;width:26px;height:26px;font-size:12px;line-height:1;cursor:pointer;color:var(--ink-sub);font-family:var(--body);flex:none}
   .nav-row button:hover{border-color:var(--accent);color:var(--accent)}
   .nav-row button.del:hover{border-color:#d33;color:#d33}
+  .nav-row button.home{border-color:#f59e0b;color:#f59e0b;background:#fffbeb}
+  .home-pick{display:flex;align-items:center;gap:8px;margin:0 0 10px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:#fffbeb;font-size:13px;font-weight:700;color:var(--ink)}
+  .home-pick select{flex:1;min-width:0;border:1px solid var(--line);border-radius:7px;padding:5px 8px;font-size:13px;font-family:var(--body);background:#fff}
 </style>
 </head>
 <body>
@@ -154,6 +157,7 @@
 <div class="modal-back" id="navBack">
   <div class="modal">
     <h3>상단 채널 편집</h3>
+    <div class="home-pick"><span>🏠 초기 메인화면</span><select id="homeSel"></select></div>
     <div id="navList" class="nav-list"></div>
     <button class="tb-btn" id="navAdd" style="margin-top:12px">＋ 채널 추가</button>
     <div class="modal-row"><button class="btn-cancel" id="navClose">닫기</button></div>
@@ -227,6 +231,10 @@ const DEFAULT_SITES=[
   ['ABC7','https://abc7.com/watch/live'],
 ];
 /* @SITES_END */
+/* === 초기 메인화면 (채널 이름, ''이면 전체목록) === */
+/* @HOME_START */
+const DEFAULT_HOME = 'KBS1';
+/* @HOME_END */
 function coerceSites(p){
   if(Array.isArray(p)&&p.length&&Array.isArray(p[0])){
     return p.map(s=>{ var a=[String(s[0]||''),String(s[1]||'')]; if(s[2]==='newwin') a.push('newwin'); return a; });
@@ -242,6 +250,7 @@ function ensureDistFresh(){
       localStorage.setItem(sk,DIST_SIG);
       localStorage.removeItem(STORE_KEY);
       localStorage.removeItem(STORE_KEY+'_sites');
+      localStorage.removeItem(STORE_KEY+'_home');
     }
   }catch(_){}
 }
@@ -252,7 +261,11 @@ function loadSites(){
 }
 function saveSites(){ try{ localStorage.setItem(STORE_KEY+'_sites', JSON.stringify(SITES)); }catch(_){} }
 let SITES = loadSites();
-const DEFAULT_I = Math.max(0, SITES.findIndex(s=>s[0]==='Famelack'));
+function loadHome(){ try{ var v=localStorage.getItem(STORE_KEY+'_home'); if(v!==null) return v; }catch(_){} return DEFAULT_HOME; }
+function saveHome(){ try{ localStorage.setItem(STORE_KEY+'_home', HOME); }catch(_){} }
+let HOME = loadHome();
+function homeIndex(){ if(!HOME) return -1; const i=SITES.findIndex(s=>s[0]===HOME); return (i>=0 && SITES[i][2]!=='newwin') ? i : -1; }
+function setHome(name){ HOME=name||''; saveHome(); renderNavList(); }
 
 /* === 전체목록 디렉터리 (카테고리별) — livetv 데이터 === */
 /* @DIR_START */
@@ -374,7 +387,7 @@ function setViewerSrc(url){
 const gridPanel=document.getElementById('gridPanel');
 const nav=document.getElementById('topnav');
 const track=document.getElementById('navTrack');
-let currentUrl=SITES[DEFAULT_I][1];
+let currentUrl=(SITES[Math.max(0,homeIndex())]||['',''])[1];
 
 function centerNavBtn(btn){
   const navRect=nav.getBoundingClientRect();
@@ -518,9 +531,16 @@ function closeNavMgr(){ navBack.classList.remove('show'); }
 function renderNavList(){
   const list=document.getElementById('navList'); list.innerHTML='';
   function mk(t,fn,cls){ const b=document.createElement('button'); b.textContent=t; if(cls)b.className=cls; b.onclick=fn; return b; }
+  const sel=document.getElementById('homeSel'); sel.innerHTML='';
+  const o0=document.createElement('option'); o0.value=''; o0.textContent='📺 전체목록'; sel.appendChild(o0);
+  SITES.forEach(s=>{ if(s[2]==='newwin') return; const o=document.createElement('option'); o.value=s[0]; o.textContent=s[0]; sel.appendChild(o); });
+  sel.value=(homeIndex()>=0?HOME:'');
+  sel.onchange=()=>setHome(sel.value);
+  const hi=homeIndex();
   SITES.forEach((s,i)=>{
     const row=document.createElement('div'); row.className='nav-row';
-    const nm=document.createElement('div'); nm.className='nm'; nm.textContent=s[0]+(s[2]==='newwin'?' ↗':'');
+    const nm=document.createElement('div'); nm.className='nm'; nm.textContent=s[0]+(s[2]==='newwin'?' ↗':'')+(i===hi?'  🏠':'');
+    if(s[2]!=='newwin') row.appendChild(mk('★',()=>setHome(i===hi?'':s[0]),i===hi?'home':'')); else row.appendChild(mk('★',()=>alert('새 창 채널은 초기 화면으로 쓸 수 없어요.')));
     row.appendChild(mk('▲',()=>moveSite(i,-1)));
     row.appendChild(mk('▼',()=>moveSite(i,1)));
     row.appendChild(nm);
@@ -530,7 +550,7 @@ function renderNavList(){
   });
 }
 function moveSite(i,dir){ const ni=i+dir; if(ni<0||ni>=SITES.length) return; const t=SITES[i]; SITES[i]=SITES[ni]; SITES[ni]=t; saveSites(); renderNav(); renderNavList(); }
-function delSite(i){ if(!confirm('이 채널을 삭제할까요?\n'+SITES[i][0])) return; SITES.splice(i,1); saveSites(); renderNav(); renderNavList(); }
+function delSite(i){ if(!confirm('이 채널을 삭제할까요?\n'+SITES[i][0])) return; if(SITES[i][0]===HOME){ HOME=''; saveHome(); } SITES.splice(i,1); saveSites(); renderNav(); renderNavList(); }
 function openCh(i){
   chEdit=(i==null?null:i);
   document.getElementById('chTitle').textContent=(i==null?'채널 추가':'채널 수정');
@@ -552,7 +572,7 @@ document.getElementById('chOk').onclick=function(){
   if(!url){ alert('URL을 입력해 주세요.'); return; }
   if(!/^https?:\/\//i.test(url)) url='https://'+url;
   const rec=nw?[nm,url,'newwin']:[nm,url];
-  if(chEdit==null) SITES.push(rec); else SITES[chEdit]=rec;
+  if(chEdit==null) SITES.push(rec); else { if(SITES[chEdit][0]===HOME) { HOME=(nw?'':nm); saveHome(); } SITES[chEdit]=rec; }
   saveSites(); renderNav(); renderNavList(); chBack.classList.remove('show');
 };
 
@@ -645,11 +665,14 @@ function buildHTML(cfg){
   const vb=clone.querySelector('#viewerBox'); if(vb){ vb.innerHTML=''; vb.style.display=''; }
   ['#dlgBack','#codeBack','#navBack','#chBack'].forEach(id=>{ const m=clone.querySelector(id); if(m) m.classList.remove('show'); });
   const ns=clone.querySelector('#dlgNewSecWrap'); if(ns) ns.style.display='none';
+  const hs=clone.querySelector('#homeSel'); if(hs) hs.innerHTML='';
   const nl=clone.querySelector('#navList'); if(nl) nl.innerHTML='';
   const et=clone.querySelector('#editToolbar'); if(et) et.innerHTML='';
   let html='<!DOCTYPE html>\n'+clone.outerHTML;
   html=html.replace(/\/\* @SITES_START \*\/[\s\S]*?\/\* @SITES_END \*\//,
     '/* @SITES_START */\nconst DEFAULT_SITES = '+serializeSites(SITES)+';\n/* @SITES_END */');
+  html=html.replace(/\/\* @HOME_START \*\/[\s\S]*?\/\* @HOME_END \*\//,
+    '/* @HOME_START */\nconst DEFAULT_HOME = '+JSON.stringify(HOME)+';\n/* @HOME_END */');
   html=html.replace(/\/\* @DIR_START \*\/[\s\S]*?\/\* @DIR_END \*\//,
     '/* @DIR_START */\nconst DEFAULT_DIRECTORY = '+serializeDir(DIRECTORY)+';\n/* @DIR_END */');
   html=html.replace(/\/\* @CONFIG \*\/[\s\S]*?\/\* @CONFIG_END \*\//,
@@ -670,7 +693,7 @@ document.getElementById('saveView').onclick=function(){
   closeCode();
 };
 document.getElementById('copyCode').onclick=function(){
-  const code='const DEFAULT_SITES = '+serializeSites(SITES)+';\n\nconst DEFAULT_DIRECTORY = '+serializeDir(DIRECTORY)+';';
+  const code='const DEFAULT_SITES = '+serializeSites(SITES)+';\n\nconst DEFAULT_HOME = '+JSON.stringify(HOME)+';\n\nconst DEFAULT_DIRECTORY = '+serializeDir(DIRECTORY)+';';
   const ta=document.getElementById('codeArea'); ta.value=code; ta.style.pointerEvents='auto';
   ta.select(); ta.setSelectionRange(0,code.length);
   let ok=false; try{ ok=document.execCommand('copy'); }catch(_){}
@@ -751,7 +774,7 @@ nav.insertBefore(openBtn, track);
   nav.addEventListener('wheel',e=>{ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ nav.scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
 })();
 
-/* 초기화: 저장된 마지막 화면 복원(없으면 기본 = 전체목록) */
+/* 초기화: 저장된 마지막 화면 복원(없으면 기본 = 초기 메인화면 설정) */
 (function(){
   var saved='';
   try { saved = sessionStorage.getItem('mywayLive') || ''; } catch(_) {}
@@ -767,6 +790,9 @@ nav.insertBefore(openBtn, track);
   }
   var mu = /^url:(.+)$/.exec(saved);
   if(mu){ loadUrl(mu[1]); return; }
+  /* 기본: 편집기에서 지정한 초기 메인화면 (없으면 전체목록) */
+  var hi=homeIndex();
+  if(hi>=0){ var hb=track.querySelector('button[data-site="'+hi+'"]'); if(hb){ loadSite(hi,hb); return; } }
   showGrid(gridBtn);
 })();
 
