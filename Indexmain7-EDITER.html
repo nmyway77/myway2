@@ -1006,6 +1006,13 @@
       pointer-events: none;
     }
     .masonry .gcard:hover .cap { opacity: 1; }
+    /* 사진형 탭: 캡션 항상 표시 */
+    .masonry.photo-tab .gcard .cap { opacity: 1; padding: 22px 10px 9px; font-weight: 700; background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,.68) 78%); text-shadow: 0 1px 2px rgba(0,0,0,.45); }
+    .masonry.photo-tab .gcard .gph { display:flex; align-items:center; justify-content:center; min-height: 140px; padding: 16px; font-size: 1rem; font-weight: 800; color: #3b4a7a; background: linear-gradient(135deg,#eef2ff,#f6f8ff); text-align:center; word-break: keep-all; }
+    .masonry.photo-tab .gadd { display:none; width:100%; min-height: 110px; border: 1.5px dashed #c2cbe8 !important; background: #f6f8ff !important; color: #5b6bff; font: inherit; font-weight: 800; font-size: .9rem; cursor: pointer; }
+    body.editing .masonry.photo-tab .gadd { display:block; }
+    .masonry.photo-tab .gadd:hover { border-color: #7e94ff !important; background: #eef2ff !important; }
+    .masonry.photo-tab .gcard .card-ctrl { border-radius: 8px; }
     @media (max-width: 900px) { .masonry { column-count: 3; } }
     @media (max-width: 600px) { .masonry { column-count: 2; column-gap: 10px; } .masonry .gcard { margin-bottom: 10px; } }
     @media (max-width: 360px) { .masonry { column-count: 1; } }
@@ -1054,6 +1061,7 @@
     body.editing .card .card-ctrl, body.editing .logo-tile .card-ctrl { display: flex; }
     body.editing .card:hover, body.editing .logo-tile:hover { transform: none; }
     .logo-tile { position: relative; }
+    .logo-tile .logo-txt { font-size: 15px; font-weight: 800; color: #3b4a7a; letter-spacing: -.3px; line-height: 1; text-align: center; padding: 0 4px; overflow: hidden; }
     .logo-tile .card-ctrl { border-radius: 50%; gap: 4px; }
     .logo-tile .card-ctrl button { width: 26px; height: 26px; font-size: 12px; }
     .card-ctrl button { border: 1px solid #dfe3ec; background: #fff; border-radius: 8px; width: 30px; height: 30px; font-size: 13px; line-height: 1; cursor: pointer; color: #444; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
@@ -1079,6 +1087,7 @@
     .code-opt .cs { font-size: 11.5px; color: #8590ad; margin-top: 3px; }
     .nav-list { display:flex; flex-direction:column; gap:6px; max-height:52vh; overflow:auto; margin-bottom:12px; }
     .nav-row { display:flex; align-items:center; gap:6px; border:1px solid #e1e5ee; border-radius:9px; padding:7px 9px; }
+    .modal .nav-row select.tab-mode-in { width:auto; min-width:0; flex:none; height:28px; padding:0 6px; font-size:12px; font-weight:700; border:1px solid #e1e5ee; border-radius:7px; color:#4a5170; background:#fafbfe; }
     .nav-row .nm { flex:1; font-size:13px; font-weight:700; color:#1a1f36; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .nav-row button { border:1px solid #e1e5ee; background:#fff; border-radius:7px; width:28px; height:28px; font-size:13px; line-height:1; cursor:pointer; color:#8590ad; flex:none; }
     .nav-row button:hover { border-color:var(--accent); color:var(--accent); }
@@ -1146,7 +1155,7 @@
       <input id="dlgKo" type="text" placeholder="예: naver.com">
       <label>URL</label>
       <input id="dlgUrl" type="text" placeholder="https://...">
-      <label id="dlgImgLabel">로고 이미지 URL <span class="hint">(로고형 탭용)</span></label>
+      <label id="dlgImgLabel">이미지 URL <span class="hint">(로고형·사진형 탭용)</span></label>
       <input id="dlgImg" type="text" placeholder="https://....png">
       <label>섹션</label>
       <select id="dlgSec"></select>
@@ -2155,7 +2164,7 @@
     function coerceTabs(p){
       if(!p||typeof p!=='object'||Array.isArray(p)) return null;
       var out={}, any=false;
-      Object.keys(p).forEach(function(k){ var t=p[k]; if(t&&typeof t==='object'&&Array.isArray(t.sections)){ var o={sections:coerceSections(t.sections)||[]}; if(t.logoStyle) o.logoStyle=true; out[k]=o; any=true; } });
+      Object.keys(p).forEach(function(k){ var t=p[k]; if(t&&typeof t==='object'&&Array.isArray(t.sections)){ var o={sections:coerceSections(t.sections)||[]}; if(t.logoStyle) o.logoStyle=true; if(t.photoStyle) o.photoStyle=true; if(Array.isArray(t.altSections)&&t.altSections.length){ var alt=coerceSections(t.altSections); if(alt&&alt.length) o.altSections=alt; } out[k]=o; any=true; } });
       return any?out:null;
     }
     function cloneTabs(t){ return coerceTabs(t)||{}; }
@@ -2205,6 +2214,31 @@
       if (!tab) return;
 
       const isLogo = !!tab.logoStyle;
+
+      /* ===== 사진형 탭: 섹션 없이 사진 갤러리(masonry) 하나로 표시 ===== */
+      if (tab.photoStyle) {
+        if (!tab.sections.length) tab.sections.push({label:'', sub:'', items:[]});
+        const wrap = document.createElement('section'); wrap.className = 'section photo-section';
+        const m = document.createElement('div'); m.className = 'masonry photo-tab';
+        const items = tab.sections[0].items;
+        items.forEach((it, ii) => {
+          const a = document.createElement('a'); a.className = 'gcard'; a.href = it.url; a.target = '_blank'; a.rel = 'noopener';
+          a.setAttribute('aria-label', it.name || it.ticker || '');
+          if (it.img) {
+            const img = document.createElement('img'); img.src = it.img; img.alt = it.name || it.ticker || ''; img.loading = 'lazy'; img.decoding = 'async'; img.referrerPolicy = 'no-referrer';
+            a.appendChild(img);
+          } else {
+            const ph = document.createElement('div'); ph.className = 'gph'; ph.textContent = (it.name || it.ticker || '?'); a.appendChild(ph);
+          }
+          const cap = document.createElement('div'); cap.className = 'cap'; cap.textContent = it.name || it.ticker || ''; a.appendChild(cap);
+          addCardCtrl(a, 0, ii);
+          m.appendChild(a);
+        });
+        if (SHOW_EDIT) { const add = document.createElement('button'); add.type = 'button'; add.className = 'gcard gadd'; add.textContent = '＋ 사진 추가'; add.onclick = () => openDlg(null, 0); m.appendChild(add); }
+        wrap.appendChild(m); frag.appendChild(wrap);
+        root.replaceChildren(frag);
+        return;
+      }
 
       tab.sections.forEach((sec, si) => {
         const section = document.createElement('section');
@@ -2263,13 +2297,22 @@
             a.target = '_blank';
             a.rel = 'noopener noreferrer';
             a.setAttribute('aria-label', it.name || '');
-            const img = document.createElement('img');
-            img.src = it.img;
-            img.alt = it.name || '';
-            img.loading = 'lazy';
-            img.decoding = 'async';
-            img.referrerPolicy = 'no-referrer';
-            a.appendChild(img);
+            if (it.img) {
+              const img = document.createElement('img');
+              img.src = it.img;
+              img.alt = it.name || '';
+              img.loading = 'lazy';
+              img.decoding = 'async';
+              img.referrerPolicy = 'no-referrer';
+              a.appendChild(img);
+            } else {
+              /* 이미지 없는 항목(카드형→사진형 전환 시): 이름 앞글자 타일 */
+              const tx = document.createElement('span');
+              tx.className = 'logo-txt';
+              tx.textContent = String(it.name || it.ticker || it.ko || '?').trim().slice(0, 2);
+              tx.title = it.name || it.ticker || '';
+              a.appendChild(tx);
+            }
             addCardCtrl(a, si, ii);
             grid.appendChild(a);
           } else {
@@ -2309,6 +2352,7 @@
     /* ===== 편집 동작 (현재 탭 기준) ===== */
     function curSections(){ return (tabs[curTab] && tabs[curTab].sections) || []; }
     function isLogoTab(){ return !!(tabs[curTab] && tabs[curTab].logoStyle); }
+    function isPhotoTab(){ return !!(tabs[curTab] && tabs[curTab].photoStyle); }
     function addCardCtrl(cardEl, si, ii){
       if(!SHOW_EDIT) return;
       const ctrl=document.createElement('div'); ctrl.className='card-ctrl';
@@ -2325,7 +2369,7 @@
     function moveSection(si,dir){ const secs=curSections(); const ni=si+dir; if(ni<0||ni>=secs.length) return; const t=secs[si]; secs[si]=secs[ni]; secs[ni]=t; saveTabs(); renderTab(curTab); }
     function renameSection(si){ const secs=curSections(); const v=prompt('섹션 이름', secs[si].label); if(v===null) return; secs[si].label=v.trim()||secs[si].label; const s2=prompt('섹션 부제(영문 등, 선택)', secs[si].sub); if(s2!==null) secs[si].sub=s2.trim(); saveTabs(); renderTab(curTab); }
     function deleteSection(si){ const secs=curSections(); if(!confirm('이 섹션 전체를 삭제할까요?\n['+secs[si].label+'] '+secs[si].items.length+'개 항목')) return; secs.splice(si,1); saveTabs(); renderTab(curTab); }
-    function addSection(){ const v=prompt('새 섹션 이름'); if(v===null) return; const nm=v.trim(); if(!nm) return; curSections().push({label:nm,sub:'',items:[]}); saveTabs(); renderTab(curTab); }
+    function addSection(){ if(isPhotoTab()){ alert('사진형 탭은 섹션 없이 사진만 추가해요. "＋ 항목추가"를 이용해 주세요.'); return; } const v=prompt('새 섹션 이름'); if(v===null) return; const nm=v.trim(); if(!nm) return; curSections().push({label:nm,sub:'',items:[]}); saveTabs(); renderTab(curTab); }
 
     /* ===== 추가/수정 모달 ===== */
     let dlgEdit=null;
@@ -2333,12 +2377,13 @@
     function setRow(inputId, show){ var inp=document.getElementById(inputId); if(!inp) return; inp.style.display=show?'block':'none'; var lab=inp.previousElementSibling; if(lab && lab.tagName==='LABEL') lab.style.display=show?'block':'none'; }
     function openDlg(target, presetSi){
       const secs=curSections();
-      if(!secs.length){ if(confirm('이 탭에 섹션이 없어요. 먼저 섹션을 만들까요?')) addSection(); return; }
+      if(!secs.length){ if(isPhotoTab()){ secs.push({label:'',sub:'',items:[]}); } else { if(confirm('이 탭에 섹션이 없어요. 먼저 섹션을 만들까요?')) addSection(); return; } }
       dlgEdit = target||null;
       document.getElementById('dlgTitle').textContent = target?'항목 수정':'항목 추가';
-      const logo=isLogoTab();
-      setRow('dlgKo', !logo);
-      setRow('dlgImg', logo);
+      const logo=isLogoTab(), photo=isPhotoTab();
+      setRow('dlgKo', !logo && !photo);
+      setRow('dlgImg', logo || photo);
+      setRow('dlgSec', !photo);
       const sel=document.getElementById('dlgSec'); sel.innerHTML='';
       secs.forEach((s,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=s.label; sel.appendChild(o); });
       const it = target ? secs[target.si].items[target.ii] : {ticker:'',ko:'',url:'',name:'',img:''};
@@ -2362,9 +2407,9 @@
       if(!url){ alert('URL을 입력해 주세요.'); return; }
       if(!/^https?:\/\//i.test(url)) url='https://'+url;
       if(img && !/^https?:\/\//i.test(img)) img='https://'+img;
-      const logo=isLogoTab();
+      const logo=isLogoTab(), photo=isPhotoTab();
       const rec={ticker:ticker, ko:ko, url:url};
-      if(logo){ rec.name=ticker; if(img) rec.img=img; }
+      if(logo||photo){ rec.name=ticker; if(img) rec.img=img; }
       else if(img){ rec.img=img; }
       const secs=curSections();
       if(dlgEdit){
@@ -2444,22 +2489,27 @@
     function closeCode(){ codeBack.classList.remove('show'); }
     document.getElementById('codeClose').onclick=closeCode;
     codeBack.addEventListener('click',e=>{ if(e.target===codeBack) closeCode(); });
+    function serializeSectionsArr(secs){
+      var out='[\n';
+      (secs||[]).forEach(function(s){
+        out+='        { label:'+JSON.stringify(s.label)+', sub:'+JSON.stringify(s.sub)+', items: [\n';
+        (s.items||[]).forEach(function(it){
+          var f='ticker:'+JSON.stringify(it.ticker)+', ko:'+JSON.stringify(it.ko)+', url:'+JSON.stringify(it.url);
+          if(it.name) f+=', name:'+JSON.stringify(it.name);
+          if(it.img) f+=', img:'+JSON.stringify(it.img);
+          out+='          { '+f+' },\n';
+        });
+        out+='        ] },\n';
+      });
+      out+='      ]'; return out;
+    }
     function serializeTabs(t){
       let out='{\n';
       Object.keys(t).forEach(function(k){
         var tb=t[k];
-        out+='      '+JSON.stringify(k)+': { '+(tb.logoStyle?'logoStyle: true, ':'')+'sections: [\n';
-        (tb.sections||[]).forEach(function(s){
-          out+='        { label:'+JSON.stringify(s.label)+', sub:'+JSON.stringify(s.sub)+', items: [\n';
-          (s.items||[]).forEach(function(it){
-            var f='ticker:'+JSON.stringify(it.ticker)+', ko:'+JSON.stringify(it.ko)+', url:'+JSON.stringify(it.url);
-            if(it.name) f+=', name:'+JSON.stringify(it.name);
-            if(it.img) f+=', img:'+JSON.stringify(it.img);
-            out+='          { '+f+' },\n';
-          });
-          out+='        ] },\n';
-        });
-        out+='      ] },\n';
+        out+='      '+JSON.stringify(k)+': { '+(tb.logoStyle?'logoStyle: true, ':'')+(tb.photoStyle?'photoStyle: true, ':'')+'sections: '+serializeSectionsArr(tb.sections);
+        if(tb.altSections&&tb.altSections.length) out+=', altSections: '+serializeSectionsArr(tb.altSections);
+        out+=' },\n';
       });
       out+='    }'; return out;
     }
@@ -2531,6 +2581,16 @@
     function addTab(){ var v=prompt('새 탭 이름'); if(v===null) return; var nm=v.trim(); if(!nm) return; var id=newTabId(nm); TABS_META.push({id:id,label:nm}); tabs[id]={sections:[]}; saveMeta(); saveTabs(); renderNav(); renderNavList(); }
     function renameTab(i){ var v=prompt('탭 이름', TABS_META[i].label); if(v===null) return; TABS_META[i].label=v.trim()||TABS_META[i].label; saveMeta(); renderNav(); renderNavList(); }
     function deleteTab(i){ var t=TABS_META[i]; if(!confirm('이 탭을 삭제할까요?\n['+t.label+']\n탭 안 내용도 함께 삭제돼요.')) return; if(tabs[t.id]) delete tabs[t.id]; TABS_META.splice(i,1); saveMeta(); saveTabs(); if(curTab===t.id){ curTab=(TABS_META[0]&&TABS_META[0].id)||'daily'; } renderNav(); renderNavList(); renderTab(curTab); }
+    function setTabMode(id, photo){
+      if(!tabs[id]) tabs[id]={sections:[]};
+      var t=tabs[id], cur=!!t.photoStyle;
+      if(cur===photo) return;
+      /* 현재 모드의 섹션을 altSections에 보관하고, 반대 모드에서 작업했던 섹션을 꺼내 옴 (처음이면 빈 상태) */
+      var keep=t.sections||[], other=t.altSections||[];
+      t.sections=other; t.altSections=keep;
+      if(photo){ t.photoStyle=true; if(!t.sections.length) t.sections.push({label:'',sub:'',items:[]}); } else delete t.photoStyle;
+      saveTabs(); if(curTab===id) renderTab(id);
+    }
     function moveTab(i,dir){ var ni=i+dir; if(ni<0||ni>=TABS_META.length) return; var t=TABS_META[i]; TABS_META[i]=TABS_META[ni]; TABS_META[ni]=t; saveMeta(); renderNav(); renderNavList(); }
     const navBack=document.getElementById('navBack');
     function openNavMgr(){ renderNavList(); navBack.classList.add('show'); }
@@ -2544,6 +2604,14 @@
         row.appendChild(mk('▲',function(){moveTab(i,-1);}));
         row.appendChild(mk('▼',function(){moveTab(i,1);}));
         row.appendChild(nm);
+        if(t.id!=='daily'){
+          /* 표시 형태: 사진형(원형 로고 타일) / 카드형(현재 텍스트 카드) */
+          var sel=document.createElement('select'); sel.className='tab-mode-in'; sel.title='표시 형태';
+          [['card','카드형'],['photo','사진형']].forEach(function(o){ var op=document.createElement('option'); op.value=o[0]; op.textContent=o[1]; sel.appendChild(op); });
+          sel.value=(tabs[t.id]&&tabs[t.id].photoStyle)?'photo':'card';
+          sel.onchange=function(){ setTabMode(t.id, sel.value==='photo'); };
+          row.appendChild(sel);
+        }
         row.appendChild(mk('✏',function(){renameTab(i);}));
         row.appendChild(mk('✕',function(){deleteTab(i);},'del'));
         list.appendChild(row);
