@@ -1050,8 +1050,12 @@
     .lb-scroll { width:100%; min-height:100%; display:flex; flex-direction:column; align-items:center; gap:12px; padding:16px 14px 70px; }
     .lb-photos { width:100%; display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start; align-content:flex-start; gap:12px; }
     .lb-photos img { width:auto; max-width:100%; height:auto; display:block; border-radius:10px; }
-    .lb-scroll .lb-content { width:100%; margin:14px 0 0; color:#1f2740; line-height:1.65; font-size:1rem; word-break:break-word; text-align:center; -webkit-user-select:text; user-select:text; }
-    .lb-scroll .lb-content img { max-width:100%; height:auto; border-radius:8px; display:block; margin:8px auto; }
+    /* 본문 폭: 원본 매체(보그 등)의 기사 컬럼과 비슷한 1000px. 사진은 이 폭에 맞춰 표시 */
+    .lb-scroll .lb-content { width:100%; max-width:1000px; margin:14px auto 0; color:#1f2740; line-height:1.65; font-size:1rem; word-break:break-word; text-align:center; -webkit-user-select:text; user-select:text; }
+    /* 붙여넣은 내용의 사진: 한 줄에 여러 장이 나란히 놓이도록 inline-block (원본 배치에 가깝게) */
+    .lb-scroll .lb-content img { width:100%; max-width:100%; height:auto; border-radius:8px; display:block; margin:6px auto; }
+    .lb-scroll .lb-content figure { padding:0; }
+    .lb-scroll .lb-content table, .lb-scroll .lb-content td { border:0; padding:0; vertical-align:top; }
     .lb-scroll .lb-content a { color:#3b6fe0; }
     .lightbox .lb-close { position:fixed; top:14px; right:16px; width:44px; height:44px; border-radius:50%; border:none; background:rgba(20,24,38,.55); color:#fff; font-size:1.5rem; line-height:1; cursor:pointer; z-index:1001; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 10px rgba(0,0,0,.18); }
     .lightbox .lb-close:hover { background:rgba(20,24,38,.78); }
@@ -2532,9 +2536,35 @@
           if(e.link){ im.style.cursor='pointer'; im.title='이 사진의 페이지로 이동'; im.addEventListener('click',function(ev){ ev.stopPropagation(); window.open(e.link,'_blank','noopener'); }); }
           ph.appendChild(im); });
         sc.appendChild(ph); }
-      if(content){ var box=document.createElement('div'); box.className='lb-content'; box.innerHTML=sanitizeHtml(content); box.addEventListener('click',function(ev){ ev.stopPropagation(); }); sc.appendChild(box); }
+      if(content){ var box=document.createElement('div'); box.className='lb-content'; box.innerHTML=sanitizeHtml(content); tidyPastedContent(box); box.addEventListener('click',function(ev){ ev.stopPropagation(); }); sc.appendChild(box); }
       var lb=document.getElementById('lightbox'); lb.scrollTop=0; lb.classList.add('open');
       document.body.style.overflow='hidden'; document.documentElement.style.overflow='hidden';
+    }
+    /* 붙여넣은 HTML 정리 (원본 사이트 CSS가 없어도 사진 배치가 비슷하게 보이도록) */
+    function tidyPastedContent(root){
+      /* (1) 지연로딩 이미지: data-src 등에 실제 주소가 있으면 src로 복구, 주소 없는 빈 이미지는 제거 */
+      root.querySelectorAll('img').forEach(function(im){
+        var real=im.getAttribute('data-src')||im.getAttribute('data-lazy-src')||im.getAttribute('data-original')||'';
+        var cur=im.getAttribute('src')||'';
+        if((!cur||/^data:|\.svg$|blank|placeholder|1x1|spacer/i.test(cur)) && real) im.setAttribute('src', real);
+        cur=im.getAttribute('src')||'';
+        if(!cur||/^data:image\/(gif|svg)/i.test(cur)) { im.remove(); return; }
+        im.removeAttribute('sizes');
+        im.referrerPolicy='no-referrer'; im.loading='lazy';
+      });
+      /* (2) 자식들이 전부 "사진 하나씩"인 컨테이너 → 가로 나란히 (워드프레스 columns 등) */
+      var isPhotoOnly=function(el){ if(el.nodeType!==1) return false; var imgs=el.querySelectorAll('img'); if(imgs.length!==1) return false; return (el.textContent||'').replace(/\s+/g,'').length<2; };
+      var all=root.querySelectorAll('*');
+      Array.prototype.forEach.call(all, function(el){
+        var kids=Array.prototype.filter.call(el.childNodes, function(n){ return !(n.nodeType===3 && !n.textContent.trim()); });
+        if(kids.length<2 || kids.length>4) return;
+        if(!kids.every(isPhotoOnly)) return;
+        el.style.display='flex'; el.style.flexWrap='wrap'; el.style.gap='12px'; el.style.justifyContent='center'; el.style.alignItems='flex-start';
+        el.style.flexWrap='nowrap';
+        kids.forEach(function(k){ k.style.flex='1 1 0'; k.style.minWidth='0'; k.style.margin='0'; k.style.display='block'; var im=k.querySelector('img'); if(im){ im.style.width='100%'; im.style.margin='0'; } });
+      });
+      /* (3) 사진 사이 빈 문단 제거 */
+      root.querySelectorAll('p').forEach(function(pp){ if(!pp.querySelector('img,video,iframe') && !(pp.textContent||'').trim()) pp.remove(); });
     }
     function closeLightbox(){ document.getElementById('lightbox').classList.remove('open'); document.getElementById('lbScroll').innerHTML=''; document.body.style.overflow=''; document.documentElement.style.overflow=''; }
     document.getElementById('lbClose').onclick=closeLightbox;
