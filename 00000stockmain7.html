@@ -506,6 +506,16 @@ div[data-google-query-id],
     .mkt-nm{ font-size:.8rem; font-weight:800; letter-spacing:-.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .mkt-tk{ margin-left:auto; font-size:.6rem; font-weight:700; color:var(--text-muted); background:#f1f4f9; border-radius:6px; padding:1px 5px; letter-spacing:.3px; white-space:nowrap; }
     .mkt-item:hover .mkt-nm{ color:#2563eb; }
+    .menu-strip{ margin-top:-12px; margin-bottom:1.6rem; }
+    .menu-grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:10px; }
+    .menu-card{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; padding:12px 10px 10px; border-radius:14px; background:#fff; border:1px solid var(--card-border); box-shadow:0 1px 2px rgba(16,24,40,.05); text-decoration:none; color:var(--text-main); transition:transform .18s cubic-bezier(.2,.7,.3,1), box-shadow .18s, background .15s; }
+    .menu-card:hover{ transform:translateY(-2px); background:#f7faff; box-shadow:0 10px 20px -14px rgba(59,130,246,.5); }
+    .menu-ic{ width:92px; height:92px; }
+    .menu-ic svg{ display:block; width:100%; height:100%; }
+    .menu-nm{ font-size:.86rem; font-weight:800; letter-spacing:-.3px; white-space:nowrap; }
+    .menu-card:hover .menu-nm{ color:#2563eb; }
+    @media (max-width:980px){ .menu-grid{ grid-template-columns:repeat(3,1fr); } }
+    @media (max-width:520px){ .menu-grid{ grid-template-columns:repeat(2,1fr); } .menu-ic{ width:72px; height:72px; } }
     @media (max-width:980px){ .mkt-grid{ grid-template-columns:repeat(3,1fr); } }
     @media (max-width:520px){ .mkt-grid{ grid-template-columns:repeat(2,1fr); } .mkt-tk{ display:none; } }
     @media (max-width:980px){ .cfgi-grid{ grid-template-columns:repeat(3,1fr); } }
@@ -1260,7 +1270,7 @@ div[data-google-query-id],
           grid.appendChild(a);
         });
         block.appendChild(grid); wrap.appendChild(block);
-        if(bi===0){ wrap.appendChild(buildCfgiStrip()); wrap.appendChild(buildMktStrip()); }
+        if(bi===0){ wrap.appendChild(buildCfgiStrip()); wrap.appendChild(buildMktStrip()); wrap.appendChild(buildMenuStrip()); }
       });
       fitCfgi();
     }
@@ -1316,6 +1326,33 @@ div[data-google-query-id],
         var nm=document.createElement('span'); nm.className='mkt-nm'; nm.textContent=m.nm;
         var tk=document.createElement('span'); tk.className='mkt-tk'; tk.textContent=m.tk;
         a.appendChild(ic); a.appendChild(nm); a.appendChild(tk); grid.appendChild(a);
+      });
+      box.appendChild(grid);
+      return box;
+    }
+    /* ===== 메뉴 카드 (뉴스/실시간TV/라디오/음악/여행/영화) — 흰 카드, 공포지수 게이지 크기 아이콘 ===== */
+    var MENU_ITEMS=[
+      { nm:'날씨', url:'https://myway.kr/00mainweather.html',
+        svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><defs><linearGradient id="bg_weather" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ffffff"/></linearGradient><linearGradient id="sun_weather" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7c400"/><stop offset="1" stop-color="#f2b200"/></linearGradient><linearGradient id="wh_weather" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f86ea"/><stop offset="1" stop-color="#1b63cc"/></linearGradient></defs><circle cx="172" cy="96" r="46" fill="url(#sun_weather)"/><path d="M70 200 h100 a36 36 0 0 0 4 -72 a50 50 0 0 0 -96 -12 a42 42 0 0 0 -8 84 z" fill="url(#wh_weather)"/></svg>' },
+      { nm:'뉴스', url:'https://myway.kr/newsitesbar3.html',
+        svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><defs><linearGradient id="bg_news" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ffffff"/></linearGradient><linearGradient id="sun_news" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7c400"/><stop offset="1" stop-color="#f2b200"/></linearGradient><linearGradient id="wh_news" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f86ea"/><stop offset="1" stop-color="#1b63cc"/></linearGradient></defs><circle cx="188" cy="76" r="40" fill="url(#sun_news)"/><rect x="46" y="70" width="150" height="126" rx="18" fill="url(#wh_news)"/><rect x="66" y="92" width="52" height="42" rx="8" fill="#ffffff"/><rect x="130" y="94" width="46" height="10" rx="5" fill="#ffffff" opacity=".85"/><rect x="130" y="112" width="46" height="10" rx="5" fill="#ffffff" opacity=".55"/><rect x="66" y="150" width="110" height="10" rx="5" fill="#ffffff" opacity=".55"/><rect x="66" y="170" width="80" height="10" rx="5" fill="#ffffff" opacity=".35"/></svg>' },
+      { nm:'실시간 TV', url:'https://myway.kr/livetv00.html',
+        svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><defs><linearGradient id="bg_tv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ffffff"/></linearGradient><linearGradient id="sun_tv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7c400"/><stop offset="1" stop-color="#f2b200"/></linearGradient><linearGradient id="wh_tv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f86ea"/><stop offset="1" stop-color="#1b63cc"/></linearGradient></defs><circle cx="76" cy="66" r="34" fill="url(#sun_tv)"/><path d="M104 46 L128 76 L152 46" stroke="url(#wh_tv)" stroke-width="12" stroke-linecap="round" fill="none"/><rect x="46" y="76" width="164" height="118" rx="20" fill="url(#wh_tv)"/><rect x="62" y="92" width="132" height="86" rx="12" fill="#ffffff"/><path d="M118 118 L118 152 L148 135 Z" fill="url(#wh_tv)"/><rect x="86" y="200" width="84" height="10" rx="5" fill="url(#wh_tv)" opacity=".8"/><circle cx="180" cy="106" r="9" fill="#ff5a4f"/></svg>' },
+      { nm:'실시간 라디오', url:'https://myway.kr/liveradio00.html',
+        svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><defs><linearGradient id="bg_radio" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ffffff"/></linearGradient><linearGradient id="sun_radio" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7c400"/><stop offset="1" stop-color="#f2b200"/></linearGradient><linearGradient id="wh_radio" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f86ea"/><stop offset="1" stop-color="#1b63cc"/></linearGradient></defs><circle cx="184" cy="72" r="38" fill="url(#sun_radio)"/><path d="M70 92 L118 48" stroke="url(#wh_radio)" stroke-width="12" stroke-linecap="round"/><rect x="44" y="90" width="168" height="112" rx="22" fill="url(#wh_radio)"/><circle cx="90" cy="146" r="30" fill="#ffffff"/><circle cx="90" cy="146" r="12" fill="url(#wh_radio)"/><rect x="134" y="120" width="60" height="12" rx="6" fill="#ffffff" opacity=".9"/><rect x="134" y="142" width="60" height="12" rx="6" fill="#ffffff" opacity=".55"/><rect x="134" y="164" width="40" height="12" rx="6" fill="#ffffff" opacity=".35"/><circle cx="192" cy="104" r="9" fill="#ff5a4f"/></svg>' },
+      { nm:'음악', url:'https://myway.kr/MUSIC-YTUBE.html',
+        svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><defs><linearGradient id="bg_music" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ffffff"/></linearGradient><linearGradient id="sun_music" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7c400"/><stop offset="1" stop-color="#f2b200"/></linearGradient><linearGradient id="wh_music" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f86ea"/><stop offset="1" stop-color="#1b63cc"/></linearGradient></defs><circle cx="182" cy="70" r="40" fill="url(#sun_music)"/><path d="M104 190 L104 74 L192 54 L192 168" stroke="url(#wh_music)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" fill="none"/><ellipse cx="78" cy="190" rx="32" ry="26" fill="url(#wh_music)"/><ellipse cx="166" cy="170" rx="32" ry="26" fill="url(#wh_music)"/></svg>' },
+      { nm:'잡지', url:'https://myway.kr/00barmagazine.html',
+        svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><defs><linearGradient id="bg_magazine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#ffffff"/></linearGradient><linearGradient id="sun_magazine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7c400"/><stop offset="1" stop-color="#f2b200"/></linearGradient><linearGradient id="wh_magazine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f86ea"/><stop offset="1" stop-color="#1b63cc"/></linearGradient></defs><circle cx="184" cy="66" r="38" fill="url(#sun_magazine)"/><path d="M52 80 q38 -16 76 0 v116 q-38 -16 -76 0 z" fill="url(#wh_magazine)"/><path d="M128 80 q38 -16 76 0 v116 q-38 -16 -76 0 z" fill="url(#wh_magazine)" opacity=".88"/><rect x="66" y="96" width="48" height="36" rx="6" fill="#ffffff"/><circle cx="80" cy="110" r="6" fill="url(#sun_magazine)"/><rect x="66" y="142" width="48" height="8" rx="4" fill="#ffffff" opacity=".9"/><rect x="66" y="158" width="34" height="8" rx="4" fill="#ffffff" opacity=".6"/><rect x="142" y="96" width="48" height="8" rx="4" fill="#ffffff" opacity=".9"/><rect x="142" y="112" width="40" height="8" rx="4" fill="#ffffff" opacity=".6"/><rect x="142" y="128" width="48" height="8" rx="4" fill="#ffffff" opacity=".6"/><rect x="142" y="144" width="30" height="8" rx="4" fill="#ffffff" opacity=".4"/><rect x="124" y="76" width="8" height="122" rx="4" fill="#1554b8"/></svg>' }
+    ];
+    function buildMenuStrip(){
+      var box=document.createElement('div'); box.className='menu-strip';
+      var grid=document.createElement('div'); grid.className='menu-grid';
+      MENU_ITEMS.forEach(function(m){
+        var a=document.createElement('a'); a.className='menu-card'; a.href=m.url; a.target='_blank'; a.rel='noopener'; a.title=m.nm;
+        var ic=document.createElement('span'); ic.className='menu-ic'; ic.innerHTML=m.svg;
+        var nm=document.createElement('span'); nm.className='menu-nm'; nm.textContent=m.nm;
+        a.appendChild(ic); a.appendChild(nm); grid.appendChild(a);
       });
       box.appendChild(grid);
       return box;
