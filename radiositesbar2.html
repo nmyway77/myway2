@@ -70,6 +70,9 @@
   .mini-btn{width:24px;height:24px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--ink-sub);font-size:12px;font-weight:800;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.12);padding:0}
   .mini-btn:hover{color:var(--accent);border-color:var(--accent)}
   .mini-btn.del:hover{color:#c0392b;border-color:#c0392b}
+  .mini-btn.home{border-color:#f59e0b;color:#f59e0b;background:#fffbeb}
+  .home-pick{display:flex;align-items:center;gap:8px;margin:0 0 10px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:#fffbeb;font-size:13px;font-weight:700;color:var(--ink)}
+  .home-pick select{flex:1;min-width:0;border:1px solid var(--line);border-radius:7px;padding:5px 8px;font-size:13px;font-family:inherit;background:#fff}
   .sec-tools{display:none;gap:5px;margin-left:auto}
   body.editing .sec-tools{display:flex}
   .sec-tools .mini-btn{width:26px;height:26px}
@@ -120,7 +123,7 @@
 </nav>
 
 <div class="viewer">
-  <iframe id="viewer" title="LIVE 라디오 뷰어" referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen="" style=""></iframe>
+  <iframe id="viewer" title="LIVE 라디오 뷰어" referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen=""></iframe>
   <div class="grid-panel" id="gridPanel"></div>
 </div>
 
@@ -145,6 +148,7 @@
 <div class="modal-back" id="navBack">
   <div class="modal">
     <h3>상단 채널 편집</h3>
+    <div class="home-pick"><span>🏠 초기 메인화면</span><select id="homeSel"></select></div>
     <div id="navList" class="ch-list"></div>
     <button class="tb-btn" id="navAdd" style="margin-top:12px">＋ 채널 추가</button>
     <div class="modal-row"><button class="btn-cancel" id="navClose">닫기</button></div>
@@ -240,6 +244,10 @@ var EXPORT_NAME = 'myway-radio.json';
 var DEFAULT_DATA = {
   "sites": [
     [
+      "radionara",
+      "https://radionara.vercel.app/"
+    ],
+    [
       "KBS",
       "https://radio.kbs.co.kr/"
     ],
@@ -280,11 +288,6 @@ var DEFAULT_DATA = {
       "https://www.cbs.co.kr/radio"
     ],
     [
-      "radionara",
-      "https://radionara.vercel.app/",
-      true
-    ],
-    [
       "CNN Radio",
       "https://edition.cnn.com/audio"
     ],
@@ -293,16 +296,11 @@ var DEFAULT_DATA = {
       "https://www.bbc.co.uk/sounds/stations"
     ]
   ],
-  "defaultName": "KBS1",
+  "defaultName": "radionara",
   "directory": [
     {
       "label": "KBS 라디오",
       "items": [
-        [
-          "라디오바로보기",
-          "",
-          "https://myway.kr/liveradio00.html"
-        ],
         [
           "KBS 1라디오",
           "뉴스·정보 · onair.kbs",
@@ -448,6 +446,13 @@ function defaultIndex(){
   var i=data.sites.findIndex(function(s){return s[0]===data.defaultName;});
   return Math.max(0,i);
 }
+/* 초기 메인화면: defaultName 채널이 iframe 재생 가능하면 그 인덱스, 아니면 -1(전체목록) */
+function homeIndex(){
+  if(!data.defaultName) return -1;
+  var i=data.sites.findIndex(function(s){return s[0]===data.defaultName;});
+  return (i>=0 && !data.sites[i][2]) ? i : -1;
+}
+function setHome(name){ data.defaultName=name||''; saveData(); renderNavList(); }
 
 /* ---- 뷰어 ---- */
 var viewer=document.getElementById('viewer');
@@ -638,10 +643,18 @@ document.getElementById('secSave').addEventListener('click',function(){
 var navBack=document.getElementById('navBack'), navList=document.getElementById('navList');
 function renderNavList(){
   navList.innerHTML='';
+  var sel=document.getElementById('homeSel'); sel.innerHTML='';
+  var o0=document.createElement('option'); o0.value=''; o0.textContent='📻 전체목록'; sel.appendChild(o0);
+  data.sites.forEach(function(s){ if(s[2]) return; var o=document.createElement('option'); o.value=s[0]; o.textContent=s[0]; sel.appendChild(o); });
+  var hi=homeIndex();
+  sel.value=(hi>=0?data.defaultName:'');
+  sel.onchange=function(){ setHome(sel.value); };
   data.sites.forEach(function(s,i){
     var row=document.createElement('div'); row.className='ch-row';
-    var nm=document.createElement('div'); nm.className='nm'; nm.textContent=s[0]; row.appendChild(nm);
+    var nm=document.createElement('div'); nm.className='nm'; nm.textContent=s[0]+(i===hi?'  🏠':''); row.appendChild(nm);
     if(s[2]){ var tg=document.createElement('span'); tg.className='tag'; tg.textContent='새탭'; row.appendChild(tg); }
+    var hb=miniBtn('★', i===hi?'초기화면 해제':'초기화면으로', function(){ if(s[2]){ alert('새탭 채널은 초기 화면으로 쓸 수 없어요.'); return; } setHome(i===hi?'':s[0]); });
+    if(i===hi) hb.classList.add('home'); row.appendChild(hb);
     row.appendChild(miniBtn('✎','수정',function(){openChModal(i);}));
     row.appendChild(miniBtn('▲','위로',function(){moveSite(i,-1);}));
     row.appendChild(miniBtn('▼','아래로',function(){moveSite(i,1);}));
@@ -650,7 +663,7 @@ function renderNavList(){
   });
 }
 function moveSite(i,dir){ var j=i+dir; if(j<0||j>=data.sites.length)return; var t=data.sites[i];data.sites[i]=data.sites[j];data.sites[j]=t; saveData(); renderNav(); renderNavList(); }
-function delSite(i){ if(!confirm('이 채널을 삭제할까요?'))return; data.sites.splice(i,1); saveData(); renderNav(); renderNavList(); }
+function delSite(i){ if(!confirm('이 채널을 삭제할까요?'))return; if(data.sites[i][0]===data.defaultName) data.defaultName=''; data.sites.splice(i,1); saveData(); renderNav(); renderNavList(); }
 document.getElementById('navClose').addEventListener('click',function(){navBack.classList.remove('show');});
 document.getElementById('navAdd').addEventListener('click',function(){openChModal(-1);});
 
@@ -672,7 +685,7 @@ document.getElementById('chSave').addEventListener('click',function(){
   var nt=document.getElementById('chNewtab').checked;
   if(!nm||!u){ alert('이름과 URL을 모두 입력하세요'); return; }
   var row=[nm,u]; if(nt) row.push(true);
-  if(chEdit<0) data.sites.push(row); else data.sites[chEdit]=row;
+  if(chEdit<0) data.sites.push(row); else { if(data.sites[chEdit][0]===data.defaultName) data.defaultName=(nt?'':nm); data.sites[chEdit]=row; }
   saveData(); chBack.classList.remove('show'); renderNav(); renderNavList();
 });
 
@@ -717,6 +730,7 @@ function buildHTML(mode){
   var nt=q('#navTrack'); if(nt) nt.innerHTML='';
   var gp=q('#gridPanel'); if(gp){ gp.innerHTML=''; gp.classList.remove('show'); gp.removeAttribute('data-done'); }
   var nl=q('#navList'); if(nl) nl.innerHTML='';
+  var hs=q('#homeSel'); if(hs) hs.innerHTML='';
   /* 동적으로 추가된 nav 버튼(전체목록/새탭) 제거 */
   var tn=q('#topnav'); if(tn){ tn.querySelectorAll('button[data-site],button[data-grid],.open-btn').forEach(function(b){b.remove();}); tn.classList.remove('dragging'); }
   /* 열린 모달 닫기 */
@@ -812,12 +826,9 @@ if(SHOW_EDIT){
       if(b){ loadSite(i,b); return; }
     }
   }
-  /* 기본: KBS1 바로 재생 (없으면 전체목록) */
-  var di=defaultIndex();
-  if(data.sites[di] && !data.sites[di][2]){
-    var db=track.querySelector('button[data-site="'+di+'"]');
-    if(db){ loadSite(di,db); return; }
-  }
+  /* 기본: 편집기에서 지정한 초기 메인화면 (없으면 전체목록) */
+  var hi=homeIndex();
+  if(hi>=0){ var hb=track.querySelector('button[data-site="'+hi+'"]'); if(hb){ loadSite(hi,hb); return; } }
   showGrid(gridBtn);
 })();
 
