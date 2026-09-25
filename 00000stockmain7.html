@@ -489,7 +489,10 @@ div[data-google-query-id],
     .cfgi-item{ border-radius:14px; overflow:hidden; background:#fff; border:1px solid var(--card-border); box-shadow:0 1px 2px rgba(16,24,40,.05); }
     .cfgi-nm{ display:flex; align-items:center; gap:6px; padding:8px 10px 6px; font-size:.82rem; font-weight:800; color:var(--text-main); letter-spacing:-.3px; text-decoration:none; border-bottom:1px solid var(--card-border); transition:background .15s,color .15s; }
     .cfgi-nm:hover{ background:#eef4ff; color:#2563eb; }
-    .cfgi-nm small{ font-size:.62rem; font-weight:700; color:var(--text-muted); background:#f1f4f9; border-radius:6px; padding:1px 6px; letter-spacing:.4px; }
+    .cfgi-nm small{ font-size:.62rem; font-weight:700; color:var(--text-muted); background:#f1f4f9; border-radius:6px; padding:1px 6px; letter-spacing:.4px; cursor:pointer; transition:background .15s,color .15s; }
+    .cfgi-nm small:hover{ background:#03c75a; color:#fff; }
+    .cfgi-news{ font-style:normal; font-size:.5rem; font-weight:600; margin-left:3px; opacity:.7; letter-spacing:0; }
+    .cfgi-nm small:hover .cfgi-news{ opacity:1; }
     .cfgi-go{ margin-left:auto; font-size:.62rem; font-weight:700; color:#3b82f6; }
     .cfgi-box{ position:relative; display:block; width:100%; aspect-ratio:360/306; overflow:hidden; cursor:pointer; }
     .cfgi-box:hover{ background:#f5f8ff; }
@@ -497,7 +500,7 @@ div[data-google-query-id],
     .cfgi-credit{ margin-top:6px; padding:0 4px; font-size:.64rem; color:var(--text-muted); text-align:right; }
     .cfgi-credit a{ color:#7a86a8; text-decoration:none; }
     /* ===== 주요지수 차트 바로가기 (작은 아이콘 + 종목명, 한 줄) ===== */
-    .mkt-strip{ margin-top:10px; margin-bottom:1.6rem; }
+    .mkt-strip{ margin-top:14px; margin-bottom:26px; }
     .mkt-grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:10px; }
     .mkt-item{ display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:12px; background:#fff; border:1px solid var(--card-border); box-shadow:0 1px 2px rgba(16,24,40,.05); text-decoration:none; color:var(--text-main); transition:transform .18s cubic-bezier(.2,.7,.3,1), box-shadow .18s, background .15s; min-width:0; }
     .mkt-item:hover{ transform:translateY(-2px); background:#f7faff; box-shadow:0 10px 20px -14px rgba(59,130,246,.5); }
@@ -508,7 +511,7 @@ div[data-google-query-id],
     .mkt-item:hover .mkt-nm{ color:#2563eb; }
     a.mkt-tk{ text-decoration:none; cursor:pointer; transition:background .15s,color .15s; }
     a.mkt-tk:hover{ background:#2563eb; color:#fff; }
-    .menu-strip{ margin-top:-12px; margin-bottom:1.6rem; }
+    .menu-strip{ margin-top:0; margin-bottom:1.6rem; }
     .menu-grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:10px; }
     .menu-card{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; padding:12px 10px 10px; border-radius:14px; background:#fff; border:1px solid var(--card-border); box-shadow:0 1px 2px rgba(16,24,40,.05); text-decoration:none; color:var(--text-main); transition:transform .18s cubic-bezier(.2,.7,.3,1), box-shadow .18s, background .15s; }
     .menu-card:hover{ transform:translateY(-2px); background:#f7faff; box-shadow:0 10px 20px -14px rgba(59,130,246,.5); }
@@ -1286,7 +1289,10 @@ div[data-google-query-id],
         var it=document.createElement('div'); it.className='cfgi-item';
         var nm=document.createElement('a'); nm.className='cfgi-nm'; nm.textContent=c[0];
         nm.href='https://coinone.co.kr/chart?site=coinone'+c[1].toLowerCase(); nm.target='_blank'; nm.rel='noopener'; nm.title=c[0]+' \uCF54\uC778\uC6D0 \uCC28\uD2B8';
-        var sm=document.createElement('small'); sm.textContent=c[1]; nm.appendChild(sm);
+        var sm=document.createElement('small'); sm.textContent=c[1]; sm.title=c[0]+' \uB124\uC774\uBC84 \uC99D\uAD8C \uC2DC\uC138\u00B7\uB274\uC2A4';
+        sm.addEventListener('click',function(e){ e.preventDefault(); e.stopPropagation(); window.open('https://stock.naver.com/crypto/UPBIT/'+c[1]+'/news/marketUpdates','_blank','noopener'); });
+        var nw=document.createElement('i'); nw.className='cfgi-news'; nw.textContent='\uB274\uC2A4'; sm.appendChild(nw);
+        nm.appendChild(sm);
         var lk=document.createElement('span'); lk.className='cfgi-go'; lk.textContent='\uCC28\uD2B8 \u2197'; nm.appendChild(lk);
         var fb=document.createElement('a'); fb.className='cfgi-box'; fb.href='https://cfgi.io/'+c[2]+'-fear-greed-index/'; fb.target='_blank'; fb.rel='noopener'; fb.title=c[0]+' cfgi.io \uC0C1\uC138';
         var f=document.createElement('iframe'); f.loading='lazy'; f.title=c[0]+' Fear and Greed'; f.setAttribute('scrolling','no');
