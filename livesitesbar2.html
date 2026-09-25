@@ -1,10 +1,81 @@
 <!DOCTYPE html>
-<html lang="ko"><head>
+<html lang="ko"><style id="__mw_adguard_style__" type="text/css">ins.adsbygoogle,
+.adsbygoogle,
+iframe[id^="google_ads_iframe"],
+iframe[id^="google_ads_frame"],
+iframe[src*="googlesyndication.com"],
+iframe[src*="doubleclick.net"],
+iframe[src*="/ads/"],
+iframe[src*="adnxs.com"],
+iframe[src*="criteo"],
+div[id^="div-gpt-ad"],
+div[id^="google_ads_"],
+div[id^="dfp-"],
+div[id^="ad-slot"],
+div[id^="ad_slot"],
+div[id^="adfox_"],
+div[data-ad-slot],
+div[data-google-query-id],
+.ad-banner,
+.ad_banner,
+.adBanner,
+.ad-container,
+.ad_container,
+.adContainer,
+.ad-wrapper,
+.ad_wrapper,
+.adWrapper,
+.ad-slot,
+.ad_slot,
+.adSlot,
+.ad-unit,
+.ad-block,
+.ad-area,
+.ad-zone,
+.ad-box,
+.ad-placeholder,
+.ad-placement,
+.ad-label,
+.ads-area,
+.advertisement,
+.advertising,
+.advert,
+.adsbox,
+.sponsored-link,
+.sponsored-ad,
+.sponsor-banner,
+.banner-ad,
+.banner_ad,
+.bannerAd,
+[class^="taboola"],
+[class*="trc_related"],
+[id^="taboola-"],
+.OUTBRAIN,
+[class^="ob-"],
+[id^="outbrain_widget"],
+[id^="dablewidget"],
+[class^="dable"],
+[id^="mgid"],
+[class^="mgbox"],
+[id^="revcontent"],
+[class^="rc-"],
+[id^="criteo"],
+[id^="adfit"],
+.kakao_ad_area,
+[id^="ad_wrap"],
+[class^="ad_wrap"],
+[id^="AD_"],
+[class="ad"],
+[id="ad"],
+[id^="banner_ad"],
+[class^="banner_ad"]{display:none !important}
+</style><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>LIVE TV · 실시간 방송 | MYWAY.KR</title>
 <meta name="description" content="지상파·종편·뉴스·경제·해외 실시간 방송과 치지직·SOOP·트위치 라이브를 한 화면에서. 상단 채널을 골라 전체 화면으로 보세요.">
 <meta name="robots" content="index, follow">
+
 <link rel="canonical" href="https://myway.kr/00mainlivetv.html">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -203,15 +274,15 @@ const IS_DIST = true;
 const SHOW_EDIT = true;
 const COPY_PROTECT = false;
 const STORE_KEY = "mywayLiveDirV1_dist";
-const DIST_SIG = "sig1790304104039";
+const DIST_SIG = "sig1790322126582";
 /* @CONFIG_END */
 
 /* === 상단 채널 버튼 (iframe에 바로 재생) — livesitesbar2 채널 === */
 /* @SITES_START */
 const DEFAULT_SITES = [
   ["네이버TV","https://tv.naver.com/l"],
-  ["MLB-다시보기","https://mlblive.net/"],
   ["치지직","https://chzzk.naver.com/lives"],
+  ["MLB-다시보기","https://mlblive.net/"],
   ["SOOP","https://www.sooplive.co.kr/live/all"],
   ["MBC","https://onair.imbc.com/"],
   ["SBS","https://www.sbs.co.kr/live/S01?div=main_live"],
@@ -228,7 +299,7 @@ const DEFAULT_SITES = [
 /* @SITES_END */
 /* === 초기 메인화면 (채널 이름, ''이면 전체목록) === */
 /* @HOME_START */
-const DEFAULT_HOME = "KBS1";
+const DEFAULT_HOME = "네이버TV";
 /* @HOME_END */
 function coerceSites(p){
   if(Array.isArray(p)&&p.length&&Array.isArray(p[0])){
