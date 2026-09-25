@@ -293,7 +293,7 @@ var DEFAULT_DATA = {
       "https://www.bbc.co.uk/sounds/stations"
     ]
   ],
-  "defaultName": "TBN 교통방송",
+  "defaultName": "KBS1",
   "directory": [
     {
       "label": "KBS 라디오",
@@ -811,6 +811,12 @@ if(SHOW_EDIT){
       var b=track.querySelector('button[data-site="'+i+'"]');
       if(b){ loadSite(i,b); return; }
     }
+  }
+  /* 기본: KBS1 바로 재생 (없으면 전체목록) */
+  var di=defaultIndex();
+  if(data.sites[di] && !data.sites[di][2]){
+    var db=track.querySelector('button[data-site="'+di+'"]');
+    if(db){ loadSite(di,db); return; }
   }
   showGrid(gridBtn);
 })();

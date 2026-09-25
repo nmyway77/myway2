@@ -199,7 +199,7 @@ const IS_DIST = true;
 const SHOW_EDIT = true;
 const COPY_PROTECT = false;
 const STORE_KEY = "mywayLiveDirV1_dist";
-const DIST_SIG = "sig1783113689864";
+const DIST_SIG = "sig1790301194237";
 /* @CONFIG_END */
 
 /* === 상단 채널 버튼 (iframe에 바로 재생) — livesitesbar2 채널 === */
@@ -246,7 +246,7 @@ function loadSites(){
 }
 function saveSites(){ try{ localStorage.setItem(STORE_KEY+'_sites', JSON.stringify(SITES)); }catch(_){} }
 let SITES = loadSites();
-const DEFAULT_I = Math.max(0, SITES.findIndex(s=>s[0]==='Famelack'));
+const DEFAULT_I = Math.max(0, SITES.findIndex(s=>s[0]==='KBS1'));
 
 /* === 전체목록 디렉터리 (카테고리별) — livetv 데이터 === */
 /* @DIR_START */
@@ -731,6 +731,9 @@ nav.insertBefore(openBtn, track);
   }
   var mu = /^url:(.+)$/.exec(saved);
   if(mu){ loadUrl(mu[1]); return; }
+  /* 기본: KBS1 바로 재생 (없으면 전체목록) */
+  var db=track.querySelector('button[data-site="'+DEFAULT_I+'"]');
+  if(db && SITES[DEFAULT_I] && SITES[DEFAULT_I][2]!=='newwin'){ loadSite(DEFAULT_I,db); return; }
   showGrid(gridBtn);
 })();
 
