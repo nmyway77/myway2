@@ -440,6 +440,7 @@
     .favm-row .nm { flex: 1; font-size: .85rem; color: #39406a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .favm-row .edit { flex: 0 0 auto; border: none; background: #eef2ff; color: #4757f5; width: 26px; height: 26px; border-radius: 8px; cursor: pointer; font-size: .9rem; line-height: 1; }
     .favm-row .edit:hover { background: #e2e8ff; }
+    .favm-row .edit:disabled { opacity: .35; cursor: default; }
     .favm-row .del { flex: 0 0 auto; border: none; background: #fdecec; color: #e0483a; width: 26px; height: 26px; border-radius: 8px; cursor: pointer; font-size: 1rem; line-height: 1; }
     .favm-row .del:hover { background: #fbdcdc; }
     .favm-row.is-editing { background: #f3f6ff; border-radius: 9px; padding: 4px 6px; margin: -4px -6px; box-shadow: inset 0 0 0 1.5px #aeb9ea; }
@@ -3035,7 +3036,21 @@
     /* ===== 사용자 즐겨찾기 (+ 버튼) — extra-logo-section 맨 끝에 원형 타일 ===== */
     (function () {
       const FAV_KEY = 'mywayFavTilesV1';
-      function loadFavs() { try { const a = JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch (_) { return []; } }
+      /* 배포본 HTML에 굳어진 즐겨찾기 타일(.fav-item)을 기본값으로 삼음 — localStorage가 비어 있는 새 브라우저/시크릿 창에서도 표시되도록 */
+      const SEED_FAVS = (function () {
+        const root = document.getElementById('extraLogoSection'); if (!root) return [];
+        return Array.from(root.querySelectorAll('.fav-item')).map(a => {
+          const im = a.querySelector('img'); const src = (im && im.getAttribute('src')) || '';
+          return { name: a.getAttribute('title') || '', url: a.getAttribute('href') || '', img: /^data:/i.test(src) ? '' : src };
+        }).filter(f => f.url);
+      })();
+      function loadFavs() {
+        try {
+          const raw = localStorage.getItem(FAV_KEY);
+          if (raw === null) return SEED_FAVS.slice();
+          const a = JSON.parse(raw); return Array.isArray(a) ? a : [];
+        } catch (_) { return SEED_FAVS.slice(); }
+      }
       function saveFavs(a) { try { localStorage.setItem(FAV_KEY, JSON.stringify(a)); } catch (_) {} }
       function favicon(url) { try { return 'https://www.google.com/s2/favicons?sz=128&domain=' + new URL(url).hostname; } catch (_) { return ''; } }
       function tileImg(f) { return f.img || favicon(f.url); }
@@ -3057,6 +3072,8 @@
         /* 편집 모드(body.editing)에서 타일 위에 ✏ 수정 · × 삭제 — 차트 카드와 동일 패턴 */
         const ctrl = document.createElement('div'); ctrl.className = 'card-ctrl';
         const mk = (t, title, fn, cls) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = t; b.title = title; if (cls) b.className = cls; b.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); fn(); }); return b; };
+        /* ◀ ▶ 이동 — 메인 탭 타일(addCardCtrl)과 동일 배치 */
+        ctrl.appendChild(mk('\u25c0', '앞으로', () => moveFav(idx, -1)));
         ctrl.appendChild(mk('\u270f', '수정', () => { openFavModal(); startEdit(idx); }));
         ctrl.appendChild(mk('\u00d7', '삭제', () => {
           if (!confirm('이 즐겨찾기를 삭제할까요?\n' + (f.name || f.url))) return;
@@ -3064,9 +3081,17 @@
           if (editIdx === idx) { exitEdit(); clearInputs(); } else if (editIdx > idx) { editIdx--; }
           renderFavList(); mountFavGrid();
         }, 'del'));
+        ctrl.appendChild(mk('\u25b6', '뒤로', () => moveFav(idx, 1)));
         a.appendChild(ctrl);
         a.addEventListener('click', e => { if (document.body.classList.contains('editing')) e.preventDefault(); }, true);
         return a;
+      }
+      function moveFav(idx, dir) {
+        const arr = loadFavs(); const ni = idx + dir;
+        if (ni < 0 || ni >= arr.length) return;
+        const t = arr[idx]; arr[idx] = arr[ni]; arr[ni] = t; saveFavs(arr);
+        if (editIdx === idx) editIdx = ni; else if (editIdx === ni) editIdx = idx;
+        renderFavList(); mountFavGrid();
       }
       function addTile() {
         const add = document.createElement('div');
@@ -3149,7 +3174,11 @@
             else if (editIdx > idx) { editIdx--; }
             renderFavList(); mountFavGrid();
           });
-          row.appendChild(im); row.appendChild(nm); row.appendChild(edit); row.appendChild(del);
+          const up = document.createElement('button'); up.className = 'edit'; up.textContent = '\u25b2'; up.title = '위로'; up.disabled = idx === 0;
+          up.addEventListener('click', () => moveFav(idx, -1));
+          const dn = document.createElement('button'); dn.className = 'edit'; dn.textContent = '\u25bc'; dn.title = '아래로'; dn.disabled = idx === favs.length - 1;
+          dn.addEventListener('click', () => moveFav(idx, 1));
+          row.appendChild(im); row.appendChild(nm); row.appendChild(up); row.appendChild(dn); row.appendChild(edit); row.appendChild(del);
           list.appendChild(row);
         });
       }
@@ -3205,10 +3234,18 @@
         const rd = new FileReader();
         rd.onload = () => {
           try {
-            const arr = JSON.parse(rd.result);
+            let arr = JSON.parse(rd.result);
+            /* myway-index.json(인덱스 전체 데이터)을 넣으면 즐겨찾기(daily) 탭 항목만 자동 추출 */
             if (arr && !Array.isArray(arr) && arr.kind === 'myway-index-v1') {
-              alert('이 파일은 인덱스 전체 데이터(myway-index) JSON이에요.\n여기(즐겨찾기 가져오기)가 아니라 오른쪽 위 연필(✏) 도구 메뉴의 "📥 가져오기"로 넣어 주세요.');
-              fileInput.value = ''; return;
+              const tabs = arr.tabs || {};
+              const src = tabs.daily || tabs[Object.keys(tabs)[0]] || {};
+              const secs = Array.isArray(src.sections) ? src.sections : [];
+              arr = [];
+              secs.forEach(sec => { (Array.isArray(sec.items) ? sec.items : []).forEach(it => {
+                if (it && it.url) arr.push({ name: it.name || it.ticker || it.ko || '', url: it.url, img: it.img || '' });
+              }); });
+              if (!arr.length) { alert('인덱스 JSON에서 즐겨찾기(daily) 항목을 찾지 못했어요.'); fileInput.value = ''; return; }
+              if (!confirm('인덱스 전체 데이터 JSON이에요.\n즐겨찾기 탭 항목 ' + arr.length + '개만 즐겨찾기에 추가할까요?\n(탭 전체를 바꾸려면 연필(✏) 메뉴의 "📥 가져오기"를 쓰세요)')) { fileInput.value = ''; return; }
             }
             if (!Array.isArray(arr)) throw new Error('not array');
             const clean = arr.filter(x => x && x.url).map(x => ({ name: x.name || '', url: String(x.url), img: x.img || '' }));

@@ -3095,7 +3095,21 @@
     /* ===== 사용자 즐겨찾기 (+ 버튼) — extra-logo-section 맨 끝에 원형 타일 ===== */
     (function () {
       const FAV_KEY = 'mywayFavTilesV1';
-      function loadFavs() { try { const a = JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch (_) { return []; } }
+      /* 배포본 HTML에 굳어진 즐겨찾기 타일(.fav-item)을 기본값으로 삼음 — localStorage가 비어 있는 새 브라우저/시크릿 창에서도 표시되도록 */
+      const SEED_FAVS = (function () {
+        const root = document.getElementById('extraLogoSection'); if (!root) return [];
+        return Array.from(root.querySelectorAll('.fav-item')).map(a => {
+          const im = a.querySelector('img'); const src = (im && im.getAttribute('src')) || '';
+          return { name: a.getAttribute('title') || '', url: a.getAttribute('href') || '', img: /^data:/i.test(src) ? '' : src };
+        }).filter(f => f.url);
+      })();
+      function loadFavs() {
+        try {
+          const raw = localStorage.getItem(FAV_KEY);
+          if (raw === null) return SEED_FAVS.slice();
+          const a = JSON.parse(raw); return Array.isArray(a) ? a : [];
+        } catch (_) { return SEED_FAVS.slice(); }
+      }
       function saveFavs(a) { try { localStorage.setItem(FAV_KEY, JSON.stringify(a)); } catch (_) {} }
       function favicon(url) { try { return 'https://www.google.com/s2/favicons?sz=128&domain=' + new URL(url).hostname; } catch (_) { return ''; } }
       function tileImg(f) { return f.img || favicon(f.url); }
