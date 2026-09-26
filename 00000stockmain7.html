@@ -779,13 +779,13 @@ div[data-google-query-id],
   </header>
 
 
-  <section id="chartTop" class="chart-top">
+  <section id="chartTop" class="chart-top" style="display: none;">
     <div class="chart-top-inner">
       <div id="infoWrap"></div>
     </div>
   </section>
 
-  <main class="main" id="main" data-tab="today"></main>
+  <main class="main" id="main" data-tab="tab"></main>
 
   <footer class="myway-footer">
     <a href="https://myway.kr/" target="_top">마이웨이 myway.kr</a>
@@ -863,7 +863,7 @@ div[data-google-query-id],
   <!-- TODAY 카드 추가/수정 모달 -->
   <div class="modal-back" id="infoBack">
     <div class="modal">
-      <h3 id="infoTitle">카드 수정</h3>
+      <h3 id="infoTitle">카드 추가</h3>
       <label>이름(국문)</label>
       <input id="infName" type="text" placeholder="예: 뉴스">
       <label>영문 라벨</label>
@@ -907,7 +907,7 @@ div[data-google-query-id],
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayStockV1_dist";
-    const DIST_SIG = "sig1790422690860";
+    const DIST_SIG = "sig1790426391289";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-stock-v1';   // JSON 식별자 — 다른 도구 JSON과 섞임 방지
     let _distChecked = false;
@@ -1311,6 +1311,30 @@ div[data-google-query-id],
           { ticker:"한화오션", ko:"042660", url:"https://finance.naver.com/item/board.naver?code=042660" },
         ] },
       ] },
+      "tab": { photoStyle: true, newFirst: false, sections: [
+        { label:"", sub:"", items: [
+          { ticker:"어슴새벽", ko:"", url:"https://www.youtube.com/@%EC%96%B4%EC%8A%B4%EC%83%88%EB%B2%BD/videos", name:"어슴새벽", img:"https://yt3.googleusercontent.com/HgUXqemvvq-n4kH50j3ioz614RP5QpWHqPR_Hpyl8I3SLvsRd4iJCUNxXcRJ2JJaxQ0T8Rk9=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/HgUXqemvvq-n4kH50j3ioz614RP5QpWHqPR_Hpyl8I3SLvsRd4iJCUNxXcRJ2JJaxQ0T8Rk9=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"성정길", ko:"", url:"https://www.youtube.com/@%EC%84%B1%EC%A0%95%EA%B8%B8/videos", name:"성정길", img:"https://yt3.googleusercontent.com/tnhVz-EYgm18Pnr925s--4WdaRRLUgg1-FxPbIWSpCc5kkmxKzUsYQwJbPikmmcoMHPEDuXU=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/tnhVz-EYgm18Pnr925s--4WdaRRLUgg1-FxPbIWSpCc5kkmxKzUsYQwJbPikmmcoMHPEDuXU=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"타임레버리지", ko:"", url:"https://www.youtube.com/@time_leverage_/videos", name:"타임레버리지", img:"https://yt3.googleusercontent.com/Uura_JQnxrTRjk3zx67XV4ng4-8Bs_2sfJ58B9Ea3_v2KjPqRDDVT7be8o4zSW4A3geODBOqeA=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/Uura_JQnxrTRjk3zx67XV4ng4-8Bs_2sfJ58B9Ea3_v2KjPqRDDVT7be8o4zSW4A3geODBOqeA=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"오태민의 지혜의족보", ko:"", url:"https://www.youtube.com/@wisdom_of_bitcoin/videos", name:"오태민의 지혜의족보", img:"https://yt3.googleusercontent.com/3NSkcLtDTb6hHefm67n32edxSxnpjEEMczSXSVBE3tAcJqnGPUQWsLRrXj064ZFeeojg2giLlf8=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/3NSkcLtDTb6hHefm67n32edxSxnpjEEMczSXSVBE3tAcJqnGPUQWsLRrXj064ZFeeojg2giLlf8=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"크립토미나티", ko:"", url:"https://www.youtube.com/@Cryptominati-1/videos", name:"크립토미나티", img:"https://yt3.googleusercontent.com/oIknD7XPsUdjBHazT1Dd7Ok66_bSQoacWPzitE1gsppg4NiilKDH89fwvlCldBCqd6_wEhu5COY=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/oIknD7XPsUdjBHazT1Dd7Ok66_bSQoacWPzitE1gsppg4NiilKDH89fwvlCldBCqd6_wEhu5COY=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"머니 블라블라", ko:"", url:"https://www.youtube.com/@money-blahblah/videos", name:"머니 블라블라", img:"https://yt3.googleusercontent.com/7xp-yD02pxlp5PnNPrlB1MZ6aB9KJxcdu5Hw9_K6QmFJZbr_K8OH2d6isyX0zKSzMruRutvW=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/7xp-yD02pxlp5PnNPrlB1MZ6aB9KJxcdu5Hw9_K6QmFJZbr_K8OH2d6isyX0zKSzMruRutvW=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"자두두", ko:"", url:"https://www.youtube.com/@jadoodoo/videos", name:"자두두", img:"https://yt3.googleusercontent.com/Jl5NuijG16L862WpdZBRzHI9k_YpV0zkkiqAcGgJEfbna7wHYmkR2dzTDkgN9ymi2hHOiBN6-w=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/Jl5NuijG16L862WpdZBRzHI9k_YpV0zkkiqAcGgJEfbna7wHYmkR2dzTDkgN9ymi2hHOiBN6-w=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"웨돔의 비트코인", ko:"", url:"https://www.youtube.com/@wedombtc/videos", name:"웨돔의 비트코인", img:"https://yt3.googleusercontent.com/OS87giQDproJWSantWbscLQHQj7Pa4Z05-6i8HIxmdEdd9Dxgk8xMc7WiPUU_FBBm-5coP0Q=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/OS87giQDproJWSantWbscLQHQj7Pa4Z05-6i8HIxmdEdd9Dxgk8xMc7WiPUU_FBBm-5coP0Q=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"철구형", ko:"", url:"https://www.youtube.com/@chul9hyung/videos", name:"철구형", img:"https://yt3.googleusercontent.com/ytc/AIdro_kQD5S_A-EqQYReimN8O-_70kLGA0xW1Hq4DgwhvrGq3dE=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/ytc/AIdro_kQD5S_A-EqQYReimN8O-_70kLGA0xW1Hq4DgwhvrGq3dE=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"신사임당", ko:"", url:"https://www.youtube.com/@CH%EC%8B%A0%EC%82%AC%EC%9E%84%EB%8B%B9/videos", name:"신사임당", img:"https://yt3.googleusercontent.com/Q1FSHr0ekw_c6POJcPyRQgMf_ao_b0uc79DVIvT3zEH7KG4YqJxuGODltWbAwmNvpp_pR6Y97-8=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/Q1FSHr0ekw_c6POJcPyRQgMf_ao_b0uc79DVIvT3zEH7KG4YqJxuGODltWbAwmNvpp_pR6Y97-8=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"차트천재 김선재", ko:"", url:"https://www.youtube.com/@%EC%B0%A8%ED%8A%B8%EC%B2%9C%EC%9E%AC%EA%B9%80%EC%84%A0%EC%9E%AC/videos", name:"차트천재 김선재", img:"https://yt3.googleusercontent.com/jQfcXnipfVk6l4p3FbTqQG24_01km4_XvVhRbKeEcBrD8lI1n3Jh0ysn6kX7jwsz8UAeEkcIIQ=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/jQfcXnipfVk6l4p3FbTqQG24_01km4_XvVhRbKeEcBrD8lI1n3Jh0ysn6kX7jwsz8UAeEkcIIQ=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"50억 아빠", ko:"", url:"https://www.youtube.com/@50%EC%96%B5%EC%95%84%EB%B9%A0/videos", name:"50억 아빠", img:"https://yt3.googleusercontent.com/Gacs79aFO4d9VCL83OLQrE1plMAEddL4kPEZKhw79jMzzOqXKyavxaFZX6poOIRo46qMPasAkQ=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/Gacs79aFO4d9VCL83OLQrE1plMAEddL4kPEZKhw79jMzzOqXKyavxaFZX6poOIRo46qMPasAkQ=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"스트리머 사또", ko:"", url:"https://www.youtube.com/@live-streamersatto/videos", name:"스트리머 사또", img:"https://yt3.googleusercontent.com/ytc/AIdro_n5EwqwEc7yGozUZQNiDIjvSfZUoH8phK2_UFq8KWsJycM=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/ytc/AIdro_n5EwqwEc7yGozUZQNiDIjvSfZUoH8phK2_UFq8KWsJycM=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"링컨 트레이딩", ko:"", url:"https://www.youtube.com/@%EB%A7%81%EC%BB%A8%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%94%A9/videos", name:"링컨 트레이딩", img:"https://yt3.googleusercontent.com/doz_eB7Tif7NJ9_ufTP0sNPg_kWPR08Xzad9CGnTQBZYPVX8j-fOC7vKRhVXeggonjoGu1nY3A=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/doz_eB7Tif7NJ9_ufTP0sNPg_kWPR08Xzad9CGnTQBZYPVX8j-fOC7vKRhVXeggonjoGu1nY3A=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"오늘의 코인뉴스", ko:"", url:"https://www.youtube.com/@Todaycoin/videos", name:"오늘의 코인뉴스", img:"https://yt3.googleusercontent.com/ivggGvHi3nJxEbanQdmPErnw2hTR8Cle9MdV59ESd_qeCjdhrjnNhiqGADhLBVmVQy1wsTPX9w=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/ivggGvHi3nJxEbanQdmPErnw2hTR8Cle9MdV59ESd_qeCjdhrjnNhiqGADhLBVmVQy1wsTPX9w=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"디파이 농부 조선생", ko:"", url:"https://www.youtube.com/@Web3World/videos", name:"디파이 농부 조선생", img:"https://yt3.googleusercontent.com/59dCItnUYREuPA26hQrynRw_0wvSThekw-SDZ2xUfQQ4zCiLLZrn44sALucvIM9N2KmLR1uEL9Y=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/59dCItnUYREuPA26hQrynRw_0wvSThekw-SDZ2xUfQQ4zCiLLZrn44sALucvIM9N2KmLR1uEL9Y=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"크립토 토마토", ko:"", url:"https://www.youtube.com/@cryptotomato/videos", name:"크립토 토마토", img:"https://yt3.googleusercontent.com/04ByeFsjPSgbu_ViNBKrCdyv8Dn1ICezr4fjzcyslHuHmiwy7Lc7d6bn9ZxAE1-mxC-oaxmizd4=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/04ByeFsjPSgbu_ViNBKrCdyv8Dn1ICezr4fjzcyslHuHmiwy7Lc7d6bn9ZxAE1-mxC-oaxmizd4=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"네번째혁명TV", ko:"", url:"https://www.youtube.com/@4thRevolutionTV/videos", name:"네번째혁명TV", img:"https://yt3.googleusercontent.com/nxJbGuI0MffbMniGfCgHzOTsXV1rY6QoEuTBgntkrvZHYBBuyKkLyScFBxnDt3PoJNfGasvYyG0=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/nxJbGuI0MffbMniGfCgHzOTsXV1rY6QoEuTBgntkrvZHYBBuyKkLyScFBxnDt3PoJNfGasvYyG0=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"Discover Crypto", ko:"", url:"https://www.youtube.com/@DiscoverCrypto_/videos", name:"Discover Crypto", img:"https://yt3.googleusercontent.com/ByeOVnzg4NGjB901wnWg3mmKPG6_kUXGqOLhrGs7-adpkZ3YCUsNcvTwDEcV_XOT-i7HOIla=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/ByeOVnzg4NGjB901wnWg3mmKPG6_kUXGqOLhrGs7-adpkZ3YCUsNcvTwDEcV_XOT-i7HOIla=s160-c-k-c0x00ffffff-no-rj"] },
+          { ticker:"김작가 TV", ko:"", url:"https://www.youtube.com/@lucky_tv/videos", name:"김작가 TV", img:"https://yt3.googleusercontent.com/ytc/AIdro_l79jFuRgya9MaP5m4cBZiYJatuLf7i4maG5TWjJ7Zu27E=s160-c-k-c0x00ffffff-no-rj", imgs:["https://yt3.googleusercontent.com/ytc/AIdro_l79jFuRgya9MaP5m4cBZiYJatuLf7i4maG5TWjJ7Zu27E=s160-c-k-c0x00ffffff-no-rj"] },
+        ] },
+      ] },
     };
     /* @DATA_END */
 
@@ -1706,6 +1730,7 @@ div[data-google-query-id],
     /* @TABSMETA_START */
     const DEFAULT_TABS_META = [
       { id:"today", label:"TODAY" },
+      { id:"tab", label:"코인 유튜버" },
       { id:"news", label:"리포트&뉴스" },
       { id:"chart", label:"주요 차트" },
       { id:"sites", label:"주요 사이트" },
