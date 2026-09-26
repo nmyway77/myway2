@@ -2669,11 +2669,19 @@
     }
     function importData(){
       const inp=document.createElement('input'); inp.type='file'; inp.accept='.json,.html,.htm,text/html,application/json';
+      inp.style.cssText='position:fixed;left:-9999px;top:0;opacity:0'; document.body.appendChild(inp);
       inp.onchange=()=>{
-        const f=inp.files[0]; if(!f) return;
+        const f=inp.files[0]; if(!f){ inp.remove(); return; }
         const r=new FileReader();
-        r.onload=()=>{
+        r.onerror=()=>{ alert('파일을 읽지 못했어요: '+(r.error&&r.error.message||'')); inp.remove(); };
+        r.onload=()=>{ try{ _applyImportText(String(r.result)); }catch(err){ alert('가져오기 중 오류: '+(err&&err.message||err)); } inp.remove(); };
+        r.readAsText(f);
+      };
+      inp.click();
+    }
+    function _applyImportText(rawText){
           let tb=null, mt=null, foreignKind=null;
+          const r={result:rawText};
           const txt=String(r.result).replace(/^\uFEFF/, '').trim();
           try{
             const p=JSON.parse(txt);
@@ -2696,10 +2704,6 @@
           if(tb){ Object.keys(tb).forEach(k=>{ tabs[k]=tb[k]; }); saveTabs(); msg.push('탭 '+Object.keys(tb).length+'개'); }
           renderTab(curTab);
           alert('가져왔어요. '+msg.join(' · '));
-        };
-        r.readAsText(f);
-      };
-      inp.click();
     }
 
     /* ===== 편집 도구 FAB ===== */
@@ -3202,6 +3206,10 @@
         rd.onload = () => {
           try {
             const arr = JSON.parse(rd.result);
+            if (arr && !Array.isArray(arr) && arr.kind === 'myway-index-v1') {
+              alert('이 파일은 인덱스 전체 데이터(myway-index) JSON이에요.\n여기(즐겨찾기 가져오기)가 아니라 오른쪽 위 연필(✏) 도구 메뉴의 "📥 가져오기"로 넣어 주세요.');
+              fileInput.value = ''; return;
+            }
             if (!Array.isArray(arr)) throw new Error('not array');
             const clean = arr.filter(x => x && x.url).map(x => ({ name: x.name || '', url: String(x.url), img: x.img || '' }));
             const cur = loadFavs();
