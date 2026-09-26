@@ -439,6 +439,7 @@
     .favm-row .nm { flex: 1; font-size: .85rem; color: #39406a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .favm-row .edit { flex: 0 0 auto; border: none; background: #eef2ff; color: #4757f5; width: 26px; height: 26px; border-radius: 8px; cursor: pointer; font-size: .9rem; line-height: 1; }
     .favm-row .edit:hover { background: #e2e8ff; }
+    .favm-row .edit:disabled { opacity: .35; cursor: default; }
     .favm-row .del { flex: 0 0 auto; border: none; background: #fdecec; color: #e0483a; width: 26px; height: 26px; border-radius: 8px; cursor: pointer; font-size: 1rem; line-height: 1; }
     .favm-row .del:hover { background: #fbdcdc; }
     .favm-row.is-editing { background: #f3f6ff; border-radius: 9px; padding: 4px 6px; margin: -4px -6px; box-shadow: inset 0 0 0 1.5px #aeb9ea; }
@@ -1158,7 +1159,7 @@
 
   </style>
 </head>
-<body>
+<body class="">
   <!-- SEO: 한글 브랜드명 명시 (화면 비표시, 검색엔진 인식용) -->
   <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">마이웨이(MYWAY.KR) - 자주가는 사이트 모음 한국 종합 포털, 뉴스·VOD·라디오·게시판·주식 차트 한자리</h1>
 
@@ -1170,7 +1171,7 @@
   <main class="main" id="main"></main>
 
   <!-- 즐겨찾기(+) 영역 — 아이콘 아래(하단) -->
-  <section class="extra-logo-section" id="extraLogoSection"><div class="logo-grid"><a class="logo-tile fav-item" href="https://myway.kr/livesitesbar2.html" target="_blank" rel="noopener noreferrer" title="LIVE TV"><img src="https://m.media-amazon.com/images/I/410O56DAkyL.png" alt="LIVE TV" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/radiositesbar2.html" target="_blank" rel="noopener noreferrer" title="LIVE RAIDO"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRA8q_2bod6OBDYZi1k9ikid9y6nMs4Cy9FzYS61vxzA&amp;s" alt="LIVE RAIDO" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/00mainfortune.html" target="_blank" rel="noopener noreferrer" title="운세"><img src="https://image.edaily.co.kr/images/Photo/files/NP/S/2026/09/PS26092500169.jpg" alt="운세" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/00makingyoutubefull2.html" target="_blank" rel="noopener noreferrer" title="CCTV"><img src="https://play-lh.googleusercontent.com/uy8lICf_ydg6cR8wiHddkkoQNQf07dtbv7P3m-dv8UUaS6VRy2lFR8NnOIpwPuaACJxb3aVZrIqC6S_YtpFrm7s=w240-h480-rw" alt="CCTV" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/MUSIC-YTUBE.html" target="_blank" rel="noopener noreferrer" title="MUSIC"><img src="https://thumbs.dreamstime.com/b/music-illustration-25677286.jpg" alt="MUSIC" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/bbssitesbar2.html" target="_blank" rel="noopener noreferrer" title="BBS"><img src="https://www.shutterstock.com/image-vector/bbs-bulletin-board-system-computer-260nw-1738984151.jpg" alt="BBS" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/00mainweather.html" target="_blank" rel="noopener noreferrer" title="날씨"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRM3lpOnU1RoaAr9gaWL41k1cq1g3wYPdUap9jwb23UO7GensYRfh7Ot5w&amp;s=10" alt="날씨" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/00barmp.html" target="_blank" rel="noopener noreferrer" title="만평"><img src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2026/0901/IE003665831_STD.jpg" alt="만평" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/00mainmovieday.html" target="_blank" rel="noopener noreferrer" title="공연정보"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDqpIY_pWatzYkFY-EWYcFUFrWdwOPjz_84NbP6LTD50jCkGA3cF53yF0&amp;s=10" alt="공연정보" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/TRAVEL.html" target="_blank" rel="noopener noreferrer" title="여행정보"><img src="https://mblogthumb-phinf.pstatic.net/MjAxODA2MjNfMTAy/MDAxNTI5NzIyNDg3MDU1.jlpYUy5LwwDuVUzefYxuaMe1irVryJ_AQsmS-75fV7Mg.x3MX_6VjGIQl68AiLD0HKJwhOKVLwppcbonB2n5Huakg.JPEG.eoyoujin/1_CsDgB2D8KIetB_e37t3n_A.jpg?type=w800" alt="여행정보" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button></div></a><div class="logo-tile fav-add" role="button" tabindex="0" title="즐겨찾기 추가"></div></div></section>
+  <section class="extra-logo-section" id="extraLogoSection"><div class="logo-grid"><a class="logo-tile fav-item" href="https://myway.kr/00mainweather.html" target="_blank" rel="noopener noreferrer" title="날씨"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRM3lpOnU1RoaAr9gaWL41k1cq1g3wYPdUap9jwb23UO7GensYRfh7Ot5w&amp;s=10" alt="날씨" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/bbssitesbar2.html" target="_blank" rel="noopener noreferrer" title="BBS"><img src="https://www.shutterstock.com/image-vector/bbs-bulletin-board-system-computer-260nw-1738984151.jpg" alt="BBS" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/00makingyoutubefull2.html" target="_blank" rel="noopener noreferrer" title="CCTV"><img src="https://play-lh.googleusercontent.com/uy8lICf_ydg6cR8wiHddkkoQNQf07dtbv7P3m-dv8UUaS6VRy2lFR8NnOIpwPuaACJxb3aVZrIqC6S_YtpFrm7s=w240-h480-rw" alt="CCTV" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/livesitesbar2.html" target="_blank" rel="noopener noreferrer" title="LIVE TV"><img src="https://m.media-amazon.com/images/I/410O56DAkyL.png" alt="LIVE TV" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/radiositesbar2.html" target="_blank" rel="noopener noreferrer" title="LIVE RAIDO"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRA8q_2bod6OBDYZi1k9ikid9y6nMs4Cy9FzYS61vxzA&amp;s" alt="LIVE RAIDO" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/00mainfortune.html" target="_blank" rel="noopener noreferrer" title="운세"><img src="https://image.edaily.co.kr/images/Photo/files/NP/S/2026/09/PS26092500169.jpg" alt="운세" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/MUSIC-YTUBE.html" target="_blank" rel="noopener noreferrer" title="MUSIC"><img src="https://thumbs.dreamstime.com/b/music-illustration-25677286.jpg" alt="MUSIC" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/00barmp.html" target="_blank" rel="noopener noreferrer" title="만평"><img src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2026/0901/IE003665831_STD.jpg" alt="만평" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/00mainmovieday.html" target="_blank" rel="noopener noreferrer" title="공연정보"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDqpIY_pWatzYkFY-EWYcFUFrWdwOPjz_84NbP6LTD50jCkGA3cF53yF0&amp;s=10" alt="공연정보" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/TRAVEL.html" target="_blank" rel="noopener noreferrer" title="여행정보"><img src="https://mblogthumb-phinf.pstatic.net/MjAxODA2MjNfMTAy/MDAxNTI5NzIyNDg3MDU1.jlpYUy5LwwDuVUzefYxuaMe1irVryJ_AQsmS-75fV7Mg.x3MX_6VjGIQl68AiLD0HKJwhOKVLwppcbonB2n5Huakg.JPEG.eoyoujin/1_CsDgB2D8KIetB_e37t3n_A.jpg?type=w800" alt="여행정보" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><div class="logo-tile fav-add" role="button" tabindex="0" title="즐겨찾기 추가"></div></div></section>
 
 
   <!-- 즐겨찾기 추가 모달 -->
@@ -1190,7 +1191,7 @@
       <input type="text" id="favImg" placeholder="https://.../icon.png" autocomplete="off">
       <button class="favm-add-btn" id="favAddBtn">추가하기</button>
       <button class="favm-edit-cancel" id="favEditCancelBtn">편집 취소</button>
-      <div class="favm-list" id="favList"><div class="favm-row"><img src="https://m.media-amazon.com/images/I/410O56DAkyL.png" alt=""><span class="nm">LIVE TV</span><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRA8q_2bod6OBDYZi1k9ikid9y6nMs4Cy9FzYS61vxzA&amp;s" alt=""><span class="nm">LIVE RAIDO</span><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://image.edaily.co.kr/images/Photo/files/NP/S/2026/09/PS26092500169.jpg" alt=""><span class="nm">운세</span><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://play-lh.googleusercontent.com/uy8lICf_ydg6cR8wiHddkkoQNQf07dtbv7P3m-dv8UUaS6VRy2lFR8NnOIpwPuaACJxb3aVZrIqC6S_YtpFrm7s=w240-h480-rw" alt=""><span class="nm">CCTV</span><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://thumbs.dreamstime.com/b/music-illustration-25677286.jpg" alt=""><span class="nm">MUSIC</span><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://www.shutterstock.com/image-vector/bbs-bulletin-board-system-computer-260nw-1738984151.jpg" alt=""><span class="nm">BBS</span><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRM3lpOnU1RoaAr9gaWL41k1cq1g3wYPdUap9jwb23UO7GensYRfh7Ot5w&amp;s=10" alt=""><span class="nm">날씨</span><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2026/0901/IE003665831_STD.jpg" alt=""><span class="nm">만평</span><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDqpIY_pWatzYkFY-EWYcFUFrWdwOPjz_84NbP6LTD50jCkGA3cF53yF0&amp;s=10" alt=""><span class="nm">공연정보</span><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://mblogthumb-phinf.pstatic.net/MjAxODA2MjNfMTAy/MDAxNTI5NzIyNDg3MDU1.jlpYUy5LwwDuVUzefYxuaMe1irVryJ_AQsmS-75fV7Mg.x3MX_6VjGIQl68AiLD0HKJwhOKVLwppcbonB2n5Huakg.JPEG.eoyoujin/1_CsDgB2D8KIetB_e37t3n_A.jpg?type=w800" alt=""><span class="nm">여행정보</span><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div></div>
+      <div class="favm-list" id="favList"><div class="favm-row"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRM3lpOnU1RoaAr9gaWL41k1cq1g3wYPdUap9jwb23UO7GensYRfh7Ot5w&amp;s=10" alt=""><span class="nm">날씨</span><button class="edit" title="위로" disabled="">▲</button><button class="edit" title="아래로">▼</button><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://www.shutterstock.com/image-vector/bbs-bulletin-board-system-computer-260nw-1738984151.jpg" alt=""><span class="nm">BBS</span><button class="edit" title="위로">▲</button><button class="edit" title="아래로">▼</button><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://play-lh.googleusercontent.com/uy8lICf_ydg6cR8wiHddkkoQNQf07dtbv7P3m-dv8UUaS6VRy2lFR8NnOIpwPuaACJxb3aVZrIqC6S_YtpFrm7s=w240-h480-rw" alt=""><span class="nm">CCTV</span><button class="edit" title="위로">▲</button><button class="edit" title="아래로">▼</button><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://m.media-amazon.com/images/I/410O56DAkyL.png" alt=""><span class="nm">LIVE TV</span><button class="edit" title="위로">▲</button><button class="edit" title="아래로">▼</button><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRA8q_2bod6OBDYZi1k9ikid9y6nMs4Cy9FzYS61vxzA&amp;s" alt=""><span class="nm">LIVE RAIDO</span><button class="edit" title="위로">▲</button><button class="edit" title="아래로">▼</button><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://image.edaily.co.kr/images/Photo/files/NP/S/2026/09/PS26092500169.jpg" alt=""><span class="nm">운세</span><button class="edit" title="위로">▲</button><button class="edit" title="아래로">▼</button><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://thumbs.dreamstime.com/b/music-illustration-25677286.jpg" alt=""><span class="nm">MUSIC</span><button class="edit" title="위로">▲</button><button class="edit" title="아래로">▼</button><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2026/0901/IE003665831_STD.jpg" alt=""><span class="nm">만평</span><button class="edit" title="위로">▲</button><button class="edit" title="아래로">▼</button><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDqpIY_pWatzYkFY-EWYcFUFrWdwOPjz_84NbP6LTD50jCkGA3cF53yF0&amp;s=10" alt=""><span class="nm">공연정보</span><button class="edit" title="위로">▲</button><button class="edit" title="아래로">▼</button><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div><div class="favm-row"><img src="https://mblogthumb-phinf.pstatic.net/MjAxODA2MjNfMTAy/MDAxNTI5NzIyNDg3MDU1.jlpYUy5LwwDuVUzefYxuaMe1irVryJ_AQsmS-75fV7Mg.x3MX_6VjGIQl68AiLD0HKJwhOKVLwppcbonB2n5Huakg.JPEG.eoyoujin/1_CsDgB2D8KIetB_e37t3n_A.jpg?type=w800" alt=""><span class="nm">여행정보</span><button class="edit" title="위로">▲</button><button class="edit" title="아래로" disabled="">▼</button><button class="edit" title="수정">✏</button><button class="del" title="삭제">×</button></div></div>
       <div class="favm-io">
         <button id="favExportBtn">내보내기</button>
         <button id="favImportBtn">가져오기</button>
@@ -1295,14 +1296,14 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayIndexV1_dist";
-    const DIST_SIG = "sig1790398686983";
+    const DIST_SIG = "sig1790400168919";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-index-v1';
     const DATA_VERSION = '4';
     let _distChecked = false;
     function ensureDistFresh(){
       if(_distChecked || !IS_DIST) return; _distChecked = true;
-      try{ var sk = STORE_KEY+'_sig'; if(localStorage.getItem(sk) !== DIST_SIG){ localStorage.setItem(sk, DIST_SIG); localStorage.removeItem(STORE_KEY); localStorage.removeItem(STORE_KEY+'_tabsmeta'); localStorage.removeItem(STORE_KEY+'_v'); } }catch(_){}
+      try{ var sk = STORE_KEY+'_sig'; if(localStorage.getItem(sk) !== DIST_SIG){ localStorage.setItem(sk, DIST_SIG); localStorage.removeItem(STORE_KEY); localStorage.removeItem(STORE_KEY+'_tabsmeta'); localStorage.removeItem(STORE_KEY+'_v'); /* 새 배포본이면 즐겨찾기 타일도 파일에 굳어진 값으로 교체 */ localStorage.removeItem('mywayFavTilesV1'); } }catch(_){}
     }
 
     /* 복제방지 */
@@ -2733,11 +2734,19 @@
     }
     function importData(){
       const inp=document.createElement('input'); inp.type='file'; inp.accept='.json,.html,.htm,text/html,application/json';
+      inp.style.cssText='position:fixed;left:-9999px;top:0;opacity:0'; document.body.appendChild(inp);
       inp.onchange=()=>{
-        const f=inp.files[0]; if(!f) return;
+        const f=inp.files[0]; if(!f){ inp.remove(); return; }
         const r=new FileReader();
-        r.onload=()=>{
+        r.onerror=()=>{ alert('파일을 읽지 못했어요: '+(r.error&&r.error.message||'')); inp.remove(); };
+        r.onload=()=>{ try{ _applyImportText(String(r.result)); }catch(err){ alert('가져오기 중 오류: '+(err&&err.message||err)); } inp.remove(); };
+        r.readAsText(f);
+      };
+      inp.click();
+    }
+    function _applyImportText(rawText){
           let tb=null, mt=null, foreignKind=null;
+          const r={result:rawText};
           const txt=String(r.result).replace(/^\uFEFF/, '').trim();
           try{
             const p=JSON.parse(txt);
@@ -2760,10 +2769,6 @@
           if(tb){ Object.keys(tb).forEach(k=>{ tabs[k]=tb[k]; }); saveTabs(); msg.push('탭 '+Object.keys(tb).length+'개'); }
           renderTab(curTab);
           alert('가져왔어요. '+msg.join(' · '));
-        };
-        r.readAsText(f);
-      };
-      inp.click();
     }
 
     /* ===== 편집 도구 FAB ===== */
@@ -3095,6 +3100,7 @@
     /* ===== 사용자 즐겨찾기 (+ 버튼) — extra-logo-section 맨 끝에 원형 타일 ===== */
     (function () {
       const FAV_KEY = 'mywayFavTilesV1';
+      try { if (typeof ensureDistFresh === 'function') ensureDistFresh(); } catch (_) {}
       /* 배포본 HTML에 굳어진 즐겨찾기 타일(.fav-item)을 기본값으로 삼음 — localStorage가 비어 있는 새 브라우저/시크릿 창에서도 표시되도록 */
       const SEED_FAVS = (function () {
         const root = document.getElementById('extraLogoSection'); if (!root) return [];
@@ -3131,6 +3137,8 @@
         /* 편집 모드(body.editing)에서 타일 위에 ✏ 수정 · × 삭제 — 차트 카드와 동일 패턴 */
         const ctrl = document.createElement('div'); ctrl.className = 'card-ctrl';
         const mk = (t, title, fn, cls) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = t; b.title = title; if (cls) b.className = cls; b.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); fn(); }); return b; };
+        /* ◀ ▶ 이동 — 메인 탭 타일(addCardCtrl)과 동일 배치 */
+        ctrl.appendChild(mk('\u25c0', '앞으로', () => moveFav(idx, -1)));
         ctrl.appendChild(mk('\u270f', '수정', () => { openFavModal(); startEdit(idx); }));
         ctrl.appendChild(mk('\u00d7', '삭제', () => {
           if (!confirm('이 즐겨찾기를 삭제할까요?\n' + (f.name || f.url))) return;
@@ -3138,9 +3146,17 @@
           if (editIdx === idx) { exitEdit(); clearInputs(); } else if (editIdx > idx) { editIdx--; }
           renderFavList(); mountFavGrid();
         }, 'del'));
+        ctrl.appendChild(mk('\u25b6', '뒤로', () => moveFav(idx, 1)));
         a.appendChild(ctrl);
         a.addEventListener('click', e => { if (document.body.classList.contains('editing')) e.preventDefault(); }, true);
         return a;
+      }
+      function moveFav(idx, dir) {
+        const arr = loadFavs(); const ni = idx + dir;
+        if (ni < 0 || ni >= arr.length) return;
+        const t = arr[idx]; arr[idx] = arr[ni]; arr[ni] = t; saveFavs(arr);
+        if (editIdx === idx) editIdx = ni; else if (editIdx === ni) editIdx = idx;
+        renderFavList(); mountFavGrid();
       }
       function addTile() {
         const add = document.createElement('div');
@@ -3223,7 +3239,11 @@
             else if (editIdx > idx) { editIdx--; }
             renderFavList(); mountFavGrid();
           });
-          row.appendChild(im); row.appendChild(nm); row.appendChild(edit); row.appendChild(del);
+          const up = document.createElement('button'); up.className = 'edit'; up.textContent = '\u25b2'; up.title = '위로'; up.disabled = idx === 0;
+          up.addEventListener('click', () => moveFav(idx, -1));
+          const dn = document.createElement('button'); dn.className = 'edit'; dn.textContent = '\u25bc'; dn.title = '아래로'; dn.disabled = idx === favs.length - 1;
+          dn.addEventListener('click', () => moveFav(idx, 1));
+          row.appendChild(im); row.appendChild(nm); row.appendChild(up); row.appendChild(dn); row.appendChild(edit); row.appendChild(del);
           list.appendChild(row);
         });
       }
@@ -3279,7 +3299,19 @@
         const rd = new FileReader();
         rd.onload = () => {
           try {
-            const arr = JSON.parse(rd.result);
+            let arr = JSON.parse(rd.result);
+            /* myway-index.json(인덱스 전체 데이터)을 넣으면 즐겨찾기(daily) 탭 항목만 자동 추출 */
+            if (arr && !Array.isArray(arr) && arr.kind === 'myway-index-v1') {
+              const tabs = arr.tabs || {};
+              const src = tabs.daily || tabs[Object.keys(tabs)[0]] || {};
+              const secs = Array.isArray(src.sections) ? src.sections : [];
+              arr = [];
+              secs.forEach(sec => { (Array.isArray(sec.items) ? sec.items : []).forEach(it => {
+                if (it && it.url) arr.push({ name: it.name || it.ticker || it.ko || '', url: it.url, img: it.img || '' });
+              }); });
+              if (!arr.length) { alert('인덱스 JSON에서 즐겨찾기(daily) 항목을 찾지 못했어요.'); fileInput.value = ''; return; }
+              if (!confirm('인덱스 전체 데이터 JSON이에요.\n즐겨찾기 탭 항목 ' + arr.length + '개만 즐겨찾기에 추가할까요?\n(탭 전체를 바꾸려면 연필(✏) 메뉴의 "📥 가져오기"를 쓰세요)')) { fileInput.value = ''; return; }
+            }
             if (!Array.isArray(arr)) throw new Error('not array');
             const clean = arr.filter(x => x && x.url).map(x => ({ name: x.name || '', url: String(x.url), img: x.img || '' }));
             const cur = loadFavs();
