@@ -1,81 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko"><style id="__mw_adguard_style__" type="text/css">ins.adsbygoogle,
-.adsbygoogle,
-iframe[id^="google_ads_iframe"],
-iframe[id^="google_ads_frame"],
-iframe[src*="googlesyndication.com"],
-iframe[src*="doubleclick.net"],
-iframe[src*="/ads/"],
-iframe[src*="adnxs.com"],
-iframe[src*="criteo"],
-div[id^="div-gpt-ad"],
-div[id^="google_ads_"],
-div[id^="dfp-"],
-div[id^="ad-slot"],
-div[id^="ad_slot"],
-div[id^="adfox_"],
-div[data-ad-slot],
-div[data-google-query-id],
-.ad-banner,
-.ad_banner,
-.adBanner,
-.ad-container,
-.ad_container,
-.adContainer,
-.ad-wrapper,
-.ad_wrapper,
-.adWrapper,
-.ad-slot,
-.ad_slot,
-.adSlot,
-.ad-unit,
-.ad-block,
-.ad-area,
-.ad-zone,
-.ad-box,
-.ad-placeholder,
-.ad-placement,
-.ad-label,
-.ads-area,
-.advertisement,
-.advertising,
-.advert,
-.adsbox,
-.sponsored-link,
-.sponsored-ad,
-.sponsor-banner,
-.banner-ad,
-.banner_ad,
-.bannerAd,
-[class^="taboola"],
-[class*="trc_related"],
-[id^="taboola-"],
-.OUTBRAIN,
-[class^="ob-"],
-[id^="outbrain_widget"],
-[id^="dablewidget"],
-[class^="dable"],
-[id^="mgid"],
-[class^="mgbox"],
-[id^="revcontent"],
-[class^="rc-"],
-[id^="criteo"],
-[id^="adfit"],
-.kakao_ad_area,
-[id^="ad_wrap"],
-[class^="ad_wrap"],
-[id^="AD_"],
-[class="ad"],
-[id="ad"],
-[id^="banner_ad"],
-[class^="banner_ad"]{display:none !important}
-</style><head>
+<html lang="ko"><head>
   <meta charset="UTF-8">
   <title>마이웨이(MYWAY.KR) 주요 차트 - 코인·미국주식·한국주식 한자리</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="마이웨이(MYWAY.KR)의 주식·코인 차트 대시보드. 비트코인·이더리움 등 코인, 미국주식, 한국주식(48종목 12섹터), 지수선물, 공포탐욕지수를 한 페이지에서 빠르게 조회하세요.">
   <meta name="keywords" content="마이웨이, MYWAY, myway.kr, 마이웨이 차트, 마이웨이 주식, 주식 차트, 코인 차트, 비트코인 차트, 미국주식, 한국주식, 지수선물, 공포탐욕지수, TradingView">
-  <script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=36713"></script><link rel="canonical" href="https://myway.kr/00000stockmain7.html">
+  <link rel="canonical" href="https://myway.kr/00000stockmain7.html">
   <meta name="robots" content="index, follow">
   <meta property="og:title" content="마이웨이(MYWAY.KR) 주요 차트 - 코인·미국주식·한국주식 한자리">
   <meta property="og:description" content="마이웨이(MYWAY.KR)의 주식·코인 차트 대시보드. 코인·미국주식·한국주식·지수선물·공포탐욕지수를 한 페이지에서.">
@@ -500,24 +430,62 @@ div[data-google-query-id],
     @media (max-width:980px){ .cfgi-grid{ grid-template-columns:repeat(3,1fr); } }
     @media (max-width:520px){ .cfgi-grid{ grid-template-columns:repeat(2,1fr); } }
 
+    /* ===== 멀티차트 (multichart.html 인라인 샘플 · 라이트 테마) ===== */
+    .mc-strip{ margin-top:6px; margin-bottom:32px; padding:18px 18px 14px; border:1px solid rgba(0,0,0,.09); border-radius:18px; background:rgba(255,255,255,.55); }
+    /* 하단 고정 차트 (야간 선행 지표) */
+    .mc-divider{ display:flex; align-items:center; gap:12px; margin:26px 0 14px; }
+    .mc-divider-line{ flex:1; height:1px; background:var(--card-border); }
+    .mc-divider-label{ font-size:.8rem; font-weight:700; color:var(--text-sub); letter-spacing:-.2px; white-space:nowrap; }
+    .mc-fixed{ display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+    .mc-badge{ width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.72rem; font-weight:800; flex:0 0 26px; }
+    .mc-badge.nq{ background:#e8efff; color:#2563eb; }
+    .mc-badge.kr{ background:#fff4d6; color:#b7791f; }
+    .mc-ftitle{ flex:1; min-width:0; font-size:.86rem; font-weight:800; color:var(--text-main); letter-spacing:-.3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .mc-tag{ font-size:.68rem; font-family:ui-monospace,Menlo,Consolas,monospace; color:var(--text-muted); white-space:nowrap; }
+    .mc-ext{ font-size:.72rem; font-weight:700; color:#2563eb; text-decoration:none; background:#eef2ff; border-radius:6px; padding:3px 8px; white-space:nowrap; }
+    .mc-ext:hover{ background:#e2e8ff; }
+    .mc-host.tall{ height:360px; }
+    @media (max-width:980px){ .mc-fixed{ grid-template-columns:1fr; } .mc-host.tall{ height:300px; } .mc-strip{ padding:14px 12px 12px; } }
+    .mc-head{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:18px; padding-bottom:12px; border-bottom:1px solid var(--card-border); }
+    .mc-title{ font-size:.95rem; font-weight:800; color:var(--text-main); letter-spacing:-.3px; margin-right:14px; }
+    .mc-preset{ border:0; background:transparent; color:var(--text-muted); border-radius:999px; padding:5px 10px; font-size:.78rem; font-weight:600; cursor:pointer; transition:background .15s,color .15s; }
+    .mc-preset:hover{ background:#f1f5ff; color:#2563eb; }
+    .mc-preset.on{ background:#e8efff; color:#2563eb; font-weight:800; }
+    .mc-link{ margin-left:auto; font-size:.78rem; font-weight:600; color:var(--text-muted); text-decoration:none; }
+    .mc-link:hover{ color:#2563eb; }
+    .mc-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .mc-card{ background:#fff; border:1.5px solid #5aa7e0; /* 나스닥100 하늘색으로 통일 */ border-radius:14px; box-shadow:0 1px 2px rgba(16,24,40,.05); overflow:hidden; display:flex; flex-direction:column; }
+    .mc-card-head{ display:flex; align-items:center; gap:8px; padding:10px 12px; border-bottom:1px solid #cfe6f7; background:#fff; }
+    .mc-num{ font-size:.72rem; font-weight:700; color:var(--text-muted); flex:0 0 auto; }
+    .mc-sel{ flex:1; min-width:0; border:0; border-radius:8px; background:#f5f7fb; color:var(--text-main); font-size:.82rem; font-weight:700; padding:6px 8px; outline:none; }
+    .mc-sel:focus{ background:#eef2ff; }
+    .mc-host{ height:300px; background:#fff; }
+    .mc-host .tradingview-widget-container, .mc-host .tradingview-widget-container__widget{ height:100%; width:100%; }
+    .mc-foot{ text-align:right; font-size:.7rem; color:var(--text-muted); margin-top:10px; }
+    .mc-foot a{ color:inherit; text-decoration:none; }
+    @media (max-width:980px){ .mc-grid{ grid-template-columns:1fr; } .mc-host{ height:260px; } }
+
     .info-block + .info-block{ margin-top:1.6rem; }
-    .info-grid{ display:grid; grid-template-columns:repeat(8,1fr); gap:10px; }
-    .info-card{ position:relative; display:flex; flex-direction:column; gap:11px; padding:16px 12px; border-radius:16px; text-decoration:none;
-      background:var(--card-bg); border:1px solid var(--card-border); box-shadow:0 1px 2px rgba(16,24,40,.05);
-      transition:transform .2s cubic-bezier(.2,.7,.3,1), box-shadow .2s, border-color .2s; overflow:hidden;
+    /* ===== 정보 카드: 시장 지표 스트립(.mkt-item)과 같은 가로 알약 디자인 ===== */
+    .info-grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:10px; }
+    /* 첫 블록 외에는 영문 배지를 숨겨 한 줄 6개에서도 이름이 다 나오게 */
+    #infoWrap .info-block:not(:first-child) .info-en{ display:none; }
+    .info-card{ position:relative; display:flex; flex-direction:row; align-items:center; gap:9px; padding:8px 12px; border-radius:12px; text-decoration:none;
+      background:#fff; border:1px solid var(--card-border); box-shadow:0 1px 2px rgba(16,24,40,.05); color:var(--text-main);
+      transition:transform .18s cubic-bezier(.2,.7,.3,1), box-shadow .18s, background .15s; overflow:hidden;
       animation:infoIn .55s cubic-bezier(.2,.7,.3,1) both; }
-    .info-card::after{ content:""; position:absolute; left:0; right:0; top:0; height:3px; background:linear-gradient(90deg,var(--c),var(--c2)); }
-    .info-card:hover{ transform:translateY(-5px); box-shadow:0 16px 32px -14px var(--c); border-color:transparent; }
-    .info-ico{ width:42px; height:42px; border-radius:13px; display:flex; align-items:center; justify-content:center;
-      background:linear-gradient(135deg,var(--c),var(--c2)); box-shadow:0 8px 18px -8px var(--c); }
-    .info-ico svg{ width:23px; height:23px; stroke:#fff; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
-    .info-name{ font-size:.97rem; font-weight:800; color:var(--text-main); letter-spacing:-.3px; }
-    .info-en{ font-size:.66rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:.7px; }
-    .info-arrow{ position:absolute; top:16px; right:14px; width:16px; height:16px; color:var(--c); opacity:0; transform:translateX(-4px); transition:.2s; }
-    .info-card:hover .info-arrow{ opacity:1; transform:translateX(0); }
-    @keyframes infoIn{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;} }
-    @media (max-width:980px){ .info-grid{ grid-template-columns:repeat(4,1fr); } #chartTop .chart-top-inner{ padding:18px 14px 2px; } }
-    @media (max-width:520px){ .info-grid{ grid-template-columns:repeat(2,1fr); gap:10px; } .info-card{ padding:16px 14px; } }
+    .info-card:hover{ transform:translateY(-2px); background:#f7faff; box-shadow:0 10px 20px -14px rgba(59,130,246,.5); }
+    .info-ico{ flex:0 0 26px; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(135deg,var(--c),var(--c2)); box-shadow:0 2px 5px rgba(0,0,0,.18); }
+    .info-ico svg{ width:14px; height:14px; stroke:#fff; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+    .info-name{ font-size:.86rem; font-weight:800; color:var(--text-main); letter-spacing:-.3px; white-space:nowrap; flex:0 0 auto; }
+    .info-card:hover .info-name{ color:#2563eb; }
+    .info-en{ margin-left:auto; font-size:.62rem; font-weight:700; color:var(--text-muted); background:#f1f4f9; border-radius:6px; padding:2px 6px; letter-spacing:.3px; text-transform:uppercase; white-space:nowrap; flex:0 0 auto; }
+    .info-en:empty{ display:none; }
+    .info-arrow{ display:none; }
+    @keyframes infoIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;} }
+    @media (max-width:980px){ .info-grid{ grid-template-columns:repeat(3,1fr); } #chartTop .chart-top-inner{ padding:18px 14px 2px; } }
+    @media (max-width:520px){ .info-grid{ grid-template-columns:repeat(2,1fr); gap:8px; } .info-en{ display:none; } .info-name{ font-size:.8rem; } }
 
     /* ===== 모든 탭 네임카드: BBS바2 스타일 (전역) ===== */
     .grid { grid-template-columns: repeat(4, 1fr); column-gap: 10px; row-gap: 26px; }
@@ -702,7 +670,8 @@ div[data-google-query-id],
 
     /* info-card 편집 오버레이 */
     body.editing .info-card .card-ctrl { display: flex; }
-    .info-card .card-ctrl { border-radius: 16px; }
+    .info-card .card-ctrl { border-radius: 12px; gap: 4px; }
+    .info-card .card-ctrl button { width: 26px; height: 26px; font-size: 12px; border-radius: 6px; }
     body.editing .info-card:hover { transform: none; }
     .icon-prev { margin-top: 8px; }
     .icon-prev .info-ico { width: 42px; height: 42px; border-radius: 13px; display: inline-flex; align-items: center; justify-content: center; }
@@ -717,7 +686,7 @@ div[data-google-query-id],
 
   </style>
 </head>
-<body class="">
+<body>
   <!-- SEO: 한글 브랜드명 명시 (화면 비표시, 검색엔진 인식용) -->
   <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">마이웨이(MYWAY.KR) 주식·코인 차트 - 코인, 미국주식, 한국주식, 지수선물, 공포탐욕지수 한자리</h1>
 
@@ -854,7 +823,7 @@ div[data-google-query-id],
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayStockV1_dist";
-    const DIST_SIG = "sig1790401933416";
+    const DIST_SIG = "sig1790417284290";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-stock-v1';   // JSON 식별자 — 다른 도구 JSON과 섞임 방지
     let _distChecked = false;
@@ -1286,15 +1255,15 @@ div[data-google-query-id],
     /* @INFO_START */
     const DEFAULT_INFO = [
       { title:"종합정보", desc:"뉴스 · 지수 · 주식 · 코인 ·", cards: [
+        { name:"비교챠트", en:"", url:"https://myway.kr/multichart.html", c:"#146c2a", c2:"#60a5fa", icon:"news" },
+        { name:"코인", en:"Crypto", url:"https://www.bithumb.com/react/trade/order/BTC-KRW", c:"#f59e0b", c2:"#fbbf24", icon:"coin" },
         { name:"코인뉴스", en:"News", url:"https://myway.kr/00mainstocknews.html", c:"#ef4444", c2:"#f97316", icon:"news" },
         { name:"지수", en:"Index", url:"https://alphasquare.co.kr/home/market-indicator?code=005930&factor=index", c:"#3b82f6", c2:"#06b6d4", icon:"index" },
         { name:"국내주식", en:"Korea", url:"https://alphasquare.co.kr/home/special-factor?code=005930&factor=returns_top&market-key=kr-markets-all", c:"#16a34a", c2:"#10b981", icon:"krstock" },
         { name:"해외주식", en:"Global", url:"https://stock.naver.com/market/stock/usa", c:"#6366f1", c2:"#818cf8", icon:"globalstock" },
-        { name:"코인", en:"Crypto", url:"https://www.bithumb.com/react/trade/order/BTC-KRW", c:"#f59e0b", c2:"#fbbf24", icon:"coin" },
         { name:"국채", en:"Bonds", url:"https://kr.tradingview.com/markets/bonds/", c:"#7c3aed", c2:"#a855f7", icon:"bond" },
         { name:"환율", en:"Exchange", url:"https://kr.tradingview.com/markets/currencies/", c:"#0d9488", c2:"#14b8a6", icon:"fx" },
         { name:"공시", en:"Disclosure", url:"https://myway.kr/notice.html", c:"#475569", c2:"#64748b", icon:"disclosure" },
-        { name:"비교챠트", en:"", url:"https://myway.kr/multichart.html", c:"#146c2a", c2:"#60a5fa", icon:"news" },
         { name:"미선물 실시간", en:"", url:"https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=NQ&title=Chart+-+Sep+2026+E-mini+Nasdaq-100&venue=0&monthYear=U6&year=2026&exchangeCode=XCME&interval=1", c:"#1fd91c", c2:"#60a5fa", icon:"index" },
         { name:"선물챠트2", en:"", url:"https://kr.tradingview.com/symbols/CME_MINI-NQ1!/", c:"#550c41", c2:"#60a5fa", icon:"index" },
         { name:"선물현황", en:"", url:"https://www.cmegroup.com/ko/markets/equities/nasdaq/e-mini-nasdaq-100.html", c:"#0f8040", c2:"#b560fb", icon:"news" },
@@ -1404,7 +1373,7 @@ div[data-google-query-id],
           grid.appendChild(a);
         });
         block.appendChild(grid); wrap.appendChild(block);
-        if(bi===0){ wrap.appendChild(buildCfgiStrip()); wrap.appendChild(buildMktStrip()); }
+        if(bi===0){ wrap.appendChild(buildCfgiStrip()); wrap.appendChild(buildMktStrip()); wrap.appendChild(buildMultiChartStrip()); }
       });
       fitCfgi();
     }
@@ -1469,6 +1438,94 @@ div[data-google-query-id],
         a.appendChild(ic); a.appendChild(nm); a.appendChild(tk); grid.appendChild(a);
       });
       box.appendChild(grid);
+      return box;
+    }
+
+    /* ===== 멀티차트 인라인 (multichart.html의 심볼·프리셋 재사용, TradingView 라이트 테마) ===== */
+    var MC_SYMBOLS = {
+      '📊 지수 (24시간 CFD)': [['다우 30 (24h)','OANDA:US30USD'],['나스닥 100 (24h)','OANDA:NAS100USD'],['S&P 500 (24h)','OANDA:SPX500USD'],['나스닥 종합','NASDAQ:IXIC'],['러셀 2000 (IWM ETF)','AMEX:IWM'],['한국 (EWY ETF)','AMEX:EWY'],['닛케이 225 (24h)','OANDA:JP225USD'],['독일 DAX (24h)','OANDA:DE30EUR'],['홍콩 항셍 (24h)','OANDA:HK33HKD'],['VIX 변동성','CBOE:VIX']],
+      '🪙 암호화폐 (USD)': [['비트코인 BTC','BITSTAMP:BTCUSD'],['이더리움 ETH','BITSTAMP:ETHUSD'],['리플 XRP','BITSTAMP:XRPUSD'],['솔라나 SOL','BINANCE:SOLUSDT'],['도지코인 DOGE','BINANCE:DOGEUSDT'],['에이다 ADA','BINANCE:ADAUSDT'],['바이낸스코인 BNB','BINANCE:BNBUSDT']],
+      '🪙 암호화폐 (KRW)': [['비트코인 (원화)','UPBIT:BTCKRW'],['이더리움 (원화)','UPBIT:ETHKRW'],['리플 (원화)','UPBIT:XRPKRW'],['솔라나 (원화)','UPBIT:SOLKRW'],['도지코인 (원화)','UPBIT:DOGEKRW']],
+      '⛏️ 원자재': [['금 (USD/oz)','OANDA:XAUUSD'],['은 (USD/oz)','OANDA:XAGUSD'],['백금','OANDA:XPTUSD'],['구리','CAPITALCOM:COPPER'],['WTI 원유','OANDA:WTICOUSD'],['브렌트 원유','OANDA:BCOUSD'],['천연가스','CAPITALCOM:NATURALGAS']],
+      '💱 환율 / 통화': [['원/달러 USD/KRW','FX_IDC:USDKRW'],['엔/달러 USD/JPY','FX:USDJPY'],['유로/달러 EUR/USD','FX:EURUSD'],['파운드/달러 GBP/USD','FX:GBPUSD'],['달러 인덱스 DXY','CAPITALCOM:DXY'],['원/엔 JPY/KRW','FX_IDC:JPYKRW'],['원/유로 EUR/KRW','FX_IDC:EURKRW'],['원/위안 CNY/KRW','FX_IDC:CNYKRW']],
+      '🇺🇸 미국 주식': [['엔비디아 NVDA','NASDAQ:NVDA'],['애플 AAPL','NASDAQ:AAPL'],['마이크로소프트 MSFT','NASDAQ:MSFT'],['구글 GOOGL','NASDAQ:GOOGL'],['아마존 AMZN','NASDAQ:AMZN'],['메타 META','NASDAQ:META'],['테슬라 TSLA','NASDAQ:TSLA'],['넷플릭스 NFLX','NASDAQ:NFLX'],['브로드컴 AVGO','NASDAQ:AVGO'],['TSMC TSM','NYSE:TSM'],['팔란티어 PLTR','NASDAQ:PLTR'],['AMD','NASDAQ:AMD']],
+      '📈 ETF': [['SPY (S&P500)','AMEX:SPY'],['QQQ (나스닥100)','NASDAQ:QQQ'],['VOO','AMEX:VOO'],['GLD (금)','AMEX:GLD'],['TLT (장기채)','NASDAQ:TLT'],['SOXX (반도체)','NASDAQ:SOXX'],['SOXL (반도체 3X)','NASDAQ:SOXL'],['TQQQ (나스닥 3X)','NASDAQ:TQQQ']]
+    };
+    var MC_PRESETS = {
+      default:   { nm:'📊 다우·BTC·금', syms:['OANDA:US30USD','BITSTAMP:BTCUSD','OANDA:XAUUSD'] },
+      indices:   { nm:'📈 지수 모음',    syms:['OANDA:US30USD','OANDA:NAS100USD','AMEX:EWY'] },
+      crypto:    { nm:'🪙 암호화폐',     syms:['BITSTAMP:BTCUSD','BITSTAMP:ETHUSD','BINANCE:SOLUSDT'] },
+      forex:     { nm:'💱 환율',         syms:['FX_IDC:USDKRW','FX:USDJPY','CAPITALCOM:DXY'] },
+      usstock:   { nm:'🇺🇸 미국 빅테크', syms:['NASDAQ:NVDA','NASDAQ:AAPL','NASDAQ:TSLA'] },
+      commodity: { nm:'⛏️ 원자재',       syms:['OANDA:XAUUSD','OANDA:XAGUSD','OANDA:WTICOUSD'] }
+    };
+    var MC_KEY='mywayStockMultiChartV1';
+    function mcLoad(){ try{ var a=JSON.parse(localStorage.getItem(MC_KEY)||'null'); if(Array.isArray(a)&&a.length===3) return a; }catch(_){ } return MC_PRESETS.default.syms.slice(); }
+    function mcSave(a){ try{ localStorage.setItem(MC_KEY, JSON.stringify(a)); }catch(_){ } }
+    function mcRenderChart(host, symbol){
+      host.innerHTML='';
+      var c=document.createElement('div'); c.className='tradingview-widget-container';
+      var w=document.createElement('div'); w.className='tradingview-widget-container__widget'; c.appendChild(w);
+      var sc=document.createElement('script'); sc.type='text/javascript'; sc.async=true;
+      sc.src='https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+      sc.text=JSON.stringify({ autosize:true, symbol:symbol, interval:'D', timezone:'Asia/Seoul', theme:'light', style:'1', locale:'kr',
+        backgroundColor:'rgba(255,255,255,1)', gridColor:'rgba(0,0,0,0.05)', allow_symbol_change:false, hide_side_toolbar:true, hide_top_toolbar:false,
+        save_image:false, calendar:false, support_host:'https://www.tradingview.com' });
+      c.appendChild(sc); host.appendChild(c);
+    }
+    function buildMultiChartStrip(){
+      var sel=mcLoad();
+      var box=document.createElement('div'); box.className='mc-strip';
+      var head=document.createElement('div'); head.className='mc-head';
+      var tt=document.createElement('span'); tt.className='mc-title'; tt.textContent='📊 멀티차트'; head.appendChild(tt);
+      var hosts=[], selects=[];
+      function markPreset(){ head.querySelectorAll('.mc-preset').forEach(function(b){ var p=MC_PRESETS[b.dataset.p]; b.classList.toggle('on', p.syms.join()===sel.join()); }); }
+      Object.keys(MC_PRESETS).forEach(function(k){
+        var b=document.createElement('button'); b.type='button'; b.className='mc-preset'; b.dataset.p=k; b.textContent=MC_PRESETS[k].nm;
+        b.addEventListener('click',function(){ sel=MC_PRESETS[k].syms.slice(); mcSave(sel); sel.forEach(function(sy,i){ selects[i].value=sy; mcRenderChart(hosts[i],sy); }); markPreset(); });
+        head.appendChild(b);
+      });
+      var lk=document.createElement('a'); lk.className='mc-link'; lk.href='https://myway.kr/multichart.html'; lk.target='_blank'; lk.rel='noopener'; lk.textContent='크게 보기 ↗'; head.appendChild(lk);
+      box.appendChild(head);
+      var grid=document.createElement('div'); grid.className='mc-grid';
+      for(var i=0;i<3;i++){ (function(i){
+        var card=document.createElement('div'); card.className='mc-card c'+(i+1);
+        var ch=document.createElement('div'); ch.className='mc-card-head';
+        var num=document.createElement('span'); num.className='mc-num'; num.textContent='0'+(i+1);
+        var s=document.createElement('select'); s.className='mc-sel';
+        Object.keys(MC_SYMBOLS).forEach(function(g){ var og=document.createElement('optgroup'); og.label=g; MC_SYMBOLS[g].forEach(function(it){ var o=document.createElement('option'); o.value=it[1]; o.textContent=it[0]; og.appendChild(o); }); s.appendChild(og); });
+        s.value=sel[i];
+        var host=document.createElement('div'); host.className='mc-host';
+        s.addEventListener('change',function(){ sel[i]=s.value; mcSave(sel); mcRenderChart(host,s.value); markPreset(); });
+        ch.appendChild(num); ch.appendChild(s); card.appendChild(ch); card.appendChild(host); grid.appendChild(card);
+        hosts.push(host); selects.push(s);
+        mcRenderChart(host, sel[i]);
+      })(i); }
+      box.appendChild(grid);
+      /* ── 하단 고정 차트: 나스닥100 24h + 한국(EWY) ── */
+      var dv=document.createElement('div'); dv.className='mc-divider';
+      dv.innerHTML='<span class="mc-divider-line"></span><span class="mc-divider-label">📌 야간 시장 선행 지표 · 나스닥 → 한국</span><span class="mc-divider-line"></span>';
+      box.appendChild(dv);
+      var fx=document.createElement('div'); fx.className='mc-fixed';
+      [
+        { badge:'NQ', cls:'nq', title:'나스닥 100 (24시간 실시간)', sym:'OANDA:NAS100USD' },
+        { badge:'한', cls:'kr', title:'한국 시장 (EWY · 야간 선행)', sym:'AMEX:EWY', ext:{ href:'https://m.stock.naver.com/domestic/stock/005930/total', txt:'📊 네이버 ↗', title:'네이버 증권 삼성전자 실시간 (새창)' } }
+      ].forEach(function(f){
+        var card=document.createElement('div'); card.className='mc-card c'+f.cls;
+        var ch=document.createElement('div'); ch.className='mc-card-head';
+        var bd=document.createElement('span'); bd.className='mc-badge '+f.cls; bd.textContent=f.badge;
+        var tt=document.createElement('span'); tt.className='mc-ftitle'; tt.textContent=f.title;
+        ch.appendChild(bd); ch.appendChild(tt);
+        if(f.ext){ var ex=document.createElement('a'); ex.className='mc-ext'; ex.href=f.ext.href; ex.target='_blank'; ex.rel='noopener'; ex.title=f.ext.title; ex.textContent=f.ext.txt; ch.appendChild(ex); }
+        var tg=document.createElement('span'); tg.className='mc-tag'; tg.textContent=f.sym; ch.appendChild(tg);
+        var host=document.createElement('div'); host.className='mc-host tall';
+        card.appendChild(ch); card.appendChild(host); fx.appendChild(card);
+        mcRenderChart(host, f.sym);
+      });
+      box.appendChild(fx);
+      var ft=document.createElement('div'); ft.className='mc-foot'; ft.innerHTML='<a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">Charts by TradingView</a>';
+      box.appendChild(ft);
+      markPreset();
       return box;
     }
     function fitCfgi(){
