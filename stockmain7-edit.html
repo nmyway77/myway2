@@ -460,7 +460,9 @@
     .mc-modal-host .tradingview-widget-container, .mc-modal-host .tradingview-widget-container__widget{ height:100%; width:100%; }
     @media (max-width:980px){ .mc-fixed{ grid-template-columns:1fr; } .mc-host.tall{ height:300px; } .mc-strip{ padding:14px 12px 12px; } }
     .mc-head{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:18px; padding-bottom:12px; border-bottom:1px solid var(--card-border); }
-    .mc-title{ font-size:.95rem; font-weight:800; color:var(--text-main); letter-spacing:-.3px; margin-right:14px; }
+    .mc-title{ font-size:.95rem; font-weight:800; color:var(--text-main); letter-spacing:-.3px; margin-right:4px; }
+    .mc-note{ font-size:.72rem; font-weight:600; color:var(--text-muted); background:#f1f4f9; border-radius:6px; padding:2px 8px; margin-right:12px; white-space:nowrap; }
+    @media (max-width:520px){ .mc-note{ display:none; } }
     .mc-preset{ border:0; background:transparent; color:var(--text-muted); border-radius:999px; padding:5px 10px; font-size:.78rem; font-weight:600; cursor:pointer; transition:background .15s,color .15s; }
     .mc-preset:hover{ background:#f1f5ff; color:#2563eb; }
     .mc-preset.on{ background:#e8efff; color:#2563eb; font-weight:800; }
@@ -1609,6 +1611,7 @@
       var box=document.createElement('div'); box.className='mc-strip';
       var head=document.createElement('div'); head.className='mc-head';
       var tt=document.createElement('span'); tt.className='mc-title'; tt.textContent='📊 멀티차트'; head.appendChild(tt);
+      var nt=document.createElement('span'); nt.className='mc-note'; nt.textContent='표시 가격은 모두 달러(USD) 기준 · 원화 종목은 (원화) 표기'; head.appendChild(nt);
       var hosts=[], selects=[];
       function markPreset(){ head.querySelectorAll('.mc-preset').forEach(function(b){ var p=MC_PRESETS[b.dataset.p]; b.classList.toggle('on', p.syms.join()===sel.join()); }); }
       Object.keys(MC_PRESETS).forEach(function(k){
