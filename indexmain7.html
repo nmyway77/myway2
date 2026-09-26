@@ -1,75 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko"><style id="__mw_adguard_style__" type="text/css">ins.adsbygoogle,
-.adsbygoogle,
-iframe[id^="google_ads_iframe"],
-iframe[id^="google_ads_frame"],
-iframe[src*="googlesyndication.com"],
-iframe[src*="doubleclick.net"],
-iframe[src*="/ads/"],
-iframe[src*="adnxs.com"],
-iframe[src*="criteo"],
-div[id^="div-gpt-ad"],
-div[id^="google_ads_"],
-div[id^="dfp-"],
-div[id^="ad-slot"],
-div[id^="ad_slot"],
-div[id^="adfox_"],
-div[data-ad-slot],
-div[data-google-query-id],
-.ad-banner,
-.ad_banner,
-.adBanner,
-.ad-container,
-.ad_container,
-.adContainer,
-.ad-wrapper,
-.ad_wrapper,
-.adWrapper,
-.ad-slot,
-.ad_slot,
-.adSlot,
-.ad-unit,
-.ad-block,
-.ad-area,
-.ad-zone,
-.ad-box,
-.ad-placeholder,
-.ad-placement,
-.ad-label,
-.ads-area,
-.advertisement,
-.advertising,
-.advert,
-.adsbox,
-.sponsored-link,
-.sponsored-ad,
-.sponsor-banner,
-.banner-ad,
-.banner_ad,
-.bannerAd,
-[class^="taboola"],
-[class*="trc_related"],
-[id^="taboola-"],
-.OUTBRAIN,
-[class^="ob-"],
-[id^="outbrain_widget"],
-[id^="dablewidget"],
-[class^="dable"],
-[id^="mgid"],
-[class^="mgbox"],
-[id^="revcontent"],
-[class^="rc-"],
-[id^="criteo"],
-[id^="adfit"],
-.kakao_ad_area,
-[id^="ad_wrap"],
-[class^="ad_wrap"],
-[id^="AD_"],
-[class="ad"],
-[id="ad"],
-[id^="banner_ad"],
-[class^="banner_ad"]{display:none !important}
-</style><head>
+<html lang="ko"><head>
   <meta charset="UTF-8">
   <title>마이웨이(MYWAY.KR) - 자주가는 사이트 모음 | 한국 뉴스·VOD·라디오·게시판·차트 한자리</title>
   <meta name="description" content="마이웨이(MYWAY.KR)는 한국에서 자주 가는 사이트를 한자리에 모은 종합 포털입니다. 뉴스, 지상파 VOD, 라디오, 게시판, 잡지, 주식·코인 비교차트, 유튜브 썸네일 추출기, 세계시계, 계산기까지 모두 모았습니다.">
@@ -388,6 +318,7 @@ div[data-google-query-id],
       .card .name-ko { font-size: .78rem; }
       .main { padding: 44px 14px 60px; }
       .extra-logo-section { margin-top: 33px; }
+      body[data-active-tab="daily"] .extra-logo-section { margin-top: 24px; }
     }
     @media (max-width: 380px) {
       .grid { grid-template-columns: repeat(2, 1fr); column-gap: 9px; row-gap: 22px; }
@@ -652,6 +583,12 @@ div[data-google-query-id],
     .extra-logo-section .logo-grid {
       margin-bottom: 0;
     }
+    /* 생활정보 탭: 위 로고 줄과 아래 로고 그룹 사이 간격을 줄 간격(24px)과 동일하게 */
+    body[data-active-tab="daily"] .main { padding-bottom: 0; }
+    body[data-active-tab="daily"] .main .section:last-of-type { margin-bottom: 0; }
+    body[data-active-tab="daily"] .main .logo-grid:last-child { margin-bottom: 0; }
+    body[data-active-tab="daily"] .extra-logo-section { margin-top: 24px; }
+    body[data-active-tab="daily"].editing .extra-logo-section { margin-top: 12px; }
 
   .sc-section {
       width: 100%;
@@ -1221,7 +1158,7 @@ div[data-google-query-id],
 
   </style>
 </head>
-<body class="">
+<body>
   <!-- SEO: 한글 브랜드명 명시 (화면 비표시, 검색엔진 인식용) -->
   <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">마이웨이(MYWAY.KR) - 자주가는 사이트 모음 한국 종합 포털, 뉴스·VOD·라디오·게시판·주식 차트 한자리</h1>
 
@@ -1233,7 +1170,7 @@ div[data-google-query-id],
   <main class="main" id="main"></main>
 
   <!-- 즐겨찾기(+) 영역 — 아이콘 아래(하단) -->
-  <section class="extra-logo-section" id="extraLogoSection"><div class="logo-grid"><div class="logo-tile fav-add" role="button" tabindex="0" title="즐겨찾기 추가"></div></div></section>
+  <section class="extra-logo-section" id="extraLogoSection"><div class="logo-grid"><a class="logo-tile fav-item" href="https://myway.kr/livesitesbar2.html" target="_blank" rel="noopener noreferrer" title="LIVE TV"><img src="https://m.media-amazon.com/images/I/410O56DAkyL.png" alt="LIVE TV" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/radiositesbar2.html" target="_blank" rel="noopener noreferrer" title="LIVE RAIDO"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRA8q_2bod6OBDYZi1k9ikid9y6nMs4Cy9FzYS61vxzA&amp;s" alt="LIVE RAIDO" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/00mainfortune.html" target="_blank" rel="noopener noreferrer" title="운세"><img src="https://image.edaily.co.kr/images/Photo/files/NP/S/2026/09/PS26092500169.jpg" alt="운세" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/00makingyoutubefull2.html" target="_blank" rel="noopener noreferrer" title="CCTV"><img src="https://play-lh.googleusercontent.com/uy8lICf_ydg6cR8wiHddkkoQNQf07dtbv7P3m-dv8UUaS6VRy2lFR8NnOIpwPuaACJxb3aVZrIqC6S_YtpFrm7s=w240-h480-rw" alt="CCTV" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/MUSIC-YTUBE.html" target="_blank" rel="noopener noreferrer" title="MUSIC"><img src="https://thumbs.dreamstime.com/b/music-illustration-25677286.jpg" alt="MUSIC" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/bbssitesbar2.html" target="_blank" rel="noopener noreferrer" title="BBS"><img src="https://www.shutterstock.com/image-vector/bbs-bulletin-board-system-computer-260nw-1738984151.jpg" alt="BBS" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/00mainweather.html" target="_blank" rel="noopener noreferrer" title="날씨"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRM3lpOnU1RoaAr9gaWL41k1cq1g3wYPdUap9jwb23UO7GensYRfh7Ot5w&amp;s=10" alt="날씨" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button></div></a><div class="logo-tile fav-add" role="button" tabindex="0" title="즐겨찾기 추가"></div></div></section>
 
 
   <!-- 즐겨찾기 추가 모달 -->
@@ -1358,7 +1295,7 @@ div[data-google-query-id],
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayIndexV1_dist";
-    const DIST_SIG = "sig1790394970432";
+    const DIST_SIG = "sig1790396432945";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-index-v1';
     const DATA_VERSION = '4';

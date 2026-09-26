@@ -319,6 +319,7 @@
       .card .name-ko { font-size: .78rem; }
       .main { padding: 44px 14px 60px; }
       .extra-logo-section { margin-top: 33px; }
+      body[data-active-tab="daily"] .extra-logo-section { margin-top: 24px; }
     }
     @media (max-width: 380px) {
       .grid { grid-template-columns: repeat(2, 1fr); column-gap: 9px; row-gap: 22px; }
@@ -583,6 +584,12 @@
     .extra-logo-section .logo-grid {
       margin-bottom: 0;
     }
+    /* 생활정보 탭: 위 로고 줄과 아래 로고 그룹 사이 간격을 줄 간격(24px)과 동일하게 */
+    body[data-active-tab="daily"] .main { padding-bottom: 0; }
+    body[data-active-tab="daily"] .main .section:last-of-type { margin-bottom: 0; }
+    body[data-active-tab="daily"] .main .logo-grid:last-child { margin-bottom: 0; }
+    body[data-active-tab="daily"] .extra-logo-section { margin-top: 24px; }
+    body[data-active-tab="daily"].editing .extra-logo-section { margin-top: 12px; }
 
   .sc-section {
       width: 100%;
