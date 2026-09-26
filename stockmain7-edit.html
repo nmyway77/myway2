@@ -558,6 +558,14 @@
     .masonry.photo-tab .gadd:hover { border-color: #7e94ff !important; background: #eef2ff !important; }
     .masonry.photo-tab .gcard .card-ctrl { border-radius: 8px; }
     body.editing .masonry.photo-tab .gcard .card-ctrl { display: flex; }
+    /* 사진형 카드 입체감: 드라마 페이지와 같은 바닥 그림자 이미지 + 은은한 box-shadow */
+    .masonry.photo-tab .gcard { overflow: visible; margin: 0 0 30px; background: #fff; box-shadow: 0 6px 6px 0 rgba(90,90,130,.11); }
+    .masonry.photo-tab .gcard:hover { box-shadow: 0 8px 14px 0 rgba(90,90,130,.16); }
+    .masonry.photo-tab .gcard::after { content: ""; position: absolute; left: 2.5%; right: 2.5%; top: 100%; height: 20px; background: url('https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png') center top / 100% 100% no-repeat; pointer-events: none; }
+    /* 드라마 페이지처럼 모서리 각지게 */
+    .masonry.photo-tab .gcard, .masonry.photo-tab .gcard img, .masonry.photo-tab .gcard .gph, .masonry.photo-tab .gcard .cap, .masonry.photo-tab .gcard .split-hint, .masonry.photo-tab .gcard .card-ctrl { border-radius: 0; }
+    .masonry.photo-tab .gcard:hover img { transform: none; }
+
     .masonry.photo-tab .gcard { cursor: pointer; }
     /* 여러 장 배지 / 좌우 힌트 (gallery-editful과 동일) */
     .masonry.photo-tab .multi-badge { position:absolute; left:7px; top:7px; z-index:3; display:flex; align-items:center; gap:3px; padding:3px 7px; border-radius:20px; background:rgba(20,20,30,.62); color:#fff; font-size:.66rem; font-weight:700; font-family:'Courier New',monospace; pointer-events:none; }

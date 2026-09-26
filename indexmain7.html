@@ -1,75 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko"><style id="__mw_adguard_style__" type="text/css">ins.adsbygoogle,
-.adsbygoogle,
-iframe[id^="google_ads_iframe"],
-iframe[id^="google_ads_frame"],
-iframe[src*="googlesyndication.com"],
-iframe[src*="doubleclick.net"],
-iframe[src*="/ads/"],
-iframe[src*="adnxs.com"],
-iframe[src*="criteo"],
-div[id^="div-gpt-ad"],
-div[id^="google_ads_"],
-div[id^="dfp-"],
-div[id^="ad-slot"],
-div[id^="ad_slot"],
-div[id^="adfox_"],
-div[data-ad-slot],
-div[data-google-query-id],
-.ad-banner,
-.ad_banner,
-.adBanner,
-.ad-container,
-.ad_container,
-.adContainer,
-.ad-wrapper,
-.ad_wrapper,
-.adWrapper,
-.ad-slot,
-.ad_slot,
-.adSlot,
-.ad-unit,
-.ad-block,
-.ad-area,
-.ad-zone,
-.ad-box,
-.ad-placeholder,
-.ad-placement,
-.ad-label,
-.ads-area,
-.advertisement,
-.advertising,
-.advert,
-.adsbox,
-.sponsored-link,
-.sponsored-ad,
-.sponsor-banner,
-.banner-ad,
-.banner_ad,
-.bannerAd,
-[class^="taboola"],
-[class*="trc_related"],
-[id^="taboola-"],
-.OUTBRAIN,
-[class^="ob-"],
-[id^="outbrain_widget"],
-[id^="dablewidget"],
-[class^="dable"],
-[id^="mgid"],
-[class^="mgbox"],
-[id^="revcontent"],
-[class^="rc-"],
-[id^="criteo"],
-[id^="adfit"],
-.kakao_ad_area,
-[id^="ad_wrap"],
-[class^="ad_wrap"],
-[id^="AD_"],
-[class="ad"],
-[id="ad"],
-[id^="banner_ad"],
-[class^="banner_ad"]{display:none !important}
-</style><head>
+<html lang="ko"><head>
   <meta charset="UTF-8">
   <title>마이웨이(MYWAY.KR) - 자주가는 사이트 모음 | 한국 뉴스·VOD·라디오·게시판·차트 한자리</title>
   <meta name="description" content="마이웨이(MYWAY.KR)는 한국에서 자주 가는 사이트를 한자리에 모은 종합 포털입니다. 뉴스, 지상파 VOD, 라디오, 게시판, 잡지, 주식·코인 비교차트, 유튜브 썸네일 추출기, 세계시계, 계산기까지 모두 모았습니다.">
@@ -1083,6 +1013,14 @@ div[data-google-query-id],
     .masonry.photo-tab .gadd:hover { border-color: #7e94ff !important; background: #eef2ff !important; }
     .masonry.photo-tab .gcard .card-ctrl { border-radius: 8px; }
     body.editing .masonry.photo-tab .gcard .card-ctrl { display: flex; }
+    /* 사진형 카드 입체감: 드라마 페이지와 같은 바닥 그림자 이미지 + 은은한 box-shadow */
+    .masonry.photo-tab .gcard { overflow: visible; margin: 0 0 30px; background: #fff; box-shadow: 0 6px 6px 0 rgba(90,90,130,.11); }
+    .masonry.photo-tab .gcard:hover { box-shadow: 0 8px 14px 0 rgba(90,90,130,.16); }
+    .masonry.photo-tab .gcard::after { content: ""; position: absolute; left: 2.5%; right: 2.5%; top: 100%; height: 20px; background: url('https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png') center top / 100% 100% no-repeat; pointer-events: none; }
+    /* 드라마 페이지처럼 모서리 각지게 */
+    .masonry.photo-tab .gcard, .masonry.photo-tab .gcard img, .masonry.photo-tab .gcard .gph, .masonry.photo-tab .gcard .cap, .masonry.photo-tab .gcard .split-hint, .masonry.photo-tab .gcard .card-ctrl { border-radius: 0; }
+    .masonry.photo-tab .gcard:hover img { transform: none; }
+
     .masonry.photo-tab .gcard { cursor: pointer; }
     /* 여러 장 배지 / 좌우 힌트 (gallery-editful과 동일) */
     .masonry.photo-tab .multi-badge { position:absolute; left:7px; top:7px; z-index:3; display:flex; align-items:center; gap:3px; padding:3px 7px; border-radius:20px; background:rgba(20,20,30,.62); color:#fff; font-size:.66rem; font-weight:700; font-family:'Courier New',monospace; pointer-events:none; }
@@ -1213,7 +1151,7 @@ div[data-google-query-id],
 
   </style>
 </head>
-<body class="">
+<body>
   <!-- SEO: 한글 브랜드명 명시 (화면 비표시, 검색엔진 인식용) -->
   <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">마이웨이(MYWAY.KR) - 자주가는 사이트 모음 한국 종합 포털, 뉴스·VOD·라디오·게시판·주식 차트 한자리</h1>
 
@@ -1285,12 +1223,12 @@ div[data-google-query-id],
         <input id="pdPin" type="checkbox" style="width:16px;height:16px;margin:0">
         <span style="margin:0;color:#1f2740">📌 <b>맨 앞에 고정</b> (새 항목은 고정 항목 다음에 들어감)</span>
       </label>
-      <label class="field" id="pdPosWrap" style="display: flex; align-items: center; gap: 8px; margin-top: 2px; cursor: pointer;">
+      <label class="field" id="pdPosWrap" style="display:flex;align-items:center;gap:8px;margin-top:2px;cursor:pointer">
         <input id="pdFirst" type="checkbox" style="width:16px;height:16px;margin:0">
         <span style="margin:0;color:#1f2740">새 항목을 <b>맨 앞</b>에 추가 (이 탭의 기본으로 기억)</span>
       </label>
       <div class="modal-row">
-        <button class="btn-cancel" id="pdDel" style="color: rgb(214, 69, 92); display: none;">삭제</button>
+        <button class="btn-cancel" id="pdDel" style="display:none;color:#d6455c">삭제</button>
         <button class="btn-cancel" id="pdCancel">취소</button>
         <button class="btn-ok" id="pdOk">등록</button>
       </div>
@@ -1350,7 +1288,7 @@ div[data-google-query-id],
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayIndexV1_dist";
-    const DIST_SIG = "sig1790392763390";
+    const DIST_SIG = "sig1790394501475";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-index-v1';
     const DATA_VERSION = '4';
