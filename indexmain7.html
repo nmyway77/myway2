@@ -1,75 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko"><style id="__mw_adguard_style__" type="text/css">ins.adsbygoogle,
-.adsbygoogle,
-iframe[id^="google_ads_iframe"],
-iframe[id^="google_ads_frame"],
-iframe[src*="googlesyndication.com"],
-iframe[src*="doubleclick.net"],
-iframe[src*="/ads/"],
-iframe[src*="adnxs.com"],
-iframe[src*="criteo"],
-div[id^="div-gpt-ad"],
-div[id^="google_ads_"],
-div[id^="dfp-"],
-div[id^="ad-slot"],
-div[id^="ad_slot"],
-div[id^="adfox_"],
-div[data-ad-slot],
-div[data-google-query-id],
-.ad-banner,
-.ad_banner,
-.adBanner,
-.ad-container,
-.ad_container,
-.adContainer,
-.ad-wrapper,
-.ad_wrapper,
-.adWrapper,
-.ad-slot,
-.ad_slot,
-.adSlot,
-.ad-unit,
-.ad-block,
-.ad-area,
-.ad-zone,
-.ad-box,
-.ad-placeholder,
-.ad-placement,
-.ad-label,
-.ads-area,
-.advertisement,
-.advertising,
-.advert,
-.adsbox,
-.sponsored-link,
-.sponsored-ad,
-.sponsor-banner,
-.banner-ad,
-.banner_ad,
-.bannerAd,
-[class^="taboola"],
-[class*="trc_related"],
-[id^="taboola-"],
-.OUTBRAIN,
-[class^="ob-"],
-[id^="outbrain_widget"],
-[id^="dablewidget"],
-[class^="dable"],
-[id^="mgid"],
-[class^="mgbox"],
-[id^="revcontent"],
-[class^="rc-"],
-[id^="criteo"],
-[id^="adfit"],
-.kakao_ad_area,
-[id^="ad_wrap"],
-[class^="ad_wrap"],
-[id^="AD_"],
-[class="ad"],
-[id="ad"],
-[id^="banner_ad"],
-[class^="banner_ad"]{display:none !important}
-</style><head>
+<html lang="ko"><head>
   <meta charset="UTF-8">
   <title>마이웨이(MYWAY.KR) - 자주가는 사이트 모음 | 한국 뉴스·VOD·라디오·게시판·차트 한자리</title>
   <meta name="description" content="마이웨이(MYWAY.KR)는 한국에서 자주 가는 사이트를 한자리에 모은 종합 포털입니다. 뉴스, 지상파 VOD, 라디오, 게시판, 잡지, 주식·코인 비교차트, 유튜브 썸네일 추출기, 세계시계, 계산기까지 모두 모았습니다.">
@@ -1213,7 +1143,7 @@ div[data-google-query-id],
 
   </style>
 </head>
-<body class="">
+<body>
   <!-- SEO: 한글 브랜드명 명시 (화면 비표시, 검색엔진 인식용) -->
   <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">마이웨이(MYWAY.KR) - 자주가는 사이트 모음 한국 종합 포털, 뉴스·VOD·라디오·게시판·주식 차트 한자리</h1>
 
@@ -1281,6 +1211,10 @@ div[data-google-query-id],
         <div id="pdPaste" class="paste-area" contenteditable="true" data-ph="다른 페이지에서 복사한 내용(사진·글)을 여기에 붙여넣으세요"></div>
         <span class="img-hint">붙여넣은 내용은 이 항목의 <b>전체 보기 화면</b>에 사진들과 함께 나와요.</span>
       </div>
+      <label class="field" id="pdPinWrap" style="display:flex;align-items:center;gap:8px;margin-top:2px;cursor:pointer">
+        <input id="pdPin" type="checkbox" style="width:16px;height:16px;margin:0">
+        <span style="margin:0;color:#1f2740">📌 <b>맨 앞에 고정</b> (새 항목은 고정 항목 다음에 들어감)</span>
+      </label>
       <label class="field" id="pdPosWrap" style="display:flex;align-items:center;gap:8px;margin-top:2px;cursor:pointer">
         <input id="pdFirst" type="checkbox" style="width:16px;height:16px;margin:0">
         <span style="margin:0;color:#1f2740">새 항목을 <b>맨 앞</b>에 추가 (이 탭의 기본으로 기억)</span>
@@ -1346,7 +1280,7 @@ div[data-google-query-id],
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayIndexV1_dist";
-    const DIST_SIG = "sig1790381132815";
+    const DIST_SIG = "sig1790383159184";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-index-v1';
     const DATA_VERSION = '4';
@@ -1525,6 +1459,7 @@ div[data-google-query-id],
       ] },
       "news": { photoStyle: true, newFirst: true, sections: [
         { label:"", sub:"", items: [
+          { ticker:"뉴스 바로보기", ko:"", url:"https://myway.kr/newsitesbar3.html", pin:true, name:"뉴스 바로보기", img:"https://cdn.goodedumedia.com/news/photo/202501/238_381_4842.png", imgs:["https://cdn.goodedumedia.com/news/photo/202501/238_381_4842.png"] },
         ] },
       ], altSections: [
         { label:"종합 일간지", sub:"General News", items: [
@@ -2218,7 +2153,7 @@ div[data-google-query-id],
     /* @DATA_END */
 
     /* ===== 데이터 로드/저장 ===== */
-    function coerceItems(arr){ return (Array.isArray(arr)?arr:[]).filter(x=>x&&typeof x==='object').map(function(x){ var o={ticker:String(x.ticker||''),ko:String(x.ko||''),url:String(x.url||'')}; if(x.name) o.name=String(x.name); if(x.img) o.img=String(x.img); if(Array.isArray(x.imgs)&&x.imgs.length) o.imgs=x.imgs.map(function(v){return String(v||'');}).filter(Boolean); if(x.content) o.content=String(x.content); return o; }); }
+    function coerceItems(arr){ return (Array.isArray(arr)?arr:[]).filter(x=>x&&typeof x==='object').map(function(x){ var o={ticker:String(x.ticker||''),ko:String(x.ko||''),url:String(x.url||'')}; if(x.pin) o.pin=true; if(x.name) o.name=String(x.name); if(x.img) o.img=String(x.img); if(Array.isArray(x.imgs)&&x.imgs.length) o.imgs=x.imgs.map(function(v){return String(v||'');}).filter(Boolean); if(x.content) o.content=String(x.content); return o; }); }
     function coerceSections(arr){ if(!Array.isArray(arr)) return null; return arr.filter(s=>s&&typeof s==='object').map(s=>({label:String(s.label||''),sub:String(s.sub||''),items:coerceItems(s.items)})); }
     function coerceTabs(p){
       if(!p||typeof p!=='object'||Array.isArray(p)) return null;
@@ -2329,7 +2264,7 @@ div[data-google-query-id],
               (pageUrl ? '<span class="sh-right">페이지<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M9 7h8v8"/></svg></span>' : '');
             a.appendChild(hint);
           }
-          const cap = document.createElement('div'); cap.className = 'cap'; cap.textContent = nm; a.appendChild(cap);
+          const cap = document.createElement('div'); cap.className = 'cap'; cap.textContent = (it.pin ? '📌 ' : '') + nm; a.appendChild(cap);
           addCardCtrl(a, 0, ii);
           m.appendChild(a);
         });
@@ -2505,6 +2440,7 @@ div[data-google-query-id],
       document.getElementById('pdOk').textContent = target?'저장':'등록';
       document.getElementById('pdDel').style.display = target?'':'none';
       document.getElementById('pdPosWrap').style.display = target?'none':'flex';
+      document.getElementById('pdPin').checked = !!(it && it.pin);
       document.getElementById('pdFirst').checked = tabNewFirst(curTab);
       document.getElementById('pdName').value = it ? (it.name||it.ticker||'') : '';
       document.getElementById('pdUrl').value = it ? (it.url||'') : '';
@@ -2530,12 +2466,13 @@ div[data-google-query-id],
       const rec={ticker:name, ko:'', url:url, name:name};
       if(entries.length){ rec.img=entries[0].img; rec.imgs=entries.map(entryToStr); }
       if(content) rec.content=content;
+      if(document.getElementById('pdPin').checked) rec.pin=true;
       const secs=curSections(); if(!secs.length) secs.push({label:'',sub:'',items:[]});
-      if(pdEdit){ secs[pdEdit.si].items[pdEdit.ii]=rec; }
+      if(pdEdit){ secs[pdEdit.si].items[pdEdit.ii]=rec; var arr=secs[pdEdit.si].items; var pinned=arr.filter(x=>x.pin), rest=arr.filter(x=>!x.pin); secs[pdEdit.si].items=pinned.concat(rest); }
       else {
         const first=document.getElementById('pdFirst').checked;
         if(tabs[curTab]) tabs[curTab].newFirst=first;
-        if(first) secs[0].items.unshift(rec); else secs[0].items.push(rec);
+        if(first){ var pinN=0; while(pinN<secs[0].items.length && secs[0].items[pinN].pin) pinN++; secs[0].items.splice(pinN,0,rec); } else secs[0].items.push(rec);
       }
       saveTabs(); renderTab(curTab); closePhotoDlg();
     };
@@ -2708,6 +2645,7 @@ div[data-google-query-id],
         out+='        { label:'+JSON.stringify(s.label)+', sub:'+JSON.stringify(s.sub)+', items: [\n';
         (s.items||[]).forEach(function(it){
           var f='ticker:'+JSON.stringify(it.ticker)+', ko:'+JSON.stringify(it.ko)+', url:'+JSON.stringify(it.url);
+          if(it.pin) f+=', pin:true';
           if(it.name) f+=', name:'+JSON.stringify(it.name);
           if(it.img) f+=', img:'+JSON.stringify(it.img);
           if(it.imgs&&it.imgs.length) f+=', imgs:'+JSON.stringify(it.imgs);

@@ -1212,6 +1212,10 @@
         <div id="pdPaste" class="paste-area" contenteditable="true" data-ph="다른 페이지에서 복사한 내용(사진·글)을 여기에 붙여넣으세요"></div>
         <span class="img-hint">붙여넣은 내용은 이 항목의 <b>전체 보기 화면</b>에 사진들과 함께 나와요.</span>
       </div>
+      <label class="field" id="pdPinWrap" style="display:flex;align-items:center;gap:8px;margin-top:2px;cursor:pointer">
+        <input id="pdPin" type="checkbox" style="width:16px;height:16px;margin:0">
+        <span style="margin:0;color:#1f2740">📌 <b>맨 앞에 고정</b> (새 항목은 고정 항목 다음에 들어감)</span>
+      </label>
       <label class="field" id="pdPosWrap" style="display:flex;align-items:center;gap:8px;margin-top:2px;cursor:pointer">
         <input id="pdFirst" type="checkbox" style="width:16px;height:16px;margin:0">
         <span style="margin:0;color:#1f2740">새 항목을 <b>맨 앞</b>에 추가 (이 탭의 기본으로 기억)</span>
@@ -2240,7 +2244,7 @@
     /* @DATA_END */
 
     /* ===== 데이터 로드/저장 ===== */
-    function coerceItems(arr){ return (Array.isArray(arr)?arr:[]).filter(x=>x&&typeof x==='object').map(function(x){ var o={ticker:String(x.ticker||''),ko:String(x.ko||''),url:String(x.url||'')}; if(x.name) o.name=String(x.name); if(x.img) o.img=String(x.img); if(Array.isArray(x.imgs)&&x.imgs.length) o.imgs=x.imgs.map(function(v){return String(v||'');}).filter(Boolean); if(x.content) o.content=String(x.content); return o; }); }
+    function coerceItems(arr){ return (Array.isArray(arr)?arr:[]).filter(x=>x&&typeof x==='object').map(function(x){ var o={ticker:String(x.ticker||''),ko:String(x.ko||''),url:String(x.url||'')}; if(x.pin) o.pin=true; if(x.name) o.name=String(x.name); if(x.img) o.img=String(x.img); if(Array.isArray(x.imgs)&&x.imgs.length) o.imgs=x.imgs.map(function(v){return String(v||'');}).filter(Boolean); if(x.content) o.content=String(x.content); return o; }); }
     function coerceSections(arr){ if(!Array.isArray(arr)) return null; return arr.filter(s=>s&&typeof s==='object').map(s=>({label:String(s.label||''),sub:String(s.sub||''),items:coerceItems(s.items)})); }
     function coerceTabs(p){
       if(!p||typeof p!=='object'||Array.isArray(p)) return null;
@@ -2336,7 +2340,7 @@
               (pageUrl ? '<span class="sh-right">페이지<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M9 7h8v8"/></svg></span>' : '');
             a.appendChild(hint);
           }
-          const cap = document.createElement('div'); cap.className = 'cap'; cap.textContent = nm; a.appendChild(cap);
+          const cap = document.createElement('div'); cap.className = 'cap'; cap.textContent = (it.pin ? '📌 ' : '') + nm; a.appendChild(cap);
           addCardCtrl(a, 0, ii);
           m.appendChild(a);
         });
@@ -2512,6 +2516,7 @@
       document.getElementById('pdOk').textContent = target?'저장':'등록';
       document.getElementById('pdDel').style.display = target?'':'none';
       document.getElementById('pdPosWrap').style.display = target?'none':'flex';
+      document.getElementById('pdPin').checked = !!(it && it.pin);
       document.getElementById('pdFirst').checked = tabNewFirst(curTab);
       document.getElementById('pdName').value = it ? (it.name||it.ticker||'') : '';
       document.getElementById('pdUrl').value = it ? (it.url||'') : '';
@@ -2537,12 +2542,13 @@
       const rec={ticker:name, ko:'', url:url, name:name};
       if(entries.length){ rec.img=entries[0].img; rec.imgs=entries.map(entryToStr); }
       if(content) rec.content=content;
+      if(document.getElementById('pdPin').checked) rec.pin=true;
       const secs=curSections(); if(!secs.length) secs.push({label:'',sub:'',items:[]});
-      if(pdEdit){ secs[pdEdit.si].items[pdEdit.ii]=rec; }
+      if(pdEdit){ secs[pdEdit.si].items[pdEdit.ii]=rec; var arr=secs[pdEdit.si].items; var pinned=arr.filter(x=>x.pin), rest=arr.filter(x=>!x.pin); secs[pdEdit.si].items=pinned.concat(rest); }
       else {
         const first=document.getElementById('pdFirst').checked;
         if(tabs[curTab]) tabs[curTab].newFirst=first;
-        if(first) secs[0].items.unshift(rec); else secs[0].items.push(rec);
+        if(first){ var pinN=0; while(pinN<secs[0].items.length && secs[0].items[pinN].pin) pinN++; secs[0].items.splice(pinN,0,rec); } else secs[0].items.push(rec);
       }
       saveTabs(); renderTab(curTab); closePhotoDlg();
     };
@@ -2715,6 +2721,7 @@
         out+='        { label:'+JSON.stringify(s.label)+', sub:'+JSON.stringify(s.sub)+', items: [\n';
         (s.items||[]).forEach(function(it){
           var f='ticker:'+JSON.stringify(it.ticker)+', ko:'+JSON.stringify(it.ko)+', url:'+JSON.stringify(it.url);
+          if(it.pin) f+=', pin:true';
           if(it.name) f+=', name:'+JSON.stringify(it.name);
           if(it.img) f+=', img:'+JSON.stringify(it.img);
           if(it.imgs&&it.imgs.length) f+=', imgs:'+JSON.stringify(it.imgs);
