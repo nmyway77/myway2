@@ -1,81 +1,10 @@
 <!DOCTYPE html>
-<html lang="ko"><style id="__mw_adguard_style__" type="text/css">ins.adsbygoogle,
-.adsbygoogle,
-iframe[id^="google_ads_iframe"],
-iframe[id^="google_ads_frame"],
-iframe[src*="googlesyndication.com"],
-iframe[src*="doubleclick.net"],
-iframe[src*="/ads/"],
-iframe[src*="adnxs.com"],
-iframe[src*="criteo"],
-div[id^="div-gpt-ad"],
-div[id^="google_ads_"],
-div[id^="dfp-"],
-div[id^="ad-slot"],
-div[id^="ad_slot"],
-div[id^="adfox_"],
-div[data-ad-slot],
-div[data-google-query-id],
-.ad-banner,
-.ad_banner,
-.adBanner,
-.ad-container,
-.ad_container,
-.adContainer,
-.ad-wrapper,
-.ad_wrapper,
-.adWrapper,
-.ad-slot,
-.ad_slot,
-.adSlot,
-.ad-unit,
-.ad-block,
-.ad-area,
-.ad-zone,
-.ad-box,
-.ad-placeholder,
-.ad-placement,
-.ad-label,
-.ads-area,
-.advertisement,
-.advertising,
-.advert,
-.adsbox,
-.sponsored-link,
-.sponsored-ad,
-.sponsor-banner,
-.banner-ad,
-.banner_ad,
-.bannerAd,
-[class^="taboola"],
-[class*="trc_related"],
-[id^="taboola-"],
-.OUTBRAIN,
-[class^="ob-"],
-[id^="outbrain_widget"],
-[id^="dablewidget"],
-[class^="dable"],
-[id^="mgid"],
-[class^="mgbox"],
-[id^="revcontent"],
-[class^="rc-"],
-[id^="criteo"],
-[id^="adfit"],
-.kakao_ad_area,
-[id^="ad_wrap"],
-[class^="ad_wrap"],
-[id^="AD_"],
-[class="ad"],
-[id="ad"],
-[id^="banner_ad"],
-[class^="banner_ad"]{display:none !important}
-</style><head>
+<html lang="ko"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>LIVE TV · 실시간 방송 | MYWAY.KR</title>
 <meta name="description" content="지상파·종편·뉴스·경제·해외 실시간 방송과 치지직·SOOP·트위치 라이브를 한 화면에서. 상단 채널을 골라 전체 화면으로 보세요.">
 <meta name="robots" content="index, follow">
-
 <link rel="canonical" href="https://myway.kr/00mainlivetv.html">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -113,11 +42,17 @@ div[data-google-query-id],
   .dir-section{max-width:1040px;margin:0 auto 24px}
   .dir-label{font-size:12.5px;font-weight:800;color:var(--accent);letter-spacing:.5px;text-transform:uppercase;margin:0 0 10px;padding:0 4px}
   .dir-grid{display:grid;grid-template-columns:repeat(4,1fr);column-gap:10px;row-gap:26px}
-  .dir-card{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:14px 15px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;text-align:left;text-decoration:none;color:inherit;font-family:var(--body);transition:all .15s;box-shadow:0 2px 4px rgba(90,90,130,.06);position:relative;overflow:visible}
+  .dir-card{display:flex;flex-direction:row;align-items:center;gap:10px;padding:13px 14px;border:1px solid var(--line);border-radius:0;background:#fff;cursor:pointer;text-align:left;text-decoration:none;color:inherit;font-family:var(--body);transition:all .15s;box-shadow:0 2px 4px rgba(90,90,130,.06);position:relative;overflow:visible}
   .dir-card::after{content:"";position:absolute;left:2.5%;right:2.5%;top:100%;height:18px;background:url('https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png') center top / 100% 100% no-repeat;pointer-events:none;z-index:1}
   .dir-card:hover{border-color:var(--accent);background:#f5fbf8;transform:translateY(-2px);box-shadow:0 4px 10px rgba(11,107,83,.12)}
   .dir-card .t{font-size:15px;font-weight:800;color:var(--ink);letter-spacing:-0.3px;line-height:1.15}
   .dir-card .k{font-size:11px;color:var(--ink-sub);line-height:1.2}
+  .dir-card .txt{display:flex;flex-direction:column;gap:3px;min-width:0}
+  /* 왼쪽 그라데이션 로고 (각진 카드 + 로고, 입체감은 그대로) */
+  .card-logo{flex:0 0 32px;width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 3px 7px -2px var(--c2)}
+  .card-logo svg{width:17px;height:17px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .lg-0{--c1:#7c3aed;--c2:#ec4899} .lg-1{--c1:#2563eb;--c2:#60a5fa} .lg-2{--c1:#059669;--c2:#34d399} .lg-3{--c1:#ea580c;--c2:#fbbf24}
+  .lg-4{--c1:#0d9488;--c2:#22d3ee} .lg-5{--c1:#e11d48;--c2:#fb7185} .lg-6{--c1:#4f46e5;--c2:#a78bfa} .lg-7{--c1:#1e3a8a;--c2:#06b6d4}
   @media (max-width:720px){ .dir-grid{grid-template-columns:repeat(2,1fr);row-gap:24px} .grid-panel{padding:24px 12px 50px} }
 
   /* === 편집 도구 === */
@@ -145,7 +80,7 @@ div[data-google-query-id],
   body.editing .sect-add{display:inline-block}
   body.editing .sect-tools{display:inline-flex}
   /* 카드 편집 오버레이 */
-  .card-ctrl{display:none;position:absolute;inset:0;z-index:3;background:rgba(255,255,255,.82);border-radius:10px;align-items:center;justify-content:center;gap:6px}
+  .card-ctrl{display:none;position:absolute;inset:0;z-index:3;background:rgba(255,255,255,.82);border-radius:0;align-items:center;justify-content:center;gap:6px}
   body.editing .dir-card .card-ctrl{display:flex}
   body.editing .dir-card{cursor:default}
   body.editing .dir-card:hover{transform:none}
@@ -196,7 +131,7 @@ div[data-google-query-id],
 </nav>
 
 <div class="viewer">
-  <div id="viewerBox"></div>
+  <div id="viewerBox" style=""></div>
   <div class="grid-panel" id="gridPanel"></div>
 </div>
 
@@ -274,7 +209,7 @@ const IS_DIST = true;
 const SHOW_EDIT = true;
 const COPY_PROTECT = false;
 const STORE_KEY = "mywayLiveDirV1_dist";
-const DIST_SIG = "sig1790322126582";
+const DIST_SIG = "sig1790468608590";
 /* @CONFIG_END */
 
 /* === 상단 채널 버튼 (iframe에 바로 재생) — livesitesbar2 채널 === */
@@ -299,7 +234,7 @@ const DEFAULT_SITES = [
 /* @SITES_END */
 /* === 초기 메인화면 (채널 이름, ''이면 전체목록) === */
 /* @HOME_START */
-const DEFAULT_HOME = "네이버TV";
+const DEFAULT_HOME = "KBS1";
 /* @HOME_END */
 function coerceSites(p){
   if(Array.isArray(p)&&p.length&&Array.isArray(p[0])){
@@ -490,7 +425,12 @@ function renderGrid(){
       const c=document.createElement('a'); c.className='dir-card'; c.href=it[2]; c.target='_blank'; c.rel='noopener';
       const tt=document.createElement('span'); tt.className='t'; tt.textContent=it[0];
       const kk=document.createElement('span'); kk.className='k'; kk.textContent=it[1];
-      c.appendChild(tt); c.appendChild(kk);
+      const lg=document.createElement('span'); lg.className='card-logo lg-'+(ii%8);
+      lg.innerHTML=/youtube\.com|youtu\.be/i.test(String(it[2]||''))
+        ? '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9l5 3-5 3z"/></svg>'
+        : '<svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M8 3l4 4 4-4M9 22h6"/></svg>';
+      const txt=document.createElement('span'); txt.className='txt'; txt.appendChild(tt); txt.appendChild(kk);
+      c.appendChild(lg); c.appendChild(txt);
       if(SHOW_EDIT){
         const ctrl=document.createElement('div'); ctrl.className='card-ctrl';
         const lft=document.createElement('button'); lft.textContent='◀'; lft.title='왼쪽으로'; lft.onclick=e=>{e.preventDefault();moveItem(si,ii,-1);};
