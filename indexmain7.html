@@ -1230,7 +1230,7 @@
   <!-- 사진형 탭 항목 추가/수정 모달 (gallery-editful 방식) -->
   <div class="modal-back" id="pdlgBack">
     <div class="modal pdlg">
-      <h3 id="pdlgTitle">사진 항목 수정</h3>
+      <h3 id="pdlgTitle">사진 항목 추가</h3>
       <label class="field"><span>텍스트 (이름)</span><input id="pdName" type="text" placeholder="예) 보그" autocomplete="off"></label>
       <label class="field"><span>연결 주소 (선택)</span><input id="pdUrl" type="text" placeholder="비우면 클릭해도 이동 안 함" autocomplete="off"></label>
       <div class="field">
@@ -1248,14 +1248,14 @@
         <input id="pdPin" type="checkbox" style="width:16px;height:16px;margin:0">
         <span style="margin:0;color:#1f2740">📌 <b>맨 앞에 고정</b> (새 항목은 고정 항목 다음에 들어감)</span>
       </label>
-      <label class="field" id="pdPosWrap" style="display: none; align-items: center; gap: 8px; margin-top: 2px; cursor: pointer;">
+      <label class="field" id="pdPosWrap" style="display: flex; align-items: center; gap: 8px; margin-top: 2px; cursor: pointer;">
         <input id="pdFirst" type="checkbox" style="width:16px;height:16px;margin:0">
         <span style="margin:0;color:#1f2740">새 항목을 <b>맨 앞</b>에 추가 (이 탭의 기본으로 기억)</span>
       </label>
       <div class="modal-row">
-        <button class="btn-cancel" id="pdDel" style="color: rgb(214, 69, 92);">삭제</button>
+        <button class="btn-cancel" id="pdDel" style="color: rgb(214, 69, 92); display: none;">삭제</button>
         <button class="btn-cancel" id="pdCancel">취소</button>
-        <button class="btn-ok" id="pdOk">저장</button>
+        <button class="btn-ok" id="pdOk">등록</button>
       </div>
     </div>
   </div>
@@ -1314,7 +1314,7 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayIndexV1_dist";
-    const DIST_SIG = "sig1790489050824";
+    const DIST_SIG = "sig1790490731827";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-index-v1';
     const DATA_VERSION = '4';
@@ -1494,6 +1494,8 @@
       "news": { photoStyle: true, newFirst: true, sections: [
         { label:"", sub:"", items: [
           { ticker:"뉴스 바로보기", ko:"", url:"https://myway.kr/newsitesbar3.html", pin:true, name:"뉴스 바로보기", img:"https://cdn.goodedumedia.com/news/photo/202501/238_381_4842.png", imgs:["https://cdn.goodedumedia.com/news/photo/202501/238_381_4842.png"] },
+          { ticker:"동아일보", ko:"", url:"https://www.donga.com/", name:"동아일보", img:"https://clogo.saramin.co.kr/workenv-bg/202502/12/srk3nd87_jt3x-1me54wg_workenv-bg.png/sri/resize/860x516", imgs:["https://clogo.saramin.co.kr/workenv-bg/202502/12/srk3nd87_jt3x-1me54wg_workenv-bg.png/sri/resize/860x516"] },
+          { ticker:"중앙일보", ko:"", url:"https://www.joongang.co.kr/", name:"중앙일보", img:"https://upload.wikimedia.org/wikipedia/commons/8/8f/Oldkoreadailylogo.jpg?utm_source=ko.wikipedia.org&utm_campaign=index&utm_content=original", imgs:["https://upload.wikimedia.org/wikipedia/commons/8/8f/Oldkoreadailylogo.jpg?utm_source=ko.wikipedia.org&utm_campaign=index&utm_content=original"] },
           { ticker:"“한국 개인정보 DB 1건당 500달러” 해커들의 쇼핑몰 된 다크웹", ko:"", url:"https://www.kmib.co.kr/article/view.asp?arcid=9000017372&code=61121111&sid1=soc", name:"“한국 개인정보 DB 1건당 500달러” 해커들의 쇼핑몰 된 다크웹", img:"https://myway.kr/0000KKK.png", imgs:["https://myway.kr/0000KKK.png"] },
         ] },
       ], altSections: [
