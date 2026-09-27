@@ -1862,7 +1862,9 @@
           a.setAttribute('aria-label', nm);
           const cover = photos.length ? photos[0].img : (it.img || '');
           if (cover) {
-            const img = document.createElement('img'); img.src = cover; img.alt = nm; img.loading = 'lazy'; img.decoding = 'async'; img.referrerPolicy = 'no-referrer'; img.draggable = false;
+            const img = document.createElement('img'); img.src = cover; img.alt = nm; img.loading = (ii < 12 ? 'eager' : 'lazy'); img.decoding = 'async'; img.referrerPolicy = 'no-referrer'; img.draggable = false;
+            /* 사진 주소가 막혀 있으면(핫링크 차단·폰 네트워크 등) 카드가 높이 0으로 사라지지 않도록 제목 카드로 대체 */
+            img.onerror = function () { img.onerror = null; const ph = document.createElement('div'); ph.className = 'gph'; ph.textContent = nm || '?'; img.replaceWith(ph); };
             a.appendChild(img);
           } else {
             const ph = document.createElement('div'); ph.className = 'gph'; ph.textContent = nm || '?'; a.appendChild(ph);
