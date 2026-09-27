@@ -1779,6 +1779,21 @@
     }
     function saveMeta(){ try{ localStorage.setItem(STORE_KEY+'_tabsmeta', JSON.stringify(TABS_META)); }catch(_){} }
     var TABS_META = loadMeta();
+    /* ── 마이그레이션: TODAY의 '생활정보'·'TOOLS' 블록을 네비 'TOOLS' 탭(카드형)으로 이동 ── */
+    (function migrateToolsTab(){
+      try{
+        var MOVE=['생활정보','TOOLS'];
+        var picked=INFO.filter(function(b){ return MOVE.indexOf(String(b.title||'').trim())>=0; });
+        if(!picked.length) return;
+        var secs=picked.map(function(b){ return { label:String(b.title||'').trim(), sub:String(b.desc||'').replace(/\s*·\s*$/,''), items:(b.cards||[]).filter(function(c){return c&&c.url;}).map(function(c){ return { ticker:String(c.name||''), ko:String(c.en||''), url:String(c.url) }; }) }; });
+        if(!tabs.tools) tabs.tools={ sections:[] };
+        var have=(tabs.tools.sections||[]).map(function(s){return s.label;});
+        secs.forEach(function(s){ if(have.indexOf(s.label)<0) tabs.tools.sections.push(s); });
+        INFO=INFO.filter(function(b){ return MOVE.indexOf(String(b.title||'').trim())<0; });
+        if(!TABS_META.some(function(t){return t.id==='tools';})) TABS_META.push({ id:'tools', label:'TOOLS' });
+        saveTabs(); saveInfo(); saveMeta();
+      }catch(_){}
+    })();
 
     function selectTab(id){
       curTab=id;
@@ -1861,10 +1876,11 @@
       news:  '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>',
       play:  '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9l5 3-5 3z"/></svg>',
       globe: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>',
-      chat:  '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>'
+      chat:  '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+      tool:  '<svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0 5 5L13 18l-3-3 6.7-6.7z"/><path d="M4 20l4-4"/><path d="M3 21l1-1"/></svg>'
     };
     /* 탭별 아이콘 종류 (없는 탭은 chart/bars 번갈아) */
-    const TAB_LOGO_KIND = { news:'news', youtube:'play', sites:'globe', community:'chat' };
+    const TAB_LOGO_KIND = { news:'news', youtube:'play', sites:'globe', community:'chat', tools:'tool' };
     function makeChartLogo(it, idx, tabId){
       const isCoin = /upbit\.com|bithumb/i.test(String(it.url||''));
       const isYt = /youtube\.com|youtu\.be/i.test(String(it.url||''));
