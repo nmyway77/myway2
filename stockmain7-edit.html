@@ -1420,7 +1420,17 @@
 
     /* ===== 데이터 로드/저장 (편집 데이터 우선) ===== */
     function coerceItems(arr){ return (Array.isArray(arr)?arr:[]).filter(x=>x&&typeof x==='object').map(function(x){ var o={ticker:String(x.ticker||''),ko:String(x.ko||''),url:String(x.url||'')}; if(x.pin) o.pin=true; if(x.name) o.name=String(x.name); if(x.img) o.img=String(x.img); if(Array.isArray(x.imgs)&&x.imgs.length) o.imgs=x.imgs.map(function(v){return String(v||'');}).filter(Boolean); if(x.content) o.content=String(x.content); return o; }); }
-    function coerceSections(arr){ if(!Array.isArray(arr)) return null; return arr.filter(s=>s&&typeof s==='object').map(s=>({label:String(s.label||''),sub:String(s.sub||''),items:coerceItems(s.items)})); }
+    function coerceSections(arr){ if(!Array.isArray(arr)) return null; return arr.filter(s=>s&&typeof s==='object').map(s=>{ const o={label:String(s.label||''),sub:String(s.sub||''),items:coerceItems(s.items)}; if(s.link&&typeof s.link==='object') o.link={text:String(s.link.text||''),url:String(s.link.url||'')}; return o; }); }
+    /* 섹션 '바로보기' 링크: 섹션에 저장된 link가 있으면 그것을(빈 url이면 숨김), 없으면 기본값(미국 지수 선물 → 비교차트) */
+    const SECTION_QUICKLINKS = { '미국 지수 선물': { text:'비교차트', url:'https://myway.kr/multichart.html' } };
+    function effectiveQuick(sec){ if(sec.link){ return sec.link.url ? sec.link : null; } return SECTION_QUICKLINKS[sec.label] || null; }
+    function editSectionLink(si){
+      const secs=curSections(); const sec=secs[si]; const cur=effectiveQuick(sec)||{text:'',url:''};
+      const t=prompt('바로보기 링크 텍스트 (예: 비교차트)\n비워두고 확인하면 링크를 숨깁니다.', cur.text); if(t===null) return;
+      if(!t.trim()){ sec.link={text:'',url:''}; saveTabs(); renderTab(curTab); return; }
+      const u=prompt('바로보기 링크 주소(URL)', cur.url||'https://myway.kr/'); if(u===null) return;
+      sec.link={text:t.trim(), url:u.trim()}; saveTabs(); renderTab(curTab);
+    }
     function coerceTabs(p){
       if(!p||typeof p!=='object'||Array.isArray(p)) return null;
       var out={}, any=false;
@@ -1943,14 +1953,16 @@
         label.textContent = sec.label;
         head.appendChild(label);
 
-        /* '미국 지수 선물' 섹션: 영어 sub 대신 비교차트 링크를 그 자리에 */
-        if (sec.label === '미국 지수 선물') {
+        /* 섹션 '바로보기' 링크 (편집 가능) — 있으면 sub 대신 그 자리에 */
+        const quick = effectiveQuick(sec);
+        if (quick) {
           const cmpLink = document.createElement('a');
           cmpLink.className = 'section-newslink';
-          cmpLink.href = 'https://myway.kr/multichart.html';
+          cmpLink.href = quick.url;
           cmpLink.target = '_blank';
           cmpLink.rel = 'noopener';
-          cmpLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12.5" y="7" width="3" height="10"/><rect x="18" y="13" width="3" height="4"/></svg><span>비교차트</span>';
+          cmpLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12.5" y="7" width="3" height="10"/><rect x="18" y="13" width="3" height="4"/></svg>';
+          cmpLink.appendChild(document.createTextNode(' ' + quick.text));
           head.appendChild(cmpLink);
         } else {
           const sub = document.createElement('span');
@@ -1965,6 +1977,7 @@
           stools.appendChild(sm('▲','섹션 위로',()=>moveSection(si,-1)));
           stools.appendChild(sm('▼','섹션 아래로',()=>moveSection(si,1)));
           stools.appendChild(sm('✏','이름변경',()=>renameSection(si)));
+          stools.appendChild(sm('🔗','바로보기 링크 수정',()=>editSectionLink(si)));
           stools.appendChild(sm('✕','섹션삭제',()=>deleteSection(si)));
           head.appendChild(stools);
           const sadd = document.createElement('button'); sadd.className='sect-add'; sadd.type='button'; sadd.textContent='＋ 이 섹션에 추가'; sadd.onclick=()=>openDlg(null, si);
@@ -2334,7 +2347,7 @@
     function serializeSectionsArr(secs){
       var out='[\n';
       (secs||[]).forEach(function(s){
-        out+='        { label:'+JSON.stringify(s.label)+', sub:'+JSON.stringify(s.sub)+', items: [\n';
+        out+='        { label:'+JSON.stringify(s.label)+', sub:'+JSON.stringify(s.sub)+(s.link?', link:{text:'+JSON.stringify(s.link.text)+', url:'+JSON.stringify(s.link.url)+'}':'')+', items: [\n';
         (s.items||[]).forEach(function(it){
           var f='ticker:'+JSON.stringify(it.ticker)+', ko:'+JSON.stringify(it.ko)+', url:'+JSON.stringify(it.url);
           if(it.pin) f+=', pin:true';
