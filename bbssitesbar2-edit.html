@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
+<html lang="ko"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>BBS · 커뮤니티 한자리 | MYWAY.KR</title>
@@ -131,7 +130,7 @@
 
 <nav class="topnav" id="topnav">
   <a class="nav-home" href="https://myway.kr" aria-label="MYWAY.KR 홈">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"></path><path d="M5 10v9h14v-9"></path></svg>
   </a>
   <div class="nav-track" id="navTrack"></div>
 </nav>
@@ -222,34 +221,26 @@
 
 <script>
 /* @CONFIG */
-const IS_DIST = false;        // 편집판 파일이면 true
-const SHOW_EDIT = true;       // 편집 도구 표시 (배포용은 false)
-const COPY_PROTECT = false;   // 복사방지 (편집판은 false)
-const STORE_KEY = 'mywayBbsDirV1';
-const DIST_SIG = '';
+const IS_DIST = false;
+const SHOW_EDIT = true;
+const COPY_PROTECT = false;
+const STORE_KEY = "mywayBbsDirV1";
+const DIST_SIG = "";
 /* @CONFIG_END */
 const DATA_KIND = 'myway-bbs-v1';   // JSON 식별자 — 다른 도구 JSON과 섞임 방지
 
 /* === 상단 채널 버튼 (iframe에 바로 표시) — bbssitesbar2 === */
 /* @SITES_START */
-const DEFAULT_SITES=[
-  ['디시인사이드','https://www.dcinside.com/'],
-  ['에펨코리아','https://www.fmkorea.com/'],
-  ['더쿠','https://theqoo.net/hot?filter_mode=normal'],
-  ['뽐뿌','https://ppomppu.co.kr/hot.php'],
-  ['미시쿠폰','https://www.missycoupons.com/zero/board.php#id=general'],
-  ['인벤','https://www.inven.co.kr/board/webzine/2097?iskin=webzine'],
-  ['인스티즈','https://www.instiz.net/pt?srt=3#greentop'],
-  ['보배드림','https://www.bobaedream.co.kr/list?code=freeb'],
-  ['힙합플레야','https://hiphopplaya.com/'],
-  ['개드립','https://www.dogdrip.net/?mid=dogdrip&sort_index=popular'],
-  ['일베','https://www.ilbe.com/'],
-  ['네이트판','https://pann.nate.com/'],
-  ['와이고수','https://www.ygosu.com/community/best_article/?type=daily'],
+const DEFAULT_SITES = [
+  ["보배드림","https://www.bobaedream.co.kr/list?code=freeb"],
+  ["힙합플레야","https://hiphopplaya.com/"],
+  ["와이고수","https://www.ygosu.com/community/best_article/?type=daily"],
+  ["네이트판","https://pann.nate.com/"],
+  ["개드립","https://www.dogdrip.net/?mid=dogdrip&sort_index=popular"],
 ];
 /* @SITES_END */
 /* @HOME_START */
-const DEFAULT_HOME = '보배드림';   // 첫 화면: 채널 이름 또는 'grid'(전체목록)
+const DEFAULT_HOME = "보배드림";
 /* @HOME_END */
 function loadHome(){ try{ var h=localStorage.getItem(STORE_KEY+'_home'); if(h) return h; }catch(_){} return DEFAULT_HOME; }
 function saveHome(h){ HOME=h; try{ localStorage.setItem(STORE_KEY+'_home',h); }catch(_){} }
@@ -286,33 +277,33 @@ const DEFAULT_I = Math.max(0, homeIndex());
 /* === 전체목록 디렉터리 (카테고리별) — bbssitesbar2 데이터 === */
 /* @DIR_START */
 const DEFAULT_DIRECTORY = [
-  { label:'커뮤니티·게시판', items:[
-    ['더쿠','theqoo.net','https://theqoo.net/hot?filter_mode=normal'],
-    ['클리앙','clien.net','https://www.clien.net/service/group/clien_all?&od=T33'],
-    ['에펨코리아','fmkorea.com','https://www.fmkorea.com/'],
-    ['디시인사이드','dcinside.com','https://www.dcinside.com/'],
-    ['보배드림','bobaedream.co.kr','https://www.bobaedream.co.kr/list?code=freeb'],
-    ['인벤','inven.co.kr','https://www.inven.co.kr/board/webzine/2097?iskin=webzine'],
-    ['인스티즈','instiz.net','https://www.instiz.net/pt?srt=3#greentop'],
-    ['루리웹','ruliweb.com','https://bbs.ruliweb.com/best/humor/now?orderby=readcount&range=7d'],
-    ['일베저장소','ilbe.com','https://www.ilbe.com/'],
-    ['개드립','dogdrip.net','https://www.dogdrip.net/?mid=dogdrip&sort_index=popular'],
-    ['와이고수','ygosu.com','https://ygosu.com/board/best_article/?type=daily'],
-    ['이토랜드','etoland.co.kr','https://etoland.co.kr/b/hit/list'],
-    ['가생이닷컴','gasengi.com','https://www.gasengi.com/'],
-    ['네이트판','pann.nate.com','https://pann.nate.com/'],
-    ['미시쿠폰','missycoupons.com','https://www.missycoupons.com/zero/board.php#id=general'],
-    ['오늘의 유머','todayhumor.co.kr','https://www.todayhumor.co.kr/board/hold/list.php'],
-    ['알고사','rgo4.com','https://rgo4.com/free'],
-    ['뽐뿌','ppomppu.co.kr','https://www.ppomppu.co.kr/zboard/zboard.php?id=f1020'],
-    ['웃긴대학','humoruniv.com','https://web.humoruniv.com/main.html'],
-    ['SLR클럽','slrclub.com','https://www.slrclub.com/bbs/zboard.php?id=politics'],
-    ['MLB파크','mlbpark.donga.com','https://mlbpark.donga.com/mp'],
-    ['목동아 (네이버 카페)','cafe.naver.com','https://cafe.naver.com/f-e/cafes/17191536/menus/0?viewType=L'],
-    ['PGR21','pgr21.com','https://www.pgr21.com/'],
-    ['82쿡','82cook.com','https://www.82cook.com/'],
-    ['힙합플레야','hiphopplaya.com','https://hiphopplaya.com/'],
-    ['국민제안','modu.pcpp.go.kr','https://modu.pcpp.go.kr/suggest-board'],
+  { label:"커뮤니티·게시판", items:[
+    ["더쿠","theqoo.net","https://theqoo.net/hot?filter_mode=normal"],
+    ["클리앙","clien.net","https://www.clien.net/service/group/clien_all?&od=T33"],
+    ["에펨코리아","fmkorea.com","https://www.fmkorea.com/"],
+    ["디시인사이드","dcinside.com","https://www.dcinside.com/"],
+    ["보배드림","bobaedream.co.kr","https://www.bobaedream.co.kr/list?code=freeb"],
+    ["인벤","inven.co.kr","https://www.inven.co.kr/board/webzine/2097?iskin=webzine"],
+    ["인스티즈","instiz.net","https://www.instiz.net/pt?srt=3#greentop"],
+    ["루리웹","ruliweb.com","https://bbs.ruliweb.com/best/humor/now?orderby=readcount&range=7d"],
+    ["일베저장소","ilbe.com","https://www.ilbe.com/"],
+    ["개드립","dogdrip.net","https://www.dogdrip.net/?mid=dogdrip&sort_index=popular"],
+    ["와이고수","ygosu.com","https://ygosu.com/board/best_article/?type=daily"],
+    ["이토랜드","etoland.co.kr","https://etoland.co.kr/b/hit/list"],
+    ["가생이닷컴","gasengi.com","https://www.gasengi.com/"],
+    ["네이트판","pann.nate.com","https://pann.nate.com/"],
+    ["미시쿠폰","missycoupons.com","https://www.missycoupons.com/zero/board.php#id=general"],
+    ["오늘의 유머","todayhumor.co.kr","https://www.todayhumor.co.kr/board/hold/list.php"],
+    ["알고사","rgo4.com","https://rgo4.com/free"],
+    ["뽐뿌","ppomppu.co.kr","https://www.ppomppu.co.kr/zboard/zboard.php?id=f1020"],
+    ["웃긴대학","humoruniv.com","https://web.humoruniv.com/main.html"],
+    ["SLR클럽","slrclub.com","https://www.slrclub.com/bbs/zboard.php?id=politics"],
+    ["MLB파크","mlbpark.donga.com","https://mlbpark.donga.com/mp"],
+    ["목동아 (네이버 카페)","cafe.naver.com","https://cafe.naver.com/f-e/cafes/17191536/menus/0?viewType=L"],
+    ["PGR21","pgr21.com","https://www.pgr21.com/"],
+    ["82쿡","82cook.com","https://www.82cook.com/"],
+    ["힙합플레야","hiphopplaya.com","https://hiphopplaya.com/"],
+    ["국민제안","modu.pcpp.go.kr","https://modu.pcpp.go.kr/suggest-board"],
   ]},
 ];
 /* @DIR_END */
@@ -841,5 +832,6 @@ nav.insertBefore(openBtn, track);
   };
 })();
 </script>
-</body>
-</html>
+
+
+</body></html>
