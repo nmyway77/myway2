@@ -1300,6 +1300,7 @@
       <div class="code-opt">
         <button id="saveEdit"><div class="ct">📝 편집용 HTML 저장</div><div class="cs">복사방지 없음 · 현재 내용이 박힌 편집 파일. 다시 편집·내보내기 가능</div></button>
         <button id="saveView"><div class="ct">👁 배포용 HTML 저장</div><div class="cs">복사방지 포함 · 편집도구 없는 공개용 파일</div></button>
+        <button id="saveEditor"><div class="ct">🛠 에디터 파일 저장</div><div class="cs">지금 내용이 기본값으로 박힌 에디터 자체 파일. 다음부터 이 파일을 열면 JSON 불러오기 없이 그대로 이어서 편집</div></button>
         <button id="copyCode"><div class="ct">📋 데이터 코드 복사</div><div class="cs">DEFAULT_TABS 코드를 클립보드로 복사</div></button>
       </div>
       <div class="modal-row"><button class="btn-cancel" id="codeClose">닫기</button></div>
@@ -2840,6 +2841,7 @@
     }
     function dl(name,html){ const blob=new Blob([html],{type:'text/html'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1500); }
     document.getElementById('saveEdit').onclick=function(){ dl('indexmain7-edit.html', buildHTML({dist:true,edit:true,prot:false,key:'mywayIndexV1_dist',sig:'sig'+Date.now()})); closeCode(); };
+    document.getElementById('saveEditor').onclick=function(){ dl('Indexmain7-EDITER.html', buildHTML({dist:false,edit:true,prot:false,key:'mywayIndexV1',sig:''})); closeCode(); };
     document.getElementById('saveView').onclick=function(){ dl('indexmain7-view.html', buildHTML({dist:false,edit:false,prot:true,key:'mywayIndexV1',sig:''})); closeCode(); };
     document.getElementById('copyCode').onclick=function(){
       const code='const DEFAULT_TABS = '+serializeTabs(tabs)+';';
