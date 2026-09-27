@@ -637,7 +637,8 @@
     .masonry.photo-tab .split-hint .sh-left { justify-content:flex-start; padding-left:9px; background:linear-gradient(to right, rgba(20,20,30,.5), transparent 72%); }
     .masonry.photo-tab .split-hint .sh-right { justify-content:flex-end; padding-right:9px; background:linear-gradient(to left, rgba(20,20,30,.5), transparent 72%); }
     .masonry.photo-tab .split-hint svg { width:13px; height:13px; flex:0 0 auto; }
-    @media (hover:none){ .masonry.photo-tab .split-hint { opacity:1; } .masonry.photo-tab .split-hint > span { font-size:.62rem; } }
+    /* 핸드폰(터치 기기)에서는 원본/페이지 힌트 글자를 아예 숨김 (PC 마우스 오버에서만 표시) */
+    @media (hover:none){ .masonry.photo-tab .split-hint { display:none !important; } }
     body.editing .masonry.photo-tab .split-hint, body.editing .masonry.photo-tab .multi-badge { display:none; }
     /* 사진 항목 입력 모달 */
     .pdlg .field { display:block; margin-bottom:13px; }

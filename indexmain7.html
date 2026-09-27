@@ -1055,7 +1055,8 @@
     .masonry.photo-tab .split-hint .sh-left { justify-content:flex-start; padding-left:9px; background:linear-gradient(to right, rgba(20,20,30,.5), transparent 72%); }
     .masonry.photo-tab .split-hint .sh-right { justify-content:flex-end; padding-right:9px; background:linear-gradient(to left, rgba(20,20,30,.5), transparent 72%); }
     .masonry.photo-tab .split-hint svg { width:13px; height:13px; flex:0 0 auto; }
-    @media (hover:none){ .masonry.photo-tab .split-hint { opacity:1; } .masonry.photo-tab .split-hint > span { font-size:.62rem; } }
+    /* 핸드폰(터치 기기)에서는 원본/페이지 힌트 글자를 아예 숨김 (PC 마우스 오버에서만 표시) */
+    @media (hover:none){ .masonry.photo-tab .split-hint { display:none !important; } }
     body.editing .masonry.photo-tab .split-hint, body.editing .masonry.photo-tab .multi-badge { display:none; }
     /* 사진 항목 입력 모달 */
     .pdlg .field { display:block; margin-bottom:13px; }
@@ -1229,7 +1230,7 @@
   <!-- 사진형 탭 항목 추가/수정 모달 (gallery-editful 방식) -->
   <div class="modal-back" id="pdlgBack">
     <div class="modal pdlg">
-      <h3 id="pdlgTitle">사진 항목 추가</h3>
+      <h3 id="pdlgTitle">사진 항목 수정</h3>
       <label class="field"><span>텍스트 (이름)</span><input id="pdName" type="text" placeholder="예) 보그" autocomplete="off"></label>
       <label class="field"><span>연결 주소 (선택)</span><input id="pdUrl" type="text" placeholder="비우면 클릭해도 이동 안 함" autocomplete="off"></label>
       <div class="field">
@@ -1247,14 +1248,14 @@
         <input id="pdPin" type="checkbox" style="width:16px;height:16px;margin:0">
         <span style="margin:0;color:#1f2740">📌 <b>맨 앞에 고정</b> (새 항목은 고정 항목 다음에 들어감)</span>
       </label>
-      <label class="field" id="pdPosWrap" style="display:flex;align-items:center;gap:8px;margin-top:2px;cursor:pointer">
+      <label class="field" id="pdPosWrap" style="display: none; align-items: center; gap: 8px; margin-top: 2px; cursor: pointer;">
         <input id="pdFirst" type="checkbox" style="width:16px;height:16px;margin:0">
         <span style="margin:0;color:#1f2740">새 항목을 <b>맨 앞</b>에 추가 (이 탭의 기본으로 기억)</span>
       </label>
       <div class="modal-row">
-        <button class="btn-cancel" id="pdDel" style="display:none;color:#d6455c">삭제</button>
+        <button class="btn-cancel" id="pdDel" style="color: rgb(214, 69, 92);">삭제</button>
         <button class="btn-cancel" id="pdCancel">취소</button>
-        <button class="btn-ok" id="pdOk">등록</button>
+        <button class="btn-ok" id="pdOk">저장</button>
       </div>
     </div>
   </div>
@@ -1299,6 +1300,7 @@
       <div class="code-opt">
         <button id="saveEdit"><div class="ct">📝 편집용 HTML 저장</div><div class="cs">복사방지 없음 · 현재 내용이 박힌 편집 파일. 다시 편집·내보내기 가능</div></button>
         <button id="saveView"><div class="ct">👁 배포용 HTML 저장</div><div class="cs">복사방지 포함 · 편집도구 없는 공개용 파일</div></button>
+        <button id="saveEditor"><div class="ct">🛠 에디터 파일 저장</div><div class="cs">지금 내용이 기본값으로 박힌 에디터 자체 파일. 다음부터 이 파일을 열면 JSON 불러오기 없이 그대로 이어서 편집</div></button>
         <button id="copyCode"><div class="ct">📋 데이터 코드 복사</div><div class="cs">DEFAULT_TABS 코드를 클립보드로 복사</div></button>
       </div>
       <div class="modal-row"><button class="btn-cancel" id="codeClose">닫기</button></div>
@@ -1312,7 +1314,7 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayIndexV1_dist";
-    const DIST_SIG = "sig1790474195166";
+    const DIST_SIG = "sig1790482837603";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-index-v1';
     const DATA_VERSION = '4';
@@ -1492,6 +1494,7 @@
       "news": { photoStyle: true, newFirst: true, sections: [
         { label:"", sub:"", items: [
           { ticker:"뉴스 바로보기", ko:"", url:"https://myway.kr/newsitesbar3.html", pin:true, name:"뉴스 바로보기", img:"https://cdn.goodedumedia.com/news/photo/202501/238_381_4842.png", imgs:["https://cdn.goodedumedia.com/news/photo/202501/238_381_4842.png"] },
+          { ticker:"“한국 개인정보 DB 1건당 500달러”", ko:"", url:"https://image.kmib.co.kr/online_image/2026/0927/01100201.20260925500135.png", name:"“한국 개인정보 DB 1건당 500달러”", img:"https://image.kmib.co.kr/online_image/2026/0927/01100201.20260925500135.png", imgs:["https://image.kmib.co.kr/online_image/2026/0927/01100201.20260925500135.png"] },
         ] },
       ], altSections: [
         { label:"종합 일간지", sub:"General News", items: [
@@ -1841,6 +1844,27 @@
           { ticker:"여성시대", ko:"여시 · 20대 여성", url:"https://cafe.daum.net/subdued20club" },
           { ticker:"쭉빵카페", ko:"여성 패션·연애", url:"https://cafe.daum.net/ok1221" },
           { ticker:"화장발", ko:"화장·뷰티", url:"https://cafe.daum.net/Khj0421" },
+        ] },
+      ] },
+      "blog": { sections: [
+        { label:"블로그 플랫폼", sub:"Blog Platform", items: [
+          { ticker:"네이버 블로그", ko:"blog.naver.com", url:"https://blog.naver.com/" },
+          { ticker:"티스토리", ko:"tistory.com", url:"https://www.tistory.com/" },
+          { ticker:"브런치", ko:"brunch.co.kr · 카카오", url:"https://brunch.co.kr/" },
+          { ticker:"벨로그", ko:"velog.io · 개발자", url:"https://velog.io/" },
+          { ticker:"미디엄", ko:"medium.com", url:"https://medium.com/" },
+          { ticker:"워드프레스", ko:"wordpress.com", url:"https://wordpress.com/" },
+          { ticker:"깃허브 페이지", ko:"github.io · 개발자", url:"https://pages.github.com/" },
+          { ticker:"노션", ko:"notion.so", url:"https://www.notion.so/" },
+        ] },
+        { label:"인기 블로그·사이트", sub:"Popular Blogs", items: [
+          { ticker:"만개의레시피", ko:"요리·레시피", url:"https://www.10000recipe.com/" },
+          { ticker:"우리집밥상", ko:"요리·식단", url:"https://www.10000recipe.com/" },
+          { ticker:"오늘의집", ko:"인테리어 · ohou.se", url:"https://ohou.se/" },
+          { ticker:"디스이즈게임", ko:"게임 정보", url:"https://www.thisisgame.com/" },
+          { ticker:"IT동아", ko:"IT 리뷰", url:"https://it.donga.com/" },
+          { ticker:"나무위키", ko:"namu.wiki · 위키", url:"https://namu.wiki/" },
+          { ticker:"GeekNews", ko:"개발자 뉴스", url:"https://news.hada.io/" },
         ] },
       ] },
       "movie": { photoStyle: true, newFirst: false, sections: [
@@ -2359,6 +2383,7 @@
       { id:"broadcast", label:"방송사" },
       { id:"music", label:"음악" },
       { id:"bbs", label:"BBS" },
+      { id:"blog", label:"블로그" },
     ];
     /* @TABSMETA_END */
 
@@ -2886,6 +2911,7 @@
     }
     function dl(name,html){ const blob=new Blob([html],{type:'text/html'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1500); }
     document.getElementById('saveEdit').onclick=function(){ dl('indexmain7-edit.html', buildHTML({dist:true,edit:true,prot:false,key:'mywayIndexV1_dist',sig:'sig'+Date.now()})); closeCode(); };
+    document.getElementById('saveEditor').onclick=function(){ dl('Indexmain7-EDITER.html', buildHTML({dist:false,edit:true,prot:false,key:'mywayIndexV1',sig:''})); closeCode(); };
     document.getElementById('saveView').onclick=function(){ dl('indexmain7-view.html', buildHTML({dist:false,edit:false,prot:true,key:'mywayIndexV1',sig:''})); closeCode(); };
     document.getElementById('copyCode').onclick=function(){
       const code='const DEFAULT_TABS = '+serializeTabs(tabs)+';';
