@@ -1230,7 +1230,7 @@
   <!-- 사진형 탭 항목 추가/수정 모달 (gallery-editful 방식) -->
   <div class="modal-back" id="pdlgBack">
     <div class="modal pdlg">
-      <h3 id="pdlgTitle">사진 항목 추가</h3>
+      <h3 id="pdlgTitle">사진 항목 수정</h3>
       <label class="field"><span>텍스트 (이름)</span><input id="pdName" type="text" placeholder="예) 보그" autocomplete="off"></label>
       <label class="field"><span>연결 주소 (선택)</span><input id="pdUrl" type="text" placeholder="비우면 클릭해도 이동 안 함" autocomplete="off"></label>
       <div class="field">
@@ -1248,14 +1248,14 @@
         <input id="pdPin" type="checkbox" style="width:16px;height:16px;margin:0">
         <span style="margin:0;color:#1f2740">📌 <b>맨 앞에 고정</b> (새 항목은 고정 항목 다음에 들어감)</span>
       </label>
-      <label class="field" id="pdPosWrap" style="display:flex;align-items:center;gap:8px;margin-top:2px;cursor:pointer">
+      <label class="field" id="pdPosWrap" style="display: none; align-items: center; gap: 8px; margin-top: 2px; cursor: pointer;">
         <input id="pdFirst" type="checkbox" style="width:16px;height:16px;margin:0">
         <span style="margin:0;color:#1f2740">새 항목을 <b>맨 앞</b>에 추가 (이 탭의 기본으로 기억)</span>
       </label>
       <div class="modal-row">
-        <button class="btn-cancel" id="pdDel" style="display:none;color:#d6455c">삭제</button>
+        <button class="btn-cancel" id="pdDel" style="color: rgb(214, 69, 92);">삭제</button>
         <button class="btn-cancel" id="pdCancel">취소</button>
-        <button class="btn-ok" id="pdOk">등록</button>
+        <button class="btn-ok" id="pdOk">저장</button>
       </div>
     </div>
   </div>
@@ -1494,6 +1494,7 @@
       "news": { photoStyle: true, newFirst: true, sections: [
         { label:"", sub:"", items: [
           { ticker:"뉴스 바로보기", ko:"", url:"https://myway.kr/newsitesbar3.html", pin:true, name:"뉴스 바로보기", img:"https://cdn.goodedumedia.com/news/photo/202501/238_381_4842.png", imgs:["https://cdn.goodedumedia.com/news/photo/202501/238_381_4842.png"] },
+          { ticker:"이대호", ko:"", url:"https://www.kmib.co.kr/article/view.asp?arcid=9000017372&code=61121111&sid1=soc", name:"이대호", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsJ7v32vB8V1g6MyAweLYM9B-T9eISpFmgauwNrvjS_ieG0JKxMVwz2iFN&s=10", imgs:["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsJ7v32vB8V1g6MyAweLYM9B-T9eISpFmgauwNrvjS_ieG0JKxMVwz2iFN&s=10"] },
           { ticker:"“한국 개인정보 DB 1건당 500달러” 해커들의 쇼핑몰 된 다크웹", ko:"", url:"https://www.kmib.co.kr/article/view.asp?arcid=9000017372&code=61121111&sid1=soc", name:"“한국 개인정보 DB 1건당 500달러” 해커들의 쇼핑몰 된 다크웹", img:"https://myway.kr/0000KKK.png", imgs:["https://myway.kr/0000KKK.png"] },
         ] },
       ], altSections: [
@@ -1986,8 +1987,9 @@
           { ticker:"Billboard MA", ko:"빌보드 뮤직 어워드", url:"https://www.billboard.com/h/billboard-music-awards/" },
         ] },
       ] },
-      "shopping": { photoStyle: true, sections: [
+      "shopping": { photoStyle: true, newFirst: false, sections: [
         { label:"", sub:"", items: [
+          { ticker:"이대호", ko:"", url:"", name:"이대호", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsJ7v32vB8V1g6MyAweLYM9B-T9eISpFmgauwNrvjS_ieG0JKxMVwz2iFN&s=10", imgs:["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsJ7v32vB8V1g6MyAweLYM9B-T9eISpFmgauwNrvjS_ieG0JKxMVwz2iFN&s=10"] },
         ] },
       ], altSections: [
         { label:"종합 오픈마켓", sub:"Open Market", items: [
