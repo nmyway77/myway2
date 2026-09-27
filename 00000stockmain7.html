@@ -730,13 +730,13 @@
   </header>
 
 
-  <section id="chartTop" class="chart-top" style="">
+  <section id="chartTop" class="chart-top" style="display: none;">
     <div class="chart-top-inner">
       <div id="infoWrap"></div>
     </div>
   </section>
 
-  <main class="main" id="main" data-tab="today"></main>
+  <main class="main" id="main" data-tab="news"></main>
 
   <footer class="myway-footer">
     <a href="https://myway.kr/" target="_top">마이웨이 myway.kr</a>
@@ -859,7 +859,7 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayStockV1_dist";
-    const DIST_SIG = "sig1790493162456";
+    const DIST_SIG = "sig1790493582477";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-stock-v1';   // JSON 식별자 — 다른 도구 JSON과 섞임 방지
     let _distChecked = false;
@@ -1699,7 +1699,7 @@
     /* @TABSMETA_START */
     const DEFAULT_TABS_META = [
       { id:"today", label:"TODAY" },
-      { id:"tab", label:"코인 유튜버" },
+      { id:"tab", label:"유튜버" },
       { id:"news", label:"리포트&뉴스" },
       { id:"chart", label:"주요 차트" },
       { id:"sites", label:"주요 사이트" },
