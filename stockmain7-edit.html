@@ -82,12 +82,12 @@
       background: rgba(255, 255, 255, 0.92);
       backdrop-filter: saturate(180%) blur(12px);
       -webkit-backdrop-filter: saturate(180%) blur(12px);
-      padding: 12px 14px;
+      padding: 9px 14px;
       padding-left: max(14px, env(safe-area-inset-left));
       padding-right: max(14px, env(safe-area-inset-right));
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       justify-content: center;
       justify-content: safe center;
       overflow-x: auto;
@@ -103,7 +103,7 @@
       align-items: center;
       gap: 2px;
       flex: 0 0 auto;
-      padding-right: 11px;
+      padding-right: 9px;
       border-right: 1.5px solid rgba(0,0,0,0.10);
       position: sticky;
       left: 0;
@@ -112,10 +112,10 @@
     }
     .hcs-switch a {
       font-weight: 800;
-      font-size: .9rem;
+      font-size: .78rem;
       text-decoration: none;
       color: var(--text-sub);
-      padding: 6px 11px;
+      padding: 5px 9px;
       border-radius: 999px;
       letter-spacing: -0.2px;
       transition: all .15s;
@@ -131,7 +131,7 @@
       flex: 0 0 auto;
       min-width: 0;
       display: flex;
-      gap: 8px;
+      gap: 6px;
       justify-content: safe center;  /* 데스크탑: 중앙정렬 / 모바일 좁은 화면: 자동 좌측 폴백 */
       overflow-x: visible;
       scrollbar-width: none;
@@ -141,12 +141,12 @@
     .tab-nav::-webkit-scrollbar { display: none; }
     .tab-btn {
       font: inherit;
-      font-size: .9rem;
+      font-size: .76rem;
       font-weight: 700;
       letter-spacing: -0.2px;
-      padding: 7px 14px;
+      padding: 5px 11px;
       border-radius: 999px;
-      border: 1.5px solid rgba(0,0,0,0.08);
+      border: 1.2px solid rgba(0,0,0,0.08);
       background: rgba(0,0,0,0.03);
       color: var(--text-sub);
       cursor: pointer;
@@ -179,7 +179,7 @@
     .main {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 28px 16px 60px;
+      padding: 24px 16px 60px;
       padding-bottom: calc(60px + var(--safe-bottom));
     }
 
@@ -637,8 +637,7 @@
     .masonry.photo-tab .split-hint .sh-left { justify-content:flex-start; padding-left:9px; background:linear-gradient(to right, rgba(20,20,30,.5), transparent 72%); }
     .masonry.photo-tab .split-hint .sh-right { justify-content:flex-end; padding-right:9px; background:linear-gradient(to left, rgba(20,20,30,.5), transparent 72%); }
     .masonry.photo-tab .split-hint svg { width:13px; height:13px; flex:0 0 auto; }
-    /* 핸드폰(터치 기기)에서는 원본/페이지 힌트 글자를 아예 숨김 (PC 마우스 오버에서만 표시) */
-    @media (hover:none){ .masonry.photo-tab .split-hint { display:none !important; } }
+    @media (hover:none){ .masonry.photo-tab .split-hint { opacity:1; } .masonry.photo-tab .split-hint > span { font-size:.62rem; } }
     body.editing .masonry.photo-tab .split-hint, body.editing .masonry.photo-tab .multi-badge { display:none; }
     /* 사진 항목 입력 모달 */
     .pdlg .field { display:block; margin-bottom:13px; }
@@ -730,13 +729,13 @@
   </header>
 
 
-  <section id="chartTop" class="chart-top" style="display: none;">
+  <section id="chartTop" class="chart-top" style="">
     <div class="chart-top-inner">
       <div id="infoWrap"></div>
     </div>
   </section>
 
-  <main class="main" id="main" data-tab="news"></main>
+  <main class="main" id="main" data-tab="today"></main>
 
   <footer class="myway-footer">
     <a href="https://myway.kr/" target="_top">마이웨이 myway.kr</a>
@@ -1863,9 +1862,7 @@
           a.setAttribute('aria-label', nm);
           const cover = photos.length ? photos[0].img : (it.img || '');
           if (cover) {
-            const img = document.createElement('img'); img.src = cover; img.alt = nm; img.loading = (ii < 12 ? 'eager' : 'lazy'); img.decoding = 'async'; img.referrerPolicy = 'no-referrer'; img.draggable = false;
-            /* 사진 주소가 막혀 있으면(핫링크 차단·폰 네트워크 등) 카드가 높이 0으로 사라지지 않도록 제목 카드로 대체 */
-            img.onerror = function () { img.onerror = null; const ph = document.createElement('div'); ph.className = 'gph'; ph.textContent = nm || '?'; img.replaceWith(ph); };
+            const img = document.createElement('img'); img.src = cover; img.alt = nm; img.loading = 'lazy'; img.decoding = 'async'; img.referrerPolicy = 'no-referrer'; img.draggable = false;
             a.appendChild(img);
           } else {
             const ph = document.createElement('div'); ph.className = 'gph'; ph.textContent = nm || '?'; a.appendChild(ph);

@@ -87,12 +87,12 @@
       backdrop-filter: saturate(180%) blur(12px);
       -webkit-backdrop-filter: saturate(180%) blur(12px);
       border-bottom: 1px solid rgba(0,0,0,0.06);
-      padding: 12px 14px;
+      padding: 9px 14px;
       padding-left: max(14px, env(safe-area-inset-left));
       padding-right: max(14px, env(safe-area-inset-right));
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       justify-content: center;
       justify-content: safe center;
       overflow-x: auto;
@@ -108,7 +108,7 @@
       align-items: center;
       gap: 2px;
       flex: 0 0 auto;
-      padding-right: 11px;
+      padding-right: 9px;
       border-right: 1.5px solid rgba(0,0,0,0.10);
       position: sticky;
       left: 0;
@@ -117,10 +117,10 @@
     }
     .hcs-switch a {
       font-weight: 800;
-      font-size: .9rem;
+      font-size: .78rem;
       text-decoration: none;
       color: var(--text-sub);
-      padding: 6px 11px;
+      padding: 5px 9px;
       border-radius: 999px;
       letter-spacing: -0.2px;
       transition: all .15s;
@@ -136,7 +136,7 @@
       flex: 0 0 auto;
       min-width: 0;
       display: flex;
-      gap: 8px;
+      gap: 6px;
       overflow-x: visible;
       scrollbar-width: none;
       -ms-overflow-style: none;
@@ -145,12 +145,12 @@
     .tab-nav::-webkit-scrollbar { display: none; }
     .tab-btn {
       font: inherit;
-      font-size: .9rem;
+      font-size: .76rem;
       font-weight: 700;
       letter-spacing: -0.2px;
-      padding: 7px 14px;
+      padding: 5px 11px;
       border-radius: 999px;
-      border: 1.5px solid rgba(0,0,0,0.08);
+      border: 1.2px solid rgba(0,0,0,0.08);
       background: rgba(0,0,0,0.03);
       color: var(--text-sub);
       cursor: pointer;
@@ -183,11 +183,11 @@
     .main {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 56px 16px 60px;
+      padding: 44px 16px 60px;
       padding-bottom: calc(60px + var(--safe-bottom));
     }
 
-    .section { margin-bottom: 32px; }
+    .section { margin-bottom: 26px; }
     .section:last-child { margin-bottom: 0; }
 
     .section-head {
@@ -386,20 +386,20 @@
     /* 원형 로고 그리드 (INDEXMAIN 디자인) - 기본: 고정 10열 74px */
     .logo-grid {
       display: grid;
-      grid-template-columns: repeat(10, 74px);
-      gap: 24px;
+      grid-template-columns: repeat(10, 62px);
+      gap: 18px;
       justify-content: center;
       width: 100%;
       max-width: 100%;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     .logo-tile {
-      width: 74px;
-      height: 74px;
+      width: 62px;
+      height: 62px;
       border-radius: 50%;
       background: #fff;
-      box-shadow: 0 3px 24px 0 #b1c7e866;
-      border: 3px solid #e5e8f6;
+      box-shadow: 0 3px 20px 0 #b1c7e866;
+      border: 2.5px solid #e5e8f6;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -418,8 +418,8 @@
       /* 박스는 정지 — 회전/스케일은 이미지가 담당 */
     }
     .logo-tile img {
-      width: 54px;
-      height: 54px;
+      width: 44px;
+      height: 44px;
       object-fit: contain;
       background: transparent;
       border-radius: 50%;
@@ -432,7 +432,7 @@
     }
     /* + 추가 타일 (위 logo-tile과 동일 규격, 점선) */
     .logo-tile.fav-add { border-style: dashed; border-color: #c2cbe8; background: #f6f8ff; }
-    .logo-tile.fav-add::before { content: "+"; font-size: 36px; font-weight: 300; color: #9aa6cf; line-height: 1; }
+    .logo-tile.fav-add::before { content: "+"; font-size: 30px; font-weight: 300; color: #9aa6cf; line-height: 1; }
     .logo-tile.fav-add:hover { border-color: #7e94ff; background: #eef2ff; box-shadow: 0 8px 32px 0 #7e94ff66; }
     .logo-tile.fav-add:hover::before { color: #5b6bff; }
     /* 즐겨찾기 추가 모달 */
@@ -473,40 +473,40 @@
 
     /* ===== logo-grid 반응형 (INDEXMAIN과 동일한 9분기) ===== */
     /* 1) 초대형 PC (1600px+) */
-    @media (min-width: 1600px) {
+    @media (min-width: 1280px) {
       .logo-grid {
-        grid-template-columns: repeat(12, 80px);
-        gap: 28px;
-      }
-      .logo-tile { width: 80px; height: 80px; }
-      .logo-tile img { width: 58px; height: 58px; }
-    }
-    /* 2) 일반 PC (1101 ~ 1599px) */
-    @media (min-width: 1101px) and (max-width: 1599px) {
-      .logo-grid {
-        grid-template-columns: repeat(10, 74px);
+        grid-template-columns: repeat(12, 64px);
         gap: 22px;
       }
-      .logo-tile { width: 74px; height: 74px; }
-      .logo-tile img { width: 54px; height: 54px; }
+      .logo-tile { width: 64px; height: 64px; }
+      .logo-tile img { width: 46px; height: 46px; }
     }
-    /* 3) 노트북 / 작은 PC (901 ~ 1100px) */
-    @media (min-width: 901px) and (max-width: 1100px) {
+    /* 2) 일반 PC (1000 ~ 1279px) */
+    @media (min-width: 1000px) and (max-width: 1279px) {
       .logo-grid {
-        grid-template-columns: repeat(8, 70px);
+        grid-template-columns: repeat(10, 62px);
         gap: 18px;
       }
-      .logo-tile { width: 70px; height: 70px; }
-      .logo-tile img { width: 50px; height: 50px; }
+      .logo-tile { width: 62px; height: 62px; }
+      .logo-tile img { width: 44px; height: 44px; }
     }
-    /* 4) 태블릿 (701 ~ 900px) */
-    @media (min-width: 701px) and (max-width: 900px) {
+    /* 3) 노트북 / 작은 PC (800 ~ 999px) */
+    @media (min-width: 800px) and (max-width: 999px) {
       .logo-grid {
-        grid-template-columns: repeat(7, 70px);
+        grid-template-columns: repeat(8, 60px);
         gap: 16px;
       }
-      .logo-tile { width: 70px; height: 70px; }
-      .logo-tile img { width: 50px; height: 50px; }
+      .logo-tile { width: 60px; height: 60px; }
+      .logo-tile img { width: 42px; height: 42px; }
+    }
+    /* 4) 태블릿 (701 ~ 799px) */
+    @media (min-width: 701px) and (max-width: 799px) {
+      .logo-grid {
+        grid-template-columns: repeat(7, 58px);
+        gap: 14px;
+      }
+      .logo-tile { width: 58px; height: 58px; }
+      .logo-tile img { width: 40px; height: 40px; }
     }
     /* 5) 핸드폰 세로 (~ 700px) */
     @media (max-width: 700px) {
@@ -590,11 +590,11 @@
     .extra-logo-section {
       width: 100%;
       max-width: 1280px;
-      margin: 42px auto 24px;
+      margin: 34px auto 20px;
       padding: 0 14px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 16px;
     }
     /* extra-logo-section 안에서도 동일한 logo-grid 스타일 재사용 */
     .extra-logo-section .logo-grid {
@@ -604,7 +604,7 @@
     body[data-active-tab="daily"] .main { padding-bottom: 0; }
     body[data-active-tab="daily"] .main .section:last-of-type { margin-bottom: 0; }
     body[data-active-tab="daily"] .main .logo-grid:last-child { margin-bottom: 0; }
-    body[data-active-tab="daily"] .extra-logo-section { margin-top: 24px; }
+    body[data-active-tab="daily"] .extra-logo-section { margin-top: 20px; }
     body[data-active-tab="daily"].editing .extra-logo-section { margin-top: 12px; }
 
   .sc-section {
@@ -678,8 +678,8 @@
     /* ───── 그리드: .logo-row와 동일한 구조 ───── */
     .sc-grid {
       display: grid;
-      grid-template-columns: repeat(10, 74px);
-      gap: 24px;
+      grid-template-columns: repeat(10, 62px);
+      gap: 18px;
       justify-content: center;
       width: 100%;
       max-width: 100%;
@@ -688,12 +688,12 @@
     /* ───── 타일: .ai-logo-wrap와 동일한 원형 ───── */
     .sc-tile {
       position: relative;
-      width: 74px;
-      height: 74px;
+      width: 62px;
+      height: 62px;
       border-radius: 50%;
       background: #fff;
-      box-shadow: 0 3px 24px 0 #b1c7e866;
-      border: 3px solid #e5e8f6;
+      box-shadow: 0 3px 20px 0 #b1c7e866;
+      border: 2.5px solid #e5e8f6;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -802,24 +802,24 @@
     }
 
     /* ───── 반응형 (logo-row와 완전 동일하게) ───── */
-    @media (min-width: 1600px) {
+    @media (min-width: 1280px) {
       .sc-section { padding: 0 16px; }
-      .sc-grid { grid-template-columns: repeat(12, 80px); gap: 28px; }
-      .sc-tile { width: 80px; height: 80px; }
-      .sc-fav.sc-ph { font-size: 30px; }
+      .sc-grid { grid-template-columns: repeat(12, 64px); gap: 22px; }
+      .sc-tile { width: 64px; height: 64px; }
+      .sc-fav.sc-ph { font-size: 26px; }
     }
-    @media (min-width: 1101px) and (max-width: 1599px) {
-      .sc-grid { grid-template-columns: repeat(10, 74px); gap: 22px; }
-      .sc-tile { width: 74px; height: 74px; }
+    @media (min-width: 1000px) and (max-width: 1279px) {
+      .sc-grid { grid-template-columns: repeat(10, 62px); gap: 18px; }
+      .sc-tile { width: 62px; height: 62px; }
     }
-    @media (min-width: 901px) and (max-width: 1100px) {
-      .sc-grid { grid-template-columns: repeat(8, 70px); gap: 18px; }
-      .sc-tile { width: 70px; height: 70px; }
+    @media (min-width: 800px) and (max-width: 999px) {
+      .sc-grid { grid-template-columns: repeat(8, 60px); gap: 16px; }
+      .sc-tile { width: 60px; height: 60px; }
     }
-    @media (min-width: 701px) and (max-width: 900px) {
+    @media (min-width: 701px) and (max-width: 799px) {
       .sc-section { padding: 0 14px; }
-      .sc-grid { grid-template-columns: repeat(7, 70px); gap: 16px; }
-      .sc-tile { width: 70px; height: 70px; }
+      .sc-grid { grid-template-columns: repeat(7, 58px); gap: 14px; }
+      .sc-tile { width: 58px; height: 58px; }
     }
     @media (max-width: 700px) {
       .sc-section { padding: 0 10px; }

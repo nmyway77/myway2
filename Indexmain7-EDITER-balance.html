@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko"><head>
   <meta charset="UTF-8">
-  <title>사이트 바 | MYWAY.KR</title>
+  <title>마이웨이(MYWAY.KR) - 자주가는 사이트 모음 | 한국 뉴스·VOD·라디오·게시판·차트 한자리</title>
   <meta name="description" content="마이웨이(MYWAY.KR)는 한국에서 자주 가는 사이트를 한자리에 모은 종합 포털입니다. 뉴스, 지상파 VOD, 라디오, 게시판, 잡지, 주식·코인 비교차트, 유튜브 썸네일 추출기, 세계시계, 계산기까지 모두 모았습니다.">
   <meta name="keywords" content="마이웨이, MYWAY, myway.kr, 마이웨이 포털, 마이웨이 사이트 모음, 자주가는 사이트, 한국 포털, 사이트 모음, 한국 뉴스, 무료 VOD, 한국 라디오, 게시판 모음, 잡지 모음, 주식 비교, 코인 비교, 세계시계, 계산기, 유튜브 썸네일">
-  <link rel="canonical" href="https://myway.kr/barsite.html">
+  <link rel="canonical" href="https://myway.kr/indexmain7.html">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -17,7 +17,7 @@
   <!-- Open Graph (페이스북·카카오톡 공유 시 표시) -->
   <meta property="og:title" content="마이웨이(MYWAY.KR) - 자주가는 사이트 모음 | 한국 뉴스·VOD·라디오·게시판·차트 한자리">
   <meta property="og:description" content="한국에서 자주 가는 사이트를 한자리에서. 뉴스, 지상파 VOD, 라디오, 게시판, 잡지, 주식·코인 비교차트, 유튜브 썸네일 추출기, 세계시계, 계산기까지 모두 모은 한국 종합 포털.">
-  <meta property="og:url" content="https://myway.kr/barsite.html">
+  <meta property="og:url" content="https://myway.kr/indexmain7.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="MYWAY.KR">
   <meta property="og:locale" content="ko_KR">
@@ -86,7 +86,7 @@
       background: rgba(255, 255, 255, 0.92);
       backdrop-filter: saturate(180%) blur(12px);
       -webkit-backdrop-filter: saturate(180%) blur(12px);
-      border-bottom: 1px solid rgba(0,0,0,0.06);
+      border-bottom: 1px solid rgba(0,0,0,0.045);
       padding: 9px 14px;
       padding-left: max(14px, env(safe-area-inset-left));
       padding-right: max(14px, env(safe-area-inset-right));
@@ -166,10 +166,10 @@
     }
     .tab-btn:active { transform: scale(0.96); }
     .tab-btn.is-active {
-      background: #1f2740;
+      background: linear-gradient(135deg,#5b6bff 0%,#8c6ff0 100%);
       color: #fff;
-      border-color: #1f2740;
-      box-shadow: 0 4px 16px rgba(31, 39, 64, 0.25);
+      border-color: transparent;
+      box-shadow: 0 4px 14px rgba(108, 92, 231, 0.28);
     }
     .tab-btn .count {
       display: inline-block;
@@ -183,7 +183,7 @@
     .main {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 44px 16px 60px;
+      padding: 40px 16px 60px;
       padding-bottom: calc(60px + var(--safe-bottom));
     }
 
@@ -398,8 +398,8 @@
       height: 62px;
       border-radius: 50%;
       background: #fff;
-      box-shadow: 0 3px 20px 0 #b1c7e866;
-      border: 2.5px solid #e5e8f6;
+      box-shadow: 0 2px 10px 0 #b1c7e84d;
+      border: 2px solid #e9ecf5;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -412,7 +412,7 @@
     }
     .logo-tile:hover,
     .logo-tile:active {
-      box-shadow: 0 8px 32px 0 #7e94ff99;
+      box-shadow: 0 6px 22px 0 #7e94ff80;
       border-color: #94a2ff;
       background: #f7faff;
       /* 박스는 정지 — 회전/스케일은 이미지가 담당 */
@@ -692,8 +692,8 @@
       height: 62px;
       border-radius: 50%;
       background: #fff;
-      box-shadow: 0 3px 20px 0 #b1c7e866;
-      border: 2.5px solid #e5e8f6;
+      box-shadow: 0 2px 10px 0 #b1c7e84d;
+      border: 2px solid #e9ecf5;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -705,7 +705,7 @@
       color: inherit;
     }
     .sc-tile:hover {
-      box-shadow: 0 8px 32px 0 #7e94ff99;
+      box-shadow: 0 6px 22px 0 #7e94ff80;
       border-color: #94a2ff;
       background: #f7faff;
     }
@@ -1310,18 +1310,18 @@
 
   <script>
     /* @CONFIG */
-    const IS_DIST = true;
+    const IS_DIST = false;
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
-    const STORE_KEY = "mywayBarSiteV1_dist";
-    const DIST_SIG = "sig1790510252760";
+    const STORE_KEY = "mywayIndexV1";
+    const DIST_SIG = "";
     /* @CONFIG_END */
-    const DATA_KIND = 'myway-barsite-v1';
+    const DATA_KIND = 'myway-index-v1';
     const DATA_VERSION = '4';
     let _distChecked = false;
     function ensureDistFresh(){
       if(_distChecked || !IS_DIST) return; _distChecked = true;
-      try{ var sk = STORE_KEY+'_sig'; if(localStorage.getItem(sk) !== DIST_SIG){ localStorage.setItem(sk, DIST_SIG); localStorage.removeItem(STORE_KEY); localStorage.removeItem(STORE_KEY+'_tabsmeta'); localStorage.removeItem(STORE_KEY+'_v'); /* 새 배포본이면 즐겨찾기 타일도 파일에 굳어진 값으로 교체 */ localStorage.removeItem('mywayBarFavTilesV1'); } }catch(_){}
+      try{ var sk = STORE_KEY+'_sig'; if(localStorage.getItem(sk) !== DIST_SIG){ localStorage.setItem(sk, DIST_SIG); localStorage.removeItem(STORE_KEY); localStorage.removeItem(STORE_KEY+'_tabsmeta'); localStorage.removeItem(STORE_KEY+'_v'); /* 새 배포본이면 즐겨찾기 타일도 파일에 굳어진 값으로 교체 */ localStorage.removeItem('mywayFavTilesV1'); } }catch(_){}
     }
 
     /* 복제방지 */
@@ -1357,6 +1357,47 @@
        - fear  탭: 코인 공포·탐욕 지수 (cfgi.io) 12개 */
     /* @DATA_START */
     const DEFAULT_TABS = {
+      "daily": { logoStyle: true, sections: [
+        { label:"바로가기", sub:"", items: [
+          { ticker:"ChatGPT", ko:"", url:"https://chat.openai.com/", name:"ChatGPT", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMdM9MEQ0ExL1PmInT3U5I8v63YXBEdoIT0Q&s" },
+          { ticker:"claude", ko:"", url:"https://claude.com/", name:"claude", img:"https://appexpress.ai/wp-content/uploads/2025/06/claude-ai-logo.webp" },
+          { ticker:"Grok", ko:"", url:"https://grok.com/?referrer=website", name:"Grok", img:"https://images.seeklogo.com/logo-png/61/2/grok-logo-png_seeklogo-613403.png" },
+          { ticker:"Gemini", ko:"", url:"https://gemini.google.com/", name:"Gemini", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSm5xNOdkOwTDL9cxAWHDDyjK-6HcM-qHCxhw&s" },
+          { ticker:"Perplexity", ko:"", url:"https://www.perplexity.ai/", name:"Perplexity", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpPv1KMnK1H9jPpIRzMvNRjyGSauDIOsOONQ&s" },
+          { ticker:"Copilot", ko:"", url:"https://copilot.microsoft.com/", name:"Copilot", img:"https://www.shutterstock.com/image-vector/colorful-logo-design-on-white-600nw-2504051213.jpg" },
+          { ticker:"youtube", ko:"", url:"https://www.youtube.com/", name:"youtube", img:"https://i.namu.wiki/i/nFpEwvOC3osgEryYjpr0dDIX8x3I25n3TghiV636cJIQSYyVp2cFORD9oBKHC2CvuHEGdPWW_VSrTlSzkE9pBQ.svg" },
+          { ticker:"넷플릭스", ko:"", url:"https://href.li/?https://www.netflix.com/", name:"넷플릭스", img:"https://cdn.simpleicons.org/netflix/E50914" },
+          { ticker:"디즈니+", ko:"", url:"https://href.li/?https://www.disneyplus.com/ko-kr", name:"디즈니+", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Disney%2B_logo.svg" },
+          { ticker:"쿠팡플레이", ko:"", url:"https://www.coupangplay.com/catalog", name:"쿠팡플레이", img:"https://d2juy7qzamcf56.cloudfront.net/2024-11-26/09738456-1277-4953-80fb-fc9c9d2df777.png" },
+          { ticker:"google", ko:"", url:"https://www.google.com/webhp?hl=en&gl=au", name:"google", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYMMskKN9Ql1Ep4wG_vEW01t98DUBVXeXE8A&s" },
+          { ticker:"얀덱스", ko:"", url:"https://yandex.com/", name:"얀덱스", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLy84_udbZnEZ2XLBOIdZjgGfKkzZJiL17sSIKF1UuVg&s=10" },
+          { ticker:"yahoo", ko:"", url:"https://www.yahoo.com/", name:"yahoo", img:"https://dl.memuplay.com/new_market/img/com.yahoo.mobile.client.android.finance.icon.2024-12-19-08-15-13.png" },
+          { ticker:"naver", ko:"", url:"https://www.naver.com/", name:"naver", img:"https://play-lh.googleusercontent.com/jYtnK__ibJh9emODIgTyjZdbKym1iAj4RfoVhQZcfbG-DuTSHR5moHVx9CQnqg1yoco9" },
+          { ticker:"daum", ko:"", url:"https://www.daum.net/", name:"daum", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTm-uCPPoWEDsQjRWs3MrM1nkrcqxygYAXbvg&s" },
+          { ticker:"nate", ko:"", url:"https://www.nate.com/", name:"nate", img:"https://m1.nateimg.co.kr/n3main/newBI/nate_ogt.png" },
+          { ticker:"줌", ko:"", url:"https://zum.com/", name:"줌", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKq7knDLDDQnrP-vD1YN8TTFHNNXUkFLfZ0P4rnftOsw&s=10" },
+          { ticker:"bing", ko:"", url:"https://www.bing.com/", name:"bing", img:"https://play-lh.googleusercontent.com/kmxAt02yG8Hp-TzZHDoRGFtB70QFz7njpWQzQp8KANztd-DozlJipu8tprSn80Q8pw" },
+          { ticker:"msn", ko:"", url:"https://www.msn.com/", name:"msn", img:"https://images.icon-icons.com/1488/PNG/512/5307-msn_102525.png" },
+          { ticker:"이글루스", ko:"", url:"https://egloos.com/", name:"이글루스", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1-c91K0GS5oKZY7h3-GDzCD_VvFAFuMm8gDF2oNJe8VlY4UhqiyMaBSQc&s=10" },
+          { ticker:"네이버카페", ko:"", url:"https://section.cafe.naver.com/ca-fe/home/powers/popular", name:"네이버카페", img:"https://i.namu.wiki/i/enhRFSl24PP34o2i61sIOaWBIGlsJHdrlP6_l2Q9JYxbzIcHDvykqgPm5LF3Zp6c6T7S_KpnWS67kDDhz94JIg.svg" },
+          { ticker:"유튜브쇼츠", ko:"", url:"https://www.youtube.com/shorts", name:"유튜브쇼츠", img:"https://www.edigitalagency.com.au/wp-content/uploads/new-YouTube-Shorts-logo-png-large-size.png" },
+          { ticker:"틱톡", ko:"", url:"https://www.tiktok.com/explore", name:"틱톡", img:"https://image.zdnet.co.kr/2021/10/14/5cc59f54b5f3bffe52c47c3ba645d514.png" },
+          { ticker:"x", ko:"", url:"https://x.com/", name:"x", img:"https://freepnglogo.com/images/all_img/1725374683twitter-x-logo.png" },
+          { ticker:"네이버클립", ko:"", url:"https://m.naver.com/", name:"네이버클립", img:"https://cloudreview.co.kr/assets/img/sns/clip.png" },
+          { ticker:"nexon", ko:"", url:"https://www.nexon.com/", name:"nexon", img:"https://i0.wp.com/data.infowos.com/wp-content/uploads/2023/10/image-80.png?fit=379%2C280&ssl=1" },
+          { ticker:"soundcloud", ko:"", url:"https://soundcloud.com/search?q=%EC%9E%84%EC%9E%AC%EB%B2%94", name:"soundcloud", img:"https://cdn.simpleicons.org/soundcloud/FF5500" },
+          { ticker:"핀터레스트", ko:"", url:"https://kr.pinterest.com/ideas/", name:"핀터레스트", img:"https://upload.wikimedia.org/wikipedia/commons/0/08/Pinterest-logo.png" },
+          { ticker:"인스타그램", ko:"", url:"https://www.instagram.com/", name:"인스타그램", img:"https://img.freepik.com/free-vector/instagram-logo_1199-122.jpg?semt=ais_hybrid&w=740" },
+          { ticker:"podcast", ko:"", url:"https://podcasts.apple.com/kr/browse", name:"podcast", img:"https://www.apple.com/v/apple-podcasts/e/images/meta/apple-podcasts_wechat__cq3l3kjucay6_og.png" },
+          { ticker:"github", ko:"", url:"https://github.com/", name:"github", img:"https://images.icon-icons.com/3685/PNG/512/github_logo_icon_229278.png" },
+          { ticker:"unicorn", ko:"", url:"https://getunicorn.app/ko/product/unicorn-https/windows", name:"unicorn", img:"https://play-lh.googleusercontent.com/MBxbMGKKsNBbswAVWydz4Xy3ccEvDACHG8x_iun0nhUCe8H5NRdZgbw_A0kCHNBEuw" },
+          { ticker:"safevisit", ko:"", url:"https://www.safevisit.org/", name:"safevisit", img:"https://cdn6.aptoide.com/imgs/e/a/8/ea81ef0732f97269e9bd21a81ac68d31_icon.png" },
+          { ticker:"noxinfluencer", ko:"", url:"https://kr.noxinfluencer.com/youtube-channel-rank/top-100-all-all-youtuber-sorted-by-subs-weekly", name:"noxinfluencer", img:"https://cdn.shopify.com/app-store/listing_images/f98a4fd90e4dd3a77daf9eb09a443698/icon/CLzJ98-74YwDEAE=.png" },
+          { ticker:"semrush", ko:"", url:"https://ko.semrush.com/trending-websites/kr/all", name:"semrush", img:"https://cdn.brandfetch.io/idt3n8W3ef/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1667587193513" },
+          { ticker:"쿠팡", ko:"", url:"https://www.coupang.com/", name:"쿠팡", img:"https://imgmmw.mbn.co.kr/storage/news/2020/03/30/9be5b2a51a9935efe75ffcfbf3bb3bfb.png" },
+          { ticker:"컬리", ko:"", url:"https://www.kurly.com/main", name:"컬리", img:"https://logo-resources.thevc.kr/organizations/200x200/b19e571b0602922971f4bb129c172f207b87d3c51d32af1015f393d2d5ed13f0_1616673222364807.jpg" },
+        ] },
+      ] },
       "portal": { photoStyle: true, sections: [
         { label:"", sub:"", items: [
           { ticker:"포브스", ko:"", url:"https://www.forbeskorea.co.kr/", name:"포브스", img:"https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000533599.jpg", imgs:["https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000533599.jpg"] },
@@ -1450,6 +1491,313 @@
           { ticker:"Scribd", ko:"문서 공유", url:"https://www.scribd.com/" },
         ] },
       ] },
+      "news": { newFirst: true, sections: [
+        { label:"종합 일간지", sub:"General News", link:{text:"뉴스-바로보기", url:"https://myway.kr/newsitesbar3.html"}, items: [
+          { ticker:"조선일보", ko:"chosun.com", url:"https://www.chosun.com/" },
+          { ticker:"중앙일보", ko:"joongang.co.kr", url:"https://www.joongang.co.kr/" },
+          { ticker:"동아일보", ko:"donga.com", url:"https://www.donga.com/" },
+          { ticker:"한겨레", ko:"hani.co.kr", url:"https://www.hani.co.kr/" },
+          { ticker:"경향신문", ko:"khan.co.kr", url:"https://www.khan.co.kr/" },
+          { ticker:"국민일보", ko:"kmib.co.kr", url:"https://www.kmib.co.kr/" },
+          { ticker:"서울신문", ko:"seoul.co.kr", url:"https://www.seoul.co.kr/" },
+          { ticker:"문화일보", ko:"munhwa.com", url:"https://www.munhwa.com/" },
+          { ticker:"세계일보", ko:"segye.com", url:"https://www.segye.com/" },
+          { ticker:"한국일보", ko:"hankookilbo.com", url:"https://www.hankookilbo.com/" },
+          { ticker:"디스패치", ko:"dispatch.co.kr", url:"https://www.dispatch.co.kr/" },
+          { ticker:"THE FACT", ko:"tf.co.kr", url:"https://www.tf.co.kr/" },
+        ] },
+        { label:"경제 일간지", sub:"Business News", items: [
+          { ticker:"한국경제", ko:"hankyung.com", url:"https://www.hankyung.com/" },
+          { ticker:"매일경제", ko:"mk.co.kr", url:"https://www.mk.co.kr/" },
+          { ticker:"머니투데이", ko:"mt.co.kr", url:"https://www.mt.co.kr/" },
+          { ticker:"이데일리", ko:"edaily.co.kr", url:"https://www.edaily.co.kr/" },
+          { ticker:"헤럴드경제", ko:"heraldcorp.com", url:"https://www.heraldcorp.com/" },
+          { ticker:"서울경제", ko:"sedaily.com", url:"https://www.sedaily.com/" },
+          { ticker:"아시아경제", ko:"asiae.co.kr", url:"https://www.asiae.co.kr/" },
+          { ticker:"파이낸셜뉴스", ko:"fnnews.com", url:"https://www.fnnews.com/" },
+          { ticker:"디지털타임스", ko:"dt.co.kr", url:"https://www.dt.co.kr/" },
+          { ticker:"전자신문", ko:"etnews.com", url:"https://www.etnews.com/" },
+        ] },
+        { label:"지방지", sub:"Local News", items: [
+          { ticker:"부산일보", ko:"busan.com", url:"https://www.busan.com/" },
+          { ticker:"국제신문", ko:"부산 · kookje.co.kr", url:"https://www.kookje.co.kr/" },
+          { ticker:"매일신문", ko:"대구 · imaeil.com", url:"https://www.imaeil.com/" },
+          { ticker:"영남일보", ko:"대구·경북", url:"https://www.yeongnam.com/" },
+          { ticker:"경북일보", ko:"kyongbuk.co.kr", url:"https://www.kyongbuk.co.kr/" },
+          { ticker:"경남신문", ko:"경남 · knnews.co.kr", url:"https://www.knnews.co.kr/" },
+          { ticker:"경남도민일보", ko:"idomin.com", url:"https://www.idomin.com/" },
+          { ticker:"강원일보", ko:"kwnews.co.kr", url:"https://www.kwnews.co.kr/" },
+          { ticker:"강원도민일보", ko:"kado.net", url:"https://www.kado.net/" },
+          { ticker:"충청일보", ko:"ccdailynews.com", url:"https://www.ccdailynews.com/" },
+          { ticker:"충청투데이", ko:"cctoday.co.kr", url:"https://www.cctoday.co.kr/" },
+          { ticker:"대전일보", ko:"daejonilbo.com", url:"https://www.daejonilbo.com/" },
+          { ticker:"광주일보", ko:"kwangju.co.kr", url:"https://www.kwangju.co.kr/" },
+          { ticker:"전남일보", ko:"jnilbo.com", url:"https://www.jnilbo.com/" },
+          { ticker:"전북일보", ko:"jjan.kr", url:"https://www.jjan.kr/" },
+          { ticker:"무등일보", ko:"광주 · mdilbo.com", url:"https://www.mdilbo.com/" },
+          { ticker:"경기일보", ko:"kyeonggi.com", url:"https://www.kyeonggi.com/" },
+          { ticker:"인천일보", ko:"incheonilbo.com", url:"https://www.incheonilbo.com/" },
+          { ticker:"제주일보", ko:"jejunews.com", url:"https://www.jejunews.com/" },
+          { ticker:"한라일보", ko:"제주 · ihalla.com", url:"https://www.ihalla.com/" },
+        ] },
+        { label:"통신사·인터넷 매체", sub:"News Agency & Online", items: [
+          { ticker:"연합뉴스", ko:"yna.co.kr", url:"https://www.yna.co.kr/" },
+          { ticker:"뉴시스", ko:"newsis.com", url:"https://www.newsis.com/" },
+          { ticker:"뉴스1", ko:"news1.kr", url:"https://www.news1.kr/" },
+          { ticker:"오마이뉴스", ko:"ohmynews.com", url:"https://www.ohmynews.com/" },
+          { ticker:"프레시안", ko:"pressian.com", url:"https://www.pressian.com/" },
+          { ticker:"미디어오늘", ko:"mediatoday.co.kr", url:"https://www.mediatoday.co.kr/" },
+          { ticker:"노컷뉴스", ko:"nocutnews.co.kr", url:"https://www.nocutnews.co.kr/" },
+          { ticker:"비즈니스포스트", ko:"businesspost.co.kr", url:"https://www.businesspost.co.kr/" },
+          { ticker:"미디어스", ko:"mediaus.co.kr", url:"https://www.mediaus.co.kr/" },
+          { ticker:"PD저널", ko:"pdjournal.com", url:"https://www.pdjournal.com/" },
+        ] },
+        { label:"스포츠·연예", sub:"Sports & Entertainment", items: [
+          { ticker:"스포츠조선", ko:"sports.chosun.com", url:"https://sports.chosun.com/" },
+          { ticker:"일간스포츠", ko:"isplus.com", url:"https://isplus.com/" },
+          { ticker:"스포츠동아", ko:"sports.donga.com", url:"https://sports.donga.com/" },
+          { ticker:"스포츠경향", ko:"sports.khan.co.kr", url:"https://sports.khan.co.kr/" },
+          { ticker:"스포츠서울", ko:"sportsseoul.com", url:"https://www.sportsseoul.com/" },
+          { ticker:"스포츠한국", ko:"sports.hankooki.com", url:"https://sports.hankooki.com/" },
+          { ticker:"OSEN", ko:"osen.co.kr", url:"https://www.osen.co.kr/" },
+          { ticker:"마이데일리", ko:"mydaily.co.kr", url:"https://www.mydaily.co.kr/" },
+          { ticker:"엑스포츠뉴스", ko:"xportsnews.com", url:"https://www.xportsnews.com/" },
+          { ticker:"스타뉴스", ko:"starnewskorea.com", url:"https://www.starnewskorea.com/" },
+        ] },
+      ], altSections: [
+        { label:"", sub:"", items: [
+          { ticker:"뉴스 바로보기", ko:"", url:"https://myway.kr/newsitesbar3.html", pin:true, name:"뉴스 바로보기", img:"https://cdn.goodedumedia.com/news/photo/202501/238_381_4842.png", imgs:["https://cdn.goodedumedia.com/news/photo/202501/238_381_4842.png"] },
+          { ticker:"동아일보", ko:"", url:"https://www.donga.com/", name:"동아일보", img:"https://clogo.saramin.co.kr/workenv-bg/202502/12/srk3nd87_jt3x-1me54wg_workenv-bg.png/sri/resize/860x516", imgs:["https://clogo.saramin.co.kr/workenv-bg/202502/12/srk3nd87_jt3x-1me54wg_workenv-bg.png/sri/resize/860x516"] },
+          { ticker:"중앙일보", ko:"", url:"https://www.joongang.co.kr/", name:"중앙일보", img:"https://upload.wikimedia.org/wikipedia/commons/8/8f/Oldkoreadailylogo.jpg?utm_source=ko.wikipedia.org&utm_campaign=index&utm_content=original", imgs:["https://upload.wikimedia.org/wikipedia/commons/8/8f/Oldkoreadailylogo.jpg?utm_source=ko.wikipedia.org&utm_campaign=index&utm_content=original"] },
+          { ticker:"“한국 개인정보 DB 1건당 500달러” 해커들의 쇼핑몰 된 다크웹", ko:"", url:"https://www.kmib.co.kr/article/view.asp?arcid=9000017372&code=61121111&sid1=soc", name:"“한국 개인정보 DB 1건당 500달러” 해커들의 쇼핑몰 된 다크웹", img:"https://myway.kr/0000KKK.png", imgs:["https://myway.kr/0000KKK.png"] },
+        ] },
+      ] },
+      "bbs": { sections: [
+        { label:"BBS · 커뮤니티", sub:"Community", items: [
+          { ticker:"더쿠", ko:"theqoo.net", url:"https://theqoo.net/hot?filter_mode=normal" },
+          { ticker:"클리앙", ko:"clien.net", url:"https://www.clien.net/service/group/clien_all?&od=T33" },
+          { ticker:"에펨코리아", ko:"fmkorea.com", url:"https://www.fmkorea.com/" },
+          { ticker:"디시인사이드", ko:"dcinside.com", url:"https://www.dcinside.com/" },
+          { ticker:"보배드림", ko:"bobaedream.co.kr", url:"https://www.bobaedream.co.kr/list?code=freeb" },
+          { ticker:"인벤", ko:"inven.co.kr", url:"https://www.inven.co.kr/board/webzine/2097?iskin=webzine" },
+          { ticker:"인스티즈", ko:"instiz.net", url:"https://www.instiz.net/pt?srt=3#greentop" },
+          { ticker:"루리웹", ko:"ruliweb.com", url:"https://bbs.ruliweb.com/best/humor/now?orderby=readcount&range=7d" },
+          { ticker:"일베저장소", ko:"ilbe.com", url:"https://www.ilbe.com/" },
+          { ticker:"개드립", ko:"dogdrip.net", url:"https://www.dogdrip.net/?mid=dogdrip&sort_index=popular" },
+          { ticker:"와이고수", ko:"ygosu.com", url:"https://ygosu.com/board/best_article/?type=daily" },
+          { ticker:"이토랜드", ko:"etoland.co.kr", url:"https://etoland.co.kr/b/hit/list" },
+          { ticker:"가생이닷컴", ko:"gasengi.com", url:"https://www.gasengi.com/" },
+          { ticker:"네이트판", ko:"pann.nate.com", url:"https://pann.nate.com/" },
+          { ticker:"미시쿠폰", ko:"missycoupons.com", url:"https://www.missycoupons.com/zero/board.php#id=general" },
+          { ticker:"오늘의 유머", ko:"todayhumor.co.kr", url:"https://www.todayhumor.co.kr/board/hold/list.php" },
+          { ticker:"알고사", ko:"rgo4.com", url:"https://rgo4.com/free" },
+          { ticker:"뽐뿌", ko:"ppomppu.co.kr", url:"https://www.ppomppu.co.kr/zboard/zboard.php?id=f1020" },
+          { ticker:"웃긴대학", ko:"humoruniv.com", url:"https://web.humoruniv.com/main.html" },
+          { ticker:"SLR클럽", ko:"slrclub.com", url:"https://www.slrclub.com/bbs/zboard.php?id=politics" },
+          { ticker:"MLB파크", ko:"mlbpark.donga.com", url:"https://mlbpark.donga.com/mp" },
+          { ticker:"목동아", ko:"cafe.naver.com", url:"https://cafe.naver.com/f-e/cafes/17191536/menus/0?viewType=L" },
+          { ticker:"PGR21", ko:"pgr21.com", url:"https://www.pgr21.com/" },
+          { ticker:"82쿡", ko:"82cook.com", url:"https://www.82cook.com/" },
+          { ticker:"힙합플레야", ko:"hiphopplaya.com", url:"https://hiphopplaya.com/" },
+          { ticker:"국민제안", ko:"modu.pcpp.go.kr", url:"https://modu.pcpp.go.kr/suggest-board" },
+        ] },
+      ] },
+      "broadcast": { sections: [
+        { label:"국내 방송사", sub:"Korea · 지상파·종편·보도전문", items: [
+          { ticker:"KBS", ko:"kbs.co.kr", url:"https://www.kbs.co.kr/" },
+          { ticker:"MBC", ko:"imbc.com", url:"https://www.imbc.com/" },
+          { ticker:"SBS", ko:"sbs.co.kr", url:"https://www.sbs.co.kr/" },
+          { ticker:"EBS", ko:"ebs.co.kr", url:"https://www.ebs.co.kr/" },
+          { ticker:"JTBC", ko:"jtbc.co.kr", url:"https://jtbc.co.kr/" },
+          { ticker:"TV조선", ko:"tvchosun.com", url:"https://broadcast.tvchosun.com/" },
+          { ticker:"채널A", ko:"channela.com", url:"https://ichannela.com/" },
+          { ticker:"MBN", ko:"mbn.co.kr", url:"https://www.mbn.co.kr/" },
+          { ticker:"YTN", ko:"ytn.co.kr", url:"https://www.ytn.co.kr/" },
+          { ticker:"연합뉴스TV", ko:"yonhapnewstv.co.kr", url:"https://www.yonhapnewstv.co.kr/" },
+        ] },
+        { label:"해외 방송사 · 영미권", sub:"US · UK", items: [
+          { ticker:"CNN", ko:"미국 · cnn.com", url:"https://edition.cnn.com/" },
+          { ticker:"ABC News", ko:"미국 · abcnews.go.com", url:"https://abcnews.go.com/" },
+          { ticker:"NBC News", ko:"미국 · nbcnews.com", url:"https://www.nbcnews.com/" },
+          { ticker:"CBS News", ko:"미국 · cbsnews.com", url:"https://www.cbsnews.com/" },
+          { ticker:"FOX News", ko:"미국 · foxnews.com", url:"https://www.foxnews.com/" },
+          { ticker:"MSNBC", ko:"미국 · msnbc.com", url:"https://www.msnbc.com/" },
+          { ticker:"PBS", ko:"미국 공공방송 · pbs.org", url:"https://www.pbs.org/" },
+          { ticker:"BBC", ko:"영국 · bbc.com", url:"https://www.bbc.com/" },
+          { ticker:"ITV", ko:"영국 · itv.com", url:"https://www.itv.com/" },
+          { ticker:"Sky News", ko:"영국 · news.sky.com", url:"https://news.sky.com/" },
+        ] },
+        { label:"해외 방송사 · 유럽·중동", sub:"Europe · Middle East", items: [
+          { ticker:"Channel 4", ko:"영국 · channel4.com", url:"https://www.channel4.com/" },
+          { ticker:"DW", ko:"독일 · 도이체벨레 · dw.com", url:"https://www.dw.com/" },
+          { ticker:"France 24", ko:"프랑스 · france24.com", url:"https://www.france24.com/" },
+          { ticker:"Euronews", ko:"유럽 종합 · euronews.com", url:"https://www.euronews.com/" },
+          { ticker:"RAI", ko:"이탈리아 · rai.it", url:"https://www.rai.it/" },
+          { ticker:"Al Jazeera", ko:"카타르 · aljazeera.com", url:"https://www.aljazeera.com/" },
+          { ticker:"RT", ko:"러시아 · rt.com", url:"https://www.rt.com/" },
+        ] },
+        { label:"해외 방송사 · 아시아·오세아니아", sub:"Asia · Oceania", items: [
+          { ticker:"NHK", ko:"일본 · nhk.or.jp", url:"https://www.nhk.or.jp/" },
+          { ticker:"TBS", ko:"일본 · tbs.co.jp", url:"https://www.tbs.co.jp/" },
+          { ticker:"TV Asahi", ko:"일본 · tv-asahi.co.jp", url:"https://www.tv-asahi.co.jp/" },
+          { ticker:"후지TV", ko:"일본 · fujitv.co.jp", url:"https://www.fujitv.co.jp/" },
+          { ticker:"NTV", ko:"일본 · ntv.co.jp", url:"https://www.ntv.co.jp/" },
+          { ticker:"CCTV", ko:"중국 · cctv.com", url:"https://www.cctv.com/" },
+          { ticker:"CGTN", ko:"중국 영문 · cgtn.com", url:"https://www.cgtn.com/" },
+          { ticker:"TVB", ko:"홍콩 · tvb.com", url:"https://www.tvb.com/" },
+          { ticker:"ABC 호주", ko:"abc.net.au", url:"https://www.abc.net.au/" },
+        ] },
+      ] },
+      "radio": { sections: [
+        { label:"KBS 라디오", sub:"", link:{text:"라디오 바로보기", url:"https://myway.kr/radiositesbar2.html"}, items: [
+          { ticker:"KBS 1라디오", ko:"뉴스·정보 · onair.kbs.co.kr", url:"https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=21&ch_type=radioList&bora=on&chat=on" },
+          { ticker:"KBS 2라디오", ko:"해피 FM · onair.kbs.co.kr", url:"https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=22&ch_type=radioList&bora=on&chat=on" },
+          { ticker:"KBS 3라디오", ko:"사랑의소리 · onair.kbs.co.kr", url:"https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=23&ch_type=radioList" },
+          { ticker:"KBS 1FM", ko:"Classic FM · onair.kbs.co.kr", url:"https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=24&ch_type=radioList&bora=on&chat=on" },
+          { ticker:"KBS 2FM", ko:"Cool FM · onair.kbs.co.kr", url:"https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=25&ch_type=radioList" },
+          { ticker:"KBS 한민족방송", ko:"한민족 · onair.kbs.co.kr", url:"https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=26&ch_type=radioList" },
+        ] },
+        { label:"MBC · SBS 라디오", sub:"", items: [
+          { ticker:"MBC 표준FM", ko:"MBC · 표준FM", url:"https://miniwebapp.imbc.com/index?channel=sfm" },
+          { ticker:"MBC FM4U", ko:"MBC · FM4U", url:"https://miniwebapp.imbc.com/index?channel=mfm" },
+          { ticker:"MBC 올댓뮤직", ko:"MBC · 채널M", url:"https://miniwebapp.imbc.com/index?channel=chm" },
+          { ticker:"SBS 러브FM", ko:"SBS · 103.5MHz", url:"https://www.sbs.co.kr/live/S08?div=live_list" },
+          { ticker:"SBS 파워FM", ko:"SBS · 107.7MHz", url:"https://www.sbs.co.kr/live/S07?div=live_list" },
+        ] },
+        { label:"기타 국내 라디오", sub:"", items: [
+          { ticker:"CBS", ko:"기독교방송 · cbs.co.kr", url:"https://www.cbs.co.kr/radio" },
+          { ticker:"TBN 교통방송", ko:"교통방송 · tbn.or.kr", url:"https://www.tbn.or.kr/onair/tbnlive.tbn?area_code=2" },
+          { ticker:"TBS eFM", ko:"서울 · tbs.seoul.kr", url:"https://tbs.seoul.kr/eFm/index.do" },
+        ] },
+        { label:"해외 라디오", sub:"", items: [
+          { ticker:"CNN Radio", ko:"미국 · cnn.com", url:"https://edition.cnn.com/audio" },
+          { ticker:"BBC Radio", ko:"영국 · bbc.co.uk/sounds", url:"https://www.bbc.co.uk/sounds/stations" },
+          { ticker:"Radio Garden", ko:"전세계 · radio.garden", url:"https://radio.garden/" },
+        ] },
+      ] },
+      "livetv": { sections: [
+        { label:"실시간 스트리밍", sub:"", link:{text:"LIVE TV 바로보기", url:"https://myway.kr/livesitesbar2.html"}, items: [
+          { ticker:"쿠팡플레이", ko:"coupangplay.com", url:"https://www.coupangplay.com/catalog" },
+          { ticker:"넷플릭스", ko:"netflix.com", url:"https://www.netflix.com/kr/" },
+          { ticker:"디즈니+", ko:"disneyplus.com", url:"https://www.disneyplus.com/ko-kr" },
+          { ticker:"치지직", ko:"CHZZK · chzzk.naver.com", url:"https://chzzk.naver.com/" },
+          { ticker:"SOOP", ko:"구 아프리카TV · sooplive", url:"https://www.sooplive.co.kr/" },
+          { ticker:"트위치", ko:"Twitch · twitch.tv", url:"https://www.twitch.tv/" },
+          { ticker:"네이버TV", ko:"LIVE · tv.naver.com", url:"https://tv.naver.com/l/livehome" },
+          { ticker:"카카오TV", ko:"LIVE · tv.kakao.com", url:"https://tv.kakao.com/live" },
+          { ticker:"네이버 쇼핑라이브", ko:"shoppinglive.naver.com", url:"https://shoppinglive.naver.com/home" },
+          { ticker:"미국 LIVE 모음", ko:"thetvapp.to", url:"https://thetvapp.to/" },
+          { ticker:"TheTVApp", ko:"int.klcis.cc", url:"https://int.klcis.cc/" },
+          { ticker:"TV Garden", ko:"전세계 채널 · tv.garden", url:"https://tv.garden/" },
+          { ticker:"MLB 다시보기", ko:"mlblive.net", url:"https://mlblive.net/" },
+          { ticker:"FREE LIVE MLB", ko:"nbabox.co", url:"https://nbabox.co/" },
+        ] },
+        { label:"지상파·종합편성 LIVE", sub:"", items: [
+          { ticker:"KBS1", ko:"onair.kbs.co.kr", url:"https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList" },
+          { ticker:"KBS2", ko:"onair.kbs.co.kr", url:"https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList" },
+          { ticker:"MBC", ko:"onair.imbc.com", url:"https://onair.imbc.com/" },
+          { ticker:"SBS", ko:"sbs.co.kr/live", url:"https://www.sbs.co.kr/live/S01?div=main_live" },
+          { ticker:"JTBC", ko:"onair.jtbc.co.kr", url:"https://onair.jtbc.co.kr/" },
+          { ticker:"TV조선", ko:"broadcast.tvchosun.com", url:"https://broadcast.tvchosun.com/onair/on.cstv" },
+          { ticker:"채널A", ko:"ichannela.com", url:"https://ichannela.com/com/cmm/onair.do" },
+          { ticker:"MBN", ko:"mbn.co.kr", url:"https://www.mbn.co.kr/vod/onair" },
+          { ticker:"EBS", ko:"ebs.co.kr/onair", url:"https://www.ebs.co.kr/onair?mainTop&channelCodeString=tv" },
+          { ticker:"아리랑TV", ko:"Arirang · arirang.com", url:"https://www.arirang.com/live?lang=en" },
+        ] },
+        { label:"뉴스 LIVE", sub:"", items: [
+          { ticker:"YTN", ko:"ytn.co.kr", url:"https://www.ytn.co.kr/_hd/hd_live.html" },
+          { ticker:"연합뉴스TV", ko:"yonhapnewstv.co.kr", url:"https://www.yonhapnewstv.co.kr/live" },
+          { ticker:"KBS NEWS", ko:"news.kbs.co.kr", url:"https://news.kbs.co.kr/news/pc/news24/news24.html?ref=pGnb" },
+          { ticker:"MBC NEWS", ko:"imnews.imbc.com", url:"https://imnews.imbc.com/more/onair/" },
+          { ticker:"SBS NEWS", ko:"news.sbs.co.kr", url:"https://news.sbs.co.kr/news/live.do?plink=GNB&cooper=SBSNEWS" },
+          { ticker:"JTBC NEWS", ko:"news.jtbc.co.kr", url:"https://news.jtbc.co.kr/live" },
+        ] },
+        { label:"경제·증권 LIVE", sub:"", items: [
+          { ticker:"한국경제TV", ko:"wowtv.co.kr", url:"https://www.wowtv.co.kr/LiveCenter/Live/Index?liveID=1" },
+          { ticker:"매일경제TV", ko:"MBN머니 · mbnmoney", url:"https://mbnmoney.mbn.co.kr/tv/onair" },
+          { ticker:"서울경제TV", ko:"sentv.co.kr", url:"https://www.sentv.co.kr/onair" },
+          { ticker:"이데일리TV", ko:"tv.edaily.co.kr", url:"https://tv.edaily.co.kr/Live/HighVod" },
+          { ticker:"MTN", ko:"머니투데이방송 · mtn.co.kr", url:"https://www.mtn.co.kr/" },
+        ] },
+        { label:"해외 LIVE TV", sub:"", items: [
+          { ticker:"NHK World", ko:"일본 · nhk.or.jp", url:"https://www3.nhk.or.jp/nhkworld/" },
+          { ticker:"ABC", ko:"미국 · abc.com", url:"https://abc.com/" },
+          { ticker:"NBC News", ko:"미국 · nbcnews.com/now", url:"https://www.nbcnews.com/now" },
+          { ticker:"FOX News", ko:"미국 · foxnews.com", url:"https://www.foxnews.com/" },
+          { ticker:"ABC7", ko:"미국 LA · abc7.com", url:"https://abc7.com/" },
+        ] },
+      ] },
+      "magazine": { photoStyle: true, sections: [
+        { label:"", sub:"", items: [
+          { ticker:"보그", ko:"", url:"https://www.vogue.co.kr/", name:"보그", img:"https://img.vogue.co.kr/vogue/2024/02/style_65ceef66858de-1116x1400.jpg", imgs:["https://img.vogue.co.kr/vogue/2024/02/style_65ceef66858de-1116x1400.jpg"], content:"<div class=\"full_box\" style=\"color: rgb(0, 0, 0); font-family: &quot;Pretendard Variable&quot;, Pretendard, window, ios, android, sans-serif; font-size: 16px; letter-spacing: -0.032px;\"><section class=\"article_visual full_visual\" style=\"position: relative; background-position: center center; background-repeat: no-repeat; background-size: cover; height: 100vh; z-index: 1; min-height: 600px;\"><div class=\"inner\" style=\"display: flex; flex-flow: column wrap; align-items: center; justify-content: center; width: 1524.8px; height: 100vh; padding: 109px 48px 0px; color: rgb(255, 255, 255); text-align: center; margin: 0px auto; position: absolute; z-index: 1; min-height: 600px;\"><h1 class=\"post_tit\" style=\"font-size: 3.875rem; margin: 0px 0px 28px; font-family: inherit; color: inherit; line-height: 1.22; max-width: 800px;\">게스(GUESS)의 섹시한 데님은 계속된다</h1><div class=\"post_info\" style=\"display: flex; margin: -10px auto 33px;\"><p class=\"date\" style=\"padding: 0px; margin: 0px; font-size: 1.125rem; letter-spacing: 0px; display: flex; align-items: center; line-height: 1.66; opacity: 0.7; max-width: 800px;\">2026.09.22<span class=\"author\" style=\"position: relative; margin-left: 8px; padding-left: 10px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; word-break: break-all;\"><a href=\"https://www.vogue.co.kr/author/hannah-park/\" style=\"background-color: transparent; text-decoration-line: none;\">박한나</a></span></p></div><ul class=\"share_list share_list_pc\" style=\"list-style: none; padding: 0px; margin: 60px -8px 0px 0px; display: flex; flex-wrap: wrap;\"><li style=\"padding: 0px; margin: 0px 4px 0px 0px; width: 38px; height: 38px; border-radius: 100%; border: 1px solid rgba(255, 255, 255, 0.5); display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; font-size: 0px;\"><a class=\"share_btn\" id=\"share-pc-tw-btn\" href=\"https://www.vogue.co.kr/2026/09/22/%ea%b2%8c%ec%8a%a4guess%ec%9d%98-%ec%84%b9%ec%8b%9c%ed%95%9c-%eb%8d%b0%eb%8b%98%ec%9d%80-%ea%b3%84%ec%86%8d%eb%90%9c%eb%8b%a4/twitter\" style=\"background-color: transparent; text-decoration-line: none;\"><img src=\"https://www.vogue.co.kr/wp-content/themes/vogue/assets/images/ic_sns_x.svg\" width=\"38\" height=\"38\" alt=\"x\" data-src=\"https://www.vogue.co.kr/wp-content/themes/vogue/assets/images/ic_sns_x.svg\" decoding=\"async\" class=\" ls-is-cached lazyloaded\" style=\"border-style: none; vertical-align: middle;\"></a></li><li style=\"padding: 0px; margin: 0px 4px 0px 0px; width: 38px; height: 38px; border-radius: 100%; border: 1px solid rgba(255, 255, 255, 0.5); display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; font-size: 0px;\"><a class=\"share_btn\" id=\"share-pc-fb-btn\" href=\"https://www.vogue.co.kr/2026/09/22/%ea%b2%8c%ec%8a%a4guess%ec%9d%98-%ec%84%b9%ec%8b%9c%ed%95%9c-%eb%8d%b0%eb%8b%98%ec%9d%80-%ea%b3%84%ec%86%8d%eb%90%9c%eb%8b%a4/facebook\" style=\"background-color: transparent; text-decoration-line: none;\"><img src=\"https://www.vogue.co.kr/wp-content/themes/vogue/assets/images/ic_sns_facebook.svg\" width=\"38\" height=\"38\" alt=\"facebook\" data-src=\"https://www.vogue.co.kr/wp-content/themes/vogue/assets/images/ic_sns_facebook.svg\" decoding=\"async\" class=\" ls-is-cached lazyloaded\" style=\"border-style: none; vertical-align: middle;\"></a></li><li style=\"padding: 0px; margin: 0px; width: 38px; height: 38px; border-radius: 100%; border: 1px solid rgba(255, 255, 255, 0.5); display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; font-size: 0px;\"><a class=\"share_btn\" id=\"share-pc-copy-btn\" href=\"https://www.vogue.co.kr/2026/09/22/%ea%b2%8c%ec%8a%a4guess%ec%9d%98-%ec%84%b9%ec%8b%9c%ed%95%9c-%eb%8d%b0%eb%8b%98%ec%9d%80-%ea%b3%84%ec%86%8d%eb%90%9c%eb%8b%a4/url\" style=\"background-color: transparent; text-decoration-line: none;\">복사<img src=\"https://www.vogue.co.kr/wp-content/themes/vogue/assets/images/ic_copy_wh.svg\" width=\"38\" height=\"38\" alt=\"url\" data-src=\"https://www.vogue.co.kr/wp-content/themes/vogue/assets/images/ic_copy_wh.svg\" decoding=\"async\" class=\" lazyloaded\" style=\"border-style: none; vertical-align: middle;\"></a></li></ul><ul class=\"share_list pc google_btn_pc\" style=\"list-style: none; padding: 0px; margin: 10px -8px 0px 0px; display: flex; flex-wrap: wrap; width: 124px; position: relative;\"><li class=\"google_btn\" id=\"google-btn\" style=\"padding: 0px 10px; margin: 0px; width: 124px; height: 30px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.5); display: flex; flex-wrap: nowrap; align-items: center; justify-content: space-between; font-size: 0.7rem; line-height: 2rem; position: relative; letter-spacing: -0.05rem;\"><a href=\"https://www.vogue.co.kr/2026/09/22/%ea%b2%8c%ec%8a%a4guess%ec%9d%98-%ec%84%b9%ec%8b%9c%ed%95%9c-%eb%8d%b0%eb%8b%98%ec%9d%80-%ea%b3%84%ec%86%8d%eb%90%9c%eb%8b%a4/#\" class=\"google-publisher-btn\" style=\"background-color: transparent; text-decoration-line: none;\">구글 선호 매체 추가</a><span class=\"ic_question\" style=\"width: 16px; height: 16px; background: rgba(210, 210, 210, 0.5); border-radius: 50%; margin: 0px -4px 0px 0px; line-height: 1.1rem; font-size: 0.7rem; color: rgba(255, 255, 255, 0.6); font-weight: 600; cursor: pointer;\">?</span></li><li class=\"google_btn_pop\" style=\"padding: 10px 6px; margin: 0px; width: auto; height: auto; border-radius: 10px; border: 0px; display: flex; flex-wrap: nowrap; align-items: center; justify-content: space-between; font-size: 0px; position: absolute; background: rgb(240, 240, 240); line-height: 1.3rem; text-align: left; color: rgb(90, 90, 90); box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 16px 0px; max-width: 370px; bottom: -94px; word-break: break-all; opacity: 0; visibility: hidden; transform: translateY(5px); transition: opacity 0.3s, transform 0.3s, visibility 0.3s;\"><p style=\"padding: 0px; margin: 0px; font-size: 0.7rem; line-height: 0.9rem; opacity: 1; max-width: 800px; align-items: center; z-index: 1;\"></p></li></ul></div><div class=\"bg\" style=\"height: 100vh; min-height: 600px; overflow: hidden; position: relative;\"><img src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a91283e11071-scaled-1920x1080.jpg?x=2560&amp;y=1031\" class=\"pc lazyloaded\" data-src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a91283e11071-scaled-1920x1080.jpg?x=2560&amp;y=1031\" decoding=\"async\" style=\"border-style: none; vertical-align: middle; width: 1524.8px; height: 764px; object-fit: cover;\"></div></section></div><section class=\"article_section view special\" style=\"display: flex; padding: 80px 0px 0px; position: relative; flex-wrap: wrap; color: rgb(0, 0, 0); font-family: &quot;Pretendard Variable&quot;, Pretendard, window, ios, android, sans-serif; font-size: 16px; letter-spacing: -0.032px;\"><div class=\"post_content common_content\" style=\"z-index: 1; word-break: keep-all; width: 800px; max-width: 800px; margin: 0px auto; padding-right: 0px;\"><div class=\"editor\"><div class=\"sponsored-txt\" style=\"color: rgb(90, 90, 90); word-break: break-all; font-size: 1.06rem; line-height: 1.4; margin: 0px 0px 30px;\"></div><div class=\"contt\"><p style=\"padding: 0px; margin: 0px 0px 30px; font-size: 1.06rem; line-height: 1.76; word-break: normal;\"><span style=\"font-weight: 700;\"><a href=\"https://guesskorea.com/?utm_source=vogue&amp;utm_medium=article&amp;utm_campaign=global\" data-type=\"URL\" data-id=\"https://guesskorea.com/?utm_source=vogue&amp;utm_medium=article&amp;utm_campaign=global\" target=\"_blank\" rel=\"noreferrer noopener sponsored\" style=\"background-color: transparent; text-underline-position: under; word-break: break-all;\">게스(GUESS)</a>는 지난 45년간 고정관념을 깨며 아이콘으로서의 위상을 이어가고 있다.</span></p><figure class=\"content_video ds-video ds-goFirst-ended ds-click-pause\" style=\"margin: 30px 0px; padding: 0px;\"><div id=\"vjs_video_3\" crossorigin=\"anonymous\" poster=\"https://vod.vogue.co.kr/outputs/style_6a912905cca4d/MP4/style_6a912905cca4d_Thumbnail720p.0000000.jpg\" data-setup=\"{&quot;fluid&quot;:false,&quot;responsive&quot;:false,&quot;autoplay&quot;:false,&quot;controls&quot;:true,&quot;preload&quot;:true,&quot;loop&quot;:false,&quot;muted&quot;:true,&quot;playsinline&quot;:true}\" class=\"video-js vjs-default-skin vjs-big-play-centered vjs-paused vjs_video_3-dimensions vjs-controls-enabled vjs-touch-enabled vjs-workinghover vjs-v8 vjs-user-active\" tabindex=\"-1\" role=\"region\" lang=\"ko-kr\" translate=\"no\" aria-label=\"Video Player\" style=\"width: 800px; height: 450px; max-width: 100%; display: inline-block; vertical-align: top; color: rgb(255, 255, 255); background-color: rgb(0, 0, 0); position: relative; padding: 0px; font-size: 10px; line-height: 1; font-family: Arial, Helvetica, sans-serif; word-break: initial; outline: none;\"><video class=\"vjs-tech\" data-setup=\"{&quot;fluid&quot;:false,&quot;responsive&quot;:false,&quot;autoplay&quot;:false,&quot;controls&quot;:true,&quot;preload&quot;:true,&quot;loop&quot;:false,&quot;muted&quot;:true,&quot;playsinline&quot;:true}\" poster=\"https://vod.vogue.co.kr/outputs/style_6a912905cca4d/MP4/style_6a912905cca4d_Thumbnail720p.0000000.jpg\" crossorigin=\"anonymous\" id=\"vjs_video_3_html5_api\" tabindex=\"-1\" role=\"application\" preload=\"true\" muted=\"muted\" playsinline=\"playsinline\" style=\"display: inline-block; box-sizing: inherit; max-height: 800px; margin-bottom: -2px; position: absolute; top: 0px; left: 0px; width: 800px; height: 450px;\"></video><div class=\"vjs-poster\" aria-disabled=\"false\" style=\"box-sizing: inherit; display: inline-block; vertical-align: middle; cursor: pointer; margin: 0px; padding: 0px; position: absolute; inset: 0px; height: 450px; max-width: 100%;\"><picture class=\"vjs-poster\" tabindex=\"-1\" style=\"box-sizing: inherit; display: inline-block; vertical-align: middle; cursor: pointer; margin: 0px; padding: 0px; position: absolute; inset: 0px; height: 450px;\"><img loading=\"lazy\" crossorigin=\"anonymous\" alt=\"\" src=\"https://vod.vogue.co.kr/outputs/style_6a912905cca4d/MP4/style_6a912905cca4d_Thumbnail720p.0000000.jpg\" style=\"border-style: none; box-sizing: inherit; vertical-align: middle; max-height: 1000px; width: auto; object-fit: contain; margin-bottom: 30px;\"></picture></div><div class=\"vjs-text-track-display\" translate=\"yes\" aria-live=\"off\" aria-atomic=\"true\" style=\"box-sizing: inherit; position: absolute; inset: 0px 0px 3em; pointer-events: none; max-width: 100%;\"><div style=\"box-sizing: inherit; max-width: 100%; position: absolute; inset: 0px; margin: 12px;\"></div></div><button class=\"vjs-big-play-button\" type=\"button\" title=\"Play Video\" aria-disabled=\"false\" style=\"font-family: inherit; font-size: 3em; line-height: 1.5em; margin: -0.81666em 0px 0px -1.5em; overflow: visible; appearance: none; box-sizing: inherit; padding: 0px; border-width: 0.06666em; border-style: solid; border-color: rgb(255, 255, 255); background: none rgba(43, 51, 63, 0.7); cursor: pointer; display: block; transition: 0.4s; height: 1.63332em; width: 3em; position: absolute; top: 225px; left: 400px; opacity: 1; border-radius: 0.3em;\"><span class=\"vjs-icon-placeholder\" aria-hidden=\"true\" style=\"box-sizing: inherit;\"></span><span class=\"vjs-control-text\" aria-live=\"polite\" style=\"box-sizing: inherit; border: 0px; clip: rect(0px, 0px, 0px, 0px); height: 1px; overflow: hidden; padding: 0px; position: absolute; width: 1px;\">Play Video</span></button></div></figure><p style=\"padding: 0px; margin: 30px 0px; font-size: 1.06rem; line-height: 1.76; word-break: normal;\">패션은 변신을 위해 존재하며, 특히 예상치 못한 변신을 추구한다. 그래서 낡고 해진 보스턴백이 값을 매길 수 없는 인기 아이템이 되기도 하고, 독특한 마스크를 지닌 인물이 세계적인 슈퍼모델로 거듭나기도 한다. 그 대표적인 브랜드가 바로 게스(GUESS)다. 고정관념에서 벗어나 미국의 실용적이고 투박한 데님을 스타일과 섹시함의 아이콘으로 탈바꿈시켰고, 그렇게 이전에는 볼 수 없던 완전히 새로운 형태의 데님이 탄생했다.</p><p style=\"padding: 0px; margin: 30px 0px; font-size: 1.06rem; line-height: 1.76; word-break: normal;\">오늘 &lt;보그&gt;는 데님을 입는 방식을 완전히 재정의한 게스의 45주년을 기념한다. 게스가 일으킨 혁명은 오늘날 하나의 정설이 되었다. 우리는 가장 멋지고, 편안하면서도, 섹시해 보이고 싶을 때 자연스럽게 데님으로 손을 뻗는다. 세계적인 사진작가와 모델들이 완성한 방대한 캠페인 아카이브를 통해, 영원히 사랑받는 관능적인 데님의 출발점을 되짚어본다.</p><div class=\"wp-block-dsmgn-two-column-images content_columns_div\" style=\"max-width: 100%; margin-top: 30px;\"><div class=\"content_columns two\" style=\"width: 800px; flex-wrap: wrap; display: flex; align-items: flex-start; margin: 36px 0px 46px; max-width: 100%;\"><div class=\"content_column\" style=\"max-width: 100%; float: left; display: flex; flex-wrap: wrap; margin-right: 10px; width: 399.65px;\"><img decoding=\"async\" src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a912862e7f57-699x930.jpg\" alt=\"\" width=\"1923\" height=\"2560\" data-src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a912862e7f57-699x930.jpg\" class=\" lazyloaded\" style=\"border-style: none; vertical-align: middle; margin-bottom: 30px; max-height: none; width: auto;\"></div><div class=\"content_column\" style=\"max-width: 100%; float: left; display: flex; flex-wrap: wrap; margin-left: 10px; width: 386.35px;\"><img decoding=\"async\" src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a91289a9f11a-675x930.jpg\" alt=\"\" width=\"1859\" height=\"2560\" data-src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a91289a9f11a-675x930.jpg\" class=\" lazyloaded\" style=\"border-style: none; vertical-align: middle; margin-bottom: 30px; max-height: none; width: auto;\"></div></div></div><p style=\"padding: 0px; margin: 30px 0px; font-size: 1.06rem; line-height: 1.76; word-break: normal;\">1980년대 초, 모로코 출신의 마르시아노(Marciano) 4형제는 LA를 누비며 데님의 새로운 가능성을 고민하고 있었다. 당시 미국의 청바지는 주로 실용적인 작업복에 머물러 있었다. 작업 현장에 나갈 때가 아니라면 주말에 굳이 챙겨 입지 않았고, 섹시함과는 거리가 먼 아이템이었다. 하지만 마르시아노(Marciano) 형제들의 시선은 달랐다. 미국적인 필수 아이템에 자신들만의 프랑스식 관능미를 불어넣어, 옷장 속 평범한 기본 아이템을 누구나 갈망하는 매혹적인 하이엔드 데님으로 변모시키고자 했다. 그 결과 탄생한 것이 바로 게스다. 게스는 자신감 넘치고 당당한 새로운 세대의 여성을 정조준했다. 초기엔 바이어들이 회의적인 반응을 보였지만, 뉴욕의 한 백화점이 호의로 마련해준 매대에서 몇 시간 만에 전량 매진을 기록하며 게스는 순식간에 어디서나 볼 수 있는 브랜드로 급부상했다.</p><figure class=\"wp-block-image size-large\" style=\"margin: 36px 0px; padding: 0px;\"><img decoding=\"async\" width=\"1052\" height=\"1400\" src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128278c05f-1052x1400.jpg\" alt=\"\" class=\"wp-image-856308 lazyautosizes lazyloaded\" data-src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128278c05f-1052x1400.jpg\" data-srcset=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128278c05f-1052x1400.jpg 1052w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128278c05f-699x930.jpg 699w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128278c05f-768x1022.jpg 768w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128278c05f-200x266.jpg 200w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128278c05f-600x799.jpg 600w\" data-sizes=\"auto\" sizes=\"800px\" srcset=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128278c05f-1052x1400.jpg 1052w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128278c05f-699x930.jpg 699w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128278c05f-768x1022.jpg 768w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128278c05f-200x266.jpg 200w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128278c05f-600x799.jpg 600w\" style=\"border-style: none; vertical-align: bottom;\"></figure><p style=\"padding: 0px; margin: 30px 0px; font-size: 1.06rem; line-height: 1.76; word-break: normal;\">과장이 아니다. 말 그대로였다. 그리고 이 역사적인 도약의 순간에는 언제나 &lt;보그&gt;가 있었다. 특히 안나 윈투어(Anna Wintour)가 편집장으로서의 첫 &lt;보그&gt; 커버 촬영에서 쿠튀르 비즈 재킷과 함께 게스 청바지를 매치한 것은 패션계의 아이코닉한 순간으로 남아있다. 이는 단순한 우연이 아닌 진보를 향한 선언이었는데, 게스의 공동 설립자 폴 마르시아노(Paul Marciano)는 “안나 윈투어는 누구보다 먼저 패션의 변화를 감지했습니다. 럭셔리는 더 이상 단순한 격식이 아니라 태도와 개성, 그리고 여성이 스스로 옷을 입는 방식에 관한 문제였죠. 그녀의 커버는 그 새로운 시대정신을 정확히 포착해 냈습니다”라고 회상한다. 1988년 11월, 세상은 섹시함에 대한 새로운 해석을 받아들일 준비가 되어 있었고, 이를 계기로 패션의 새로운 장이 열렸다.</p><div class=\"wp-block-dsmgn-two-column-images content_columns_div\" style=\"max-width: 100%; margin-top: 30px;\"><div class=\"content_columns two\" style=\"width: 800px; flex-wrap: wrap; display: flex; align-items: flex-start; margin: 36px 0px 46px; max-width: 100%;\"><div class=\"content_column\" style=\"max-width: 100%; float: left; display: flex; flex-wrap: wrap; margin-right: 10px; width: 502.474px;\"><img decoding=\"async\" src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a91287454416-930x699.jpg\" alt=\"\" width=\"2560\" height=\"1923\" data-src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a91287454416-930x699.jpg\" class=\" lazyloaded\" style=\"border-style: none; vertical-align: middle; margin-bottom: 30px; max-height: none; width: auto;\"></div><div class=\"content_column\" style=\"max-width: 100%; float: left; display: flex; flex-wrap: wrap; margin-left: 10px; width: 283.526px;\"><img decoding=\"async\" src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128c206709-699x930.jpg\" alt=\"\" width=\"1923\" height=\"2560\" data-src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128c206709-699x930.jpg\" class=\" lazyloaded\" style=\"border-style: none; vertical-align: middle; margin-bottom: 30px; max-height: none; width: auto;\"></div></div></div><p style=\"padding: 0px; margin: 30px 0px; font-size: 1.06rem; line-height: 1.76; word-break: normal;\">이 문화적 흐름의 변화는 게스 역사에서 결정적인 전환점이 되었다. 독창적인 실루엣과 스타일은 물론, 시대를 관통하면서도 당당하고 신선하며 위트와 모험심이 넘치는 관능미를 제안하려는 열망이 게스를 특별하게 만들었다. 그리고 폴은 그 비전의 중심에 있었다. 본능에 가까운 감각으로 비주얼을 디렉팅하던 그는 초기 할리우드 영화부터 유럽 특유의 화려함, 미국 서부의 신화에 이르기까지 다양한 레퍼런스에서 영감을 얻었다. 그렇게 익숙하면서도 낯선 게스만의 시각 언어가 완성되었다. 서사를 세세히 설명하기보다 은근한 암시를 던지는 영화의 한 장면처럼, 흑백 이미지는 브랜드의 독보적인 시그니처로 자리 잡았다. 컨버터블에 비스듬히 기댄 여성과 그 뒤 미지의 세계로 뻗어 나가는 사막 한가운데의 고속도로. 이런 이미지는 보는 이를 단숨에 매혹하며 호기심을 자극했다. 폴 마르시아노는 특히 세비야에서 진행된 촬영을 떠올리며 “우리는 단순히 제품을 파는 데 집중하지 않았습니다. 우리는 꿈을 만들고 있었습니다”라고 전했다. 그리고 그 꿈은 현실이 되었다.</p><figure class=\"wp-block-image size-large\" style=\"margin: 36px 0px; padding: 0px;\"><img decoding=\"async\" width=\"1400\" height=\"982\" src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128e6dc9db-1400x982.jpg\" alt=\"\" class=\"wp-image-856318 lazyautosizes lazyloaded\" data-src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128e6dc9db-1400x982.jpg\" data-srcset=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128e6dc9db-1400x982.jpg 1400w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128e6dc9db-930x652.jpg 930w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128e6dc9db-768x539.jpg 768w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128e6dc9db-200x140.jpg 200w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128e6dc9db-600x421.jpg 600w\" data-sizes=\"auto\" sizes=\"800px\" srcset=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128e6dc9db-1400x982.jpg 1400w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128e6dc9db-930x652.jpg 930w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128e6dc9db-768x539.jpg 768w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128e6dc9db-200x140.jpg 200w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128e6dc9db-600x421.jpg 600w\" style=\"border-style: none; vertical-align: bottom;\"></figure><p style=\"padding: 0px; margin: 30px 0px; font-size: 1.06rem; line-height: 1.76; word-break: normal;\">지금 패션계를 대표하는 수많은 톱모델이 무명 시절 게스 캠페인을 통해 얼굴을 알렸다. 폴은 “게스의 아이콘은 특유의 애티튜드와 자연스러운 관능미, 진정성, 그리고 모험심을 드러내야 합니다”라고 강조한다. 이번 &lt;보그&gt;와 게스의 화보 캐스팅 역시 이 기준을 충실히 따랐다. 독보적인 개성과 강렬한 에너지로 차세대 패션 신을 이끌어갈 네 명의 라이징 스타, 마틸드 루치디(Matilde Lucidi), 솔랑주 스미스(Solange Smith), 신현지, 크리스티나 체니(Cristina Cheni)가 선정되었다. 이들은 에바 헤르지고바(Eva Herzigová), 나오미 캠벨(Naomi Campbell), 레티시아 카스타(Laetitia Casta), 안나 니콜 스미스(Anna Nicole Smith), 카를라 브루니(Carla Bruni)로 이어지는 찬란한 레거시를 계승한다. 캐스팅 당시에는 대중에게 낯선 얼굴일지라도, 게스는 유명세 대신 그들이 지닌 고유한 아우라를 꿰뚫어 보았다. “우리는 단지 명성만을 좇은 적이 없습니다. 우리가 주목하는 것은 개성, 그리고 이미지를 통해 이야기를 전달할 수 있는 힘입니다.”</p><div class=\"wp-block-dsmgn-two-column-images content_columns_div\" style=\"max-width: 100%; margin-top: 30px;\"><div class=\"content_columns two\" style=\"width: 800px; flex-wrap: wrap; display: flex; align-items: flex-start; margin: 36px 0px 46px; max-width: 100%;\"><div class=\"content_column\" style=\"max-width: 100%; float: left; display: flex; flex-wrap: wrap; margin-right: 10px; width: 388.379px;\"><img decoding=\"async\" src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128d494dbd-687x930.jpg\" alt=\"\" width=\"1891\" height=\"2560\" data-src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128d494dbd-687x930.jpg\" class=\" lazyloaded\" style=\"border-style: none; vertical-align: middle; margin-bottom: 30px; max-height: none; width: auto;\"></div><div class=\"content_column\" style=\"max-width: 100%; float: left; display: flex; flex-wrap: wrap; margin-left: 10px; width: 397.621px;\"><img decoding=\"async\" src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a912816c1310-703x930.jpg\" alt=\"\" width=\"1936\" height=\"2560\" data-src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a912816c1310-703x930.jpg\" class=\" lazyloaded\" style=\"border-style: none; vertical-align: middle; margin-bottom: 30px; max-height: none; width: auto;\"></div></div></div><p style=\"padding: 0px; margin: 30px 0px; font-size: 1.06rem; line-height: 1.76; word-break: normal;\">이 철학을 온전히 대변하는 작업이 바로 1980년대 후반 엘렌 폰 운베르트(Ellen von Unwerth)가 당시 신인이었던 클라우디아 시퍼(Claudia Schiffer)를 포착한 전설적인 컷이다. 폴은 “당시 클라우디아는 신인이었지만, 카메라 앞에 선 순간 압도적인 존재감을 드러냈습니다. 그 컷은 게스의 본질인 자신감과 관능미를 오롯이 담아냈고, 이후 수십 년간 브랜드의 시각적 정체성을 정의하는 기준이 되었죠”라고 덧붙인다. 패션 필드에 몸담은 이라면 누구나 한 번쯤 무드보드 한가운데에 이 사진을 핀업해 보았을 것이다.</p><figure class=\"wp-block-image size-large\" style=\"margin: 36px 0px; padding: 0px;\"><img decoding=\"async\" width=\"1055\" height=\"1400\" src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128066f02a-1055x1400.jpg\" alt=\"\" class=\"wp-image-856306 lazyautosizes lazyloaded\" data-src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128066f02a-1055x1400.jpg\" data-srcset=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128066f02a-1055x1400.jpg 1055w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128066f02a-701x930.jpg 701w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128066f02a-768x1019.jpg 768w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128066f02a-200x265.jpg 200w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128066f02a-600x796.jpg 600w\" data-sizes=\"auto\" sizes=\"800px\" srcset=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128066f02a-1055x1400.jpg 1055w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128066f02a-701x930.jpg 701w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128066f02a-768x1019.jpg 768w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128066f02a-200x265.jpg 200w, https://img.vogue.co.kr/vogue/2026/08/style_6a9128066f02a-600x796.jpg 600w\" style=\"border-style: none; vertical-align: bottom;\"></figure><p style=\"padding: 0px; margin: 30px 0px; font-size: 1.06rem; line-height: 1.76; word-break: normal;\">대중의 뜨거운 지지와는 별개로, 여전히 패션계 일각에서는 직설적이고 화려한 관능미를 드러내는 것을 주저하곤 한다. 그러나 게스는 반대로, 언제나 확고한 태도를 견지한다. “섹시함을 표현하는 방식은 진화할지 몰라도 그 본질은 결코 변하지 않습니다. 게스에게 섹시함이란 언제나 당당한 자신감과 직결되어 있으니까요.” 트렌드는 끊임없이 순환하고, 옷자락 길이는 오르내리며, 특정한 감성이 뜨고 지기를 반복한다. 그러나 결코 자신감만큼은 유행을 타지 않는다. 당당하게 귀환한 Y2K 트렌드가 이를 방증한다. 골반에 걸쳐 입는 로우라이즈 실루엣과 유쾌한 관능미는 곧 게스의 아이덴티티 그 자체다. “패션은 언제나 순환합니다. Y2K 시대에는 오늘날에도 여전히 유효한 낙관주의, 자신감, 화려함이 살아 숨 쉬고 있었습니다.”</p><div class=\"wp-block-dsmgn-two-column-images content_columns_div\" style=\"max-width: 100%; margin-top: 30px;\"><div class=\"content_columns two\" style=\"width: 800px; flex-wrap: wrap; display: flex; align-items: flex-start; margin: 36px 0px 46px; max-width: 100%;\"><div class=\"content_column\" style=\"max-width: 100%; float: left; display: flex; flex-wrap: wrap; margin-right: 10px; width: 390.765px;\"><img decoding=\"async\" src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128ae5a7f9-699x930.jpg\" alt=\"\" width=\"1923\" height=\"2560\" data-src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128ae5a7f9-699x930.jpg\" class=\" lazyloaded\" style=\"border-style: none; vertical-align: middle; margin-bottom: 30px; max-height: none; width: auto;\"></div><div class=\"content_column\" style=\"max-width: 100%; float: left; display: flex; flex-wrap: wrap; margin-left: 10px; width: 395.235px;\"><img decoding=\"async\" src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128521198b-706x930.jpg\" alt=\"\" width=\"1945\" height=\"2560\" data-src=\"https://img.vogue.co.kr/vogue/2026/08/style_6a9128521198b-706x930.jpg\" class=\" lazyloaded\" style=\"border-style: none; vertical-align: middle; margin-bottom: 30px; max-height: none; width: auto;\"></div></div></div><p style=\"padding: 0px; margin: 30px 0px; font-size: 1.06rem; line-height: 1.76; word-break: normal;\">게스의 이러한 이야기는 명확한 콘셉트와 혁신적인 비전이 만나 빚어낸, 마법 같은 일이다. 게스의 아카이브가 지금까지도 생생한 생명력을 유지하는 비결은 바로 그 진정성에 있다. 인물과 스타일은 시대의 결정적 순간들을 대변하지만, 게스는 트렌드의 주기를 뛰어넘는 본질적인 무언가를 포착한다. 바로 자연스러움과 관능미다.</p><p style=\"padding: 0px; margin: 30px 0px; font-size: 1.06rem; line-height: 1.76; word-break: normal;\">45년이 지난 지금도 브랜드의 나침반은 명확하다. 새로운 캠페인이 공개될 때마다 현대적으로 재해석된 게스 특유의 스피릿을 목격하게 된다. 헤일리 비버(Hailey Bieber)부터 신현지, 그리고 그다음 세대에 이르기까지, 게스의 아이콘들은 여전히 패션 신에서 대체 불가능한 영향력을 발휘하고 있다.</p><p style=\"padding: 0px; margin: 30px 0px; font-size: 1.06rem; line-height: 1.76; word-break: normal;\"></p><p style=\"padding: 0px; margin: 30px 0px; font-size: 1.06rem; line-height: 1.76; word-break: normal;\"><a href=\"https://guesskorea.com/?utm_source=vogue&amp;utm_medium=article&amp;utm_campaign=global\" data-type=\"URL\" data-id=\"https://guesskorea.com/?utm_source=vogue&amp;utm_medium=article&amp;utm_campaign=global\" target=\"_blank\" rel=\"noreferrer noopener sponsored\" style=\"background-color: transparent; text-underline-position: under; word-break: break-all;\">guesskorea.com</a></p></div></div><div class=\"profile_sub pc\" authors=\"1089\"><div class=\"profile_wrap\" style=\"position: relative; display: flex; flex-direction: row; align-items: center; width: 800px; margin: 50px 0px -10px; padding: 40px 0px 0px; border-top: 1px solid rgb(0, 0, 0);\"><div class=\"profile_pic\" style=\"max-width: 100px; max-height: 100px; width: 100px; height: 100px; border-radius: 50%; overflow: hidden;\"><img src=\"https://img.vogue.co.kr/vogue/common/vogue_logo_profile_pic.png\" alt=\"박한나\" skip-lazy=\"\" style=\"border-style: none; vertical-align: middle;\"></div><div class=\"profile_meta\" style=\"margin: 0px 0px 0px 18px; width: 682px;\"><h2 class=\"tit_sub profile_name\" id=\"type_span\" style=\"font-family: inherit; color: inherit; margin: 0px 0px 5px; font-size: 1.125rem; letter-spacing: -0.002em; text-transform: uppercase; line-height: 1.3;\">박한나</h2></div></div></div></div></section>" },
+          { ticker:"엘르", ko:"", url:"https://www.elle.co.kr/", name:"엘르", img:"https://www.elle.co.kr/resources_old/online/org_online_image/el/12fec014-92f2-4883-9983-6b0daff4b157.jpg", imgs:["https://www.elle.co.kr/resources_old/online/org_online_image/el/12fec014-92f2-4883-9983-6b0daff4b157.jpg"] },
+          { ticker:"마리끌레르", ko:"", url:"https://www.marieclairekorea.com/", name:"마리끌레르", img:"https://image.aladin.co.kr/product/16870/23/cover500/k032534972_1.jpg", imgs:["https://image.aladin.co.kr/product/16870/23/cover500/k032534972_1.jpg"] },
+          { ticker:"코스모폴리", ko:"", url:"https://www.cosmopolitan.co.kr/", name:"코스모폴리", img:"https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000588834.jpg", imgs:["https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000588834.jpg"] },
+          { ticker:"하퍼스바자", ko:"", url:"https://www.harpersbazaar.co.kr/", name:"하퍼스바자", img:"https://image.yes24.com/goods/103932601/XL", imgs:["https://image.yes24.com/goods/103932601/XL"] },
+          { ticker:"우먼센스", ko:"", url:"https://www.womansense.co.kr/", name:"우먼센스", img:"https://i.ytimg.com/vi/DTQjqK4_Ml4/hq720_2.jpg?sqp=-oaymwEiCLQEENAFSFryq4qpAxQIARUAAAAAJQAAyEI9AICiQ9ABAQ==&rs=AOn4CLBlZcELGfCcm06hnVjMfWxNO1fDZg", imgs:["https://i.ytimg.com/vi/DTQjqK4_Ml4/hq720_2.jpg?sqp=-oaymwEiCLQEENAFSFryq4qpAxQIARUAAAAAJQAAyEI9AICiQ9ABAQ==&rs=AOn4CLBlZcELGfCcm06hnVjMfWxNO1fDZg"] },
+          { ticker:"우먼동", ko:"", url:"https://woman.donga.com/", name:"우먼동", img:"https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000558677.jpg", imgs:["https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000558677.jpg"] },
+          { ticker:"우먼조선", ko:"", url:"https://woman.chosun.com/", name:"우먼조선", img:"https://img.ridicdn.net/cover/486000697/xxlarge#1", imgs:["https://img.ridicdn.net/cover/486000697/xxlarge#1"] },
+          { ticker:"씨네21", ko:"", url:"https://cine21.com/", name:"씨네21", img:"https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000550336.jpg", imgs:["https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000550336.jpg"] },
+          { ticker:"레이디경향", ko:"", url:"https://lady.khan.co.kr/", name:"레이디경향", img:"https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/3904000116365.jpg", imgs:["https://contents.kyobobook.co.kr/sih/fit-in/458x0/pdt/3904000116365.jpg"] },
+          { ticker:"gq코리아", ko:"", url:"https://www.gqkorea.co.kr/", name:"gq코리아", img:"https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000525754.jpg", imgs:["https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000525754.jpg"] },
+          { ticker:"주부생활", ko:"", url:"https://www.ju-bu.co.kr/", name:"주부생활", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJyp4rG7vBXQD6Dz6xKQSZPK0G2cwzGwpBKg&s", imgs:["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJyp4rG7vBXQD6Dz6xKQSZPK0G2cwzGwpBKg&s"] },
+          { ticker:"에스콰이어", ko:"", url:"https://www.esquirekorea.co.kr/", name:"에스콰이어", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShE9H0xMGtDrQkbk8bKv2i2JKic-drYXTw7Q&s", imgs:["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShE9H0xMGtDrQkbk8bKv2i2JKic-drYXTw7Q&s"] },
+          { ticker:"텐아시아", ko:"", url:"https://www.tenasia.co.kr/", name:"텐아시아", img:"https://image.aladin.co.kr/product/24342/92/cover500/k492630706_1.jpg", imgs:["https://image.aladin.co.kr/product/24342/92/cover500/k492630706_1.jpg"] },
+          { ticker:"메종", ko:"", url:"https://www.maisonkorea.com/", name:"메종", img:"https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/9771227846009.jpg", imgs:["https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/9771227846009.jpg"] },
+          { ticker:"싱글즈", ko:"", url:"https://m.singleskorea.com/", name:"싱글즈", img:"https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000468310.jpg", imgs:["https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000468310.jpg"] },
+          { ticker:"theneighbor", ko:"", url:"https://www.theneighbor.co.kr/", name:"theneighbor", img:"https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000589312.jpg", imgs:["https://contents.kyobobook.co.kr/sih/fit-in/400x0/pdt/3904000589312.jpg"] },
+          { ticker:"디스패치", ko:"", url:"https://www.dispatch.co.kr/", name:"디스패치", img:"https://pds.joongang.co.kr//news/component/htmlphoto_mmdata/201808/08/f94b6284-1f62-4dbe-8e78-77ab858e93fc.jpg", imgs:["https://pds.joongang.co.kr//news/component/htmlphoto_mmdata/201808/08/f94b6284-1f62-4dbe-8e78-77ab858e93fc.jpg"] },
+          { ticker:"스포츠조선", ko:"", url:"https://www.sportschosun.com/", name:"스포츠조선", img:"sportscho.png", imgs:["sportscho.png"] },
+          { ticker:"스포츠서울", ko:"", url:"https://www.sportsseoul.com/", name:"스포츠서울", img:"sportsseoul.png", imgs:["sportsseoul.png"] },
+          { ticker:"일간스포츠", ko:"", url:"https://isplus.com/", name:"일간스포츠", img:"1sports.jpg", imgs:["1sports.jpg"] },
+          { ticker:"더팩", ko:"", url:"https://www.tf.co.kr/", name:"더팩", img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7tj6cMHuGS4odUl_RTstenIDDIv2nPfbaX0_8vmfsCbNDmitYrQcnBi7B&s=10", imgs:["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7tj6cMHuGS4odUl_RTstenIDDIv2nPfbaX0_8vmfsCbNDmitYrQcnBi7B&s=10"] },
+        ] },
+      ], altSections: [
+        { label:"시사·종합", sub:"News Magazine", items: [
+          { ticker:"시사IN", ko:"sisain.co.kr", url:"https://www.sisain.co.kr/" },
+          { ticker:"시사저널", ko:"sisajournal.com", url:"https://www.sisajournal.com/" },
+          { ticker:"한겨레21", ko:"h21.hani.co.kr", url:"https://h21.hani.co.kr/" },
+          { ticker:"주간조선", ko:"weekly.chosun.com", url:"https://weekly.chosun.com/" },
+          { ticker:"주간동아", ko:"weekly.donga.com", url:"https://weekly.donga.com/" },
+          { ticker:"주간경향", ko:"weekly.khan.co.kr", url:"https://weekly.khan.co.kr/" },
+          { ticker:"월간조선", ko:"monthly.chosun.com", url:"https://monthly.chosun.com/" },
+          { ticker:"월간중앙", ko:"jmagazine.joins.com", url:"https://jmagazine.joins.com/monthly" },
+          { ticker:"신동아", ko:"shindonga.donga.com", url:"https://shindonga.donga.com/" },
+          { ticker:"뉴스위크 한국판", ko:"newsweekkorea.com", url:"https://www.newsweekkorea.com/" },
+        ] },
+        { label:"경제·비즈니스", sub:"Business Magazine", items: [
+          { ticker:"포브스 코리아", ko:"forbes 코리아", url:"https://jmagazine.joins.com/forbes" },
+          { ticker:"한경비즈니스", ko:"magazine.hankyung.com", url:"https://magazine.hankyung.com/business" },
+          { ticker:"매경이코노미", ko:"mk.co.kr 매거진", url:"https://www.mk.co.kr/economy/" },
+          { ticker:"비즈한국", ko:"bizhankook.com", url:"https://www.bizhankook.com/" },
+          { ticker:"머니S", ko:"moneys.co.kr", url:"https://www.moneys.co.kr/" },
+          { ticker:"이코노미스트 코리아", ko:"economist.co.kr", url:"https://economist.co.kr/" },
+          { ticker:"이코노미인사이트", ko:"economyinsight.co.kr", url:"https://www.economyinsight.co.kr/" },
+          { ticker:"이코노미조선", ko:"economychosun.com", url:"https://economychosun.com/" },
+        ] },
+        { label:"여성·라이프스타일", sub:"Fashion & Lifestyle", items: [
+          { ticker:"보그 코리아", ko:"vogue.co.kr", url:"https://www.vogue.co.kr/" },
+          { ticker:"엘르 코리아", ko:"elle.co.kr", url:"https://www.elle.co.kr/" },
+          { ticker:"마리끌레르", ko:"marieclairekorea.com", url:"https://www.marieclairekorea.com/" },
+          { ticker:"코스모폴리탄", ko:"cosmopolitan.co.kr", url:"https://www.cosmopolitan.co.kr/" },
+          { ticker:"하퍼스바자", ko:"harpersbazaar.co.kr", url:"https://www.harpersbazaar.co.kr/" },
+          { ticker:"우먼센스", ko:"womansense.co.kr", url:"https://www.womansense.co.kr/" },
+          { ticker:"우먼동아", ko:"woman.donga.com", url:"https://woman.donga.com/" },
+          { ticker:"우먼조선", ko:"woman.chosun.com", url:"https://woman.chosun.com/" },
+          { ticker:"레이디경향", ko:"lady.khan.co.kr", url:"https://lady.khan.co.kr/" },
+          { ticker:"GQ 코리아", ko:"gqkorea.co.kr", url:"https://www.gqkorea.co.kr/" },
+        ] },
+        { label:"문화·전문", sub:"Culture & Specialty", items: [
+          { ticker:"씨네21", ko:"cine21.com", url:"http://www.cine21.com/" },
+          { ticker:"매거진B", ko:"magazine-b.com", url:"https://magazine-b.com/" },
+          { ticker:"텐아시아", ko:"tenasia.hankyung.com", url:"https://tenasia.hankyung.com/" },
+          { ticker:"디자인하우스", ko:"designhouse.co.kr", url:"https://www.designhouse.co.kr/" },
+          { ticker:"어라운드", ko:"a-round.kr", url:"https://a-round.kr/" },
+          { ticker:"에스콰이어", ko:"esquirekorea.co.kr", url:"https://www.esquirekorea.co.kr/" },
+          { ticker:"메종", ko:"maisonkorea.com", url:"https://www.maisonkorea.com/" },
+          { ticker:"동아사이언스", ko:"dongascience.com", url:"https://www.dongascience.com/" },
+        ] },
+      ] },
       "cafe": { photoStyle: true, newFirst: false, sections: [
         { label:"", sub:"", items: [
           { ticker:".", ko:"", url:"https://comic.sportsseoul.com/", name:".", img:"https://play-lh.googleusercontent.com/xA3JvveLtwrIxiRGv_8pW5aP_hwZWoZXUdA8DKfm9PVMmwD8kWKAddGTQfM_Bnv-1HU", imgs:["https://play-lh.googleusercontent.com/xA3JvveLtwrIxiRGv_8pW5aP_hwZWoZXUdA8DKfm9PVMmwD8kWKAddGTQfM_Bnv-1HU"] },
@@ -1498,6 +1846,27 @@
           { ticker:"여성시대", ko:"여시 · 20대 여성", url:"https://cafe.daum.net/subdued20club" },
           { ticker:"쭉빵카페", ko:"여성 패션·연애", url:"https://cafe.daum.net/ok1221" },
           { ticker:"화장발", ko:"화장·뷰티", url:"https://cafe.daum.net/Khj0421" },
+        ] },
+      ] },
+      "blog": { sections: [
+        { label:"블로그 플랫폼", sub:"Blog Platform", items: [
+          { ticker:"네이버 블로그", ko:"blog.naver.com", url:"https://blog.naver.com/" },
+          { ticker:"티스토리", ko:"tistory.com", url:"https://www.tistory.com/" },
+          { ticker:"브런치", ko:"brunch.co.kr · 카카오", url:"https://brunch.co.kr/" },
+          { ticker:"벨로그", ko:"velog.io · 개발자", url:"https://velog.io/" },
+          { ticker:"미디엄", ko:"medium.com", url:"https://medium.com/" },
+          { ticker:"워드프레스", ko:"wordpress.com", url:"https://wordpress.com/" },
+          { ticker:"깃허브 페이지", ko:"github.io · 개발자", url:"https://pages.github.com/" },
+          { ticker:"노션", ko:"notion.so", url:"https://www.notion.so/" },
+        ] },
+        { label:"인기 블로그·사이트", sub:"Popular Blogs", items: [
+          { ticker:"만개의레시피", ko:"요리·레시피", url:"https://www.10000recipe.com/" },
+          { ticker:"우리집밥상", ko:"요리·식단", url:"https://www.10000recipe.com/" },
+          { ticker:"오늘의집", ko:"인테리어 · ohou.se", url:"https://ohou.se/" },
+          { ticker:"디스이즈게임", ko:"게임 정보", url:"https://www.thisisgame.com/" },
+          { ticker:"IT동아", ko:"IT 리뷰", url:"https://it.donga.com/" },
+          { ticker:"나무위키", ko:"namu.wiki · 위키", url:"https://namu.wiki/" },
+          { ticker:"GeekNews", ko:"개발자 뉴스", url:"https://news.hada.io/" },
         ] },
       ] },
       "movie": { photoStyle: true, newFirst: false, sections: [
@@ -1617,6 +1986,106 @@
           { ticker:"골든디스크", ko:"goldendisc.co.kr", url:"https://www.goldendisc.co.kr/" },
           { ticker:"Grammy", ko:"grammy.com · 그래미", url:"https://www.grammy.com/" },
           { ticker:"Billboard MA", ko:"빌보드 뮤직 어워드", url:"https://www.billboard.com/h/billboard-music-awards/" },
+        ] },
+      ] },
+      "shopping": { newFirst: false, sections: [
+        { label:"종합 오픈마켓", sub:"Open Market", items: [
+          { ticker:"쿠팡", ko:"coupang.com", url:"https://www.coupang.com/" },
+          { ticker:"네이버쇼핑", ko:"shopping.naver.com", url:"https://shopping.naver.com/" },
+          { ticker:"G마켓", ko:"gmarket.co.kr", url:"https://www.gmarket.co.kr/" },
+          { ticker:"옥션", ko:"auction.co.kr", url:"https://www.auction.co.kr/" },
+          { ticker:"11번가", ko:"11st.co.kr", url:"https://www.11st.co.kr/" },
+          { ticker:"롯데온", ko:"lotteon.com", url:"https://www.lotteon.com/" },
+          { ticker:"SSG닷컴", ko:"ssg.com", url:"https://www.ssg.com/" },
+          { ticker:"인터파크쇼핑", ko:"shopping.interpark.com", url:"https://shopping.interpark.com/" },
+          { ticker:"티몬", ko:"tmon.co.kr", url:"https://www.tmon.co.kr/" },
+        ] },
+        { label:"백화점 · 홈쇼핑", sub:"Dept & Home Shopping", items: [
+          { ticker:"더현대닷컴", ko:"thehyundai.com", url:"https://www.thehyundai.com/" },
+          { ticker:"현대H몰", ko:"hmall.com", url:"https://www.hmall.com/" },
+          { ticker:"GS샵", ko:"gsshop.com", url:"https://www.gsshop.com/" },
+          { ticker:"CJ온스타일", ko:"cjonstyle.com", url:"https://www.cjonstyle.com/" },
+          { ticker:"롯데홈쇼핑", ko:"lotteimall.com", url:"https://www.lotteimall.com/" },
+          { ticker:"NS홈쇼핑", ko:"nsmall.com", url:"https://www.nsmall.com/" },
+          { ticker:"홈앤쇼핑", ko:"hnsmall.com", url:"https://www.hnsmall.com/" },
+          { ticker:"공영쇼핑", ko:"gongyoungshop.kr", url:"https://www.gongyoungshop.kr/" },
+        ] },
+        { label:"패션", sub:"Fashion", items: [
+          { ticker:"무신사", ko:"musinsa.com", url:"https://www.musinsa.com/" },
+          { ticker:"29CM", ko:"29cm.co.kr", url:"https://www.29cm.co.kr/" },
+          { ticker:"W컨셉", ko:"wconcept.co.kr", url:"https://www.wconcept.co.kr/" },
+          { ticker:"지그재그", ko:"zigzag.kr", url:"https://zigzag.kr/" },
+          { ticker:"에이블리", ko:"a-bly.com", url:"https://a-bly.com/" },
+          { ticker:"LF몰", ko:"lfmall.co.kr", url:"https://www.lfmall.co.kr/" },
+          { ticker:"SSF샵", ko:"ssfshop.com", url:"https://www.ssfshop.com/" },
+          { ticker:"코오롱몰", ko:"kolonmall.com", url:"https://www.kolonmall.com/" },
+          { ticker:"하프클럽", ko:"halfclub.com", url:"https://www.halfclub.com/" },
+        ] },
+        { label:"명품 · 리셀", sub:"Luxury & Resell", items: [
+          { ticker:"KREAM", ko:"kream.co.kr", url:"https://kream.co.kr/" },
+          { ticker:"발란", ko:"balaan.co.kr", url:"https://www.balaan.co.kr/" },
+          { ticker:"트렌비", ko:"trenbe.com", url:"https://www.trenbe.com/" },
+          { ticker:"머스트잇", ko:"mustit.co.kr", url:"https://www.mustit.co.kr/" },
+        ] },
+        { label:"뷰티", sub:"Beauty", items: [
+          { ticker:"올리브영", ko:"oliveyoung.co.kr", url:"https://www.oliveyoung.co.kr/" },
+          { ticker:"아모레몰", ko:"amoremall.com", url:"https://www.amoremall.com/" },
+          { ticker:"이니스프리", ko:"innisfree.com", url:"https://www.innisfree.com/kr/ko/" },
+          { ticker:"에뛰드", ko:"etude.com", url:"https://www.etude.com/" },
+          { ticker:"화해", ko:"hwahae.co.kr", url:"https://www.hwahae.co.kr/" },
+        ] },
+        { label:"식품 · 신선", sub:"Fresh Food", items: [
+          { ticker:"마켓컬리", ko:"kurly.com", url:"https://www.kurly.com/" },
+          { ticker:"오아시스마켓", ko:"oasis.co.kr", url:"https://www.oasis.co.kr/" },
+          { ticker:"이마트몰", ko:"emart.ssg.com", url:"https://emart.ssg.com/" },
+          { ticker:"홈플러스", ko:"homeplus.co.kr", url:"https://www.homeplus.co.kr/" },
+          { ticker:"정육각", ko:"jeongyookgak.com", url:"https://www.jeongyookgak.com/" },
+          { ticker:"더반찬", ko:"thebanchan.co.kr", url:"https://www.thebanchan.co.kr/" },
+        ] },
+        { label:"가전 · 디지털", sub:"Electronics", items: [
+          { ticker:"다나와", ko:"danawa.com", url:"https://www.danawa.com/" },
+          { ticker:"에누리", ko:"enuri.com", url:"https://www.enuri.com/" },
+          { ticker:"롯데하이마트", ko:"himart.co.kr", url:"https://www.himart.co.kr/" },
+          { ticker:"전자랜드", ko:"etland.co.kr", url:"https://www.etland.co.kr/" },
+          { ticker:"삼성스토어", ko:"samsung.com", url:"https://www.samsung.com/sec/" },
+          { ticker:"LG전자", ko:"lge.co.kr", url:"https://www.lge.co.kr/" },
+          { ticker:"애플", ko:"apple.com/kr", url:"https://www.apple.com/kr/" },
+        ] },
+        { label:"가구 · 인테리어", sub:"Living", items: [
+          { ticker:"오늘의집", ko:"ohou.se", url:"https://ohou.se/" },
+          { ticker:"이케아", ko:"ikea.com/kr", url:"https://www.ikea.com/kr/ko/" },
+          { ticker:"한샘몰", ko:"mall.hanssem.com", url:"https://mall.hanssem.com/" },
+          { ticker:"현대리바트", ko:"hyundailivart.co.kr", url:"https://www.hyundailivart.co.kr/" },
+          { ticker:"일룸", ko:"iloom.com", url:"https://www.iloom.com/" },
+        ] },
+        { label:"스포츠 · 신발", sub:"Sports", items: [
+          { ticker:"나이키", ko:"nike.com/kr", url:"https://www.nike.com/kr/" },
+          { ticker:"아디다스", ko:"adidas.co.kr", url:"https://www.adidas.co.kr/" },
+          { ticker:"뉴발란스", ko:"nbkorea.com", url:"https://www.nbkorea.com/" },
+          { ticker:"ABC마트", ko:"abcmart.a-rt.com", url:"https://abcmart.a-rt.com/" },
+        ] },
+        { label:"도서", sub:"Books", items: [
+          { ticker:"예스24", ko:"yes24.com", url:"https://www.yes24.com/" },
+          { ticker:"교보문고", ko:"kyobobook.co.kr", url:"https://www.kyobobook.co.kr/" },
+          { ticker:"알라딘", ko:"aladin.co.kr", url:"https://www.aladin.co.kr/" },
+        ] },
+        { label:"중고거래", sub:"Secondhand", items: [
+          { ticker:"당근", ko:"daangn.com", url:"https://www.daangn.com/" },
+          { ticker:"번개장터", ko:"bunjang.co.kr", url:"https://m.bunjang.co.kr/" },
+          { ticker:"중고나라", ko:"joongna.com", url:"https://web.joongna.com/" },
+        ] },
+        { label:"해외직구", sub:"Global", items: [
+          { ticker:"아마존", ko:"amazon.com", url:"https://www.amazon.com/" },
+          { ticker:"알리익스프레스", ko:"aliexpress.com", url:"https://ko.aliexpress.com/" },
+          { ticker:"테무", ko:"temu.com", url:"https://www.temu.com/kr" },
+          { ticker:"쉬인", ko:"shein.com", url:"https://kr.shein.com/" },
+          { ticker:"아이허브", ko:"iherb.com", url:"https://kr.iherb.com/" },
+          { ticker:"이베이", ko:"ebay.com", url:"https://www.ebay.com/" },
+          { ticker:"라쿠텐", ko:"rakuten.co.jp", url:"https://www.rakuten.co.jp/" },
+          { ticker:"타오바오", ko:"taobao.com", url:"https://world.taobao.com/" },
+        ] },
+      ], altSections: [
+        { label:"", sub:"", items: [
         ] },
       ] },
       "youtuber": { photoStyle: true, sections: [
@@ -1855,6 +2324,10 @@
           { ticker:"채널A", ko:"", url:"https://ichannela.com/program/detail/program_detail_renew.do?cateCode=0501320001&paramGb=free", name:"채널A", img:"http://image.ichannela.com/images/program/WPG2170136D/site_poster_img1_20230404041015436.jpg", imgs:["http://image.ichannela.com/images/program/WPG2170136D/site_poster_img1_20230404041015436.jpg"] },
         ] },
       ] },
+      "tab": { photoStyle: true, sections: [
+        { label:"", sub:"", items: [
+        ] },
+      ] },
     };
     /* @DATA_END */
 
@@ -1897,12 +2370,22 @@
     let editMode = false, toolOpen = false;
     /* @TABSMETA_START */
     const DEFAULT_TABS_META = [
+      { id:"daily", label:"즐겨찾기" },
+      { id:"magazine", label:"여성지" },
       { id:"portal", label:"시사-경제지" },
+      { id:"news", label:"뉴스" },
+      { id:"bbs", label:"BBS" },
+      { id:"livetv", label:"LIVE TV" },
+      { id:"radio", label:"LIVE 라디오" },
       { id:"dramavod", label:"드라마VOD" },
       { id:"youtuber", label:"유튜버" },
       { id:"movie", label:"영화" },
       { id:"cafe", label:"만화" },
+      { id:"shopping", label:"쇼핑몰" },
+      { id:"tab", label:"여행&공연" },
+      { id:"broadcast", label:"방송사" },
       { id:"music", label:"음악" },
+      { id:"blog", label:"블로그" },
     ];
     /* @TABSMETA_END */
 
@@ -2312,7 +2795,7 @@
     function exportData(){
       const payload={ kind:DATA_KIND, tabsMeta:TABS_META, tabs:tabs };
       const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='myway-barsite.json'; a.click();
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='myway-index.json'; a.click();
       setTimeout(()=>URL.revokeObjectURL(a.href),1500);
     }
     function importData(){
@@ -2431,9 +2914,9 @@
       return html;
     }
     function dl(name,html){ const blob=new Blob([html],{type:'text/html'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1500); }
-    document.getElementById('saveEdit').onclick=function(){ dl('barsite-edit.html', buildHTML({dist:true,edit:true,prot:false,key:'mywayBarSiteV1_dist',sig:'sig'+Date.now()})); closeCode(); };
-    document.getElementById('saveEditor').onclick=function(){ dl('barsite-EDITER.html', buildHTML({dist:false,edit:true,prot:false,key:'mywayBarSiteV1',sig:''})); closeCode(); };
-    document.getElementById('saveView').onclick=function(){ dl('barsite-view.html', buildHTML({dist:false,edit:false,prot:true,key:'mywayBarSiteV1',sig:''})); closeCode(); };
+    document.getElementById('saveEdit').onclick=function(){ dl('indexmain7-edit.html', buildHTML({dist:true,edit:true,prot:false,key:'mywayIndexV1_dist',sig:'sig'+Date.now()})); closeCode(); };
+    document.getElementById('saveEditor').onclick=function(){ dl('Indexmain7-EDITER.html', buildHTML({dist:false,edit:true,prot:false,key:'mywayIndexV1',sig:''})); closeCode(); };
+    document.getElementById('saveView').onclick=function(){ dl('indexmain7-view.html', buildHTML({dist:false,edit:false,prot:true,key:'mywayIndexV1',sig:''})); closeCode(); };
     document.getElementById('copyCode').onclick=function(){
       const code='const DEFAULT_TABS = '+serializeTabs(tabs)+';';
       const ta=document.getElementById('codeArea'); ta.value=code; ta.style.pointerEvents='auto'; ta.select(); ta.setSelectionRange(0,code.length);
@@ -2463,7 +2946,7 @@
     let TABS_META = loadMeta();
     function selectTab(id){
       curTab=id;
-      try{ sessionStorage.setItem('mywayTab_barsite', id); }catch(_){}
+      try{ sessionStorage.setItem('mywayTab_indexmain7', id); }catch(_){}
       renderNav(); renderTab(id);
       try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(_){}
       try{ var b=document.querySelector('#tabNav .tab-btn[data-tab="'+id+'"]'); if(b) b.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}); }catch(_){}
@@ -2531,7 +3014,7 @@
     /* ============ 탭 네비 ============ */
     (function(){
       var saved='daily';
-      try { saved = sessionStorage.getItem('mywayTab_barsite') || 'daily'; } catch(_) {}
+      try { saved = sessionStorage.getItem('mywayTab_indexmain7') || 'daily'; } catch(_) {}
       if(!TABS_META.some(t=>t.id===saved)) saved=(TABS_META[0]&&TABS_META[0].id)||'daily';
       curTab=saved; renderNav(); renderTab(saved);
     })();
@@ -2683,7 +3166,7 @@
   <script>
     /* ===== 사용자 즐겨찾기 (+ 버튼) — extra-logo-section 맨 끝에 원형 타일 ===== */
     (function () {
-      const FAV_KEY = 'mywayBarFavTilesV1';
+      const FAV_KEY = 'mywayFavTilesV1';
       try { if (typeof ensureDistFresh === 'function') ensureDistFresh(); } catch (_) {}
       /* 배포본 HTML에 굳어진 즐겨찾기 타일(.fav-item)을 기본값으로 삼음 — localStorage가 비어 있는 새 브라우저/시크릿 창에서도 표시되도록 */
       const SEED_FAVS = (function () {
@@ -2870,7 +3353,7 @@
         const blob = new Blob([JSON.stringify(loadFavs(), null, 2)], { type: 'application/json' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'myway-barsite-favorites.json';
+        a.download = 'myway-favorites.json';
         document.body.appendChild(a); a.click();
         setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 100);
       });
@@ -2885,7 +3368,7 @@
           try {
             let arr = JSON.parse(rd.result);
             /* myway-index.json(인덱스 전체 데이터)을 넣으면 즐겨찾기(daily) 탭 항목만 자동 추출 */
-            if (arr && !Array.isArray(arr) && (arr.kind === 'myway-barsite-v1' || arr.kind === 'myway-index-v1')) {
+            if (arr && !Array.isArray(arr) && arr.kind === 'myway-index-v1') {
               const tabs = arr.tabs || {};
               const src = tabs.daily || tabs[Object.keys(tabs)[0]] || {};
               const secs = Array.isArray(src.sections) ? src.sections : [];
