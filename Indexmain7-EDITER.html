@@ -256,6 +256,22 @@
     }
     /* 라이트 카드에서는 좌상단 글로우 비활성 */
     .card::before { content: none; }
+    /* ===== 카드형: 각진 모서리 + 왼쪽 그라데이션 로고 (입체감·페이퍼컬 그림자는 그대로) ===== */
+    #main .card { border-radius: 0; }
+    #main .card .card-content { display: flex; align-items: center; gap: 10px; }
+    #main .card .card-content > .card-txt { min-width: 0; }
+    .chart-logo { flex: 0 0 32px; width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--c1), var(--c2)); box-shadow: 0 3px 7px -2px var(--c2); }
+    .chart-logo svg { width: 17px; height: 17px; stroke: #fff; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .lg-0 { --c1:#7c3aed; --c2:#ec4899; }
+    .lg-1 { --c1:#2563eb; --c2:#60a5fa; }
+    .lg-2 { --c1:#059669; --c2:#34d399; }
+    .lg-3 { --c1:#ea580c; --c2:#fbbf24; }
+    .lg-4 { --c1:#0d9488; --c2:#22d3ee; }
+    .lg-5 { --c1:#e11d48; --c2:#fb7185; }
+    .lg-6 { --c1:#4f46e5; --c2:#a78bfa; }
+    .lg-7 { --c1:#1e3a8a; --c2:#06b6d4; }
+    body.editing #main .card > .card-ctrl { border-radius: 0; }
     /* 카드 아래 곡선 그림자 PNG (shopping.html 동일 효과) */
     .card::after {
       content: "";
@@ -2304,6 +2320,32 @@
     // 영문 보조 라벨(작은 글씨)을 숨길 탭 목록
     const HIDE_SUB_TABS = ['news', 'bbs', 'broadcast', 'magazine'];
 
+    /* 카드형 탭용 그라데이션 로고 (탭별 아이콘) */
+    const CARD_LOGO_SVG = {
+      news:  '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>',
+      play:  '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9l5 3-5 3z"/></svg>',
+      globe: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>',
+      chat:  '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+      radio: '<svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="2"/><circle cx="8" cy="14" r="2.5"/><path d="M14 12h4M14 16h4M7 8l10-5"/></svg>',
+      tv:    '<svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M8 3l4 4 4-4M9 22h6"/></svg>',
+      film:  '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 15h18M8 4v16M16 4v16"/></svg>',
+      music: '<svg viewBox="0 0 24 24"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>',
+      cart:  '<svg viewBox="0 0 24 24"><path d="M3 4h2l2.5 11h11L21 7H6.5"/><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/></svg>',
+      book:  '<svg viewBox="0 0 24 24"><path d="M4 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4zM20 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg>',
+      pen:   '<svg viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M13 7l3 3"/></svg>',
+      cup:   '<svg viewBox="0 0 24 24"><path d="M4 8h13v7a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M17 10h2a2 2 0 0 1 0 4h-2M7 3v2M11 3v2"/></svg>',
+      home:  '<svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>',
+      chart: '<svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 4 8-8"/><path d="M14 8h6v6"/></svg>'
+    };
+    const TAB_LOGO_KIND = { daily:'home', radio:'radio', livetv:'tv', portal:'globe', news:'news', bbs:'chat', broadcast:'tv', magazine:'book', cafe:'cup', blog:'pen', movie:'film', music:'music', shopping:'cart' };
+    function makeCardLogo(it, idx, tabId){
+      const isYt = /youtube\.com|youtu\.be/i.test(String(it.url||''));
+      const kind = isYt ? 'play' : (TAB_LOGO_KIND[tabId] || 'chart');
+      const el = document.createElement('span');
+      el.className = 'chart-logo lg-' + (idx % 8);
+      el.innerHTML = CARD_LOGO_SVG[kind] || CARD_LOGO_SVG.chart;
+      return el;
+    }
     function renderTab(tabId) {
       // body 속성 변경 → CSS 라이트/다크 톤 토글
       document.body.dataset.activeTab = tabId;
@@ -2452,12 +2494,15 @@
             const tk = document.createElement('div');
             tk.className = 'ticker';
             tk.textContent = it.ticker;
-            a.appendChild(tk);
             if (String(it.ticker).length > 6) a.dataset.long = '1';
             const ko = document.createElement('div');
             ko.className = 'name-ko';
             ko.textContent = it.ko;
-            a.appendChild(ko);
+            const content = document.createElement('div'); content.className = 'card-content';
+            content.appendChild(makeCardLogo(it, ii, tabId));
+            const txt = document.createElement('div'); txt.className = 'card-txt';
+            txt.appendChild(tk); txt.appendChild(ko); content.appendChild(txt);
+            a.appendChild(content);
             const arr = document.createElement('span');
             arr.className = 'arrow';
             arr.textContent = '↗';

@@ -277,11 +277,31 @@
     }
     .card:active { transform: translateY(-1px); }
 
+    /* ===== 주요 차트 탭: 각진 모서리 + 그라데이션 로고 (입체감·페이퍼컬 그림자는 그대로) ===== */
+    #main .card,
+    #main .card-half { border-radius: 0; }
+    #main .card-split { padding-left: 12px; }
+    #main .card-content { display: flex; align-items: center; gap: 10px; }
+    #main .card-content > .card-txt { min-width: 0; }
+    .chart-logo { flex: 0 0 32px; width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--c1), var(--c2)); box-shadow: 0 3px 7px -2px var(--c2); }
+    .chart-logo svg { width: 17px; height: 17px; stroke: #fff; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    /* 로고 색 팔레트 (카드 순서대로 순환) */
+    .lg-0 { --c1:#7c3aed; --c2:#ec4899; }  /* 보라→핑크 (샘플 이미지) */
+    .lg-1 { --c1:#2563eb; --c2:#60a5fa; }  /* 파랑 */
+    .lg-2 { --c1:#059669; --c2:#34d399; }  /* 초록 */
+    .lg-3 { --c1:#ea580c; --c2:#fbbf24; }  /* 주황→노랑 */
+    .lg-4 { --c1:#0d9488; --c2:#22d3ee; }  /* 청록 */
+    .lg-5 { --c1:#e11d48; --c2:#fb7185; }  /* 로즈 */
+    .lg-6 { --c1:#4f46e5; --c2:#a78bfa; }  /* 인디고 */
+    .lg-7 { --c1:#1e3a8a; --c2:#06b6d4; }  /* 오션 */
+    body.editing #main .card-ctrl { border-radius: 0; }
+
     /* ===== 분할 카드(한국 주식: 좌 알파스퀘어 / 우 네이버) ===== */
     .card-split { padding: 14px 14px 22px; justify-content: flex-start; }
     .card-split .card-content {
       position: relative;
-      z-index: 1;
+      z-index: 3; /* 좌/우 클릭 영역(z-index 2)의 hover 배경보다 위 — 종목명이 가려지지 않게 */
       pointer-events: none; /* 클릭은 좌/우 영역이 담당 */
     }
     .card-half {
@@ -1823,6 +1843,27 @@
     function serializeMeta(arr){ var out='[\n'; arr.forEach(function(t){ out+='      { id:'+JSON.stringify(t.id)+', label:'+JSON.stringify(t.label)+' },\n'; }); out+='    ]'; return out; }
 
     /* ============ 렌더 ============ */
+    /* 주요 차트 탭 카드용 그라데이션 로고 */
+    const CHART_LOGO_SVG = {
+      chart: '<svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 4 8-8"/><path d="M14 8h6v6"/></svg>',
+      coin:  '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 8v8"/></svg>',
+      bars:  '<svg viewBox="0 0 24 24"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>',
+      news:  '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>',
+      play:  '<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9l5 3-5 3z"/></svg>',
+      globe: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>',
+      chat:  '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>'
+    };
+    /* 탭별 아이콘 종류 (없는 탭은 chart/bars 번갈아) */
+    const TAB_LOGO_KIND = { news:'news', youtube:'play', sites:'globe', community:'chat' };
+    function makeChartLogo(it, idx, tabId){
+      const isCoin = /upbit\.com|bithumb/i.test(String(it.url||''));
+      const isYt = /youtube\.com|youtu\.be/i.test(String(it.url||''));
+      const kind = isCoin ? 'coin' : isYt ? 'play' : (TAB_LOGO_KIND[tabId] || (idx % 2 ? 'bars' : 'chart'));
+      const el = document.createElement('span');
+      el.className = 'chart-logo lg-' + (idx % 8);
+      el.innerHTML = CHART_LOGO_SVG[kind];
+      return el;
+    }
     function renderTab(tabId) {
       /* 미국 지수 선물·지수의 네이버 차트 매핑 (ticker 기준) */
       const NAVER_INDEX = {
@@ -1977,8 +2018,11 @@
             const ko = document.createElement('div');
             ko.className = 'name-ko';
             ko.textContent = it.ko;
-            content.appendChild(tk);
-            content.appendChild(ko);
+            content.appendChild(makeChartLogo(it, ii, tabId));
+            const txt = document.createElement('div'); txt.className = 'card-txt';
+            txt.appendChild(tk);
+            txt.appendChild(ko);
+            content.appendChild(txt);
             card.appendChild(content);
 
             /* 좌측: 원본(알파스퀘어/빗썸/트레이딩뷰) */
@@ -2023,14 +2067,19 @@
           const tk = document.createElement('div');
           tk.className = 'ticker';
           tk.textContent = it.ticker;
-          a.appendChild(tk);
           /* 사이트명 등 긴 라벨은 자동 축소 (6자 이상) */
           if (String(it.ticker).length > 6) a.dataset.long = '1';
 
           const ko = document.createElement('div');
           ko.className = 'name-ko';
           ko.textContent = it.ko;
-          a.appendChild(ko);
+          {
+            const content = document.createElement('div'); content.className = 'card-content';
+            content.appendChild(makeChartLogo(it, ii, tabId));
+            const txt = document.createElement('div'); txt.className = 'card-txt';
+            txt.appendChild(tk); txt.appendChild(ko); content.appendChild(txt);
+            a.appendChild(content);
+          }
 
           const arr = document.createElement('span');
           arr.className = 'arrow';
