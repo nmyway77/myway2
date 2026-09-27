@@ -758,7 +758,14 @@
 
   <!-- 메인 iframe wrapper (H 토글로 펼치기/접기) -->
   <div class="main-frame-wrap" id="frameWrap">
-    <iframe id="main-frame" class="main-frame" src="00000stockmain7.html" allowfullscreen allow="fullscreen" loading="eager" data-current-url="00000stockmain7.html"></iframe>
+    <iframe id="main-frame" class="main-frame" allowfullscreen allow="fullscreen" loading="eager" data-current-url="00000stockmain7.html"></iframe>
+    <script>
+      /* 캐시 버스터: 자식 페이지(indexmain7 등) 주소 뒤에 10분 단위 버전값을 붙여
+         폰(특히 아이폰 사파리)이 iframe 안의 옛 파일을 계속 쓰는 문제 방지.
+         data-current-url 등 비교용 값은 원래 파일명 그대로 유지한다. */
+      function bustUrl(u){ return u + (u.indexOf('?') > -1 ? '&' : '?') + 'v=' + Math.floor(Date.now() / 600000); }
+      document.getElementById('main-frame').src = bustUrl('00000stockmain7.html');
+    </script>
   </div>
 
   <!-- ===== EDITER: 검색엔진 · 자주쓰는 검색어 편집 오버레이 ===== -->
@@ -2001,12 +2008,12 @@
       if (!sameUrl) {
         try {
           if (frame.contentWindow && frame.contentWindow.location) {
-            frame.contentWindow.location.replace(url);
+            frame.contentWindow.location.replace(bustUrl(url));
           } else {
-            frame.src = url;
+            frame.src = bustUrl(url);
           }
         } catch(_) {
-          frame.src = url;
+          frame.src = bustUrl(url);
         }
         frame.setAttribute('data-current-url', url);
         try { sessionStorage.setItem('mywayScreen', url); } catch(__) {}
@@ -2106,7 +2113,7 @@
       var frame = document.getElementById('main-frame');
       if(!frame) return;
       if(frame.getAttribute('data-current-url') !== saved){
-        frame.src = saved;
+        frame.src = bustUrl(saved);
         frame.setAttribute('data-current-url', saved);
       }
       document.querySelectorAll('#parent-links a').forEach(function(a){
@@ -2152,7 +2159,7 @@
       var f = document.getElementById('main-frame');
       if(!f) return;
       if((f.getAttribute('data-current-url') || '') === url) return;
-      try { f.contentWindow.location.replace(url); } catch(_){ f.src = url; }
+      try { f.contentWindow.location.replace(bustUrl(url)); } catch(_){ f.src = bustUrl(url); }
       f.setAttribute('data-current-url', url);
       try { sessionStorage.setItem('mywayScreen', url); } catch(e){}
     }
@@ -2793,7 +2800,7 @@ var DEFAULT_ENGINES = [
       });
       /* iframe을 초기 화면으로 리셋 */
       src = src.replace(/<iframe id="main-frame"[\s\S]*?<\/iframe>/,
-        '<iframe id="main-frame" class="main-frame" src="00000stockmain7.html" allowfullscreen allow="fullscreen" loading="eager" data-current-url="00000stockmain7.html"></iframe>');
+        '<iframe id="main-frame" class="main-frame" allowfullscreen allow="fullscreen" loading="eager" data-current-url="00000stockmain7.html"></iframe>');
       /* 네비 active를 초기 상태(C&S)로 리셋 */
       src = src.replace(/ class="[^"]*\bactive\b[^"]*"/g, '');
       src = src.replace(/(<a href="#" )(onclick="showScreenParent\(event, '00000stockmain7\.html'\)")/, '$1class="active" $2');
