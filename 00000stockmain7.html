@@ -729,13 +729,13 @@
   </header>
 
 
-  <section id="chartTop" class="chart-top" style="display: none;">
+  <section id="chartTop" class="chart-top" style="">
     <div class="chart-top-inner">
       <div id="infoWrap"></div>
     </div>
   </section>
 
-  <main class="main" id="main" data-tab="tools"></main>
+  <main class="main" id="main" data-tab="today"></main>
 
   <footer class="myway-footer">
     <a href="https://myway.kr/" target="_top">마이웨이 myway.kr</a>
@@ -813,7 +813,7 @@
   <!-- TODAY 카드 추가/수정 모달 -->
   <div class="modal-back" id="infoBack">
     <div class="modal">
-      <h3 id="infoTitle">카드 추가</h3>
+      <h3 id="infoTitle">카드 수정</h3>
       <label>이름(국문)</label>
       <input id="infName" type="text" placeholder="예: 뉴스">
       <label>영문 라벨</label>
@@ -858,7 +858,7 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayStockV1_dist";
-    const DIST_SIG = "sig1790511047584";
+    const DIST_SIG = "sig1790599749827";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-stock-v1';   // JSON 식별자 — 다른 도구 JSON과 섞임 방지
     let _distChecked = false;
@@ -1361,7 +1361,7 @@
       { title:"종합정보", desc:"뉴스 · 지수 · 주식 · 코인 ·", cards: [
         { name:"비교챠트", en:"", url:"https://myway.kr/multichart.html", c:"#146c2a", c2:"#60a5fa", icon:"news" },
         { name:"업비트", en:"코인", url:"https://www.bithumb.com/react/trade/order/BTC-KRW", c:"#f59e0b", c2:"#fbbf24", icon:"coin" },
-        { name:"코인리더스", en:"코인뉴스", url:"https://www.coinreaders.com/sub_view.html", c:"#ef4444", c2:"#f97316", icon:"news" },
+        { name:"코인니스", en:"코인뉴스", url:"https://coinness.com/news", c:"#ef4444", c2:"#f97316", icon:"news" },
         { name:"알파스퀘어", en:"주식코인", url:"https://alphasquare.co.kr/home/market-indicator?code=005930&factor=index", c:"#3b82f6", c2:"#06b6d4", icon:"index" },
         { name:"네이버증권", en:"주식코인", url:"https://stock.naver.com/", c:"#16a34a", c2:"#10b981", icon:"krstock" },
         { name:"트레이딩뷰", en:"지수정보", url:"https://kr.tradingview.com/markets/", c:"#6366f1", c2:"#818cf8", icon:"globalstock" },
