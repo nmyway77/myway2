@@ -16,14 +16,14 @@
   html,body{margin:0;padding:0;height:100%}
   body{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:#fff;color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
 
-  .topnav{flex:none;display:flex;gap:8px;align-items:center;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:10px 14px;background:#fff;border-bottom:1px solid var(--line);cursor:grab;scrollbar-width:none}
+  .topnav{flex:none;display:flex;gap:6px;align-items:center;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:8px 14px;background:#fff;border-bottom:1px solid var(--line);cursor:grab;scrollbar-width:none}
   .topnav::-webkit-scrollbar{display:none}
   .topnav.dragging{cursor:grabbing}
-  .nav-home{flex:none;order:0;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-sub);padding:8px;border-radius:10px;transition:color .15s,background .15s}
+  .nav-home{flex:none;order:0;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-sub);padding:6px;border-radius:8px;transition:color .15s,background .15s}
   .nav-home:hover{color:var(--accent);background:#f5f6f8}
-  .nav-home svg{width:20px;height:20px;display:block}
-  .nav-track{flex:none;order:3;display:flex;align-items:center;gap:8px;margin:0 auto}
-  .topnav button{flex:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font-family:var(--body);font-size:14px;font-weight:700;color:var(--ink-sub);cursor:pointer;transition:all .16s}
+  .nav-home svg{width:17px;height:17px;display:block}
+  .nav-track{flex:none;order:3;display:flex;align-items:center;gap:6px;margin:0 auto}
+  .topnav button{flex:none;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;font-family:var(--body);font-size:12.5px;font-weight:700;color:var(--ink-sub);cursor:pointer;transition:all .16s}
   .topnav button:hover{border-color:#cfd3da;color:var(--ink)}
   .topnav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
   .topnav .grid-btn{order:1;border-color:#b9e0d4;color:var(--accent)}
@@ -34,13 +34,13 @@
   .viewer iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
 
   /* 전체목록(디렉터리) 패널 */
-  .grid-panel{position:absolute;inset:0;overflow-y:auto;display:none;padding:30px 16px 60px;background:#fff;scrollbar-width:none}
+  .grid-panel{position:absolute;inset:0;overflow-y:auto;display:none;padding:24px 16px 50px;background:#fff;scrollbar-width:none}
   .grid-panel::-webkit-scrollbar{display:none}
   .grid-panel.show{display:block}
-  .grid-title{text-align:center;font-size:20px;font-weight:800;letter-spacing:-0.02em;color:#244;margin:0 0 6px}
-  .grid-sub{text-align:center;font-size:13px;color:var(--ink-sub);margin:0 0 26px}
-  .dir-section{max-width:1200px;margin:0 auto 28px}
-  .dir-label{font-size:12.5px;font-weight:800;color:var(--accent);letter-spacing:.5px;text-transform:uppercase;margin:0 0 10px;padding:0 4px}
+  .grid-title{text-align:center;font-size:16px;font-weight:800;letter-spacing:-0.02em;color:#244;margin:0 0 5px}
+  .grid-sub{text-align:center;font-size:11px;color:var(--ink-sub);margin:0 0 21px}
+  .dir-section{max-width:1060px;margin:0 auto 22px}
+  .dir-label{font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.5px;text-transform:uppercase;margin:0 0 8px;padding:0 4px}
   .home-list{display:flex;flex-direction:column;gap:6px;max-height:52vh;overflow:auto;scrollbar-width:none}
   .home-list::-webkit-scrollbar{display:none}
   .home-row{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:9px 11px;cursor:pointer;font-size:13px;font-weight:700;color:var(--ink)}
@@ -50,49 +50,58 @@
   .home-row .mark{margin-left:auto;font-size:12px}
   .nav-row button.home{font-size:13px}
   .nav-row button.home.on{border-color:var(--accent);color:var(--accent);background:#f5fbf8}
-  /* 전체목록 카드: indexmain7 원형 로고 타일 형식 */
-  .dir-grid{display:grid;grid-template-columns:repeat(auto-fill,72px);justify-content:center;column-gap:18px;row-gap:20px;padding:4px 0}
-  .dir-card{display:flex;flex-direction:column;align-items:center;gap:6px;width:72px;text-decoration:none;color:inherit;font-family:var(--body);position:relative;cursor:pointer}
-  .dir-card .tile{width:64px;height:64px;border-radius:50%;background:#fff;box-shadow:0 3px 20px 0 #b1c7e866;border:2.5px solid #e5e8f6;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:box-shadow .15s,border-color .15s,transform .12s}
-  .dir-card .tile img{width:40px;height:40px;object-fit:contain;display:block;pointer-events:none}
-  .dir-card .tile .ini{font-size:22px;font-weight:800;color:#5b6bff;letter-spacing:-.5px}
-  .dir-card:hover .tile{box-shadow:0 8px 32px 0 #7e94ff99;border-color:#7e94ff;transform:scale(1.06)}
-  .dir-card .t{font-size:11.5px;font-weight:700;color:#39406a;letter-spacing:-.3px;line-height:1.2;text-align:center;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .dir-card .k{display:none}
-  @media (min-width:1280px){ .dir-grid{grid-template-columns:repeat(auto-fill,76px);column-gap:22px} .dir-card{width:76px} }
-  @media (max-width:720px){ .dir-grid{grid-template-columns:repeat(auto-fill,64px);column-gap:12px;row-gap:16px} .dir-card{width:64px} .dir-card .tile{width:56px;height:56px} .dir-card .tile img{width:34px;height:34px} .grid-panel{padding:24px 12px 50px} }
+  /* 전체목록 카드: 아이콘 배지 + 이름 + 도메인 (종이 그림자) */
+  .dir-grid{display:grid;grid-template-columns:repeat(4,1fr);column-gap:10px;row-gap:24px}
+  .dir-card{display:flex;flex-direction:row;align-items:center;gap:10px;padding:11px 13px;min-height:56px;border:1px solid var(--line);border-radius:9px;background:#fff;cursor:pointer;text-align:left;text-decoration:none;color:inherit;font-family:var(--body);transition:all .15s;box-shadow:0 2px 4px rgba(90,90,130,.06);position:relative;overflow:visible}
+  .dir-card::after{content:"";position:absolute;left:2.5%;right:2.5%;top:100%;height:14px;background:url('https://64.media.tumblr.com/f5f06009df6584ebb5539cad61f73c63/tumblr_inline_qsghz3XZRQ1r45nlo_500.png') center top / 100% 100% no-repeat;pointer-events:none;z-index:1}
+  .dir-card:hover{border-color:#c9d3ff;background:#f7f8ff;transform:translateY(-2px);box-shadow:0 4px 12px rgba(91,107,255,.14)}
+  .dir-card .ic{flex:none;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.14);overflow:hidden}
+  .dir-card .ic svg{width:15px;height:15px;display:block}
+  .dir-card .ic img{width:100%;height:100%;object-fit:cover;display:block;background:#fff}
+  .dir-card .ic.c0{background:linear-gradient(135deg,#8e44d9,#c04ce8)}
+  .dir-card .ic.c1{background:linear-gradient(135deg,#2f7bff,#4aa3ff)}
+  .dir-card .ic.c2{background:linear-gradient(135deg,#17b978,#2fd38a)}
+  .dir-card .ic.c3{background:linear-gradient(135deg,#ff9a1f,#ffb73a)}
+  .dir-card .ic.c4{background:linear-gradient(135deg,#12b4c9,#2fd0dd)}
+  .dir-card .ic.c5{background:linear-gradient(135deg,#f0416a,#ff6b7d)}
+  .dir-card .ic.c6{background:linear-gradient(135deg,#6f5cf0,#8f7cff)}
+  .dir-card .ic.c7{background:linear-gradient(135deg,#1f5fa8,#2b7fd0)}
+  .dir-card .tx{min-width:0;display:flex;flex-direction:column;gap:2px}
+  .dir-card .t{font-size:12.5px;font-weight:800;color:var(--ink);letter-spacing:-0.3px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .dir-card .k{font-size:9.5px;color:var(--ink-sub);line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  @media (max-width:900px){ .dir-grid{grid-template-columns:repeat(3,1fr)} }
+  @media (max-width:640px){ .dir-grid{grid-template-columns:repeat(2,1fr);row-gap:22px} .dir-card{padding:10px 11px;gap:9px;min-height:54px} .dir-card .ic{width:30px;height:30px} .grid-panel{padding:20px 12px 44px} }
 
   /* === 편집 도구 === */
   .dir-toolbar{max-width:1040px;margin:0 auto 22px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
-  .tb-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 15px;font-family:var(--body);font-size:13px;font-weight:700;color:var(--ink-sub);cursor:pointer;transition:all .15s}
+  .tb-btn{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font-family:var(--body);font-size:12px;font-weight:700;color:var(--ink-sub);cursor:pointer;transition:all .15s}
   .tb-btn:hover{border-color:#cfd3da;color:var(--ink)}
   .tb-btn.on{background:var(--accent);border-color:var(--accent);color:#fff}
   .tb-btn.code{border-color:#b9e0d4;color:var(--accent)}
   /* 편집 도구 FAB (우측 상단 고정) */
   .edit-toolbar{position:fixed;top:8px;right:12px;z-index:200}
-  .tool-fab{width:36px;height:36px;border-radius:50%;border:0;background:linear-gradient(135deg,#0b6b53,#14a37f);color:#fff;cursor:pointer;box-shadow:0 3px 10px rgba(11,107,83,.35);display:flex;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s;-webkit-tap-highlight-color:transparent}
+  .tool-fab{width:32px;height:32px;border-radius:50%;border:0;background:linear-gradient(135deg,#0b6b53,#14a37f);color:#fff;cursor:pointer;box-shadow:0 3px 10px rgba(11,107,83,.35);display:flex;align-items:center;justify-content:center;transition:transform .15s,box-shadow .15s;-webkit-tap-highlight-color:transparent}
   .tool-fab:hover{transform:scale(1.08)}
   .tool-fab.open{box-shadow:0 4px 14px rgba(11,107,83,.5)}
   .tool-fab.editing{box-shadow:0 0 0 3px rgba(11,107,83,.3),0 3px 10px rgba(11,107,83,.35)}
   .tool-fab svg{display:block}
-  .tool-menu{display:none;position:absolute;top:44px;right:0;flex-direction:column;gap:5px;min-width:168px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:8px}
+  .tool-menu{display:none;position:absolute;top:40px;right:0;flex-direction:column;gap:5px;min-width:168px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:8px}
   .tool-menu.open{display:flex}
   .tool-menu .tb-btn{width:100%;text-align:left;justify-content:flex-start;border-radius:8px}
-  .dir-secthead{max-width:1200px;margin:0 auto 12px;display:flex;align-items:center;gap:8px;padding:0 4px}
+  .dir-secthead{max-width:1060px;margin:0 auto 10px;display:flex;align-items:center;gap:8px;padding:0 4px}
   .dir-secthead .dir-label{margin:0}
-  .sect-add{display:none;border:1px dashed #b9e0d4;background:#f5fbf8;color:var(--accent);border-radius:8px;padding:3px 9px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:var(--body)}
+  .sect-add{display:none;border:1px dashed #b9e0d4;background:#f5fbf8;color:var(--accent);border-radius:8px;padding:3px 8px;font-size:10.5px;font-weight:700;cursor:pointer;font-family:var(--body)}
   .sect-tools{display:none;gap:5px}
   .sect-tools button{border:1px solid var(--line);background:#fff;border-radius:7px;width:24px;height:22px;font-size:12px;line-height:1;cursor:pointer;color:var(--ink-sub);font-family:var(--body)}
   .sect-tools button:hover{border-color:var(--accent);color:var(--accent)}
   body.editing .sect-add{display:inline-block}
   body.editing .sect-tools{display:inline-flex}
   /* 카드 편집 오버레이 */
-  .card-ctrl{display:none;position:absolute;left:50%;top:22px;transform:translateX(-50%);z-index:3;background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:10px;padding:3px;align-items:center;justify-content:center;gap:3px;box-shadow:0 4px 12px rgba(0,0,0,.14)}
+  .card-ctrl{display:none;position:absolute;inset:0;z-index:3;background:rgba(255,255,255,.82);border-radius:10px;align-items:center;justify-content:center;gap:6px}
   body.editing .dir-card .card-ctrl{display:flex}
   body.editing .dir-card{cursor:default}
-  body.editing .dir-card:hover .tile{transform:none;box-shadow:0 3px 20px 0 #b1c7e866;border-color:#e5e8f6}
-  body.editing .dir-card .tile{opacity:.55}
-  .card-ctrl button{border:1px solid var(--line);background:#fff;border-radius:7px;width:24px;height:24px;font-size:12px;line-height:1;cursor:pointer;color:#444;font-family:var(--body)}
+  body.editing .dir-card:hover{transform:none}
+  .card-ctrl button{border:1px solid var(--line);background:#fff;border-radius:7px;width:26px;height:26px;font-size:12px;line-height:1;cursor:pointer;color:#444;font-family:var(--body);box-shadow:0 1px 3px rgba(0,0,0,.08)}
   .card-ctrl button:hover{border-color:var(--accent);color:var(--accent)}
   .card-ctrl button.del:hover{border-color:#d33;color:#d33}
 
@@ -136,7 +145,7 @@
 </nav>
 
 <div class="viewer">
-  <div id="viewerBox"></div>
+  <div id="viewerBox" style=""></div>
   <div class="grid-panel" id="gridPanel"></div>
 </div>
 
@@ -156,7 +165,7 @@
     <input id="dlgDesc" type="text" placeholder="예: CHZZK · chzzk.naver.com">
     <label>URL</label>
     <input id="dlgUrl" type="text" placeholder="https://...">
-    <label>아이콘 이미지 URL (비우면 사이트 파비콘 자동)</label>
+    <label>아이콘 이미지 URL (비우면 색 말풍선 아이콘)</label>
     <input id="dlgImg" type="text" placeholder="https://.../logo.png">
     <div class="modal-row">
       <button class="btn-cancel" id="dlgCancel">취소</button>
@@ -353,12 +362,8 @@ function centerNavBtn(btn){
 }
 function clearActive(){ nav.querySelectorAll('button[data-site],button[data-grid]').forEach(b=>b.classList.remove('active')); }
 
-/* 아이콘: 지정 이미지 > 사이트 파비콘(구글 s2) */
-function iconOf(it){
-  if(it[3]) return it[3];
-  var host=''; try{ host=new URL(it[2]).hostname; }catch(_){ host=String(it[1]||'').replace(/^https?:\/\//,'').split('/')[0]; }
-  return 'https://www.google.com/s2/favicons?domain='+encodeURIComponent(host)+'&sz=64';
-}
+/* 카드 아이콘: 말풍선 (항목에 이미지 URL이 있으면 그 이미지) */
+const BUBBLE_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-5 4v-4H6.5A2.5 2.5 0 0 1 4 13.5z"/></svg>';
 /* 전체목록 패널 (재실행 가능) */
 function renderGrid(){
   gridPanel.innerHTML='';
@@ -385,13 +390,14 @@ function renderGrid(){
     const g=document.createElement('div'); g.className='dir-grid';
     sec.items.forEach((it,ii)=>{
       const c=document.createElement('a'); c.className='dir-card'; c.href=it[2]; c.target='_blank'; c.rel='noopener'; c.title=it[0]+(it[1]?' · '+it[1]:'');
-      const tile=document.createElement('span'); tile.className='tile';
-      const im=document.createElement('img'); im.alt=''; im.loading='lazy'; im.src=iconOf(it);
-      im.onerror=function(){ var sp=document.createElement('span'); sp.className='ini'; sp.textContent=(it[0]||'?').trim().charAt(0); im.replaceWith(sp); };
-      tile.appendChild(im);
+      const ic=document.createElement('span'); ic.className='ic c'+(ii%8);
+      if(it[3]){ const im=document.createElement('img'); im.alt=''; im.loading='lazy'; im.src=it[3]; im.onerror=function(){ im.remove(); ic.innerHTML=BUBBLE_SVG; }; ic.appendChild(im); }
+      else ic.innerHTML=BUBBLE_SVG;
+      const tx=document.createElement('span'); tx.className='tx';
       const tt=document.createElement('span'); tt.className='t'; tt.textContent=it[0];
       const kk=document.createElement('span'); kk.className='k'; kk.textContent=it[1];
-      c.appendChild(tile); c.appendChild(tt); c.appendChild(kk);
+      tx.appendChild(tt); tx.appendChild(kk);
+      c.appendChild(ic); c.appendChild(tx);
       if(SHOW_EDIT){
         const ctrl=document.createElement('div'); ctrl.className='card-ctrl';
         const lft=document.createElement('button'); lft.textContent='◀'; lft.title='왼쪽으로'; lft.onclick=e=>{e.preventDefault();moveItem(si,ii,-1);};
