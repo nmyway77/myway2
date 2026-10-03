@@ -1314,7 +1314,7 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayIndexV1_dist";
-    const DIST_SIG = "sig1790994412587";
+    const DIST_SIG = "sig1791061895838";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-index-v1';
     const DATA_VERSION = '4';
@@ -1848,25 +1848,34 @@
           { ticker:"화장발", ko:"화장·뷰티", url:"https://cafe.daum.net/Khj0421" },
         ] },
       ] },
-      "blog": { sections: [
-        { label:"블로그 플랫폼", sub:"Blog Platform", items: [
-          { ticker:"네이버 블로그", ko:"blog.naver.com", url:"https://blog.naver.com/" },
-          { ticker:"티스토리", ko:"tistory.com", url:"https://www.tistory.com/" },
-          { ticker:"브런치", ko:"brunch.co.kr · 카카오", url:"https://brunch.co.kr/" },
-          { ticker:"벨로그", ko:"velog.io · 개발자", url:"https://velog.io/" },
-          { ticker:"미디엄", ko:"medium.com", url:"https://medium.com/" },
-          { ticker:"워드프레스", ko:"wordpress.com", url:"https://wordpress.com/" },
-          { ticker:"깃허브 페이지", ko:"github.io · 개발자", url:"https://pages.github.com/" },
-          { ticker:"노션", ko:"notion.so", url:"https://www.notion.so/" },
+      "tools": { sections: [
+        { label:"생활정보", sub:"날씨 · 운세 · 달력", items: [
+          { ticker:"전세계시간", ko:"World Clock", url:"https://myway.kr/00barwatch.html" },
+          { ticker:"스탑워치", ko:"Stopwatch", url:"https://myway.kr/stopwatch.html" },
+          { ticker:"티케팅보조도구", ko:"Ticketing", url:"https://myway.kr/servertime.html" },
         ] },
-        { label:"인기 블로그·사이트", sub:"Popular Blogs", items: [
-          { ticker:"만개의레시피", ko:"요리·레시피", url:"https://www.10000recipe.com/" },
-          { ticker:"우리집밥상", ko:"요리·식단", url:"https://www.10000recipe.com/" },
-          { ticker:"오늘의집", ko:"인테리어 · ohou.se", url:"https://ohou.se/" },
-          { ticker:"디스이즈게임", ko:"게임 정보", url:"https://www.thisisgame.com/" },
-          { ticker:"IT동아", ko:"IT 리뷰", url:"https://it.donga.com/" },
-          { ticker:"나무위키", ko:"namu.wiki · 위키", url:"https://namu.wiki/" },
-          { ticker:"GeekNews", ko:"개발자 뉴스", url:"https://news.hada.io/" },
+        { label:"TOOLS", sub:"계산기 · 변환 · 검사", items: [
+          { ticker:"계산기", ko:"Calculator", url:"https://myway.kr/temp2.html" },
+          { ticker:"환율계산기", ko:"Exchange", url:"https://myway.kr/exchange.html" },
+          { ticker:"영문주소", ko:"Address", url:"https://www.juso.go.kr/" },
+          { ticker:"이름 로마자표기", ko:"Name", url:"romanize.html" },
+          { ticker:"맞춤법검사", ko:"Spell Check", url:"https://www.engram.us/ko/spell-check" },
+          { ticker:"글자수세기", ko:"Word Count", url:"https://myway.kr/0b-wordcount.html" },
+          { ticker:"PDF 도구", ko:"PDF Tool", url:"https://www.ilovepdf.com/ko/pdf_to_powerpoint" },
+          { ticker:"사진원형자르기", ko:"Crop", url:"https://photoaid.com/ko/tools/cropround?srsltid=AfmBOop9C0Ja_07QmZE9rDyhXSje9lF0P4seRO90BJAp04hEn_sBCxCq" },
+          { ticker:"QR코드만들기", ko:"QR Code", url:"https://myway.kr/qrtool.html" },
+          { ticker:"썸네일추출기", ko:"Thumbnail", url:"https://myway.kr/extract7.html" },
+          { ticker:"단위계산기", ko:"Unit", url:"https://myway.kr/0b-unit.html" },
+          { ticker:"속도측정", ko:"Speed", url:"https://sightmap.co.kr/%ec%9d%b8%ed%84%b0%eb%84%b7-%ec%86%8d%eb%8f%84-%ec%b8%a1%ec%a0%95-%ec%82%ac%ec%9d%b4%ed%8a%b8-%eb%aa%a8%ec%9d%8c-top-7/" },
+          { ticker:"디데이계산기", ko:"D-Day", url:"https://myway.kr/ddaytool.html" },
+          { ticker:"순위결정게임", ko:"Rank Game", url:"https://myway.kr/marblerank.html" },
+          { ticker:"GIF만들기", ko:"Make GIF", url:"https://www.freeconvert.com/ko/image-to-gif" },
+          { ticker:"펜쓰기모드", ko:"Pen Mode", url:"https://myway.kr/pentool.html" },
+          { ticker:"PDF 통합삭제", ko:"PDF Pages", url:"https://myway.kr/pdfpages.html" },
+          { ticker:"갤러리1", ko:"", url:"https://myway.kr/gallery.html" },
+          { ticker:"갤러리2", ko:"", url:"https://myway.kr/nav3.html" },
+          { ticker:"바사이트", ko:"", url:"https://myway.kr/BARSITE.html" },
+          { ticker:"멀티서치엔진", ko:"", url:"https://myway.kr/searchengine.html" },
         ] },
       ] },
       "movie": { photoStyle: true, newFirst: false, sections: [
@@ -2385,7 +2394,7 @@
       { id:"tab", label:"여행&공연" },
       { id:"broadcast", label:"방송사" },
       { id:"music", label:"음악" },
-      { id:"blog", label:"블로그" },
+      { id:"tools", label:"TOOLS" },
     ];
     /* @TABSMETA_END */
 
@@ -2414,12 +2423,13 @@
       music: '<svg viewBox="0 0 24 24"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>',
       cart:  '<svg viewBox="0 0 24 24"><path d="M3 4h2l2.5 11h11L21 7H6.5"/><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/></svg>',
       book:  '<svg viewBox="0 0 24 24"><path d="M4 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4zM20 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg>',
+      tool:  '<svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0 5 5L13 18l-3-3 6.7-6.7z"/><path d="M4 20l4-4"/><path d="M3 21l1-1"/></svg>',
       pen:   '<svg viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M13 7l3 3"/></svg>',
       cup:   '<svg viewBox="0 0 24 24"><path d="M4 8h13v7a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M17 10h2a2 2 0 0 1 0 4h-2M7 3v2M11 3v2"/></svg>',
       home:  '<svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>',
       chart: '<svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 4 8-8"/><path d="M14 8h6v6"/></svg>'
     };
-    const TAB_LOGO_KIND = { daily:'home', radio:'radio', livetv:'tv', portal:'globe', news:'news', bbs:'chat', broadcast:'tv', magazine:'book', cafe:'cup', blog:'pen', movie:'film', music:'music', shopping:'cart' };
+    const TAB_LOGO_KIND = { daily:'home', radio:'radio', livetv:'tv', portal:'globe', news:'news', bbs:'chat', broadcast:'tv', magazine:'book', cafe:'cup', blog:'pen', tools:'tool', movie:'film', music:'music', shopping:'cart' };
     function makeCardLogo(it, idx, tabId){
       const isYt = /youtube\.com|youtu\.be/i.test(String(it.url||''));
       const kind = isYt ? 'play' : (TAB_LOGO_KIND[tabId] || 'chart');
