@@ -1268,14 +1268,14 @@
       <h3 id="dlgTitle">항목 추가</h3>
       <label>이름</label>
       <input id="dlgTicker" type="text" placeholder="예: 네이버 / 삼성전자">
-      <label>보조 라벨 <span class="hint">(카드형 탭용 · 도메인/설명)</span></label>
-      <input id="dlgKo" type="text" placeholder="예: naver.com">
+      <label style="display: block;">보조 라벨 <span class="hint">(카드형 탭용 · 도메인/설명)</span></label>
+      <input id="dlgKo" type="text" placeholder="예: naver.com" style="display: block;">
       <label>URL</label>
       <input id="dlgUrl" type="text" placeholder="https://...">
-      <label id="dlgImgLabel">이미지 URL <span class="hint">(로고형·사진형 탭용)</span></label>
-      <input id="dlgImg" type="text" placeholder="https://....png">
-      <label>섹션</label>
-      <select id="dlgSec"></select>
+      <label id="dlgImgLabel" style="display: none;">이미지 URL <span class="hint">(로고형·사진형 탭용)</span></label>
+      <input id="dlgImg" type="text" placeholder="https://....png" style="display: none;">
+      <label style="display: block;">섹션</label>
+      <select id="dlgSec" style="display: block;"></select>
       <div class="modal-row">
         <button class="btn-cancel" id="dlgCancel">취소</button>
         <button class="btn-ok" id="dlgOk">저장</button>
@@ -1314,7 +1314,7 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayIndexV1_dist";
-    const DIST_SIG = "sig1791064609322";
+    const DIST_SIG = "sig1791595392125";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-index-v1';
     const DATA_VERSION = '4';
@@ -1876,6 +1876,7 @@
           { ticker:"갤러리2", ko:"", url:"https://myway.kr/nav3.html" },
           { ticker:"바사이트", ko:"", url:"https://myway.kr/BARSITE.html" },
           { ticker:"멀티서치엔진", ko:"", url:"https://myway.kr/searchengine.html" },
+          { ticker:"사진 자르기", ko:"사진 자르기", url:"https://myway.kr/photocrop.html" },
         ] },
       ] },
       "movie": { photoStyle: true, newFirst: false, sections: [
@@ -3471,4 +3472,4 @@
 </script>
 
 
-</body></html>
+<input type="file" accept=".json,.html,.htm,text/html,application/json" style="position: fixed; left: -9999px; top: 0px; opacity: 0;"></body></html>
