@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>사진 자르기 · MYWAY.KR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+/* 레이아웃: 왼쪽 작업판(사진 + 드래그 선택 상자) / 오른쪽 설정 패널, 좁은 화면에서는 한 줄로 쌓임 */
+:root{
+  --paper:#f7f3eb; --board:#e8e1d2; --card:#fffdf8; --line:#d9d0bd;
+  --ink:#2a2733; --mute:#777084;
+  --a1:#7c4dff; --a2:#3d7bff; --grad:linear-gradient(135deg,var(--a1),var(--a2));
+  --warn:#c0392b;
+  --f-display:'Fraunces',Georgia,serif;
+  --f-body:'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  --f-mono:'JetBrains Mono',Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:13px;line-height:1.5;
+  -webkit-user-select:none;user-select:none}
+input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit}
+button{font-family:inherit;font-size:12.5px;color:inherit;cursor:pointer}
+[hidden]{display:none!important}
+.pc-wrap{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:20px 76px}
+.pc-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.pc-head h1{font-family:var(--f-display);font-weight:700;font-size:26px;margin:0;letter-spacing:-.01em}
+.pc-head h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pc-head p{margin:0;color:var(--mute)}
+.pc-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:start}
+@media(max-width:820px){.pc-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* 작업판 */
+.pc-board{background:var(--board);border:1px solid var(--line);border-radius:10px;padding:12px;min-width:0}
+.pc-tools{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.pc-btn{background:var(--card);border:1px solid var(--line);border-radius:7px;padding:6px 11px;line-height:1.3}
+.pc-btn:hover{border-color:var(--a1)}
+.pc-btn:focus-visible,.pc-chip:focus-visible,.pc-main:focus-visible,.pc-drop:focus-within{outline:2px solid var(--a2);outline-offset:2px}
+.pc-btn:disabled{opacity:.45;cursor:default;border-color:var(--line)}
+.pc-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;
+  min-height:360px;border:2px dashed #b9ad94;border-radius:8px;background:var(--card);cursor:pointer;padding:24px}
+.pc-drop.is-over{border-color:var(--a1);background:#f1ecff}
+.pc-drop b{font-size:16px}
+.pc-drop small{color:var(--mute)}
+.pc-drop .pc-pick{background:var(--grad);color:#fff;border-radius:7px;padding:8px 18px;font-weight:600}
+.pc-stagebox{display:flex;justify-content:center}
+.pc-stage{position:relative;overflow:hidden;touch-action:none;cursor:crosshair;
+  background:repeating-conic-gradient(#d8d2c4 0 25%,#f3efe6 0 50%) 0 0/16px 16px}
+.pc-stage canvas{display:block;width:100%;height:100%}
+.pc-crop{position:absolute;cursor:move;outline:1px dashed rgba(255,255,255,.75)}
+.pc-shape{position:absolute;inset:0;border:2px solid #fff;box-shadow:0 0 0 9999px rgba(20,16,36,.58);pointer-events:none}
+.pc-crop.is-circle .pc-shape{border-radius:50%}
+.pc-h{position:absolute;width:12px;height:12px;background:#fff;border:2px solid var(--a1);border-radius:50%;margin:-6px 0 0 -6px}
+.pc-h::after{content:"";position:absolute;inset:-9px}
+.pc-h[data-dir=nw]{left:0;top:0;cursor:nwse-resize}.pc-h[data-dir=n]{left:50%;top:0;cursor:ns-resize}
+.pc-h[data-dir=ne]{left:100%;top:0;cursor:nesw-resize}.pc-h[data-dir=e]{left:100%;top:50%;cursor:ew-resize}
+.pc-h[data-dir=se]{left:100%;top:100%;cursor:nwse-resize}.pc-h[data-dir=s]{left:50%;top:100%;cursor:ns-resize}
+.pc-h[data-dir=sw]{left:0;top:100%;cursor:nesw-resize}.pc-h[data-dir=w]{left:0;top:50%;cursor:ew-resize}
+.pc-info{margin-top:10px;font-family:var(--f-mono);font-size:12px;color:var(--mute);display:flex;gap:6px 16px;flex-wrap:wrap}
+.pc-info b{color:var(--ink);font-weight:600}
+
+/* 설정 패널 */
+.pc-panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.pc-sec{display:flex;flex-direction:column;gap:7px}
+.pc-sec h2{margin:0;font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--mute)}
+.pc-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.pc-chip{background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:5px 11px;line-height:1.3}
+.pc-chip:hover{border-color:var(--a1)}
+.pc-chip[aria-pressed=true]{background:var(--grad);border-color:transparent;color:#fff;font-weight:600}
+.pc-num{width:60px;padding:6px 6px;border:1px solid var(--line);border-radius:7px;background:#fff;font-family:var(--f-mono);font-size:12.5px;color:var(--ink)}
+.pc-text{flex:1;min-width:0;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:#fff;font-size:12.5px;color:var(--ink)}
+.pc-hint{color:var(--mute);font-size:11.5px;margin:0}
+.pc-lock{font-family:var(--f-mono);font-size:11.5px;color:var(--a1);font-weight:600}
+.pc-prev{display:flex;align-items:center;justify-content:center;min-height:120px;padding:10px;border:1px solid var(--line);border-radius:8px;
+  background:repeating-conic-gradient(#e4ded0 0 25%,#fbf9f3 0 50%) 0 0/14px 14px}
+.pc-prev canvas{max-width:100%;display:block}
+.pc-main{background:var(--grad);color:#fff;border:0;border-radius:8px;padding:11px;font-size:14px;font-weight:700}
+.pc-main:disabled{opacity:.45;cursor:default}
+input[type=range]{flex:1;min-width:0;accent-color:var(--a1)}
+input[type=color]{width:34px;height:28px;padding:0;border:1px solid var(--line);border-radius:6px;background:#fff}
+label.pc-check{display:flex;align-items:center;gap:5px;cursor:pointer}
+label.pc-check input{accent-color:var(--a1)}
+
+.pc-toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 16px;border-radius:8px;
+  font-size:12.5px;z-index:50;max-width:calc(100% - 32px)}
+.pc-toast.is-err{background:var(--warn)}
+.pc-foot{text-align:center;color:var(--mute);font-size:12px;margin-top:22px}
+.pc-foot a{color:var(--a1);text-decoration:none;font-weight:600}
+.pc-home{position:fixed;right:18px;bottom:18px;width:46px;height:46px;border-radius:50%;background:var(--grad);color:#fff;
+  display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:20px;box-shadow:0 4px 14px rgba(60,40,140,.35);z-index:40}
+</style>
+</head>
+<body>
+<div class="pc-wrap">
+  <header class="pc-head">
+    <h1><span>Photo Crop</span> 사진 자르기</h1>
+    <p>PNG · JPG 사진을 드래그해서 원하는 크기로, 사각형이나 원형으로 잘라요.</p>
+  </header>
+
+  <div class="pc-grid">
+    <section class="pc-board">
+      <div class="pc-tools">
+        <button class="pc-btn" id="pcOpen" type="button">📂 사진 열기</button>
+        <button class="pc-btn" id="pcRotL" type="button" disabled>⟲ 왼쪽 90°</button>
+        <button class="pc-btn" id="pcRotR" type="button" disabled>⟳ 오른쪽 90°</button>
+        <button class="pc-btn" id="pcFlip" type="button" disabled>⇋ 좌우 반전</button>
+        <button class="pc-btn" id="pcAll" type="button" disabled>전체 선택</button>
+        <button class="pc-btn" id="pcCenter" type="button" disabled>가운데로</button>
+      </div>
+
+      <label class="pc-drop" id="pcDrop">
+        <input type="file" id="pcFile" accept="image/png,image/jpeg,image/webp,image/gif,image/bmp" hidden>
+        <b>사진을 여기에 끌어다 놓으세요</b>
+        <small>또는 클릭해서 선택 · 복사한 이미지는 Ctrl+V 로 붙여넣기</small>
+        <span class="pc-pick">사진 선택</span>
+      </label>
+
+      <div class="pc-stagebox" id="pcStageBox" hidden>
+        <div class="pc-stage" id="pcStage">
+          <canvas id="pcView"></canvas>
+          <div class="pc-crop" id="pcCrop">
+            <div class="pc-shape"></div>
+            <i class="pc-h" data-dir="nw"></i><i class="pc-h" data-dir="n"></i><i class="pc-h" data-dir="ne"></i>
+            <i class="pc-h" data-dir="e"></i><i class="pc-h" data-dir="se"></i><i class="pc-h" data-dir="s"></i>
+            <i class="pc-h" data-dir="sw"></i><i class="pc-h" data-dir="w"></i>
+          </div>
+        </div>
+      </div>
+      <div class="pc-info" id="pcInfo" hidden>
+        <span>원본 <b id="pcISrc">-</b></span>
+        <span>선택 <b id="pcISel">-</b></span>
+        <span>저장 <b id="pcIOut">-</b></span>
+      </div>
+    </section>
+
+    <aside class="pc-panel">
+      <div class="pc-sec">
+        <h2>모양</h2>
+        <div class="pc-row">
+          <button class="pc-chip" type="button" data-shape="rect" aria-pressed="true">▭ 사각형</button>
+          <button class="pc-chip" type="button" data-shape="circle" aria-pressed="false">◯ 원형</button>
+        </div>
+      </div>
+
+      <div class="pc-sec">
+        <h2>비율</h2>
+        <div class="pc-row" id="pcRatios">
+          <button class="pc-chip" type="button" data-r="free" aria-pressed="true">자유</button>
+          <button class="pc-chip" type="button" data-r="1:1" aria-pressed="false">1:1</button>
+          <button class="pc-chip" type="button" data-r="4:3" aria-pressed="false">4:3</button>
+          <button class="pc-chip" type="button" data-r="3:4" aria-pressed="false">3:4</button>
+          <button class="pc-chip" type="button" data-r="3:2" aria-pressed="false">3:2</button>
+          <button class="pc-chip" type="button" data-r="2:3" aria-pressed="false">2:3</button>
+          <button class="pc-chip" type="button" data-r="16:9" aria-pressed="false">16:9</button>
+          <button class="pc-chip" type="button" data-r="9:16" aria-pressed="false">9:16</button>
+        </div>
+      </div>
+
+      <div class="pc-sec">
+        <h2>원하는 크기 (픽셀)</h2>
+        <div class="pc-row">
+          <input class="pc-num" id="pcW" type="number" min="1" max="10000" placeholder="가로" inputmode="numeric">
+          <span>×</span>
+          <input class="pc-num" id="pcH" type="number" min="1" max="10000" placeholder="세로" inputmode="numeric">
+          <button class="pc-btn" id="pcFix" type="button">적용</button>
+          <button class="pc-btn" id="pcUnfix" type="button" hidden>해제</button>
+        </div>
+        <p class="pc-hint" id="pcFixHint">크기를 넣고 적용하면 그 비율로 선택되고, 정확히 그 크기로 저장돼요. 비워 두면 선택한 영역의 원본 픽셀 그대로 저장돼요.</p>
+      </div>
+
+      <div class="pc-sec">
+        <h2>저장 형식</h2>
+        <div class="pc-row">
+          <button class="pc-chip" type="button" data-fmt="png" aria-pressed="true">PNG</button>
+          <button class="pc-chip" type="button" data-fmt="jpg" aria-pressed="false">JPG</button>
+          <label class="pc-check" id="pcTransWrap"><input type="checkbox" id="pcTrans" checked> 투명 배경</label>
+        </div>
+        <div class="pc-row" id="pcBgRow" hidden>
+          <span>배경색</span><input type="color" id="pcBg" value="#ffffff">
+        </div>
+        <div class="pc-row" id="pcQRow" hidden>
+          <span>화질</span><input type="range" id="pcQ" min="50" max="100" value="92"><span id="pcQv" style="font-family:var(--f-mono)">92</span>
+        </div>
+        <div class="pc-row">
+          <span>파일명</span><input class="pc-text" id="pcName" type="text" value="crop" spellcheck="false"><span id="pcExt" style="font-family:var(--f-mono)">.png</span>
+        </div>
+      </div>
+
+      <div class="pc-sec">
+        <h2>미리보기</h2>
+        <div class="pc-prev"><canvas id="pcPrev" width="1" height="1"></canvas></div>
+      </div>
+
+      <button class="pc-main" id="pcSave" type="button" disabled>⬇ 자른 사진 저장</button>
+      <button class="pc-btn" id="pcCopy" type="button" disabled>클립보드에 복사 (PNG)</button>
+    </aside>
+  </div>
+
+  <footer class="pc-foot">사진은 내 브라우저 안에서만 처리되고 어디에도 업로드되지 않아요 · <a href="https://myway.kr">myway.kr</a></footer>
+</div>
+
+<a class="pc-home" href="https://myway.kr" title="MYWAY.KR 홈" aria-label="홈으로">⌂</a>
+<div class="pc-toast" id="pcToast" hidden></div>
+
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id);};
+var stage=$('pcStage'), view=$('pcView'), cropEl=$('pcCrop'), prev=$('pcPrev');
+var src=null, W=0, H=0, scale=1;
+var crop={x:0,y:0,w:0,h:0};
+var ratio=null, ratioKey='free', shape='rect', fixed=null, fmt='png';
+
+/* ---------- 알림 ---------- */
+var toastT=0;
+function toast(msg,err){
+  var t=$('pcToast'); t.textContent=msg; t.classList.toggle('is-err',!!err); t.hidden=false;
+  clearTimeout(toastT); toastT=setTimeout(function(){t.hidden=true;},2600);
+}
+
+/* ---------- 사진 불러오기 ---------- */
+function loadFile(file){
+  if(!file) return;
+  if(!/^image\//.test(file.type)){ toast('이미지 파일만 열 수 있어요 (PNG, JPG 등).',true); return; }
+  var url=URL.createObjectURL(file), img=new Image();
+  img.onload=function(){
+    var c=document.createElement('canvas');
+    c.width=img.naturalWidth; c.height=img.naturalHeight;
+    c.getContext('2d').drawImage(img,0,0);
+    URL.revokeObjectURL(url);
+    if(!c.width||!c.height){ toast('사진을 읽지 못했어요.',true); return; }
+    var base=(file.name||'image').replace(/\.[^.]+$/,'')||'image';
+    $('pcName').value=base+'_crop';
+    setSource(c);
+  };
+  img.onerror=function(){ URL.revokeObjectURL(url); toast('이 파일은 열 수 없어요. PNG나 JPG 파일인지 확인해 주세요.',true); };
+  img.src=url;
+}
+function setSource(c){
+  src=c; W=c.width; H=c.height;
+  $('pcDrop').hidden=true; $('pcStageBox').hidden=false; $('pcInfo').hidden=false;
+  ['pcRotL','pcRotR','pcFlip','pcAll','pcCenter','pcSave','pcCopy'].forEach(function(id){$(id).disabled=false;});
+  layout(); initCrop();
+}
+
+/* ---------- 화면 배치 ---------- */
+function layout(){
+  if(!src) return;
+  var board=$('pcStageBox').parentNode;
+  var availW=Math.max(120,board.clientWidth-24);
+  var stacked=window.matchMedia('(max-width:820px)').matches;
+  var availH=Math.max(260, stacked ? window.innerHeight*0.6 : window.innerHeight-210);
+  scale=Math.min(availW/W, availH/H, 4);
+  var dw=Math.max(1,Math.round(W*scale)), dh=Math.max(1,Math.round(H*scale));
+  scale=dw/W;
+  stage.style.width=dw+'px'; stage.style.height=dh+'px';
+  var dpr=window.devicePixelRatio||1;
+  view.width=Math.max(1,Math.min(W,Math.round(dw*dpr)));
+  view.height=Math.max(1,Math.min(H,Math.round(dh*dpr)));
+  var g=view.getContext('2d'); g.imageSmoothingQuality='high';
+  g.clearRect(0,0,view.width,view.height);
+  g.drawImage(src,0,0,view.width,view.height);
+  update();
+}
+
+/* ---------- 선택 영역 ---------- */
+function initCrop(){
+  var w=W*0.8,h=H*0.8;
+  if(ratio){ h=w/ratio; if(h>H*0.8){h=H*0.8;w=h*ratio;} }
+  crop={x:(W-w)/2,y:(H-h)/2,w:w,h:h}; update();
+}
+function refit(){
+  if(!src) return;
+  if(!ratio){ update(); return; }
+  var cx=crop.x+crop.w/2, cy=crop.y+crop.h/2, w=crop.w, h=w/ratio;
+  var f=Math.min(1,W/w,H/h); w*=f; h*=f;
+  crop={x:clamp(cx-w/2,0,W-w),y:clamp(cy-h/2,0,H-h),w:w,h:h}; update();
+}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function outSize(){
+  if(fixed) return {w:fixed.w,h:fixed.h};
+  return {w:Math.max(1,Math.round(crop.w)),h:Math.max(1,Math.round(crop.h))};
+}
+var rafP=0;
+function update(){
+  if(!src) return;
+  cropEl.style.left=(crop.x*scale)+'px'; cropEl.style.top=(crop.y*scale)+'px';
+  cropEl.style.width=(crop.w*scale)+'px'; cropEl.style.height=(crop.h*scale)+'px';
+  cropEl.classList.toggle('is-circle',shape==='circle');
+  var o=outSize();
+  $('pcISrc').textContent=W+' × '+H;
+  $('pcISel').textContent=Math.round(crop.w)+' × '+Math.round(crop.h);
+  $('pcIOut').textContent=o.w+' × '+o.h+' px';
+  if(!rafP) rafP=requestAnimationFrame(function(){rafP=0;drawPreview();});
+}
+
+/* ---------- 결과 그리기 ---------- */
+function renderOut(cv,ow,oh){
+  cv.width=ow; cv.height=oh;
+  var g=cv.getContext('2d'); g.imageSmoothingEnabled=true; g.imageSmoothingQuality='high';
+  if(fmt==='jpg'||!$('pcTrans').checked){ g.fillStyle=$('pcBg').value; g.fillRect(0,0,ow,oh); }
+  g.save();
+  if(shape==='circle'){ g.beginPath(); g.ellipse(ow/2,oh/2,ow/2,oh/2,0,0,Math.PI*2); g.clip(); }
+  g.drawImage(src,crop.x,crop.y,crop.w,crop.h,0,0,ow,oh);
+  g.restore();
+}
+function drawPreview(){
+  if(!src) return;
+  var o=outSize(), k=Math.min(250/o.w,190/o.h,1);
+  renderOut(prev,Math.max(1,Math.round(o.w*k)),Math.max(1,Math.round(o.h*k)));
+}
+
+/* ---------- 드래그 ---------- */
+var drag=null;
+function pt(e){
+  var r=stage.getBoundingClientRect();
+  return {x:clamp((e.clientX-r.left)/scale,0,W), y:clamp((e.clientY-r.top)/scale,0,H)};
+}
+function corner(ax,ay,p){
+  var dx=p.x-ax, dy=p.y-ay, w=Math.abs(dx), h=Math.abs(dy);
+  var aw=dx>=0?W-ax:ax, ah=dy>=0?H-ay:ay;
+  if(ratio){
+    if(w/ratio>h) h=w/ratio; else w=h*ratio;
+    if(w>aw){w=aw;h=w/ratio;}
+    if(h>ah){h=ah;w=h*ratio;}
+  }else{ w=Math.min(w,aw); h=Math.min(h,ah); }
+  if(w<1||h<1) return;
+  crop={x:dx>=0?ax:ax-w, y:dy>=0?ay:ay-h, w:w, h:h};
+}
+function edge(dir,s,p){
+  var w,h,ax,ay,c,m;
+  if(dir==='e'||dir==='w'){
+    ax=dir==='e'?s.x:s.x+s.w; var dx=p.x-ax; w=Math.min(Math.abs(dx),dx>=0?W-ax:ax); h=s.h; var y=s.y;
+    if(ratio){ c=s.y+s.h/2; h=w/ratio; m=2*Math.min(c,H-c); if(h>m){h=m;w=h*ratio;} y=c-h/2; }
+    if(w<1||h<1) return;
+    crop={x:dx>=0?ax:ax-w,y:y,w:w,h:h};
+  }else{
+    ay=dir==='s'?s.y:s.y+s.h; var dy=p.y-ay; h=Math.min(Math.abs(dy),dy>=0?H-ay:ay); w=s.w; var x=s.x;
+    if(ratio){ c=s.x+s.w/2; w=h*ratio; m=2*Math.min(c,W-c); if(w>m){w=m;h=w/ratio;} x=c-w/2; }
+    if(w<1||h<1) return;
+    crop={x:x,y:dy>=0?ay:ay-h,w:w,h:h};
+  }
+}
+stage.addEventListener('pointerdown',function(e){
+  if(!src||(e.pointerType==='mouse'&&e.button!==0)) return;
+  e.preventDefault();
+  var p=pt(e), s={x:crop.x,y:crop.y,w:crop.w,h:crop.h}, dir=e.target.getAttribute&&e.target.getAttribute('data-dir');
+  if(dir){
+    drag={mode:dir.length===2?'corner':'edge',dir:dir,s:s,
+      ax:dir.indexOf('w')>=0?s.x+s.w:s.x, ay:dir.indexOf('n')>=0?s.y+s.h:s.y};
+  }else if(cropEl.contains(e.target)){
+    drag={mode:'move',s:s,p0:p};
+  }else{
+    drag={mode:'new',ax:p.x,ay:p.y,cx:e.clientX,cy:e.clientY,live:false};
+  }
+});
+window.addEventListener('pointermove',function(e){
+  if(!drag) return;
+  var p=pt(e);
+  if(drag.mode==='move'){
+    crop.x=clamp(drag.s.x+p.x-drag.p0.x,0,W-crop.w); crop.y=clamp(drag.s.y+p.y-drag.p0.y,0,H-crop.h);
+  }else if(drag.mode==='edge'){
+    edge(drag.dir,drag.s,p);
+  }else{
+    if(drag.mode==='new'&&!drag.live){
+      if(Math.abs(e.clientX-drag.cx)<4&&Math.abs(e.clientY-drag.cy)<4) return;
+      drag.live=true;
+    }
+    corner(drag.ax,drag.ay,p);
+  }
+  update();
+});
+function endDrag(){ drag=null; }
+window.addEventListener('pointerup',endDrag);
+window.addEventListener('pointercancel',endDrag);
+
+/* ---------- 설정 ---------- */
+function press(sel,attr,val){
+  Array.prototype.forEach.call(document.querySelectorAll(sel),function(b){
+    b.setAttribute('aria-pressed',b.getAttribute(attr)===val?'true':'false');
+  });
+}
+function syncUI(){
+  press('[data-shape]','data-shape',shape);
+  press('[data-r]','data-r',fixed?'':ratioKey);
+  press('[data-fmt]','data-fmt',fmt);
+  $('pcUnfix').hidden=!fixed;
+  $('pcFixHint').innerHTML=fixed
+    ? '<span class="pc-lock">🔒 '+fixed.w+' × '+fixed.h+' px 로 고정됨</span> — 드래그로 위치와 범위만 고르면 돼요.'
+    : '크기를 넣고 적용하면 그 비율로 선택되고, 정확히 그 크기로 저장돼요. 비워 두면 선택한 영역의 원본 픽셀 그대로 저장돼요.';
+  var jpg=fmt==='jpg';
+  $('pcTransWrap').hidden=jpg;
+  $('pcBgRow').hidden=!(jpg||!$('pcTrans').checked);
+  $('pcQRow').hidden=!jpg;
+  $('pcExt').textContent=jpg?'.jpg':'.png';
+}
+function setRatio(key){
+  ratioKey=key; fixed=null;
+  if(key==='free') ratio=null; else { var a=key.split(':'); ratio=a[0]/a[1]; }
+  syncUI(); refit();
+}
+document.addEventListener('click',function(e){
+  var b=e.target.closest&&e.target.closest('button'); if(!b) return;
+  if(b.hasAttribute('data-r')) setRatio(b.getAttribute('data-r'));
+  else if(b.hasAttribute('data-shape')){
+    shape=b.getAttribute('data-shape');
+    if(shape==='circle'&&!fixed) setRatio('1:1'); else { syncUI(); update(); }
+  }
+  else if(b.hasAttribute('data-fmt')){ fmt=b.getAttribute('data-fmt'); syncUI(); update(); }
+});
+$('pcFix').addEventListener('click',function(){
+  var w=parseInt($('pcW').value,10), h=parseInt($('pcH').value,10);
+  if(!(w>=1&&w<=10000&&h>=1&&h<=10000)){ toast('가로·세로를 1~10000 사이 숫자로 입력해 주세요.',true); return; }
+  fixed={w:w,h:h}; ratio=w/h; syncUI(); refit();
+});
+$('pcUnfix').addEventListener('click',function(){ setRatio('free'); });
+['pcW','pcH'].forEach(function(id){ $(id).addEventListener('keydown',function(e){ if(e.key==='Enter') $('pcFix').click(); }); });
+$('pcTrans').addEventListener('change',function(){ syncUI(); update(); });
+$('pcBg').addEventListener('input',update);
+$('pcQ').addEventListener('input',function(){ $('pcQv').textContent=this.value; });
+
+/* ---------- 회전 / 반전 ---------- */
+function transform(kind){
+  if(!src) return;
+  var c=document.createElement('canvas'), g;
+  if(kind==='flip'){ c.width=W; c.height=H; g=c.getContext('2d'); g.translate(W,0); g.scale(-1,1); }
+  else{ c.width=H; c.height=W; g=c.getContext('2d');
+    if(kind==='r'){ g.translate(H,0); g.rotate(Math.PI/2); } else { g.translate(0,W); g.rotate(-Math.PI/2); } }
+  g.drawImage(src,0,0);
+  src=c; W=c.width; H=c.height; layout(); initCrop();
+}
+$('pcRotL').addEventListener('click',function(){transform('l');});
+$('pcRotR').addEventListener('click',function(){transform('r');});
+$('pcFlip').addEventListener('click',function(){transform('flip');});
+$('pcAll').addEventListener('click',function(){
+  if(!src) return;
+  if(ratio){ var w=W,h=w/ratio; if(h>H){h=H;w=h*ratio;} crop={x:(W-w)/2,y:(H-h)/2,w:w,h:h}; }
+  else crop={x:0,y:0,w:W,h:H};
+  update();
+});
+$('pcCenter').addEventListener('click',function(){ if(!src) return; crop.x=(W-crop.w)/2; crop.y=(H-crop.h)/2; update(); });
+
+/* ---------- 열기 ---------- */
+$('pcOpen').addEventListener('click',function(){ $('pcFile').click(); });
+$('pcFile').addEventListener('change',function(){ loadFile(this.files[0]); this.value=''; });
+var drop=$('pcDrop');
+document.addEventListener('dragover',function(e){ e.preventDefault(); drop.classList.add('is-over'); });
+document.addEventListener('dragleave',function(){ drop.classList.remove('is-over'); });
+document.addEventListener('drop',function(e){
+  e.preventDefault(); drop.classList.remove('is-over');
+  var f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0]; if(f) loadFile(f);
+});
+document.addEventListener('paste',function(e){
+  var items=(e.clipboardData&&e.clipboardData.items)||[];
+  for(var i=0;i<items.length;i++){ if(/^image\//.test(items[i].type)){ loadFile(items[i].getAsFile()); e.preventDefault(); return; } }
+});
+window.addEventListener('resize',layout);
+
+/* ---------- 저장 / 복사 ---------- */
+function makeBlob(type,q,cb){
+  var o=outSize(), c=document.createElement('canvas');
+  try{ renderOut(c,o.w,o.h); c.toBlob(cb,type,q); }catch(err){ cb(null); }
+}
+$('pcSave').addEventListener('click',function(){
+  if(!src) return;
+  var jpg=fmt==='jpg';
+  makeBlob(jpg?'image/jpeg':'image/png', jpg?$('pcQ').value/100:undefined, function(blob){
+    if(!blob){ toast('저장하지 못했어요. 크기를 줄여서 다시 해 보세요.',true); return; }
+    var name=($('pcName').value.trim().replace(/[\\/:*?"<>|]/g,'_')||'crop')+(jpg?'.jpg':'.png');
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){URL.revokeObjectURL(a.href);},4000);
+    var o=outSize(); toast(name+' 저장됨 ('+o.w+' × '+o.h+' px)');
+  });
+});
+$('pcCopy').addEventListener('click',function(){
+  if(!src) return;
+  if(!(navigator.clipboard&&window.ClipboardItem)){ toast('이 브라우저는 이미지 복사를 지원하지 않아요. 저장 버튼을 써 주세요.',true); return; }
+  var keep=fmt; fmt='png';
+  makeBlob('image/png',undefined,function(blob){
+    if(!blob){ toast('복사하지 못했어요.',true); return; }
+    navigator.clipboard.write([new ClipboardItem({'image/png':blob})])
+      .then(function(){ toast('클립보드에 복사됨'); })
+      .catch(function(){ toast('복사가 차단됐어요. 저장 버튼을 써 주세요.',true); });
+  });
+  fmt=keep;
+});
+
+/* ---------- 키보드 + 복사 방지 (사이트 공통 정책) ---------- */
+function isField(t){ return t&&(/^(INPUT|TEXTAREA)$/).test(t.tagName); }
+['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){
+  document.addEventListener(ev,function(e){ if(!isField(e.target)) e.preventDefault(); });
+});
+document.addEventListener('keydown',function(e){
+  var k=(e.key||'').toLowerCase(), ctrl=e.ctrlKey||e.metaKey;
+  if(k==='f12'||(ctrl&&e.shiftKey&&(k==='i'||k==='j'||k==='c'))||(ctrl&&(k==='u'||k==='s'))){ e.preventDefault(); return; }
+  if(ctrl&&(k==='c'||k==='x'||k==='a')&&!isField(e.target)){ e.preventDefault(); return; }
+  if(src&&!isField(e.target)&&k.indexOf('arrow')===0){
+    e.preventDefault();
+    var d=e.shiftKey?10:1;
+    if(k==='arrowleft') crop.x-=d; else if(k==='arrowright') crop.x+=d;
+    else if(k==='arrowup') crop.y-=d; else crop.y+=d;
+    crop.x=clamp(crop.x,0,W-crop.w); crop.y=clamp(crop.y,0,H-crop.h); update();
+  }
+});
+syncUI();
+})();
+</script>
+</body>
+</html>
