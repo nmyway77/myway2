@@ -680,14 +680,18 @@ div[data-google-query-id],
       position: relative;
       text-decoration: none;
       color: inherit;
-      transform: translateZ(0);
+      isolation: isolate;
     }
 #builderMount .masonry .card img{
       display: block;
       width: 100%;
       height: auto;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      background: #e9edf5;
       transition: filter .25s ease, transform .35s ease;
     }
+#builderMount .masonry .card img.ld{ aspect-ratio: auto; background: none; }
 #builderMount .masonry .card:hover img{ transform: scale(1.03); }
 /* 이름 캡션 (하단 그라데이션) */
 #builderMount .masonry .card .cap{
@@ -1553,6 +1557,7 @@ div[data-google-query-id],
           ? ['https://i.ytimg.com/vi/'+ytid+'/hqdefault.jpg','https://i.ytimg.com/vi/'+ytid+'/mqdefault.jpg','https://i.ytimg.com/vi/'+ytid+'/default.jpg']
           : [imgUrl];
         var ci = 0;
+        img.loading = 'lazy'; img.decoding = 'async';
         img.onerror = function(){ ci++; if (ci < chain.length){ img.src = chain[ci]; } else { img.onerror=null; addPlaceholder(); } };
         img.src = chain[0];
         media.appendChild(img);
@@ -2324,14 +2329,32 @@ div[data-google-query-id],
     clearTimeout(t._timer);
     t._timer = setTimeout(function(){ t.classList.remove('show'); }, 1800);
   }
+  /* 저장 공간(localStorage) 초과 경고 — 예전엔 조용히 실패해 일부 디렉토리가 사라졌음 */
+  var _quotaWarned = false;
+  function warnQuota(what){
+    if (_quotaWarned) return; _quotaWarned = true;
+    setTimeout(function(){ _quotaWarned = false; }, 3000);
+    var used = 0;
+    try{ for (var i=0;i<localStorage.length;i++){ var k = localStorage.key(i); used += k.length + (localStorage.getItem(k)||'').length; } }catch(e){}
+    alert('⚠ 브라우저 저장 공간이 가득 차서 ' + (what||'일부 데이터') + '을(를) 저장하지 못했어요.\n'
+      + '(현재 사용량 약 ' + (used*2/1048576).toFixed(1) + 'MB)\n\n'
+      + '· 새로고침하면 저장 못 한 부분은 사라집니다.\n'
+      + '· 지금 바로 [내보내기]로 백업해 두세요.\n'
+      + '· 붙여넣은 본문(뉴스 기사 등)이 많으면 용량을 크게 차지합니다.');
+  }
+  window.mwWarnQuota = warnQuota;
+  function lsSet(key, val, what){
+    try { localStorage.setItem(key, val); return true; }
+    catch(e){ warnQuota(what); return false; }
+  }
   function persist(){
     groupsData[currentGroup] = videos;
     try {
       var _payload = {order:groupKeys, data:groupsData, modes:groupModes, nsids:groupNsids, builders:groupBuilders};
       if (DIST_MODE){
-        localStorage.setItem(STORE_KEY, JSON.stringify({sig: DIST_SIG, bundle:_payload}));
+        lsSet(STORE_KEY, JSON.stringify({sig: DIST_SIG, bundle:_payload}), '디렉토리 목록');
       } else {
-        localStorage.setItem(STORE_KEY, JSON.stringify(_payload));
+        lsSet(STORE_KEY, JSON.stringify(_payload), '디렉토리 목록');
       }
     } catch(e){}
   }
@@ -2710,7 +2733,7 @@ div[data-google-query-id],
   function exportData(){
     groupsData[currentGroup] = videos;                 // 현재 그룹 반영
     var payload = { app: APP_TAG, order: groupKeys, data: groupsData, modes: groupModes, nsids: groupNsids, builders: groupBuilders, _embeds: collectEmbeds() };
-    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    var blob = new Blob([JSON.stringify(payload)], {type:'application/json'});
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a'); a.href = url; a.download = 'myway_dir2.json'; a.click();
     URL.revokeObjectURL(url);
@@ -2793,7 +2816,7 @@ div[data-google-query-id],
     var nm = uniqueDirName(base);
     groupKeys.push(nm); groupsData[nm] = []; groupModes[nm] = 'builder';
     var ns = genNs(); groupNsids[nm] = ns; groupBuilders[nm] = [];
-    try { localStorage.setItem('mywayDir2BuilderNested__ns_' + ns, JSON.stringify(setsArray || [])); } catch(e){}
+    lsSet('mywayDir2BuilderNested__ns_' + ns, JSON.stringify(setsArray || []), '빌더 디렉토리 "' + nm + '"');
     rebuildGroupSelects();
     currentGroup = nm; videos = []; selectedIdx = null;
     var gs = document.getElementById('groupSelect'); if (gs) gs.value = nm;
@@ -2822,7 +2845,7 @@ div[data-google-query-id],
         else if (oldNs && embeds['mywayBuilderNested__ns_' + oldNs] != null) payload = embeds['mywayBuilderNested__ns_' + oldNs]; /* 구(CCTV용) 백업 호환 */
         else if (json.builders && oldNs && json.builders[oldNs] != null) payload = json.builders[oldNs];
         if (payload != null){
-          try { localStorage.setItem('mywayDir2BuilderNested__ns_' + newNs, (typeof payload === 'string') ? payload : JSON.stringify(payload)); } catch(e){}
+          lsSet('mywayDir2BuilderNested__ns_' + newNs, (typeof payload === 'string') ? payload : JSON.stringify(payload), '빌더 디렉토리 "' + nm + '"');
         }
       }
       added.push(nm);
@@ -2858,7 +2881,7 @@ div[data-google-query-id],
         else if (oldNs && embeds['mywayBuilderNested__ns_' + oldNs] != null) payload = embeds['mywayBuilderNested__ns_' + oldNs]; /* 구(CCTV용) 백업 호환 */
         else if (json.builders && oldNs && json.builders[oldNs] != null) payload = json.builders[oldNs];
         if (payload != null){
-          try { localStorage.setItem('mywayDir2BuilderNested__ns_' + newNs, (typeof payload === 'string') ? payload : JSON.stringify(payload)); } catch(e){}
+          lsSet('mywayDir2BuilderNested__ns_' + newNs, (typeof payload === 'string') ? payload : JSON.stringify(payload), '빌더 디렉토리 "' + k + '"');
         }
       }
     });
@@ -3158,7 +3181,10 @@ div[data-google-query-id],
 
     function persistSets() {
       try { localStorage.setItem(SETS_KEY, JSON.stringify(sets)); }
-      catch (e) { alert('이 브라우저에서 저장 공간을 사용할 수 없습니다.'); }
+      catch (e) {
+        if (typeof window.mwWarnQuota === 'function') window.mwWarnQuota('빌더 세트');
+        else alert('이 브라우저에서 저장 공간을 사용할 수 없습니다.');
+      }
     }
 
     /* 빌더3 호환: 전역 data = 현재 선택된 세트의 data
@@ -3327,6 +3353,8 @@ div[data-google-query-id],
         const img = document.createElement('img');
         img.src = imgSrc; img.alt = item.name;
         img.loading = 'lazy'; img.decoding = 'async'; img.referrerPolicy = 'no-referrer'; img.draggable = false;
+        img.addEventListener('load', () => img.classList.add('ld'), { once: true });
+        img.addEventListener('error', () => img.classList.add('ld'), { once: true });
         a.appendChild(img);
       } else {
         const ph = document.createElement('div');
@@ -3671,7 +3699,7 @@ div[data-google-query-id],
     /* ===== 내보내기 / 가져오기 / 전체삭제 ===== */
     function exportData() {
       sets[curSet].data = data;
-      const blob = new Blob([JSON.stringify(sets, null, 2)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(sets)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url; a.download = 'myway-builder-sets.json';
@@ -4287,6 +4315,7 @@ div[data-google-query-id],
         if (imgUrl) {
           var img = document.createElement('img');
           img.className = 'sc-img'; img.alt = ''; img.referrerPolicy = 'no-referrer'; img.draggable = false;
+          img.loading = 'lazy'; img.decoding = 'async';
           img.onerror = function () { img.onerror = null; img.remove(); addPh(); };
           img.src = imgUrl;
           card.appendChild(img);
