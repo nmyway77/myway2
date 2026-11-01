@@ -979,6 +979,7 @@ div[data-google-query-id],
         <button class="cat-btn" data-cat="photoG">사진 G <span class="count" id="b_cnt-photoG">0</span></button>
         <button class="cat-btn" data-cat="photoH">사진 H <span class="count" id="b_cnt-photoH">0</span></button>
         <button class="cat-add-btn" id="b_catAddBtn" type="button" title="사진 분류 추가">+ 분류</button>
+        <button class="cat-add-btn" id="b_catRenameBtn" type="button" title="선택한 분류 이름 변경 (탭 더블클릭도 가능)">✏ 이름</button>
         <button class="cat-del-btn" id="b_catDelBtn" type="button" title="마지막에 추가한 빈 분류 삭제" hidden>− 분류</button>
       </nav>
       <div class="topbar-tools">
@@ -3068,6 +3069,7 @@ div[data-google-query-id],
     }
     /* 분류 목록이 바뀌면 UI(탭·모달 select·필터 CSS·추가카드) 재구성 */
     function syncCatUI(){
+      applyCatLabels();
       /* 필터 CSS */
       var st = document.getElementById('b_catFilterCss');
       if (!st){ st = document.createElement('style'); st.id = 'b_catFilterCss'; document.head.appendChild(st); }
@@ -3155,6 +3157,7 @@ div[data-google-query-id],
         name: (s.name != null && String(s.name).trim()) ? String(s.name).trim() : ('세트 ' + (i + 1)),
         group: (s.group || '').trim(),
         img: (s.img || '').trim(),
+        catLabels: (s.catLabels && typeof s.catLabels === 'object') ? Object.assign({}, s.catLabels) : {},
         data: normalizeCats(s.data)
       };
     }
@@ -3417,6 +3420,46 @@ div[data-google-query-id],
       CATS.forEach(c => { counts[c.code] = data[c.code].length; counts.all += data[c.code].length; });
       Object.keys(counts).forEach(k => { const el = document.getElementById('b_cnt-' + k); if (el) el.textContent = counts[k]; });
     }
+    /* ===== 분류(탭) 이름 변경 — 이름은 세트 데이터(catLabels)에 저장되어 내보내기/코드/localStorage 모두 유지 ===== */
+    function defaultCatLabel(code){
+      var b = (typeof BASE_CATS !== 'undefined' ? BASE_CATS : CATS_DEFAULT).find(function(c){ return c.code === code; });
+      if (b) return b.label;
+      return (typeof catLabelFor === 'function') ? catLabelFor(code) : code;
+    }
+    function catLabelsStore(){
+      var m = {};
+      (sets || []).forEach(function(s){ if (s && s.catLabels) Object.keys(s.catLabels).forEach(function(k){ if (s.catLabels[k]) m[k] = String(s.catLabels[k]); }); });
+      return m;
+    }
+    function applyCatLabels(){
+      var m = catLabelsStore();
+      CATS.forEach(function(c){ c.label = m[c.code] || defaultCatLabel(c.code); });
+    }
+    function refreshCatBtnLabels(){
+      document.querySelectorAll('#b_catNav .cat-btn').forEach(function(b){
+        var code = b.dataset.cat; if (!code || code === 'all') return;
+        var cnt = b.querySelector('.count'); var txt = cnt ? cnt.textContent : '';
+        b.innerHTML = labelOf(code) + ' <span class="count" id="b_cnt-' + code + '">' + txt + '</span>';
+      });
+      var sel = document.getElementById('b_inCat');
+      if (sel) Array.prototype.forEach.call(sel.options, function(o){ o.textContent = labelOf(o.value); });
+      var sub = document.getElementById('b_filterSub');
+      if (sub) sub.textContent = currentFilter === 'all' ? '전체' : labelOf(currentFilter);
+    }
+    function renameCat(code){
+      if (VIEWER_MODE) return;
+      if (!code || code === 'all'){ alert('이름을 바꿀 분류 탭을 먼저 선택한 뒤 [✏ 이름]을 누르세요.\n(탭을 더블클릭해도 됩니다)'); return; }
+      var cur = labelOf(code);
+      var v = prompt('「' + cur + '」 탭의 새 이름 (비우면 기본 이름으로)', cur);
+      if (v === null) return;
+      v = v.trim();
+      var m = catLabelsStore();
+      if (!v || v === defaultCatLabel(code)) delete m[code]; else m[code] = v;
+      sets.forEach(function(s){ s.catLabels = Object.assign({}, m); });
+      persistSets();
+      applyCatLabels(); refreshCatBtnLabels();
+      if (typeof renderSetList === 'function') renderSetList();
+    }
     function labelOf(code) { const c = CATS.find(x => x.code === code); return c ? c.label : '전체'; }
     function setActiveTab(code) {
       currentFilter = code;
@@ -3429,6 +3472,11 @@ div[data-google-query-id],
         const btn = e.target.closest('.cat-btn'); if (!btn) return;
         setActiveTab(btn.dataset.cat);
       });
+      document.getElementById('b_catNav').addEventListener('dblclick', e => {
+        const btn = e.target.closest('.cat-btn'); if (!btn || btn.dataset.cat === 'all') return;
+        e.preventDefault(); renameCat(btn.dataset.cat);
+      });
+      var rb = document.getElementById('b_catRenameBtn'); if (rb) rb.addEventListener('click', function(){ renameCat(currentFilter); });
       var ab = document.getElementById('b_catAddBtn'); if (ab) ab.addEventListener('click', addPhotoCat);
       var db = document.getElementById('b_catDelBtn'); if (db) db.addEventListener('click', removeLastPhotoCat);
     }
@@ -3762,6 +3810,7 @@ div[data-google-query-id],
           '        name: ' + JSON.stringify(set.name || '') + ',\n' +
           '        group: ' + JSON.stringify(set.group || '') + ',\n' +
           '        img: ' + JSON.stringify(set.img || '') + ',\n' +
+          (set.catLabels && Object.keys(set.catLabels).length ? '        catLabels: ' + JSON.stringify(set.catLabels) + ',\n' : '') +
           '        data: {\n' + catBlock(set.data) + '\n        }\n' +
           '      }';
       });

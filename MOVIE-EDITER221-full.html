@@ -473,6 +473,9 @@
       flex: 0 0 auto;
       -webkit-tap-highlight-color: transparent;
     }
+#builderMount.viewer-mode .cat-add-btn{ display: none !important; }
+#builderMount .cat-add-btn{ font: inherit; font-size: .88rem; font-weight: 700; padding: 7px 12px; border-radius: 999px; border: 1.5px dashed #b9c1d6; background: #fff; color: #5b7cfa; cursor: pointer; white-space: nowrap; flex: 0 0 auto; -webkit-tap-highlight-color: transparent; transition: all .15s; }
+#builderMount .cat-add-btn:hover{ background: #f0f3ff; border-color: #7c4bd6; }
 #builderMount .cat-btn:hover{ background: #f4f6fb; border-color: #c7cee0; }
 #builderMount .cat-btn:active{ transform: scale(0.96); }
 #builderMount .cat-btn.is-active{ background: #1f2740; color: #fff; border-color: #1f2740; }
@@ -896,6 +899,7 @@
         <button class="cat-btn" data-cat="photoF">사진 F <span class="count" id="b_cnt-photoF"></span></button>
         <button class="cat-btn" data-cat="photoG">사진 G <span class="count" id="b_cnt-photoG"></span></button>
         <button class="cat-btn" data-cat="photoH">사진 H <span class="count" id="b_cnt-photoH"></span></button>
+        <button class="cat-add-btn" id="b_catRenameBtn" type="button" title="선택한 분류 이름 변경 (탭 더블클릭도 가능)">✏ 이름</button>
       </nav>
       <div class="topbar-tools">
         <button class="primary" id="b_addBtn" type="button" title="추가" aria-label="추가">+</button>
@@ -2967,6 +2971,7 @@
       { code: 'photoH', label: '사진 H' }
     ];
 
+    const CATS_DEFAULT = CATS.map(function(c){ return { code: c.code, label: c.label }; });
     function emptyCats() {
       return { site: [], video: [], photoA: [], photoB: [], photoC: [], photoD: [], photoE: [], photoF: [], photoG: [], photoH: [] };
     }
@@ -2997,6 +3002,7 @@
         name: (s.name != null && String(s.name).trim()) ? String(s.name).trim() : ('세트 ' + (i + 1)),
         group: (s.group || '').trim(),
         img: (s.img || '').trim(),
+        catLabels: (s.catLabels && typeof s.catLabels === 'object') ? Object.assign({}, s.catLabels) : {},
         data: normalizeCats(s.data)
       };
     }
@@ -3258,6 +3264,46 @@
       CATS.forEach(c => { counts[c.code] = data[c.code].length; counts.all += data[c.code].length; });
       Object.keys(counts).forEach(k => { const el = document.getElementById('b_cnt-' + k); if (el) el.textContent = counts[k]; });
     }
+    /* ===== 분류(탭) 이름 변경 — 이름은 세트 데이터(catLabels)에 저장되어 내보내기/코드/localStorage 모두 유지 ===== */
+    function defaultCatLabel(code){
+      var b = (typeof BASE_CATS !== 'undefined' ? BASE_CATS : CATS_DEFAULT).find(function(c){ return c.code === code; });
+      if (b) return b.label;
+      return (typeof catLabelFor === 'function') ? catLabelFor(code) : code;
+    }
+    function catLabelsStore(){
+      var m = {};
+      (sets || []).forEach(function(s){ if (s && s.catLabels) Object.keys(s.catLabels).forEach(function(k){ if (s.catLabels[k]) m[k] = String(s.catLabels[k]); }); });
+      return m;
+    }
+    function applyCatLabels(){
+      var m = catLabelsStore();
+      CATS.forEach(function(c){ c.label = m[c.code] || defaultCatLabel(c.code); });
+    }
+    function refreshCatBtnLabels(){
+      document.querySelectorAll('#b_catNav .cat-btn').forEach(function(b){
+        var code = b.dataset.cat; if (!code || code === 'all') return;
+        var cnt = b.querySelector('.count'); var txt = cnt ? cnt.textContent : '';
+        b.innerHTML = labelOf(code) + ' <span class="count" id="b_cnt-' + code + '">' + txt + '</span>';
+      });
+      var sel = document.getElementById('b_inCat');
+      if (sel) Array.prototype.forEach.call(sel.options, function(o){ o.textContent = labelOf(o.value); });
+      var sub = document.getElementById('b_filterSub');
+      if (sub) sub.textContent = currentFilter === 'all' ? '전체' : labelOf(currentFilter);
+    }
+    function renameCat(code){
+      if (VIEWER_MODE) return;
+      if (!code || code === 'all'){ alert('이름을 바꿀 분류 탭을 먼저 선택한 뒤 [✏ 이름]을 누르세요.\n(탭을 더블클릭해도 됩니다)'); return; }
+      var cur = labelOf(code);
+      var v = prompt('「' + cur + '」 탭의 새 이름 (비우면 기본 이름으로)', cur);
+      if (v === null) return;
+      v = v.trim();
+      var m = catLabelsStore();
+      if (!v || v === defaultCatLabel(code)) delete m[code]; else m[code] = v;
+      sets.forEach(function(s){ s.catLabels = Object.assign({}, m); });
+      persistSets();
+      applyCatLabels(); refreshCatBtnLabels();
+      if (typeof renderSetList === 'function') renderSetList();
+    }
     function labelOf(code) { const c = CATS.find(x => x.code === code); return c ? c.label : '전체'; }
     function setActiveTab(code) {
       currentFilter = code;
@@ -3270,6 +3316,11 @@
         const btn = e.target.closest('.cat-btn'); if (!btn) return;
         setActiveTab(btn.dataset.cat);
       });
+      document.getElementById('b_catNav').addEventListener('dblclick', e => {
+        const btn = e.target.closest('.cat-btn'); if (!btn || btn.dataset.cat === 'all') return;
+        e.preventDefault(); renameCat(btn.dataset.cat);
+      });
+      var rb = document.getElementById('b_catRenameBtn'); if (rb) rb.addEventListener('click', function(){ renameCat(currentFilter); });
     }
 
     /* ===== 모달 (추가/수정 겸용) ===== */
@@ -3601,6 +3652,7 @@
           '        name: ' + JSON.stringify(set.name || '') + ',\n' +
           '        group: ' + JSON.stringify(set.group || '') + ',\n' +
           '        img: ' + JSON.stringify(set.img || '') + ',\n' +
+          (set.catLabels && Object.keys(set.catLabels).length ? '        catLabels: ' + JSON.stringify(set.catLabels) + ',\n' : '') +
           '        data: {\n' + catBlock(set.data) + '\n        }\n' +
           '      }';
       });
@@ -3876,7 +3928,7 @@
       curGroup = '';
       data = sets[curSet].data;
       persistSets();
-      setActiveTab('all'); render(); renderSetList(); renderGroupSelect();
+      applyCatLabels(); refreshCatBtnLabels(); setActiveTab('all'); render(); renderSetList(); renderGroupSelect();
       var mp = B_root.querySelector('.main-pane'); if (mp) mp.scrollTop = 0;
       var total = 0; added.forEach(function (s) { total += setItemCount(s); });
       alert('세트 ' + added.length + '개를 가져왔어요 (항목 ' + total + '개).' + (onlyEmptyDefault ? '' : '\n기존 세트 뒤에 추가했어요.'));
@@ -3921,7 +3973,7 @@
         curSet = 0; curGroup = '';
         data = sets[curSet].data;
         persistSets();
-        setActiveTab('all'); render(); renderSetList(); renderGroupSelect();
+        applyCatLabels(); refreshCatBtnLabels(); setActiveTab('all'); render(); renderSetList(); renderGroupSelect();
       }
     }
     document.getElementById('b_exportBtn').addEventListener('click', exportData);
@@ -4317,6 +4369,7 @@
     if (DIST_MODE) document.body.classList.add('dist-mode');
     render();
     setupCatNav();
+    applyCatLabels(); refreshCatBtnLabels();
     renderSetList();
     renderGroupSelect();
     enableSetWheel();

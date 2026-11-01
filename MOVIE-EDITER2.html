@@ -680,14 +680,18 @@ div[data-google-query-id],
       position: relative;
       text-decoration: none;
       color: inherit;
-      transform: translateZ(0);
+      isolation: isolate;
     }
 #builderMount .masonry .card img{
       display: block;
       width: 100%;
       height: auto;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      background: #e9edf5;
       transition: filter .25s ease, transform .35s ease;
     }
+#builderMount .masonry .card img.ld{ aspect-ratio: auto; background: none; }
 #builderMount .masonry .card:hover img{ transform: scale(1.03); }
 /* 이름 캡션 (하단 그라데이션) */
 #builderMount .masonry .card .cap{
@@ -975,6 +979,7 @@ div[data-google-query-id],
         <button class="cat-btn" data-cat="photoG">사진 G <span class="count" id="b_cnt-photoG">0</span></button>
         <button class="cat-btn" data-cat="photoH">사진 H <span class="count" id="b_cnt-photoH">0</span></button>
         <button class="cat-add-btn" id="b_catAddBtn" type="button" title="사진 분류 추가">+ 분류</button>
+        <button class="cat-add-btn" id="b_catRenameBtn" type="button" title="선택한 분류 이름 변경 (탭 더블클릭도 가능)">✏ 이름</button>
         <button class="cat-del-btn" id="b_catDelBtn" type="button" title="마지막에 추가한 빈 분류 삭제" hidden>− 분류</button>
       </nav>
       <div class="topbar-tools">
@@ -1553,6 +1558,7 @@ div[data-google-query-id],
           ? ['https://i.ytimg.com/vi/'+ytid+'/hqdefault.jpg','https://i.ytimg.com/vi/'+ytid+'/mqdefault.jpg','https://i.ytimg.com/vi/'+ytid+'/default.jpg']
           : [imgUrl];
         var ci = 0;
+        img.loading = 'lazy'; img.decoding = 'async';
         img.onerror = function(){ ci++; if (ci < chain.length){ img.src = chain[ci]; } else { img.onerror=null; addPlaceholder(); } };
         img.src = chain[0];
         media.appendChild(img);
@@ -2324,14 +2330,32 @@ div[data-google-query-id],
     clearTimeout(t._timer);
     t._timer = setTimeout(function(){ t.classList.remove('show'); }, 1800);
   }
+  /* 저장 공간(localStorage) 초과 경고 — 예전엔 조용히 실패해 일부 디렉토리가 사라졌음 */
+  var _quotaWarned = false;
+  function warnQuota(what){
+    if (_quotaWarned) return; _quotaWarned = true;
+    setTimeout(function(){ _quotaWarned = false; }, 3000);
+    var used = 0;
+    try{ for (var i=0;i<localStorage.length;i++){ var k = localStorage.key(i); used += k.length + (localStorage.getItem(k)||'').length; } }catch(e){}
+    alert('⚠ 브라우저 저장 공간이 가득 차서 ' + (what||'일부 데이터') + '을(를) 저장하지 못했어요.\n'
+      + '(현재 사용량 약 ' + (used*2/1048576).toFixed(1) + 'MB)\n\n'
+      + '· 새로고침하면 저장 못 한 부분은 사라집니다.\n'
+      + '· 지금 바로 [내보내기]로 백업해 두세요.\n'
+      + '· 붙여넣은 본문(뉴스 기사 등)이 많으면 용량을 크게 차지합니다.');
+  }
+  window.mwWarnQuota = warnQuota;
+  function lsSet(key, val, what){
+    try { localStorage.setItem(key, val); return true; }
+    catch(e){ warnQuota(what); return false; }
+  }
   function persist(){
     groupsData[currentGroup] = videos;
     try {
       var _payload = {order:groupKeys, data:groupsData, modes:groupModes, nsids:groupNsids, builders:groupBuilders};
       if (DIST_MODE){
-        localStorage.setItem(STORE_KEY, JSON.stringify({sig: DIST_SIG, bundle:_payload}));
+        lsSet(STORE_KEY, JSON.stringify({sig: DIST_SIG, bundle:_payload}), '디렉토리 목록');
       } else {
-        localStorage.setItem(STORE_KEY, JSON.stringify(_payload));
+        lsSet(STORE_KEY, JSON.stringify(_payload), '디렉토리 목록');
       }
     } catch(e){}
   }
@@ -2710,7 +2734,7 @@ div[data-google-query-id],
   function exportData(){
     groupsData[currentGroup] = videos;                 // 현재 그룹 반영
     var payload = { app: APP_TAG, order: groupKeys, data: groupsData, modes: groupModes, nsids: groupNsids, builders: groupBuilders, _embeds: collectEmbeds() };
-    var blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+    var blob = new Blob([JSON.stringify(payload)], {type:'application/json'});
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a'); a.href = url; a.download = 'myway_dir2.json'; a.click();
     URL.revokeObjectURL(url);
@@ -2793,7 +2817,7 @@ div[data-google-query-id],
     var nm = uniqueDirName(base);
     groupKeys.push(nm); groupsData[nm] = []; groupModes[nm] = 'builder';
     var ns = genNs(); groupNsids[nm] = ns; groupBuilders[nm] = [];
-    try { localStorage.setItem('mywayDir2BuilderNested__ns_' + ns, JSON.stringify(setsArray || [])); } catch(e){}
+    lsSet('mywayDir2BuilderNested__ns_' + ns, JSON.stringify(setsArray || []), '빌더 디렉토리 "' + nm + '"');
     rebuildGroupSelects();
     currentGroup = nm; videos = []; selectedIdx = null;
     var gs = document.getElementById('groupSelect'); if (gs) gs.value = nm;
@@ -2822,7 +2846,7 @@ div[data-google-query-id],
         else if (oldNs && embeds['mywayBuilderNested__ns_' + oldNs] != null) payload = embeds['mywayBuilderNested__ns_' + oldNs]; /* 구(CCTV용) 백업 호환 */
         else if (json.builders && oldNs && json.builders[oldNs] != null) payload = json.builders[oldNs];
         if (payload != null){
-          try { localStorage.setItem('mywayDir2BuilderNested__ns_' + newNs, (typeof payload === 'string') ? payload : JSON.stringify(payload)); } catch(e){}
+          lsSet('mywayDir2BuilderNested__ns_' + newNs, (typeof payload === 'string') ? payload : JSON.stringify(payload), '빌더 디렉토리 "' + nm + '"');
         }
       }
       added.push(nm);
@@ -2858,7 +2882,7 @@ div[data-google-query-id],
         else if (oldNs && embeds['mywayBuilderNested__ns_' + oldNs] != null) payload = embeds['mywayBuilderNested__ns_' + oldNs]; /* 구(CCTV용) 백업 호환 */
         else if (json.builders && oldNs && json.builders[oldNs] != null) payload = json.builders[oldNs];
         if (payload != null){
-          try { localStorage.setItem('mywayDir2BuilderNested__ns_' + newNs, (typeof payload === 'string') ? payload : JSON.stringify(payload)); } catch(e){}
+          lsSet('mywayDir2BuilderNested__ns_' + newNs, (typeof payload === 'string') ? payload : JSON.stringify(payload), '빌더 디렉토리 "' + k + '"');
         }
       }
     });
@@ -3045,6 +3069,7 @@ div[data-google-query-id],
     }
     /* 분류 목록이 바뀌면 UI(탭·모달 select·필터 CSS·추가카드) 재구성 */
     function syncCatUI(){
+      applyCatLabels();
       /* 필터 CSS */
       var st = document.getElementById('b_catFilterCss');
       if (!st){ st = document.createElement('style'); st.id = 'b_catFilterCss'; document.head.appendChild(st); }
@@ -3132,6 +3157,7 @@ div[data-google-query-id],
         name: (s.name != null && String(s.name).trim()) ? String(s.name).trim() : ('세트 ' + (i + 1)),
         group: (s.group || '').trim(),
         img: (s.img || '').trim(),
+        catLabels: (s.catLabels && typeof s.catLabels === 'object') ? Object.assign({}, s.catLabels) : {},
         data: normalizeCats(s.data)
       };
     }
@@ -3158,7 +3184,10 @@ div[data-google-query-id],
 
     function persistSets() {
       try { localStorage.setItem(SETS_KEY, JSON.stringify(sets)); }
-      catch (e) { alert('이 브라우저에서 저장 공간을 사용할 수 없습니다.'); }
+      catch (e) {
+        if (typeof window.mwWarnQuota === 'function') window.mwWarnQuota('빌더 세트');
+        else alert('이 브라우저에서 저장 공간을 사용할 수 없습니다.');
+      }
     }
 
     /* 빌더3 호환: 전역 data = 현재 선택된 세트의 data
@@ -3327,6 +3356,8 @@ div[data-google-query-id],
         const img = document.createElement('img');
         img.src = imgSrc; img.alt = item.name;
         img.loading = 'lazy'; img.decoding = 'async'; img.referrerPolicy = 'no-referrer'; img.draggable = false;
+        img.addEventListener('load', () => img.classList.add('ld'), { once: true });
+        img.addEventListener('error', () => img.classList.add('ld'), { once: true });
         a.appendChild(img);
       } else {
         const ph = document.createElement('div');
@@ -3389,6 +3420,46 @@ div[data-google-query-id],
       CATS.forEach(c => { counts[c.code] = data[c.code].length; counts.all += data[c.code].length; });
       Object.keys(counts).forEach(k => { const el = document.getElementById('b_cnt-' + k); if (el) el.textContent = counts[k]; });
     }
+    /* ===== 분류(탭) 이름 변경 — 이름은 세트 데이터(catLabels)에 저장되어 내보내기/코드/localStorage 모두 유지 ===== */
+    function defaultCatLabel(code){
+      var b = (typeof BASE_CATS !== 'undefined' ? BASE_CATS : CATS_DEFAULT).find(function(c){ return c.code === code; });
+      if (b) return b.label;
+      return (typeof catLabelFor === 'function') ? catLabelFor(code) : code;
+    }
+    function catLabelsStore(){
+      var m = {};
+      (sets || []).forEach(function(s){ if (s && s.catLabels) Object.keys(s.catLabels).forEach(function(k){ if (s.catLabels[k]) m[k] = String(s.catLabels[k]); }); });
+      return m;
+    }
+    function applyCatLabels(){
+      var m = catLabelsStore();
+      CATS.forEach(function(c){ c.label = m[c.code] || defaultCatLabel(c.code); });
+    }
+    function refreshCatBtnLabels(){
+      document.querySelectorAll('#b_catNav .cat-btn').forEach(function(b){
+        var code = b.dataset.cat; if (!code || code === 'all') return;
+        var cnt = b.querySelector('.count'); var txt = cnt ? cnt.textContent : '';
+        b.innerHTML = labelOf(code) + ' <span class="count" id="b_cnt-' + code + '">' + txt + '</span>';
+      });
+      var sel = document.getElementById('b_inCat');
+      if (sel) Array.prototype.forEach.call(sel.options, function(o){ o.textContent = labelOf(o.value); });
+      var sub = document.getElementById('b_filterSub');
+      if (sub) sub.textContent = currentFilter === 'all' ? '전체' : labelOf(currentFilter);
+    }
+    function renameCat(code){
+      if (VIEWER_MODE) return;
+      if (!code || code === 'all'){ alert('이름을 바꿀 분류 탭을 먼저 선택한 뒤 [✏ 이름]을 누르세요.\n(탭을 더블클릭해도 됩니다)'); return; }
+      var cur = labelOf(code);
+      var v = prompt('「' + cur + '」 탭의 새 이름 (비우면 기본 이름으로)', cur);
+      if (v === null) return;
+      v = v.trim();
+      var m = catLabelsStore();
+      if (!v || v === defaultCatLabel(code)) delete m[code]; else m[code] = v;
+      sets.forEach(function(s){ s.catLabels = Object.assign({}, m); });
+      persistSets();
+      applyCatLabels(); refreshCatBtnLabels();
+      if (typeof renderSetList === 'function') renderSetList();
+    }
     function labelOf(code) { const c = CATS.find(x => x.code === code); return c ? c.label : '전체'; }
     function setActiveTab(code) {
       currentFilter = code;
@@ -3401,6 +3472,11 @@ div[data-google-query-id],
         const btn = e.target.closest('.cat-btn'); if (!btn) return;
         setActiveTab(btn.dataset.cat);
       });
+      document.getElementById('b_catNav').addEventListener('dblclick', e => {
+        const btn = e.target.closest('.cat-btn'); if (!btn || btn.dataset.cat === 'all') return;
+        e.preventDefault(); renameCat(btn.dataset.cat);
+      });
+      var rb = document.getElementById('b_catRenameBtn'); if (rb) rb.addEventListener('click', function(){ renameCat(currentFilter); });
       var ab = document.getElementById('b_catAddBtn'); if (ab) ab.addEventListener('click', addPhotoCat);
       var db = document.getElementById('b_catDelBtn'); if (db) db.addEventListener('click', removeLastPhotoCat);
     }
@@ -3671,7 +3747,7 @@ div[data-google-query-id],
     /* ===== 내보내기 / 가져오기 / 전체삭제 ===== */
     function exportData() {
       sets[curSet].data = data;
-      const blob = new Blob([JSON.stringify(sets, null, 2)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(sets)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url; a.download = 'myway-builder-sets.json';
@@ -3734,6 +3810,7 @@ div[data-google-query-id],
           '        name: ' + JSON.stringify(set.name || '') + ',\n' +
           '        group: ' + JSON.stringify(set.group || '') + ',\n' +
           '        img: ' + JSON.stringify(set.img || '') + ',\n' +
+          (set.catLabels && Object.keys(set.catLabels).length ? '        catLabels: ' + JSON.stringify(set.catLabels) + ',\n' : '') +
           '        data: {\n' + catBlock(set.data) + '\n        }\n' +
           '      }';
       });
@@ -4287,6 +4364,7 @@ div[data-google-query-id],
         if (imgUrl) {
           var img = document.createElement('img');
           img.className = 'sc-img'; img.alt = ''; img.referrerPolicy = 'no-referrer'; img.draggable = false;
+          img.loading = 'lazy'; img.decoding = 'async';
           img.onerror = function () { img.onerror = null; img.remove(); addPh(); };
           img.src = imgUrl;
           card.appendChild(img);
