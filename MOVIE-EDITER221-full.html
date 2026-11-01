@@ -3266,13 +3266,16 @@
     }
     /* ===== 분류(탭) 이름 변경 — 이름은 세트 데이터(catLabels)에 저장되어 내보내기/코드/localStorage 모두 유지 ===== */
     function defaultCatLabel(code){
-      var b = (typeof BASE_CATS !== 'undefined' ? BASE_CATS : CATS_DEFAULT).find(function(c){ return c.code === code; });
-      if (b) return b.label;
+      /* 기본 이름은 변경 전 스냅샷에서만 읽는다 (CATS/BASE_CATS 객체는 이름 변경 시 덮어써지므로 참조 금지) */
+      if (typeof BASE_CAT_LABELS !== 'undefined' && BASE_CAT_LABELS[code]) return BASE_CAT_LABELS[code];
+      if (typeof CATS_DEFAULT !== 'undefined'){ var b = CATS_DEFAULT.find(function(c){ return c.code === code; }); if (b) return b.label; }
       return (typeof catLabelFor === 'function') ? catLabelFor(code) : code;
     }
+    /* 탭 이름은 '세트별'로 저장 — 현재 선택된 세트의 catLabels만 사용 */
     function catLabelsStore(){
       var m = {};
-      (sets || []).forEach(function(s){ if (s && s.catLabels) Object.keys(s.catLabels).forEach(function(k){ if (s.catLabels[k]) m[k] = String(s.catLabels[k]); }); });
+      var cs = (sets && sets[curSet]) ? sets[curSet] : null;
+      if (cs && cs.catLabels) Object.keys(cs.catLabels).forEach(function(k){ if (cs.catLabels[k]) m[k] = String(cs.catLabels[k]); });
       return m;
     }
     function applyCatLabels(){
@@ -3294,18 +3297,21 @@
       if (VIEWER_MODE) return;
       if (!code || code === 'all'){ alert('이름을 바꿀 분류 탭을 먼저 선택한 뒤 [✏ 이름]을 누르세요.\n(탭을 더블클릭해도 됩니다)'); return; }
       var cur = labelOf(code);
-      var v = prompt('「' + cur + '」 탭의 새 이름 (비우면 기본 이름으로)', cur);
+      var setNm = (sets && sets[curSet] && sets[curSet].name) ? sets[curSet].name : '';
+      var v = prompt('[' + setNm + '] 세트의 「' + cur + '」 탭 새 이름 (비우면 기본 이름으로)\n※ 이 세트에만 적용됩니다', cur);
       if (v === null) return;
       v = v.trim();
       var m = catLabelsStore();
       if (!v || v === defaultCatLabel(code)) delete m[code]; else m[code] = v;
-      sets.forEach(function(s){ s.catLabels = Object.assign({}, m); });
+      if (sets && sets[curSet]) sets[curSet].catLabels = Object.assign({}, m);
       persistSets();
       applyCatLabels(); refreshCatBtnLabels();
       if (typeof renderSetList === 'function') renderSetList();
     }
     function labelOf(code) { const c = CATS.find(x => x.code === code); return c ? c.label : '전체'; }
     function setActiveTab(code) {
+      /* 세트/디렉토리 전환 등 모든 경로에서 호출되므로 여기서 현재 세트의 탭 이름을 반영 */
+      try { applyCatLabels(); refreshCatBtnLabels(); } catch(_){}
       currentFilter = code;
       B_root.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('is-active', b.dataset.cat === code));
       document.getElementById('b_filterSub').textContent = code === 'all' ? '전체' : labelOf(code);
@@ -4437,6 +4443,8 @@
       if(!sets || !sets.length) sets = defaultSets();
       curSet = 0;
       data = sets[curSet].data;
+      currentFilter = 'all';
+      applyCatLabels(); refreshCatBtnLabels();
       setActiveTab('all');
       render(); renderSetList(); renderGroupSelect();
     }catch(e){ try{console.error('B_show',e);}catch(_){} }
