@@ -542,6 +542,9 @@ div[data-google-query-id],
       flex: 0 0 auto;
       -webkit-tap-highlight-color: transparent;
     }
+#builderMount .cat-btn.cat-dragging{ opacity: .4; }
+#builderMount .cat-btn.cat-drop-before{ box-shadow: -3px 0 0 0 #5b7cfa; }
+#builderMount .cat-btn.cat-drop-after{ box-shadow: 3px 0 0 0 #5b7cfa; }
 #builderMount .cat-btn:hover{ background: #f4f6fb; border-color: #c7cee0; }
 #builderMount .cat-btn:active{ transform: scale(0.96); }
 #builderMount .cat-btn.is-active{ background: #1f2740; color: #fff; border-color: #1f2740; }
@@ -980,6 +983,8 @@ div[data-google-query-id],
         <button class="cat-btn" data-cat="photoH">사진 H <span class="count" id="b_cnt-photoH">0</span></button>
         <button class="cat-add-btn" id="b_catAddBtn" type="button" title="사진 분류 추가">+ 분류</button>
         <button class="cat-add-btn" id="b_catRenameBtn" type="button" title="선택한 분류 이름 변경 (탭 더블클릭도 가능)">✏ 이름</button>
+        <button class="cat-add-btn" id="b_catMoveL" type="button" title="선택한 분류를 왼쪽으로 (탭을 드래그해도 됩니다)">◀</button>
+        <button class="cat-add-btn" id="b_catMoveR" type="button" title="선택한 분류를 오른쪽으로 (탭을 드래그해도 됩니다)">▶</button>
         <button class="cat-del-btn" id="b_catDelBtn" type="button" title="마지막에 추가한 빈 분류 삭제" hidden>− 분류</button>
       </nav>
       <div class="topbar-tools">
@@ -2936,7 +2941,7 @@ div[data-google-query-id],
       var t = e.target;
       if (t && (t.tagName==='INPUT' || t.tagName==='TEXTAREA' || (t.closest && t.closest('[contenteditable="true"]')))) return;
       /* 드래그 정렬 예외: 재생목록 항목·빌더 카드는 dragstart를 막지 않음 */
-      if (e.type==='dragstart' && t && t.closest && t.closest('.pl-item, #builderMount .card, #builderMount .set-card')) return;
+      if (e.type==='dragstart' && t && t.closest && t.closest('.pl-item, #builderMount .card, #builderMount .set-card, #b_catNav .cat-btn')) return;
       e.preventDefault();
     });
   });
@@ -3159,6 +3164,7 @@ div[data-google-query-id],
         group: (s.group || '').trim(),
         img: (s.img || '').trim(),
         catLabels: (s.catLabels && typeof s.catLabels === 'object') ? Object.assign({}, s.catLabels) : {},
+        catOrder: Array.isArray(s.catOrder) ? s.catOrder.map(String).filter(Boolean) : [],
         data: normalizeCats(s.data)
       };
     }
@@ -3290,6 +3296,7 @@ div[data-google-query-id],
 
     /* ===== 렌더 ===== */
     function render() {
+      try { applyCatOrder(); } catch(_){}
       const root = document.getElementById('b_masonryGallery');
       const frag = document.createDocumentFragment();
       CATS.forEach(c => data[c.code].forEach((item, idx) => frag.appendChild(buildCard(item, c.code, idx))));
@@ -3450,6 +3457,93 @@ div[data-google-query-id],
       var sub = document.getElementById('b_filterSub');
       if (sub) sub.textContent = currentFilter === 'all' ? '전체' : labelOf(currentFilter);
     }
+    /* ===== 분류(탭) 순서 변경 — 세트별 catOrder에 저장 ===== */
+    function currentCatOrder(){
+      var cs = (sets && sets[curSet]) ? sets[curSet] : null;
+      var saved = (cs && Array.isArray(cs.catOrder)) ? cs.catOrder : [];
+      /* 기본 순서는 변경 전 스냅샷 기준 (CATS는 세트별 정렬로 바뀌므로 참조 금지) */
+      var base = (typeof BASE_CAT_LABELS !== 'undefined') ? Object.keys(BASE_CAT_LABELS)
+               : (typeof CATS_DEFAULT !== 'undefined') ? CATS_DEFAULT.map(function(c){ return c.code; }) : [];
+      var inCats = {}; CATS.forEach(function(c){ inCats[c.code] = true; });
+      var known = base.filter(function(c){ return inCats[c]; });
+      CATS.slice().sort(function(a, b){ return a.code < b.code ? -1 : a.code > b.code ? 1 : 0; })
+          .forEach(function(c){ if (known.indexOf(c.code) < 0) known.push(c.code); });
+      var out = saved.filter(function(c){ return known.indexOf(c) >= 0; });
+      known.forEach(function(c){ if (out.indexOf(c) < 0) out.push(c); });
+      return out;
+    }
+    function applyCatOrder(){
+      var order = currentCatOrder();
+      var pos = {}; order.forEach(function(c, i){ pos[c] = i; });
+      CATS.sort(function(a, b){ return (pos[a.code] || 0) - (pos[b.code] || 0); });
+      var nav = document.getElementById('b_catNav');
+      if (nav){
+        var btns = {}; nav.querySelectorAll('.cat-btn').forEach(function(b){ if (b.dataset.cat !== 'all') btns[b.dataset.cat] = b; });
+        var anchor = null;
+        Array.prototype.some.call(nav.children, function(el){ if (!el.classList.contains('cat-btn')){ anchor = el; return true; } return false; });
+        order.forEach(function(c){ var b = btns[c]; if (!b) return; if (anchor) nav.insertBefore(b, anchor); else nav.appendChild(b); });
+      }
+      var sel = document.getElementById('b_inCat');
+      if (sel){
+        var opts = {}; Array.prototype.forEach.call(sel.options, function(o){ opts[o.value] = o; });
+        order.forEach(function(c){ if (opts[c]) sel.appendChild(opts[c]); });
+      }
+    }
+    function saveCatOrder(order){
+      if (VIEWER_MODE || !sets || !sets[curSet]) return;
+      sets[curSet].catOrder = order.slice();
+      persistSets();
+      applyCatOrder();
+      if (typeof render === 'function') render();
+      if (typeof renderSetList === 'function') renderSetList();
+    }
+    function moveCat(code, dir){
+      if (VIEWER_MODE) return;
+      if (!code || code === 'all'){ alert('순서를 바꿀 분류 탭을 먼저 선택한 뒤 ◀ ▶ 를 누르세요.\n(탭을 드래그해서 옮겨도 됩니다)'); return; }
+      var order = currentCatOrder(); var i = order.indexOf(code); if (i < 0) return;
+      var j = i + dir; if (j < 0 || j >= order.length) return;
+      order.splice(i, 1); order.splice(j, 0, code);
+      saveCatOrder(order);
+    }
+    function moveCatTo(code, targetCode, after){
+      if (VIEWER_MODE || code === targetCode) return;
+      var order = currentCatOrder().filter(function(c){ return c !== code; });
+      var t = order.indexOf(targetCode); if (t < 0) return;
+      order.splice(after ? t + 1 : t, 0, code);
+      saveCatOrder(order);
+    }
+    var _catDrag = null;
+    function clearCatDropMarks(){ document.querySelectorAll('#b_catNav .cat-drop-before, #b_catNav .cat-drop-after').forEach(function(b){ b.classList.remove('cat-drop-before', 'cat-drop-after'); }); }
+    function setupCatDrag(){
+      var nav = document.getElementById('b_catNav'); if (!nav) return;
+      nav.addEventListener('dragstart', function(e){
+        var b = e.target.closest && e.target.closest('.cat-btn');
+        if (!b || b.dataset.cat === 'all' || VIEWER_MODE){ e.preventDefault(); return; }
+        _catDrag = b.dataset.cat; b.classList.add('cat-dragging');
+        try{ e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', _catDrag); }catch(_){}
+      });
+      nav.addEventListener('dragover', function(e){
+        if (!_catDrag) return;
+        var b = e.target.closest && e.target.closest('.cat-btn'); if (!b || b.dataset.cat === 'all' || b.dataset.cat === _catDrag) return;
+        e.preventDefault(); clearCatDropMarks();
+        var r = b.getBoundingClientRect(); var after = (e.clientX - r.left) > r.width / 2;
+        b.classList.add(after ? 'cat-drop-after' : 'cat-drop-before');
+      });
+      nav.addEventListener('dragleave', function(e){ var b = e.target.closest && e.target.closest('.cat-btn'); if (b) b.classList.remove('cat-drop-before', 'cat-drop-after'); });
+      nav.addEventListener('drop', function(e){
+        if (!_catDrag) return;
+        var b = e.target.closest && e.target.closest('.cat-btn'); clearCatDropMarks();
+        if (!b || b.dataset.cat === 'all' || b.dataset.cat === _catDrag){ _catDrag = null; return; }
+        e.preventDefault();
+        var r = b.getBoundingClientRect(); var after = (e.clientX - r.left) > r.width / 2;
+        var code = _catDrag; _catDrag = null;
+        moveCatTo(code, b.dataset.cat, after);
+      });
+      nav.addEventListener('dragend', function(){ _catDrag = null; clearCatDropMarks(); nav.querySelectorAll('.cat-dragging').forEach(function(b){ b.classList.remove('cat-dragging'); }); });
+    }
+    function markCatDraggable(){
+      document.querySelectorAll('#b_catNav .cat-btn').forEach(function(b){ b.draggable = (!VIEWER_MODE && b.dataset.cat !== 'all'); });
+    }
     function renameCat(code){
       if (VIEWER_MODE) return;
       if (!code || code === 'all'){ alert('이름을 바꿀 분류 탭을 먼저 선택한 뒤 [✏ 이름]을 누르세요.\n(탭을 더블클릭해도 됩니다)'); return; }
@@ -3468,7 +3562,7 @@ div[data-google-query-id],
     function labelOf(code) { const c = CATS.find(x => x.code === code); return c ? c.label : '전체'; }
     function setActiveTab(code) {
       /* 세트/디렉토리 전환 등 모든 경로에서 호출되므로 여기서 현재 세트의 탭 이름을 반영 */
-      try { applyCatLabels(); refreshCatBtnLabels(); } catch(_){}
+      try { applyCatLabels(); refreshCatBtnLabels(); applyCatOrder(); markCatDraggable(); } catch(_){}
       currentFilter = code;
       B_root.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('is-active', b.dataset.cat === code));
       document.getElementById('b_filterSub').textContent = code === 'all' ? '전체' : labelOf(code);
@@ -3484,6 +3578,9 @@ div[data-google-query-id],
         e.preventDefault(); renameCat(btn.dataset.cat);
       });
       var rb = document.getElementById('b_catRenameBtn'); if (rb) rb.addEventListener('click', function(){ renameCat(currentFilter); });
+      var ml = document.getElementById('b_catMoveL'); if (ml) ml.addEventListener('click', function(){ moveCat(currentFilter, -1); });
+      var mr = document.getElementById('b_catMoveR'); if (mr) mr.addEventListener('click', function(){ moveCat(currentFilter, 1); });
+      setupCatDrag(); markCatDraggable();
       var ab = document.getElementById('b_catAddBtn'); if (ab) ab.addEventListener('click', addPhotoCat);
       var db = document.getElementById('b_catDelBtn'); if (db) db.addEventListener('click', removeLastPhotoCat);
     }
@@ -3818,6 +3915,7 @@ div[data-google-query-id],
           '        group: ' + JSON.stringify(set.group || '') + ',\n' +
           '        img: ' + JSON.stringify(set.img || '') + ',\n' +
           (set.catLabels && Object.keys(set.catLabels).length ? '        catLabels: ' + JSON.stringify(set.catLabels) + ',\n' : '') +
+          (set.catOrder && set.catOrder.length ? '        catOrder: ' + JSON.stringify(set.catOrder) + ',\n' : '') +
           '        data: {\n' + catBlock(set.data) + '\n        }\n' +
           '      }';
       });
