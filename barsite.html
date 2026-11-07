@@ -1174,7 +1174,47 @@
     .nav-row button:hover { border-color:var(--accent); color:var(--accent); }
     .nav-row button.del:hover { border-color:#e0456b; color:#e0456b; }
 
-  </style>
+      /* ============ P 페이지 맨 위 · TV & 라디오 (상단 채널바 + 풀화면 재생) ============ */
+    body.hcs-collapsed .tvr-section,
+    body.editing .tvr-section { display: none !important; }
+    .tvr-section { width: 100%; margin: 14px 0 6px; padding: 0; }
+    .tvr-head { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 12px; max-width: 1040px; padding: 0 14px; }
+    .tvr-head::before, .tvr-head::after { content: ""; flex: 1; height: 1px; max-width: 280px; background: linear-gradient(90deg, transparent, #d9ddf0); }
+    .tvr-head::after { background: linear-gradient(90deg, #d9ddf0, transparent); }
+    .tvr-title { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 800; letter-spacing: 2.4px; color: #4b2dbd; }
+    .tvr-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff3b5c; animation: tvrPulse 1.6s infinite; }
+    @keyframes tvrPulse { 0% { box-shadow: 0 0 0 0 rgba(255,59,92,.55); } 70% { box-shadow: 0 0 0 8px rgba(255,59,92,0); } 100% { box-shadow: 0 0 0 0 rgba(255,59,92,0); } }
+
+    /* 상단 채널바 (재생 중엔 화면 위에 고정) */
+    .tvr-bar { position: sticky; top: var(--tvr-top, 0px); scroll-margin-top: var(--tvr-top, 0px); z-index: 30; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 9px 14px; background: rgba(255,255,255,.96); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-top: 1px solid #eef0f8; border-bottom: 1px solid #eef0f8; }
+    .tvr-seg { order: 2; flex: none; display: flex; gap: 2px; padding: 2px; border-radius: 999px; background: #f1f2fa; margin-left: 4px; }
+    .tvr-seg button { border: 0; border-radius: 999px; padding: 4px 9px; font-size: 11px; font-weight: 800; color: #6a749c; background: transparent; cursor: pointer; white-space: nowrap; transition: .15s; }
+    .tvr-seg button.on { color: #fff; background: linear-gradient(110deg, #5b8def 0%, #7d6fe8 55%, #b176f3 100%); box-shadow: 0 3px 10px rgba(125,111,232,.35); }
+    .tvr-seg button.on[data-k="radio"] { background: linear-gradient(110deg, #f08aa8 0%, #c57af0 60%, #8f7cf2 100%); box-shadow: 0 3px 10px rgba(197,122,240,.35); }
+    .tvr-list { order: 1; flex: 0 1 auto; min-width: 0; display: flex; flex-wrap: wrap; gap: 6px; padding: 2px; justify-content: center; }
+    .tvr-list::-webkit-scrollbar { display: none; }
+    .tvr-ch { flex: none; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #e2e6f3; background: #fff; border-radius: 999px; padding: 7px 14px; font-size: 12.5px; font-weight: 700; color: #4a5170; cursor: pointer; white-space: nowrap; transition: .15s; }
+    .tvr-ch:hover { border-color: #a99cf5; color: #4b2dbd; }
+    .tvr-ch .nw { font-size: 10px; color: #9aa2c0; }
+    .tvr-ch.on { background: #1f6f4f; border-color: #1f6f4f; color: #fff; box-shadow: 0 3px 10px rgba(31,111,79,.3); }
+    .tvr-ch.on::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #ff4d6a; }
+    .tvr-section.playing .tvr-bar { padding-right: 62px; } /* 우측 상단 연필(편집) 버튼과 겹치지 않게 */
+    .tvr-ch.on { cursor: pointer; } .tvr-ch.on:hover { background: #18583f; }
+
+    /* 풀화면 뷰어 — 재생할 때만 펼쳐짐 */
+    .tvr-screen { display: none; position: relative; width: 100%; height: calc(100vh - 56px - var(--tvr-top, 0px)); min-height: 480px; background: #fff; }
+    .tvr-section.playing .tvr-screen { display: block; }
+    .tvr-screen iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .tvr-hint { text-align: center; font-size: 12px; color: #9aa2c0; padding: 10px 14px 4px; }
+    .tvr-section.playing .tvr-hint { display: none; }
+
+    @media (max-width: 700px) {
+      .tvr-bar { padding: 8px 10px; }
+      .tvr-bar { justify-content: flex-start; }
+      .tvr-list { flex: 1 1 auto; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; justify-content: flex-start; }
+      .tvr-screen { height: calc(100vh - 56px - var(--tvr-top, 0px)); min-height: 380px; }
+    }
+</style>
 </head>
 <body class="">
   <!-- SEO: 한글 브랜드명 명시 (화면 비표시, 검색엔진 인식용) -->
@@ -1183,6 +1223,18 @@
   <header class="topbar">
     <nav class="tab-nav" id="tabNav"></nav>
   </header>
+
+  <!-- P 페이지 맨 위 · TV & 라디오 (상단 채널바 → 누르면 아래 풀화면 재생) -->
+  <section class="tvr-section" id="tvrSection" aria-label="LIVE TV · 라디오">
+    <div class="tvr-head"><span class="tvr-title"><span class="tvr-dot"></span>ON AIR · TV &amp; RADIO</span></div>
+    <div class="tvr-bar" id="tvrBar">
+      <div class="tvr-seg" id="tvrSeg"><button type="button" data-k="tv" class="on">📺 TV</button><button type="button" data-k="radio">📻 라디오</button></div>
+      <div class="tvr-list" id="tvrList"></div>
+    </div>
+    <div class="tvr-hint">채널을 누르면 아래에 화면이 크게 열려요 · 같은 채널을 한 번 더 누르면 꺼져요</div>
+    <div class="tvr-screen" id="tvrScreen"></div>
+  </section>
+
 
   <!-- 생활정보 아이콘(편집 섹션) — 상단 -->
   <main class="main" id="main"></main>
@@ -2978,4 +3030,78 @@
 </script>
 
 
+<script>
+/* ===== P 페이지 맨 위 TV & 라디오 — 상단 채널바 + 풀화면 재생 =====
+   채널 목록 = livesitesbar2.html / radiositesbar2.html 의 상단 채널(iframe 재생용) 그대로
+   [이름, 주소, 'newwin'] — 'newwin'은 iframe 차단 사이트라 새 탭으로 열림
+   ※ 페이지 열 때 자동 재생하지 않음 — 채널을 눌러야 재생 */
+(function(){
+  /* @TVR_START */
+  var TVR = {
+    tv: [
+      ["YTN","https://www.ytn.co.kr/_hd/hd_live.html"],
+      ["연합뉴스","https://www.yonhapnewstv.co.kr/live"],
+      ["KBS1","https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList"],
+      ["KBS2","https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList"],
+      ["KBS24","https://news.kbs.co.kr/news/pc/news24/news24.html"],
+      ["SBS","https://www.sbs.co.kr/live/S01?div=main_live"],
+      ["채널A","https://ichannela.com/com/cmm/onair.do"],
+      ["SOOP","https://www.sooplive.co.kr/live/all"]
+    ],
+    radio: [
+      ["radionara","https://radionara.vercel.app/"],
+      ["KBS","https://radio.kbs.co.kr/"],
+      ["KBS1","https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=21&ch_type=radioList&bora=on&chat=on"],
+      ["KBS2","https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=22&ch_type=radioList&bora=on&chat=on"],
+      ["KBS3","https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=23&ch_type=radioList"],
+      ["COOL FM","https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=25&ch_type=radioList"],
+      ["SBS러브FM","https://www.sbs.co.kr/live/S08?div=live_list"],
+      ["SBS파워FM","https://www.sbs.co.kr/live/S07?div=live_list"],
+      ["TBN 교통방송","https://www.tbn.or.kr/onair/tbnlive.tbn?area_code=2"],
+      ["CBS","https://www.cbs.co.kr/radio"]
+    ]
+  };
+  /* @TVR_END */
+  var kind = 'tv', cur = null; /* cur = {k, i} */
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function ytId(u){ var m = String(u||'').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/); return m ? m[1] : null; }
+  function list(){
+    var arr = TVR[kind] || [];
+    $('tvrList').innerHTML = arr.map(function(c, i){
+      var on = cur && cur.k === kind && cur.i === i;
+      return '<button type="button" class="tvr-ch' + (on ? ' on' : '') + '" data-i="' + i + '" title="' + esc(c[0]) + (c[2] === 'newwin' ? ' (새 탭으로 열림)' : (on ? ' — 다시 누르면 끄기' : '')) + '">' + esc(c[0]) + (c[2] === 'newwin' ? '<span class="nw">↗</span>' : '') + '</button>';
+    }).join('');
+    Array.prototype.forEach.call($('tvrSeg').children, function(b){ b.classList.toggle('on', b.getAttribute('data-k') === kind); });
+  }
+  function stop(){ cur = null; $('tvrScreen').innerHTML = ''; $('tvrSection').classList.remove('playing'); list(); }
+  function play(i){
+    var c = (TVR[kind] || [])[i]; if (!c) return;
+    if (c[2] === 'newwin') { window.open(c[1], '_blank', 'noopener'); return; }
+    if (cur && cur.k === kind && cur.i === i) { stop(); return; } /* 재생 중인 채널을 다시 누르면 끄기 */
+    var first = !cur;
+    cur = { k: kind, i: i };
+    var y = ytId(c[1]), src = y ? 'https://www.youtube.com/embed/' + y + '?autoplay=1&playsinline=1' : String(c[1]).replace(/"/g, '%22');
+    $('tvrScreen').innerHTML = '<iframe title="' + esc(c[0]) + '" referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen src="' + src + '"></iframe>';
+    $('tvrSection').classList.add('playing');
+    list();
+    var b = $('tvrList').querySelector('.tvr-ch.on'); if (b) { try { b.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' }); } catch(e){} }
+    /* 처음 열 때 채널바가 화면 맨 위에 오도록 스크롤 → 아래가 전부 방송 화면 */
+    if (first) { try { $('tvrBar').scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch(e){} }
+  }
+  function init(){
+    if (!$('tvrSection')) return;
+    $('tvrList').addEventListener('click', function(e){ var b = e.target.closest('.tvr-ch'); if (b) play(+b.getAttribute('data-i')); });
+    $('tvrSeg').addEventListener('click', function(e){ var b = e.target.closest('button[data-k]'); if (!b) return; kind = b.getAttribute('data-k'); list(); });
+    /* 아래 탭(시사-경제지 등)을 바꾸면 재생 정지 → 탭 내용이 바로 보이게 */
+    var lastTab = document.body.getAttribute('data-active-tab');
+    try { new MutationObserver(function(){ var t = document.body.getAttribute('data-active-tab'); if (t !== lastTab) { lastTab = t; if (cur) stop(); } }).observe(document.body, { attributes: true, attributeFilter: ['data-active-tab'] }); } catch(e){}
+    /* 고정 탭바(.topbar) 높이만큼 채널바를 아래에 붙임 */
+    function topH(){ var tb = document.querySelector('.topbar'); var h = tb ? tb.offsetHeight : 0; document.documentElement.style.setProperty('--tvr-top', h + 'px'); }
+    topH(); window.addEventListener('resize', topH); setTimeout(topH, 600);
+    list();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
 </body></html>
