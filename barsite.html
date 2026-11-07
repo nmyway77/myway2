@@ -114,6 +114,7 @@
       left: 0;
       z-index: 5;
       background: rgba(255,255,255,0.97);
+      box-shadow: -16px 0 0 rgba(255,255,255,0.97); /* 왼쪽 여백으로 탭 글자가 비치지 않게 */
     }
     .hcs-switch a {
       font-weight: 800;
@@ -3199,6 +3200,18 @@
       nav.insertBefore(frag, nav.firstChild);
       if (onair) Array.prototype.forEach.call(nav.querySelectorAll('.tab-btn:not(.tvr-tab)'), function(b){ b.classList.remove('is-active'); });
     }
+    /* 모바일: 누른 탭 버튼을 탭바 가운데로 가로 스크롤 → 양옆 다음 탭이 보이게 */
+    function navCenter(sel){
+      requestAnimationFrame(function(){
+        var b = document.querySelector(sel); if (!b) return;
+        var sc = b.closest('.topbar') || b.parentNode; if (!sc || sc.scrollWidth <= sc.clientWidth) return;
+        var br = b.getBoundingClientRect(), sr = sc.getBoundingClientRect();
+        var sw = sc.querySelector('.hcs-switch'), swW = sw ? sw.getBoundingClientRect().width : 0; /* 왼쪽 고정 H·C&S·P 폭 제외 */
+        var left = sc.scrollLeft + (br.left - sr.left) - swW - (sc.clientWidth - swW - br.width) / 2;
+        left = Math.max(0, Math.min(left, sc.scrollWidth - sc.clientWidth));
+        try { sc.scrollTo({ left: left, behavior: 'smooth' }); } catch(e){ sc.scrollLeft = left; }
+      });
+    }
     function openOnair(k){
       var changed = (onair !== k);
       onair = k;
@@ -3213,6 +3226,7 @@
           $('tvrSection').classList.add('playing', 'page-mode');
         }
         try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e){}
+        navCenter('#tabNav .tab-btn[data-tab="onair_' + k + '"]');
         return;
       }
       list();
@@ -3221,12 +3235,13 @@
         else { var ri = 0; (TVR.radio || []).forEach(function(c, i){ if (c[0] === 'radionara') ri = i; }); play(ri, true); } /* 라디오 탭 = 라디오나라 바로 재생 */
       }
       try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e){}
+      navCenter('#tabNav .tab-btn[data-tab="onair_' + k + '"]');
     }
     /* 일반 탭을 고르면 TV·라디오 모드 해제 (재생 정지) */
     try {
       if (typeof selectTab === 'function') {
         var _st = selectTab;
-        selectTab = function(){ if (onair) { onair = null; stop(); } return _st.apply(this, arguments); };
+        selectTab = function(id){ if (onair) { onair = null; stop(); } var r = _st.apply(this, arguments); navCenter('#tabNav .tab-btn[data-tab="' + id + '"]'); return r; };
       }
     } catch(e){}
     /* renderNav(탭바 다시 그림)가 호출될 때마다 TV·라디오 버튼을 다시 붙임 */
