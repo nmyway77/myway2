@@ -3075,7 +3075,7 @@
     Array.prototype.forEach.call($('tvrSeg').children, function(b){ b.classList.toggle('on', b.getAttribute('data-k') === kind); });
   }
   function stop(){ cur = null; $('tvrScreen').innerHTML = ''; $('tvrSection').classList.remove('playing'); list(); }
-  function play(i){
+  function play(i, noScroll){
     var c = (TVR[kind] || [])[i]; if (!c) return;
     if (c[2] === 'newwin') { window.open(c[1], '_blank', 'noopener'); return; }
     if (cur && cur.k === kind && cur.i === i) { stop(); return; } /* 재생 중인 채널을 다시 누르면 끄기 */
@@ -3087,7 +3087,7 @@
     list();
     var b = $('tvrList').querySelector('.tvr-ch.on'); if (b) { try { b.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' }); } catch(e){} }
     /* 처음 열 때 채널바가 화면 맨 위에 오도록 스크롤 → 아래가 전부 방송 화면 */
-    if (first) { try { $('tvrBar').scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch(e){} }
+    if (first && !noScroll) { try { $('tvrBar').scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch(e){} }
   }
   function init(){
     if (!$('tvrSection')) return;
@@ -3099,6 +3099,8 @@
     /* 고정 탭바(.topbar) 높이만큼 채널바를 아래에 붙임 */
     function topH(){ var tb = document.querySelector('.topbar'); var h = tb ? tb.offsetHeight : 0; document.documentElement.style.setProperty('--tvr-top', h + 'px'); }
     topH(); window.addEventListener('resize', topH); setTimeout(topH, 600);
+    /* P 페이지를 열면 처음부터 YTN 화면 재생 (스크롤 이동 없이) */
+    kind = 'tv'; play(0, true);
     list();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
