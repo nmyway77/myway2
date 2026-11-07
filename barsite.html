@@ -3126,7 +3126,10 @@
       var nav = $('tabNav');
       if (nav) Array.prototype.forEach.call(nav.querySelectorAll('.tab-btn'), function(b){ b.classList.toggle('is-active', b.getAttribute('data-tab') === 'onair_' + k); });
       list();
-      if (k === 'tv' && !cur) play(0, true); /* TV 탭 = YTN 바로 재생 */
+      if (!cur) {
+        if (k === 'tv') play(0, true); /* TV 탭 = YTN 바로 재생 */
+        else { var ri = 0; (TVR.radio || []).forEach(function(c, i){ if (c[0] === 'SBS파워FM') ri = i; }); play(ri, true); } /* 라디오 탭 = SBS 파워FM 바로 재생 */
+      }
       try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e){}
     }
     /* 일반 탭을 고르면 TV·라디오 모드 해제 (재생 정지) */
