@@ -739,7 +739,8 @@
       <div class="screen-links" id="parent-links" style="cursor: default;">
         <a href="#" onclick="showScreenParent(event, 'indexmain7.html')">H</a>
        
-        <a href="#" class="active" onclick="showScreenParent(event, '00000stockmain7.html')">C&amp;S</a>
+        <a href="#" onclick="showScreenParent(event, '00000stockmain7.html')">C&amp;S</a>
+        <a href="#" class="active" onclick="showScreenParent(event, 'barsite.html')">P</a>
         
         
 
@@ -750,7 +751,7 @@
 
   <!-- 메인 iframe wrapper (H 토글로 펼치기/접기) -->
   <div class="main-frame-wrap" id="frameWrap">
-    <iframe id="main-frame" class="main-frame" src="00000stockmain7.html" allowfullscreen allow="fullscreen" loading="eager" data-current-url="00000stockmain7.html"></iframe>
+    <iframe id="main-frame" class="main-frame" src="barsite.html" allowfullscreen allow="fullscreen" loading="eager" data-current-url="barsite.html"></iframe>
   </div>
 
   <!-- ===== EDITER: 검색엔진 · 자주쓰는 검색어 편집 오버레이 ===== -->
@@ -2094,7 +2095,7 @@
       try { saved = sessionStorage.getItem('mywayScreen'); } catch(_) {}
       if(!saved) return;
       /* 통합본 파일명만 복원 (구버전 값이 남아 있으면 무시) */
-      if(['indexmain7.html','00000stockmain7.html'].indexOf(saved) === -1) return;
+      if(['indexmain7.html','00000stockmain7.html','barsite.html'].indexOf(saved) === -1) return;
       var frame = document.getElementById('main-frame');
       if(!frame) return;
       if(frame.getAttribute('data-current-url') !== saved){
@@ -2780,7 +2781,7 @@ var DEFAULT_ENGINES = [
       });
       /* iframe을 초기 화면으로 리셋 */
       src = src.replace(/<iframe id="main-frame"[\s\S]*?<\/iframe>/,
-        '<iframe id="main-frame" class="main-frame" src="00000stockmain7.html" allowfullscreen allow="fullscreen" loading="eager" data-current-url="00000stockmain7.html"></iframe>');
+        '<iframe id="main-frame" class="main-frame" src="barsite.html" allowfullscreen allow="fullscreen" loading="eager" data-current-url="barsite.html"></iframe>');
       /* 네비 active를 초기 상태(C&S)로 리셋 */
       src = src.replace(/ class="[^"]*\bactive\b[^"]*"/g, '');
       src = src.replace(/(<a href="#" )(onclick="showScreenParent\(event, '00000stockmain7\.html'\)")/, '$1class="active" $2');
