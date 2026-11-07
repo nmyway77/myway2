@@ -1093,6 +1093,7 @@
     <textarea id="codeArea" readonly spellcheck="false" style="width:100%;height:300px;padding:13px;border-radius:11px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-family:'JetBrains Mono','SFMono-Regular',Consolas,monospace;font-size:.78rem;line-height:1.5;outline:none;resize:vertical;white-space:pre;-webkit-user-select:text;user-select:text;"></textarea>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeCodeModal()">닫기</button>
+      <button class="btn-save" onclick="exportEditorHtml()" style="background:#7a3be0;">에디터 파일 저장</button>
       <button class="btn-save" onclick="exportEditableHtml()" style="background:#3b6fe0;">편집판 HTML로 저장</button>
       <button class="btn-save" onclick="exportHtml()" style="background:#21b781;">보기전용 HTML로 저장</button>
       <button class="btn-save" onclick="copyCode()">복사</button>
@@ -1123,6 +1124,22 @@
   </div>
 </div>
 
+<script>
+  /* 저장(내보내기) 시 열려 있던 모달·팝업 상태가 파일에 같이 박히지 않도록 정리한 소스를 돌려줌 */
+  window.cleanPageSource = function(){
+    var root = document.documentElement.cloneNode(true);
+    root.querySelectorAll('.modal-bg').forEach(function(el){ el.style.display = 'none'; });
+    root.querySelectorAll('.modal-overlay.open, .lightbox.open').forEach(function(el){ el.classList.remove('open'); });
+    var rlb = root.querySelector('#b_lightbox'), rbody = root.querySelector('body');
+    if (rlb && rbody){ rlb.classList.remove('open'); rbody.insertBefore(rlb, rbody.firstChild); }
+    ['codeArea','b_codeArea'].forEach(function(id){ var t = root.querySelector('#'+id); if (t) t.textContent = ''; });
+    return '<!DOCTYPE html>\n' + root.outerHTML;
+  };
+  document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('.modal-bg').forEach(function(el){ el.style.display = 'none'; });
+    document.querySelectorAll('.modal-overlay.open, .lightbox.open').forEach(function(el){ el.classList.remove('open'); });
+  });
+</script>
 <script>
   var DEFAULT_VIDEOS = [];
 
@@ -2168,7 +2185,7 @@
       groupsData[currentGroup] = videos;            // 현재 그룹 반영
       var json = JSON.stringify({order:groupKeys, data:groupsData, modes:groupModes, nsids:groupNsids});
       json = json.replace(/<\/script>/gi, '<\\/script>');
-      var src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+      var src = window.cleanPageSource();
       src = src.replace('var VIEWER_MODE = false;', 'var VIEWER_MODE = true;');
       src = src.replace('var EMBEDDED_GROUPS = null;', 'var EMBEDDED_GROUPS = ' + json + ';');
       src = injectBuilders(src);
@@ -2181,12 +2198,29 @@
       URL.revokeObjectURL(url);
     } catch(e){ alert('HTML 내보내기 오류: ' + e.message); }
   }
+  /* 에디터 파일 자체 저장: 현재 목록을 DEFAULT_GROUPS로 박되 DIST_MODE는 그대로(false) → 코드/내보내기 기능이 남는 원본 편집기 */
+  function exportEditorHtml(){
+    try {
+      groupsData[currentGroup] = videos;
+      var json = JSON.stringify({order:groupKeys, data:groupsData, modes:groupModes, nsids:groupNsids});
+      json = json.replace(/<\/script>/gi, '<\\/script>');
+      var src = window.cleanPageSource();
+      var replaced = false;
+      src = src.replace(/^(\s*)var DEFAULT_GROUPS = .*;\s*$/m, function(_, sp){ replaced = true; return sp + 'var DEFAULT_GROUPS = ' + json + ';'; });
+      if (!replaced){ alert('기본값 표식을 찾지 못했어요. 페이지를 새로고침한 뒤 다시 시도해 주세요.'); return; }
+      src = injectBuilders(src);
+      var blob = new Blob([src], {type:'text/html;charset=utf-8'});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a'); a.href = url; a.download = 'MUSIC-EDIT.html'; a.click();
+      URL.revokeObjectURL(url);
+    } catch(e){ alert('HTML 내보내기 오류: ' + e.message); }
+  }
   function exportEditableHtml(){
     try {
       groupsData[currentGroup] = videos;            // 현재 그룹 반영
       var json = JSON.stringify({order:groupKeys, data:groupsData, modes:groupModes, nsids:groupNsids});
       json = json.replace(/<\/script>/gi, '<\\/script>');
-      var src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+      var src = window.cleanPageSource();
       // 현재 내용을 기본값(DEFAULT_GROUPS)으로 박음 · 편집 도구는 그대로 유지(VIEWER_MODE 손대지 않음)
       var replaced = false;
       src = src.replace(/^(\s*)var DEFAULT_GROUPS = .*;\s*$/m, function(_, sp){ replaced = true; return sp + 'var DEFAULT_GROUPS = ' + json + ';'; });
@@ -3004,7 +3038,7 @@
         sets[curSet].data = data;
         var json = JSON.stringify(sets);
         json = json.replace(/<\/script>/gi, '<\\/script>');   // 닫는 태그 깨짐 방지
-        var src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        var src = window.cleanPageSource();
         src = src.replace('var VIEWER_MODE = false;', 'var VIEWER_MODE = true;');
         src = src.replace('var EMBEDDED_SETS = null;', 'var EMBEDDED_SETS = ' + json + ';');
         if (src.indexOf('var VIEWER_MODE = true;') < 0 || src.indexOf('var EMBEDDED_SETS = ' + json) < 0) {
@@ -3024,7 +3058,7 @@
         sets[curSet].data = data;
         var json = JSON.stringify(sets);
         json = json.replace(/<\/script>/gi, '<\\/script>');
-        var src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        var src = window.cleanPageSource();
         var replaced = false;
         src = src.replace(/^(\s*)var DEFAULT_SETS = .*;\s*$/m, function (_, sp) { replaced = true; return sp + 'var DEFAULT_SETS = ' + json + ';'; });
         if (!replaced) { alert('기본값 표식을 찾지 못했어요. 새로고침 후 다시 시도해 주세요.'); return; }
