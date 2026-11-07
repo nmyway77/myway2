@@ -1174,7 +1174,48 @@
     .nav-row button:hover { border-color:var(--accent); color:var(--accent); }
     .nav-row button.del:hover { border-color:#e0456b; color:#e0456b; }
 
-  </style>
+      /* ============ 즐겨찾기 하단 · TV & 라디오 (상단 채널바 + 풀화면 재생) ============ */
+    body:not([data-active-tab="daily"]) .tvr-section,
+    body.hcs-collapsed .tvr-section,
+    body.editing .tvr-section { display: none !important; }
+    .tvr-section { width: 100%; margin: 28px 0 0; padding: 0; }
+    .tvr-head { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 12px; max-width: 1040px; padding: 0 14px; }
+    .tvr-head::before, .tvr-head::after { content: ""; flex: 1; height: 1px; max-width: 280px; background: linear-gradient(90deg, transparent, #d9ddf0); }
+    .tvr-head::after { background: linear-gradient(90deg, #d9ddf0, transparent); }
+    .tvr-title { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 800; letter-spacing: 2.4px; color: #4b2dbd; }
+    .tvr-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff3b5c; animation: tvrPulse 1.6s infinite; }
+    @keyframes tvrPulse { 0% { box-shadow: 0 0 0 0 rgba(255,59,92,.55); } 70% { box-shadow: 0 0 0 8px rgba(255,59,92,0); } 100% { box-shadow: 0 0 0 0 rgba(255,59,92,0); } }
+
+    /* 상단 채널바 (재생 중엔 화면 위에 고정) */
+    .tvr-bar { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 9px 14px; background: rgba(255,255,255,.96); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-top: 1px solid #eef0f8; border-bottom: 1px solid #eef0f8; }
+    .tvr-seg { order: 2; flex: none; display: flex; gap: 2px; padding: 2px; border-radius: 999px; background: #f1f2fa; margin-left: 4px; }
+    .tvr-seg button { border: 0; border-radius: 999px; padding: 4px 9px; font-size: 11px; font-weight: 800; color: #6a749c; background: transparent; cursor: pointer; white-space: nowrap; transition: .15s; }
+    .tvr-seg button.on { color: #fff; background: linear-gradient(110deg, #5b8def 0%, #7d6fe8 55%, #b176f3 100%); box-shadow: 0 3px 10px rgba(125,111,232,.35); }
+    .tvr-seg button.on[data-k="radio"] { background: linear-gradient(110deg, #f08aa8 0%, #c57af0 60%, #8f7cf2 100%); box-shadow: 0 3px 10px rgba(197,122,240,.35); }
+    .tvr-list { order: 1; flex: 0 1 auto; min-width: 0; display: flex; flex-wrap: wrap; gap: 6px; padding: 2px; justify-content: center; }
+    .tvr-list::-webkit-scrollbar { display: none; }
+    .tvr-ch { flex: none; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #e2e6f3; background: #fff; border-radius: 999px; padding: 7px 14px; font-size: 12.5px; font-weight: 700; color: #4a5170; cursor: pointer; white-space: nowrap; transition: .15s; }
+    .tvr-ch:hover { border-color: #a99cf5; color: #4b2dbd; }
+    .tvr-ch .nw { font-size: 10px; color: #9aa2c0; }
+    .tvr-ch.on { background: #1f6f4f; border-color: #1f6f4f; color: #fff; box-shadow: 0 3px 10px rgba(31,111,79,.3); }
+    .tvr-ch.on::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #ff4d6a; }
+    .tvr-section.playing .tvr-bar { padding-right: 62px; } /* 우측 상단 연필(편집) 버튼과 겹치지 않게 */
+    .tvr-ch.on { cursor: pointer; } .tvr-ch.on:hover { background: #18583f; }
+
+    /* 풀화면 뷰어 — 재생할 때만 펼쳐짐 */
+    .tvr-screen { display: none; position: relative; width: 100%; height: calc(100vh - 56px); min-height: 480px; background: #fff; }
+    .tvr-section.playing .tvr-screen { display: block; }
+    .tvr-screen iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .tvr-hint { text-align: center; font-size: 12px; color: #9aa2c0; padding: 10px 14px 4px; }
+    .tvr-section.playing .tvr-hint { display: none; }
+
+    @media (max-width: 700px) {
+      .tvr-bar { padding: 8px 10px; }
+      .tvr-bar { justify-content: flex-start; }
+      .tvr-list { flex: 1 1 auto; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; justify-content: flex-start; }
+      .tvr-screen { height: calc(100vh - 56px); min-height: 380px; }
+    }
+</style>
 </head>
 <body class="">
   <!-- SEO: 한글 브랜드명 명시 (화면 비표시, 검색엔진 인식용) -->
@@ -1190,6 +1231,18 @@
   <!-- 즐겨찾기(+) 영역 — 아이콘 아래(하단) -->
   <section class="extra-logo-section" id="extraLogoSection"><div class="logo-grid"><a class="logo-tile fav-item" href="https://myway.kr/00mainweather.html" target="_blank" rel="noopener noreferrer" title="날씨"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRM3lpOnU1RoaAr9gaWL41k1cq1g3wYPdUap9jwb23UO7GensYRfh7Ot5w&amp;s=10" alt="날씨" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/newsitesbar3.html" target="_blank" rel="noopener noreferrer" title="뉴스"><img src="https://png.pngtree.com/png-clipart/20230804/original/pngtree-vector-news-icon-button-news-logo-vector-picture-image_9512841.png" alt="뉴스" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/MUSIC-YTUBE.html" target="_blank" rel="noopener noreferrer" title="MUSIC"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfgAPmFUvYKj1APhfgdOM9et0UQQejvK_ECkYoSN0lOA&amp;s" alt="MUSIC" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/bbssitesbar2.html" target="_blank" rel="noopener noreferrer" title="BBS"><img src="https://www.shutterstock.com/image-vector/bbs-bulletin-board-system-computer-260nw-1738984151.jpg" alt="BBS" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/radiositesbar2.html" target="_blank" rel="noopener noreferrer" title="LIVE RAIDO"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRA8q_2bod6OBDYZi1k9ikid9y6nMs4Cy9FzYS61vxzA&amp;s" alt="LIVE RAIDO" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/livesitesbar2.html" target="_blank" rel="noopener noreferrer" title="LIVE TV"><img src="https://m.media-amazon.com/images/I/410O56DAkyL.png" alt="LIVE TV" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/00makingyoutubefull2.html" target="_blank" rel="noopener noreferrer" title="CCTV"><img src="https://play-lh.googleusercontent.com/uy8lICf_ydg6cR8wiHddkkoQNQf07dtbv7P3m-dv8UUaS6VRy2lFR8NnOIpwPuaACJxb3aVZrIqC6S_YtpFrm7s=w240-h480-rw" alt="CCTV" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://search.daum.net/search?w=tot&amp;t__nil_searchbox=suggest&amp;sug=&amp;q=%EB%8B%AC%EB%A0%A5" target="_blank" rel="noopener noreferrer" title="달력"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3sZ-PKuYhMAnwSGRBKLJ7JbidPd37DHMCi5050FF0YA&amp;s=10" alt="달력" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/00mainfortune.html" target="_blank" rel="noopener noreferrer" title="운세"><img src="https://image.edaily.co.kr/images/Photo/files/NP/S/2026/09/PS26092500169.jpg" alt="운세" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/00barmp.html" target="_blank" rel="noopener noreferrer" title="만평"><img src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2026/0901/IE003665831_STD.jpg" alt="만평" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/00mainmovieday.html" target="_blank" rel="noopener noreferrer" title="공연정보"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDqpIY_pWatzYkFY-EWYcFUFrWdwOPjz_84NbP6LTD50jCkGA3cF53yF0&amp;s=10" alt="공연정보" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/TRAVEL.html" target="_blank" rel="noopener noreferrer" title="여행정보"><img src="https://mblogthumb-phinf.pstatic.net/MjAxODA2MjNfMTAy/MDAxNTI5NzIyNDg3MDU1.jlpYUy5LwwDuVUzefYxuaMe1irVryJ_AQsmS-75fV7Mg.x3MX_6VjGIQl68AiLD0HKJwhOKVLwppcbonB2n5Huakg.JPEG.eoyoujin/1_CsDgB2D8KIetB_e37t3n_A.jpg?type=w800" alt="여행정보" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/stopwatch.html" target="_blank" rel="noopener noreferrer" title="스탑워치"><img src="https://png.pngtree.com/png-clipart/20250202/original/pngtree-timer-or-stopwatch-3d-icon-isolated-on-a-transparent-background-symbolizing-png-image_20363834.png" alt="스탑워치" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/00barwatch.html" target="_blank" rel="noopener noreferrer" title="전세계 시간"><img src="https://previews.123rf.com/images/i3alda/i3alda1112/i3alda111200248/11496558-world-time-clock.jpg" alt="전세계 시간" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/pdfpages.html" target="_blank" rel="noopener noreferrer" title="PDF도구"><img src="https://play-lh.googleusercontent.com/288vqzbljuIMw2-QYqKh2RWGsQ83ndPhc_97XoQJp31vfqR9dPqjDcqRY3Cv-A-42WbXrjZoayMd7KMysHqTCGs=w240-h480-rw" alt="PDF도구" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><a class="logo-tile fav-item" href="https://myway.kr/romanize.html" target="_blank" rel="noopener noreferrer" title="한글이름 -영어변화기"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhDd7pGojlUT4-tnUeTMgVNKx6BZTsJY1UnoA4ZgRBmWyPppNn-JKs56c&amp;s=10" alt="한글이름 -영어변화기" loading="lazy" decoding="async"><div class="card-ctrl"><button type="button" title="앞으로">◀</button><button type="button" title="수정">✏</button><button type="button" title="삭제" class="del">×</button><button type="button" title="뒤로">▶</button></div></a><div class="logo-tile fav-add" role="button" tabindex="0" title="즐겨찾기 추가"></div></div></section>
 
+
+
+  <!-- 즐겨찾기 하단 · TV & 라디오 (상단 채널바 → 누르면 아래 풀화면 재생) -->
+  <section class="tvr-section" id="tvrSection" aria-label="LIVE TV · 라디오">
+    <div class="tvr-head"><span class="tvr-title"><span class="tvr-dot"></span>ON AIR · TV &amp; RADIO</span></div>
+    <div class="tvr-bar" id="tvrBar">
+      <div class="tvr-seg" id="tvrSeg"><button type="button" data-k="tv" class="on">📺 TV</button><button type="button" data-k="radio">📻 라디오</button></div>
+      <div class="tvr-list" id="tvrList"></div>
+    </div>
+    <div class="tvr-hint">채널을 누르면 아래에 화면이 크게 열려요 · 같은 채널을 한 번 더 누르면 꺼져요</div>
+    <div class="tvr-screen" id="tvrScreen"></div>
+  </section>
 
   <!-- 즐겨찾기 추가 모달 -->
   <div class="favm-bg" id="favmBg">
@@ -3473,4 +3526,74 @@
 </script>
 
 
-<input type="file" accept=".json,.html,.htm,text/html,application/json" style="position: fixed; left: -9999px; top: 0px; opacity: 0;"></body></html>
+<input type="file" accept=".json,.html,.htm,text/html,application/json" style="position: fixed; left: -9999px; top: 0px; opacity: 0;"><script>
+/* ===== 즐겨찾기 하단 TV & 라디오 — 상단 채널바 + 풀화면 재생 =====
+   채널 목록 = livesitesbar2.html / radiositesbar2.html 의 상단 채널(iframe 재생용) 그대로
+   [이름, 주소, 'newwin'] — 'newwin'은 iframe 차단 사이트라 새 탭으로 열림
+   ※ 페이지 열 때 자동 재생하지 않음 — 채널을 눌러야 재생 */
+(function(){
+  /* @TVR_START */
+  var TVR = {
+    tv: [
+      ["YTN","https://www.ytn.co.kr/_hd/hd_live.html"],
+      ["연합뉴스","https://www.yonhapnewstv.co.kr/live"],
+      ["KBS1","https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList"],
+      ["KBS2","https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11&ch_type=globalList"],
+      ["KBS24","https://news.kbs.co.kr/news/pc/news24/news24.html"],
+      ["SBS","https://www.sbs.co.kr/live/S01?div=main_live"],
+      ["채널A","https://ichannela.com/com/cmm/onair.do"],
+      ["SOOP","https://www.sooplive.co.kr/live/all"]
+    ],
+    radio: [
+      ["radionara","https://radionara.vercel.app/"],
+      ["KBS","https://radio.kbs.co.kr/"],
+      ["KBS1","https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=21&ch_type=radioList&bora=on&chat=on"],
+      ["KBS2","https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=22&ch_type=radioList&bora=on&chat=on"],
+      ["KBS3","https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=23&ch_type=radioList"],
+      ["COOL FM","https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=25&ch_type=radioList"],
+      ["SBS러브FM","https://www.sbs.co.kr/live/S08?div=live_list"],
+      ["SBS파워FM","https://www.sbs.co.kr/live/S07?div=live_list"],
+      ["TBN 교통방송","https://www.tbn.or.kr/onair/tbnlive.tbn?area_code=2"],
+      ["CBS","https://www.cbs.co.kr/radio"]
+    ]
+  };
+  /* @TVR_END */
+  var kind = 'tv', cur = null; /* cur = {k, i} */
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function ytId(u){ var m = String(u||'').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/); return m ? m[1] : null; }
+  function list(){
+    var arr = TVR[kind] || [];
+    $('tvrList').innerHTML = arr.map(function(c, i){
+      var on = cur && cur.k === kind && cur.i === i;
+      return '<button type="button" class="tvr-ch' + (on ? ' on' : '') + '" data-i="' + i + '" title="' + esc(c[0]) + (c[2] === 'newwin' ? ' (새 탭으로 열림)' : (on ? ' — 다시 누르면 끄기' : '')) + '">' + esc(c[0]) + (c[2] === 'newwin' ? '<span class="nw">↗</span>' : '') + '</button>';
+    }).join('');
+    Array.prototype.forEach.call($('tvrSeg').children, function(b){ b.classList.toggle('on', b.getAttribute('data-k') === kind); });
+  }
+  function stop(){ cur = null; $('tvrScreen').innerHTML = ''; $('tvrSection').classList.remove('playing'); list(); }
+  function play(i){
+    var c = (TVR[kind] || [])[i]; if (!c) return;
+    if (c[2] === 'newwin') { window.open(c[1], '_blank', 'noopener'); return; }
+    if (cur && cur.k === kind && cur.i === i) { stop(); return; } /* 재생 중인 채널을 다시 누르면 끄기 */
+    var first = !cur;
+    cur = { k: kind, i: i };
+    var y = ytId(c[1]), src = y ? 'https://www.youtube.com/embed/' + y + '?autoplay=1&playsinline=1' : String(c[1]).replace(/"/g, '%22');
+    $('tvrScreen').innerHTML = '<iframe title="' + esc(c[0]) + '" referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen src="' + src + '"></iframe>';
+    $('tvrSection').classList.add('playing');
+    list();
+    var b = $('tvrList').querySelector('.tvr-ch.on'); if (b) { try { b.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' }); } catch(e){} }
+    /* 처음 열 때 채널바가 화면 맨 위에 오도록 스크롤 → 아래가 전부 방송 화면 */
+    if (first) { try { $('tvrBar').scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch(e){} }
+  }
+  function init(){
+    if (!$('tvrSection')) return;
+    $('tvrList').addEventListener('click', function(e){ var b = e.target.closest('.tvr-ch'); if (b) play(+b.getAttribute('data-i')); });
+    $('tvrSeg').addEventListener('click', function(e){ var b = e.target.closest('button[data-k]'); if (!b) return; kind = b.getAttribute('data-k'); list(); });
+    /* 즐겨찾기 탭을 벗어나면 소리가 계속 나지 않게 재생 정지 */
+    try { new MutationObserver(function(){ if (cur && document.body.getAttribute('data-active-tab') !== 'daily') stop(); }).observe(document.body, { attributes: true, attributeFilter: ['data-active-tab'] }); } catch(e){}
+    list();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
+</body></html>
