@@ -750,6 +750,11 @@
 
 </head>
 <body>
+<div class="lightbox" id="b_lightbox">
+    <button type="button" class="lb-close" id="b_lbClose" aria-label="닫기">×</button>
+    <div class="lb-scroll" id="b_lbScroll"></div>
+  </div>
+
 <div class="container">
   <aside class="side-nav">
     <div class="side-bar">
@@ -1027,7 +1032,7 @@
 </div>
 
 <!-- 코드 출력 모달 -->
-<div id="codeModal" class="modal-bg" style="display: flex;">
+<div id="codeModal" class="modal-bg" style="display: none;">
   <div class="modal-inner" style="max-width:600px;">
     <h2 class="modal-title">전체 디렉토리 코드</h2>
     <p style="font-size:.82rem;color:var(--ink-soft);line-height:1.55;margin:0 0 10px;">
@@ -1068,6 +1073,24 @@
   </div>
 </div>
 
+<script>
+  /* 저장(내보내기) 시 열려 있던 모달·팝업 상태가 파일에 같이 박히지 않도록 정리한 소스를 돌려줌 */
+  window.cleanPageSource = function(){
+    var root = document.documentElement.cloneNode(true);
+    root.querySelectorAll('.modal-bg').forEach(function(el){ el.style.display = 'none'; });
+    root.querySelectorAll('.modal-overlay.open, .lightbox.open').forEach(function(el){ el.classList.remove('open'); });
+    /* 라이트박스가 body 끝으로 옮겨진 상태로 저장되면 스크립트보다 뒤에 놓여 오류가 나므로 body 맨 앞으로 되돌림 */
+    var rlb = root.querySelector('#b_lightbox'), rbody = root.querySelector('body');
+    if (rlb && rbody){ rlb.classList.remove('open'); rbody.insertBefore(rlb, rbody.firstChild); }
+    ['codeArea','b_codeArea'].forEach(function(id){ var t = root.querySelector('#'+id); if (t) t.textContent = ''; });
+    return '<!DOCTYPE html>\n' + root.outerHTML;
+  };
+  /* 예전에 열린 상태로 저장된 파일이어도 처음엔 모달을 닫고 시작 */
+  document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('.modal-bg').forEach(function(el){ el.style.display = 'none'; });
+    document.querySelectorAll('.modal-overlay.open, .lightbox.open').forEach(function(el){ el.classList.remove('open'); });
+  });
+</script>
 <script>
   var DEFAULT_VIDEOS = [
     { url:'https://www.youtube.com/watch?v=DSgn-lTHJzM',                 name:'서울역',       color:'#c64f86' },
@@ -1823,7 +1846,7 @@
       groupsData[currentGroup] = videos;            // 현재 그룹 반영
       var json = JSON.stringify({order:groupKeys, data:groupsData, modes:groupModes, nsids:groupNsids});
       json = json.replace(/<\/script>/gi, '<\\/script>');
-      var src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+      var src = window.cleanPageSource();
       src = src.replace('var VIEWER_MODE = false;', 'var VIEWER_MODE = true;');
       src = src.replace('var EMBEDDED_GROUPS = null;', 'var EMBEDDED_GROUPS = ' + json + ';');
       src = injectBuilders(src);
@@ -1841,7 +1864,7 @@
       groupsData[currentGroup] = videos;            // 현재 그룹 반영
       var json = JSON.stringify({order:groupKeys, data:groupsData, modes:groupModes, nsids:groupNsids});
       json = json.replace(/<\/script>/gi, '<\\/script>');
-      var src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+      var src = window.cleanPageSource();
       // 현재 내용을 기본값(DEFAULT_GROUPS)으로 박음 · 편집 도구는 그대로 유지(VIEWER_MODE 손대지 않음)
       var replaced = false;
       src = src.replace(/^(\s*)var DEFAULT_GROUPS = .*;\s*$/m, function(_, sp){ replaced = true; return sp + 'var DEFAULT_GROUPS = ' + json + ';'; });
@@ -1862,7 +1885,7 @@
       groupsData[currentGroup] = videos;
       var json = JSON.stringify({order:groupKeys, data:groupsData, modes:groupModes, nsids:groupNsids});
       json = json.replace(/<\/script>/gi, '<\\/script>');
-      var src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+      var src = window.cleanPageSource();
       var replaced = false;
       src = src.replace(/^(\s*)var DEFAULT_GROUPS = .*;\s*$/m, function(_, sp){ replaced = true; return sp + 'var DEFAULT_GROUPS = ' + json + ';'; });
       if (!replaced){ alert('기본값 표식을 찾지 못했어요. 페이지를 새로고침한 뒤 다시 시도해 주세요.'); return; }
@@ -2669,7 +2692,7 @@
         sets[curSet].data = data;
         var json = JSON.stringify(sets);
         json = json.replace(/<\/script>/gi, '<\\/script>');   // 닫는 태그 깨짐 방지
-        var src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        var src = window.cleanPageSource();
         src = src.replace('var VIEWER_MODE = false;', 'var VIEWER_MODE = true;');
         src = src.replace('var EMBEDDED_SETS = null;', 'var EMBEDDED_SETS = ' + json + ';');
         if (src.indexOf('var VIEWER_MODE = true;') < 0 || src.indexOf('var EMBEDDED_SETS = ' + json) < 0) {
@@ -2689,7 +2712,7 @@
         sets[curSet].data = data;
         var json = JSON.stringify(sets);
         json = json.replace(/<\/script>/gi, '<\\/script>');
-        var src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        var src = window.cleanPageSource();
         var replaced = false;
         src = src.replace(/^(\s*)var DEFAULT_SETS = .*;\s*$/m, function (_, sp) { replaced = true; return sp + 'var DEFAULT_SETS = ' + json + ';'; });
         if (!replaced) { alert('기본값 표식을 찾지 못했어요. 새로고침 후 다시 시도해 주세요.'); return; }
@@ -3524,8 +3547,4 @@
 })();
 </script>
 
-
-<div class="lightbox" id="b_lightbox">
-    <button type="button" class="lb-close" id="b_lbClose" aria-label="닫기">×</button>
-    <div class="lb-scroll" id="b_lbScroll"></div>
-  </div></body></html>
+</body></html>
