@@ -3330,7 +3330,7 @@
     topH(); window.addEventListener('resize', topH); setTimeout(topH, 600);
 
     /* ── 탭바 맨 앞에 [📺 TV] [📻 라디오] 버튼 추가 (탭 편집 데이터와는 별도) ── */
-    var onair = 'tv'; /* 'tv' | 'radio' | null(일반 탭 보는 중) */
+    var onair = 'music'; /* 'tv' | 'radio' | 'music' | 'cctv' | null(일반 탭 보는 중) — 처음 열 때 음악 탭 */
     function addNavBtns(){
       var nav = $('tabNav'); if (!nav || nav.querySelector('.tvr-tab')) return;
       var frag = document.createDocumentFragment();
@@ -3402,9 +3402,9 @@
       if (t !== 'onair' && onair) { onair = null; stop(); var nav = $('tabNav'); if (nav) Array.prototype.forEach.call(nav.querySelectorAll('.tvr-tab'), function(b){ b.classList.remove('is-active'); }); }
     }).observe(document.body, { attributes: true, attributeFilter: ['data-active-tab'] }); } catch(e){}
 
-    /* P 페이지를 열면 처음부터 TV 탭 + YTN 화면 */
+    /* P 페이지를 열면 처음부터 🎵 음악 탭 화면 */
     addNavBtns();
-    openOnair('tv');
+    openOnair('music');
     list();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
