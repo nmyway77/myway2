@@ -1175,9 +1175,17 @@
     .nav-row button.del:hover { border-color:#e0456b; color:#e0456b; }
 
       /* ============ P 페이지 맨 위 · TV & 라디오 (상단 채널바 + 풀화면 재생) ============ */
+    body:not([data-active-tab="onair"]) .tvr-section,
     body.hcs-collapsed .tvr-section,
     body.editing .tvr-section { display: none !important; }
-    .tvr-section { width: 100%; margin: 14px 0 6px; padding: 0; }
+    .tvr-section { width: 100%; margin: 0; padding: 0; }
+    body[data-active-tab="onair"] #main,
+    body[data-active-tab="onair"] .myway-footer { display: none !important; }
+    /* 탭바의 TV · 라디오 버튼 */
+    .tab-btn.tvr-tab { font-weight: 800; }
+    .tab-btn.tvr-tab.is-active[data-tab="onair_tv"] { background: linear-gradient(110deg, #5b8def 0%, #7d6fe8 55%, #b176f3 100%); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(125,111,232,.35); }
+    .tab-btn.tvr-tab.is-active[data-tab="onair_radio"] { background: linear-gradient(110deg, #f08aa8 0%, #c57af0 60%, #8f7cf2 100%); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(197,122,240,.35); }
+    .tab-nav .tvr-sep { flex: none; width: 1px; align-self: stretch; margin: 6px 2px; background: rgba(0,0,0,.1); }
     .tvr-head { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 12px; max-width: 1040px; padding: 0 14px; }
     .tvr-head::before, .tvr-head::after { content: ""; flex: 1; height: 1px; max-width: 280px; background: linear-gradient(90deg, transparent, #d9ddf0); }
     .tvr-head::after { background: linear-gradient(90deg, #d9ddf0, transparent); }
@@ -1198,7 +1206,7 @@
     .tvr-ch .nw { font-size: 10px; color: #9aa2c0; }
     .tvr-ch.on { background: #1f6f4f; border-color: #1f6f4f; color: #fff; box-shadow: 0 3px 10px rgba(31,111,79,.3); }
     .tvr-ch.on::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #ff4d6a; }
-    .tvr-section.playing .tvr-bar { padding-right: 62px; } /* 우측 상단 연필(편집) 버튼과 겹치지 않게 */
+    .tvr-section.playing .tvr-bar { padding-right: 14px; } /* 우측 상단 연필(편집) 버튼과 겹치지 않게 */
     .tvr-ch.on { cursor: pointer; } .tvr-ch.on:hover { background: #18583f; }
 
     /* 풀화면 뷰어 — 재생할 때만 펼쳐짐 */
@@ -1226,9 +1234,7 @@
 
   <!-- P 페이지 맨 위 · TV & 라디오 (상단 채널바 → 누르면 아래 풀화면 재생) -->
   <section class="tvr-section" id="tvrSection" aria-label="LIVE TV · 라디오">
-    <div class="tvr-head"><span class="tvr-title"><span class="tvr-dot"></span>ON AIR · TV &amp; RADIO</span></div>
     <div class="tvr-bar" id="tvrBar">
-      <div class="tvr-seg" id="tvrSeg"><button type="button" data-k="tv" class="on">📺 TV</button><button type="button" data-k="radio">📻 라디오</button></div>
       <div class="tvr-list" id="tvrList"></div>
     </div>
     <div class="tvr-hint">채널을 누르면 아래에 화면이 크게 열려요 · 같은 채널을 한 번 더 누르면 꺼져요</div>
@@ -3034,7 +3040,7 @@
 /* ===== P 페이지 맨 위 TV & 라디오 — 상단 채널바 + 풀화면 재생 =====
    채널 목록 = livesitesbar2.html / radiositesbar2.html 의 상단 채널(iframe 재생용) 그대로
    [이름, 주소, 'newwin'] — 'newwin'은 iframe 차단 사이트라 새 탭으로 열림
-   ※ 페이지 열 때 자동 재생하지 않음 — 채널을 눌러야 재생 */
+   ※ P 페이지를 열면 탭바의 [📺 TV]가 선택되고 YTN이 바로 재생됨 */
 (function(){
   /* @TVR_START */
   var TVR = {
@@ -3072,7 +3078,6 @@
       var on = cur && cur.k === kind && cur.i === i;
       return '<button type="button" class="tvr-ch' + (on ? ' on' : '') + '" data-i="' + i + '" title="' + esc(c[0]) + (c[2] === 'newwin' ? ' (새 탭으로 열림)' : (on ? ' — 다시 누르면 끄기' : '')) + '">' + esc(c[0]) + (c[2] === 'newwin' ? '<span class="nw">↗</span>' : '') + '</button>';
     }).join('');
-    Array.prototype.forEach.call($('tvrSeg').children, function(b){ b.classList.toggle('on', b.getAttribute('data-k') === kind); });
   }
   function stop(){ cur = null; $('tvrScreen').innerHTML = ''; $('tvrSection').classList.remove('playing'); list(); }
   function play(i, noScroll){
@@ -3092,15 +3097,61 @@
   function init(){
     if (!$('tvrSection')) return;
     $('tvrList').addEventListener('click', function(e){ var b = e.target.closest('.tvr-ch'); if (b) play(+b.getAttribute('data-i')); });
-    $('tvrSeg').addEventListener('click', function(e){ var b = e.target.closest('button[data-k]'); if (!b) return; kind = b.getAttribute('data-k'); list(); });
-    /* 아래 탭(시사-경제지 등)을 바꾸면 재생 정지 → 탭 내용이 바로 보이게 */
-    var lastTab = document.body.getAttribute('data-active-tab');
-    try { new MutationObserver(function(){ var t = document.body.getAttribute('data-active-tab'); if (t !== lastTab) { lastTab = t; if (cur) stop(); } }).observe(document.body, { attributes: true, attributeFilter: ['data-active-tab'] }); } catch(e){}
     /* 고정 탭바(.topbar) 높이만큼 채널바를 아래에 붙임 */
     function topH(){ var tb = document.querySelector('.topbar'); var h = tb ? tb.offsetHeight : 0; document.documentElement.style.setProperty('--tvr-top', h + 'px'); }
     topH(); window.addEventListener('resize', topH); setTimeout(topH, 600);
-    /* P 페이지를 열면 처음부터 YTN 화면 재생 (스크롤 이동 없이) */
-    kind = 'tv'; play(0, true);
+
+    /* ── 탭바 맨 앞에 [📺 TV] [📻 라디오] 버튼 추가 (탭 편집 데이터와는 별도) ── */
+    var onair = 'tv'; /* 'tv' | 'radio' | null(일반 탭 보는 중) */
+    function addNavBtns(){
+      var nav = $('tabNav'); if (!nav || nav.querySelector('.tvr-tab')) return;
+      var frag = document.createDocumentFragment();
+      [['tv','📺 TV'],['radio','📻 라디오']].forEach(function(d){
+        var b = document.createElement('button'); b.type = 'button';
+        b.className = 'tab-btn tvr-tab' + (onair === d[0] ? ' is-active' : '');
+        b.dataset.tab = 'onair_' + d[0]; b.textContent = d[1];
+        b.onclick = function(){ openOnair(d[0]); };
+        frag.appendChild(b);
+      });
+      var sep = document.createElement('span'); sep.className = 'tvr-sep'; frag.appendChild(sep);
+      nav.insertBefore(frag, nav.firstChild);
+      if (onair) Array.prototype.forEach.call(nav.querySelectorAll('.tab-btn:not(.tvr-tab)'), function(b){ b.classList.remove('is-active'); });
+    }
+    function openOnair(k){
+      var changed = (onair !== k);
+      onair = k;
+      if (changed && cur) stop();
+      kind = k;
+      document.body.setAttribute('data-active-tab', 'onair');
+      var nav = $('tabNav');
+      if (nav) Array.prototype.forEach.call(nav.querySelectorAll('.tab-btn'), function(b){ b.classList.toggle('is-active', b.getAttribute('data-tab') === 'onair_' + k); });
+      list();
+      if (k === 'tv' && !cur) play(0, true); /* TV 탭 = YTN 바로 재생 */
+      try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e){}
+    }
+    /* 일반 탭을 고르면 TV·라디오 모드 해제 (재생 정지) */
+    try {
+      if (typeof selectTab === 'function') {
+        var _st = selectTab;
+        selectTab = function(){ if (onair) { onair = null; if (cur) stop(); } return _st.apply(this, arguments); };
+      }
+    } catch(e){}
+    /* renderNav(탭바 다시 그림)가 호출될 때마다 TV·라디오 버튼을 다시 붙임 */
+    try {
+      if (typeof renderNav === 'function') {
+        var _rn = renderNav;
+        renderNav = function(){ _rn.apply(this, arguments); addNavBtns(); };
+      }
+    } catch(e){}
+    /* 일반 탭(시사-경제지 등)을 누르면 → 재생 정지, TV·라디오 버튼 비활성 */
+    try { new MutationObserver(function(){
+      var t = document.body.getAttribute('data-active-tab');
+      if (t !== 'onair' && onair) { onair = null; if (cur) stop(); var nav = $('tabNav'); if (nav) Array.prototype.forEach.call(nav.querySelectorAll('.tvr-tab'), function(b){ b.classList.remove('is-active'); }); }
+    }).observe(document.body, { attributes: true, attributeFilter: ['data-active-tab'] }); } catch(e){}
+
+    /* P 페이지를 열면 처음부터 TV 탭 + YTN 화면 */
+    addNavBtns();
+    openOnair('tv');
     list();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
