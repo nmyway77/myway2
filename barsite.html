@@ -1215,6 +1215,8 @@
     .tvr-screen iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
     .tvr-hint { text-align: center; font-size: 12px; color: #9aa2c0; padding: 10px 14px 4px; }
     .tvr-section.playing .tvr-hint { display: none; }
+    .tvr-section.page-mode .tvr-bar { display: none; }
+    .tvr-section.page-mode .tvr-screen { height: calc(100vh - var(--tvr-top, 0px)); min-height: 480px; }
 
     @media (max-width: 700px) {
       .tvr-bar { padding: 8px 10px; }
@@ -3068,6 +3070,14 @@
     ]
   };
   /* @TVR_END */
+  /* ===== 라디오 옆 [음악] [CCTV] 탭 — 아래 주소의 페이지를 화면 전체로 띄움 =====
+     주소를 바꾸려면 여기 url만 고치면 됨 (인덱스 즐겨찾기 아이콘의 링크 주소와 동일) */
+  /* @PAGES_START */
+  var TVR_PAGES = {
+    music: { label: "🎵 음악", url: "https://myway.kr/MUSIC-YTUBE.html" },
+    cctv:  { label: "📹 CCTV", url: "https://myway.kr/00makingyoutubefull2.html" }
+  };
+  /* @PAGES_END */
   var kind = 'tv', cur = null; /* cur = {k, i} */
   function $(id){ return document.getElementById(id); }
   function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
@@ -3079,7 +3089,7 @@
       return '<button type="button" class="tvr-ch' + (on ? ' on' : '') + '" data-i="' + i + '" title="' + esc(c[0]) + (c[2] === 'newwin' ? ' (새 탭으로 열림)' : (on ? ' — 다시 누르면 끄기' : '')) + '">' + esc(c[0]) + (c[2] === 'newwin' ? '<span class="nw">↗</span>' : '') + '</button>';
     }).join('');
   }
-  function stop(){ cur = null; $('tvrScreen').innerHTML = ''; $('tvrSection').classList.remove('playing'); list(); }
+  function stop(){ cur = null; $('tvrScreen').innerHTML = ''; $('tvrSection').classList.remove('playing'); $('tvrSection').classList.remove('page-mode'); list(); }
   function play(i, noScroll){
     var c = (TVR[kind] || [])[i]; if (!c) return;
     if (c[2] === 'newwin') { window.open(c[1], '_blank', 'noopener'); return; }
@@ -3106,7 +3116,7 @@
     function addNavBtns(){
       var nav = $('tabNav'); if (!nav || nav.querySelector('.tvr-tab')) return;
       var frag = document.createDocumentFragment();
-      [['tv','📺 TV'],['radio','📻 라디오']].forEach(function(d){
+      [['tv','📺 TV'],['radio','📻 라디오']].concat(Object.keys(TVR_PAGES).map(function(k){ return [k, TVR_PAGES[k].label]; })).forEach(function(d){
         var b = document.createElement('button'); b.type = 'button';
         b.className = 'tab-btn tvr-tab' + (onair === d[0] ? ' is-active' : '');
         b.dataset.tab = 'onair_' + d[0]; b.textContent = d[1];
@@ -3120,11 +3130,19 @@
     function openOnair(k){
       var changed = (onair !== k);
       onair = k;
-      if (changed && cur) stop();
+      if (changed) stop();
       kind = k;
       document.body.setAttribute('data-active-tab', 'onair');
       var nav = $('tabNav');
       if (nav) Array.prototype.forEach.call(nav.querySelectorAll('.tab-btn'), function(b){ b.classList.toggle('is-active', b.getAttribute('data-tab') === 'onair_' + k); });
+      if (TVR_PAGES[k]) { /* 음악·CCTV: 채널바 없이 해당 페이지를 화면 전체로 */
+        if (changed || !$('tvrScreen').firstChild) {
+          $('tvrScreen').innerHTML = '<iframe title="' + esc(TVR_PAGES[k].label) + '" allow="autoplay; encrypted-media; fullscreen" allowfullscreen src="' + String(TVR_PAGES[k].url).replace(/"/g, '%22') + '"></iframe>';
+          $('tvrSection').classList.add('playing', 'page-mode');
+        }
+        try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e){}
+        return;
+      }
       list();
       if (!cur) {
         if (k === 'tv') play(0, true); /* TV 탭 = YTN 바로 재생 */
@@ -3136,7 +3154,7 @@
     try {
       if (typeof selectTab === 'function') {
         var _st = selectTab;
-        selectTab = function(){ if (onair) { onair = null; if (cur) stop(); } return _st.apply(this, arguments); };
+        selectTab = function(){ if (onair) { onair = null; stop(); } return _st.apply(this, arguments); };
       }
     } catch(e){}
     /* renderNav(탭바 다시 그림)가 호출될 때마다 TV·라디오 버튼을 다시 붙임 */
@@ -3149,7 +3167,7 @@
     /* 일반 탭(시사-경제지 등)을 누르면 → 재생 정지, TV·라디오 버튼 비활성 */
     try { new MutationObserver(function(){
       var t = document.body.getAttribute('data-active-tab');
-      if (t !== 'onair' && onair) { onair = null; if (cur) stop(); var nav = $('tabNav'); if (nav) Array.prototype.forEach.call(nav.querySelectorAll('.tvr-tab'), function(b){ b.classList.remove('is-active'); }); }
+      if (t !== 'onair' && onair) { onair = null; stop(); var nav = $('tabNav'); if (nav) Array.prototype.forEach.call(nav.querySelectorAll('.tvr-tab'), function(b){ b.classList.remove('is-active'); }); }
     }).observe(document.body, { attributes: true, attributeFilter: ['data-active-tab'] }); } catch(e){}
 
     /* P 페이지를 열면 처음부터 TV 탭 + YTN 화면 */
