@@ -1184,7 +1184,8 @@
     body[data-active-tab="onair"] .myway-footer { display: none !important; }
     /* 탭바의 TV · 라디오 버튼 */
     .tab-btn.tvr-tab { font-weight: 800; }
-    .tab-btn.tvr-tab.is-active[data-tab="onair_tv"] { background: linear-gradient(110deg, #5b8def 0%, #7d6fe8 55%, #b176f3 100%); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(125,111,232,.35); }
+    .tab-btn.tvr-tab.is-active[data-tab="onair_tv"],
+    .tab-btn.tvr-tab.is-active[data-tab="onair_tv2"] { background: linear-gradient(110deg, #5b8def 0%, #7d6fe8 55%, #b176f3 100%); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(125,111,232,.35); }
     .tab-btn.tvr-tab.is-active[data-tab="onair_radio"] { background: linear-gradient(110deg, #f08aa8 0%, #c57af0 60%, #8f7cf2 100%); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(197,122,240,.35); }
     .tab-nav .tvr-sep { flex: none; width: 1px; align-self: stretch; margin: 6px 2px; background: rgba(0,0,0,.1); }
     .tvr-head { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 12px; max-width: 1040px; padding: 0 14px; }
@@ -3292,6 +3293,7 @@
      주소를 바꾸려면 여기 url만 고치면 됨 (인덱스 즐겨찾기 아이콘의 링크 주소와 동일) */
   /* @PAGES_START */
   var TVR_PAGES = {
+    tv2:   { label: "📺 TV2", url: "https://nmyway77.github.io/livetv7/" },
     music: { label: "🎵 음악", url: "https://myway.kr/MUSIC-YTUBE.html" },
     cctv:  { label: "📹 CCTV", url: "https://myway.kr/00makingyoutubefull2.html" }
   };
@@ -3334,7 +3336,11 @@
     function addNavBtns(){
       var nav = $('tabNav'); if (!nav || nav.querySelector('.tvr-tab')) return;
       var frag = document.createDocumentFragment();
-      [['tv','📺 TV'],['radio','📻 라디오']].concat(Object.keys(TVR_PAGES).map(function(k){ return [k, TVR_PAGES[k].label]; })).forEach(function(d){
+      var pk = Object.keys(TVR_PAGES);
+      function pg(k){ return [k, TVR_PAGES[k].label]; }
+      [['tv','📺 TV']].concat(pk.filter(function(k){ return k === 'tv2'; }).map(pg))
+        .concat([['radio','📻 라디오']])
+        .concat(pk.filter(function(k){ return k !== 'tv2'; }).map(pg)).forEach(function(d){
         var b = document.createElement('button'); b.type = 'button';
         b.className = 'tab-btn tvr-tab' + (onair === d[0] ? ' is-active' : '');
         b.dataset.tab = 'onair_' + d[0]; b.textContent = d[1];
