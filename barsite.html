@@ -1215,6 +1215,14 @@
     .tvr-screen { display: none; position: relative; width: 100%; height: calc(100vh - 56px - var(--tvr-top, 0px)); min-height: 480px; background: #fff; }
     .tvr-section.playing .tvr-screen { display: block; }
     .tvr-screen iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    /* 핸드폰 KBS — 화살표 클릭 유도 화면 */
+    .tvr-tap { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-decoration: none; color: #fff; background: radial-gradient(circle at 50% 42%, #3a3f7a 0%, #141831 72%); cursor: pointer; }
+    .tvr-tap-arw { font-size: 52px; line-height: 1; animation: tvrBob 1s ease-in-out infinite; }
+    .tvr-tap-ttl { font-size: 20px; font-weight: 800; letter-spacing: .5px; }
+    .tvr-tap-btn { padding: 12px 24px; border-radius: 999px; font-size: 15px; font-weight: 800; background: linear-gradient(110deg, #5b8def 0%, #7d6fe8 55%, #b176f3 100%); animation: tvrRing 1.6s infinite; }
+    .tvr-tap-sub { font-size: 12px; color: #b9bfdc; }
+    @keyframes tvrBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+    @keyframes tvrRing { 0% { box-shadow: 0 0 0 0 rgba(125,111,232,.65); } 70% { box-shadow: 0 0 0 16px rgba(125,111,232,0); } 100% { box-shadow: 0 0 0 0 rgba(125,111,232,0); } }
     .tvr-hint { text-align: center; font-size: 12px; color: #9aa2c0; padding: 10px 14px 4px; }
     .tvr-section.playing .tvr-hint { display: none; }
     .tvr-section.page-mode .tvr-bar { display: none; }
@@ -3299,6 +3307,8 @@
   };
   /* @PAGES_END */
   var kind = 'tv', cur = null; /* cur = {k, i} */
+  /* 핸드폰·태블릿 판별 (PC는 KBS도 화면 안에서 그대로 재생) */
+  var IS_MOBILE = /Android|iPhone|iPad|iPod|Mobile|SamsungBrowser/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   function $(id){ return document.getElementById(id); }
   function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function ytId(u){ var m = String(u||'').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/); return m ? m[1] : null; }
@@ -3317,6 +3327,12 @@
     var first = !cur;
     cur = { k: kind, i: i };
     var y = ytId(c[1]), src = y ? 'https://www.youtube.com/embed/' + y + '?autoplay=1&playsinline=1' : String(c[1]).replace(/"/g, '%22');
+    if (kind === 'tv' && IS_MOBILE && /kbs\.co\.kr/i.test(c[1])) {
+      /* 핸드폰에서 KBS는 화면 안(iframe)에서 안 나옴 → 화살표로 클릭 유도, 누르면 KBS 공식 플레이어 새 창 */
+      $('tvrScreen').innerHTML = '<a class="tvr-tap" href="' + String(c[1]).replace(/"/g, '%22') + '" target="_blank" rel="noopener">' +
+        '<span class="tvr-tap-arw">👇</span><span class="tvr-tap-ttl">' + esc(c[0]) + '</span>' +
+        '<span class="tvr-tap-btn">▶ 눌러서 보기 ↗</span><span class="tvr-tap-sub">핸드폰에서는 KBS 공식 플레이어(새 창)로 열려요</span></a>';
+    } else
     $('tvrScreen').innerHTML = '<iframe title="' + esc(c[0]) + '" referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen src="' + src + '"></iframe>';
     $('tvrSection').classList.add('playing');
     list();
