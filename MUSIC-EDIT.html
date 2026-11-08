@@ -104,6 +104,15 @@
     .pl-item.cur .ti{color:#fff;font-weight:700;}
     .pl-item .no{flex:none;width:18px;text-align:center;color:#8a8f99;font-size:11px;}
     .pl-item.cur .no{color:#4da3ff;}
+    /* 재생목록 패널에서 바로 편집 (▲▼ ✏ ✕) — 편집판에서만 */
+    .pl-item .pl-ed{flex:none;display:none;gap:3px;margin-left:auto;}
+    .pl-item:hover .pl-ed,.pl-item.ed-open .pl-ed{display:flex;}
+    @media (hover:none){ .pl-item .pl-ed{display:flex;} }
+    .pl-ed button{width:24px;height:24px;padding:0;border:1px solid #3a3f4a;border-radius:6px;background:#1c2029;color:#c9ced8;font-size:11px;line-height:1;cursor:pointer;}
+    .pl-ed button:hover{border-color:#4da3ff;color:#fff;background:#25304a;}
+    .pl-ed button.x:hover{border-color:#e05555;background:#4a2228;}
+    .pl-ed button:disabled{opacity:.25;cursor:default;}
+    .pl-item .ti{flex:1;min-width:0;}
     .pl-addsong{border:0;border-radius:7px;background:#2b6cb0;color:#fff;font-size:11.5px;font-weight:700;padding:5px 10px;cursor:pointer;}
     .pl-addsong:hover{background:#3182ce;}
     /* 유튜브 설정(⚙)과 겹치지 않게 왼쪽 위(전체화면 버튼 옆)에 배치 */
@@ -1785,7 +1794,7 @@
   /* ── 가수 카드: 직접 등록한 곡 목록을 우측 리스트로 재생 ── */
   function mountTracks(box, v){
     var tracks = (v.tracks||[]).map(function(t){
-      return { name:t.name||'', url:t.url||'', id:getYouTubeId(t.url) };
+      return { name:t.name||'', url:t.url||'', id:getYouTubeId(t.url), src:t };
     }).filter(function(t){ return !!t.id; });
     if (!tracks.length){
       box.innerHTML = '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#a89e8c;text-align:center;font-size:.92rem;line-height:1.7;">아직 곡이 없습니다.<br>카드의 ✏ 수정을 열어 ＋ 추가등록으로 곡을 넣어주세요.</div>';
@@ -1807,14 +1816,53 @@
       try{ ytPlayer.loadVideoById(tracks[cur].id); ytPlayer.unMute(); ytPlayer.setVolume(DEFAULT_VOLUME); }catch(e){}
       highlight();
     }
-    tracks.forEach(function(t,i){
-      var it = document.createElement('div'); it.className = 'pl-item' + (i===0?' cur':'');
-      it.innerHTML = '<span class="no">'+(i+1)+'</span><img loading="lazy" src="https://i.ytimg.com/vi/'+t.id+'/mqdefault.jpg" alt=""><span class="ti"></span>';
-      var ti = it.querySelector('.ti');
-      if (t.name){ ti.textContent = t.name; } else { ti.textContent = '곡 '+(i+1); plFetchTitle(t.id, ti); }
-      it.addEventListener('click', function(){ playAt(i); });
-      wrap.appendChild(it);
-    });
+    var canEdit = !DIST_MODE && selectedIdx!=null && videos[selectedIdx]===v;
+    function buildItems(){
+      wrap.innerHTML = '';
+      if (cnt) cnt.textContent = tracks.length + '곡';
+      tracks.forEach(function(t,i){
+        var it = document.createElement('div'); it.className = 'pl-item' + (i===cur?' cur':'');
+        it.innerHTML = '<span class="no">'+(i+1)+'</span><img loading="lazy" src="https://i.ytimg.com/vi/'+t.id+'/mqdefault.jpg" alt=""><span class="ti"></span>'+
+          (canEdit ? '<span class="pl-ed"><button type="button" data-a="up" title="위로">▲</button><button type="button" data-a="down" title="아래로">▼</button><button type="button" data-a="name" title="제목 수정">✏</button><button type="button" data-a="del" class="x" title="이 곡 삭제">✕</button></span>' : '');
+        var ti = it.querySelector('.ti');
+        if (t.name){ ti.textContent = t.name; } else { ti.textContent = '곡 '+(i+1); plFetchTitle(t.id, ti); }
+        it.addEventListener('click', function(e){
+          var b = e.target.closest('.pl-ed button');
+          if (b){ e.stopPropagation(); if (!b.disabled) editTrack(i, b.getAttribute('data-a')); return; }
+          playAt(i);
+        });
+        if (canEdit){
+          if (i===0) it.querySelector('[data-a=up]').disabled = true;
+          if (i===tracks.length-1) it.querySelector('[data-a=down]').disabled = true;
+        }
+        wrap.appendChild(it);
+      });
+    }
+    /* 패널에서 바로 수정 → 카드 데이터(v.tracks)에 반영하고 저장. 재생 중인 곡은 그대로 유지 */
+    function editTrack(i, act){
+      var src = v.tracks, t = tracks[i], si = src.indexOf(t.src);
+      if (si < 0) return;
+      var playing = tracks[cur];
+      if (act === 'up' || act === 'down'){
+        var j = i + (act === 'up' ? -1 : 1); if (j < 0 || j >= tracks.length) return;
+        var sj = src.indexOf(tracks[j].src);
+        src[si] = tracks[j].src; src[sj] = t.src;
+        tracks[i] = tracks[j]; tracks[j] = t;
+      } else if (act === 'name'){
+        var nm = prompt('곡 제목 (비우면 유튜브 제목 자동)', t.name || '');
+        if (nm === null) return;
+        t.name = t.src.name = nm.trim();
+      } else if (act === 'del'){
+        if (!confirm('‘' + (t.name || ('곡 '+(i+1))) + '’ 을(를) 목록에서 삭제할까요?')) return;
+        src.splice(si, 1); tracks.splice(i, 1);
+        if (!tracks.length){ persist(); renderList(); renderMain(); return; }
+        if (playing === t){ cur = Math.min(i, tracks.length-1); persist(); renderList(); buildItems(); playAt(cur); return; }
+      }
+      cur = Math.max(0, tracks.indexOf(playing));
+      persist(); renderList(); buildItems();
+      if (act === 'up' || act === 'down'){ var moved = wrap.children[tracks.indexOf(t)]; if (moved){ moved.classList.add('ed-open'); try{ moved.scrollIntoView({block:'nearest'}); }catch(e){} } }
+    }
+    buildItems();
     function plainIframe(){
       box.innerHTML = '<iframe src="https://www.youtube.com/embed/'+tracks[0].id+'?autoplay=1&mute=1&playsinline=1&enablejsapi=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
       autoUnmute(box.querySelector('iframe'), 'youtube');
