@@ -1867,6 +1867,22 @@
       box.innerHTML = '<iframe src="https://www.youtube.com/embed/'+tracks[0].id+'?autoplay=1&mute=1&playsinline=1&enablejsapi=1" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
       autoUnmute(box.querySelector('iframe'), 'youtube');
     }
+    /* 다음 곡 이동 — 유튜브 '재생 끝남' 신호를 놓쳐도 1초마다 직접 확인해서 넘어감 */
+    var advancing = false, advTimer = null;
+    function advance(){
+      if (advancing) return;
+      advancing = true;
+      clearTimeout(advTimer); advTimer = setTimeout(function(){ advancing = false; }, 8000);
+      playAt(cur+1);
+    }
+    var endPoll = setInterval(function(){
+      if (!wrap.isConnected){ clearInterval(endPoll); return; }
+      if (advancing || !ytPlayer || typeof ytPlayer.getPlayerState !== 'function') return;
+      try{
+        var st = ytPlayer.getPlayerState(), d = ytPlayer.getDuration(), t = ytPlayer.getCurrentTime();
+        if (st === 0 || (d > 0 && t >= d - 0.4 && st !== 3 && st !== 2)) advance();
+      }catch(e){}
+    }, 1000);
     ensureYTApi(function(){
       var host = document.getElementById('plHost'); if (!host) return;
       var errStreak = 0;   /* 연속 재생실패 카운트 (전곡 실패 시 무한루프 방지) */
@@ -1878,8 +1894,8 @@
           events: {
             onReady: function(e){ try{ e.target.setVolume(DEFAULT_VOLUME); e.target.unMute(); e.target.playVideo(); }catch(err){} },
             onStateChange: function(e){
-              if (e.data === YT.PlayerState.PLAYING) errStreak = 0;
-              if (e.data === YT.PlayerState.ENDED) playAt(cur+1);
+              if (e.data === YT.PlayerState.PLAYING){ errStreak = 0; advancing = false; }
+              if (e.data === YT.PlayerState.ENDED) advance();
             },
             /* 임베드 차단·삭제·비공개 영상 → 표시해 두고 다음 곡으로 자동 건너뜀 */
             onError: function(){
@@ -1887,7 +1903,8 @@
               var it = wrap.children[cur];
               if (it){ it.style.opacity = '.45'; it.title = '재생 불가(임베드 차단·삭제됨) — 자동 건너뜀'; }
               if (errStreak >= tracks.length) return;   /* 전곡 재생 불가면 정지 */
-              setTimeout(function(){ playAt(cur+1); }, 800);
+              advancing = false;
+              setTimeout(function(){ advance(); }, 800);
             }
           }
         });
