@@ -135,11 +135,13 @@
     .song-row input[type=text]{width:100%;}
     .song-row .song-del{flex:none;width:34px;height:38px;border:1px solid var(--line);border-radius:9px;background:#fff;color:#b55;font-size:14px;line-height:1;cursor:pointer;}
     .song-row .song-del:hover{border-color:#d33;color:#d33;}
-    /* 곡 순서 드래그 손잡이 */
-    .song-row .song-drag{flex:none;width:22px;height:38px;display:flex;align-items:center;justify-content:center;color:#b3a993;font-size:15px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;border-radius:7px;}
-    .song-row .song-drag:hover{color:var(--accent);background:var(--accent-soft);}
-    .song-row.song-dragging{opacity:.92;background:var(--accent-soft);border-radius:11px;box-shadow:0 6px 18px rgba(60,40,20,.18);position:relative;z-index:5;}
-    .song-row.song-dragging .song-drag{cursor:grabbing;color:var(--accent);}
+    /* 곡 순서 ▲▼ 버튼 */
+    .song-row .song-mv{flex:none;display:flex;flex-direction:column;gap:2px;}
+    .song-row .song-mv button{width:26px;height:18px;padding:0;border:1px solid var(--line);border-radius:6px;background:#fff;color:#8a7f6a;font-size:10px;line-height:1;cursor:pointer;}
+    .song-row .song-mv button:hover{border-color:var(--accent);color:var(--accent);}
+    .song-row .song-mv button:disabled{opacity:.3;cursor:default;border-color:var(--line);color:#8a7f6a;}
+    .song-row.song-moved{animation:songFlash .5s ease;}
+    @keyframes songFlash{0%{background:var(--accent-soft);}100%{background:transparent;}}
     .song-add-btn{display:block;width:100%;margin:2px 0 10px;padding:10px;border:1.5px dashed var(--accent,#4a7);border-radius:10px;background:transparent;color:var(--accent,#4a7);font-size:.88rem;font-weight:700;cursor:pointer;font-family:var(--sans);}
     .song-add-btn:hover{background:rgba(90,160,120,.08);}
     .modal-inner select.modal-select{padding:11px 38px 11px 14px;border-radius:10px;border:1px solid var(--line);font-size:.95rem;background-color:var(--paper);color:var(--ink);font-family:var(--sans);font-weight:600;outline:none;transition:.15s;width:100%;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='%236b6353'><path d='M7 10l5 5 5-5z'/></svg>");background-repeat:no-repeat;background-position:right 13px center;}
@@ -1900,7 +1902,7 @@
     var wrap = document.getElementById('songRows');
     var row = document.createElement('div'); row.className = 'song-row';
     row.innerHTML =
-      '<span class="song-drag" title="끌어서 순서 바꾸기">⠿</span>'+
+      '<span class="song-mv"><button type="button" class="song-up" title="위로">▲</button><button type="button" class="song-down" title="아래로">▼</button></span>'+
       '<input class="song-url" type="text" placeholder="https://youtu.be/... 유튜브 주소만 넣어도 됨" autocomplete="off">'+
       '<input class="song-name" type="text" placeholder="곡 제목 (선택)" autocomplete="off">'+
       '<button type="button" class="song-del" title="이 칸 삭제">✕</button>';
@@ -1911,52 +1913,32 @@
       var rows = wrap.querySelectorAll('.song-row');
       if (rows.length <= 1){ row.querySelector('.song-name').value = ''; u.value = ''; }
       else row.remove();
+      refreshSongMove();
       updatePreview();
     });
-    bindSongDrag(row, wrap);
+    row.querySelector('.song-up').addEventListener('click', function(){
+      var p = row.previousElementSibling; if (p) wrap.insertBefore(row, p); songMoved(row);
+    });
+    row.querySelector('.song-down').addEventListener('click', function(){
+      var n = row.nextElementSibling; if (n) wrap.insertBefore(n, row); songMoved(row);
+    });
     wrap.appendChild(row);
+    refreshSongMove();
     return row;
   }
-  /* 곡 순서 드래그 — 왼쪽 ⠿ 손잡이를 잡고 위아래로 끌기 (마우스·터치 모두) */
-  function bindSongDrag(row, wrap){
-    var h = row.querySelector('.song-drag'); if (!h) return;
-    h.addEventListener('pointerdown', function(e){
-      if (e.button != null && e.button !== 0) return;
-      e.preventDefault();
-      var box = wrap.closest('.modal-inner');
-      var timer = null, lastY = e.clientY;
-      /* 줄을 DOM에서 옮기면 pointer capture가 풀리므로 window에서 받음 */
-      row.classList.add('song-dragging');
-      function place(y){
-        var rows = Array.prototype.filter.call(wrap.querySelectorAll('.song-row'), function(r){ return r !== row; });
-        var before = null;
-        for (var i = 0; i < rows.length; i++){
-          var rc = rows[i].getBoundingClientRect();
-          if (y < rc.top + rc.height / 2){ before = rows[i]; break; }
-        }
-        if (before){ if (row.nextSibling !== before) wrap.insertBefore(row, before); }
-        else if (wrap.lastElementChild !== row) wrap.appendChild(row);
-      }
-      function edge(){
-        if (!box) return;
-        var bc = box.getBoundingClientRect(), d = 0;
-        if (lastY < bc.top + 40) d = -8; else if (lastY > bc.bottom - 40) d = 8;
-        if (d){ box.scrollTop += d; place(lastY); }
-      }
-      function move(ev){ lastY = ev.clientY; place(lastY); }
-      function up(){
-        window.removeEventListener('pointermove', move);
-        window.removeEventListener('pointerup', up);
-        window.removeEventListener('pointercancel', up);
-        clearInterval(timer);
-        row.classList.remove('song-dragging');
-        updatePreview();
-      }
-      window.addEventListener('pointermove', move);
-      window.addEventListener('pointerup', up);
-      window.addEventListener('pointercancel', up);
-      timer = setInterval(edge, 16);
+  /* 곡 순서 ▲▼ — 맨 위 ▲, 맨 아래 ▼는 비활성 */
+  function refreshSongMove(){
+    var rows = document.querySelectorAll('#songRows .song-row');
+    Array.prototype.forEach.call(rows, function(r, i){
+      r.querySelector('.song-up').disabled = (i === 0);
+      r.querySelector('.song-down').disabled = (i === rows.length - 1);
     });
+  }
+  function songMoved(row){
+    refreshSongMove();
+    row.classList.remove('song-moved'); void row.offsetWidth; row.classList.add('song-moved');
+    try{ row.scrollIntoView({block:'nearest'}); }catch(e){}
+    updatePreview();
   }
   function resetSongRows(list){
     var wrap = document.getElementById('songRows'); if (!wrap) return;
