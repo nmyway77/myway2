@@ -3447,7 +3447,12 @@
     /* P 페이지를 열면 처음부터 📺 TV2 탭 화면 */
     addNavBtns();
     /* 화살표 링크 클릭 기억 (KBS 핸드폰·MBC 등 새 창으로 나가는 채널) */
-    $('tvrScreen').addEventListener('click', function(e){ if (e.target.closest('.tvr-tap') && cur) markReturn(cur.k, cur.i); }, true);
+    $('tvrScreen').addEventListener('click', function(e){
+      var a = e.target.closest('.tvr-tap'); if (!a) return;
+      if (cur) markReturn(cur.k, cur.i);
+      /* 핸드폰: 새 탭 대신 같은 창(최상위)에서 열기 → 백버튼으로 myway.kr 복귀 */
+      if (IS_MOBILE) { e.preventDefault(); try { (window.top || window).location.href = a.href; } catch(err) { window.open(a.href, '_blank', 'noopener'); } }
+    }, true);
     var ret = takeReturn();
     if (ret && ret.k !== 'tv') openOnair(ret.k, ret.i); else openOnair('tv2');
     list();
