@@ -3269,6 +3269,7 @@
 /* ===== P 페이지 맨 위 TV & 라디오 — 상단 채널바 + 풀화면 재생 =====
    채널 목록 = livesitesbar2.html / radiositesbar2.html 의 상단 채널(iframe 재생용) 그대로
    [이름, 주소, 'newwin'] — 'newwin'은 iframe 차단 사이트라 새 탭으로 열림
+   [이름, 주소, 'tap'] — 'tap'은 PC·핸드폰 모두 화살표 화면 → 누르면 새 창 (MBC 라디오)
    ※ P 페이지를 열면 탭바의 [📺 TV]가 선택되고 YTN이 바로 재생됨 */
 (function(){
   /* @TVR_START */
@@ -3292,6 +3293,7 @@
       ["COOL FM","https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=25&ch_type=radioList"],
       ["SBS러브FM","https://www.sbs.co.kr/live/S08?div=live_list"],
       ["SBS파워FM","https://www.sbs.co.kr/live/S07?div=live_list"],
+      ["MBC","https://miniwebapp.imbc.com/index?channel=mfm","tap"],
       ["TBN 교통방송","https://www.tbn.or.kr/onair/tbnlive.tbn?area_code=2"],
       ["CBS","https://www.cbs.co.kr/radio"]
     ]
@@ -3327,6 +3329,12 @@
     var first = !cur;
     cur = { k: kind, i: i };
     var y = ytId(c[1]), src = y ? 'https://www.youtube.com/embed/' + y + '?autoplay=1&playsinline=1' : String(c[1]).replace(/"/g, '%22');
+    if (c[2] === 'tap') {
+      /* MBC 라디오 등: 화면 안 재생이 안 되는 채널 → PC·핸드폰 모두 화살표로 클릭 유도, 누르면 공식 플레이어 새 창 */
+      $('tvrScreen').innerHTML = '<a class="tvr-tap" href="' + String(c[1]).replace(/"/g, '%22') + '" target="_blank" rel="noopener">' +
+        '<span class="tvr-tap-arw">👇</span><span class="tvr-tap-ttl">' + esc(c[0]) + '</span>' +
+        '<span class="tvr-tap-btn">▶ 눌러서 ' + (kind === 'radio' ? '듣기' : '보기') + ' ↗</span><span class="tvr-tap-sub">방송사 공식 플레이어(새 창)로 열려요</span></a>';
+    } else
     if ((kind === 'tv' || kind === 'radio') && IS_MOBILE && /kbs\.co\.kr/i.test(c[1])) {
       /* 핸드폰에서 KBS(TV·라디오)는 화면 안(iframe)에서 안 나옴 → 화살표로 클릭 유도, 누르면 KBS 공식 플레이어 새 창 */
       $('tvrScreen').innerHTML = '<a class="tvr-tap" href="' + String(c[1]).replace(/"/g, '%22') + '" target="_blank" rel="noopener">' +
