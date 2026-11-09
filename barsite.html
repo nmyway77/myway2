@@ -3321,10 +3321,20 @@
       return '<button type="button" class="tvr-ch' + (on ? ' on' : '') + '" data-i="' + i + '" title="' + esc(c[0]) + (c[2] === 'newwin' ? ' (새 탭으로 열림)' : (on ? ' — 다시 누르면 끄기' : '')) + '">' + esc(c[0]) + (c[2] === 'newwin' ? '<span class="nw">↗</span>' : '') + '</button>';
     }).join('');
   }
+  /* 화살표(새 창) 링크로 나갔다가 백버튼으로 돌아오면 → 같은 탭(라디오 등)·같은 채널로 복귀 (그 탭 세션에서 1회만) */
+  var RET_KEY = 'mywayOnairReturnV1';
+  function markReturn(k, i){ try { sessionStorage.setItem(RET_KEY, JSON.stringify({ k: k, i: i, t: Date.now() })); } catch(e){} }
+  function takeReturn(){
+    try {
+      var r = JSON.parse(sessionStorage.getItem(RET_KEY) || 'null'); sessionStorage.removeItem(RET_KEY);
+      if (r && (TVR[r.k] || []).length && r.t && Date.now() - r.t < 3 * 3600 * 1000) return r;
+    } catch(e){}
+    return null;
+  }
   function stop(){ cur = null; $('tvrScreen').innerHTML = ''; $('tvrSection').classList.remove('playing'); $('tvrSection').classList.remove('page-mode'); list(); }
   function play(i, noScroll){
     var c = (TVR[kind] || [])[i]; if (!c) return;
-    if (c[2] === 'newwin') { window.open(c[1], '_blank', 'noopener'); return; }
+    if (c[2] === 'newwin') { markReturn(kind, i); window.open(c[1], '_blank', 'noopener'); return; }
     if (cur && cur.k === kind && cur.i === i) { stop(); return; } /* 재생 중인 채널을 다시 누르면 끄기 */
     var first = !cur;
     cur = { k: kind, i: i };
@@ -3388,7 +3398,7 @@
         try { sc.scrollTo({ left: left, behavior: 'smooth' }); } catch(e){ sc.scrollLeft = left; }
       });
     }
-    function openOnair(k){
+    function openOnair(k, startI){
       var changed = (onair !== k);
       onair = k;
       if (changed) stop();
@@ -3407,7 +3417,8 @@
       }
       list();
       if (!cur) {
-        if (k === 'tv') play(0, true); /* TV 탭 = YTN 바로 재생 */
+        if (startI != null && (TVR[k] || [])[startI]) play(startI, true); /* 백버튼 복귀: 나갔던 채널 */
+        else if (k === 'tv') play(0, true); /* TV 탭 = YTN 바로 재생 */
         else play(0, true); /* 라디오 탭 = 맨 앞 채널(SBS러브FM) 바로 재생 */
       }
       try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e){}
@@ -3435,7 +3446,10 @@
 
     /* P 페이지를 열면 처음부터 📺 TV2 탭 화면 */
     addNavBtns();
-    openOnair('tv2');
+    /* 화살표 링크 클릭 기억 (KBS 핸드폰·MBC 등 새 창으로 나가는 채널) */
+    $('tvrScreen').addEventListener('click', function(e){ if (e.target.closest('.tvr-tap') && cur) markReturn(cur.k, cur.i); }, true);
+    var ret = takeReturn();
+    if (ret) openOnair(ret.k, ret.i); else openOnair('tv2');
     list();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
