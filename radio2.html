@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>실시간 라디오 | MYWAY</title>
+<meta name="description" content="KBS·MBC·SBS·TBN·CBS 등 라디오 방송사 공식 온에어를 한 화면에서">
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --text:#1d2433; --sub:#6b7385; --accent:#c57af0; --line:#e3e6ec; --side:280px; --tabsH:56px; }
+  * { box-sizing:border-box; }
+  html, body { height:100%; }
+  body { margin:0; font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; background:var(--bg); color:var(--text); overflow:hidden; }
+  .top { height:100%; }
+
+  /* 상단 분류 탭 */
+  .tabs { height:var(--tabsH); display:flex; align-items:center; gap:8px; padding:0 16px; background:var(--card); border-bottom:1px solid var(--line); overflow-x:auto; scrollbar-width:none; }
+  .tabs::-webkit-scrollbar { display:none; }
+  .tabs > :first-child { margin-left:auto; }
+  .tabs > :last-child { margin-right:auto; }
+  .tabs button { flex:none; border:1px solid var(--line); background:var(--card); padding:7px 16px; border-radius:20px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text); white-space:nowrap; }
+  .tabs button:hover { border-color:#b9bfcc; }
+  .tabs button.on { background:var(--text); color:#fff; border-color:var(--text); }
+
+  /* 본문: 왼쪽 방송 화면(방송사 페이지 전체) + 오른쪽 방송국 목록 */
+  .wrap { height:calc(100% - var(--tabsH)); display:flex; }
+  .stage { flex:1; min-width:0; position:relative; background:#fff; }
+  .stage iframe { position:absolute; inset:0; width:100%; height:100%; border:0; background:#fff; }
+  .stage .empty { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#9aa2b5; font-size:15px; }
+
+  /* 핸드폰 KBS·임베드 막힌 채널 → 화살표 클릭 유도 */
+  .tap { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; color:#fff; text-decoration:none; background:radial-gradient(circle at 50% 45%, #3d2f5c 0%, #120d20 75%); cursor:pointer; }
+  .tap .arw { font-size:46px; line-height:1; animation:bob 1s ease-in-out infinite; }
+  .tap .ttl { font-size:18px; font-weight:800; }
+  .tap .btn { background:linear-gradient(110deg,#f08aa8 0%,#c57af0 60%,#8f7cf2 100%); padding:11px 22px; border-radius:999px; font-size:14px; font-weight:800; animation:ring 1.6s infinite; }
+  .tap .sub { font-size:11.5px; color:#bfb5d6; }
+  @keyframes bob { 0%,100% { transform:translateY(0); } 50% { transform:translateY(9px); } }
+  @keyframes ring { 0% { box-shadow:0 0 0 0 rgba(197,122,240,.65); } 70% { box-shadow:0 0 0 14px rgba(197,122,240,0); } 100% { box-shadow:0 0 0 0 rgba(197,122,240,0); } }
+
+  .side { flex:none; width:var(--side); display:flex; flex-direction:column; background:var(--card); border-left:1px solid var(--line); min-height:0; }
+  .list { flex:1; overflow-y:auto; padding:8px; display:flex; flex-direction:column; gap:6px; }
+  .card { position:relative; flex:none; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:9px 34px 9px 12px; cursor:pointer; }
+  .card:hover { border-color:#b9bfcc; }
+  .card.on { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent) inset; }
+  .card b { display:block; font-size:14px; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .card .meta { font-size:11.5px; color:var(--sub); }
+  .badge { display:inline-block; font-size:10px; font-weight:700; color:#fff; background:#e5384f; padding:1px 5px; border-radius:4px; margin-right:4px; }
+  .badge.lk { background:#6b7385; }
+  .star { position:absolute; top:50%; right:6px; transform:translateY(-50%); border:0; background:none; font-size:18px; cursor:pointer; color:#c7ccd6; padding:4px; }
+  .star.on { color:#f5b301; }
+  .notice { flex:none; padding:8px 12px; font-size:10.5px; line-height:1.55; color:#8a91a3; border-top:1px solid var(--line); }
+  .notice a { color:#4b5bd6; font-weight:700; text-decoration:none; }
+
+  .home-fab { position:fixed; right:calc(var(--side) + 14px); bottom:14px; z-index:20; width:42px; height:42px; border-radius:50%; background:linear-gradient(110deg,#5b8def 0%,#7d6fe8 55%,#b176f3 100%); color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; box-shadow:0 6px 16px rgba(125,111,232,.4); }
+  .home-fab svg { width:20px; height:20px; }
+
+  /* 핸드폰·좁은 화면: 탭+화면 위 고정, 방송국은 아래로 */
+  @media (max-width: 760px) {
+    body { overflow:auto; }
+    .top { height:auto; position:sticky; top:0; z-index:5; background:var(--bg); }
+    .tabs { padding:0 10px; }
+    .wrap { height:auto; display:block; }
+    .stage { height:62vh; }
+    .side { width:auto; border-left:0; }
+    .home-fab { right:14px; }
+    .list { overflow:visible; display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); }
+  }
+
+  * { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+  input, textarea { -webkit-user-select:text; user-select:text; }
+</style>
+</head>
+<body>
+<div class="top">
+  <nav class="tabs" id="tabs"></nav>
+  <div class="wrap" id="wrap">
+    <section class="stage" id="stage"><div class="empty">오른쪽에서 방송을 선택하세요</div></section>
+  </div>
+</div>
+<a class="home-fab" href="https://myway.kr" target="_top" aria-label="홈"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></a>
+
+<script>
+/* ===== 라디오 채널 =====
+   [이름, 분류, 주소, 'newwin'(선택)] — 'newwin'은 화면 안 재생(임베드)이 막힌 채널 → 별도 창 버튼
+   주소는 radiositesbar2.html 상단 채널과 동일 */
+/* @RADIO_START */
+const RADIO = [
+  ["radionara",   "추천",     "https://radionara.vercel.app/"],
+  ["KBS 라디오",  "KBS",      "https://radio.kbs.co.kr/"],
+  ["KBS1",        "KBS",      "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=21&ch_type=radioList&bora=on&chat=on"],
+  ["KBS2",        "KBS",      "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=22&ch_type=radioList&bora=on&chat=on"],
+  ["KBS3",        "KBS",      "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=23&ch_type=radioList"],
+  ["COOL FM",     "KBS",      "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=25&ch_type=radioList"],
+  ["SBS 러브FM",  "SBS",      "https://www.sbs.co.kr/live/S08?div=live_list"],
+  ["SBS 파워FM",  "SBS",      "https://www.sbs.co.kr/live/S07?div=live_list"],
+  ["MBC RADIO",   "MBC",      "https://www.imbc.com/broad/radio/"],
+  ["TBN 교통방송","교통·종교", "https://www.tbn.or.kr/onair/tbnlive.tbn?area_code=2"],
+  ["CBS",         "교통·종교", "https://www.cbs.co.kr/radio"],
+  ["CNN Radio",   "해외",     "https://edition.cnn.com/audio"],
+  ["BBC Radio",   "해외",     "https://www.bbc.co.uk/sounds/stations"]
+];
+/* @RADIO_END */
+
+const FAV_KEY = "mywayRadio2FavV1";
+let favs = [];
+try { favs = JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch(e) {}
+let currentCat = "전체", cur = -1;
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const IS_MOBILE = /Android|iPhone|iPad|iPod|Mobile|SamsungBrowser/i.test(navigator.userAgent) ||
+  (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+/* 핸드폰에서 KBS는 화면 안에서 안 나옴 → 별도 창 버튼 */
+const isExt = r => !!r[3] || (IS_MOBILE && /kbs\.co\.kr/i.test(r[2]));
+
+const side = document.createElement("aside");
+side.className = "side";
+side.innerHTML = `<div class="list" id="grid"></div>
+  <footer class="notice">ⓘ 방송사가 인터넷에 공개한 <b>공식 온에어 페이지</b>를 연결해 보여 주는 비영리 개인 페이지입니다. · <a href="https://myway.kr" target="_top">myway.kr</a></footer>`;
+function placeSide(){
+  const narrow = window.matchMedia("(max-width: 760px)").matches;
+  if (narrow) { if (side.parentNode !== document.body) document.body.insertBefore(side, document.querySelector(".home-fab")); }
+  else { if (side.parentNode !== $("wrap")) $("wrap").appendChild(side); }
+}
+placeSide();
+window.addEventListener("resize", placeSide);
+
+function saveFavs(){ try { localStorage.setItem(FAV_KEY, JSON.stringify(favs)); } catch(e) {} }
+function inCat(r){ return currentCat === "전체" ? true : currentCat === "즐겨찾기" ? favs.includes(r[0]) : r[1] === currentCat; }
+
+function renderTabs(){
+  const cats = ["전체", "즐겨찾기", ...new Set(RADIO.map(r => r[1]))];
+  $("tabs").innerHTML = cats.map(c => `<button class="${c===currentCat?'on':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
+}
+function renderGrid(){
+  const html = RADIO.map((r, i) => !inCat(r) ? "" : `
+    <div class="card ${i===cur?'on':''}" data-i="${i}">
+      <button class="star ${favs.includes(r[0])?'on':''}" data-fav="${esc(r[0])}" title="즐겨찾기">★</button>
+      <b>${esc(r[0])}</b>
+      <div class="meta">${isExt(r) ? '<span class="badge lk">LINK</span>' : '<span class="badge">ON AIR</span>'}${esc(r[1])}</div>
+    </div>`).join("");
+  $("grid").innerHTML = html || `<p style="color:#888;padding:8px">${currentCat==="즐겨찾기" ? "별(★)을 눌러 즐겨찾기를 추가하세요." : "방송이 없습니다."}</p>`;
+}
+function play(i){
+  const r = RADIO[i]; if (!r) return;
+  cur = i;
+  document.title = `${r[0]} - 실시간 라디오`;
+  if (isExt(r)) {
+    $("stage").innerHTML = `<a class="tap" href="${esc(r[2])}" target="_blank" rel="noopener">
+      <div class="arw">👇</div><div class="ttl">${esc(r[0])}</div><div class="btn">▶ 눌러서 듣기 ↗</div>
+      <div class="sub">${IS_MOBILE ? "핸드폰에서는 방송사 공식 페이지(새 창)로 열려요" : "이 방송은 방송사가 화면 안 재생을 막아 별도 창으로 열려요"}</div></a>`;
+  } else {
+    $("stage").innerHTML = `<iframe title="${esc(r[0])}" src="${esc(r[2])}" referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+  }
+  Array.prototype.forEach.call($("grid").querySelectorAll(".card"), el => el.classList.toggle("on", +el.dataset.i === cur));
+}
+
+$("tabs").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  currentCat = b.dataset.cat; renderTabs(); renderGrid(); $("grid").scrollTop = 0;
+  const first = RADIO.findIndex(inCat);          // 탭을 누르면 그 탭 첫 방송 바로 재생
+  if (first > -1) play(first);
+});
+side.addEventListener("click", e => {
+  const f = e.target.closest("[data-fav]");
+  if (f) { const s = f.dataset.fav; favs = favs.includes(s) ? favs.filter(x => x !== s) : [...favs, s]; saveFavs(); renderGrid(); return; }
+  const card = e.target.closest(".card"); if (card) play(+card.dataset.i);
+});
+
+renderTabs(); renderGrid();
+play(0);   // 초기화면 = radionara
+</script>
+<script>
+/* 복사 방지 */
+(function(){
+  ['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){
+    document.addEventListener(ev, function(e){ var t=e.target; if(t&&t.closest&&t.closest('input,textarea'))return; e.preventDefault(); }, true);
+  });
+  document.addEventListener('keydown', function(e){
+    var k=(e.key||'').toLowerCase(), c=e.ctrlKey||e.metaKey;
+    if (e.key==='F12' || (c&&['u','s','c','x','a'].indexOf(k)>-1) || (c&&e.shiftKey&&['i','j','c'].indexOf(k)>-1)) { e.preventDefault(); e.stopPropagation(); }
+  }, true);
+})();
+</script>
+</body>
+</html>
