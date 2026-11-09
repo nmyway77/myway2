@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 바로가기 · 프롬프트 모음 | MYWAY.KR</title>
+<meta name="description" content="대화형·이미지·영상·음악 AI 바로가기와 바로 쓰는 프롬프트 모음">
+<style>
+  :root { --bg:#f6f8fc; --card:#fff; --text:#222a4a; --sub:#7a84a6; --line:#e5e8f6; --accent:#5b6bff; --tabsH:56px; }
+  * { box-sizing:border-box; }
+  html, body { height:100%; }
+  body { margin:0; font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; background:var(--bg); color:var(--text); }
+
+  /* 상단 탭 */
+  .tabs { position:sticky; top:0; z-index:10; height:var(--tabsH); display:flex; align-items:center; gap:8px; padding:0 16px; background:#fff; border-bottom:1px solid var(--line); overflow-x:auto; scrollbar-width:none; }
+  .tabs::-webkit-scrollbar { display:none; }
+  .tabs > :first-child { margin-left:auto; }
+  .tabs > :last-child { margin-right:auto; }
+  .tabs button { flex:none; border:1px solid var(--line); background:#fff; padding:7px 16px; border-radius:20px; cursor:pointer; font-size:14px; font-weight:700; color:var(--text); white-space:nowrap; }
+  .tabs button:hover { border-color:#b9c2e6; }
+  .tabs button.on { background:var(--text); color:#fff; border-color:var(--text); }
+  .tabs .sep { flex:none; width:1px; height:22px; background:var(--line); margin:0 4px; }
+
+  main { max-width:1080px; margin:0 auto; padding:22px 16px 80px; }
+  .sec { margin-bottom:30px; }
+  .sec h2 { font-size:15px; font-weight:800; margin:0 0 4px; color:#39406a; text-align:center; }
+  .sec .desc { font-size:12px; color:var(--sub); text-align:center; margin:0 0 16px; }
+
+  /* H 화면과 같은 원형 로고 타일 */
+  .logo-grid { display:flex; flex-wrap:wrap; gap:18px 22px; justify-content:center; max-width:900px; margin:0 auto; }
+  .logo-item { width:76px; }
+  .logo-item { display:flex; flex-direction:column; align-items:center; gap:7px; text-decoration:none; color:var(--text); -webkit-tap-highlight-color:transparent; }
+  .logo-tile { width:64px; height:64px; border-radius:50%; background:#fff; box-shadow:0 3px 20px 0 #b1c7e866; border:2.5px solid #e5e8f6; display:flex; align-items:center; justify-content:center; overflow:hidden; transition:box-shadow .15s, border-color .15s; }
+  .logo-item:hover .logo-tile { box-shadow:0 8px 32px 0 #7e94ff99; border-color:#94a2ff; background:#f7faff; }
+  .logo-tile img { width:42px; height:42px; object-fit:contain; border-radius:10px; transition:transform .12s; }
+  .logo-item:hover .logo-tile img { transform:scale(1.08) rotate(-3deg); }
+  .logo-tile .txt { font-size:15px; font-weight:800; color:#3b4a7a; }
+  .logo-name { font-size:11.5px; font-weight:700; color:#4a5478; max-width:76px; text-align:center; line-height:1.25; word-break:keep-all; }
+
+  /* 프롬프트 카드 */
+  .p-list { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; }
+  .p-card { background:#fff; border:1.5px solid var(--line); border-radius:14px; padding:14px 14px 12px; display:flex; flex-direction:column; gap:8px; }
+  .p-card h3 { margin:0; font-size:14.5px; font-weight:800; color:#2b3359; }
+  .p-card .use { font-size:11.5px; color:var(--sub); margin-top:-4px; }
+  .p-text { background:#f6f8ff; border:1px solid #e9edfb; border-radius:10px; padding:10px 11px; font-size:12.8px; line-height:1.6; color:#39406a; white-space:pre-wrap; flex:1; }
+  .p-text mark { background:#fff2b8; color:#6b4e00; border-radius:3px; padding:0 2px; }
+  .p-btns { display:flex; gap:6px; flex-wrap:wrap; }
+  .p-btns button, .p-btns a { border:1.5px solid #dfe3f2; background:#f7f9ff; color:#4a5478; border-radius:10px; padding:7px 11px; font-size:12px; font-weight:700; cursor:pointer; text-decoration:none; }
+  .p-btns button.copy { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .p-btns button.copy.done { background:#2e7d4f; border-color:#2e7d4f; }
+  .p-tip { font-size:12px; color:var(--sub); text-align:center; margin:-6px 0 16px; }
+
+  .myway-footer { text-align:center; font-size:12px; color:#8590ad; padding:18px 0 4px; border-top:1px solid #eef0f4; margin-top:20px; }
+  .myway-footer a { color:#4a5170; }
+  .home-fab { position:fixed; right:14px; bottom:14px; z-index:50; width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,#6a5cff,#3c8cff); color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:18px; box-shadow:0 4px 12px rgba(60,80,200,.35); }
+
+  @media (max-width: 640px) {
+    main { padding:16px 10px 80px; }
+    .logo-grid { gap:16px 6px; }
+    .logo-item { width:22%; }
+    .p-list { grid-template-columns:1fr; }
+    .tabs { padding:0 10px; }
+  }
+  @media (max-width: 360px) { .logo-tile { width:56px; height:56px; } .logo-tile img { width:36px; height:36px; } }
+
+  * { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+  input, textarea { -webkit-user-select:text; user-select:text; }
+</style>
+</head>
+<body>
+<nav class="tabs" id="tabs"></nav>
+<main id="main"></main>
+<a class="home-fab" href="https://myway.kr" target="_top" title="MYWAY.KR 홈">⌂</a>
+
+<script>
+/* ───── 1. AI 바로가기 (H 화면처럼 원형 로고 타일) ───── */
+const AI_GROUPS = [
+  { title:"💬 대화형 AI", desc:"질문·글쓰기·번역·요약 등 무엇이든", items:[
+    ["ChatGPT","https://chatgpt.com/"], ["Claude","https://claude.ai/"], ["Gemini","https://gemini.google.com/"],
+    ["Copilot","https://copilot.microsoft.com/"], ["Grok","https://grok.com/"], ["DeepSeek","https://chat.deepseek.com/"],
+    ["뤼튼","https://wrtn.ai/"] ]},
+  { title:"🔎 검색·리서치", desc:"출처와 함께 찾아 주는 AI", items:[
+    ["Perplexity","https://www.perplexity.ai/"], ["NotebookLM","https://notebooklm.google.com/"], ["Genspark","https://www.genspark.ai/"],
+    ["Consensus","https://consensus.app/"] ]},
+  { title:"🎨 이미지", desc:"그림·사진·디자인 만들기", items:[
+    ["Midjourney","https://www.midjourney.com/"], ["Ideogram","https://ideogram.ai/"], ["Leonardo","https://leonardo.ai/"],
+    ["Firefly","https://firefly.adobe.com/"], ["Krea","https://www.krea.ai/"], ["Canva","https://www.canva.com/"] ]},
+  { title:"🎬 영상", desc:"글·사진으로 영상 만들기", items:[
+    ["Runway","https://runwayml.com/"], ["Kling","https://klingai.com/"], ["Pika","https://pika.art/"], ["Hailuo","https://hailuoai.video/"] ]},
+  { title:"🎵 음악·음성", desc:"노래 만들기·목소리 읽기", items:[
+    ["Suno","https://suno.com/"], ["Udio","https://www.udio.com/"], ["ElevenLabs","https://elevenlabs.io/"], ["타입캐스트","https://typecast.ai/"] ]},
+  { title:"📄 번역·문서·업무", desc:"번역·발표자료·도표·정리", items:[
+    ["DeepL","https://www.deepl.com/"], ["파파고","https://papago.naver.com/"], ["Gamma","https://gamma.app/"],
+    ["Napkin","https://www.napkin.ai/"], ["Notion","https://www.notion.so/"], ["Grammarly","https://www.grammarly.com/"] ]}
+];
+const icon = url => "https://www.google.com/s2/favicons?sz=128&domain=" + new URL(url).hostname;
+
+/* ───── 2. 프롬프트 모음 — [ ] 안을 내 내용으로 바꿔서 쓰기 ───── */
+const PROMPTS = {
+  "영어 수업": [
+    ["한줄해석 + 어휘·어법 + 줄거리 요약", "선생님용 · 지문 분석", "아래 영어 지문을 학생용 수업 자료로 만들어 줘.\n1) 한 문장씩 영어 원문과 자연스러운 한글 해석을 번갈아 써 줘.\n2) 내신에 나올 만한 핵심 어휘 10개를 뜻·예문과 함께 표로 정리해 줘.\n3) 시험에 자주 나오는 어법 포인트 5개를 설명해 줘.\n4) 지문 전체 줄거리를 3줄로 요약해 줘.\n\n[지문 붙여넣기]"],
+    ["내신 변형문제 만들기", "선생님용 · 시험 대비", "아래 영어 지문으로 [중2/고1] 내신 시험 대비 변형문제를 만들어 줘.\n- 주제/요지 찾기 1문항, 빈칸 추론 2문항, 어법 판단 2문항, 순서 배열 1문항, 서술형(영작) 2문항\n- 각 문항마다 정답과 짧은 해설을 마지막에 따로 모아서 써 줘.\n\n[지문 붙여넣기]"],
+    ["단어 시험지 만들기", "선생님용 · 단어 테스트", "아래 단어 목록으로 단어 시험지를 만들어 줘.\n- A형: 영어 → 우리말 뜻 쓰기\n- B형: 우리말 → 영어 쓰기 (순서 섞기)\n- 마지막에 정답지를 따로 붙여 줘.\n\n[단어 목록 붙여넣기]"],
+    ["서술형 답안 첨삭", "선생님용 · 첨삭", "아래는 학생이 쓴 영어 서술형 답안이야. [문제/조건]에 맞게 썼는지 채점하고,\n틀린 부분을 문장별로 고쳐 주고 왜 틀렸는지 학생이 이해하기 쉽게 설명해 줘. 마지막에 모범 답안도 보여 줘.\n\n문제/조건: [문제 붙여넣기]\n학생 답안: [답안 붙여넣기]"],
+    ["학부모 상담 문자 다듬기", "선생님용 · 학부모 소통", "아래 내용을 학부모님께 보낼 정중하고 따뜻한 문자로 다듬어 줘. 너무 길지 않게, 학생의 좋은 점을 먼저 말하고 보완할 점은 부드럽게 전해 줘.\n\n[전하고 싶은 내용]"]
+  ],
+  "영어 공부": [
+    ["모르는 문장 쉽게 풀어 주기", "학생용 · 독해", "아래 영어 문장을 중학생도 이해할 수 있게 설명해 줘.\n주어·동사를 먼저 찾아 주고, 끊어 읽기 표시(/)를 한 뒤 한 덩어리씩 해석해 줘.\n\n[문장 붙여넣기]"],
+    ["영어 일기 고쳐 주기", "학생용 · 영작", "내가 쓴 영어 일기를 고쳐 줘. 원래 문장과 고친 문장을 나란히 보여 주고, 왜 고쳤는지 한글로 짧게 설명해 줘. 칭찬할 점도 하나 말해 줘.\n\n[일기 붙여넣기]"],
+    ["단어 외우기 도우미", "학생용 · 어휘", "아래 영어 단어들을 쉽게 외울 수 있게 도와줘. 단어마다 뜻, 쉬운 예문 1개, 기억하기 좋은 연상법을 알려 주고, 마지막에 퀴즈 5문제를 내 줘.\n\n[단어 목록]"],
+    ["영어 회화 연습 상대", "학생용 · 회화", "지금부터 너는 [카페 점원 / 공항 직원 / 새 친구] 역할이야. 나와 영어로 대화해 줘. 내가 틀린 표현을 쓰면 대화를 이어 가면서 괄호 안에 고친 표현을 알려 줘. 한 번에 한 문장씩만 말해 줘."],
+    ["문법 개념 정리", "학생용 · 문법", "[관계대명사 / 현재완료 / 가정법] 을(를) 중학생 눈높이로 설명해 줘. 핵심 규칙, 헷갈리는 점, 예문 3개, 확인 문제 3개 순서로 정리해 줘."]
+  ],
+  "업무·문서": [
+    ["이메일 정중하게 쓰기", "업무 · 메일", "아래 내용으로 [거래처/상사/고객]에게 보낼 정중한 이메일을 써 줘. 제목도 함께 만들어 주고, 너무 길지 않게 해 줘.\n\n[전하고 싶은 내용]"],
+    ["긴 글 요약", "업무 · 요약", "아래 글을 핵심만 5줄로 요약하고, 꼭 알아야 할 숫자·날짜·할 일은 따로 목록으로 뽑아 줘.\n\n[글 붙여넣기]"],
+    ["회의록 정리", "업무 · 회의", "아래 회의 메모를 회의록 형식으로 정리해 줘.\n- 회의 목적 / 결정된 사항 / 누가 언제까지 할 일 / 다음 회의 안건\n\n[메모 붙여넣기]"],
+    ["엑셀 함수 물어보기", "업무 · 엑셀", "엑셀에서 [하고 싶은 일, 예: A열에 이름이 같은 사람의 B열 금액 합계]을(를) 하고 싶어. 쓸 수 있는 함수와 정확한 수식을 알려 주고, 어느 칸에 넣으면 되는지 예시로 설명해 줘."],
+    ["발표 자료 뼈대", "업무 · 발표", "[주제]로 10분 발표를 하려고 해. 슬라이드 8장 구성으로 각 장의 제목과 넣을 내용(핵심 문장 3개)을 정리해 줘. 듣는 사람은 [대상]이야."]
+  ],
+  "글쓰기": [
+    ["블로그 글 초안", "글쓰기 · 블로그", "[주제]에 대한 블로그 글을 써 줘. 친근한 말투로, 소제목 3~4개를 넣고, 처음 두 문장에서 읽고 싶게 만들어 줘. 마지막에 검색에 잘 걸릴 태그 10개도 추천해 줘."],
+    ["문장 자연스럽게 다듬기", "글쓰기 · 퇴고", "아래 글의 뜻은 그대로 두고, 어색한 문장과 맞춤법만 자연스럽게 다듬어 줘. 고친 부분은 굵게 표시해 줘.\n\n[글 붙여넣기]"],
+    ["제목 아이디어", "글쓰기 · 제목", "아래 글에 어울리는 제목을 10개 추천해 줘. 궁금증을 주는 제목 5개, 정보가 분명한 제목 5개로 나눠 줘.\n\n[글 또는 내용 요약]"],
+    ["SNS 홍보 문구", "글쓰기 · 홍보", "[가게/학원/행사] 홍보용 인스타그램 글을 3가지 버전(짧게 / 감성적으로 / 정보 위주)으로 써 줘. 해시태그도 붙여 줘.\n\n홍보할 내용: [내용]"],
+    ["축사·인사말", "글쓰기 · 행사", "[행사 이름]에서 할 1분 분량 인사말을 써 줘. 말하는 사람은 [나의 역할], 듣는 사람은 [대상]이야. 너무 딱딱하지 않게 해 줘."]
+  ],
+  "생활": [
+    ["냉장고 재료로 요리", "생활 · 요리", "지금 냉장고에 [재료들]이 있어. 이걸로 30분 안에 만들 수 있는 요리 3가지를 추천하고, 하나는 자세한 순서까지 알려 줘."],
+    ["여행 일정 짜기", "생활 · 여행", "[여행지]로 [기간] 여행을 가. [함께 가는 사람, 예: 초등학생 아이 2명]과 함께야. 이동 동선이 겹치지 않게 하루씩 일정을 짜 주고, 예산 아끼는 팁도 알려 줘."],
+    ["물건 비교·구매 고민", "생활 · 쇼핑", "[물건 A]와 [물건 B] 중에 고민 중이야. 내 사용 목적은 [목적]이야. 장단점을 표로 비교하고, 확실한 정보와 추측을 구분해서 알려 줘."],
+    ["건강 정보 정리(참고용)", "생활 · 건강", "[궁금한 증상/건강 주제]에 대해 일반적으로 알려진 정보를 정리해 줘. 병원에 꼭 가야 하는 경우도 따로 알려 줘. (진단이 아니라 참고용으로)"],
+    ["어려운 서류 쉽게 읽기", "생활 · 서류", "아래 계약서/안내문을 어려운 말 없이 쉽게 풀어서 설명해 줘. 내가 꼭 확인해야 할 부분과 불리할 수 있는 조항을 따로 짚어 줘.\n\n[내용 붙여넣기]"]
+  ]
+};
+const PCATS = Object.keys(PROMPTS);
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let cur = "ai";
+
+function renderTabs(){
+  $("tabs").innerHTML = `<button data-t="ai" class="${cur==='ai'?'on':''}">🤖 AI 바로가기</button><span class="sep"></span>`
+    + PCATS.map(c => `<button data-t="${esc(c)}" class="${cur===c?'on':''}">📝 ${esc(c)}</button>`).join("");
+}
+function renderAI(){
+  $("main").innerHTML = AI_GROUPS.map(g => `<section class="sec"><h2>${esc(g.title)}</h2><p class="desc">${esc(g.desc)}</p>
+    <div class="logo-grid">${g.items.map(([n,u]) => `<a class="logo-item" href="${esc(u)}" target="_blank" rel="noopener" title="${esc(n)}">
+      <span class="logo-tile"><img src="${esc(icon(u))}" alt="${esc(n)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'txt',textContent:'${esc(n.slice(0,2))}'}))"></span>
+      <span class="logo-name">${esc(n)}</span></a>`).join("")}</div></section>`).join("")
+    + `<p class="p-tip">AI 서비스는 이름·주소가 자주 바뀌어요. 안 열리는 곳이 있으면 알려 주세요.</p>` + footer();
+}
+function renderPrompts(cat){
+  const hl = s => esc(s).replace(/\[([^\]]+)\]/g, "<mark>[$1]</mark>");
+  $("main").innerHTML = `<section class="sec"><h2>📝 ${esc(cat)} 프롬프트</h2>
+    <p class="desc">[노란 칸]을 내 내용으로 바꿔서 AI에 붙여 넣으세요</p>
+    <div class="p-list">${PROMPTS[cat].map((p, i) => `<div class="p-card">
+      <h3>${esc(p[0])}</h3><div class="use">${esc(p[1])}</div>
+      <div class="p-text">${hl(p[2])}</div>
+      <div class="p-btns">
+        <button class="copy" data-i="${i}">복사</button>
+        <button data-open="chatgpt" data-i="${i}">ChatGPT로 열기</button>
+        <button data-open="claude" data-i="${i}">Claude로 열기</button>
+      </div></div>`).join("")}</div></section>` + footer();
+}
+const footer = () => `<div class="myway-footer"><a href="https://myway.kr" target="_top">myway.kr</a></div>`;
+function render(){ renderTabs(); if (cur === "ai") renderAI(); else renderPrompts(cur); window.scrollTo(0, 0); }
+
+$("tabs").addEventListener("click", e => { const b = e.target.closest("button[data-t]"); if (!b) return; cur = b.dataset.t; render(); try { history.replaceState(null, "", "#" + encodeURIComponent(cur)); } catch(_) {} });
+
+function copyText(t){
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(t);
+  return new Promise((res, rej) => { const ta = document.createElement("textarea"); ta.value = t; ta.style.cssText = "position:fixed;left:-9999px"; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy") ? res() : rej(); } catch(e) { rej(e); } ta.remove(); });
+}
+$("main").addEventListener("click", e => {
+  const b = e.target.closest("button[data-i]"); if (!b || cur === "ai") return;
+  const text = PROMPTS[cur][+b.dataset.i][2];
+  if (b.classList.contains("copy")) {
+    copyText(text).then(() => { b.textContent = "복사됨 ✓"; b.classList.add("done"); setTimeout(() => { b.textContent = "복사"; b.classList.remove("done"); }, 1500); })
+      .catch(() => { b.textContent = "복사 실패"; });
+    return;
+  }
+  const url = b.dataset.open === "claude" ? "https://claude.ai/new?q=" : "https://chatgpt.com/?q=";
+  window.open(url + encodeURIComponent(text), "_blank", "noopener");
+});
+
+const h = decodeURIComponent(location.hash.slice(1));
+if (PCATS.includes(h)) cur = h;
+render();
+</script>
+
+<script>
+/* 복사 방지 (프롬프트 [복사] 버튼은 정상 동작) */
+(function(){
+  const block = e => { const t = e.target; if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA")) return; e.preventDefault(); };
+  ["contextmenu","selectstart","dragstart"].forEach(ev => document.addEventListener(ev, block));
+  ["copy","cut"].forEach(ev => document.addEventListener(ev, e => { if (e.target && e.target.tagName === "TEXTAREA") return; e.preventDefault(); }));
+  document.addEventListener("keydown", e => {
+    const k = (e.key || "").toLowerCase();
+    if (k === "f12" || (e.ctrlKey && ["u","s","c","x","a"].includes(k)) || (e.ctrlKey && e.shiftKey && ["i","j","c"].includes(k))) e.preventDefault();
+  });
+})();
+</script>
+<script>
+/* 모바일: 새 창 대신 같은 창(최상위)에서 열기 → 백버튼으로 MYWAY 복귀 */
+(function(){
+  if(!/Mobi/i.test(navigator.userAgent)) return;
+  const go = u => { try { (window.top || window).location.href = u; } catch(_) { location.href = u; } };
+  document.addEventListener('click', function(e){
+    if (e.defaultPrevented) return;
+    const a = e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a || /^(javascript|#)/.test(a.getAttribute('href') || '')) return;
+    e.preventDefault(); go(a.href);
+  });
+  const _open = window.open;
+  window.open = function(url){ if (typeof url === 'string' && /^https?:/.test(url)) { go(url); return null; } return _open.apply(window, arguments); };
+})();
+</script>
+</body>
+</html>
