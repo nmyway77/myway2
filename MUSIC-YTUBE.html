@@ -3974,4 +3974,25 @@
 </script>
 
 
+<script>
+/* 모바일: 새 창(새 탭) 대신 최상위 창에서 직접 열어 → 백버튼으로 MYWAY 복귀. PC·태블릿은 새 탭 유지. */
+(function(){
+  if(!/Mobi/i.test(navigator.userAgent)) return;
+  function skip(u){ return !u || u.charAt(0) === '#' || /^(javascript|blob|data|mailto|tel|about):/i.test(u); }
+  function go(u){ try { (window.top || window).location.href = u; } catch(_) { location.href = u; } }
+  document.addEventListener('click', function(e){
+    if (e.defaultPrevented || document.body.classList.contains('editing')) return;
+    var a = e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a || a.hasAttribute('download')) return;
+    var href = a.getAttribute('href') || '';
+    if (skip(href) || skip(a.href)) return;
+    e.preventDefault(); go(a.href);
+  });
+  var _open = window.open;
+  window.open = function(url){
+    if (typeof url === 'string' && !skip(url)) { go(new URL(url, location.href).href); return null; }
+    return _open.apply(window, arguments);
+  };
+})();
+</script>
 </body></html>
