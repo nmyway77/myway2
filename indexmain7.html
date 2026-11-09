@@ -3473,4 +3473,22 @@
 </script>
 
 
-<input type="file" accept=".json,.html,.htm,text/html,application/json" style="position: fixed; left: -9999px; top: 0px; opacity: 0;"></body></html>
+<input type="file" accept=".json,.html,.htm,text/html,application/json" style="position: fixed; left: -9999px; top: 0px; opacity: 0;"><script>
+/* 네이버: 핸드폰에서는 모바일 네이버(m.naver.com), PC에서는 PC 네이버(www.naver.com) */
+(function(){
+  var MOB = /Android|iPhone|iPad|iPod|Mobile|SamsungBrowser/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (!MOB) return;
+  function fix(u){
+    try { var x = new URL(u, location.href); if (/^(www\.)?naver\.com$/i.test(x.hostname) && (x.pathname === '/' || x.pathname === '')) return 'https://m.naver.com/' + x.search + x.hash; } catch(e){}
+    return null;
+  }
+  /* window 캡처 → 기존 모바일 링크 처리보다 먼저 주소를 바꿈 */
+  window.addEventListener('click', function(e){
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null; if (!a) return;
+    var m = fix(a.getAttribute('href')); if (m) a.setAttribute('href', m);
+  }, true);
+  var _open = window.open;
+  window.open = function(u){ var m = (typeof u === 'string') ? fix(u) : null; if (m) arguments[0] = m; return _open.apply(window, arguments); };
+})();
+</script>
+</body></html>
