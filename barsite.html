@@ -3303,7 +3303,7 @@
      주소를 바꾸려면 여기 url만 고치면 됨 (인덱스 즐겨찾기 아이콘의 링크 주소와 동일) */
   /* @PAGES_START */
   var TVR_PAGES = {
-    tv2:   { label: "📺 TV2", url: "https://nmyway77.github.io/livetv7/" },
+    tv2:   { label: "📺 TV", url: "https://nmyway77.github.io/livetv7/" },
     music: { label: "🎵 음악", url: "https://myway.kr/MUSIC-YTUBE.html" },
     cctv:  { label: "📹 CCTV", url: "https://myway.kr/00makingyoutubefull2.html" }
   };
@@ -3373,7 +3373,8 @@
       var frag = document.createDocumentFragment();
       var pk = Object.keys(TVR_PAGES);
       function pg(k){ return [k, TVR_PAGES[k].label]; }
-      [['tv','📺 TV']].concat(pk.filter(function(k){ return k === 'tv2'; }).map(pg))
+      /* 예전 [📺 TV](채널바) 탭은 제거 — TV2(livetv7)를 [📺 TV]로 표시 */
+      pk.filter(function(k){ return k === 'tv2'; }).map(pg)
         .concat([['radio','📻 라디오']])
         .concat(pk.filter(function(k){ return k !== 'tv2'; }).map(pg)).forEach(function(d){
         var b = document.createElement('button'); b.type = 'button';
@@ -3449,7 +3450,7 @@
     /* 화살표 링크 클릭 기억 (KBS 핸드폰·MBC 등 새 창으로 나가는 채널) */
     $('tvrScreen').addEventListener('click', function(e){ if (e.target.closest('.tvr-tap') && cur) markReturn(cur.k, cur.i); }, true);
     var ret = takeReturn();
-    if (ret) openOnair(ret.k, ret.i); else openOnair('tv2');
+    if (ret && ret.k !== 'tv') openOnair(ret.k, ret.i); else openOnair('tv2');
     list();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
