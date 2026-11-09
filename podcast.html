@@ -94,19 +94,21 @@
 <script>
 /* ───── 채널 목록 (유튜브 공식 채널 ID) ─────
    mode: 처음 눌렀을 때 보여 줄 화면 — live(지금 생방송) / latest(최신 회차·업로드 목록)
+   ※ 채널 라이브 주소(live_stream)는 방송이 없거나 동시에 2개 이상 생방송 중이면 "재생할 수 없음"이 떠서
+     기본은 최신 회차, 라이브는 버튼으로. vid가 있으면(24시간 방송) 그 영상으로 라이브 고정
    cat: 상단 분류 탭 */
 const CHANNELS = [
-  { slug:"3pro",      name:"삼프로TV",               cat:"경제",      id:"UChlv4GSd7OQl3js-jkLOnFA", mode:"live",   desc:"경제 · 아침 라이브" },
+  { slug:"3pro",      name:"삼프로TV",               cat:"경제",      id:"UChlv4GSd7OQl3js-jkLOnFA", mode:"latest",   desc:"경제 · 아침 라이브" },
   { slug:"syuka",     name:"슈카월드",               cat:"경제",      id:"UCsJ6RuBiTVWRX156FVbeaGg", mode:"latest", desc:"경제 · 정기 라이브" },
-  { slug:"ytnradio",  name:"YTN 라디오",             cat:"시사",      id:"UCwRljhjVWtLqAKbsWGPU_OA", mode:"live",   desc:"보도 라디오 · 라이브" },
-  { slug:"hanpan",    name:"CBS 박재홍의 한판승부",  cat:"시사",      id:"UCV9gIwasozKlwz5U2Sa2q6g", mode:"live",   desc:"CBS 라디오 · 평일 저녁" },
+  { slug:"ytnradio",  name:"YTN 라디오",             cat:"시사",      id:"UCwRljhjVWtLqAKbsWGPU_OA", vid:"SMQJyQ0UMvI", mode:"live", desc:"24시간 듣는 라디오" },
+  { slug:"hanpan",    name:"CBS 박재홍의 한판승부",  cat:"시사",      id:"UCV9gIwasozKlwz5U2Sa2q6g", mode:"latest",   desc:"CBS 라디오 · 평일 저녁" },
   { slug:"ytnsisa",   name:"YTN 시사",               cat:"시사",      id:"UCvWUqUT10RiJ6W8XiruqAiQ", mode:"latest", desc:"보도 · 시사 프로그램" },
-  { slug:"gyeomson",  name:"겸손은힘들다 뉴스공장",  cat:"시사",      id:"UCAAvO0ehWox1bbym3rXKBZw", mode:"live",   desc:"시사 토크 · 아침 라이브" },
-  { slug:"sinsa",     name:"신의한수",               cat:"시사",      id:"UCgOLQwRv1r2m9mhE1tfsn3Q", mode:"live",   desc:"시사 토크 · 라이브" },
+  { slug:"gyeomson",  name:"겸손은힘들다 뉴스공장",  cat:"시사",      id:"UCAAvO0ehWox1bbym3rXKBZw", mode:"latest",   desc:"시사 토크 · 아침 라이브" },
+  { slug:"sinsa",     name:"신의한수",               cat:"시사",      id:"UCgOLQwRv1r2m9mhE1tfsn3Q", mode:"latest",   desc:"시사 토크 · 라이브" },
   { slug:"jiyoon",    name:"김지윤의 지식Play",      cat:"교양",      id:"UCXql5C57vS4ogUt6CPEWWHA", mode:"latest", desc:"국제정치 · 역사 · 문화" },
   { slug:"videomug",  name:"비디오머그",             cat:"교양",      id:"UCMEbRpvuwTbXxGiyDb1mT8w", mode:"latest", desc:"SBS 지식뉴스" },
   { slug:"chim",      name:"침착맨",                 cat:"예능·토크", id:"UCUj6rrhMTR9pipbAWBAMvUQ", mode:"latest", desc:"토크 · 다시보기" },
-  { slug:"chimlive",  name:"침착맨 원본 박물관",     cat:"예능·토크", id:"UCewitUbsXnyjvJjGgxa0IYw", mode:"live",   desc:"침착맨 생방송 송출" }
+  { slug:"chimlive",  name:"침착맨 원본 박물관",     cat:"예능·토크", id:"UCewitUbsXnyjvJjGgxa0IYw", mode:"latest",   desc:"침착맨 생방송 송출" }
 ];
 const CATS = ["전체", "즐겨찾기", "경제", "시사", "교양", "예능·토크"];
 
@@ -143,7 +145,7 @@ function renderGrid(){
   $("grid").innerHTML = list.length ? list.map(c => `
     <div class="card ${c.slug===curSlug?'on':''}" data-slug="${esc(c.slug)}">
       <b>${esc(c.name)}</b>
-      <div class="meta"><span class="badge ${c.mode==='live'?'':'vod'}">${c.mode==='live'?'LIVE':'VOD'}</span>${esc(c.desc)}</div>
+      <div class="meta"><span class="badge ${c.vid?'':'vod'}">${c.vid?'24H':'VOD'}</span>${esc(c.desc)}</div>
       <button class="star ${favs.includes(c.slug)?'on':''}" data-fav="${esc(c.slug)}" title="즐겨찾기">★</button>
     </div>`).join("")
     : `<div style="padding:16px;color:#8a91a3;font-size:13px">${currentCat==="즐겨찾기" ? "★을 눌러 즐겨찾기를 추가하세요" : "채널이 없습니다"}</div>`;
@@ -151,7 +153,7 @@ function renderGrid(){
 function renderMode(){
   Array.prototype.forEach.call($("mode").querySelectorAll("button"), b => b.classList.toggle("on", b.dataset.m === curMode));
   $("hint").textContent = !curSlug ? "" : curMode === "live"
-    ? "지금 생방송이 없으면 화면이 비거나 '예정' 안내가 나와요 → [▶ 최신 회차]를 눌러 보세요"
+    ? "지금 생방송 중일 때만 나와요. '재생할 수 없음'이 뜨면 생방송이 없는 시간이에요 → [▶ 최신 회차]"
     : "최근 올라온 영상 목록이 나와요 (재생목록 버튼으로 다른 회차 선택)";
 }
 
@@ -160,7 +162,7 @@ function play(slug, mode){
   curSlug = c.slug; curMode = mode || c.mode;
   const q = "autoplay=1&mute=1&playsinline=1&rel=0";
   const src = curMode === "live"
-    ? `https://www.youtube.com/embed/live_stream?channel=${c.id}&${q}`
+    ? (c.vid ? `https://www.youtube.com/embed/${c.vid}?${q}` : `https://www.youtube.com/embed/live_stream?channel=${c.id}&${q}`)
     : `https://www.youtube.com/embed/videoseries?list=UU${c.id.slice(2)}&${q}`;
   $("player").innerHTML = `<iframe src="${src}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="${esc(c.name)}"></iframe>`;
   $("now").innerHTML = `${esc(c.name)}<small>${esc(c.cat)} · ${curMode === "live" ? "라이브" : "최신 회차"}</small>`;
