@@ -3327,8 +3327,8 @@
     var first = !cur;
     cur = { k: kind, i: i };
     var y = ytId(c[1]), src = y ? 'https://www.youtube.com/embed/' + y + '?autoplay=1&playsinline=1' : String(c[1]).replace(/"/g, '%22');
-    if (kind === 'tv' && IS_MOBILE && /kbs\.co\.kr/i.test(c[1])) {
-      /* 핸드폰에서 KBS는 화면 안(iframe)에서 안 나옴 → 화살표로 클릭 유도, 누르면 KBS 공식 플레이어 새 창 */
+    if ((kind === 'tv' || kind === 'radio') && IS_MOBILE && /kbs\.co\.kr/i.test(c[1])) {
+      /* 핸드폰에서 KBS(TV·라디오)는 화면 안(iframe)에서 안 나옴 → 화살표로 클릭 유도, 누르면 KBS 공식 플레이어 새 창 */
       $('tvrScreen').innerHTML = '<a class="tvr-tap" href="' + String(c[1]).replace(/"/g, '%22') + '" target="_blank" rel="noopener">' +
         '<span class="tvr-tap-arw">👇</span><span class="tvr-tap-ttl">' + esc(c[0]) + '</span>' +
         '<span class="tvr-tap-btn">▶ 눌러서 보기 ↗</span><span class="tvr-tap-sub">핸드폰에서는 KBS 공식 플레이어(새 창)로 열려요</span></a>';
