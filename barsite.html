@@ -3213,12 +3213,13 @@
     var href = a.getAttribute('href') || '';
     if(!href || href.charAt(0) === '#' || /^javascript:/i.test(href)) return;
     e.preventDefault();
+    try { if (window.__mywayMarkLeave) window.__mywayMarkLeave(); } catch(_) {}
     try { (window.top || window).location.href = a.href; }
     catch(_) { window.open(a.href, '_blank'); }
   }, true);
   var _open = window.open.bind(window);
   window.open = function(url, name, feat){
-    if(url){ try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
+    if(url){ try { if (window.__mywayMarkLeave) window.__mywayMarkLeave(); } catch(_) {} try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
     return _open(url, name, feat);
   };
 })();
@@ -3340,7 +3341,7 @@
   function takeReturn(){
     try {
       var r = JSON.parse(sessionStorage.getItem(RET_KEY) || 'null'); sessionStorage.removeItem(RET_KEY);
-      if (r && (TVR[r.k] || []).length && r.t && Date.now() - r.t < 3 * 3600 * 1000) return r;
+      if (r && r.t && Date.now() - r.t < 3 * 3600 * 1000 && ((TVR[r.k] || []).length || (r.k && TVR_PAGES[r.k]) || (r.tab && document.querySelector('#tabNav .tab-btn[data-tab="' + r.tab + '"]')))) return r;
     } catch(e){}
     return null;
   }
@@ -3467,8 +3468,22 @@
       /* 핸드폰: 새 탭 대신 같은 창(최상위)에서 열기 → 백버튼으로 myway.kr 복귀 */
       if (IS_MOBILE) { e.preventDefault(); try { (window.top || window).location.href = a.href; } catch(err) { window.open(a.href, '_blank', 'noopener'); } }
     }, true);
+    /* 핸드폰에서 링크로 나갈 때(같은 창) 지금 보던 곳 기억 → 백버튼으로 돌아오면 그대로 (드라마VOD 등 일반 탭 + 스크롤 위치) */
+    window.__mywayMarkLeave = function(){
+      if (onair) { if (cur) markReturn(cur.k, cur.i); else markReturn(onair, null); return; }
+      var t = document.body.getAttribute('data-active-tab');
+      if (t && t !== 'onair') { try { sessionStorage.setItem(RET_KEY, JSON.stringify({ tab: t, y: window.scrollY || 0, t: Date.now() })); } catch(e){} }
+    };
+    /* 음악·CCTV 화면 안의 링크로 나가는 경우(그 페이지가 직접 이동) → 떠날 때 기억 */
+    window.addEventListener('pagehide', function(){
+      try { if (onair && onair !== 'tv2' && TVR_PAGES[onair] && !sessionStorage.getItem(RET_KEY)) markReturn(onair, null); } catch(e){}
+    });
     var ret = takeReturn();
-    if (ret && ret.k !== 'tv') openOnair(ret.k, ret.i); else openOnair('tv2');
+    if (ret && ret.tab && typeof selectTab === 'function') {
+      selectTab(ret.tab);
+      var y = +ret.y || 0; if (y) { [60, 400, 1000].forEach(function(ms){ setTimeout(function(){ try { window.scrollTo(0, y); } catch(e){} }, ms); }); }
+    }
+    else if (ret && ret.k && ret.k !== 'tv') openOnair(ret.k, ret.i); else openOnair('tv2');
     list();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
