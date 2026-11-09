@@ -3285,15 +3285,15 @@
       ["SOOP","https://www.sooplive.co.kr/live/all"]
     ],
     radio: [
-      ["radionara","https://radionara.vercel.app/"],
+      ["SBS러브FM","https://www.sbs.co.kr/live/S08?div=live_list"],
+      ["SBS파워FM","https://www.sbs.co.kr/live/S07?div=live_list"],
       ["KBS","https://radio.kbs.co.kr/"],
       ["KBS1","https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=21&ch_type=radioList&bora=on&chat=on"],
       ["KBS2","https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=22&ch_type=radioList&bora=on&chat=on"],
       ["KBS3","https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=23&ch_type=radioList"],
       ["COOL FM","https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=25&ch_type=radioList"],
-      ["SBS러브FM","https://www.sbs.co.kr/live/S08?div=live_list"],
-      ["SBS파워FM","https://www.sbs.co.kr/live/S07?div=live_list"],
       ["MBC","https://miniwebapp.imbc.com/index?channel=mfm","tap"],
+      ["radionara","https://radionara.vercel.app/"],
       ["TBN 교통방송","https://www.tbn.or.kr/onair/tbnlive.tbn?area_code=2"],
       ["CBS","https://www.cbs.co.kr/radio"]
     ]
@@ -3408,7 +3408,7 @@
       list();
       if (!cur) {
         if (k === 'tv') play(0, true); /* TV 탭 = YTN 바로 재생 */
-        else { var ri = 0; (TVR.radio || []).forEach(function(c, i){ if (c[0] === 'radionara') ri = i; }); play(ri, true); } /* 라디오 탭 = 라디오나라 바로 재생 */
+        else play(0, true); /* 라디오 탭 = 맨 앞 채널(SBS러브FM) 바로 재생 */
       }
       try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e){}
       navCenter('#tabNav .tab-btn[data-tab="onair_' + k + '"]');
