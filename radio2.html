@@ -148,7 +148,7 @@ function play(i){
       <div class="arw">👇</div><div class="ttl">${esc(r[0])}</div><div class="btn">▶ 눌러서 듣기 ↗</div>
       <div class="sub">${IS_MOBILE ? "핸드폰에서는 방송사 공식 페이지(새 창)로 열려요" : "이 방송은 방송사가 화면 안 재생을 막아 별도 창으로 열려요"}</div></a>`;
   } else {
-    $("stage").innerHTML = `<iframe title="${esc(r[0])}" src="${esc(r[2])}" referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+    $("stage").innerHTML = `<iframe title="${esc(r[0])}" src="${esc(r[2])}"${/sbs\.co\.kr/i.test(r[2]) ? ' sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"' : ""} referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
   }
   Array.prototype.forEach.call($("grid").querySelectorAll(".card"), el => el.classList.toggle("on", +el.dataset.i === cur));
 }

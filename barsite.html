@@ -3341,7 +3341,8 @@
         '<span class="tvr-tap-arw">👇</span><span class="tvr-tap-ttl">' + esc(c[0]) + '</span>' +
         '<span class="tvr-tap-btn">▶ 눌러서 보기 ↗</span><span class="tvr-tap-sub">핸드폰에서는 KBS 공식 플레이어(새 창)로 열려요</span></a>';
     } else
-    $('tvrScreen').innerHTML = '<iframe title="' + esc(c[0]) + '" referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen src="' + src + '"></iframe>';
+    /* allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentationS: 'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentationS 고릴라 앱에서 청취/시청' 확인창이 뜨지 않게 sandbox(allow-modals 제외) */
+    $('tvrScreen').innerHTML = '<iframe title="' + esc(c[0]) + '"' + (/sbs\.co\.kr/i.test(c[1]) ? ' sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"' : '') + ' referrerpolicy="no-referrer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen src="' + src + '"></iframe>';
     $('tvrSection').classList.add('playing');
     list();
     var b = $('tvrList').querySelector('.tvr-ch.on'); if (b) { try { b.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' }); } catch(e){} }
