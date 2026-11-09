@@ -3300,6 +3300,20 @@
   /* @TVR_END */
   /* ===== 라디오 옆 [음악] [CCTV] 탭 — 아래 주소의 페이지를 화면 전체로 띄움 =====
      주소를 바꾸려면 여기 url만 고치면 됨 (인덱스 즐겨찾기 아이콘의 링크 주소와 동일) */
+  /* 📺 TV(livetv7) 즐겨찾기를 myway.kr 저장소에 보관 — github.io 페이지 저장소는 핸드폰에서 브라우저를 껐다 켜면 지워지는 경우가 있어서 */
+  (function(){
+    var KEY = 'mywayLiveTvFavsV1', SRC = 'https://nmyway77.github.io';
+    window.addEventListener('message', function(e){
+      if (e.origin !== SRC) return;
+      var d = e.data || {};
+      if (d.type === 'LIVETV_FAVS_GET') {
+        var v = null; try { v = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(_){}
+        try { e.source.postMessage({ type: 'LIVETV_FAVS', favs: Array.isArray(v) ? v : null }, SRC); } catch(_){}
+      } else if (d.type === 'LIVETV_FAVS_SET' && Array.isArray(d.favs)) {
+        try { localStorage.setItem(KEY, JSON.stringify(d.favs.filter(function(x){ return typeof x === 'string'; }).slice(0, 500))); } catch(_){}
+      }
+    });
+  })();
   /* @PAGES_START */
   var TVR_PAGES = {
     tv2:   { label: "📺 TV", url: "https://nmyway77.github.io/livetv7/" },
