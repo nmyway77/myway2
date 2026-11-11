@@ -118,7 +118,7 @@ function load(){
   if (loading) return; loading = true;
   const q = $("find").value.trim();
   const words = q ? [q] : CATS[cat][1];
-  const cb = "&_t=" + Math.floor(Date.now() / 300000);   /* 5분마다 새 주소 → 변환 서비스의 오래된 보관본 대신 새로 받아 옴 */
+  const cb = "&_t=" + Math.floor(Date.now() / 600000);   /* 10분마다 새 주소 → 변환 서비스의 오래된 보관본 대신 새로 받아 옴 */
   const gq = w => "https://news.google.com/rss/search?q=" + encodeURIComponent(w + " when:" + hours + "h") + "&hl=ko&gl=KR&ceid=KR:ko" + cb;
   const gnews = words.map(gq).concat((q || cat) ? [] : SITES.map(s => gq("site:" + s)));
   const jobs = gnews.map(u => ({ u, g: true })).concat((q || cat) ? [] : OUTLETS.map(o => ({ u: o[1], name: o[0] })));
@@ -133,10 +133,10 @@ function load(){
         if (q && !j.g && t.indexOf(q) < 0) return;
         out.push({ t: t.trim(), src, d, link: i.link, img: j.g ? "" : imgOf(i) });
       });
-      done++; $("st").textContent = "불러오는 중… " + done + "/" + jobs.length;
+      done++; finish(done < jobs.length);   /* 받아 오는 대로 바로 보여 줌 */
       return worker();
     }); };
-  Promise.all([worker(), worker(), worker(), worker()]).then(() => {
+  function finish(partial){
     const lim = Date.now() - hours * 3600000;
     const list = out.filter(x => x.d >= lim && x.d <= Date.now() + 600000).sort((a, b) => b.d - a.d);
     /* 같은 기사 합치기: 사진 있는 쪽을 대표로, 나머지는 '외 N곳' */
@@ -144,13 +144,14 @@ function load(){
     list.forEach(x => { x.g = grams(norm(x.t)); const hit = merged.find(m => same(m.g, x.g));
       if (hit) { if (!hit.srcs.includes(x.src)) hit.srcs.push(x.src); if (!hit.img && x.img) { hit.img = x.img; } }
       else merged.push(Object.assign(x, { srcs: [x.src] })); });
-    ITEMS = merged; loading = false; render(out.length);
-  });
+    ITEMS = merged; render(out.length, partial ? (done + "/" + jobs.length) : "");
+  }
+  Promise.all([worker(), worker(), worker(), worker(), worker(), worker()]).then(() => { loading = false; finish(false); });
 }
-function render(raw){
+function render(raw, prog){
   const g = $("grid"); g.innerHTML = "";
-  $("st").textContent = ITEMS.length ? `최근 ${hours}시간 · ${ITEMS.length}개 (같은 기사 ${raw - ITEMS.length}개는 하나로 합침) · 누르면 기사 새 창` : "";
-  if (!ITEMS.length) { g.innerHTML = `<div class="empty">이 시간 안에 올라온 뉴스가 없어요 — 시간을 늘려 보세요</div>`; return; }
+  $("st").textContent = (prog ? "불러오는 중… " + prog + " · " : "") + (ITEMS.length ? `최근 ${hours}시간 · ${ITEMS.length}개 (같은 기사 ${raw - ITEMS.length}개는 하나로 합침) · 누르면 기사 새 창` : "");
+  if (!ITEMS.length) { if (prog) return; g.innerHTML = `<div class="empty">이 시간 안에 올라온 뉴스가 없어요 — 시간을 늘려 보세요</div>`; return; }
   ITEMS.forEach((x, i) => {
     const a = document.createElement("a"); a.className = "card" + (x.img ? "" : " np"); a.href = x.link; a.target = "_blank"; a.rel = "noopener";
     a.style.setProperty("--c", COLS[i % COLS.length]);
