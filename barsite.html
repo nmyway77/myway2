@@ -3280,6 +3280,11 @@
     cctv:  { label: "📹 CCTV", url: "https://myway.kr/00makingyoutubefull2.html" }
   };
   /* @PAGES_END */
+  /* 기존 일반 탭을 다른 페이지로 화면 전체 표시 (탭 위치·이름은 그대로) — cat: people2.html 처음 분류 */
+  var TAB_PAGES = {
+    youtuber: { label: "유튜버", url: "https://myway.kr/people2.html", cat: "youtuber" }
+  };
+  function pageOf(k){ return TVR_PAGES[k] || TAB_PAGES[k] || null; }
   var kind = 'tv', cur = null; /* cur = {k, i} */
   /* 핸드폰·태블릿 판별 (PC는 KBS도 화면 안에서 그대로 재생) */
   var IS_MOBILE = /Android|iPhone|iPad|iPod|Mobile|SamsungBrowser/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -3299,7 +3304,7 @@
   function takeReturn(){
     try {
       var r = JSON.parse(sessionStorage.getItem(RET_KEY) || 'null'); sessionStorage.removeItem(RET_KEY);
-      if (r && r.t && Date.now() - r.t < 3 * 3600 * 1000 && ((TVR[r.k] || []).length || (r.k && TVR_PAGES[r.k]) || (r.tab && document.querySelector('#tabNav .tab-btn[data-tab="' + r.tab + '"]')))) return r;
+      if (r && r.t && Date.now() - r.t < 3 * 3600 * 1000 && ((TVR[r.k] || []).length || (r.k && pageOf(r.k)) || (r.tab && document.querySelector('#tabNav .tab-btn[data-tab="' + r.tab + '"]')))) return r;
     } catch(e){}
     return null;
   }
@@ -3357,7 +3362,7 @@
       });
       var sep = document.createElement('span'); sep.className = 'tvr-sep'; frag.appendChild(sep);
       nav.insertBefore(frag, nav.firstChild);
-      if (onair) Array.prototype.forEach.call(nav.querySelectorAll('.tab-btn:not(.tvr-tab)'), function(b){ b.classList.remove('is-active'); });
+      if (onair) Array.prototype.forEach.call(nav.querySelectorAll('.tab-btn:not(.tvr-tab)'), function(b){ b.classList.toggle('is-active', !!TAB_PAGES[onair] && b.getAttribute('data-tab') === onair); });
     }
     /* 모바일: 누른 탭 버튼을 탭바 가운데로 가로 스크롤 → 양옆 다음 탭이 보이게 */
     function navCenter(sel){
@@ -3378,14 +3383,18 @@
       kind = k;
       document.body.setAttribute('data-active-tab', 'onair');
       var nav = $('tabNav');
-      if (nav) Array.prototype.forEach.call(nav.querySelectorAll('.tab-btn'), function(b){ b.classList.toggle('is-active', b.getAttribute('data-tab') === 'onair_' + k); });
-      if (TVR_PAGES[k]) { /* 음악·CCTV: 채널바 없이 해당 페이지를 화면 전체로 */
+      var btnTab = TAB_PAGES[k] ? k : 'onair_' + k;
+      if (nav) Array.prototype.forEach.call(nav.querySelectorAll('.tab-btn'), function(b){ b.classList.toggle('is-active', b.getAttribute('data-tab') === btnTab); });
+      var pg = pageOf(k);
+      if (pg) { /* 음악·CCTV·유튜버: 채널바 없이 해당 페이지를 화면 전체로 */
         if (changed || !$('tvrScreen').firstChild) {
-          $('tvrScreen').innerHTML = '<iframe title="' + esc(TVR_PAGES[k].label) + '" allow="autoplay; encrypted-media; fullscreen" allowfullscreen src="' + String(TVR_PAGES[k].url).replace(/"/g, '%22') + '"></iframe>';
+          /* people2.html은 같은 사이트 sessionStorage(mywayCat_people2)로 처음 분류를 정함 → 유튜버가 메인 */
+          if (pg.cat) { try { sessionStorage.setItem('mywayCat_people2', pg.cat); } catch(e){} }
+          $('tvrScreen').innerHTML = '<iframe title="' + esc(pg.label) + '" allow="autoplay; encrypted-media; fullscreen" allowfullscreen src="' + String(pg.url).replace(/"/g, '%22') + '"></iframe>';
           $('tvrSection').classList.add('playing', 'page-mode');
         }
         try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e){}
-        navCenter('#tabNav .tab-btn[data-tab="onair_' + k + '"]');
+        navCenter('#tabNav .tab-btn[data-tab="' + btnTab + '"]');
         return;
       }
       list();
@@ -3401,7 +3410,9 @@
     try {
       if (typeof selectTab === 'function') {
         var _st = selectTab;
-        selectTab = function(id){ if (onair) { onair = null; stop(); } var r = _st.apply(this, arguments); navCenter('#tabNav .tab-btn[data-tab="' + id + '"]'); return r; };
+        selectTab = function(id){
+          if (TAB_PAGES[id]) { try { sessionStorage.setItem('mywayTab_barsite', id); } catch(e){} openOnair(id); return; }
+          if (onair) { onair = null; stop(); } var r = _st.apply(this, arguments); navCenter('#tabNav .tab-btn[data-tab="' + id + '"]'); return r; };
       }
     } catch(e){}
     /* renderNav(탭바 다시 그림)가 호출될 때마다 TV·라디오 버튼을 다시 붙임 */
@@ -3434,7 +3445,7 @@
     };
     /* 음악·CCTV 화면 안의 링크로 나가는 경우(그 페이지가 직접 이동) → 떠날 때 기억 */
     window.addEventListener('pagehide', function(){
-      try { if (onair && onair !== 'tv2' && TVR_PAGES[onair] && !sessionStorage.getItem(RET_KEY)) markReturn(onair, null); } catch(e){}
+      try { if (onair && onair !== 'tv2' && pageOf(onair) && !sessionStorage.getItem(RET_KEY)) markReturn(onair, null); } catch(e){}
     });
     var ret = takeReturn();
     if (ret && ret.tab && typeof selectTab === 'function') {
