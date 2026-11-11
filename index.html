@@ -431,6 +431,12 @@
       will-change: transform;
     }
 
+    /* 아이폰 크게 보기: 헤더까지 덮어 화면 전체 */
+    .main-frame-wrap.myway-big {
+      top: 0 !important; height: 100vh !important; height: 100dvh !important;
+      z-index: 2147483000 !important; transform: none !important; transition: none !important; padding-bottom: 0 !important;
+    }
+
     /* 접힌 상태: 위로 슬라이드 아웃 */
     .main-frame-wrap.collapsed {
       transform: translateY(-12px);
@@ -2151,6 +2157,11 @@
       var d = e.data || {};
       if(d.type === 'MYWAY_SCREEN_READY'){ sendScreenNav(); }
       else if(d.type === 'MYWAY_SCREEN_SWITCH' && d.url){ switchScreen(d.url); }
+      else if(d.type === 'MYWAY_BIG'){
+        /* 아이폰 크게 보기: 안쪽 화면이 요청하면 헤더까지 덮어 화면 전체로 */
+        var mf = document.getElementById('main-frame'), fw = document.getElementById('frameWrap');
+        if(mf && fw && e.source === mf.contentWindow) fw.classList.toggle('myway-big', !!d.on);
+      }
     });
     (function(){
       var f = document.getElementById('main-frame');

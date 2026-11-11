@@ -806,7 +806,6 @@
 #builderMount{height:100%;}
 
     /* ⛶ 크게 보기 */
-  html.is-ios .big-btn { display:none !important; }
   .big-btn { flex:none; border:1.5px solid #dfe3ec; background:#fff; color:#1f2740; border-radius:999px; padding:6px 12px; font:inherit; font-size:12.5px; font-weight:800; cursor:pointer; white-space:nowrap; }
   :fullscreen.bigable, :-webkit-full-screen.bigable { background:#000 !important; display:flex !important; align-items:center; justify-content:center; width:100vw; height:100vh; }
   .bigable.big-fill { position:fixed !important; inset:0 !important; z-index:9999 !important; background:#000 !important; display:flex !important; align-items:center; justify-content:center; }
@@ -1647,10 +1646,11 @@
     }, {passive:false});
   }
   function toggleFullscreen(){
+    /* 아이폰은 requestFullscreen이 없어 버튼이 안 먹던 문제 → bigView(전체화면 안 되면 화면 꽉 채우기)로 통일 */
     var el = document.querySelector('.main');
-    var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
-    if (!fsEl){ var req = el.requestFullscreen || el.webkitRequestFullscreen; if(req) req.call(el); }
-    else { var ex = document.exitFullscreen || document.webkitExitFullscreen; if(ex) ex.call(document); }
+    var pm = document.getElementById('plMain');
+    if (pm && pm.classList.contains('big-fill')){ bigView(pm); return; }
+    el.classList.add('bigable'); bigView(el);
   }
 
   /* ── 자동 소리 재생: 클릭 시 음소거 해제 + 볼륨 50% ── */
@@ -4239,15 +4239,20 @@
 
 <script>
 /* ⛶ 크게 보기 — 핸드폰에서 유튜브 자체 전체화면 버튼이 안 먹을 때를 위해: 영상 칸을 화면 전체로 (지원 안 하는 아이폰은 이 화면 안에서 꽉 채우기) */
-/* 아이폰·아이패드는 유튜브 자체 전체화면(영상 오른쪽 아래 작은 네모)이 잘 되므로 ⛶ 크게 버튼은 숨김 */
+/* 아이폰은 유튜브 자체 전체화면이 안 될 때가 있어 ⛶ 크게 버튼을 아이폰에서도 보여 줌 */
 try { if (/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) document.documentElement.classList.add("is-ios"); } catch(e) {}
+/* 아이폰은 전체화면 기능이 없어서: 이 화면 안에서 꽉 채우고, 바깥 화면(barsite·index)에도 알려 탭·헤더까지 덮게 함 */
+function bigTell(on){ try { if (parent !== window) parent.postMessage({ type:"MYWAY_BIG", on:!!on }, "*"); } catch(e) {} }
+window.addEventListener("pagehide", function(){ bigTell(false); });
 function bigView(el){
   if (!el) return;
   const d = document, on = d.fullscreenElement || d.webkitFullscreenElement;
   if (on) { (d.exitFullscreen || d.webkitExitFullscreen).call(d); return; }
-  if (el.classList.contains("big-fill")) { el.classList.remove("big-fill"); const x = el.querySelector(".big-x"); if (x) x.remove(); return; }
+  if (el.classList.contains("big-fill")) { el.classList.remove("big-fill"); const x = el.querySelector(".big-x"); if (x) x.remove(); bigTell(false); return; }
   const req = el.requestFullscreen || el.webkitRequestFullscreen;
-  const fill = () => { el.classList.add("big-fill"); const x = document.createElement("button"); x.type = "button"; x.className = "big-x"; x.textContent = "✕ 작게"; x.onclick = () => bigView(el); el.appendChild(x); };
+  const fill = () => { el.classList.add("big-fill"); const x = document.createElement("button"); x.type = "button"; x.className = "big-x"; x.textContent = "✕ 작게"; x.onclick = () => bigView(el); el.appendChild(x); bigTell(true);
+    /* 영상 칸이 사라지면(목록으로 돌아감 등) 바깥 화면도 원래대로 */
+    const t = setInterval(() => { if (!el.isConnected || !el.classList.contains("big-fill")) { clearInterval(t); if (!document.querySelector(".big-fill")) bigTell(false); } }, 700); };
   if (req && (d.fullscreenEnabled || d.webkitFullscreenEnabled)) {
     try { const p = req.call(el); if (p && p.then) p.then(() => { try { screen.orientation.lock("landscape").catch(() => {}); } catch(e) {} }).catch(fill); } catch(e) { fill(); }
   } else fill();

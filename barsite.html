@@ -3346,6 +3346,26 @@
     var d = e.data || {};
     if(d.type === 'MYWAY_SCREEN_NAV'){ buildSwitch(d.items, d.current); }
   });
+  /* 아이폰 크게 보기: 음악·유튜버·영화 화면이 MYWAY_BIG을 보내면 그 iframe을 화면 전체로 키우고 index에도 전달 */
+  (function(){
+    var st = document.createElement('style');
+    st.textContent = 'html.myway-big #tvrScreen iframe{position:fixed !important;left:0 !important;top:0 !important;width:100vw !important;height:100vh !important;height:100dvh !important;z-index:2147483000 !important;}' +
+      'html.myway-big, html.myway-big body{overflow:hidden !important;}';
+    document.head.appendChild(st);
+    function setBig(on){
+      document.documentElement.classList.toggle('myway-big', !!on);
+      try { if(parent !== window) parent.postMessage({ type:'MYWAY_BIG', on:!!on }, '*'); } catch(_){}
+    }
+    window.addEventListener('message', function(e){
+      var d = e.data || {};
+      if(d.type !== 'MYWAY_BIG') return;
+      var fr = document.querySelector('#tvrScreen iframe');
+      if(!fr || e.source !== fr.contentWindow) return;
+      setBig(d.on);
+    });
+    /* 화면이 바뀌어 iframe이 없어지면 원래대로 */
+    setInterval(function(){ if(document.documentElement.classList.contains('myway-big') && !document.querySelector('#tvrScreen iframe')) setBig(false); }, 800);
+  })();
   function announce(){ try { if(parent !== window) parent.postMessage({ type:'MYWAY_SCREEN_READY' }, '*'); } catch(_){} }
   if(document.readyState !== 'loading') announce();
   else document.addEventListener('DOMContentLoaded', announce);
