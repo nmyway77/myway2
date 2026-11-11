@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>실시간 TV</title>
+<meta name="description" content="방송사 공식 스트림을 모아 보는 실시간 TV 샘플 페이지">
+<meta property="og:title" content="실시간 TV 샘플">
+<meta property="og:type" content="video.other">
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --text:#1d2433; --sub:#6b7385; --accent:#e5384f; --line:#e3e6ec; --side:280px; --tabsH:56px; }
+  * { box-sizing:border-box; }
+  html, body { height:100%; }
+  body { margin:0; font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif; background:var(--bg); color:var(--text); overflow:hidden; }
+
+  /* 상단 카테고리 탭 */
+  .tabs { height:var(--tabsH); display:flex; align-items:center; gap:8px; padding:0 16px; background:var(--card); border-bottom:1px solid var(--line); overflow-x:auto; scrollbar-width:none; }
+  .tabs::-webkit-scrollbar { display:none; }
+  /* 가운데 정렬 (넘치면 왼쪽부터 가로 스크롤) */
+  .tabs > :first-child { margin-left:auto; }
+  .tabs > :last-child { margin-right:auto; }
+  .tabs button { flex:none; border:1px solid var(--line); background:var(--card); padding:7px 16px; border-radius:20px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text); white-space:nowrap; }
+  .tabs button:hover { border-color:#b9bfcc; }
+  .tabs button.on { background:var(--text); color:#fff; border-color:var(--text); }
+
+  /* 본문: 좌 화면 + 우 채널 */
+  .top { height:100%; }
+  .wrap { height:calc(100% - var(--tabsH)); display:flex; }
+  .stage { flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:12px 14px 8px; }
+  .player { position:relative; width:100%; max-width:calc((100vh - var(--tabsH) - 60px) * 16 / 9); aspect-ratio:16/9; background:#000; border-radius:12px; overflow:hidden; }
+  .player iframe, .player video { position:absolute; inset:0; width:100%; height:100%; border:0; background:#000; }
+  .player .empty { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:15px; }
+  .now { width:100%; max-width:calc((100vh - var(--tabsH) - 60px) * 16 / 9); margin:8px 2px 0; font-weight:700; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-height:20px; }
+  /* 방송사 사이트 채널(KBS·MBC·SBS·채널A 등) — PC에서 원래 페이지 전체를 왼쪽 화면 가득 */
+  .stage.full { padding:0; justify-content:stretch; }
+  .stage.full .player { flex:1; width:100%; max-width:none; aspect-ratio:auto; border-radius:0; background:#fff; }
+  .stage.full .player iframe { background:#fff; }
+  .stage.full .now { display:none; }
+  .now small { color:var(--sub); font-weight:400; margin-left:6px; }
+
+  /* 핸드폰: KBS·MBC·SBS·채널A·TV조선 등 iframe 안 되는 채널 → 화살표 클릭 유도 */
+  .tap { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; color:#fff; text-decoration:none; background:radial-gradient(circle at 50% 45%, #2a3350 0%, #0d1120 75%); cursor:pointer; }
+  .tap .arw { font-size:46px; line-height:1; animation:bob 1s ease-in-out infinite; }
+  .tap .ttl { font-size:17px; font-weight:800; }
+  .tap .btn { background:var(--accent); padding:10px 20px; border-radius:999px; font-size:14px; font-weight:800; box-shadow:0 0 0 0 rgba(229,56,79,.6); animation:ring 1.6s infinite; }
+  .tap .sub { font-size:11.5px; color:#aab2c8; }
+  .tap.start .arw { animation:none; font-size:40px; }
+  @keyframes bob { 0%,100% { transform:translateY(0); } 50% { transform:translateY(9px); } }
+  @keyframes ring { 0% { box-shadow:0 0 0 0 rgba(229,56,79,.6); } 70% { box-shadow:0 0 0 14px rgba(229,56,79,0); } 100% { box-shadow:0 0 0 0 rgba(229,56,79,0); } }
+
+  /* 우측 채널 목록 */
+  .side { flex:none; width:var(--side); display:flex; flex-direction:column; background:var(--card); border-left:1px solid var(--line); min-height:0; }
+  .list { flex:1; overflow-y:auto; padding:8px; display:flex; flex-direction:column; gap:6px; }
+  .card { position:relative; flex:none; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:9px 34px 9px 12px; cursor:pointer; }
+  .card:hover { border-color:#b9bfcc; }
+  .card.on { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent) inset; }
+  .card b { display:block; font-size:14px; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .card .meta { font-size:11.5px; color:var(--sub); }
+  .badge { display:inline-block; font-size:10px; font-weight:700; color:#fff; background:var(--accent); padding:1px 5px; border-radius:4px; margin-right:4px; }
+  .star { position:absolute; top:50%; right:6px; transform:translateY(-50%); border:0; background:none; font-size:18px; cursor:pointer; color:#c7ccd6; padding:4px; }
+  .star.on { color:#f5b301; }
+  .notice { flex:none; padding:8px 12px; font-size:10.5px; line-height:1.55; color:#8a91a3; border-top:1px solid var(--line); }
+  .notice a { color:#4b5bd6; }
+
+  /* 핸드폰·좁은 화면: 탭+화면 위 고정, 채널은 아래로 스크롤 */
+  /* 핸드폰: 화면(.top)은 고정, 채널 목록(.side)만 자체 스크롤 → 채널이 TV 화면 뒤로 사라짐 */
+  @media (max-width: 760px) {
+    html, body { height:100%; height:100dvh; }
+    body { overflow:hidden; display:flex; flex-direction:column; }
+    .top { flex:none; height:auto; position:relative; z-index:5; background:var(--bg); box-shadow:0 2px 6px rgba(0,0,0,.06); }
+    .side { flex:1 1 auto; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; }
+    .tabs { padding:0 10px; }
+    .wrap { height:auto; display:block; }
+    .stage { padding:8px 8px 4px; }
+    .player, .now { max-width:none; border-radius:8px; }
+    .side { width:auto; border-left:0; }
+    .list { overflow:visible; display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); }
+    /* 핸드폰 SBS·채널A: 방송사 페이지를 화면 안에 — 영상 + 상단 메뉴가 보이게 조금 더 높게 */
+    .stage.full { padding:8px 8px 4px; }
+    .stage.full .player { flex:none; height:min(70vh, calc(56.25vw + 140px)); border-radius:8px; }
+  }
+
+  /* SOOP·MLB다시보기 탭: 채널 목록 숨기고 화면 전체 */
+  body.wide .side { display:none; }
+  body.wide .stage.full .player { border-radius:0; }
+  @media (max-width: 760px) {
+    body.wide .stage.full { padding:0; }
+    body.wide .stage.full .player { height:calc(100dvh - var(--tabsH)); }
+  }
+
+  /* OTT 탭: 바로가기 타일 (누르면 새 창) */
+  .ott { position:absolute; inset:0; overflow-y:auto; background:var(--bg); padding:28px 24px; }
+  .ott h2 { margin:0 auto 16px; max-width:980px; font-size:17px; font-weight:800; }
+  .ott h2 small { font-size:12px; color:var(--sub); font-weight:500; margin-left:8px; }
+  .ott-grid { max-width:980px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:12px; }
+  .ott-grid a { display:flex; align-items:center; gap:12px; padding:14px 16px; background:var(--card); border:1px solid var(--line); border-radius:12px; text-decoration:none; color:var(--text); box-shadow:0 2px 6px rgba(0,0,0,.04); transition:transform .15s, box-shadow .15s; }
+  .ott-grid a:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,.08); border-color:#b9bfcc; }
+  .ott-ic { flex:none; width:40px; height:40px; border-radius:11px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:17px; font-weight:900; }
+  .ott-grid b { display:block; font-size:15px; }
+  .ott-grid span { display:block; font-size:11.5px; color:var(--sub); margin-top:2px; }
+  .ott-grid i { margin-left:auto; font-style:normal; color:#9aa1b2; font-size:14px; }
+  @media (max-width: 760px) {
+    body.wide.ottmode .stage.full .player { height:calc(100dvh - var(--tabsH)); }
+    .ott { padding:16px 12px; }
+    .ott-grid { grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px; }
+    .ott-grid a { padding:10px; gap:8px; }
+    .ott-ic { width:34px; height:34px; font-size:15px; }
+    .ott-grid b { font-size:13.5px; }
+  }
+
+
+  /* ===== 웹드라마 탭: 카드 목록 → 누르면 최신회 재생 + 오른쪽 회차 목록 ===== */
+  .wd-list { position:absolute; inset:0; overflow-y:auto; background:#fff; padding:22px 18px 40px; -webkit-overflow-scrolling:touch; }
+  .wd-list h2 { max-width:1100px; margin:0 auto 12px; font-size:16px; font-weight:800; letter-spacing:-.3px; }
+  .wd-list h2 small { font-size:12px; color:var(--sub); font-weight:500; margin-left:8px; }
+  .wd-grid { max-width:1100px; margin:0 auto 26px; display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:12px; }
+  .wd-card { position:relative; aspect-ratio:4/3; border-radius:12px; overflow:hidden; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; padding:12px; text-align:center; color:#fff; background:linear-gradient(150deg,var(--c1),var(--c2)); box-shadow:0 2px 8px rgba(0,0,0,.08); transition:transform .18s, box-shadow .18s; }
+  .wd-card:hover { transform:translateY(-3px); box-shadow:0 10px 22px rgba(0,0,0,.14); }
+  .wd-card b { font-size:17px; font-weight:800; line-height:1.25; word-break:keep-all; text-shadow:0 2px 8px rgba(0,0,0,.18); }
+  .wd-card i { font-style:normal; font-size:11.5px; opacity:.92; }
+  .wd-card .tg { position:absolute; left:8px; top:8px; font-size:10.5px; font-weight:800; background:rgba(0,0,0,.25); padding:2px 7px; border-radius:999px; }
+  .wd-play { position:absolute; inset:0; display:flex; flex-direction:column; background:#fff; }
+  .wd-bar { flex:none; display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid var(--line); }
+  .wd-back { flex:none; border:0; border-radius:999px; padding:7px 14px; font-size:13px; font-weight:800; color:#fff; background:linear-gradient(95deg,#7ed6fb 10%,#b176f3 90%); cursor:pointer; }
+  .wd-mark { flex:none; border:1.5px solid #f5b301; background:#fffaf0; color:#9a6b00; border-radius:999px; padding:6px 12px; font-size:12.5px; font-weight:800; cursor:pointer; white-space:nowrap; }
+  .wd-mark.saved { background:#f5b301; color:#fff; }
+  .wd-resume { flex:none; font-size:11.5px; color:var(--sub); white-space:nowrap; }
+  .wd-resume button { border:0; background:none; color:#4b5bd6; font-weight:700; cursor:pointer; padding:0 2px; font-size:11.5px; }
+  .wd-card .mk { position:absolute; right:8px; top:8px; font-size:10.5px; font-weight:800; background:#f5b301; color:#fff; padding:2px 7px; border-radius:999px; }
+  .wd-toast { position:absolute; left:50%; bottom:18px; transform:translateX(-50%); background:rgba(20,24,30,.88); color:#fff; padding:8px 14px; border-radius:999px; font-size:12.5px; z-index:5; pointer-events:none; }
+  .wd-ttl { flex:1; min-width:0; font-size:15px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .wd-ttl small { font-size:12px; color:var(--sub); font-weight:500; margin-left:6px; }
+  .wd-body { flex:1; min-height:0; display:flex; }
+  .wd-main { flex:1; min-width:0; display:flex; align-items:center; justify-content:center; background:#000; }
+  .wd-main .wd-v { position:relative; width:100%; max-height:100%; aspect-ratio:16/9; }
+  .wd-main iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+  .wd-side { flex:none; width:330px; display:flex; flex-direction:column; border-left:1px solid var(--line); min-height:0; }
+  .wd-head { flex:none; padding:9px 12px; font-size:13px; font-weight:800; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; }
+  .wd-head span { color:var(--sub); font-weight:600; }
+  .wd-items { flex:1; overflow-y:auto; padding:6px; }
+  .wd-it { display:flex; align-items:center; gap:8px; padding:6px; border-radius:8px; cursor:pointer; }
+  .wd-it:hover { background:#f4f6fb; }
+  .wd-it.cur { background:#fde8eb; }
+  .wd-it .no { flex:none; width:26px; text-align:center; font-size:11.5px; color:var(--sub); font-weight:700; }
+  .wd-it img { flex:none; width:96px; aspect-ratio:16/9; object-fit:cover; border-radius:6px; background:#eee; }
+  .wd-it .ti { flex:1; min-width:0; font-size:12.5px; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  @media (max-width: 760px) {
+    .wd-bar { flex-wrap:wrap; } .wd-ttl { order:3; flex-basis:100%; }
+    body.wide.wdmode .stage.full .player { height:calc(100dvh - var(--tabsH)); }
+    .wd-list { padding:14px 10px 30px; }
+    .wd-grid { grid-template-columns:repeat(2, minmax(0,1fr)); gap:9px; }
+    .wd-card b { font-size:15px; }
+    .wd-body { flex-direction:column; }
+    .wd-main { flex:none; }
+    .wd-side { width:auto; flex:1; border-left:0; border-top:1px solid var(--line); }
+  }
+
+  * { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+  input, textarea { -webkit-user-select:text; user-select:text; }
+  /* 웹드라마 전용 화면(?wd=1): 채널 탭·목록 없이 화면 전체 */
+  /* 웹드라마 카드: 위에 유튜브 썸네일 사진, 아래에 제목 (사진 속 글자와 겹치지 않게) */
+  .wd-card.has-th { display:block; aspect-ratio:auto; padding:0; text-align:left; background:#fff; color:var(--text); border:1px solid var(--line); }
+  .wd-card.has-th .th { display:block; width:100%; aspect-ratio:16/9; object-fit:cover; background:#ddd; transition:transform .3s; }
+  .wd-card.has-th:hover .th { transform:scale(1.04); }
+  .wd-card.has-th b { display:block; position:relative; background:#fff; padding:8px 10px 2px; font-size:14.5px; text-shadow:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .wd-card.has-th i { display:block; position:relative; background:#fff; padding:0 10px 9px; color:var(--sub); opacity:1; }
+  .wd-card .tg, .wd-card .mk { z-index:2; }
+  body.wdonly { --tabsH:0px; }
+  body.wdonly .tabs { display:none; }
+  /* 🔔 새 영상 */
+  .feed-btn { margin-left:10px; vertical-align:middle; border:1.5px solid #b9cdf5; background:#eef4ff; color:#2a4fa8; border-radius:999px; padding:5px 12px; font:inherit; font-size:12.5px; font-weight:800; cursor:pointer; }
+  .feed-btn:hover { background:#dfe9ff; }
+  .fd-head { display:flex; align-items:center; gap:10px; margin:0 0 12px; }
+  .fd-back { border:0; border-radius:999px; padding:7px 14px; font:inherit; font-size:13px; font-weight:800; color:#fff; background:linear-gradient(95deg,#7ed6fb 10%,#b176f3 90%); cursor:pointer; }
+  .fd-top { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:0 0 14px; } .fd-top .lb { font-size:13px; color:#7a8199; margin-right:4px; }
+  .fd-chip { border:1.5px solid #dfe3ec; background:#fff; border-radius:999px; padding:6px 13px; font:inherit; font-size:13px; font-weight:700; color:#4a5170; cursor:pointer; } .fd-chip.on { background:#1f2740; color:#fff; border-color:#1f2740; }
+  .fd-st { font-size:13px; color:#7a8199; margin-left:auto; }
+  .fd-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:14px; }
+  .fd-it { cursor:pointer; border-radius:12px; overflow:hidden; background:#fff; box-shadow:0 2px 10px rgba(20,30,60,.07); transition:transform .18s; } .fd-it:hover { transform:translateY(-3px); }
+  .fd-it img { display:block; width:100%; aspect-ratio:16/9; object-fit:cover; background:#eee; }
+  .fd-it .tx { padding:8px 10px 10px; } .fd-it b { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:13.5px; line-height:1.35; color:#1f2740; }
+  .fd-it small { display:block; margin-top:5px; font-size:12px; color:#7a8199; } .fd-empty { padding:40px 0; text-align:center; color:#7a8199; }
+  @media (max-width:600px){ .fd-grid { grid-template-columns:repeat(2, minmax(0,1fr)); gap:9px; } .fd-it b { font-size:12.5px; } }
+  /* ⛶ 크게 보기 */
+  html.is-ios .big-btn { display:none !important; }
+  .big-btn { flex:none; border:1.5px solid #dfe3ec; background:#fff; color:#1f2740; border-radius:999px; padding:6px 12px; font:inherit; font-size:12.5px; font-weight:800; cursor:pointer; white-space:nowrap; }
+  :fullscreen.bigable, :-webkit-full-screen.bigable { background:#000 !important; display:flex !important; align-items:center; justify-content:center; width:100vw; height:100vh; }
+  .bigable.big-fill { position:fixed !important; inset:0 !important; z-index:9999 !important; background:#000 !important; display:flex !important; align-items:center; justify-content:center; }
+  .big-x { position:absolute; top:10px; right:10px; z-index:2; border:0; color:#fff; background:rgba(0,0,0,.6); padding:7px 13px; border-radius:999px; font:inherit; font-size:13px; font-weight:800; cursor:pointer; }
+  :fullscreen.bigable > :not(.big-x), .bigable.big-fill > :not(.big-x) { max-height:100%; width:100%; }
+</style>
+</head>
+<body>
+<div class="top">
+  <nav class="tabs" id="tabs"></nav>
+  <div class="wrap" id="wrap">
+    <section class="stage" id="stage">
+      <div class="player" id="player"><div class="empty">오른쪽에서 채널을 선택하세요</div></div>
+      <div class="now" id="now"></div>
+    </section>
+  </div>
+</div>
+
+<script>
+const CHANNELS = (function(s,k){var b=atob(s),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(b.length-1-i)^k.charCodeAt(i%k.length);return JSON.parse(new TextDecoder().decode(u));})("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","myway.kr-livetv7");
+
+const FAV_KEY = "liveTvFavs";
+let favs = [];
+try { favs = JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch(e) {}
+let currentCat = "전체";
+let curSlug = "";
+let hls = null;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* 핸드폰·태블릿 판별 — 이 경우만 KBS(공식 플레이어) 채널을 화살표 클릭 유도로 */
+const IS_MOBILE = /Android|iPhone|iPad|iPod|Mobile|SamsungBrowser/i.test(navigator.userAgent) ||
+  (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+/* 좁은 화면이면 채널 목록을 화면 아래로, 넓으면 오른쪽으로 */
+const side = document.createElement("aside");
+side.className = "side";
+side.innerHTML = `<div class="list" id="grid"></div>
+  <footer class="notice">ⓘ 방송사가 인터넷에 공개한 <b>공식 스트림·공식 유튜브 채널</b>을 연결해 보여 주는 <b>비영리 개인 사이트</b>입니다. 영상을 저장·재송출하지 않으며 광고·회원가입·수익 활동이 없습니다.
+  <b>방송사·권리자의 요청이 있으면 해당 채널을 즉시 삭제합니다.</b> 요청은 <a href="https://github.com/nmyway77/livetv7/issues" target="_blank" rel="noopener">여기(GitHub 이슈)</a>로 남겨 주세요.</footer>`;
+function placeSide(){
+  const narrow = window.matchMedia("(max-width: 760px)").matches;
+  if (narrow) { if (side.parentNode !== document.body) document.body.appendChild(side); }
+  else { if (side.parentNode !== $("wrap")) $("wrap").appendChild(side); }
+}
+placeSide();
+window.addEventListener("resize", placeSide);
+
+/* 즐겨찾기 보관: myway.kr 안에서 열리면 myway.kr(부모 페이지) 저장소에 보관
+   → 이 페이지는 다른 주소(github.io)라 핸드폰 브라우저가 껐다 켜면 지우는 경우가 있어서. 단독으로 열면 여기 저장소 사용 */
+const FAV_PARENTS = ["https://myway.kr", "https://www.myway.kr"];
+const IN_FRAME = (() => { try { return window.parent !== window; } catch(e) { return true; } })();
+function toParent(msg){ if (!IN_FRAME) return; FAV_PARENTS.forEach(o => { try { window.parent.postMessage(msg, o); } catch(e) {} }); }
+function saveFavs(){ try { localStorage.setItem(FAV_KEY, JSON.stringify(favs)); } catch(e) {} toParent({ type:"LIVETV_FAVS_SET", favs: favs }); }
+window.addEventListener("message", e => {
+  if (!FAV_PARENTS.includes(e.origin)) return;
+  const d = e.data; if (!d || d.type !== "LIVETV_FAVS") return;
+  if (Array.isArray(d.favs)) {
+    favs = d.favs.filter(x => typeof x === "string");
+    try { localStorage.setItem(FAV_KEY, JSON.stringify(favs)); } catch(err) {}
+    if (typeof renderGrid === "function") renderGrid();
+  } else if (favs.length) toParent({ type:"LIVETV_FAVS_SET", favs: favs });   // 부모에 아직 없으면 여기 것을 처음 한 번 옮겨 둠
+});
+toParent({ type:"LIVETV_FAVS_GET" });
+/* 웹드라마 '여기까지 봄' 표시 — 버튼을 눌렀을 때만 저장 (자동 저장 없음). 핸드폰에서 지워지지 않게 myway.kr 저장소에도 함께 보관 */
+const MARK_KEY = "liveTvWdMarksV1";
+let wdMarks = {};
+try { wdMarks = JSON.parse(localStorage.getItem(MARK_KEY)) || {}; } catch(e) {}
+function saveMarks(){ try { localStorage.setItem(MARK_KEY, JSON.stringify(wdMarks)); } catch(e) {} toParent({ type:"LIVETV_MARKS_SET", marks: wdMarks }); }
+window.addEventListener("message", e => {
+  if (!FAV_PARENTS.includes(e.origin)) return;
+  const d = e.data; if (!d || d.type !== "LIVETV_MARKS") return;
+  if (d.marks && typeof d.marks === "object") { wdMarks = Object.assign({}, d.marks, wdMarks); try { localStorage.setItem(MARK_KEY, JSON.stringify(wdMarks)); } catch(err) {} }
+  else if (Object.keys(wdMarks).length) toParent({ type:"LIVETV_MARKS_SET", marks: wdMarks });
+});
+toParent({ type:"LIVETV_MARKS_GET" });
+
+/* 상단 탭: 스포츠·인터넷방송·지역·종교·키즈·라이프·캠 탭은 숨김 (채널은 '전체'에 그대로)
+   그 자리에 채널 바로가기 탭 [SOOP] [MLB다시보기] [치지직] → 누르면 그 채널 화면 바로, 맨 뒤 [해외] */
+const HIDE_CATS = ["스포츠", "인터넷방송", "지역", "종교", "키즈", "라이프·캠", "해외"];
+const WIDE_TABS = ["@soop", "@mlb", "@tvgarden", "OTT", "웹드라마"];   // 이 탭은 채널 목록 없이 화면 전체 (SOOP·MLB다시보기·TV Garden·OTT)
+const DIRECT_TABS = [["SOOP", "soop"], ["MLB다시보기", "mlb"], ["치지직", "chzzk"], ["트위치", "twitch"], ["TV Garden", "tvgarden"]];
+/* OTT 탭: 누르면 화면에 OTT 바로가기 타일 → 각 타일은 새 창으로 열림 */
+const OTT_LIST = [
+  ["넷플릭스", "netflix.com", "https://www.netflix.com/kr/", "N", "#e50914,#8b0610"],
+  ["쿠팡플레이", "coupangplay.com", "https://www.coupangplay.com/", "C", "#7b2ff7,#c13cf0"],
+  ["디즈니+", "disneyplus.com", "https://www.disneyplus.com/ko-kr", "D+", "#0b3d91,#1fb5c9"],
+  ["티빙", "tving.com", "https://www.tving.com/", "T", "#ff153c,#ff6a3d"],
+  ["웨이브", "wavve.com", "https://www.wavve.com/", "W", "#1351f9,#3fa3ff"],
+  ["왓챠", "watcha.com", "https://watcha.com/", "W", "#ff0558,#ff4d8a"],
+  ["Apple TV+", "tv.apple.com", "https://tv.apple.com/kr", "tv", "#1d1d1f,#555"],
+  ["프라임 비디오", "primevideo.com", "https://www.primevideo.com/", "P", "#00a8e1,#146eb4"],
+  ["라프텔", "laftel.net · 애니", "https://laftel.net/", "L", "#816bff,#b49cff"],
+  ["유튜브", "youtube.com", "https://www.youtube.com/", "▶", "#ff0000,#c4302b"]
+];
+const dirSlug = cat => (cat && cat.charAt(0) === "@") ? cat.slice(1) : "";
+function inCat(c){
+  const d = dirSlug(currentCat);
+  if (d) { const t = CHANNELS.find(x => x.slug === d); return !!t && c.cat === t.cat; }   // 바로가기 탭: 그 채널이 속한 분류 목록
+  return currentCat==="전체" ? true : currentCat==="즐겨찾기" ? favs.includes(c.slug) : c.cat===currentCat;
+}
+const MOB_INLINE = /sbs\.co\.kr|imbc\.com|ichannela\.com|sooplive\.co\.kr|tv\.garden|mlblive\.net/i;   // SBS·채널A·SOOP·TV Garden·MLB다시보기는 핸드폰에서도 화면 안에서 바로 재생
+const ARROW_SLUGS = ["arirang"];   // PC·핸드폰 모두 화살표(별도 창): 아리랑TV (MLB다시보기는 화면 안 재생으로 변경)
+const isExt = c => c.type === "link" && (!!c.newwin || ARROW_SLUGS.includes(c.slug) || (IS_MOBILE && !MOB_INLINE.test(c.url)));   // 화살표(별도 창) 채널: 치지직·MBC·TV조선, 핸드폰 KBS 등
+function renderTabs(){
+  document.body.classList.toggle("wide", WIDE_TABS.includes(currentCat));
+  document.body.classList.toggle("ottmode", currentCat === "OTT");
+  document.body.classList.toggle("wdmode", currentCat === "웹드라마");
+  const cats = ["전체", "즐겨찾기", ...new Set(CHANNELS.map(c => c.cat))].filter(c => !HIDE_CATS.includes(c));
+  const btn = (cat, label) => `<button class="${cat===currentCat?'on':''}" data-cat="${esc(cat)}">${esc(label)}</button>`;
+  $("tabs").innerHTML = cats.map(c => btn(c, c) + (c === "지상파" ? btn("OTT", "OTT") : "") ).join("")   // OTT는 지상파 오른쪽
+    + DIRECT_TABS.filter(d => CHANNELS.some(c => c.slug === d[1])).map(d => btn("@" + d[1], d[0])).join("")
+    + (CHANNELS.some(c => c.cat === "해외") ? btn("해외", "해외") : "");
+}
+function showOtt(){
+  stopAll(); curSlug = "";
+  $("stage").classList.add("full");
+  $("now").innerHTML = "";
+  document.title = "OTT 바로가기 - 실시간 TV";
+  $("player").innerHTML = `<div class="ott"><h2>OTT 바로가기<small>누르면 새 창으로 열려요</small></h2><div class="ott-grid">`
+    + OTT_LIST.map(o => `<a href="${esc(o[2])}" target="_blank" rel="noopener"><div class="ott-ic" style="background:linear-gradient(135deg,${o[4]})">${esc(o[3])}</div><div><b>${esc(o[0])}</b><span>${esc(o[1])}</span></div><i>↗</i></a>`).join("")
+    + `</div></div>`;
+}
+
+function renderGrid(){
+  const list = CHANNELS.filter(inCat);
+  $("grid").innerHTML = list.map(c => {
+    const lk = c.type === "link";
+    const badge = lk ? (isExt(c) ? '<span class="badge" style="background:#6b7385">LINK</span>' : '<span class="badge">LIVE</span>') : '<span class="badge">LIVE</span>';
+    return `<div class="card ${c.slug===curSlug?'on':''}" data-slug="${esc(c.slug)}">
+      <button class="star ${favs.includes(c.slug)?'on':''}" data-fav="${esc(c.slug)}" title="즐겨찾기">★</button>
+      <b>${esc(c.name)}</b>
+      <div class="meta">${badge}${esc(c.cat)}</div>
+    </div>`;
+  }).join("") || `<p style="color:#888;padding:8px">채널이 없습니다.</p>`;
+}
+
+// HLS 모듈은 처음 재생할 때만 불러옴 (지연 로딩)
+function loadHlsJs(){
+  return new Promise((ok, fail) => {
+    if (window.Hls) return ok();
+    const s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js";
+    s.onload = ok; s.onerror = fail;
+    document.head.appendChild(s);
+  });
+}
+
+function stopAll(){
+  if (wdPlayer) { try { wdPlayer.destroy(); } catch(e) {} wdPlayer = null; }
+  if (hls) { hls.destroy(); hls = null; }
+  const v = $("player").querySelector("video");          // 이전 영상 완전 정지
+  if (v) { v.pause(); v.removeAttribute("src"); v.load(); }
+}
+
+async function play(slug, noAuto){   // noAuto: 처음 열 때 — 화면은 그대로 띄우고 재생만 안 함
+  const c = CHANNELS.find(x => x.slug === slug);
+  if (!c) return;
+  stopAll();
+  curSlug = slug;
+  const ext = isExt(c);   // 핸드폰(KBS 등), 또는 임베드 막힌 채널(MBC·TV조선) → 별도 창
+  $("stage").classList.toggle("full", c.type === "link" && !ext);
+  const box = $("player");
+  $("now").innerHTML = `▶ ${esc(c.name)}<small>${esc(c.cat)}</small>`;
+  document.title = `${c.name} 실시간 - 실시간 TV`;
+
+  if (c.type === "youtube" || c.type === "youtube-live") {
+    const src = c.type === "youtube"
+      ? `https://www.youtube.com/embed/${c.id}?autoplay=1&mute=1&playsinline=1`
+      : `https://www.youtube.com/embed/live_stream?channel=${c.id}&autoplay=1&mute=1&playsinline=1`;
+    const src2 = noAuto ? src.replace("autoplay=1&mute=1&", "autoplay=0&") : src;
+    box.innerHTML = `<iframe src="${src2}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+  } else if (c.type === "link") {
+    if (ext) {                  // 화살표로 클릭 유도 → 방송사 공식 페이지 별도 창
+      box.innerHTML = `<a class="tap" href="${esc(c.url)}" target="_blank" rel="noopener">
+        <div class="arw">👇</div>
+        <div class="ttl">${esc(c.name)}</div>
+        <div class="btn">▶ 눌러서 보기 ↗</div>
+        <div class="sub">${IS_MOBILE ? "핸드폰에서는 방송사 공식 페이지(새 창)로 열려요" : "이 채널은 방송사가 화면 안 재생을 막아 별도 창으로 열려요"}</div></a>`;
+    } else {                    // PC: 지상파도 화면에서 바로 재생 (핸드폰은 SBS·채널A만) — SBS·채널A는 앱 확인창 차단(sandbox)
+      box.innerHTML = `<iframe src="${esc(c.url)}"${/sbs\.co\.kr|ichannela\.com/i.test(c.url) ? ' sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"' : ""} referrerpolicy="no-referrer" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+    }
+  } else if (c.type === "hls") {
+    box.innerHTML = `<video id="v" controls autoplay muted playsinline></video>`;
+    const v = $("v");
+    try { await loadHlsJs(); } catch(e) {}
+    if (c.slug !== curSlug) return;                         // 그 사이 다른 채널을 눌렀으면 중단
+    if (window.Hls && Hls.isSupported()) {                 // 크롬·엣지·안드로이드: hls.js
+      hls = new Hls({ lowLatencyMode:true });
+      hls.on(Hls.Events.ERROR, (ev, d) => {
+        if (!d.fatal) return;
+        if (d.type === Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
+        else if (d.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+      });
+      hls.loadSource(c.url); hls.attachMedia(v);
+    } else if (v.canPlayType("application/vnd.apple.mpegurl")) {   // 아이폰·사파리: 기본 재생
+      v.src = c.url;
+    } else {
+      box.innerHTML = `<div class="empty">이 브라우저는 HLS를 지원하지 않습니다</div>`;
+    }
+  }
+  // 목록의 선택 표시만 바꿈 (화면 스크롤 이동 없음)
+  Array.prototype.forEach.call($("grid").querySelectorAll(".card"), el => el.classList.toggle("on", el.dataset.slug === curSlug));
+}
+
+// 이벤트
+$("tabs").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  currentCat = b.dataset.cat; renderTabs(); renderGrid();
+  $("grid").scrollTop = 0; side.scrollTop = 0;
+  if (currentCat === "OTT") { try { history.replaceState(null, "", location.pathname + location.search); } catch(err) {} showOtt(); return; }
+  if (currentCat === "웹드라마") { try { history.replaceState(null, "", location.pathname + location.search); } catch(err) {} showWebdrama(); return; }
+  // 탭(지상파·뉴스…)을 누르면 그 탭의 첫 채널이 바로 재생 (뉴스 = YTN), 바로가기 탭은 그 채널
+  const first = dirSlug(currentCat) ? CHANNELS.find(c => c.slug === dirSlug(currentCat)) : CHANNELS.find(inCat);
+  if (first) { try { history.replaceState(null, "", "#" + first.slug); } catch(err) {} play(first.slug); }
+});
+side.addEventListener("click", e => {
+  const f = e.target.closest("[data-fav]");
+  if (f) {
+    const s = f.dataset.fav;
+    favs = favs.includes(s) ? favs.filter(x => x !== s) : [...favs, s];
+    saveFavs(); renderGrid(); return;
+  }
+  const card = e.target.closest(".card");
+  if (!card) return;
+  const s = card.dataset.slug;
+  try { history.replaceState(null, "", "#" + s); } catch(err) {}   // 주소: 페이지#ytn (스크롤 없이)
+  play(s);
+});
+window.addEventListener("hashchange", () => { const s = location.hash.slice(1); if (s && s !== curSlug) play(s); });
+
+
+// 처음 열었을 때의 정지 화면: 채널을 고르거나 ▶를 누르기 전에는 아무것도 재생하지 않음
+function showStart(slug){
+  const c = CHANNELS.find(x => x.slug === slug); if (!c) return;
+  curSlug = "";
+  $("now").innerHTML = `▶ 채널을 선택하세요<small>${esc(c.cat)}</small>`;
+  $("player").innerHTML = `<a class="tap start" href="#${esc(c.slug)}" data-start="${esc(c.slug)}">
+    <div class="arw">▶</div>
+    <div class="ttl">${esc(c.name)} 실시간</div>
+    <div class="btn">▶ 눌러서 보기</div>
+    <div class="sub">오른쪽 목록에서 다른 채널을 골라도 바로 재생돼요</div></a>`;
+}
+$("player").addEventListener("click", e => {
+  const a = e.target.closest("a.start"); if (!a) return;
+  e.preventDefault();
+  try { history.replaceState(null, "", "#" + a.dataset.start); } catch(err) {}
+  play(a.dataset.start);
+});
+
+
+/* ===== 웹드라마 탭 =====
+   채널: 그 채널 업로드 목록(최신 영상이 맨 앞) / 작품: 공식 재생목록(1화부터 정렬 → 마지막 회부터 재생)
+   카드를 누르면 최신회가 바로 재생되고, 오른쪽(핸드폰은 아래)에 회차 목록 — 눌러서 이전 회차 보기 */
+const WEBDRAMA = [
+  /* 채널 (최신 업로드순) — UULF = 그 채널의 일반 동영상만(쇼츠 제외) */
+  { n:"짧은대본", d:"ShortPaper · 공감 연애", list:"UULFhgOgRNxrtCcVARDQT_c-Zg", v:"__CIlV8MbBs", g:"ch" },
+  { n:"치즈필름", d:"CheezeFilm", list:"UULFYn09ySlShmzBtYwl1OgOsA", v:"-ihjY0mZlG8", g:"ch" },
+  { n:"픽고", d:"PICKGO", list:"UULF2fRmj7qqiuD5VXtBO4hh2A", v:"tse-WXh_Zno", g:"ch" },
+  { n:"플레이리스트", d:"PLAYLIST Originals", list:"UULFid83oPnsL-4ZEo8CyQr6Rg", v:"hGsdXg8H0-c", g:"ch" },
+  { n:"콬TV", d:"와이낫미디어 · KOK TV", list:"UULFybPxZoFDPR1qbN04daAc2g", v:"Gw2evCjPhds", g:"ch" },
+  { n:"낄낄상회", d:"스케치 코미디", list:"UULFLVwgJVAzHwA-zv88mrAeZw", v:"scQLTQf_Ubo", g:"ch" },
+  { n:"끄적끄적", d:"Writing Down", list:"UULFQ1Rn1d6FfB3x2b0n0J6pMQ", v:"W-prwexGwxs", g:"ch" },
+  { n:"찐엔딩", d:"Real Ending", list:"UULFfela5_jdX8ZKhGGaxyel9g", v:"HVHZxv0SkWE", g:"ch" },
+  { n:"심스틸러", d:"코미디언 웹드라마", list:"UULFe9jeTrEpEXYvRrrynEU4Zw", v:"hosfRn7J3J4", g:"ch" },
+  { n:"석필름", d:"SUKFILM", list:"UULF749ed-Qfdk64DyyKpoItEg", v:"qYZ8hcNX19s", g:"ch" },
+  { n:"디비디방", d:"DVD room · 스케치 코미디", list:"UULFS5BOISYzyZJdRftDwubXug", v:"ZA7uuSa3P94", g:"ch" },
+  { n:"그냥 필름", d:"Just Film · 웹드라마", list:"UULFpWIbvmP7MbxZhQ5XOMrg1g", v:"Wo0Ns9zHhyE", g:"ch" },
+  { n:"팡팡 스튜디오", d:"PANGPANG STUDIO", list:"UULFJ-ofC67CjMxBRmRIb6s9-w", v:"GDBJ_-1-680", g:"ch" },
+  { n:"너덜트", d:"NERDULT · 현실 공감 단편", list:"UULFXEKwWflysXu312NmIP_dlw", v:"YTHqWXMVpzI", g:"ch" },
+  { n:"스튜디오에그", d:"STUDIO EGG · 웹드라마", list:"UULFqppvtzI0jIlGgJ-Cc1qitg", v:"GfxRhMXpBYs", g:"ch" },
+  { n:"Team135", d:"웹드라마", list:"UULFT5XMUy19i1aUTuKk9PDzMQ", v:"ODQA7_SbKt4", g:"ch" },
+  { n:"팀코피", d:"로맨스 웹드라마", list:"UULFaYAYPZQKEPVQoMGQeOTeqA", v:"ljGaltRuzeY", g:"ch" },
+  /* 작품 (공식 재생목록) */
+  { n:"연애플레이리스트 1", d:"플레이리스트", list:"PL920OTfqSyzcyEAPWvePd5leialysnmJb", v:"3rj7xM3Vmc4", g:"s" },
+  { n:"에이틴", d:"플레이리스트", list:"PL920OTfqSyzd6xANfwFFCUG12yPvBhGZO", v:"nca7i5oX09o", g:"s" },
+  { n:"이런 꽃 같은 엔딩", d:"플레이리스트", list:"PL920OTfqSyzdNhjehpA36lS5pkvK4-o85", v:"raoqGEn4e0s", g:"s" },
+  { n:"최고의 엔딩", d:"플레이리스트", list:"PL920OTfqSyzfQXP3YBYitEkYds0zBuUSZ", v:"f9gSYqVPvKE", g:"s" },
+  { n:"뉴연플리", d:"플레이리스트", list:"PL920OTfqSyzfO2cwSgC2jEj1VUCWC0a3G", v:"zcgWEsTeLFo", g:"s" },
+  { n:"청춘블라썸", d:"플레이리스트", list:"PL920OTfqSyzc6e1Nmugg-uDgkPhj34eVx", v:"MtRndTBDplU", g:"s" },
+  { n:"비밀 사이", d:"플레이리스트", list:"PL920OTfqSyzeSQPPsT1UR0xplYxU1Aw4s", v:"LlskeeAapP8", g:"s" },
+  { n:"전지적 짝사랑 시점", d:"콬TV · 시즌1", list:"PLqqQvcAR1H0nwn1x54Ms-u7CQVAbfzu4z", v:"PrFFidFAb5s", g:"s" },
+  { n:"청담국제고등학교", d:"콬TV", list:"PLqqQvcAR1H0mI87LSuS2rKsL4iqsBNdO0", v:"PmUVS5LY9zo", g:"s" },
+  { n:"청담국제고등학교 2", d:"콬TV", list:"PLqqQvcAR1H0kvCzPLO1VZn0QSUU7_giBx", v:"SEf8bNM6vPE", g:"s" },
+  { n:"의원탐정 기도경", d:"콬TV", list:"PLqqQvcAR1H0m-UOYDHK5p1aLc4lXl_cf7", v:"zcBB3RnFfnA", g:"s" },
+  { n:"로맨스는 데뷔 전에", d:"콬TV", list:"PLqqQvcAR1H0mRRX5Rpag611pavk1hXat4", v:"yVcScyk6q8k", g:"s" },
+  { n:"연애부록", d:"콬TV", list:"PLqqQvcAR1H0k6rOZKjp92GFMX79zRtkwE", v:"AuI8J2yLdwE", g:"s" }
+];
+/* 쇼츠·예고·짧은 클립(3분 이하) — 작품 재생목록과 채널 목록 — 목록에서 숨기고 건너뜀. 새로 올라온 것도 재생할 때 길이(3분 이하)로 알아서 건너뜀 */
+const WD_SHORTS = {"UULFybPxZoFDPR1qbN04daAc2g":["f7MsnDbQ9RM","YB8ab5Yd0gA","W9zsN1v7wu8","6OVbX6T75ZQ","nfbuGbXlekE","iZ8nsa8NtAM","SEf8bNM6vPE","AuI8J2yLdwE","b6i99upjfLo","3zDkrOlolm0","vZes0BzhFJE","jfwMs50fp5o"],"UULFYn09ySlShmzBtYwl1OgOsA":["yCbecLkghZQ","ZyhVPjtcf8w"],"PL920OTfqSyzfO2cwSgC2jEj1VUCWC0a3G":["86wBQeGQY9c","i4CAT2KvWbk","QQ3-K_Hzo5k"],"PLqqQvcAR1H0nwn1x54Ms-u7CQVAbfzu4z":["PrFFidFAb5s","J1CIzwB6usU","nsGiHoEKrCY","UGRce9frlG4","wngy9yjJgdk","FNvuyZtUJME","cCZveFMkmxQ","6-bIIJVMAsk","FpHHis_E3Lw","g-i7WEXstqs","_jmvf1RcUV0","40zwL3cem18","As8bAOlthZM","nvf0IID7xrQ","Gv8_r4CAdJQ","xwxr7Zpzgd0","nP4dThrpNKg","o3HwXJnQHv8","eLj1oD8bxnE"],"PL920OTfqSyzdNhjehpA36lS5pkvK4-o85":["9FMIY0PXYNA"],"UULFQ1Rn1d6FfB3x2b0n0J6pMQ":["SWRHH2zWFH0","_qa84JX3wWc"],"UULFid83oPnsL-4ZEo8CyQr6Rg":["l9rwYojoiPg","EIrfXz4KhtE","XgLhfuBQxy0","7yzkFOWUIb8","_zi0T4HRjbM","SoWEag6t7-Q","VFjEpXXSnbg","NeL8PAUP13Q","rFexdgF6V_Y","xuPxQNjpfz4","FAO9sWXCUTo","flvmLGlT1sw","cXBLWJ1d3SY","tXhnizxBjHM","2aBPQoFQahU","UNRKeHG-7pk","64DuuB5ai8g","uM6puUiqttY","l2mouPWCPC0","gTKzTFlG6Wg","OePzHPFgBBw","LqKsPe0bEkI","bPXccnJOpjs","7eSc2-QOMPY","xfWIBssR1Og","JQDkVLqYyBc","fZmh4wv3LsA"],"PL920OTfqSyzc6e1Nmugg-uDgkPhj34eVx":["MtRndTBDplU","DE5qdoMKDG8","hgnCLpmglVw","6E9aECjLijY","VirGw9VETbg","L-viHsxLDlU","2WkVEZ1lYsE","6bTLEgp-EX4","uvpQ0JgrwTg","v0iuuUajaIk","nTnMuDDM8Xc","ddGKrlB_xH0","siz9q5gEmxI","Y-HT_abmjKo"],"PLqqQvcAR1H0mI87LSuS2rKsL4iqsBNdO0":["-A_6h3nYAvk","t7BIQ_OBh6c","swRq66BWJto","ofGr_085Ye0","1o2viJE6HGc","tzmi7pUsjq8","kNpJtgFA0BY","SPWeoJDGals","rgeSu_As9bA","rjQJt6azWNU","UuLow9VvHg0"],"PL920OTfqSyzcyEAPWvePd5leialysnmJb":["eki5yWCnDiY","64tjK_LGwXY"],"PL920OTfqSyzd6xANfwFFCUG12yPvBhGZO":["nca7i5oX09o","7FYyjUvrig4"],"PL920OTfqSyzeSQPPsT1UR0xplYxU1Aw4s":["LlskeeAapP8","TM6qhj4xjig","-LqodNA0IaQ","E1EOB6x_-d8","XgLhfuBQxy0","7yzkFOWUIb8","8w9rYx87BnU","m_mE5KmA82c","_zi0T4HRjbM","SoWEag6t7-Q","VFjEpXXSnbg","NeL8PAUP13Q","rFexdgF6V_Y","xuPxQNjpfz4","FAO9sWXCUTo","flvmLGlT1sw","cXBLWJ1d3SY","tXhnizxBjHM","2aBPQoFQahU","UNRKeHG-7pk"],"PLqqQvcAR1H0kvCzPLO1VZn0QSUU7_giBx":["SEf8bNM6vPE","iZ8nsa8NtAM","nfbuGbXlekE","8PQweotQ6C0","UikmW-SRd2Y","7NMNe4IONXw","Pv-EGkbQliU","nmHmvNLLR2M","mBs1GpArcQA","m2M1PvSeGVs","CrMam8M_VTc","auj0oJ1043Q","hpAvm9MD2YQ","pEuUaVA1Nt0","FwZT9uPy0HE","D9Dg40ORJdQ","VpYt04saLVY","Q2nAWrSIdJo","jkU6ddLejww","-XaEAYMR6A0","_DoNtfPCW8E","abUZ4a3fiQM","x5pbRiJBq1U","2b6VfcNcMfs","NoeJlhxDpQU","JNSuO5gsBJo","B32pOWtFa_E","ybYn9V0OOt8","s_2P0QO74U4","hqvT9aaiKxU","bMi8Zt2sfms","46enWwWCd6o","NpAYUOcr6aI","hUUDfLenuWo","qq7N0F6zxdw","qjHcHVnwb3Q","hNOmOl_5Iuc","6A5K1ylbwXU","vL40jG0J2rY","15RNwksonT0","VVtKiSCWx9M","fbg_7hf8Rxk","igZIva-zXVU","suSg-lqa2Sg","wJMM3devrsA","8nbIWKMWHQ8","TvKHwxjkQHs","u9IVxIhoQ28","BE4MXQRp-CQ","cHPDvuNxwTg","sjB7aVdmOUI","L_3jYfq50HI","c8h1ZYoKQhY","BsPN4aFivH0","6bNWPG3Biw8","woxuzJbmM0A","svyhGvW_JMo","XARb0wlK4Vs","qYlWA3g-odI","qY-C6-5V5Cg","AeSeoEl85yg","pJQNkX7ZWQM","IkxQrgS69hs","NJGYkp7YRto","yL9foKvBlSA"],"PL920OTfqSyzfQXP3YBYitEkYds0zBuUSZ":["f9gSYqVPvKE"],"PLqqQvcAR1H0mRRX5Rpag611pavk1hXat4":["0KmPSGLph-Y","NURzyAuGOHA","YoO1voGXKYk","SbrtuTCts4A","cAAEKwL75-w","xNdWpjWoi2c","5yICGM7oteY","aVKFQ0UwQac","P-HJwbpMj34","Ej3Z5crVC0U","DQ-oyxw993s","BPnaRqxNfwQ","O5NQYCednmw","M5kMEk-fUvc","IofZRUfKwaQ","uIyCh6z5XRI","fCGV-XCWGYA","xzeGhyIsn2g","eObbV5DPvlU","l4Egc-2HT1Y","tYnoTsGX7P0","O4kq4eIQHIk","dQQ4MOPdof4","deN0_UhVzaE","MZToxfx2qEU","VRknESaDfJY","QdFRpPX_bOs","Y2Uocd8cCJA","KyPjHADSZdA","_FieKRzNpX8","isd-WTWBj7g","u0sbAT8f7-o","k19eOfZUz1E","-EJBxHJ9dc0","m7hOzXKHHok","ykF_KXDr7BE","3gUSNGPtBhM"],"UULFe9jeTrEpEXYvRrrynEU4Zw":["MKnotMEqtBY","4xPobba9VE4","IrFCAlKkcdY","RTE3UYBqlHQ","S3QqOZn8CW0","QOjLernh42o","_G25t-zQ3kE","kg8EkCkVi_U","1Ru0qw8ZW3Y"],"PLqqQvcAR1H0k6rOZKjp92GFMX79zRtkwE":["AuI8J2yLdwE","8b1lEzBiuDo","lerEGcRmG3w","dL0FrHK_xB8","ZXN8D69FC-Q","Ja4l1GikQL4","atEoRe1u8-Y","cO_HquLLirU","qlJMA8vE0Ok","M0FJuHZr3yk","KHjm3wcc_BI","2Wg6XSYPNVY","injXqeAhz9I","PCwBdGyvyzc","qDji2tw-eLY","iriT_UquQlM","EI_NyN9rfiI"],"UULFfela5_jdX8ZKhGGaxyel9g":["G3C5yqznY2Q","XF1PqvU0hyI","iknSgKk8uRo","6rDXTEU-rMc","ErUpKQoWtMQ","SKDcJzoIhYU","bzAzJMYaIbk","NMbzog3OXug","JpxkjrYEdnw","8bR6RBbMCH4","XrS0OfFygq4","X8sG7BMklgc","wkb4V3VD1a0","DwuYOLFCm4g","ZMT6-D0odjM"],"UULF749ed-Qfdk64DyyKpoItEg":["WJDGttg5u10","GGEOQXKiEnA","BAZ55BzHag8","2HeTi3i5FOM","2EC_Kbr-eb0","Tqf_-OomBEY","GegWff3m7Zo","rwfQ2tQAw6s","ZPaywG02OP4","M-ntAHTj1mM","6VBOLtxjl_I","KvSyn5BZgSA","Bo9jwoXPwUI","2RdWd01R3eo"]};
+const WD_COL = [["#ff9a8b","#ff6a88"],["#7ed6fb","#6f86f5"],["#b6f492","#338b93"],["#ffd36b","#f08a3c"],["#c3a1ff","#7b5cf0"],["#8fd9a8","#2aa198"],["#ff8fd0","#b176f3"],["#9aa6c7","#4b5bd6"]];
+let wdPlayer = null;
+function loadYTApi(){
+  return new Promise(ok => {
+    if (window.YT && YT.Player) return ok();
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function(){ if (prev) try { prev(); } catch(e) {} ok(); };
+    if (!document.getElementById("yt-api")) { const s = document.createElement("script"); s.id = "yt-api"; s.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(s); }
+  });
+}
+/* ===== 뒤로가기 지원: 재생·새 영상 화면을 열면 기록을 하나 남겨서, 핸드폰 뒤로가기(백버튼)로 이전 화면에 돌아오게 ===== */
+var HIST = [], HIST_POP = false;   /* [{ back, live, pushed, tag }] */
+function histOpen(back, isOpen, tag){
+  if (tag) for (var i = 0; i < HIST.length; i++) if (HIST[i].tag === tag && HIST[i].live) return HIST[i];
+  var h = { back: back, live: true, tag: tag || "" }; HIST.push(h);
+  /* 유튜브 창이 자리 잡은 뒤에 기록을 남김 (그래야 뒤로가기 한 번에 돌아옴) */
+  setTimeout(function(){ if (!h.live || (isOpen && !isOpen())) { var j = HIST.indexOf(h); if (j >= 0) HIST.splice(j, 1); return; } try { history.pushState({ myway: HIST.length }, ""); h.pushed = true; } catch(e) {} }, 900);
+  return h;
+}
+function histClosed(){ if (HIST_POP) return; var h = HIST[HIST.length - 1]; if (h) h.live = false; }   /* 화면 안 버튼으로 닫음 → 그 기록은 지난 것 */
+window.addEventListener("popstate", function(){
+  for (var i = HIST.length - 1; i >= 0; i--) { var h = HIST[i]; if (!h.pushed) continue; HIST.splice(i, 1);
+    if (h.live) { h.live = false; HIST_POP = true; try { h.back(); } catch(e) {} HIST_POP = false; } return; }
+});
+function histCloseTag(tag){ if (HIST_POP) return; var h = HIST[HIST.length - 1]; if (h && h.tag === tag) h.live = false; }
+function histCloseAll(){ if (HIST_POP) return; HIST.forEach(function(h){ h.live = false; }); }
+function showWebdrama(){
+  histCloseAll();
+  stopAll(); curSlug = "";
+  $("stage").classList.add("full");
+  $("now").innerHTML = "";
+  document.title = "웹드라마 - 실시간 TV";
+  const card = (w, i) => { const c = WD_COL[i % WD_COL.length];
+    return `<div class="wd-card${w.v ? " has-th" : ""}" data-wd="${i}" style="--c1:${c[0]};--c2:${c[1]}">${w.v ? `<img class="th" src="https://i.ytimg.com/vi/${w.v}/hqdefault.jpg" alt="" loading="lazy" onerror="this.parentNode.classList.remove('has-th');this.remove()">` : ""}<span class="tg">${w.g === "ch" ? "채널" : "작품"}</span>${(wdMarks[w.list] || wdMarks['UU' + w.list.slice(4)]) ? '<span class="mk">📌 이어보기</span>' : ''}<b>${esc(w.n)}</b><i>${esc(w.d)}</i></div>`; };
+  const sec = (g, t, sub) => `<h2>${t}<small>${sub}</small></h2><div class="wd-grid">` + WEBDRAMA.map((w, i) => w.g === g ? card(w, i) : "").join("") + `</div>`;
+  $("player").innerHTML = `<div class="wd-list"><h2 style="margin-bottom:16px">웹드라마<button type="button" class="feed-btn" id="wdFeedBtn">🔔 새 영상 확인</button></h2>` + sec("s", "인기 작품", "누르면 가장 최근 회부터 재생 · 오른쪽에 회차 목록")
+    + sec("ch", "웹드라마 채널", "누르면 그 채널의 최신 영상부터 재생") + `</div>`;
+}
+function wdTitle(id, el){
+  fetch("https://noembed.com/embed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D" + id)
+    .then(r => r.json()).then(j => { if (j && j.title) el.textContent = j.title; }).catch(() => {});
+}
+async function playWebdrama(i){
+  const w = WEBDRAMA[i]; if (!w) return;
+  stopAll();
+  histOpen(showWebdrama, () => !!document.querySelector(".wd-play"), "play");
+  $("player").innerHTML = `<div class="wd-play">
+    <div class="wd-bar"><button type="button" class="wd-back" id="wdBack">← 웹드라마 목록</button><div class="wd-ttl">${esc(w.n)}<small>${esc(w.d)}</small></div><span class="wd-resume" id="wdResume"></span><button type="button" class="big-btn wd-big">⛶ 크게</button><button type="button" class="wd-mark" id="wdMark" title="지금 보는 회차와 시간을 기억해 두고, 다음에 이 작품을 열면 여기부터 재생">📌 여기까지 봄</button></div>
+    <div class="wd-body"><div class="wd-main bigable"><div class="wd-v"><div id="wdHost"></div></div></div>
+    <aside class="wd-side"><div class="wd-head">회차 목록<span id="wdCnt">불러오는 중…</span></div><div class="wd-items" id="wdItems"></div></aside></div></div>`;
+  $("wdBack").onclick = showWebdrama;
+  document.title = w.n + " - 웹드라마";
+  await loadYTApi();
+  if (!$("wdHost")) return;
+  const isSeries = w.g === "s";
+  const shorts = new Set(WD_SHORTS[w.list] || []);
+  let built = false, jumped = false;
+  const mark = wdMarks[w.list] || (w.list.startsWith("UULF") ? wdMarks["UU" + w.list.slice(4)] : null) || null;
+  let seekTo = 0;
+  function toast(msg){ const p = document.querySelector(".wd-play"); if (!p) return; const t = document.createElement("div"); t.className = "wd-toast"; t.textContent = msg; p.appendChild(t); setTimeout(() => t.remove(), 1800); }
+  function fmt(sec){ sec = Math.floor(sec || 0); const m = Math.floor(sec / 60), ss = sec % 60; return m + ":" + (ss < 10 ? "0" : "") + ss; }
+  $("wdMark").onclick = () => {
+    if (!wdPlayer) return;
+    let ids = [], idx = 0, t = 0; try { ids = wdPlayer.getPlaylist() || []; idx = wdPlayer.getPlaylistIndex(); t = wdPlayer.getCurrentTime(); } catch(e) {}
+    if (!ids[idx]) return;
+    wdMarks[w.list] = { v: ids[idx], t: Math.floor(t), at: Date.now() }; saveMarks();
+    $("wdMark").classList.add("saved"); $("wdMark").textContent = "📌 저장됨";
+    $("wdResume").innerHTML = `${idx + 1}번째 영상 ${fmt(t)} 표시함 <button type="button" id="wdUnmark">지우기</button>`;
+    $("wdUnmark").onclick = unmark;
+    toast("여기까지 봤다고 기억했어요 — 다음에 이 작품을 열면 여기부터 나와요");
+  };
+  function unmark(){ delete wdMarks[w.list]; if (w.list.startsWith("UULF")) delete wdMarks["UU" + w.list.slice(4)]; saveMarks(); $("wdResume").textContent = ""; $("wdMark").classList.remove("saved"); $("wdMark").textContent = "📌 여기까지 봄"; toast("표시를 지웠어요"); }
+  function highlight(){
+    const wrap = $("wdItems"); if (!wrap || !wdPlayer) return;
+    let idx = -1; try { idx = wdPlayer.getPlaylistIndex(); } catch(e) {}
+    Array.prototype.forEach.call(wrap.children, ch => ch.classList.toggle("cur", +ch.dataset.i === idx));
+    const cur = wrap.querySelector('.wd-it.cur'); if (cur) try { cur.scrollIntoView({ block:"nearest" }); } catch(e) {}
+  }
+  function build(tries){
+    if (built || !wdPlayer) return;
+    let ids = []; try { ids = wdPlayer.getPlaylist() || []; } catch(e) {}
+    if (!ids.length) { if ((tries || 0) < 12) setTimeout(() => build((tries || 0) + 1), 600); return; }
+    built = true;
+    /* 작품은 1화부터 정렬된 목록 → 마지막 회(최신회)로 이동. 채널은 최신 영상이 이미 맨 앞 */
+    const mk = mark ? ids.indexOf(mark.v) : -1;
+    const lastReal = (() => { for (let k = ids.length - 1; k >= 0; k--) if (!shorts.has(ids[k])) return k; return ids.length - 1; })();
+    if (mk >= 0 && !jumped) {   /* '여기까지 봄' 표시가 있으면 그 회차·시간부터 */
+      jumped = true; started = false; seekTo = mark.t || 0;
+      try { wdPlayer.playVideoAt(mk); } catch(e) {} arm();
+      $("wdResume").innerHTML = `📌 표시한 곳(${mk + 1}번째 ${fmt(mark.t)})부터 <button type="button" id="wdLatest">최신부터 보기</button> <button type="button" id="wdUnmark">지우기</button>`;
+      $("wdLatest").onclick = () => { seekTo = 0; started = false; try { wdPlayer.playVideoAt(isSeries ? lastReal : Math.max(0, ids.findIndex(id => !shorts.has(id)))); } catch(e) {} arm(); };
+      $("wdUnmark").onclick = unmark;
+      $("wdMark").classList.add("saved"); $("wdMark").textContent = "📌 저장됨";
+    }
+    if (isSeries && !jumped) { jumped = true; started = false; try { wdPlayer.playVideoAt(lastReal); } catch(e) {} arm(); }
+    if (!isSeries && !jumped) { jumped = true; const fr = ids.findIndex(id => !shorts.has(id)); if (fr > 0) { started = false; try { wdPlayer.playVideoAt(fr); } catch(e) {} arm(); } }
+    $("wdCnt").textContent = ids.filter(id => !shorts.has(id)).length + "개 · 최신이 위";
+    const wrap = $("wdItems"); wrap.innerHTML = "";
+    /* 목록은 최신회가 위에 오도록: 작품은 거꾸로, 채널은 그대로 */
+    const order = ids.map((id, k) => k); if (isSeries) order.reverse();
+    order.forEach(k => {
+      const id = ids[k];
+      if (shorts.has(id)) return;   /* 쇼츠·예고는 목록에서 빼기 */
+      const it = document.createElement("div"); it.className = "wd-it"; it.dataset.i = k; it.dataset.v = id;
+      it.innerHTML = `<span class="no">${k + 1}</span><img loading="lazy" src="https://i.ytimg.com/vi/${id}/mqdefault.jpg" alt=""><span class="ti">영상 ${k + 1}</span>`;
+      it.onclick = () => { try { wdPlayer.playVideoAt(k); } catch(e) {} };
+      wrap.appendChild(it);
+      wdTitle(id, it.querySelector(".ti"));
+    });
+    highlight();
+  }
+  /* 재생 안 되는 회차(다른 사이트 재생 금지·예약 라이브 등)는 건너뜀: 작품은 이전 회로, 채널은 다음 영상으로 */
+  let skips = 0, shortSkips = 0, started = false, watch = null;
+  function skip(){
+    if (!wdPlayer || skips >= 6) return; skips++;
+    let idx = 0, n = 0; try { idx = wdPlayer.getPlaylistIndex(); n = (wdPlayer.getPlaylist() || []).length; } catch(e) {}
+    /* 처음 최신회를 찾을 때만 뒤로(이전 회), 보는 중에 막힌 회차를 만나면 앞으로(다음 회) */
+    const next = (isSeries && !started) ? idx - 1 : idx + 1;
+    if (next >= 0 && next < n) { try { wdPlayer.playVideoAt(next); } catch(e) {} arm(); }
+  }
+  function skipShort(){
+    shortSkips++;
+    let idx = 0, n = 0; try { idx = wdPlayer.getPlaylistIndex(); n = (wdPlayer.getPlaylist() || []).length; } catch(e) {}
+    const next = (isSeries && !started) ? idx - 1 : idx + 1;
+    if (next >= 0 && next < n) { try { wdPlayer.playVideoAt(next); } catch(e) {} arm(); }
+  }
+  function arm(){ clearTimeout(watch); watch = setTimeout(() => { if (!started) skip(); }, 7000); }
+  wdPlayer = new YT.Player("wdHost", {
+    width: "100%", height: "100%",
+    playerVars: { listType: "playlist", list: w.list, autoplay: 1, mute: 1, playsinline: 1, rel: 0 },
+    events: {
+      onReady: e => { try { e.target.mute(); e.target.playVideo(); } catch(err) {} setTimeout(() => build(0), 400); arm(); },
+      onError: () => skip(),
+      onStateChange: e => {
+        if (e.data === 1) {   /* 3분 이하(쇼츠·예고·짧은 클립)는 건너뜀 */
+          let d = 0, id = ""; try { d = wdPlayer.getDuration(); id = (wdPlayer.getVideoData() || {}).video_id || ""; } catch(err) {}
+          if (d > 0 && d <= 180 && shortSkips < 40) { if (id) { shorts.add(id); const r = $("wdItems") && $("wdItems").querySelector('.wd-it[data-v="' + id + '"]'); if (r) r.remove(); } skipShort(); return; }
+        }
+        if (e.data === 1 && !started) { started = true; clearTimeout(watch); try { wdPlayer.unMute(); wdPlayer.setVolume(80); } catch(err) {} if (seekTo > 5) { const t = seekTo; seekTo = 0; try { wdPlayer.seekTo(t, true); } catch(err) {} } }
+        if (!built) build(0); highlight();
+      }
+    }
+  });
+}
+/* ⛶ 크게 보기 — 핸드폰에서 유튜브 자체 전체화면 버튼이 안 먹을 때를 위해: 영상 칸을 화면 전체로 (지원 안 하는 아이폰은 이 화면 안에서 꽉 채우기) */
+/* 아이폰·아이패드는 유튜브 자체 전체화면(영상 오른쪽 아래 작은 네모)이 잘 되므로 ⛶ 크게 버튼은 숨김 */
+try { if (/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) document.documentElement.classList.add("is-ios"); } catch(e) {}
+function bigView(el){
+  if (!el) return;
+  const d = document, on = d.fullscreenElement || d.webkitFullscreenElement;
+  if (on) { (d.exitFullscreen || d.webkitExitFullscreen).call(d); return; }
+  if (el.classList.contains("big-fill")) { el.classList.remove("big-fill"); const x = el.querySelector(".big-x"); if (x) x.remove(); return; }
+  const req = el.requestFullscreen || el.webkitRequestFullscreen;
+  const fill = () => { el.classList.add("big-fill"); const x = document.createElement("button"); x.type = "button"; x.className = "big-x"; x.textContent = "✕ 작게"; x.onclick = () => bigView(el); el.appendChild(x); };
+  if (req && (d.fullscreenEnabled || d.webkitFullscreenEnabled)) {
+    try { const p = req.call(el); if (p && p.then) p.then(() => { try { screen.orientation.lock("landscape").catch(() => {}); } catch(e) {} }).catch(fill); } catch(e) { fill(); }
+  } else fill();
+}
+$("player").addEventListener("click", e => { if (e.target.closest(".wd-big")) { bigView(document.querySelector(".wd-main")); return; } if (e.target.closest("#wdFeedBtn")) { showWdFeed(); return; } const c = e.target.closest(".wd-card"); if (c) playWebdrama(+c.dataset.wd); });
+/* ===== 🔔 새 영상: 누를 때만 각 채널의 최근 영상(유튜브 RSS, rss2json 경유)을 모아 날짜순으로 — 쇼츠 제외 ===== */
+function makeFeed(opt){
+  /* opt: { box, sources:[{q:'channel_id=UC..'|'playlist_id=PL..', name}], onPick(list, k) } */
+  let FEED = null, days = 3, loading = false;
+  const ta = document.createElement("textarea"); const unesc = s => { ta.innerHTML = String(s); return ta.value; };
+  const ago = d => { const m = Math.floor((Date.now() - d) / 60000); if (m < 60) return Math.max(1, m) + "분 전"; const h = Math.floor(m / 60); if (h < 24) return h + "시간 전"; return Math.floor(h / 24) + "일 전"; };
+  function render(st){
+    const box = opt.box; if (!box) return; const D = [[1, "24시간"], [3, "3일"], [7, "7일"]];
+    const list = (FEED || []).filter(x => Date.now() - x.d <= days * 86400000);
+    box.innerHTML = `<div class="fd-top"><span class="lb">올라온 지</span>` + D.map(d => `<button type="button" class="fd-chip${d[0] === days ? " on" : ""}" data-d="${d[0]}">${d[1]}</button>`).join("")
+      + `<button type="button" class="fd-chip fd-re">↻ 다시 불러오기</button><span class="fd-st">${st || (list.length + "개 · 쇼츠 제외")}</span></div><div class="fd-grid"></div>`;
+    box.querySelectorAll(".fd-chip[data-d]").forEach(b => b.onclick = () => { days = +b.dataset.d; render(); });
+    box.querySelector(".fd-re").onclick = () => { FEED = null; load(); };
+    const g = box.querySelector(".fd-grid");
+    if (FEED && !list.length) { g.outerHTML = `<div class="fd-empty">이 기간에 올라온 새 영상이 없어요</div>`; return; }
+    list.forEach((x, k) => {
+      const it = document.createElement("div"); it.className = "fd-it";
+      it.innerHTML = `<img loading="lazy" alt="" src="https://i.ytimg.com/vi/${x.v}/mqdefault.jpg"><div class="tx"><b></b><small></small></div>`;
+      it.querySelector("b").textContent = x.t; it.querySelector("small").textContent = x.ch + " · " + ago(x.d);
+      it.onclick = () => opt.onPick(list, k); g.appendChild(it);
+    });
+  }
+  function one(s, tries){
+    return fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://www.youtube.com/feeds/videos.xml?" + s.q))
+      .then(r => r.json()).then(j => {
+        if (j.status !== "ok") { if ((tries || 0) < 3) return new Promise(ok => setTimeout(ok, 2500 * ((tries || 0) + 1))).then(() => one(s, (tries || 0) + 1)); return []; }
+        return (j.items || []).filter(i => !/\/shorts\//.test(i.link || "")).map(i => {
+          const m = String(i.link || "").match(/[?&]v=([\w-]{11})/); const d = Date.parse(String(i.pubDate || "").replace(" ", "T") + "Z");
+          return (m && !isNaN(d)) ? { v: m[1], t: unesc(i.title || ""), ch: s.name, d } : null; }).filter(Boolean);
+      }).catch(() => []);
+  }
+  function load(){
+    if (FEED) { render(); return; }
+    if (loading) return; loading = true;
+    const srcs = opt.sources; let k = 0, done = 0; const out = [], seen = {};
+    render("불러오는 중… 0/" + srcs.length);
+    const worker = () => { if (k >= srcs.length) return Promise.resolve(); const s = srcs[k++];
+      return one(s).then(a => { a.forEach(x => { if (!seen[x.v]) { seen[x.v] = 1; out.push(x); } }); done++; const st = opt.box && opt.box.querySelector(".fd-st"); if (st && !FEED) st.textContent = "불러오는 중… " + done + "/" + srcs.length; return worker(); }); };
+    Promise.all([worker(), worker(), worker(), worker()]).then(() => { out.sort((a, b) => b.d - a.d); FEED = out; loading = false; render(); });
+  }
+  return { load };
+}
+
+/* 웹드라마 새 영상: 채널(쇼츠 제외 목록의 채널) + 작품 재생목록의 최근 영상 */
+const wdFeed = makeFeed({
+  get box(){ return $("wdFeedBox"); },
+  sources: WEBDRAMA.map(w => ({ q: w.list.startsWith("UULF") ? "channel_id=UC" + w.list.slice(4) : "playlist_id=" + w.list, name: w.n })),
+  onPick: (list, k) => playWdIds(list, k)
+});
+function showWdFeed(){
+  histCloseTag("play"); stopAll(); histOpen(showWebdrama, () => !!$("wdFeedBox"), "feed");
+  $("player").innerHTML = `<div class="wd-list"><div class="fd-head"><button type="button" class="fd-back" id="wdFdBack">← 웹드라마 목록</button><h2 style="margin:0">🔔 웹드라마 새 영상</h2></div><div id="wdFeedBox"></div></div>`;
+  $("wdFdBack").onclick = showWebdrama;
+  document.title = "웹드라마 새 영상 - 실시간 TV";
+  wdFeed.load();
+}
+/* 새 영상 여러 개를 이어서 재생 — 3분 이하(쇼츠·예고·짧은 클립)는 건너뛰고 목록에서 뺌 */
+async function playWdIds(vids, start){
+  const allShort = new Set([].concat.apply([], Object.values(WD_SHORTS)));
+  const picked = vids[start]; vids = vids.filter(x => x === picked || !allShort.has(x.v)); start = Math.max(0, vids.indexOf(picked));
+  stopAll(); histOpen(showWdFeed, () => !!document.querySelector(".wd-play"), "play");
+  $("player").innerHTML = `<div class="wd-play">
+    <div class="wd-bar"><button type="button" class="wd-back" id="wdBack">← 새 영상 목록</button><div class="wd-ttl">🔔 웹드라마 새 영상</div><button type="button" class="big-btn wd-big">⛶ 크게</button></div>
+    <div class="wd-body"><div class="wd-main bigable"><div class="wd-v"><div id="wdHost"></div></div></div>
+    <aside class="wd-side"><div class="wd-head">새 영상<span id="wdCnt">${vids.length}개 · 최신이 위</span></div><div class="wd-items" id="wdItems"></div></aside></div></div>`;
+  $("wdBack").onclick = showWdFeed;
+  const wrap = $("wdItems");
+  vids.forEach((x, k) => {
+    const it = document.createElement("div"); it.className = "wd-it"; it.dataset.i = k; it.dataset.v = x.v;
+    it.innerHTML = `<span class="no">${k + 1}</span><img loading="lazy" src="https://i.ytimg.com/vi/${x.v}/mqdefault.jpg" alt=""><span class="ti"></span>`;
+    it.querySelector(".ti").textContent = x.ch + " · " + x.t;
+    it.onclick = () => { try { wdPlayer.playVideoAt(k); } catch(e) {} };
+    wrap.appendChild(it);
+  });
+  await loadYTApi();
+  if (!$("wdHost")) return;
+  let started = false, skipN = 0;
+  const highlight = () => { let idx = -1; try { idx = wdPlayer.getPlaylistIndex(); } catch(e) {}
+    Array.prototype.forEach.call(wrap.children, ch => ch.classList.toggle("cur", +ch.dataset.i === idx));
+    const cur = wrap.querySelector(".wd-it.cur"); if (cur) try { cur.scrollIntoView({ block:"nearest" }); } catch(e) {} };
+  const next = () => { try { const i = wdPlayer.getPlaylistIndex(); if (i + 1 < vids.length) wdPlayer.playVideoAt(i + 1); } catch(e) {} };
+  wdPlayer = new YT.Player("wdHost", {
+    width: "100%", height: "100%",
+    playerVars: { autoplay: 1, mute: 1, playsinline: 1, rel: 0 },
+    events: {
+      onReady: e => { try { e.target.mute(); e.target.loadPlaylist(vids.map(x => x.v), start || 0); } catch(err) {} },
+      onError: () => next(),
+      onStateChange: e => {
+        if (e.data === 1) {
+          let d = 0, id = ""; try { d = wdPlayer.getDuration(); id = (wdPlayer.getVideoData() || {}).video_id || ""; } catch(err) {}
+          if (d > 0 && d <= 180 && skipN < 40) { skipN++; const r = wrap.querySelector('.wd-it[data-v="' + id + '"]'); if (r) r.remove(); next(); return; }
+          if (!started) { started = true; try { wdPlayer.unMute(); wdPlayer.setVolume(80); } catch(err) {} }
+        }
+        highlight();
+      }
+    }
+  });
+}
+
+
+renderTabs(); renderGrid();
+/* 핸드폰: 화살표(KBS·MBC 등)를 누르면 새 탭 대신 같은 창(최상위)에서 열기 → 백버튼으로 myway.kr 복귀.
+   돌아오면 나갔던 채널을 다시 보여 줌 (그 탭 세션에서 1회만) */
+const RET_KEY = "liveTvReturnV1";
+$("player").addEventListener("click", e => {
+  const a = e.target.closest("a.tap:not(.start)"); if (!a || !IS_MOBILE) return;
+  e.preventDefault();
+  try { sessionStorage.setItem(RET_KEY, JSON.stringify({ slug: curSlug, cat: currentCat, y: side.scrollTop, t: Date.now() })); } catch(err) {}
+  try { (window.top || window).location.href = a.href; } catch(err) { window.open(a.href, "_blank", "noopener"); }
+});
+let retSlug = "";
+try { const r = JSON.parse(sessionStorage.getItem(RET_KEY) || "null"); sessionStorage.removeItem(RET_KEY);
+      if (r && r.slug && Date.now() - r.t < 3*3600*1000 && CHANNELS.some(c => c.slug === r.slug)) {
+        retSlug = r.slug;
+        if (typeof r.cat === "string") { currentCat = r.cat; renderTabs(); renderGrid(); }   // 나갔던 탭(예: 치지직) 그대로
+        if (r.y) requestAnimationFrame(() => { side.scrollTop = r.y; });                   // 채널 목록 스크롤 위치도
+        requestAnimationFrame(() => { const t = $("tabs").querySelector("button.on"); if (t) { const tb = $("tabs"); tb.scrollLeft = t.offsetLeft - (tb.clientWidth - t.offsetWidth) / 2; } });   // 탭바에서 그 탭이 보이게
+      } } catch(err) {}
+/* myway.kr 위쪽 [🎭 웹드라마] 버튼: ?wd=1 로 열면 채널 탭 없이 웹드라마 화면만 */
+const WD_ONLY = /[?&]wd=1/.test(location.search);
+if (WD_ONLY) { document.body.classList.add("wdonly"); currentCat = "웹드라마"; renderTabs(); }
+if (currentCat === "OTT") showOtt();
+else if (currentCat === "웹드라마") showWebdrama();
+else if (retSlug) play(retSlug);   // 화살표 채널로 나갔다가 백버튼으로 돌아온 경우만 → 그 채널 바로 재생
+else {
+  /* 처음 열 때는 항상 정지 화면. 주소 끝에 남은 #채널(새로고침·뒤로가기 때 브라우저가 되살린 값)로는 자동 재생하지 않음 */
+  try { history.replaceState(null, "", location.pathname + location.search); } catch(err) {}
+  play("ytn", true);   // 처음 화면: 원래 YTN 유튜브 화면 그대로, 자동 재생만 안 함 (▶ 누르면 재생) — 탭·다른 채널을 누르면 바로 자동 재생
+}   // 처음 연 사람: 자동 재생하지 않고 정지 화면(▶ 눌러서 보기) — 누르면 YTN, 다른 채널을 누르면 그 채널이 바로 재생
+</script>
+<script>
+/* 복사 방지 */
+(function(){
+  ['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){
+    document.addEventListener(ev, function(e){ var t=e.target; if(t&&t.closest&&t.closest('input,textarea'))return; e.preventDefault(); }, true);
+  });
+  document.addEventListener('keydown', function(e){
+    var k=(e.key||'').toLowerCase(), c=e.ctrlKey||e.metaKey;
+    if (e.key==='F12' || (c&&['u','s','c','x','a'].indexOf(k)>-1) || (c&&e.shiftKey&&['i','j','c'].indexOf(k)>-1)) { e.preventDefault(); e.stopPropagation(); }
+  }, true);
+})();
+</script>
+<script>
+/* 모바일: 새 창(새 탭) 대신 최상위 창에서 직접 열어 → 백버튼으로 MYWAY 복귀. PC·태블릿은 새 탭 유지. */
+(function(){
+  if(!/Mobi/i.test(navigator.userAgent)) return;
+  function skip(u){ return !u || u.charAt(0) === '#' || /^(javascript|blob|data|mailto|tel|about):/i.test(u); }
+  function go(u){ try { (window.top || window).location.href = u; } catch(_) { location.href = u; } }
+  document.addEventListener('click', function(e){
+    if (e.defaultPrevented || document.body.classList.contains('editing')) return;
+    var a = e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a || a.hasAttribute('download')) return;
+    var href = a.getAttribute('href') || '';
+    if (skip(href) || skip(a.href)) return;
+    e.preventDefault(); go(a.href);
+  });
+  var _open = window.open;
+  window.open = function(url){
+    if (typeof url === 'string' && !skip(url)) { go(new URL(url, location.href).href); return null; }
+    return _open.apply(window, arguments);
+  };
+})();
+</script>
+</body>
+</html>
