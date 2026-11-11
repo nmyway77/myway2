@@ -3509,7 +3509,8 @@
       if (nav) Array.prototype.forEach.call(nav.querySelectorAll('.tab-btn'), function(b){ b.classList.toggle('is-active', b.getAttribute('data-tab') === btnTab); });
       var pg = pageOf(k);
       if (pg) { /* 음악·CCTV·유튜버: 채널바 없이 해당 페이지를 화면 전체로 */
-        if (changed || !$('tvrScreen').firstChild) {
+        /* 같은 탭(음악·TV·CCTV 등)을 다시 눌러도 그 화면의 처음 화면으로 새로 열기 (예: 유튜브 재생 중 [음악] → 가수 화면) */
+        if (true) {
           /* people2.html은 같은 사이트 sessionStorage(mywayCat_people2)로 처음 분류를 정함 → 유튜버가 메인 */
           if (pg.cat) { try { sessionStorage.setItem('mywayCat_people2', pg.cat); } catch(e){} }
           $('tvrScreen').innerHTML = '<iframe title="' + esc(pg.label) + '" allow="autoplay; encrypted-media; fullscreen" allowfullscreen src="' + String(pg.url).replace(/"/g, '%22') + '"></iframe>';
