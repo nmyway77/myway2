@@ -3353,9 +3353,11 @@
       var pk = Object.keys(TVR_PAGES);
       function pg(k){ return [k, TVR_PAGES[k].label]; }
       /* 예전 [📺 TV](채널바) 탭은 제거 — TV2(livetv7)를 [📺 TV]로 표시 */
+      /* 순서: TV → 음악 → 라디오 → 나머지(팟캐스트·AI·CCTV) */
       pk.filter(function(k){ return k === 'tv2'; }).map(pg)
+        .concat(pk.filter(function(k){ return k === 'music'; }).map(pg))
         .concat([['radio','📻 라디오']])
-        .concat(pk.filter(function(k){ return k !== 'tv2'; }).map(pg)).forEach(function(d){
+        .concat(pk.filter(function(k){ return k !== 'tv2' && k !== 'music'; }).map(pg)).forEach(function(d){
         var b = document.createElement('button'); b.type = 'button';
         b.className = 'tab-btn tvr-tab' + (onair === d[0] ? ' is-active' : '');
         b.dataset.tab = 'onair_' + d[0]; b.textContent = d[1];
