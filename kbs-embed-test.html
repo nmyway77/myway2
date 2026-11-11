@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>KBS 공식화면 임베드 테스트 - MYWAY.KR</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; display: flex; flex-direction: column; background: #f7f3eb; color: #1f1d2b;
+         font-family: Pretendard, -apple-system, "Malgun Gothic", sans-serif; }
+  header { padding: 10px 12px 8px; }
+  h1 { font-size: 16px; margin: 0 0 8px; }
+  .bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+  .bar button { flex: 1 1 auto; min-height: 44px; padding: 6px 10px; font: inherit; font-size: 14px; font-weight: 600;
+                border-radius: 10px; border: 1px solid #b9b2a1; background: #fff; color: #1f1d2b; cursor: pointer; }
+  .bar button.on { color: #fff; border-color: transparent; background: linear-gradient(135deg, #7b5cf0, #3f7df0); }
+  #info { font-size: 12.5px; color: #5d5a6e; min-height: 18px; }
+  #screen { flex: 1; position: relative; background: #000; min-height: 300px; }
+  #screen iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
+  footer { padding: 8px 76px 8px 12px; font-size: 12.5px; color: #5d5a6e; }
+  footer a { color: #4b55d6; }
+  .home { position: fixed; right: 14px; bottom: 14px; width: 50px; height: 50px; border-radius: 50%;
+          display: flex; align-items: center; justify-content: center; font-size: 21px; text-decoration: none;
+          color: #fff; background: linear-gradient(135deg, #7b5cf0, #3f7df0); box-shadow: 0 4px 14px rgba(0,0,0,.25); }
+</style>
+</head>
+<body>
+<header>
+  <h1>KBS 공식화면 임베드 테스트</h1>
+  <div class="bar" id="chBar"></div>
+  <div class="bar" id="modeBar"></div>
+  <div id="info">채널과 방식(A~D)을 눌러 보세요.</div>
+</header>
+<div id="screen"></div>
+<footer><a href="https://myway.kr">myway.kr</a> · 테스트용 페이지</footer>
+<a class="home" href="https://myway.kr" title="홈" aria-label="myway.kr 홈">🏠</a>
+
+<script>
+(function () {
+  var CHS = [
+    ["KBS1 TV", "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=12&ch_type=globalList"],
+    ["1라디오", "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=21&ch_type=radioList&bora=on&chat=on"],
+    ["쿨FM",   "https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=25&ch_type=radioList"]
+  ];
+  var SB = "allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation";
+  /* 방식: [이름, 설명, sandbox 사용, no-referrer 사용] */
+  var MODES = [
+    ["A", "지금 PC에서 쓰는 방식 (no-referrer)", false, true],
+    ["B", "차단막(sandbox) + no-referrer — SBS에 쓰는 방식", true, true],
+    ["C", "차단막(sandbox)만", true, false],
+    ["D", "아무 설정 없는 기본 iframe", false, false]
+  ];
+  var ch = 0, mode = -1;
+  var screen = document.getElementById("screen"), info = document.getElementById("info");
+
+  function bar(el, items, cur, onPick) {
+    el.innerHTML = "";
+    items.forEach(function (it, i) {
+      var b = document.createElement("button");
+      b.type = "button"; b.textContent = it[0];
+      if (i === cur) b.className = "on";
+      b.addEventListener("click", function () { onPick(i); });
+      el.appendChild(b);
+    });
+  }
+  function render() {
+    bar(document.getElementById("chBar"), CHS, ch, function (i) { ch = i; render(); });
+    bar(document.getElementById("modeBar"), MODES, mode, function (i) { mode = i; render(); });
+    if (mode < 0) return;
+    var m = MODES[mode];
+    info.textContent = CHS[ch][0] + " · 방식 " + m[0] + ": " + m[1];
+    screen.innerHTML = "";
+    var f = document.createElement("iframe");
+    f.title = CHS[ch][0];
+    if (m[2]) f.setAttribute("sandbox", SB);
+    if (m[3]) f.setAttribute("referrerpolicy", "no-referrer");
+    f.setAttribute("allow", "autoplay; encrypted-media; fullscreen; picture-in-picture");
+    f.setAttribute("allowfullscreen", "");
+    f.src = CHS[ch][1];
+    screen.appendChild(f);
+  }
+  render();
+})();
+</script>
+</body>
+</html>
