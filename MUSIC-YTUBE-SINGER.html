@@ -4130,7 +4130,7 @@
     }
     function closePanel(){ panel.classList.remove('open'); tile.classList.remove('active'); }
 
-    tile.addEventListener('click', function(){ if (panel.classList.contains('open')) return; openPanel(); });
+    tile.addEventListener('click', function(){ if (panel.classList.contains('open')) return; stopPlayer(); openPanel(); }); /* 가수 화면으로 돌아오면 재생 중인 소리 멈춤 */
     panel.querySelector('.sg-back').addEventListener('click', function(){
       closePanel();
       if (box && !box.innerHTML.trim()){
