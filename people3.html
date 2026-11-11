@@ -1034,6 +1034,7 @@ const YT_CH = {"@kimseontae":"t-BApVtJGrvF5pCgbiNVeg","@woongjingoway":"45m6W8hW
   }
   /* 🔔 새 영상: 누를 때만 각 채널의 최근 영상 목록(유튜브 RSS)을 불러와 날짜순으로 — 쇼츠는 빼고 */
   var FEED=null, feedDays=3, feedLoading=false;
+  var _ta=document.createElement('textarea'); function unesc(s){ _ta.innerHTML=String(s); return _ta.value; }
   function ago(d){ var m=Math.floor((Date.now()-d)/60000); if(m<60) return Math.max(1,m)+'분 전'; var h=Math.floor(m/60); if(h<24) return h+'시간 전'; return Math.floor(h/24)+'일 전'; }
   var fcss=document.createElement('style'); fcss.textContent=
    'body.feed-mode #masonryGallery{display:none}#feedBox{display:none}body.feed-mode #feedBox{display:block}'+
@@ -1077,7 +1078,7 @@ const YT_CH = {"@kimseontae":"t-BApVtJGrvF5pCgbiNVeg","@woongjingoway":"45m6W8hW
           if(j.status!=='ok'){ if((tries||0)<3) return new Promise(function(ok){ setTimeout(ok, 2500*((tries||0)+1)); }).then(function(){ return one(c,(tries||0)+1); }); return; }
           (j.items||[]).forEach(function(i){ if(/\/shorts\//.test(i.link||'')) return; var m=String(i.link||'').match(/[?&]v=([\w-]{11})/); if(!m) return;
             var d=Date.parse(String(i.pubDate||'').replace(' ','T')+'Z'); if(isNaN(d)) return;
-            out.push({ v:m[1], t:i.title||'', ch:c.name, d:d }); });
+            out.push({ v:m[1], t:unesc(i.title||''), ch:c.name, d:d }); });
         }).catch(function(){});
     }
     function worker(){ if(k>=chans.length) return Promise.resolve(); var c=chans[k++];
