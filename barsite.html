@@ -1184,6 +1184,7 @@
     body[data-active-tab="onair"] .myway-footer { display: none !important; }
     /* 탭바의 TV · 라디오 버튼 */
     .tab-btn.tvr-tab { font-weight: 800; }
+    .phone-note { margin: 4px 4px 12px; padding: 9px 12px; border-radius: 10px; background: #fff7e0; color: #8a5a00; font-size: 12.5px; font-weight: 600; line-height: 1.45; }
     /* 영화는 위쪽 [🎬 영화] 버튼으로 이동 → 예전 일반 [영화] 탭 버튼은 숨김 */
     #tabNav .tab-btn[data-tab="movie"] { display: none; }
     .tab-btn.tvr-tab.is-active[data-tab="onair_tv"],
@@ -2303,11 +2304,16 @@
         const wrap = document.createElement('section'); wrap.className = 'section photo-section';
         const m = document.createElement('div'); m.className = 'masonry photo-tab';
         const items = tab.sections[0].items;
+        /* 핸드폰(태블릿 제외): KBS 다시보기(vod.kbs.co.kr)는 모바일 웹에서 3분 미리보기만 나와서 드라마VOD 탭에서 숨김 (편집 중에는 모두 보임) */
+        const IS_PHONE = /iPhone|iPod|Android.*Mobile|Windows Phone/i.test(navigator.userAgent);
+        const hidePhoneKbs = IS_PHONE && tabId === 'dramavod' && !editMode;
+        let hiddenN = 0;
         items.forEach((it, ii) => {
           const nm = it.name || it.ticker || '';
           const photos = photoListOf(it);
           const firstLink = (photos.find(p => p.link) || {}).link || '';
           const pageUrl = (it.url || '').trim() || firstLink;
+          if (hidePhoneKbs && /vod\.kbs\.co\.kr/i.test(pageUrl)) { hiddenN++; return; }
           const a = document.createElement('a'); a.className = 'gcard'; a.href = pageUrl || '#'; a.target = '_blank'; a.rel = 'noopener';
           a.setAttribute('aria-label', nm);
           const cover = photos.length ? photos[0].img : (it.img || '');
@@ -2344,6 +2350,7 @@
           m.appendChild(a);
         });
         if (SHOW_EDIT) { const add = document.createElement('button'); add.type = 'button'; add.className = 'gcard gadd'; add.textContent = '＋ 사진 추가'; add.onclick = () => openPhotoDlg(null); m.appendChild(add); }
+        if (hiddenN) { const nt = document.createElement('div'); nt.className = 'phone-note'; nt.textContent = '📱 핸드폰에서는 KBS 다시보기가 3분 미리보기만 나와서 ' + hiddenN + '개를 숨겼어요 · PC·태블릿에서는 모두 보여요'; wrap.appendChild(nt); }
         wrap.appendChild(m); frag.appendChild(wrap);
         root.replaceChildren(frag);
         return;
