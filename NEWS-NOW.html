@@ -62,23 +62,16 @@
 </div>
 <script>
 /* 언론사 RSS(사진 있는 곳 위주) + 구글 뉴스 검색(when:N시간)을 모아서, 같은 기사는 하나로 합쳐 최신순으로 */
+/* 언론사 RSS 중 rss2json을 거쳐도 바로바로 갱신되는 곳만 직접 (사진용) — 나머지 언론사는 구글 뉴스 검색(site:)으로 최신 기사를 가져옴
+   (SBS·JTBC·조선·동아·매경·한경·오마이·MBC RSS는 rss2json 쪽에서 몇 시간씩 늦게 갱신되고, 국민·노컷은 시간대가 틀려서 직접 쓰지 않음) */
 const OUTLETS = [
   ["연합뉴스", "https://www.yna.co.kr/rss/news.xml"],
-  ["SBS", "https://news.sbs.co.kr/news/newsflashRssFeed.do?plink=RSSREADER"],
-  ["MBC", "https://imnews.imbc.com/rss/google_news/narrativeNews.rss"],
-  ["JTBC", "https://news-ex.jtbc.co.kr/v1/get/rss/newsflesh"],
-  ["조선일보", "https://www.chosun.com/arc/outboundfeeds/rss/?outputType=xml"],
-  ["동아일보", "https://rss.donga.com/total.xml"],
-  ["매일경제", "https://www.mk.co.kr/rss/30000001/"],
   ["세계일보", "https://www.segye.com/Articles/RSSList/segye_recent.xml"],
-  ["국민일보", "https://www.kmib.co.kr/rss/data/kmibRssAll.xml"],
-  ["오마이뉴스", "http://rss.ohmynews.com/rss/ohmynews.xml"],
-  ["노컷뉴스", "https://rss.nocutnews.co.kr/nocutnews.xml"],
   ["머니투데이", "https://rss.mt.co.kr/mt_news.xml"],
-  ["한국경제", "https://www.hankyung.com/feed/all-news"],
   ["경향신문", "https://www.khan.co.kr/rss/rssdata/total_news.xml"],
   ["뉴시스", "https://newsis.com/RSS/sokbo.xml"]
 ];
+const SITES = ["yna.co.kr", "news.kbs.co.kr", "imnews.imbc.com", "news.sbs.co.kr", "ytn.co.kr", "news.jtbc.co.kr", "chosun.com", "joongang.co.kr", "donga.com", "hani.co.kr", "hankyung.com", "mk.co.kr", "news1.kr", "nocutnews.co.kr"];
 const CATS = [["전체", ["속보", "뉴스", "정부", "경제", "사회", "국제"]], ["정치", ["정치", "국회", "대통령실"]], ["경제", ["경제", "증시", "부동산"]], ["사회", ["사회", "사건", "날씨"]],
   ["국제", ["국제", "미국", "중국 일본"]], ["IT·과학", ["IT", "과학", "AI"]], ["연예", ["연예", "드라마", "가수"]], ["스포츠", ["스포츠", "야구", "축구"]]];
 const TIMES = [[1, "1시간"], [3, "3시간"], [6, "6시간"], [24, "24시간"]];
@@ -104,8 +97,12 @@ $("cats").onclick = e => { const b = e.target.closest("[data-c]"); if (!b) retur
 $("go").onclick = () => load();
 $("find").addEventListener("keydown", e => { if (e.key === "Enter") load(); });
 
-function rss(url){
-  return fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(url)).then(r => r.json()).then(j => j.status === "ok" ? (j.items || []) : []).catch(() => []);
+function rss(url, tries){
+  return fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(url)).then(r => r.json()).then(j => {
+    if (j.status === "ok") return j.items || [];
+    if ((tries || 0) < 3) return new Promise(ok => setTimeout(ok, 2500 * ((tries || 0) + 1))).then(() => rss(url, (tries || 0) + 1));   /* 한꺼번에 많으면 잠깐 막힘 → 조금 뒤 다시 */
+    return [];
+  }).catch(() => []);
 }
 function imgOf(i){
   let u = i.thumbnail || (i.enclosure && (i.enclosure.link || i.enclosure.url)) || "";
@@ -121,7 +118,9 @@ function load(){
   if (loading) return; loading = true;
   const q = $("find").value.trim();
   const words = q ? [q] : CATS[cat][1];
-  const gnews = words.map(w => "https://news.google.com/rss/search?q=" + encodeURIComponent(w + " when:" + hours + "h") + "&hl=ko&gl=KR&ceid=KR:ko");
+  const cb = "&_t=" + Math.floor(Date.now() / 300000);   /* 5분마다 새 주소 → 변환 서비스의 오래된 보관본 대신 새로 받아 옴 */
+  const gq = w => "https://news.google.com/rss/search?q=" + encodeURIComponent(w + " when:" + hours + "h") + "&hl=ko&gl=KR&ceid=KR:ko" + cb;
+  const gnews = words.map(gq).concat((q || cat) ? [] : SITES.map(s => gq("site:" + s)));
   const jobs = gnews.map(u => ({ u, g: true })).concat((q || cat) ? [] : OUTLETS.map(o => ({ u: o[1], name: o[0] })));
   $("st").textContent = "불러오는 중… 0/" + jobs.length; $("grid").innerHTML = "";
   const out = []; let k = 0, done = 0;
