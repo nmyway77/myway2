@@ -15,7 +15,8 @@
   h2 small { font-size:12px; color:var(--sub); font-weight:500; margin-left:8px; }
 
   /* 상단: 영화관·영화 사이트 */
-  .th-row { display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); gap:10px; margin-bottom:28px; }
+  .th-row { display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); gap:10px; margin-bottom:10px; }
+  .th-row.ott-row { grid-template-columns:repeat(8, minmax(0,1fr)); margin-bottom:28px; }
   .th { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; height:104px; border-radius:16px; background:#fff; text-decoration:none; box-shadow:0 2px 10px rgba(20,30,60,.06); border:1px solid var(--line); transition:transform .18s, box-shadow .18s; overflow:hidden; }
   .th:hover { transform:translateY(-3px); box-shadow:0 10px 22px rgba(20,30,60,.12); }
   .th .lg { width:54px; height:54px; border-radius:14px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:var(--c); color:#fff; font-weight:900; font-size:20px; letter-spacing:-.5px; }
@@ -66,10 +67,10 @@
   footer p { margin:10px 0 0; font-size:13px; color:var(--sub); }
   footer p a { font-weight:800; color:var(--ink); text-decoration:none; }
 
-  @media (max-width:900px) { .th-row { grid-template-columns:repeat(4, minmax(0,1fr)); } }
+  @media (max-width:900px) { .th-row, .th-row.ott-row { grid-template-columns:repeat(4, minmax(0,1fr)); } }
   @media (max-width:720px) {
     .wrap { padding:14px 10px 24px; }
-    .th-row { grid-template-columns:repeat(4, minmax(0,1fr)); gap:7px; }
+    .th-row, .th-row.ott-row { grid-template-columns:repeat(4, minmax(0,1fr)); gap:7px; }
     .th { height:86px; border-radius:12px; } .th .lg { width:42px; height:42px; border-radius:11px; font-size:12px; } .th b { font-size:11.5px; }
     .ch-grid { grid-template-columns:repeat(2, minmax(0,1fr)); gap:9px; }
     .body { flex-direction:column; } .main { flex:none; } .side { width:auto; flex:1; border-left:0; border-top:1px solid var(--line); }
@@ -80,8 +81,9 @@
 <body>
 <div class="list-view">
   <div class="wrap">
-    <h2>영화관 · 영화 정보<small>누르면 해당 사이트가 새 창으로 열려요</small></h2>
+    <h2>영화관 · 영화 정보 · OTT<small>누르면 해당 사이트가 새 창으로 열려요</small></h2>
     <div class="th-row" id="thRow"></div>
+    <div class="th-row ott-row" id="ottRow"></div>
     <h2>영화 리뷰 채널<small>누르면 그 채널의 최신 영상부터 재생 · 오른쪽에 영상 목록</small></h2>
     <div class="ch-grid" id="chKr"></div>
     <h2>해외 영화 채널<small>영어 · 누르면 최신 영상부터 재생</small></h2>
@@ -146,6 +148,7 @@ const THEATERS = [
 "col": "#6a3cf0"
 }
 ];
+const OTTS = [{"n": "넷플릭스", "u": "https://www.netflix.com/kr/", "s": "N", "col": "#e50914"}, {"n": "디즈니+", "u": "https://www.disneyplus.com/ko-kr", "s": "D+", "col": "#0b3d91"}, {"n": "쿠팡플레이", "u": "https://www.coupangplay.com/", "s": "C", "col": "#7b2ff7"}, {"n": "티빙", "u": "https://www.tving.com/", "s": "T", "col": "#ff153c"}, {"n": "웨이브", "u": "https://www.wavve.com/", "s": "W", "col": "#1351f9"}, {"n": "왓챠", "u": "https://watcha.com/", "s": "W", "col": "#ff0558"}, {"n": "Apple TV+", "u": "https://tv.apple.com/kr", "s": "tv", "col": "#1d1d1f"}, {"n": "프라임 비디오", "u": "https://www.primevideo.com/", "s": "P", "col": "#00a8e1"}];
 const CHANNELS = [
 {
 "n": "지무비",
@@ -274,6 +277,8 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", "
   document.addEventListener('keydown', e => { const k = (e.key || '').toLowerCase(); if (k === 'f12' || (e.ctrlKey && e.shiftKey && 'ijc'.includes(k)) || (e.ctrlKey && !e.shiftKey && 'usc'.includes(k) && k)) e.preventDefault(); }, true);
 })();
 
+const thTile = t => `<a class="th" href="${esc(t.u)}" target="_blank" rel="noopener"><span class="lg" style="--c:${t.col}">${t.img ? `<img src="${esc(t.img)}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.parentNode.textContent=${esc(JSON.stringify(t.n.slice(0,3)))}">` : esc(t.s || t.n.slice(0,3))}</span><b>${esc(t.n)}</b></a>`;
+$("ottRow").innerHTML = OTTS.map(thTile).join("");
 $("thRow").innerHTML = THEATERS.map(t => `<a class="th" href="${esc(t.u)}" target="_blank" rel="noopener"><span class="lg" style="--c:${t.col}">${t.img ? `<img src="${esc(t.img)}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.parentNode.textContent=${esc(JSON.stringify(t.n.slice(0,3)))}">` : esc(t.s || t.n.slice(0,3))}</span><b>${esc(t.n)}</b></a>`).join("");
 function card(c, i){ const k = COLS[i % COLS.length];
   return `<div class="ch" data-i="${i}" style="--c1:${k[0]};--c2:${k[1]}">${c.img ? `<img src="${esc(c.img)}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.remove()">` : `<div class="big">${esc(c.n)}</div>`}<span class="pl">${c.ext ? "↗" : "▶"}</span>${c.ext ? '<span class="ex">유튜브에서 보기</span>' : ""}<div class="nm"><b>${esc(c.n)}</b><i>${esc(c.d)}</i></div></div>`; }
