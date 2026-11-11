@@ -3404,6 +3404,7 @@
   var TVR_PAGES = {
     tv2:   { label: "📺 TV", url: "https://nmyway77.github.io/livetv7/" },
     movie: { label: "🎬 영화", url: "https://myway.kr/MOVIE-YTUBE.html" },
+    webdrama: { label: "🎭 웹드라마", url: "https://nmyway77.github.io/livetv7/?wd=1" },
     podcast: { label: "🎙 팟캐스트", url: "https://myway.kr/podcast.html" },
     music: { label: "🎵 음악", url: "https://myway.kr/MUSIC-YTUBE-SINGER.html" },
     cctv:  { label: "📹 CCTV", url: "https://myway.kr/00makingyoutubefull2.html" }
@@ -3480,7 +3481,7 @@
       var pk = Object.keys(TVR_PAGES);
       function pg(k){ return [k, TVR_PAGES[k].label]; }
       /* 예전 [📺 TV](채널바) 탭은 제거 — TV2(livetv7)를 [📺 TV]로 표시 */
-      /* 순서: TV → 음악 → 라디오 → 나머지(영화·팟캐스트·CCTV) */
+      /* 순서: TV → 음악 → 라디오 → 나머지(영화·웹드라마·팟캐스트·CCTV) */
       pk.filter(function(k){ return k === 'tv2'; }).map(pg)
         .concat(pk.filter(function(k){ return k === 'music'; }).map(pg))
         .concat([['radio','📻 라디오']])
