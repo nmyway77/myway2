@@ -738,8 +738,6 @@ const YT_CH = {"@kimseontae":"t-BApVtJGrvF5pCgbiNVeg","@woongjingoway":"45m6W8hW
         nav.appendChild(mkBtn(cat.code, cat.label, n));
       });
       var fb=document.createElement('button'); fb.type='button'; fb.className='cat-btn feed-btn'+(document.body.classList.contains('feed-mode')?' is-active':''); fb.textContent='🔔 새 영상'; fb.onclick=function(){ nav.querySelectorAll('.cat-btn').forEach(function(x){x.classList.remove('is-active');}); fb.classList.add('is-active'); if(window.ypFeed) window.ypFeed(); }; nav.appendChild(fb);
-      var r=document.createElement('a'); r.className='cat-btn rank-btn'; r.href=RANK_URL; r.target='_blank'; r.rel='noopener';
-      r.textContent='🏆 최신 유튜버 순위'; nav.appendChild(r);
     }
     function refreshNav(){ buildCatNav(); applyFilter(curFilter); }
 
