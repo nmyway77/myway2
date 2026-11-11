@@ -34,6 +34,7 @@
   .ch .big { position:absolute; inset:0 0 40px; display:flex; align-items:center; justify-content:center; padding:10px; color:#fff; font-size:21px; font-weight:900; text-align:center; word-break:keep-all; text-shadow:0 2px 10px rgba(0,0,0,.2); }
   .ch .pl { position:absolute; right:9px; top:9px; width:30px; height:30px; border-radius:50%; background:rgba(0,0,0,.45); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; opacity:0; transition:opacity .2s; }
   .ch:hover .pl { opacity:1; }
+  .ch .ex { position:absolute; left:8px; top:8px; font-size:10.5px; font-weight:800; color:#fff; background:rgba(0,0,0,.45); padding:2px 8px; border-radius:999px; }
 
   /* 재생 화면 */
   .play { position:fixed; inset:0; display:none; flex-direction:column; background:#fff; z-index:20; }
@@ -218,6 +219,7 @@ const CHANNELS = [
 },
 {
 "n": "무비방",
+"ext": 1,
 "d": "영화 편집",
 "list": "UURLXO9_JZZkNWqdKKY8pzQg",
 "img": "",
@@ -232,6 +234,7 @@ const CHANNELS = [
 },
 {
 "n": "Boxoffice 4K",
+"ext": 1,
 "d": "영어 · 해외 영화",
 "list": "UUwP1wo41m_YaxpupmNfe9iA",
 "img": "https://www.shutterstock.com/image-vector/4k-ultra-hd-sign-reflection-600w-253785661.jpg",
@@ -246,6 +249,7 @@ const CHANNELS = [
 },
 {
 "n": "V Sci-Fi",
+"ext": 1,
 "d": "영어 · SF 영화",
 "list": "UUwjchqe4hXdefYaDN2yHZgA",
 "img": "https://yt3.googleusercontent.com/v9HiQbBuYNy7WAJLHyNEIBscANwOP37uYgsFIOiT7HqEzOTwJNhuTrdsv7-utQBsv7TGOGUuHA=s900-c-k-c0x00ffffff-no-rj",
@@ -272,10 +276,13 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", "
 
 $("thRow").innerHTML = THEATERS.map(t => `<a class="th" href="${esc(t.u)}" target="_blank" rel="noopener"><span class="lg" style="--c:${t.col}">${t.img ? `<img src="${esc(t.img)}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.parentNode.textContent=${esc(JSON.stringify(t.n.slice(0,3)))}">` : esc(t.s || t.n.slice(0,3))}</span><b>${esc(t.n)}</b></a>`).join("");
 function card(c, i){ const k = COLS[i % COLS.length];
-  return `<div class="ch" data-i="${i}" style="--c1:${k[0]};--c2:${k[1]}">${c.img ? `<img src="${esc(c.img)}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.remove()">` : `<div class="big">${esc(c.n)}</div>`}<span class="pl">▶</span><div class="nm"><b>${esc(c.n)}</b><i>${esc(c.d)}</i></div></div>`; }
+  return `<div class="ch" data-i="${i}" style="--c1:${k[0]};--c2:${k[1]}">${c.img ? `<img src="${esc(c.img)}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.remove()">` : `<div class="big">${esc(c.n)}</div>`}<span class="pl">${c.ext ? "↗" : "▶"}</span>${c.ext ? '<span class="ex">유튜브에서 보기</span>' : ""}<div class="nm"><b>${esc(c.n)}</b><i>${esc(c.d)}</i></div></div>`; }
 $("chKr").innerHTML = CHANNELS.map((c, i) => c.g === "kr" ? card(c, i) : "").join("");
 $("chEn").innerHTML = CHANNELS.map((c, i) => c.g === "en" ? card(c, i) : "").join("");
-document.addEventListener("click", e => { const c = e.target.closest(".ch"); if (c) play(+c.dataset.i); });
+document.addEventListener("click", e => { const c = e.target.closest(".ch"); if (!c) return; const ch = CHANNELS[+c.dataset.i];
+  /* 다른 사이트 재생을 막아 둔 채널은 유튜브 채널을 새 창으로 */
+  if (ch.ext) { window.open("https://www.youtube.com/channel/UC" + ch.list.slice(2) + "/videos", "_blank", "noopener"); return; }
+  play(+c.dataset.i); });
 
 let player = null;
 function loadYTApi(){
