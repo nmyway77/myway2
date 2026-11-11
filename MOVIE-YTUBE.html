@@ -76,15 +76,30 @@
     .body { flex-direction:column; } .main { flex:none; } .side { width:auto; flex:1; border-left:0; border-top:1px solid var(--line); }
     .bar { flex-wrap:wrap; } .ttl { order:3; flex-basis:100%; }
   }
+  /* 🔔 새 영상 */
+  .feed-btn { margin-left:10px; vertical-align:middle; border:1.5px solid #b9cdf5; background:#eef4ff; color:#2a4fa8; border-radius:999px; padding:5px 12px; font:inherit; font-size:12.5px; font-weight:800; cursor:pointer; }
+  .feed-btn:hover { background:#dfe9ff; }
+  .fd-head { display:flex; align-items:center; gap:10px; margin:0 0 12px; }
+  .fd-back { border:0; border-radius:999px; padding:7px 14px; font:inherit; font-size:13px; font-weight:800; color:#fff; background:linear-gradient(95deg,#7ed6fb 10%,#b176f3 90%); cursor:pointer; }
+  .fd-top { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:0 0 14px; } .fd-top .lb { font-size:13px; color:#7a8199; margin-right:4px; }
+  .fd-chip { border:1.5px solid #dfe3ec; background:#fff; border-radius:999px; padding:6px 13px; font:inherit; font-size:13px; font-weight:700; color:#4a5170; cursor:pointer; } .fd-chip.on { background:#1f2740; color:#fff; border-color:#1f2740; }
+  .fd-st { font-size:13px; color:#7a8199; margin-left:auto; }
+  .fd-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:14px; }
+  .fd-it { cursor:pointer; border-radius:12px; overflow:hidden; background:#fff; box-shadow:0 2px 10px rgba(20,30,60,.07); transition:transform .18s; } .fd-it:hover { transform:translateY(-3px); }
+  .fd-it img { display:block; width:100%; aspect-ratio:16/9; object-fit:cover; background:#eee; }
+  .fd-it .tx { padding:8px 10px 10px; } .fd-it b { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:13.5px; line-height:1.35; color:#1f2740; }
+  .fd-it small { display:block; margin-top:5px; font-size:12px; color:#7a8199; } .fd-empty { padding:40px 0; text-align:center; color:#7a8199; }
+  @media (max-width:600px){ .fd-grid { grid-template-columns:repeat(2, minmax(0,1fr)); gap:9px; } .fd-it b { font-size:12.5px; } }
 </style>
 </head>
 <body>
 <div class="list-view">
-  <div class="wrap">
+  <div class="wrap feed-view" id="feedView" style="display:none"><div class="fd-head"><button type="button" class="fd-back" id="fdBack">← 영화 채널 목록</button><h2 style="margin:0">🔔 영화 채널 새 영상</h2></div><div id="feedBox"></div></div>
+  <div class="wrap" id="mainView">
     <h2>영화관 · 영화 정보 · OTT<small>누르면 해당 사이트가 새 창으로 열려요</small></h2>
     <div class="th-row" id="thRow"></div>
     <div class="th-row ott-row" id="ottRow"></div>
-    <h2>영화 리뷰 채널<small>누르면 그 채널의 최신 영상부터 재생 · 오른쪽에 영상 목록</small></h2>
+    <h2>영화 리뷰 채널<small>누르면 그 채널의 최신 영상부터 재생 · 오른쪽에 영상 목록</small><button type="button" class="feed-btn" id="feedBtn">🔔 새 영상 확인</button></h2>
     <div class="ch-grid" id="chKr"></div>
     <h2>해외 영화 채널<small>영어 · 누르면 최신 영상부터 재생</small></h2>
     <div class="ch-grid" id="chEn"></div>
@@ -229,6 +244,69 @@ const CHANNELS = [
 "g": "kr"
 },
 {
+"n": "리뷰엉이",
+"d": "Owl's Review · 영화 리뷰",
+"list": "UULFrBpV_pG2kyMMEHCMTNzjAQ",
+"img": "https://yt3.googleusercontent.com/ytc/AIdro_nYk3wFdXFRA5zdIfi9yDHX5B56fKB1lTeFyCs9KgoOoc0=s400-c-k-c0x00ffffff-no-rj",
+"g": "kr"
+},
+{
+"n": "Dramatic Choice",
+"d": "영화·드라마 리뷰",
+"list": "UULFuK80YHBZyyKrr2B1oHrgrw",
+"img": "https://yt3.googleusercontent.com/nb6bsir1C6cxHpSjqnWyuGSylZu4fvDUofk89Nl4lueaXNaCWQuR4r1V3GD4emOcJxvdacFDeYk=s400-c-k-c0x00ffffff-no-rj",
+"g": "kr"
+},
+{
+"n": "About time",
+"d": "영화 요약",
+"list": "UULFxn_EHVOJnrEJBZY2p3E6Sg",
+"img": "https://yt3.googleusercontent.com/0tUyFEaT597o-nsFKIA14rdhR-cZthjB1-_B1WKDB2komfx4_vUeKgnL7pf-6M9f-MVyuMnntw=s400-c-k-c0x00ffffff-no-rj",
+"g": "kr"
+},
+{
+"n": "구불",
+"d": "영화 요약",
+"list": "UULFb_GEWOGkCTXawWZKDtALwg",
+"img": "https://yt3.googleusercontent.com/9MmcW1YfvZF-a0DP50Ruz6HISwIfns_-JrYyooUzUi9yZVpn2QGBE-qKU2FaiXq4KLtfuRIZsQ=s400-c-k-c0x00ffffff-no-rj",
+"g": "kr"
+},
+{
+"n": "디토이야기",
+"d": "영화 결말 리뷰",
+"list": "UULFnabt_BunUVVk1PcSd8CO9Q",
+"img": "https://yt3.googleusercontent.com/AmjzZM7qW1lqlfFsHRd3dzJtBeTuGzB2LJ5D5y4k6T-1_fdTDHZoSTFosggSJXCh8JnrVceP=s400-c-k-c0x00ffffff-no-rj",
+"g": "kr"
+},
+{
+"n": "거의없다",
+"d": "영화 리뷰",
+"list": "UULFKFakQUa9S6TXO15xjYA1Eg",
+"img": "https://yt3.googleusercontent.com/ytc/AIdro_np5aZhHuGz-IbS6IAJdh7kWs-S9F_CuBntAWvSqQgaLQ=s400-c-k-c0x00ffffff-no-rj",
+"g": "kr"
+},
+{
+"n": "B급 리뷰",
+"d": "영화 결말 리뷰",
+"list": "UULFZLmL8OfgaKPcsJNTaikjFA",
+"img": "https://yt3.googleusercontent.com/ytc/AIdro_kIavvkFpqz2I5ROao7VXywbemFKbUWLVPCGFdQWvKRK6g=s400-c-k-c0x00ffffff-no-rj",
+"g": "kr"
+},
+{
+"n": "엠터",
+"d": "영화 결말 리뷰",
+"list": "UULFaAEBRoeT5zAwkrSNZDT_oA",
+"img": "https://yt3.googleusercontent.com/09IDbT-_L-06s2sdOzyc7LMWlQWw9u0wUKitIuLp82ZFD0unFiLvN7pFic4Fd8Juhx81hgu9rVI=s400-c-k-c0x00ffffff-no-rj",
+"g": "kr"
+},
+{
+"n": "라떼한편",
+"d": "latte's movie · 영화 리뷰",
+"list": "UULF0RBaMJf4qeMl7ZkVUlNSbA",
+"img": "https://yt3.googleusercontent.com/mLfe-rWHar8GQbxnK1g6xCilMyEM5yBbxzBSgHv7oYl0Vo4UyorN5mtfGveoqecrHipp9btk=s400-c-k-c0x00ffffff-no-rj",
+"g": "kr"
+},
+{
 "n": "Hollywood Action",
 "d": "영어 · 해외 영화",
 "list": "UULFSCyFNBoGoKdi3y5SI03OxQ",
@@ -352,6 +430,86 @@ async function play(i){
         if (e.data === 1 && !started) { started = true; clearTimeout(watch); try { player.unMute(); player.setVolume(80); } catch(err) {} }
         if (!built) build(0); highlight();
       }
+    }
+  });
+}
+/* ===== 🔔 새 영상: 누를 때만 각 채널의 최근 영상(유튜브 RSS, rss2json 경유)을 모아 날짜순으로 — 쇼츠 제외 ===== */
+function makeFeed(opt){
+  /* opt: { box, sources:[{q:'channel_id=UC..'|'playlist_id=PL..', name}], onPick(list, k) } */
+  let FEED = null, days = 3, loading = false;
+  const ta = document.createElement("textarea"); const unesc = s => { ta.innerHTML = String(s); return ta.value; };
+  const ago = d => { const m = Math.floor((Date.now() - d) / 60000); if (m < 60) return Math.max(1, m) + "분 전"; const h = Math.floor(m / 60); if (h < 24) return h + "시간 전"; return Math.floor(h / 24) + "일 전"; };
+  function render(st){
+    const box = opt.box; const D = [[1, "24시간"], [3, "3일"], [7, "7일"]];
+    const list = (FEED || []).filter(x => Date.now() - x.d <= days * 86400000);
+    box.innerHTML = `<div class="fd-top"><span class="lb">올라온 지</span>` + D.map(d => `<button type="button" class="fd-chip${d[0] === days ? " on" : ""}" data-d="${d[0]}">${d[1]}</button>`).join("")
+      + `<button type="button" class="fd-chip fd-re">↻ 다시 불러오기</button><span class="fd-st">${st || (list.length + "개 · 쇼츠 제외")}</span></div><div class="fd-grid"></div>`;
+    box.querySelectorAll(".fd-chip[data-d]").forEach(b => b.onclick = () => { days = +b.dataset.d; render(); });
+    box.querySelector(".fd-re").onclick = () => { FEED = null; load(); };
+    const g = box.querySelector(".fd-grid");
+    if (FEED && !list.length) { g.outerHTML = `<div class="fd-empty">이 기간에 올라온 새 영상이 없어요</div>`; return; }
+    list.forEach((x, k) => {
+      const it = document.createElement("div"); it.className = "fd-it";
+      it.innerHTML = `<img loading="lazy" alt="" src="https://i.ytimg.com/vi/${x.v}/mqdefault.jpg"><div class="tx"><b></b><small></small></div>`;
+      it.querySelector("b").textContent = x.t; it.querySelector("small").textContent = x.ch + " · " + ago(x.d);
+      it.onclick = () => opt.onPick(list, k); g.appendChild(it);
+    });
+  }
+  function one(s, tries){
+    return fetch("https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://www.youtube.com/feeds/videos.xml?" + s.q))
+      .then(r => r.json()).then(j => {
+        if (j.status !== "ok") { if ((tries || 0) < 3) return new Promise(ok => setTimeout(ok, 2500 * ((tries || 0) + 1))).then(() => one(s, (tries || 0) + 1)); return []; }
+        return (j.items || []).filter(i => !/\/shorts\//.test(i.link || "")).map(i => {
+          const m = String(i.link || "").match(/[?&]v=([\w-]{11})/); const d = Date.parse(String(i.pubDate || "").replace(" ", "T") + "Z");
+          return (m && !isNaN(d)) ? { v: m[1], t: unesc(i.title || ""), ch: s.name, d } : null; }).filter(Boolean);
+      }).catch(() => []);
+  }
+  function load(){
+    if (FEED) { render(); return; }
+    if (loading) return; loading = true;
+    const srcs = opt.sources; let k = 0, done = 0; const out = [], seen = {};
+    render("불러오는 중… 0/" + srcs.length);
+    const worker = () => { if (k >= srcs.length) return Promise.resolve(); const s = srcs[k++];
+      return one(s).then(a => { a.forEach(x => { if (!seen[x.v]) { seen[x.v] = 1; out.push(x); } }); done++; const st = opt.box.querySelector(".fd-st"); if (st && !FEED) st.textContent = "불러오는 중… " + done + "/" + srcs.length; return worker(); }); };
+    Promise.all([worker(), worker(), worker(), worker()]).then(() => { out.sort((a, b) => b.d - a.d); FEED = out; loading = false; render(); });
+  }
+  return { load };
+}
+
+const feed = makeFeed({
+  box: $("feedBox"),
+  sources: CHANNELS.filter(c => !c.ext).map(c => ({ q: "channel_id=UC" + c.list.slice(4), name: c.n })),
+  onPick: (list, k) => playIds("🔔 새 영상", list, k)
+});
+function showFeed(on){ $("feedView").style.display = on ? "" : "none"; $("mainView").style.display = on ? "none" : ""; try { window.scrollTo(0, 0); } catch(e) {} if (on) feed.load(); }
+$("feedBtn").onclick = () => showFeed(true);
+$("fdBack").onclick = () => showFeed(false);
+/* 새 영상 여러 개를 이어서 재생 — 오른쪽 목록은 그 영상들 */
+async function playIds(ttl, vids, start){
+  stop();
+  document.body.classList.add("playing");
+  $("ttl").textContent = ttl;
+  $("cnt").textContent = vids.length + "개 · 최신이 위"; const wrap = $("items"); wrap.innerHTML = "";
+  vids.forEach((x, k) => {
+    const it = document.createElement("div"); it.className = "it"; it.dataset.i = k;
+    it.innerHTML = `<span class="no">${k + 1}</span><img loading="lazy" src="https://i.ytimg.com/vi/${x.v}/mqdefault.jpg" alt=""><span class="ti"></span>`;
+    it.querySelector(".ti").textContent = x.ch + " · " + x.t;
+    it.onclick = () => { try { player.playVideoAt(k); } catch(e) {} };
+    wrap.appendChild(it);
+  });
+  await loadYTApi();
+  if (!document.body.classList.contains("playing")) return;
+  let started = false;
+  const highlight = () => { let idx = -1; try { idx = player.getPlaylistIndex(); } catch(e) {}
+    Array.prototype.forEach.call(wrap.children, ch => ch.classList.toggle("cur", +ch.dataset.i === idx));
+    const cur = wrap.querySelector(".it.cur"); if (cur) try { cur.scrollIntoView({ block:"nearest" }); } catch(e) {} };
+  player = new YT.Player("host", {
+    width: "100%", height: "100%",
+    playerVars: { autoplay: 1, mute: 1, playsinline: 1, rel: 0 },
+    events: {
+      onReady: e => { try { e.target.mute(); e.target.loadPlaylist(vids.map(x => x.v), start || 0); } catch(err) {} },
+      onError: () => { try { const i = player.getPlaylistIndex(); if (i + 1 < vids.length) player.playVideoAt(i + 1); } catch(e) {} },
+      onStateChange: e => { if (e.data === 1 && !started) { started = true; try { player.unMute(); player.setVolume(80); } catch(err) {} } highlight(); }
     }
   });
 }
