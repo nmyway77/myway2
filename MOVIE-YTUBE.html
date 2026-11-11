@@ -91,6 +91,7 @@
   .fd-it small { display:block; margin-top:5px; font-size:12px; color:#7a8199; } .fd-empty { padding:40px 0; text-align:center; color:#7a8199; }
   @media (max-width:600px){ .fd-grid { grid-template-columns:repeat(2, minmax(0,1fr)); gap:9px; } .fd-it b { font-size:12.5px; } }
   /* ⛶ 크게 보기 */
+  html.is-ios .big-btn { display:none !important; }
   .big-btn { flex:none; border:1.5px solid #dfe3ec; background:#fff; color:#1f2740; border-radius:999px; padding:6px 12px; font:inherit; font-size:12.5px; font-weight:800; cursor:pointer; white-space:nowrap; }
   :fullscreen.bigable, :-webkit-full-screen.bigable { background:#000 !important; display:flex !important; align-items:center; justify-content:center; width:100vw; height:100vh; }
   .bigable.big-fill { position:fixed !important; inset:0 !important; z-index:9999 !important; background:#000 !important; display:flex !important; align-items:center; justify-content:center; }
@@ -386,6 +387,8 @@ function back(){ stop(); document.body.classList.remove("playing"); document.tit
 $("back").onclick = back;
 $("bigBtn").onclick = () => bigView(document.querySelector(".main"));
 /* ⛶ 크게 보기 — 핸드폰에서 유튜브 자체 전체화면 버튼이 안 먹을 때를 위해: 영상 칸을 화면 전체로 (지원 안 하는 아이폰은 이 화면 안에서 꽉 채우기) */
+/* 아이폰·아이패드는 유튜브 자체 전체화면(영상 오른쪽 아래 작은 네모)이 잘 되므로 ⛶ 크게 버튼은 숨김 */
+try { if (/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) document.documentElement.classList.add("is-ios"); } catch(e) {}
 function bigView(el){
   if (!el) return;
   const d = document, on = d.fullscreenElement || d.webkitFullscreenElement;
