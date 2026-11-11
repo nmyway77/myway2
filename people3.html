@@ -962,7 +962,7 @@ const YT_CH = {"@kimseontae":"t-BApVtJGrvF5pCgbiNVeg","@woongjingoway":"45m6W8hW
    '@media (max-width:720px){.yp-body{flex-direction:column}.yp-main{flex:none}.yp-side{width:auto;flex:1;border-left:0;border-top:1px solid #e6e9f0}.yp-bar{flex-wrap:wrap}.yp-ttl{order:3;flex-basis:100%}}';
   document.head.appendChild(css);
   var box=document.createElement('div'); box.className='yp';
-  box.innerHTML='<div class="yp-bar"><button type="button" class="yp-back">← 유튜버 목록</button><div class="yp-ttl"></div><a class="yp-yt" target="_blank" rel="noopener">YouTube에서 보기 ↗</a></div>'+
+  box.innerHTML='<div class="yp-bar"><button type="button" class="yp-back">← 유튜버 목록</button><div class="yp-ttl"></div></div>'+
     '<div class="yp-body"><div class="yp-main"><div class="yp-v"><div id="ypHost"></div></div><div class="yp-msg">이 채널은 다른 사이트에서 재생을 막아 두었어요<a target="_blank" rel="noopener">유튜브에서 보기 ↗</a></div></div>'+
     '<aside class="yp-side"><div class="yp-head">영상 목록<span class="yp-cnt"></span></div><div class="yp-items"></div></aside></div>';
   document.body.appendChild(box);
@@ -977,7 +977,7 @@ const YT_CH = {"@kimseontae":"t-BApVtJGrvF5pCgbiNVeg","@woongjingoway":"45m6W8hW
   function open(p, cid){
     stop(); document.body.classList.add('yp-open');
     $('.yp-ttl').textContent=p.name; var chUrl='https://www.youtube.com/channel/'+cid+'/videos';
-    $('.yp-yt').href=chUrl; $('.yp-msg a').href=chUrl; $('.yp-msg').style.display='none';
+    $('.yp-msg a').href=chUrl; $('.yp-msg').style.display='none';
     $('.yp-cnt').textContent='불러오는 중…'; $('.yp-items').innerHTML='';
     loadApi().then(function(){
       if(!document.body.classList.contains('yp-open')) return;

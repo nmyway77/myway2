@@ -95,7 +95,7 @@
   </footer>
 </div>
 <div class="play">
-  <div class="bar"><button type="button" class="back" id="back">← 영화 채널 목록</button><div class="ttl" id="ttl"></div><a class="yt" id="ytLink" target="_blank" rel="noopener">YouTube에서 보기 ↗</a></div>
+  <div class="bar"><button type="button" class="back" id="back">← 영화 채널 목록</button><div class="ttl" id="ttl"></div></div>
   <div class="body"><div class="main"><div class="v"><div id="host"></div></div></div>
   <aside class="side"><div class="head">영상 목록<span id="cnt">불러오는 중…</span></div><div class="items" id="items"></div></aside></div>
 </div>
@@ -309,7 +309,6 @@ async function play(i){
   stop();
   document.body.classList.add("playing");
   $("ttl").innerHTML = esc(c.n) + `<small>${esc(c.d)}</small>`;
-  $("ytLink").href = "https://www.youtube.com/channel/UC" + c.list.slice(4) + "/videos";
   $("cnt").textContent = "불러오는 중…"; $("items").innerHTML = "";
   document.title = c.n + " - 영화";
   await loadYTApi();
