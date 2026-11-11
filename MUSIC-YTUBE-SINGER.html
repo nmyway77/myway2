@@ -4186,10 +4186,16 @@
     var sgScroll = 0, sgPushed = false;
     function closePanel(){ if (panel.classList.contains('open')) sgScroll = panel.scrollTop; panel.classList.remove('open'); tile.classList.remove('active'); }
     /* 가수를 눌러 재생하면 '뒤로' 기록을 하나 남김 → 아이폰·아이패드·안드로이드 뒤로가기(또는 가수 타일)로 보던 분류(예: 올드팝)·스크롤 위치 그대로 복귀 */
-    function backToPanel(){ sgPushed = false; stopPlayer(); openPanel(); try{ panel.scrollTop = sgScroll; }catch(e){} }
-    window.addEventListener('popstate', function(){ if (sgPushed && !panel.classList.contains('open')) backToPanel(); });
+    /* 재생 화면 위 [← 올드팝 목록] 막대: 뒤로가기가 안 먹는 기기(아이폰 등)에서도 확실히 돌아가게 */
+    var backBar = document.createElement('button'); backBar.type = 'button'; backBar.id = 'sgBackBar';
+    backBar.style.cssText = 'display:none;position:absolute;z-index:40;left:50%;top:12px;transform:translateX(-50%);padding:9px 16px;border:0;border-radius:999px;font:inherit;font-size:13.5px;font-weight:800;color:#fff;white-space:nowrap;cursor:pointer;background:linear-gradient(95deg,#7ed6fb 10%,#b176f3 90%);box-shadow:0 4px 14px rgba(0,0,0,.35);';
+    if (box && box.parentNode) box.parentNode.insertBefore(backBar, box);
+    function showBackBar(on){ backBar.style.display = on ? 'block' : 'none'; if (on) backBar.textContent = '← ' + (curCat === 'all' ? '가수' : (SG_LABEL[curCat] || '가수')) + ' 목록으로'; }
+    backBar.addEventListener('click', function(){ backToPanel(); });
+    function backToPanel(){ showBackBar(false); stopPlayer(); openPanel(); try{ panel.scrollTop = sgScroll; }catch(e){} }
+    window.addEventListener('popstate', function(){ if (sgPushed && !panel.classList.contains('open')) { sgPushed = false; backToPanel(); } else sgPushed = false; });
 
-    tile.addEventListener('click', function(){ if (panel.classList.contains('open')) return; if (sgPushed){ try{ history.back(); return; }catch(e){} } stopPlayer(); openPanel(); try{ panel.scrollTop = sgScroll; }catch(e){} }); /* 가수 화면으로 돌아오면 재생 중인 소리 멈춤 */
+    tile.addEventListener('click', function(){ if (panel.classList.contains('open')) return; backToPanel(); }); /* 가수 화면으로 돌아오면 재생 중인 소리 멈춤 */
     var sgBack = panel.querySelector('.sg-back'); if (sgBack) sgBack.addEventListener('click', function(){
       closePanel();
       if (box && !box.innerHTML.trim()){
@@ -4205,12 +4211,14 @@
         stopPlayer(); closePanel();
         selectedIdx = null; renderList();
         mountYouTube(box, parseToEmbed(p.u).code);
-        if (!sgPushed){ try{ history.pushState({ sgPlay:1 }, ''); sgPushed = true; }catch(e){} }
+        showBackBar(true);
+        /* 뒤로가기 기록은 플레이어가 자리 잡은 뒤에 남김 (유튜브 창의 기록보다 나중이어야 뒤로가기 한 번에 돌아옴) */
+        if (!sgPushed){ sgPushed = true; setTimeout(function(){ try{ if (!panel.classList.contains('open')) history.pushState({ sgPlay:1 }, ''); else sgPushed = false; }catch(e){ sgPushed = false; } }, 1200); }
       }
       /* 유튜브 영상이 아니면(사운드클라우드·채널 등) 링크대로 새 창 */
     });
     /* 하단 카드를 누르거나 디렉토리를 바꾸면 가수 화면을 닫고 원래 재생으로 */
-    list.addEventListener('click', function(){ closePanel(); }, true);
+    list.addEventListener('click', function(){ closePanel(); showBackBar(false); }, true);
     var gs = document.getElementById('groupSelect');
     if (gs) gs.addEventListener('change', closePanel);
 
