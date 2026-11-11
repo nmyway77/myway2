@@ -1185,7 +1185,7 @@
     /* 탭바의 TV · 라디오 버튼 */
     .tab-btn.tvr-tab { font-weight: 800; }
     /* 영화는 위쪽 [🎬 영화] 버튼으로 이동 → 예전 일반 [영화] 탭 버튼은 숨김 */
-    #tabNav .tab-btn[data-tab="movie"] { display: none; }
+    #tabNav .tab-btn[data-tab="movie"], #tabNav .tab-btn[data-tab="youtuber"] { display: none; }
     .tab-btn.tvr-tab.is-active[data-tab="onair_tv"],
     .tab-btn.tvr-tab.is-active[data-tab="onair_tv2"] { background: linear-gradient(110deg, #5b8def 0%, #7d6fe8 55%, #b176f3 100%); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(125,111,232,.35); }
     .tab-btn.tvr-tab.is-active[data-tab="onair_radio"] { background: linear-gradient(110deg, #f08aa8 0%, #c57af0 60%, #8f7cf2 100%); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(197,122,240,.35); }
@@ -3404,6 +3404,7 @@
   var TVR_PAGES = {
     tv2:   { label: "📺 TV", url: "https://nmyway77.github.io/livetv7/" },
     movie: { label: "🎬 영화", url: "https://myway.kr/MOVIE-YTUBE.html" },
+    youtuber: { label: "▶ 유튜버", url: "https://myway.kr/people3.html", cat: "all" },
     webdrama: { label: "🎭 웹드라마", url: "https://nmyway77.github.io/livetv7/?wd=1" },
     podcast: { label: "🎙 팟캐스트", url: "https://myway.kr/podcast.html" },
     music: { label: "🎵 음악", url: "https://myway.kr/MUSIC-YTUBE-SINGER.html" },
@@ -3412,7 +3413,6 @@
   /* @PAGES_END */
   /* 기존 일반 탭을 다른 페이지로 화면 전체 표시 (탭 위치·이름은 그대로) — cat: people2.html 처음 분류 */
   var TAB_PAGES = {
-    youtuber: { label: "유튜버", url: "https://myway.kr/people3.html", cat: "all" }
   };
   function pageOf(k){ return TVR_PAGES[k] || TAB_PAGES[k] || null; }
   var kind = 'tv', cur = null; /* cur = {k, i} */
@@ -3481,7 +3481,7 @@
       var pk = Object.keys(TVR_PAGES);
       function pg(k){ return [k, TVR_PAGES[k].label]; }
       /* 예전 [📺 TV](채널바) 탭은 제거 — TV2(livetv7)를 [📺 TV]로 표시 */
-      /* 순서: TV → 음악 → 라디오 → 나머지(영화·웹드라마·팟캐스트·CCTV) */
+      /* 순서: TV → 음악 → 라디오 → 나머지(영화·유튜버·웹드라마·팟캐스트·CCTV) */
       pk.filter(function(k){ return k === 'tv2'; }).map(pg)
         .concat(pk.filter(function(k){ return k === 'music'; }).map(pg))
         .concat([['radio','📻 라디오']])
