@@ -1234,7 +1234,14 @@
       .tvr-list { flex: 1 1 auto; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; justify-content: flex-start; }
       .tvr-screen { height: calc(100vh - 56px - var(--tvr-top, 0px)); min-height: 380px; }
     }
-</style>
+
+    /* ===== 포털 가운데 네비 (바로가기 · AI 종류별) ===== */
+    .sub-nav { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; max-width:900px; margin:0 auto 26px; padding:0 8px; }
+    .sub-btn { font:inherit; font-size:.86rem; font-weight:600; padding:7px 15px; border-radius:999px; border:1.5px solid #dfe3ec; background:#fff; color:#4a5170; cursor:pointer; white-space:nowrap; transition:all .15s; }
+    .sub-btn:hover { background:#f4f6fb; border-color:#c7cee0; }
+    .sub-btn.on { background:#1f2740; color:#fff; border-color:#1f2740; }
+    @media (max-width:720px){ .sub-nav { gap:6px; margin-bottom:20px; } .sub-btn { font-size:.8rem; padding:6px 12px; } }
+  </style>
 </head>
 <body class="">
   <!-- SEO: 한글 브랜드명 명시 (화면 비표시, 검색엔진 인식용) -->
@@ -2340,7 +2347,24 @@
         return;
       }
 
+      /* 포털처럼 원형 로고 탭에 묶음이 여러 개면 → 가운데 작은 네비로 하나씩 보기 (편집 중에는 전부 표시) */
+      const useSub = isLogo && tab.sections.length > 1 && !editMode;
+      window.__subSel = window.__subSel || {};
+      if (useSub) {
+        if (!(window.__subSel[tabId] < tab.sections.length)) window.__subSel[tabId] = 0;
+        const nav = document.createElement('nav'); nav.className = 'sub-nav';
+        tab.sections.forEach((sec, si) => {
+          const b = document.createElement('button'); b.type = 'button';
+          b.className = 'sub-btn' + (si === window.__subSel[tabId] ? ' on' : '');
+          b.textContent = String(sec.label || ('묶음 ' + (si + 1))).replace(/^[^0-9A-Za-z가-힣]+/, '');
+          b.onclick = () => { window.__subSel[tabId] = si; renderTab(tabId); };
+          nav.appendChild(b);
+        });
+        frag.appendChild(nav);
+      }
+
       tab.sections.forEach((sec, si) => {
+        if (useSub && si !== window.__subSel[tabId]) return;
         const section = document.createElement('section');
         section.className = 'section';
 
