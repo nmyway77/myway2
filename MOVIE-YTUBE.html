@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>영화 - MYWAY</title>
+<style>
+  :root { --line:#e6e9f0; --sub:#7a8199; --ink:#1f2740; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif; color:var(--ink); background:#f6f7fb; -webkit-user-select:none; user-select:none; }
+  a { color:inherit; }
+  .wrap { max-width:1120px; margin:0 auto; padding:20px 16px 30px; }
+  h2 { margin:0 0 12px; font-size:16px; font-weight:800; letter-spacing:-.3px; }
+  h2 small { font-size:12px; color:var(--sub); font-weight:500; margin-left:8px; }
+
+  /* 상단: 영화관·영화 사이트 */
+  .th-row { display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); gap:10px; margin-bottom:28px; }
+  .th { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; height:104px; border-radius:16px; background:#fff; text-decoration:none; box-shadow:0 2px 10px rgba(20,30,60,.06); border:1px solid var(--line); transition:transform .18s, box-shadow .18s; overflow:hidden; }
+  .th:hover { transform:translateY(-3px); box-shadow:0 10px 22px rgba(20,30,60,.12); }
+  .th .lg { width:54px; height:54px; border-radius:14px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:var(--c); color:#fff; font-weight:900; font-size:20px; letter-spacing:-.5px; }
+  .th .lg img { width:100%; height:100%; object-fit:cover; display:block; }
+  .th b { font-size:13px; font-weight:800; }
+  .th::after { content:"↗"; position:absolute; right:9px; top:7px; font-size:11px; color:#b3b9cc; }
+
+  /* 채널 카드 */
+  .ch-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(170px,1fr)); gap:12px; margin-bottom:26px; }
+  .ch { position:relative; aspect-ratio:1/1; border-radius:14px; overflow:hidden; cursor:pointer; background:linear-gradient(150deg,var(--c1),var(--c2)); box-shadow:0 2px 10px rgba(20,30,60,.08); transition:transform .18s, box-shadow .18s; }
+  .ch:hover { transform:translateY(-3px); box-shadow:0 12px 24px rgba(20,30,60,.16); }
+  .ch img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .ch .nm { position:absolute; left:0; right:0; bottom:0; padding:26px 10px 9px; color:#fff; background:linear-gradient(180deg,transparent,rgba(0,0,0,.72)); }
+  .ch .nm b { display:block; font-size:14px; font-weight:800; }
+  .ch .nm i { font-style:normal; font-size:11px; opacity:.85; }
+  .ch .big { position:absolute; inset:0 0 40px; display:flex; align-items:center; justify-content:center; padding:10px; color:#fff; font-size:21px; font-weight:900; text-align:center; word-break:keep-all; text-shadow:0 2px 10px rgba(0,0,0,.2); }
+  .ch .pl { position:absolute; right:9px; top:9px; width:30px; height:30px; border-radius:50%; background:rgba(0,0,0,.45); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; opacity:0; transition:opacity .2s; }
+  .ch:hover .pl { opacity:1; }
+
+  /* 재생 화면 */
+  .play { position:fixed; inset:0; display:none; flex-direction:column; background:#fff; z-index:20; }
+  body.playing .play { display:flex; }
+  body.playing .list-view { display:none; }
+  .bar { flex:none; display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid var(--line); }
+  .back { flex:none; border:0; border-radius:999px; padding:7px 14px; font-size:13px; font-weight:800; color:#fff; background:linear-gradient(95deg,#7ed6fb 10%,#b176f3 90%); cursor:pointer; }
+  .ttl { flex:1; min-width:0; font-size:15px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ttl small { font-size:12px; color:var(--sub); font-weight:500; margin-left:6px; }
+  .yt { flex:none; font-size:12px; font-weight:700; color:#c00; text-decoration:none; border:1.5px solid #f1c4c4; border-radius:999px; padding:5px 11px; }
+  .body { flex:1; min-height:0; display:flex; }
+  .main { flex:1; min-width:0; display:flex; align-items:center; justify-content:center; background:#000; }
+  .v { position:relative; width:100%; max-height:100%; aspect-ratio:16/9; }
+  .v iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+  .side { flex:none; width:340px; display:flex; flex-direction:column; border-left:1px solid var(--line); min-height:0; }
+  .head { flex:none; padding:9px 12px; font-size:13px; font-weight:800; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; }
+  .head span { color:var(--sub); font-weight:600; }
+  .items { flex:1; overflow-y:auto; padding:6px; }
+  .it { display:flex; align-items:center; gap:8px; padding:6px; border-radius:8px; cursor:pointer; }
+  .it:hover { background:#f4f6fb; }
+  .it.cur { background:#fde8eb; }
+  .it .no { flex:none; width:24px; text-align:center; font-size:11.5px; color:var(--sub); font-weight:700; }
+  .it img { flex:none; width:100px; aspect-ratio:16/9; object-fit:cover; border-radius:6px; background:#eee; }
+  .it .ti { flex:1; min-width:0; font-size:12.5px; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+
+  footer { text-align:center; padding:18px 0 26px; border-top:1px solid var(--line); }
+  .home { display:inline-flex; width:46px; height:46px; border-radius:50%; align-items:center; justify-content:center; background:linear-gradient(135deg,#7ed6fb,#b176f3); box-shadow:0 6px 16px rgba(120,100,240,.3); }
+  .home svg { width:22px; height:22px; fill:#fff; }
+  footer p { margin:10px 0 0; font-size:13px; color:var(--sub); }
+  footer p a { font-weight:800; color:var(--ink); text-decoration:none; }
+
+  @media (max-width:900px) { .th-row { grid-template-columns:repeat(4, minmax(0,1fr)); } }
+  @media (max-width:720px) {
+    .wrap { padding:14px 10px 24px; }
+    .th-row { grid-template-columns:repeat(4, minmax(0,1fr)); gap:7px; }
+    .th { height:86px; border-radius:12px; } .th .lg { width:42px; height:42px; border-radius:11px; font-size:12px; } .th b { font-size:11.5px; }
+    .ch-grid { grid-template-columns:repeat(2, minmax(0,1fr)); gap:9px; }
+    .body { flex-direction:column; } .main { flex:none; } .side { width:auto; flex:1; border-left:0; border-top:1px solid var(--line); }
+    .bar { flex-wrap:wrap; } .ttl { order:3; flex-basis:100%; }
+  }
+</style>
+</head>
+<body>
+<div class="list-view">
+  <div class="wrap">
+    <h2>영화관 · 영화 정보<small>누르면 해당 사이트가 새 창으로 열려요</small></h2>
+    <div class="th-row" id="thRow"></div>
+    <h2>영화 리뷰 채널<small>누르면 그 채널의 최신 영상부터 재생 · 오른쪽에 영상 목록</small></h2>
+    <div class="ch-grid" id="chKr"></div>
+    <h2>해외 영화 채널<small>영어 · 누르면 최신 영상부터 재생</small></h2>
+    <div class="ch-grid" id="chEn"></div>
+  </div>
+  <footer>
+    <a class="home" href="https://myway.kr/" target="_top" title="MYWAY 홈"><svg viewBox="0 0 24 24"><path d="M12 3.2 2.5 11.4l1.3 1.5L5 11.85V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-8.15l1.2 1.05 1.3-1.5L12 3.2Z"/></svg></a>
+    <p><a href="https://myway.kr/" target="_top">myway.kr</a> · © MYWAY.KR</p>
+  </footer>
+</div>
+<div class="play">
+  <div class="bar"><button type="button" class="back" id="back">← 영화 채널 목록</button><div class="ttl" id="ttl"></div><a class="yt" id="ytLink" target="_blank" rel="noopener">YouTube에서 보기 ↗</a></div>
+  <div class="body"><div class="main"><div class="v"><div id="host"></div></div></div>
+  <aside class="side"><div class="head">영상 목록<span id="cnt">불러오는 중…</span></div><div class="items" id="items"></div></aside></div>
+</div>
+<script>
+const THEATERS = [
+{
+"n": "CGV",
+"u": "https://cgv.co.kr/",
+"img": "https://play-lh.googleusercontent.com/V9A6T4mOeXrzXr1qfWik2AiY01ZX39EA-UGeGVGkmerc6M-QhqzXwCtqYSMfcsvpFGcansFKzrkJ7hfDgOeLilY",
+"col": "#e71a0f"
+},
+{
+"n": "메가박스",
+"u": "https://www.megabox.co.kr/movie",
+"img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTz4z4K8P4jfpErFQ_QZsKeYa708VnnygasbCtrJKQgmxcNH4zZ6La_fTc&s=10",
+"col": "#503396"
+},
+{
+"n": "롯데시네마",
+"u": "https://www.lottecinema.co.kr/NLCHS/Movie",
+"img": "https://play-lh.googleusercontent.com/WUVm0Q6FQnqTZ33julTaMJx7oJCqYANWArhv92Sin8Bix4dBvgWxPn1YkCogC6BSihWS2dDz2evjq-FSIhPFIA",
+"col": "#ed1c24"
+},
+{
+"n": "씨네Q",
+"s": "Q",
+"u": "https://www.cineq.co.kr/",
+"img": "",
+"col": "#1b1b1b"
+},
+{
+"n": "박스오피스",
+"s": "BOX",
+"u": "https://www.kobis.or.kr/kobis/business/stat/boxs/findDailyBoxOfficeList.do",
+"img": "",
+"col": "#2f5d9b"
+},
+{
+"n": "왓챠피디아",
+"s": "W",
+"u": "https://pedia.watcha.com/",
+"img": "",
+"col": "#ff2f6e"
+},
+{
+"n": "키노라이츠",
+"s": "K",
+"u": "https://m.kinolights.com/",
+"img": "",
+"col": "#6a3cf0"
+}
+];
+const CHANNELS = [
+{
+"n": "지무비",
+"d": "G Movie · 영화 리뷰",
+"list": "UUaHGOzOyeYzLQeKsVkfLEGA",
+"img": "https://yt3.googleusercontent.com/ytc/AIdro_nLr4j1MqKUus9uB2RADncMRaC__c2D6MKj4x4YbA4IwcU=s900-c-k-c0x00ffffff-no-rj",
+"g": "kr"
+},
+{
+"n": "고몽",
+"d": "영화 리뷰",
+"list": "UUpcft4FJXgUjnxWoQYsl7Ug",
+"img": "https://yt3.googleusercontent.com/ytc/AIdro_n2VEZCHj55JE9Ppw79uhETNd-JVDibC-WBxWnLXQSUIMs=s900-c-k-c0x00ffffff-no-rj",
+"g": "kr"
+},
+{
+"n": "김시선",
+"d": "KIMSISEON · 영화 리뷰",
+"list": "UU79hJz6y1EEiIkwfHOuWC4w",
+"img": "",
+"g": "kr"
+},
+{
+"n": "달빛뮤즈",
+"d": "영화 리뷰",
+"list": "UUMguxwveCsLVpyKrLz-EFTg",
+"img": "https://i.namu.wiki/i/wTUOFdz3yvDdO4mvVdufd6ZzU7MCCAxd1RAsET2tIfs7ITQd4CLE4bAOOu9IV1SD3NUfapHF5838h4bKZ_Tu1w.webp",
+"g": "kr"
+},
+{
+"n": "삐맨",
+"d": "B Man · 영화 리뷰",
+"list": "UUxlv4aOnrRTXMRSL8bVJqEw",
+"img": "https://yt3.googleusercontent.com/ytc/AIdro_mtkN4YfxiRYrroG8Sdq9XwJNgs5Dn0TdeNlAdrzIF5tsU=s900-c-k-c0x00ffffff-no-rj",
+"g": "kr"
+},
+{
+"n": "카랑",
+"d": "Karang · 영화 리뷰",
+"list": "UUcfz-8gGDYJfaRHYD7kkQpw",
+"img": "https://yt3.googleusercontent.com/BiKXtvU_71mOW0jsKbTraXktRO7zm8TVzoNltXeiEA-IpxO1aIwiURvC4109Rdk-AzMriHlVSg=s900-c-k-c0x00ffffff-no-rj",
+"g": "kr"
+},
+{
+"n": "드림텔러",
+"d": "DREAM TELLER",
+"list": "UUpCiIDf9UrfRqte55FHWlYQ",
+"img": "https://yt3.googleusercontent.com/gjtbY0LqxuQNNC3wwon3jf8HmnGOSWo5sEt5XTsSFHiTPERK9xVk0ohumOtJTgGdT7Hu6S3A=s900-c-k-c0x00ffffff-no-rj",
+"g": "kr"
+},
+{
+"n": "멀더의 무비파일",
+"d": "영화 리뷰",
+"list": "UUxnXl8szP2yYkI1hupfJ7kA",
+"img": "",
+"g": "kr"
+},
+{
+"n": "무비팩토리",
+"d": "movieeFactory",
+"list": "UUgEq4FxPIh8V-ENq4c4Rs8A",
+"img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcJ04hcNQkHUlrYHlAl6gUoX360PVbiT7E0uCb4txW6cz0_bVg_cPAbAYp9NyhRyTPOjI&usqp=CAU",
+"g": "kr"
+},
+{
+"n": "다씨네",
+"d": "DA_Cine",
+"list": "UUfNpXQxq5VCGrt4Sv8zaKxA",
+"img": "https://yt3.googleusercontent.com/aZ6S0UbKRq7cNzM_wmpbTeSGxdcZIMHAmLmlmC0encCUKewM2orMHJZCrj2XyaBajZHrfc2F=s160-c-k-c0x00ffffff-no-rj",
+"g": "kr"
+},
+{
+"n": "무비방",
+"d": "영화 편집",
+"list": "UURLXO9_JZZkNWqdKKY8pzQg",
+"img": "",
+"g": "kr"
+},
+{
+"n": "Hollywood Action",
+"d": "영어 · 해외 영화",
+"list": "UUSCyFNBoGoKdi3y5SI03OxQ",
+"img": "https://yt3.googleusercontent.com/Yx4v7gwomOd9VOKE07ZUj5SWdo15yt0Ev4gPD1gYQFvvBgOntKgYckKkVJEAYlWepjTQfPBi=s900-c-k-c0x00ffffff-no-rj",
+"g": "en"
+},
+{
+"n": "Boxoffice 4K",
+"d": "영어 · 해외 영화",
+"list": "UUwP1wo41m_YaxpupmNfe9iA",
+"img": "https://www.shutterstock.com/image-vector/4k-ultra-hd-sign-reflection-600w-253785661.jpg",
+"g": "en"
+},
+{
+"n": "Viral Drama",
+"d": "영어 · 해외 드라마",
+"list": "UUPN-kzUshiGEwBTSNaub1eg",
+"img": "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/e4d05b6d-6a31-4866-a76a-c9f999903bbd/d6n8y1u-8ccc9ec4-4756-438a-8897-5a89507bfd40.jpg/v1/fill/w_1024,h_1024,q_75,strp/logo_for_a_youtube_chanel_viral_gaming_by_nonedesings_d6n8y1u-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTAyNCIsInBhdGgiOiJcL2ZcL2U0ZDA1YjZkLTZhMzEtNDg2Ni1hNzZhLWM5Zjk5OTkwM2JiZFwvZDZuOHkxdS04Y2NjOWVjNC00NzU2LTQzOGEtODg5Ny01YTg5NTA3YmZkNDAuanBnIiwid2lkdGgiOiI8PTEwMjQifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.NH7KFS9A7ohGb91_xtxwq2LCK9OtImfziCwPsIpmEFk",
+"g": "en"
+},
+{
+"n": "V Sci-Fi",
+"d": "영어 · SF 영화",
+"list": "UUwjchqe4hXdefYaDN2yHZgA",
+"img": "https://yt3.googleusercontent.com/v9HiQbBuYNy7WAJLHyNEIBscANwOP37uYgsFIOiT7HqEzOTwJNhuTrdsv7-utQBsv7TGOGUuHA=s900-c-k-c0x00ffffff-no-rj",
+"g": "en"
+},
+{
+"n": "FullHDvideos4me",
+"d": "영어 · 해외 영화",
+"list": "UUpiLRBQAIDhzuxnDi9Oar4A",
+"img": "https://yt3.googleusercontent.com/MXNpkrjqrC8eI7EH4ZYlysN8fL0nlNCxORaHrXQ3f-1aWrOztMJWcPRSEBc9Sc1dZcLTaDqAc4Q=s900-c-k-c0x00ffffff-no-rj",
+"g": "en"
+}
+];
+const COLS = [["#ff9a8b","#ff6a88"],["#7ed6fb","#6f86f5"],["#b6f492","#338b93"],["#ffd36b","#f08a3c"],["#c3a1ff","#7b5cf0"],["#8fd9a8","#2aa198"],["#ff8fd0","#b176f3"],["#9aa6c7","#4b5bd6"]];
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+
+/* 복제방지 */
+(function(){
+  const ok = t => t && (/^(input|textarea)$/i.test(t.tagName) || t.isContentEditable);
+  ['contextmenu','dragstart','selectstart','copy','cut'].forEach(ev => document.addEventListener(ev, e => { if (!ok(e.target)) e.preventDefault(); }, true));
+  document.addEventListener('keydown', e => { const k = (e.key || '').toLowerCase(); if (k === 'f12' || (e.ctrlKey && e.shiftKey && 'ijc'.includes(k)) || (e.ctrlKey && !e.shiftKey && 'usc'.includes(k) && k)) e.preventDefault(); }, true);
+})();
+
+$("thRow").innerHTML = THEATERS.map(t => `<a class="th" href="${esc(t.u)}" target="_blank" rel="noopener"><span class="lg" style="--c:${t.col}">${t.img ? `<img src="${esc(t.img)}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.parentNode.textContent=${esc(JSON.stringify(t.n.slice(0,3)))}">` : esc(t.s || t.n.slice(0,3))}</span><b>${esc(t.n)}</b></a>`).join("");
+function card(c, i){ const k = COLS[i % COLS.length];
+  return `<div class="ch" data-i="${i}" style="--c1:${k[0]};--c2:${k[1]}">${c.img ? `<img src="${esc(c.img)}" alt="" referrerpolicy="no-referrer" loading="lazy" onerror="this.remove()">` : `<div class="big">${esc(c.n)}</div>`}<span class="pl">▶</span><div class="nm"><b>${esc(c.n)}</b><i>${esc(c.d)}</i></div></div>`; }
+$("chKr").innerHTML = CHANNELS.map((c, i) => c.g === "kr" ? card(c, i) : "").join("");
+$("chEn").innerHTML = CHANNELS.map((c, i) => c.g === "en" ? card(c, i) : "").join("");
+document.addEventListener("click", e => { const c = e.target.closest(".ch"); if (c) play(+c.dataset.i); });
+
+let player = null;
+function loadYTApi(){
+  return new Promise(ok => {
+    if (window.YT && YT.Player) return ok();
+    window.onYouTubeIframeAPIReady = ok;
+    const s = document.createElement("script"); s.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(s);
+  });
+}
+function stop(){ if (player) { try { player.destroy(); } catch(e) {} player = null; } const v = document.querySelector(".v"); v.innerHTML = '<div id="host"></div>'; }
+function back(){ stop(); document.body.classList.remove("playing"); document.title = "영화 - MYWAY"; }
+$("back").onclick = back;
+function title(id, el){
+  fetch("https://noembed.com/embed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D" + id)
+    .then(r => r.json()).then(j => { if (j && j.title) el.textContent = j.title; }).catch(() => {});
+}
+async function play(i){
+  const c = CHANNELS[i]; if (!c) return;
+  stop();
+  document.body.classList.add("playing");
+  $("ttl").innerHTML = esc(c.n) + `<small>${esc(c.d)}</small>`;
+  $("ytLink").href = "https://www.youtube.com/channel/UC" + c.list.slice(2) + "/videos";
+  $("cnt").textContent = "불러오는 중…"; $("items").innerHTML = "";
+  document.title = c.n + " - 영화";
+  await loadYTApi();
+  if (!document.body.classList.contains("playing")) return;
+  let built = false, started = false, skips = 0, watch = null;
+  function highlight(){
+    let idx = -1; try { idx = player.getPlaylistIndex(); } catch(e) {}
+    Array.prototype.forEach.call($("items").children, ch => ch.classList.toggle("cur", +ch.dataset.i === idx));
+    const cur = $("items").querySelector(".it.cur"); if (cur) try { cur.scrollIntoView({ block:"nearest" }); } catch(e) {}
+  }
+  function build(tries){
+    if (built || !player) return;
+    let ids = []; try { ids = player.getPlaylist() || []; } catch(e) {}
+    if (!ids.length) { if ((tries || 0) < 12) setTimeout(() => build((tries || 0) + 1), 600); return; }
+    built = true;
+    $("cnt").textContent = ids.length + "개 · 최신이 위";
+    ids.forEach((id, k) => {
+      const it = document.createElement("div"); it.className = "it"; it.dataset.i = k;
+      it.innerHTML = `<span class="no">${k + 1}</span><img loading="lazy" src="https://i.ytimg.com/vi/${id}/mqdefault.jpg" alt=""><span class="ti">영상 ${k + 1}</span>`;
+      it.onclick = () => { started = false; try { player.playVideoAt(k); } catch(e) {} arm(); };
+      $("items").appendChild(it);
+      title(id, it.querySelector(".ti"));
+    });
+    highlight();
+  }
+  /* 재생 안 되는 영상(다른 사이트 재생 금지·예약 라이브 등)은 다음 영상으로 건너뜀 */
+  function skip(){
+    if (!player || skips >= 6) return; skips++;
+    let idx = 0, n = 0; try { idx = player.getPlaylistIndex(); n = (player.getPlaylist() || []).length; } catch(e) {}
+    if (idx + 1 < n) { try { player.playVideoAt(idx + 1); } catch(e) {} arm(); }
+  }
+  function arm(){ clearTimeout(watch); watch = setTimeout(() => { if (!started) skip(); }, 7000); }
+  player = new YT.Player("host", {
+    width: "100%", height: "100%",
+    playerVars: { listType: "playlist", list: c.list, autoplay: 1, mute: 1, playsinline: 1, rel: 0 },
+    events: {
+      onReady: e => { try { e.target.mute(); e.target.playVideo(); } catch(err) {} setTimeout(() => build(0), 400); arm(); },
+      onError: () => skip(),
+      onStateChange: e => {
+        if (e.data === 1 && !started) { started = true; clearTimeout(watch); try { player.unMute(); player.setVolume(80); } catch(err) {} }
+        if (!built) build(0); highlight();
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
