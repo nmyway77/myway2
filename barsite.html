@@ -3389,6 +3389,12 @@
         try { e.source.postMessage({ type: 'LIVETV_FAVS', favs: Array.isArray(v) ? v : null }, SRC); } catch(_){}
       } else if (d.type === 'LIVETV_FAVS_SET' && Array.isArray(d.favs)) {
         try { localStorage.setItem(KEY, JSON.stringify(d.favs.filter(function(x){ return typeof x === 'string'; }).slice(0, 500))); } catch(_){}
+      } else if (d.type === 'LIVETV_MARKS_GET') {
+        /* 웹드라마 '여기까지 봄' 표시 보관 (TV 페이지가 버튼을 눌렀을 때만 보내옴) */
+        var mk = null; try { mk = JSON.parse(localStorage.getItem('mywayLiveTvMarksV1') || 'null'); } catch(_){}
+        try { e.source.postMessage({ type: 'LIVETV_MARKS', marks: (mk && typeof mk === 'object') ? mk : null }, SRC); } catch(_){}
+      } else if (d.type === 'LIVETV_MARKS_SET' && d.marks && typeof d.marks === 'object') {
+        try { var s2 = JSON.stringify(d.marks); if (s2.length < 100000) localStorage.setItem('mywayLiveTvMarksV1', s2); } catch(_){}
       }
     });
   })();
