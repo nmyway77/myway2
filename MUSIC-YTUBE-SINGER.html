@@ -4130,7 +4130,7 @@
       return '<button type="button" class="sg-cat'+(c[0]==='all'?' on':'')+'" data-c="'+c[0]+'">'+c[1]+'<span class="n">'+n+'</span></button>';
     }).join('');
     panel.innerHTML = '<header class="sg-topbar"><div class="sg-row1"><nav class="sg-sites">'+sitesHtml+'</nav>'+
-      '<button type="button" class="sg-back">▶ 재생화면</button></div><nav class="sg-cats">'+catsHtml+'</nav></header>'+
+      '</div><nav class="sg-cats">'+catsHtml+'</nav></header>'+
       '<section class="sg-section"><div class="sg-thead"><h2 class="sg-title">가수 <span class="sub">전체 '+SG_DATA.length+'</span></h2><input class="sg-find" type="search" placeholder="가수 찾기" autocomplete="off"></div>'+
       '<div class="sg-masonry">'+cardsHtml+'</div></section>'+
       '<button type="button" class="sg-top" title="맨 위로" aria-label="맨 위로">▲</button>';
@@ -4177,7 +4177,7 @@
     function closePanel(){ panel.classList.remove('open'); tile.classList.remove('active'); }
 
     tile.addEventListener('click', function(){ if (panel.classList.contains('open')) return; stopPlayer(); openPanel(); }); /* 가수 화면으로 돌아오면 재생 중인 소리 멈춤 */
-    panel.querySelector('.sg-back').addEventListener('click', function(){
+    var sgBack = panel.querySelector('.sg-back'); if (sgBack) sgBack.addEventListener('click', function(){
       closePanel();
       if (box && !box.innerHTML.trim()){
         if (selectedIdx==null && videos.length) selectedIdx = 0;
