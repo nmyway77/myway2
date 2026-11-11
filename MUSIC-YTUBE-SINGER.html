@@ -1595,6 +1595,14 @@
       inp.focus(); inp.select();
     }
   }
+  /* 안전장치: 어떤 이유로든 바깥 화면(.container·문서)이 가로로 밀리면 즉시 0으로 되돌림 (핸드폰 우측 빈칸 방지) */
+  (function(){
+    function fix(el){ if (el && el.scrollLeft) el.scrollLeft = 0; }
+    function fixAll(){ fix(document.querySelector('.container')); fix(document.documentElement); fix(document.body); fix(document.querySelector('.main')); fix(document.getElementById('ytFrameBox')); }
+    document.addEventListener('scroll', fixAll, true);
+    window.addEventListener('resize', fixAll);
+    document.addEventListener('click', function(){ setTimeout(fixAll, 0); setTimeout(fixAll, 400); setTimeout(fixAll, 1200); }, true);
+  })();
   function scrollActive(){
     var act = document.querySelector('.video-card.active');
     /* scrollIntoView는 바깥(.container·문서)까지 가로로 밀어버려 핸드폰에서 우측이 비는 문제 → 카드 줄만 직접 스크롤 */
