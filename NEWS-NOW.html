@@ -128,7 +128,7 @@ function load(){
   const worker = () => { if (k >= jobs.length) return Promise.resolve(); const j = jobs[k++];
     return rss(j.u).then(items => {
       items.forEach(i => {
-        let t = unesc(i.title), src = j.name || "";
+        let t = unesc(unesc(i.title)), src = j.name || "";   /* 두 번 풀기: &amp;quot; 처럼 이중으로 된 글자 */
         if (j.g) { const m = t.match(/^(.*)\s-\s([^-]+)$/); if (m) { t = m[1]; src = m[2].trim(); } }
         const d = Date.parse(String(i.pubDate || "").replace(" ", "T") + "Z"); if (isNaN(d)) return;
         if (q && !j.g && t.indexOf(q) < 0) return;
