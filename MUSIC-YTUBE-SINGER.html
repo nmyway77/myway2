@@ -805,7 +805,15 @@
 #builderMount .app-shell{height:100%!important;min-height:0!important;}
 #builderMount{height:100%;}
 
-  </style>
+    /* ⛶ 크게 보기 */
+  .big-btn { flex:none; border:1.5px solid #dfe3ec; background:#fff; color:#1f2740; border-radius:999px; padding:6px 12px; font:inherit; font-size:12.5px; font-weight:800; cursor:pointer; white-space:nowrap; }
+  :fullscreen.bigable, :-webkit-full-screen.bigable { background:#000 !important; display:flex !important; align-items:center; justify-content:center; width:100vw; height:100vh; }
+  .bigable.big-fill { position:fixed !important; inset:0 !important; z-index:9999 !important; background:#000 !important; display:flex !important; align-items:center; justify-content:center; }
+  .big-x { position:absolute; top:10px; right:10px; z-index:2; border:0; color:#fff; background:rgba(0,0,0,.6); padding:7px 13px; border-radius:999px; font:inherit; font-size:13px; font-weight:800; cursor:pointer; }
+  :fullscreen.bigable > :not(.big-x), .bigable.big-fill > :not(.big-x) { max-height:100%; width:100%; }
+  #plMain .big-btn.pl-big { position:absolute; top:16px; right:16px; z-index:6; background:rgba(20,24,30,.75); color:#fff; border:0; }
+  @media (max-width:760px){ #plMain .big-btn.pl-big { top:12px; right:12px; } }
+</style>
 
 
 
@@ -4215,4 +4223,25 @@
 })();
 </script>
 
+<script>
+/* ⛶ 크게 보기 — 핸드폰에서 유튜브 자체 전체화면 버튼이 안 먹을 때를 위해: 영상 칸을 화면 전체로 (지원 안 하는 아이폰은 이 화면 안에서 꽉 채우기) */
+function bigView(el){
+  if (!el) return;
+  const d = document, on = d.fullscreenElement || d.webkitFullscreenElement;
+  if (on) { (d.exitFullscreen || d.webkitExitFullscreen).call(d); return; }
+  if (el.classList.contains("big-fill")) { el.classList.remove("big-fill"); const x = el.querySelector(".big-x"); if (x) x.remove(); return; }
+  const req = el.requestFullscreen || el.webkitRequestFullscreen;
+  const fill = () => { el.classList.add("big-fill"); const x = document.createElement("button"); x.type = "button"; x.className = "big-x"; x.textContent = "✕ 작게"; x.onclick = () => bigView(el); el.appendChild(x); };
+  if (req && (d.fullscreenEnabled || d.webkitFullscreenEnabled)) {
+    try { const p = req.call(el); if (p && p.then) p.then(() => { try { screen.orientation.lock("landscape").catch(() => {}); } catch(e) {} }).catch(fill); } catch(e) { fill(); }
+  } else fill();
+}
+
+/* 음악 재생 칸(#plMain)이 새로 만들어질 때마다 ⛶ 크게 버튼 붙이기 */
+(function(){
+  function put(){ var m = document.getElementById("plMain"); if (!m || m.querySelector(".pl-big")) return; m.classList.add("bigable");
+    var b = document.createElement("button"); b.type = "button"; b.className = "big-btn pl-big"; b.textContent = "⛶ 크게"; b.onclick = function(){ bigView(m); }; m.appendChild(b); }
+  new MutationObserver(put).observe(document.body, { childList:true, subtree:true }); put();
+})();
+</script>
 </body></html>

@@ -90,6 +90,12 @@
   .fd-it .tx { padding:8px 10px 10px; } .fd-it b { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:13.5px; line-height:1.35; color:#1f2740; }
   .fd-it small { display:block; margin-top:5px; font-size:12px; color:#7a8199; } .fd-empty { padding:40px 0; text-align:center; color:#7a8199; }
   @media (max-width:600px){ .fd-grid { grid-template-columns:repeat(2, minmax(0,1fr)); gap:9px; } .fd-it b { font-size:12.5px; } }
+  /* ⛶ 크게 보기 */
+  .big-btn { flex:none; border:1.5px solid #dfe3ec; background:#fff; color:#1f2740; border-radius:999px; padding:6px 12px; font:inherit; font-size:12.5px; font-weight:800; cursor:pointer; white-space:nowrap; }
+  :fullscreen.bigable, :-webkit-full-screen.bigable { background:#000 !important; display:flex !important; align-items:center; justify-content:center; width:100vw; height:100vh; }
+  .bigable.big-fill { position:fixed !important; inset:0 !important; z-index:9999 !important; background:#000 !important; display:flex !important; align-items:center; justify-content:center; }
+  .big-x { position:absolute; top:10px; right:10px; z-index:2; border:0; color:#fff; background:rgba(0,0,0,.6); padding:7px 13px; border-radius:999px; font:inherit; font-size:13px; font-weight:800; cursor:pointer; }
+  :fullscreen.bigable > :not(.big-x), .bigable.big-fill > :not(.big-x) { max-height:100%; width:100%; }
 </style>
 </head>
 <body>
@@ -110,8 +116,8 @@
   </footer>
 </div>
 <div class="play">
-  <div class="bar"><button type="button" class="back" id="back">← 영화 채널 목록</button><div class="ttl" id="ttl"></div></div>
-  <div class="body"><div class="main"><div class="v"><div id="host"></div></div></div>
+  <div class="bar"><button type="button" class="back" id="back">← 영화 채널 목록</button><div class="ttl" id="ttl"></div><button type="button" class="big-btn" id="bigBtn">⛶ 크게</button></div>
+  <div class="body"><div class="main bigable"><div class="v"><div id="host"></div></div></div>
   <aside class="side"><div class="head">영상 목록<span id="cnt">불러오는 중…</span></div><div class="items" id="items"></div></aside></div>
 </div>
 <script>
@@ -378,6 +384,20 @@ function loadYTApi(){
 function stop(){ if (player) { try { player.destroy(); } catch(e) {} player = null; } const v = document.querySelector(".v"); v.innerHTML = '<div id="host"></div>'; }
 function back(){ stop(); document.body.classList.remove("playing"); document.title = "영화 - MYWAY"; }
 $("back").onclick = back;
+$("bigBtn").onclick = () => bigView(document.querySelector(".main"));
+/* ⛶ 크게 보기 — 핸드폰에서 유튜브 자체 전체화면 버튼이 안 먹을 때를 위해: 영상 칸을 화면 전체로 (지원 안 하는 아이폰은 이 화면 안에서 꽉 채우기) */
+function bigView(el){
+  if (!el) return;
+  const d = document, on = d.fullscreenElement || d.webkitFullscreenElement;
+  if (on) { (d.exitFullscreen || d.webkitExitFullscreen).call(d); return; }
+  if (el.classList.contains("big-fill")) { el.classList.remove("big-fill"); const x = el.querySelector(".big-x"); if (x) x.remove(); return; }
+  const req = el.requestFullscreen || el.webkitRequestFullscreen;
+  const fill = () => { el.classList.add("big-fill"); const x = document.createElement("button"); x.type = "button"; x.className = "big-x"; x.textContent = "✕ 작게"; x.onclick = () => bigView(el); el.appendChild(x); };
+  if (req && (d.fullscreenEnabled || d.webkitFullscreenEnabled)) {
+    try { const p = req.call(el); if (p && p.then) p.then(() => { try { screen.orientation.lock("landscape").catch(() => {}); } catch(e) {} }).catch(fill); } catch(e) { fill(); }
+  } else fill();
+}
+
 function title(id, el){
   fetch("https://noembed.com/embed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D" + id)
     .then(r => r.json()).then(j => { if (j && j.title) el.textContent = j.title; }).catch(() => {});
