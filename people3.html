@@ -411,7 +411,7 @@
     const SHOW_EDIT = true;
     const COPY_PROTECT = false;
     const STORE_KEY = "mywayYoutuberDirV1_dist";
-    const DIST_SIG = "sig20261111i";
+    const DIST_SIG = "sig20261111j";
     /* @CONFIG_END */
     const DATA_KIND = 'myway-people-v1';   // JSON 식별자 — 다른 도구 JSON과 섞임 방지
     let _distChecked = false;
@@ -671,20 +671,7 @@ function bigView(el){
     try { const p = req.call(el); if (p && p.then) p.then(() => { try { screen.orientation.lock("landscape").catch(() => {}); } catch(e) {} }).catch(fill); } catch(e) { fill(); }
   } else fill();
 }
-/* ===== 뒤로가기 지원: 재생·새 영상 화면을 열면 기록을 하나 남겨서, 핸드폰 뒤로가기(백버튼)로 이전 화면에 돌아오게 ===== */
-var HIST = [], HIST_POP = false;   /* [{ back, live, pushed, tag }] */
-function histOpen(back, isOpen, tag){
-  if (tag) for (var i = 0; i < HIST.length; i++) if (HIST[i].tag === tag && HIST[i].live) return HIST[i];
-  var h = { back: back, live: true, tag: tag || "" }; HIST.push(h);
-  /* 유튜브 창이 자리 잡은 뒤에 기록을 남김 (그래야 뒤로가기 한 번에 돌아옴) */
-  setTimeout(function(){ if (!h.live || (isOpen && !isOpen())) { var j = HIST.indexOf(h); if (j >= 0) HIST.splice(j, 1); return; } try { history.pushState({ myway: HIST.length }, ""); h.pushed = true; } catch(e) {} }, 900);
-  return h;
-}
-function histClosed(){ if (HIST_POP) return; var h = HIST[HIST.length - 1]; if (h) h.live = false; }   /* 화면 안 버튼으로 닫음 → 그 기록은 지난 것 */
-window.addEventListener("popstate", function(){
-  for (var i = HIST.length - 1; i >= 0; i--) { var h = HIST[i]; if (!h.pushed) continue; HIST.splice(i, 1);
-    if (h.live) { h.live = false; HIST_POP = true; try { h.back(); } catch(e) {} HIST_POP = false; } return; }
-});
+function histOpen(){} function histClosed(){}
     /* ============ 갤러리 렌더 (1회) ============ */
     function renderGallery() {
       const root = document.getElementById('masonryGallery');
@@ -772,7 +759,7 @@ window.addEventListener("popstate", function(){
         var n=people.filter(function(p){ return (p.cats||[]).indexOf(cat.code)>=0; }).length;
         nav.appendChild(mkBtn(cat.code, cat.label, n));
       });
-      var fb=document.createElement('button'); fb.type='button'; fb.className='cat-btn feed-btn'+(document.body.classList.contains('feed-mode')?' is-active':''); fb.textContent='🔔 새 영상'; fb.onclick=function(){ nav.querySelectorAll('.cat-btn').forEach(function(x){x.classList.remove('is-active');}); fb.classList.add('is-active'); if(window.ypFeed) window.ypFeed(); }; nav.appendChild(fb);
+      var fb=document.createElement('button'); fb.type='button'; fb.className='cat-btn feed-btn'+(document.body.classList.contains('feed-mode')?' is-active':''); fb.textContent='🔔 새 영상'; fb.onclick=function(){ nav.querySelectorAll('.cat-btn').forEach(function(x){x.classList.remove('is-active');}); fb.classList.add('is-active'); try{ sessionStorage.setItem('ypScroll', 0); }catch(_){} location.href=location.pathname+'?feed=1'; }; nav.appendChild(fb);
     }
     function refreshNav(){ buildCatNav(); applyFilter(curFilter); }
 
@@ -974,6 +961,10 @@ window.addEventListener("popstate", function(){
 
 /* ============ 채널 재생 화면 (임베드 + 오른쪽 영상 목록) ============ */
 (function(){
+  /* 재생·새 영상 화면은 '진짜 페이지 이동'(주소 뒤 ?ch= 등)으로 열어서, 핸드폰 백버튼으로 이전 화면에 돌아오게 함 */
+  var QS={}; location.search.replace(/[?&]([^=&]+)=([^&]*)/g,function(_,k,v){ try{ QS[k]=decodeURIComponent(v); }catch(e){ QS[k]=v; } });
+  var PATH=location.pathname;
+  function goBack(fb){ var here=location.href; try{ if(history.length>1) history.back(); }catch(e){} setTimeout(function(){ if(location.href===here) location.replace(PATH+(fb||'')); },700); }
   function chIdOf(url){ var m=String(url||'').match(/youtube\.com\/(@[^\/?#]+)/i); if(!m) return ''; return YT_CH[m[1].toLowerCase()] ? 'UC'+YT_CH[m[1].toLowerCase()] : ''; }
   var css=document.createElement('style'); css.textContent=
    '.yp{position:fixed;inset:0;z-index:300;display:none;flex-direction:column;background:#fff}'+
@@ -1004,7 +995,7 @@ window.addEventListener("popstate", function(){
   var $=function(s){ return box.querySelector(s); };
   var player=null;
   function stop(){ if(player){ try{ player.destroy(); }catch(_){ } player=null; } $('.yp-v').innerHTML='<div id="ypHost"></div>'; }
-  function close(){ histClosed(); stop(); document.body.classList.remove('yp-open'); }
+  function close(){ if(QS.ch||QS.fv!=null){ stop(); goBack(QS.fv!=null?'?feed=1':''); return; } stop(); document.body.classList.remove('yp-open'); }
   $('.yp-back').onclick=close;
   $('.yp-big').onclick=function(){ bigView($('.yp-main')); };
   document.addEventListener('keydown',function(e){ if(e.key==='Escape' && document.body.classList.contains('yp-open')) close(); });
@@ -1089,17 +1080,18 @@ window.addEventListener("popstate", function(){
     box.innerHTML='<div class="fd-top"><span class="lb">올라온 지</span>'+days.map(function(d){ return '<button type="button" class="fd-chip'+(d[0]===feedDays?' on':'')+'" data-d="'+d[0]+'">'+d[1]+'</button>'; }).join('')+
       '<button type="button" class="fd-chip fd-re">↻ 다시 불러오기</button><span class="fd-st">'+(st||(list.length+'개 · 쇼츠 제외'))+'</span></div><div class="fd-grid"></div>';
     box.querySelectorAll('.fd-chip[data-d]').forEach(function(b){ b.onclick=function(){ feedDays=+b.dataset.d; renderFeed(); }; });
-    box.querySelector('.fd-re').onclick=function(){ FEED=null; window.ypFeed(); };
+    box.querySelector('.fd-re').onclick=function(){ FEED=null; try{ sessionStorage.removeItem('ypFeedCache'); }catch(e){} window.ypFeed(); };
     var g=box.querySelector('.fd-grid');
     if(FEED && !list.length){ g.outerHTML='<div class="fd-empty">이 기간에 올라온 새 영상이 없어요</div>'; return; }
     list.forEach(function(x,k){ var it=document.createElement('div'); it.className='fd-it';
       it.innerHTML='<img loading="lazy" alt="" src="https://i.ytimg.com/vi/'+x.v+'/mqdefault.jpg"><div class="tx"><b></b><small></small></div>';
       it.querySelector('b').textContent=x.t; it.querySelector('small').textContent=x.ch+' · '+ago(x.d);
-      it.onclick=function(){ openIds('🔔 새 영상', list, k); }; g.appendChild(it); });
+      it.onclick=function(){ try{ sessionStorage.setItem('ypFeedList', JSON.stringify(list)); sessionStorage.setItem('ypFeedDays', feedDays); sessionStorage.setItem('ypFeedScroll', window.scrollY||0); }catch(e){} location.href=PATH+'?fv='+k; }; g.appendChild(it); });
     var sub=document.getElementById('filterSub'); if(sub) sub.textContent='새 영상';
   }
   window.ypFeed=function(){
     document.body.classList.add('feed-mode'); histOpen(function(){ applyFilter(curFilter); buildCatNav(); }, function(){ return document.body.classList.contains('feed-mode'); }, 'feed');
+    if(!FEED){ try{ var c=JSON.parse(sessionStorage.getItem('ypFeedCache')||'null'); if(c && Date.now()-c.t<15*60000){ FEED=c.items; feedDays=+sessionStorage.getItem('ypFeedDays')||feedDays; } }catch(e){} }
     if(FEED){ renderFeed(); return; }
     if(feedLoading) return; feedLoading=true;
     var chans=[], seen={};
@@ -1119,6 +1111,7 @@ window.addEventListener("popstate", function(){
       return one(c).then(function(){ done++; if(!FEED){ var s=document.querySelector('#feedBox .fd-st'); if(s) s.textContent='불러오는 중… '+done+'/'+chans.length; } return worker(); }); }
     Promise.all([worker(),worker(),worker(),worker()]).then(function(){
       out.sort(function(a,b){ return b.d-a.d; }); FEED=out; feedLoading=false;
+      try{ sessionStorage.setItem('ypFeedCache', JSON.stringify({ t:Date.now(), items:out })); }catch(e){}
       if(document.body.classList.contains('feed-mode')) renderFeed();
     });
   };
@@ -1128,8 +1121,17 @@ window.addEventListener("popstate", function(){
     var a=e.target.closest && e.target.closest('#masonryGallery .card'); if(!a) return;
     if(e.target.closest('.card-ctrl')) return;
     var p=people[+a.dataset.i]; if(!p) return; var cid=chIdOf(p.url); if(!cid) return;
-    e.preventDefault(); e.stopPropagation(); open(p, cid);
+    e.preventDefault(); e.stopPropagation(); try{ sessionStorage.setItem('ypScroll', window.scrollY||0); }catch(_){}
+    location.href=PATH+'?ch='+cid+'&n='+encodeURIComponent(p.name);
   }, true);
+  /* 주소에 따라 처음 화면 정하기 */
+  function restoreScroll(key){ var y=0; try{ y=+sessionStorage.getItem(key)||0; }catch(e){} if(y>0){ [0,300,900].forEach(function(ms){ setTimeout(function(){ window.scrollTo(0,y); },ms); }); } }
+  if(QS.ch && /^UC[\w-]{22}$/.test(QS.ch)) open({ name: QS.n||'' }, QS.ch);
+  else if(QS.fv!=null){ var fl=[]; try{ fl=JSON.parse(sessionStorage.getItem('ypFeedList')||'[]'); }catch(e){} if(fl.length) openIds('🔔 새 영상', fl, Math.min(+QS.fv||0, fl.length-1)); else location.replace(PATH+'?feed=1'); }
+  else if(QS.feed){ window.ypFeed(); var fbn=document.querySelector('.feed-btn'); if(fbn){ document.querySelectorAll('#catNav .cat-btn').forEach(function(x){ x.classList.remove('is-active'); }); fbn.classList.add('is-active'); } restoreScroll('ypFeedScroll'); }
+  else restoreScroll('ypScroll');
+  /* 백버튼으로 돌아왔을 때 화면이 멈춘 채 복원되면(아이폰) 다시 그림 */
+  window.addEventListener('pageshow', function(e){ if(e.persisted && (QS.ch||QS.fv!=null)) location.reload(); });
 })();
     if(SHOW_EDIT){ buildToolbar(); document.addEventListener('click', function(e){ if(toolOpen && !e.target.closest('.edit-toolbar')) closeTool(); }); }
   </script>

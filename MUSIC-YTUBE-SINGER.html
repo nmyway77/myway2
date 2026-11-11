@@ -4190,7 +4190,7 @@
     var backBar = document.createElement('button'); backBar.type = 'button'; backBar.id = 'sgBackBar';
     backBar.style.cssText = 'display:none;position:absolute;z-index:40;left:50%;top:12px;transform:translateX(-50%);padding:9px 16px;border:0;border-radius:999px;font:inherit;font-size:13.5px;font-weight:800;color:#fff;white-space:nowrap;cursor:pointer;background:linear-gradient(95deg,#7ed6fb 10%,#b176f3 90%);box-shadow:0 4px 14px rgba(0,0,0,.35);';
     if (box && box.parentNode) box.parentNode.insertBefore(backBar, box);
-    function showBackBar(on){ backBar.style.display = on ? 'block' : 'none'; if (on) backBar.textContent = '← ' + (curCat === 'all' ? '가수' : (SG_LABEL[curCat] || '가수')) + ' 목록으로'; }
+    function showBackBar(on){ backBar.style.display = 'none'; return; if (on) backBar.textContent = '← ' + (curCat === 'all' ? '가수' : (SG_LABEL[curCat] || '가수')) + ' 목록으로'; }
     backBar.addEventListener('click', function(){ backToPanel(); });
     function backToPanel(){ showBackBar(false); stopPlayer(); openPanel(); try{ panel.scrollTop = sgScroll; }catch(e){} }
     window.addEventListener('popstate', function(){ if (sgPushed && !panel.classList.contains('open')) { sgPushed = false; backToPanel(); } else sgPushed = false; });
