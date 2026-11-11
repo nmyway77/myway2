@@ -1185,7 +1185,8 @@
     /* 탭바의 TV · 라디오 버튼 */
     .tab-btn.tvr-tab { font-weight: 800; }
     /* 영화는 위쪽 [🎬 영화] 버튼으로 이동 → 예전 일반 [영화] 탭 버튼은 숨김 */
-    #tabNav .tab-btn[data-tab="movie"], #tabNav .tab-btn[data-tab="youtuber"] { display: none; }
+    #tabNav .tab-btn[data-tab="movie"], #tabNav .tab-btn[data-tab="youtuber"], #tabNav .tab-btn[data-tab="onair_newsnow"] { display: none; }
+    .section-newslink.newsnow-link { margin-left: 8px; }
     .tab-btn.tvr-tab.is-active[data-tab="onair_tv"],
     .tab-btn.tvr-tab.is-active[data-tab="onair_tv2"] { background: linear-gradient(110deg, #5b8def 0%, #7d6fe8 55%, #b176f3 100%); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(125,111,232,.35); }
     .tab-btn.tvr-tab.is-active[data-tab="onair_radio"] { background: linear-gradient(110deg, #f08aa8 0%, #c57af0 60%, #8f7cf2 100%); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(197,122,240,.35); }
@@ -2396,6 +2397,14 @@
           newsLink.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8z"/></svg><span>' + quick.text + '</span>';
           head.appendChild(newsLink);
         }
+        /* 뉴스 탭 맨 위 섹션: [📰 최신뉴스] — 여러 언론사 최신 기사를 모아 중복 없이 시간별로 (NEWS-NOW.html, 화면 안에서 열림) */
+        if (tabId === 'news' && si === 0 && !editMode) {
+          const nn = document.createElement('a');
+          nn.className = 'section-newslink newsnow-link'; nn.href = 'https://myway.kr/NEWS-NOW.html'; nn.target = '_blank'; nn.rel = 'noopener';
+          nn.textContent = '📰 최신뉴스';
+          nn.addEventListener('click', e => { if (window.__openPage) { e.preventDefault(); e.stopPropagation(); window.__openPage('newsnow'); } });
+          head.appendChild(nn);
+        }
 
         if (SHOW_EDIT) {
           const stools = document.createElement('span'); stools.className = 'sect-tools';
@@ -3509,6 +3518,7 @@
         try { sc.scrollTo({ left: left, behavior: 'smooth' }); } catch(e){ sc.scrollLeft = left; }
       });
     }
+    window.__openPage = function(k){ openOnair(k); };
     function openOnair(k, startI){
       var changed = (onair !== k);
       onair = k;
