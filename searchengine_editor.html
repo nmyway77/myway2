@@ -310,7 +310,7 @@ var DEFAULT_ENGINES = [
   { key:"ebay", label:"이베이 (한글/영어)", home:"https://www.ebay.com/", search:"https://www.ebay.com/sch/i.html?_from=R40&_trksid=p2050601.m570.l1313&_nkw=" },
   { key:"msn", label:"MSN", home:"https://www.msn.com/ko-kr/news", search:"https://www.bing.com/search?q=" },
   { key:"yahoo", label:"Yahoo", home:"https://www.yahoo.com", search:"https://search.yahoo.com/search?p=" },
-  { key:"yandex", label:"Yandex", home:"https://yandex.com", search:"https://yandex.com/search/?text=" },
+  { key:"yandex", label:"Yandex", home:"https://yandex.ru", search:"https://yandex.ru/search/?lr=10635&text=" },
   { key:"twitter", label:"Twitter", home:"https://twitter.com", search:"https://twitter.com/search?q=" },
   { key:"instagram", label:"Instagram", home:"https://www.instagram.com", search:"https://www.instagram.com/explore/tags/" },
   { key:"kakao_story", label:"kakao.com", home:"https://story.kakao.com", search:"https://story.kakao.com/hashtag/" },
@@ -352,7 +352,7 @@ if (VIEWER_MODE && Array.isArray(EMBEDDED_ENGINES) && EMBEDDED_ENGINES.length){
 } else {
   try {
     var raw = localStorage.getItem(STORE_KEY);
-    engines = raw ? JSON.parse(raw).map(normEngine) : baseDefaults(); /* Yandex: 러시아판(yandex.ru) → 국제판(yandex.com) 주소 변경, 예전에 저장된 값도 바꿈 */ try{ engines.forEach(function(e){ if(e && /yandex\.ru/.test(e.search||'')){ e.search='https://yandex.com/search/?text='; if(/yandex\.ru/.test(e.home||'')) e.home='https://yandex.com'; } }); }catch(_){}
+    engines = raw ? JSON.parse(raw).map(normEngine) : baseDefaults();
     if (!Array.isArray(engines) || !engines.length) engines = baseDefaults();
   } catch(e){ engines = baseDefaults(); }
 }

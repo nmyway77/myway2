@@ -685,7 +685,6 @@
     @media (max-width:380px){
       .engine-btn{min-width:64px;max-width:100px;padding:0 8px 0 3px;font-size:.9rem;}
     }
-
 </style>
 
 </head>
@@ -850,7 +849,7 @@
       { key: "duckduckgo", home: "https://duckduckgo.com", search: "https://duckduckgo.com/?q=" },
       { key: "msn", home: "https://www.msn.com/ko-kr/news", search: "https://www.bing.com/search?q=" },
       { key: "yahoo", home: "https://www.yahoo.com", search: "https://search.yahoo.com/search?p=" },
-      { key: "yandex", home: "https://yandex.com", search: "https://yandex.com/search/?text=" },
+      { key: "yandex", home: "https://yandex.ru", search: "https://yandex.ru/search/?lr=10635&text=" },
       { key: "naver_shopping", home: "https://shopping.naver.com/", search: "https://search.shopping.naver.com/ns/search?query=" },
       { key: "joonggonara", home: "https://cafe.naver.com/joonggonara", search: "https://web.joongna.com/search/" },
       { key: "naver_cafe", home: "https://cafe.naver.com", search: "https://cafe.naver.com/ca-fe/home/search/c-articles?q=" },
@@ -2235,7 +2234,7 @@ var DEFAULT_ENGINES = [
       { key:"ebay", label:"이베이 (한글/영어)", home:"https://www.ebay.com/", search:"https://www.ebay.com/sch/i.html?_from=R40&_trksid=p2050601.m570.l1313&_nkw=" },
       { key:"msn", label:"MSN", home:"https://www.msn.com/ko-kr/news", search:"https://www.bing.com/search?q=" },
       { key:"yahoo", label:"Yahoo", home:"https://www.yahoo.com", search:"https://search.yahoo.com/search?p=" },
-      { key:"yandex", label:"Yandex", home:"https://yandex.com", search:"https://yandex.com/search/?text=" },
+      { key:"yandex", label:"Yandex", home:"https://yandex.ru", search:"https://yandex.ru/search/?lr=10635&text=" },
       { key:"twitter", label:"Twitter", home:"https://twitter.com", search:"https://twitter.com/search?q=" },
       { key:"instagram", label:"Instagram", home:"https://www.instagram.com", search:"https://www.instagram.com/explore/tags/" },
       { key:"kakao_story", label:"kakao.com", home:"https://story.kakao.com", search:"https://story.kakao.com/hashtag/" },
@@ -2274,7 +2273,7 @@ var DEFAULT_ENGINES = [
     var engines;
     try {
       var _raw = localStorage.getItem(STORE_KEY);
-      engines = _raw ? JSON.parse(_raw).map(normEngine) : baseDefaults(); /* Yandex: 러시아판(yandex.ru) → 국제판(yandex.com) 주소 변경, 예전에 저장된 값도 바꿈 */ try{ engines.forEach(function(e){ if(e && /yandex\.ru/.test(e.search||'')){ e.search='https://yandex.com/search/?text='; if(/yandex\.ru/.test(e.home||'')) e.home='https://yandex.com'; } }); }catch(_){}
+      engines = _raw ? JSON.parse(_raw).map(normEngine) : baseDefaults();
       if (!Array.isArray(engines) || !engines.length) engines = baseDefaults();
     } catch(e){ engines = baseDefaults(); }
 
