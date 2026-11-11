@@ -671,6 +671,20 @@ function bigView(el){
     try { const p = req.call(el); if (p && p.then) p.then(() => { try { screen.orientation.lock("landscape").catch(() => {}); } catch(e) {} }).catch(fill); } catch(e) { fill(); }
   } else fill();
 }
+/* ===== 뒤로가기 지원: 재생·새 영상 화면을 열면 기록을 하나 남겨서, 핸드폰 뒤로가기(백버튼)로 이전 화면에 돌아오게 ===== */
+var HIST = [], HIST_POP = false;   /* [{ back, live, pushed, tag }] */
+function histOpen(back, isOpen, tag){
+  if (tag) for (var i = 0; i < HIST.length; i++) if (HIST[i].tag === tag && HIST[i].live) return HIST[i];
+  var h = { back: back, live: true, tag: tag || "" }; HIST.push(h);
+  /* 유튜브 창이 자리 잡은 뒤에 기록을 남김 (그래야 뒤로가기 한 번에 돌아옴) */
+  setTimeout(function(){ if (!h.live || (isOpen && !isOpen())) { var j = HIST.indexOf(h); if (j >= 0) HIST.splice(j, 1); return; } try { history.pushState({ myway: HIST.length }, ""); h.pushed = true; } catch(e) {} }, 900);
+  return h;
+}
+function histClosed(){ if (HIST_POP) return; var h = HIST[HIST.length - 1]; if (h) h.live = false; }   /* 화면 안 버튼으로 닫음 → 그 기록은 지난 것 */
+window.addEventListener("popstate", function(){
+  for (var i = HIST.length - 1; i >= 0; i--) { var h = HIST[i]; if (!h.pushed) continue; HIST.splice(i, 1);
+    if (h.live) { h.live = false; HIST_POP = true; try { h.back(); } catch(e) {} HIST_POP = false; } return; }
+});
     /* ============ 갤러리 렌더 (1회) ============ */
     function renderGallery() {
       const root = document.getElementById('masonryGallery');
@@ -733,7 +747,7 @@ function bigView(el){
 
     /* ============ 카테고리 네비 (동적) ============ */
     function applyFilter(code){
-      curFilter = code; document.body.classList.remove('feed-mode');
+      curFilter = code; if (document.body.classList.contains('feed-mode')) histClosed(); document.body.classList.remove('feed-mode');
       var cards = document.querySelectorAll('#masonryGallery .card');
       cards.forEach(function(c){
         var cats = (c.dataset.cats||'').split(/\s+/);
@@ -990,14 +1004,14 @@ function bigView(el){
   var $=function(s){ return box.querySelector(s); };
   var player=null;
   function stop(){ if(player){ try{ player.destroy(); }catch(_){ } player=null; } $('.yp-v').innerHTML='<div id="ypHost"></div>'; }
-  function close(){ stop(); document.body.classList.remove('yp-open'); }
+  function close(){ histClosed(); stop(); document.body.classList.remove('yp-open'); }
   $('.yp-back').onclick=close;
   $('.yp-big').onclick=function(){ bigView($('.yp-main')); };
   document.addEventListener('keydown',function(e){ if(e.key==='Escape' && document.body.classList.contains('yp-open')) close(); });
   function loadApi(){ return new Promise(function(ok){ if(window.YT && YT.Player) return ok(); window.onYouTubeIframeAPIReady=ok; var s=document.createElement('script'); s.src='https://www.youtube.com/iframe_api'; document.head.appendChild(s); }); }
   function title(id, el){ fetch('https://noembed.com/embed?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D'+id).then(function(r){ return r.json(); }).then(function(j){ if(j && j.title) el.textContent=j.title; }).catch(function(){}); }
   function open(p, cid){
-    stop(); document.body.classList.add('yp-open');
+    stop(); document.body.classList.add('yp-open'); histOpen(close, function(){ return document.body.classList.contains('yp-open'); }, 'play');
     $('.yp-ttl').textContent=p.name; var chUrl='https://www.youtube.com/channel/'+cid+'/videos';
     $('.yp-msg a').href=chUrl; $('.yp-msg').style.display='none';
     $('.yp-cnt').textContent='불러오는 중…'; $('.yp-items').innerHTML='';
@@ -1031,7 +1045,7 @@ function bigView(el){
   }
   /* 여러 영상(새 영상 모음)을 화면 안에서 재생 — 오른쪽 목록은 그 영상들 */
   function openIds(ttl, vids, start){
-    stop(); document.body.classList.add('yp-open');
+    stop(); document.body.classList.add('yp-open'); histOpen(close, function(){ return document.body.classList.contains('yp-open'); }, 'play');
     $('.yp-ttl').textContent=ttl; $('.yp-msg').style.display='none';
     $('.yp-cnt').textContent=vids.length+'개 · 최신이 위'; var wrap=$('.yp-items'); wrap.innerHTML='';
     vids.forEach(function(x,k){ var it=document.createElement('div'); it.className='yp-it'; it.dataset.i=k;
@@ -1085,7 +1099,7 @@ function bigView(el){
     var sub=document.getElementById('filterSub'); if(sub) sub.textContent='새 영상';
   }
   window.ypFeed=function(){
-    document.body.classList.add('feed-mode');
+    document.body.classList.add('feed-mode'); histOpen(function(){ applyFilter(curFilter); buildCatNav(); }, function(){ return document.body.classList.contains('feed-mode'); }, 'feed');
     if(FEED){ renderFeed(); return; }
     if(feedLoading) return; feedLoading=true;
     var chans=[], seen={};

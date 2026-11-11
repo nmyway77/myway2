@@ -383,7 +383,21 @@ function loadYTApi(){
   });
 }
 function stop(){ if (player) { try { player.destroy(); } catch(e) {} player = null; } const v = document.querySelector(".v"); v.innerHTML = '<div id="host"></div>'; }
-function back(){ stop(); document.body.classList.remove("playing"); document.title = "영화 - MYWAY"; }
+/* ===== 뒤로가기 지원: 재생·새 영상 화면을 열면 기록을 하나 남겨서, 핸드폰 뒤로가기(백버튼)로 이전 화면에 돌아오게 ===== */
+var HIST = [], HIST_POP = false;   /* [{ back, live, pushed, tag }] */
+function histOpen(back, isOpen, tag){
+  if (tag) for (var i = 0; i < HIST.length; i++) if (HIST[i].tag === tag && HIST[i].live) return HIST[i];
+  var h = { back: back, live: true, tag: tag || "" }; HIST.push(h);
+  /* 유튜브 창이 자리 잡은 뒤에 기록을 남김 (그래야 뒤로가기 한 번에 돌아옴) */
+  setTimeout(function(){ if (!h.live || (isOpen && !isOpen())) { var j = HIST.indexOf(h); if (j >= 0) HIST.splice(j, 1); return; } try { history.pushState({ myway: HIST.length }, ""); h.pushed = true; } catch(e) {} }, 900);
+  return h;
+}
+function histClosed(){ if (HIST_POP) return; var h = HIST[HIST.length - 1]; if (h) h.live = false; }   /* 화면 안 버튼으로 닫음 → 그 기록은 지난 것 */
+window.addEventListener("popstate", function(){
+  for (var i = HIST.length - 1; i >= 0; i--) { var h = HIST[i]; if (!h.pushed) continue; HIST.splice(i, 1);
+    if (h.live) { h.live = false; HIST_POP = true; try { h.back(); } catch(e) {} HIST_POP = false; } return; }
+});
+function back(){ histClosed(); stop(); document.body.classList.remove("playing"); document.title = "영화 - MYWAY"; }
 $("back").onclick = back;
 $("bigBtn").onclick = () => bigView(document.querySelector(".main"));
 /* ⛶ 크게 보기 — 핸드폰에서 유튜브 자체 전체화면 버튼이 안 먹을 때를 위해: 영상 칸을 화면 전체로 (지원 안 하는 아이폰은 이 화면 안에서 꽉 채우기) */
@@ -408,7 +422,7 @@ function title(id, el){
 async function play(i){
   const c = CHANNELS[i]; if (!c) return;
   stop();
-  document.body.classList.add("playing");
+  document.body.classList.add("playing"); histOpen(back, () => document.body.classList.contains("playing"), "play");
   $("ttl").innerHTML = esc(c.n) + `<small>${esc(c.d)}</small>`;
   $("cnt").textContent = "불러오는 중…"; $("items").innerHTML = "";
   document.title = c.n + " - 영화";
@@ -504,13 +518,13 @@ const feed = makeFeed({
   sources: CHANNELS.filter(c => !c.ext).map(c => ({ q: "channel_id=UC" + c.list.slice(4), name: c.n })),
   onPick: (list, k) => playIds("🔔 새 영상", list, k)
 });
-function showFeed(on){ $("feedView").style.display = on ? "" : "none"; $("mainView").style.display = on ? "none" : ""; try { window.scrollTo(0, 0); } catch(e) {} if (on) feed.load(); }
+function showFeed(on){ if (on) histOpen(() => showFeed(false), () => $("feedView").style.display !== "none", "feed"); else histClosed(); $("feedView").style.display = on ? "" : "none"; $("mainView").style.display = on ? "none" : ""; try { window.scrollTo(0, 0); } catch(e) {} if (on) feed.load(); }
 $("feedBtn").onclick = () => showFeed(true);
 $("fdBack").onclick = () => showFeed(false);
 /* 새 영상 여러 개를 이어서 재생 — 오른쪽 목록은 그 영상들 */
 async function playIds(ttl, vids, start){
   stop();
-  document.body.classList.add("playing");
+  document.body.classList.add("playing"); histOpen(back, () => document.body.classList.contains("playing"), "play");
   $("ttl").textContent = ttl;
   $("cnt").textContent = vids.length + "개 · 최신이 위"; const wrap = $("items"); wrap.innerHTML = "";
   vids.forEach((x, k) => {
