@@ -364,7 +364,7 @@ async function play(slug, noAuto){   // noAuto: 처음 열 때 — 화면은 그
         <div class="btn">▶ 눌러서 보기 ↗</div>
         <div class="sub">${IS_MOBILE ? "핸드폰에서는 방송사 공식 페이지(새 창)로 열려요" : "이 채널은 방송사가 화면 안 재생을 막아 별도 창으로 열려요"}</div></a>`;
     } else {                    // PC: 지상파도 화면에서 바로 재생 (핸드폰은 SBS·채널A만) — SBS·채널A는 앱 확인창 차단(sandbox)
-      box.innerHTML = `<iframe src="${esc(c.url)}"${/sbs\.co\.kr|ichannela\.com/i.test(c.url) ? ' sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"' : ""} referrerpolicy="no-referrer" allow="${/imbc\.com/i.test(c.url) ? "fullscreen" : "autoplay; encrypted-media; picture-in-picture; fullscreen"}" allowfullscreen></iframe>`;   // MBC는 newsitesbar2와 똑같은 설정(fullscreen만)
+      box.innerHTML = `<iframe src="${esc(c.url)}"${/sbs\.co\.kr|ichannela\.com/i.test(c.url) ? ' sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"' : ""} referrerpolicy="no-referrer" allow="${/imbc\.com/i.test(c.url) ? "autoplay; fullscreen" : "autoplay; encrypted-media; picture-in-picture; fullscreen"}" allowfullscreen></iframe>`;   // MBC는 newsitesbar2와 똑같은 설정(fullscreen만)
     }
   } else if (c.type === "hls") {
     box.innerHTML = `<video id="v" controls autoplay muted playsinline></video>`;
