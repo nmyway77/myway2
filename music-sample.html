@@ -60,15 +60,6 @@
       background:linear-gradient(140deg,var(--c1),var(--c2));font-family:Fraunces,Pretendard,serif;font-weight:800;color:rgba(255,255,255,.92);}
   .cv img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
 
-  /* 빠른 선곡 */
-  .picks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 22px;}
-  .pick{display:flex;align-items:center;gap:14px;padding:8px;border-radius:12px;text-align:left;min-width:0;transition:background .15s;}
-  .pick:hover{background:rgba(255,255,255,.06);}
-  .pick .cv{width:56px;height:56px;font-size:22px;}
-  .pick .t{min-width:0;}
-  .pick b{display:block;font-size:15.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .pick span{display:block;margin-top:3px;font-size:13px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-
   /* 장르 카드 줄 */
   .moods{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;}
   .moods::-webkit-scrollbar{display:none;}
@@ -93,24 +84,28 @@
   .foot{margin:44px 0 0;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--dim);text-align:center;}
   .foot a{color:var(--a1);text-decoration:none;}
 
-  /* ── 재생 화면 ── */
+  /* ── 재생 화면: 위에 영상(고정), 아래에 곡 목록(목록만 스크롤) ── */
   .now{display:none;}
-  body.playing-view .home{display:none;}
-  body.playing-view .now{display:block;}
-  .now-grid{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:34px;padding-top:22px;align-items:start;}
-  .back{height:38px;padding:0 14px 0 10px;margin-bottom:14px;}
-  .stage{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 30px 70px rgba(0,0,0,.55);}
+  body.playing-view .home,body.playing-view .foot{display:none;}
+  body.playing-view .main{overflow:hidden;padding-bottom:calc(var(--bar) + env(safe-area-inset-bottom,0px));}
+  body.playing-view .wrap{height:100%;}
+  body.playing-view .now{display:flex;flex-direction:column;height:100%;}
+  .now-grid{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;width:100%;max-width:1040px;margin:0 auto;padding:14px 0;}
+  .side-head{flex:none;display:flex;align-items:center;gap:14px;min-width:0;padding:0 8px 0 12px;border-bottom:1px solid var(--line);}
+  .back{flex:none;height:34px;padding:0 13px 0 9px;}
+  .stage{position:relative;flex:none;width:min(100%, calc(42vh * 16 / 9));margin:0 auto;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 20px 50px rgba(0,0,0,.5);}
   .stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
-  .meta{display:flex;align-items:center;gap:16px;margin-top:20px;}
-  .meta .cv{width:64px;height:64px;border-radius:12px;font-size:26px;}
-  .meta h1{margin:0;font-family:Fraunces,Pretendard,serif;font-weight:800;font-size:30px;letter-spacing:-.02em;}
-  .meta p{margin:4px 0 0;font-size:13.5px;color:var(--sub);}
-  .side{position:sticky;top:18px;background:rgba(20,21,31,.72);border:1px solid var(--line);border-radius:16px;overflow:hidden;backdrop-filter:blur(10px);}
-  .tabs{display:flex;border-bottom:1px solid var(--line);}
-  .tabs button{flex:1;height:48px;font-size:12.5px;font-weight:700;letter-spacing:.08em;color:var(--dim);border-bottom:2px solid transparent;}
+  .meta{flex:1;min-width:0;display:flex;align-items:center;gap:11px;}
+  .meta .cv{width:34px;height:34px;border-radius:8px;font-size:15px;}
+  .meta>div:last-child{min-width:0;}
+  .meta h1{margin:0;font-family:Fraunces,Pretendard,serif;font-weight:800;font-size:18px;letter-spacing:-.02em;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .meta p{margin:1px 0 0;font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .side{flex:1;min-height:0;display:flex;flex-direction:column;background:rgba(20,21,31,.72);border:1px solid var(--line);border-radius:16px;overflow:hidden;backdrop-filter:blur(10px);}
+  .tabs{flex:none;display:flex;}
+  .tabs button{flex:1;height:52px;padding:0 14px;white-space:nowrap;font-size:12.5px;font-weight:700;letter-spacing:.08em;color:var(--dim);border-bottom:2px solid transparent;}
   .tabs button.on{color:var(--ink);border-bottom-color:var(--ink);}
-  .queue{max-height:calc(100vh - 290px);min-height:240px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#3a3d52 transparent;}
-  .q{display:flex;align-items:center;gap:13px;width:100%;padding:10px 16px;text-align:left;border-bottom:1px solid rgba(255,255,255,.05);}
+  .queue{position:relative;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#3a3d52 transparent;}
+  .q{display:flex;align-items:center;gap:13px;width:100%;padding:8px 16px;text-align:left;border-bottom:1px solid rgba(255,255,255,.05);}
   .q:hover{background:rgba(255,255,255,.05);}
   .q.on{background:rgba(125,111,232,.2);}
   .q .cv{width:44px;height:44px;border-radius:7px;font-size:17px;}
@@ -155,12 +150,6 @@
            background:linear-gradient(135deg,var(--a2),var(--a3));box-shadow:0 8px 22px rgba(0,0,0,.45);text-decoration:none;}
   .homebtn svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 
-  @media (max-width:1080px){
-    .picks{grid-template-columns:repeat(2,minmax(0,1fr));}
-    .now-grid{grid-template-columns:1fr;gap:22px;}
-    .side{position:static;}
-    .queue{max-height:none;}
-  }
   @media (max-width:640px){
     :root{--bar:68px;}
     .top{gap:10px;padding:10px 14px;}
@@ -169,22 +158,24 @@
     .wrap{padding:0 14px;}
     .sec{margin-top:24px;}
     .sec-h h2{font-size:24px;}
-    .picks{grid-template-columns:1fr;}
-    .pick:nth-child(n+7){display:none;}   /* 핸드폰은 6명만 */
     .mood{width:150px;height:104px;}
     .mood b{font-size:16px;}
     .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 10px;}
     .card .cv{font-size:32px;}
     .card .play{display:none;}
-    .now-grid{padding-top:12px;}
+    .now-grid{gap:10px;padding:10px 0;}
     .stage{border-radius:12px;}
-    .meta h1{font-size:23px;}
-    .meta .cv{width:52px;height:52px;}
+    .side-head{flex-wrap:wrap;gap:0 10px;padding:8px 0 0 10px;}
+    .meta h1{font-size:16px;}
+    .meta p{display:none;}
+    .tabs{flex:1 0 100%;margin-left:-10px;}
+    .tabs button{height:40px;padding:0;}
     .bar{grid-template-columns:minmax(0,1fr) auto;padding:0 12px;gap:8px;}
     .bar .r,.ctl .tg,.ctl .pv{display:none;}
     .ctl button{width:42px;height:42px;}
     .ctl .pp{width:46px;height:46px;}
   }
+  @media (max-height:760px){ body.playing-view .top{display:none;} }
   .embedded .homebtn,.embedded .tag,.embedded .foot{display:none;}
   @media (prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important;} }
 </style>
@@ -204,11 +195,6 @@
       <!-- 홈 -->
       <div class="home">
         <div class="chips" id="chips"></div>
-        <section class="sec" id="secPicks">
-          <div class="sec-h"><div><span class="eyebrow" id="pickEyebrow">오늘은 이 가수 어때요</span><h2>빠른 선곡</h2></div><span class="sp"></span>
-            <button class="ghost" id="shuffleBtn" type="button"><svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>다른 가수 보기</button></div>
-          <div class="picks" id="picks"></div>
-        </section>
         <section class="sec" id="secMoods">
           <div class="sec-h"><div><span class="eyebrow">분위기로 고르기</span><h2>장르</h2></div></div>
           <div class="moods" id="moods"></div>
@@ -222,13 +208,13 @@
       <!-- 재생 화면 -->
       <div class="now" id="now">
         <div class="now-grid">
-          <div>
-            <button class="ghost back" id="backBtn" type="button"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>가수 목록</button>
-            <div class="stage" id="stage"></div>
-            <div class="meta"><div class="cv" id="metaCv"></div><div><h1 id="metaName"></h1><p id="metaSub"></p></div></div>
-          </div>
+          <div class="stage" id="stage"></div>
           <aside class="side">
-            <div class="tabs"><button type="button" class="on" data-tab="tracks">곡 목록</button><button type="button" data-tab="same">같은 장르</button><button type="button" data-tab="all">전체 가수</button></div>
+            <div class="side-head">
+              <button class="ghost back" id="backBtn" type="button"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>가수 목록</button>
+              <div class="meta"><div class="cv" id="metaCv"></div><div><h1 id="metaName"></h1><p id="metaSub"></p></div></div>
+              <div class="tabs"><button type="button" class="on" data-tab="tracks">곡 목록</button><button type="button" data-tab="same">같은 장르</button><button type="button" data-tab="all">전체 가수</button></div>
+            </div>
             <div class="queue" id="queue"></div>
           </aside>
         </div>
@@ -272,7 +258,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   SG.forEach(function(p, i){ p._i = i; });
 
   /* ── 상태 ── */
-  var curCat = 'all', query = '', pickSeed = 0, curIdx = -1, sideTab = 'tracks';
+  var curCat = 'all', query = '', curIdx = -1, sideTab = 'tracks';
 
   function pool(){
     var q = query.trim().toLowerCase();
@@ -295,16 +281,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   }
   function renderHome(){
     var list = pool(), searching = !!query.trim();
-    /* 빠른 선곡: 목록에서 12명 (버튼을 누를 때만 다른 가수로 바뀜) */
-    var n = Math.min(12, list.length), picks = [];
-    for (var k = 0; k < n; k++) picks.push(list[(pickSeed * 12 + k * Math.max(1, Math.floor(list.length / n))) % list.length]);
-    picks = picks.filter(function(p, i){ return picks.indexOf(p) === i; });
-    $('secPicks').style.display = (searching || !picks.length) ? 'none' : '';
     $('secMoods').style.display = (searching || curCat !== 'all') ? 'none' : '';
-    $('pickEyebrow').textContent = curCat === 'all' ? '오늘은 이 가수 어때요' : CAT_NAME[curCat] + '에서 골랐어요';
-    $('picks').innerHTML = picks.map(function(p){
-      return '<button type="button" class="pick" data-i="'+p._i+'"><div class="cv" '+cover(p)+'</div><div class="t"><b>'+esc(p.n)+'</b><span>'+esc(catLabel(p))+'</span></div></button>';
-    }).join('');
     $('gridEyebrow').textContent = searching ? '"' + query.trim() + '" 검색 결과' : (curCat === 'all' ? '전체' : CAT_NAME[curCat]);
     $('gridCount').textContent = list.length + '명';
     $('grid').innerHTML = list.length ? list.map(function(p){
@@ -327,7 +304,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     var p = SG[curIdx]; if (!p) return;
     if (io){ io.disconnect(); io = null; }
     if (trackOwner !== curIdx || !trackIds.length){
-      $('queue').innerHTML = '<div class="qnote">' + (apiFailed ? '곡 목록을 불러오지 못했어요.<br>재생은 왼쪽 화면에서 그대로 됩니다.' : '곡 목록을 불러오는 중…<br>재생이 시작되면 여기에 나옵니다.') + '</div>';
+      $('queue').innerHTML = '<div class="qnote">' + (apiFailed ? '곡 목록을 불러오지 못했어요.<br>재생은 위 화면에서 그대로 됩니다.' : '곡 목록을 불러오는 중…<br>재생이 시작되면 여기에 나옵니다.') + '</div>';
       return;
     }
     var cur = -1; try { cur = player.getPlaylistIndex(); } catch(e){}
@@ -454,13 +431,12 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     if (tr){ if (ready) try { if (trackIds.length > 1) player.playVideoAt(+tr.dataset.t); else player.playVideo(); } catch(err){} return; }
     var t = e.target.closest('[data-i]'); if (t){ play(+t.dataset.i); return; }
     var c = e.target.closest('.chip,.mood');
-    if (c){ curCat = c.dataset.c; pickSeed = 0; renderChips(); renderHome(); $('main').scrollTop = 0;
+    if (c){ curCat = c.dataset.c; renderChips(); renderHome(); $('main').scrollTop = 0;
       var on = $('chips').querySelector('.chip.on'); if (on) $('chips').scrollLeft = on.offsetLeft - 40; return; }
     var tb = e.target.closest('.tabs button');
     if (tb){ sideTab = tb.dataset.tab; Array.prototype.forEach.call(tb.parentNode.children, function(b){ b.classList.toggle('on', b === tb); }); renderQueue(); }
   });
   $('find').addEventListener('input', function(){ query = this.value; document.body.classList.remove('playing-view'); renderHome(); });
-  $('shuffleBtn').addEventListener('click', function(){ pickSeed++; renderHome(); });
   $('backBtn').addEventListener('click', function(){ document.body.classList.remove('playing-view'); });
   $('barInfo').addEventListener('click', function(){ if (curIdx >= 0){ document.body.classList.add('playing-view'); $('main').scrollTop = 0; } });
   $('ppBtn').addEventListener('click', function(){ if (!ready) return; try { player.getPlayerState() === 1 ? player.pauseVideo() : player.playVideo(); } catch(e){} });
