@@ -1095,13 +1095,13 @@
     @media (max-width: 900px) { .masonry { column-count: 3; } }
     @media (max-width: 600px) { .masonry { column-count: 2; column-gap: 10px; } .masonry .gcard { margin-bottom: 10px; } }
     @media (max-width: 360px) { .masonry { column-count: 1; } }
-    /* 드라마VOD: 카드를 위에서 아래(세로 줄)로 채우지 않고 왼쪽→오른쪽(가로 줄) 순서로 배치 — 앞쪽 카드(MBC)가 전부 위에 오도록 */
-    body[data-active-tab="dramavod"] .masonry.photo-tab { columns: auto; column-count: auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 12px; align-items: start; }
-    body[data-active-tab="dramavod"] .masonry.photo-tab .gcard img { aspect-ratio: 16 / 9; height: auto; object-fit: cover; }
-    body[data-active-tab="dramavod"] .masonry.photo-tab .gcard .gph { min-height: 0; aspect-ratio: 16 / 9; }
-    @media (max-width: 900px) { body[data-active-tab="dramavod"] .masonry.photo-tab { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-    @media (max-width: 600px) { body[data-active-tab="dramavod"] .masonry.photo-tab { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 10px; } }
-    @media (max-width: 360px) { body[data-active-tab="dramavod"] .masonry.photo-tab { grid-template-columns: minmax(0, 1fr); } }
+    /* 드라마VOD: 카드를 가로 줄 순서 + 같은 사진 비율(16:9)로 배치. 단, KBS는 사진을 자르지 않고 원래 크기·원래 배치 그대로 */
+    body[data-active-tab="dramavod"] .masonry.photo-tab:not([data-bc="KBS"]) { columns: auto; column-count: auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 12px; align-items: start; }
+    body[data-active-tab="dramavod"] .masonry.photo-tab:not([data-bc="KBS"]) .gcard img { aspect-ratio: 16 / 9; height: auto; object-fit: cover; }
+    body[data-active-tab="dramavod"] .masonry.photo-tab:not([data-bc="KBS"]) .gcard .gph { min-height: 0; aspect-ratio: 16 / 9; }
+    @media (max-width: 900px) { body[data-active-tab="dramavod"] .masonry.photo-tab:not([data-bc="KBS"]) { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 600px) { body[data-active-tab="dramavod"] .masonry.photo-tab:not([data-bc="KBS"]) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 10px; } }
+    @media (max-width: 360px) { body[data-active-tab="dramavod"] .masonry.photo-tab:not([data-bc="KBS"]) { grid-template-columns: minmax(0, 1fr); } }
 
     /* 갤러리도 생활정보 탭일 때만 표시 (라이트 톤이라 다른 탭과 안 어울림) */
     body:not([data-active-tab="daily"]) .gallery-section { display: none; }
@@ -2380,6 +2380,7 @@
         });
         if (SHOW_EDIT) { const add = document.createElement('button'); add.type = 'button'; add.className = 'gcard gadd'; add.textContent = '＋ 사진 추가'; add.onclick = () => openPhotoDlg(null); m.appendChild(add); }
         if (useBc) {
+          m.dataset.bc = bcSel;   /* KBS는 사진을 자르지 않고 원래 크기·원래 배치(세로 줄)로 표시 — CSS에서 구분 */
           const bnav = document.createElement('nav'); bnav.className = 'sub-nav';
           BC_LIST.forEach(bc => {
             const b = document.createElement('button'); b.type = 'button';
