@@ -406,10 +406,9 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     $('sites').innerHTML = SITES.map(function(p){
       return '<a class="site" href="'+esc(p.u)+'" target="_blank" rel="noopener" title="'+esc(p.n)+'"><div class="ic"'+(p.b ? ' style="background:'+esc(p.b)+';color:#1f2740"' : '')+'>'+esc(p.n.slice(0,2))+'</div><span>'+esc(p.n)+'</span></a>';
     }).join('') + '<span class="site-gap"></span>' +
-      /* [추가] [내보내기] [저장] — 핸드폰에서는 줄 맨 뒤로 밀림 */
+      /* 버튼은 딱 2개: [추가] [저장] — 내보내기·가져오기는 저장 창 안에. 핸드폰에서는 줄 맨 뒤로 밀림 */
       act('add', '＋', '추가', '유튜브 주소로 카드 추가') +
-      act('export', '📤', '내보내기', '지금 카드가 담긴 music-sample.html 받기 — 이 파일을 저장소에 올리면 모두에게 반영') +
-      act('save', '💾', '저장', '편집용 파일 저장 · 카드 파일(JSON) 가져오기/내보내기');
+      act('save', '💾', '저장', '올릴 파일(music-sample.html) 저장 · 카드 파일 가져오기/내보내기');
     function act(k, ic, label, tip){ return '<button type="button" class="site act" data-act="'+k+'" title="'+esc(tip)+'"><div class="ic">'+ic+'</div><span>'+label+'</span></button>'; }
     Array.prototype.forEach.call($('sites').querySelectorAll('a.site .ic'), function(ic, i){   /* 아이콘이 뜨면 글자 대신 아이콘 */
       var im = new Image(); im.referrerPolicy = 'no-referrer'; im.alt = ''; im.onload = function(){ ic.textContent = ''; ic.appendChild(im); }; im.src = SITES[i].i;
