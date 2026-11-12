@@ -67,7 +67,7 @@
   body.playing-view .sc .cv{height:60px;}
   .shelf-add{flex:none;width:64px;border-radius:12px;border:1px dashed #4a4e68;color:var(--sub);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12px;font-weight:700;}
   .shelf-add:hover{color:var(--ink);border-color:var(--a2);background:rgba(125,111,232,.12);}
-  .shelf-add i{font-style:normal;font-size:24px;line-height:1;font-weight:400;}
+  .shelf-add i{font-style:normal;font-size:20px;line-height:1.2;font-weight:400;}
   .shelf-row{flex:1;min-width:0;display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;cursor:grab;}
   .shelf-row::-webkit-scrollbar{display:none;}
   .sc{position:relative;flex:none;width:128px;}
@@ -270,7 +270,8 @@
 
 <div class="shelf" id="shelf">
   <button type="button" class="shelf-add" id="cardAddBtn" title="유튜브 주소로 내 음악 추가"><i>＋</i>추가</button>
-  <button type="button" class="shelf-add" id="saveOpenBtn" title="저장·가져오기"><i>⤓</i>저장</button>
+  <button type="button" class="shelf-add" id="importOpenBtn" title="음악2에서 내보낸 카드 파일(JSON) 가져오기"><i>📥</i>가져오기</button>
+  <button type="button" class="shelf-add" id="saveOpenBtn" title="HTML 파일로 저장"><i>💾</i>저장</button>
   <div class="shelf-row" id="shelfRow"></div>
 </div>
 <div class="modal" id="cardModal" hidden>
@@ -704,6 +705,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     $('svMsg').textContent = '카드 ' + cards.length + '장을 파일로 저장했어요.';
   }
   function myImport(file){
+    function say(t){ $('svMsg').textContent = t; if ($('saveModal').hidden) window.alert(t); }
     var fr = new FileReader();
     fr.onload = function(){
       try {
@@ -711,12 +713,12 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
         if (i0 >= 0 && i1 > i0) txt = txt.slice(i0 + A.length, i1);   /* music-sample.html / music-sample-edit.html 파일이면 그 안의 카드만 꺼냄 */
         var arr = flat(JSON.parse(txt)), have = {}, n = 0; if (!arr.length) throw 0;
         if (window.confirm('카드 ' + arr.length + '장이 들어 있는 파일이에요.\n\n[확인] 지금 카드를 지우고 이 파일 내용으로 바꾸기\n[취소] 지금 카드는 그대로 두고 없는 카드만 추가')){
-          cards = arr; mySave(); renderShelf(); $('svMsg').textContent = '파일 내용으로 바꿨어요. (카드 ' + cards.length + '장)'; return;
+          cards = arr; mySave(); renderShelf(); say('파일 내용으로 바꿨어요. (카드 ' + cards.length + '장)'); return;
         }
         cards.forEach(function(c){ have[cardKey(c)] = 1; });
         arr.forEach(function(c){ var k = cardKey(c); if (have[k]) return; have[k] = 1; cards.push(c); n++; });
-        mySave(); renderShelf(); $('svMsg').textContent = n ? n + '장을 불러와 추가했어요. (기존 카드는 그대로)' : '새로 추가할 카드가 없어요. 이미 모두 들어 있습니다.';
-      } catch(e){ $('svMsg').textContent = '카드 파일이 아니에요.'; }
+        mySave(); renderShelf(); say(n ? n + '장을 불러와 추가했어요. (기존 카드는 그대로)' : '새로 추가할 카드가 없어요. 이미 모두 들어 있습니다.');
+      } catch(e){ say('카드 파일이 아니에요.'); }
     };
     fr.readAsText(file);
   }
@@ -802,6 +804,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   $('backBtn').addEventListener('click', function(){ closeNow(); });
   $('cardAddBtn').addEventListener('click', function(){ openEdit(-1); });
   $('saveOpenBtn').addEventListener('click', function(){ $('svMsg').textContent = ''; $('saveModal').hidden = false; });
+  $('importOpenBtn').addEventListener('click', function(){ $('myFile').click(); });
   $('miniExport').addEventListener('click', myExport);   /* 음악2: 하단 카드를 JSON 파일로 내보내기 → 편집용 파일에서 가져오기 */
   $('svClose').addEventListener('click', function(){ $('saveModal').hidden = true; });
   $('svDist').addEventListener('click', function(){ saveHtml(false); });
