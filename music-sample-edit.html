@@ -86,9 +86,9 @@
   /* 음악 사이트 바로가기 (장르 제목 줄) — 좁은 화면에서는 좌우로 밀어서 봄 */
   .sites{flex:1;min-width:0;display:flex;align-items:center;gap:8px;margin-left:6px;padding:2px 0;overflow-x:auto;scrollbar-width:none;}
   .sites::-webkit-scrollbar{display:none;}
-  .site{flex:none;width:38px;height:38px;border-radius:10px;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;color:#2a2d3f;text-decoration:none;transition:transform .15s;}
+  .site{flex:none;width:34px;height:34px;border-radius:50%;overflow:hidden;background:none;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:var(--sub);text-decoration:none;transition:transform .15s;}
   .site:hover{transform:translateY(-2px);}
-  .site img{width:100%;height:100%;object-fit:cover;display:block;}
+  .site img{width:100%;height:100%;object-fit:contain;display:block;}
   .arrow{width:36px;padding:0;justify-content:center;font-size:18px;}
   /* 내 음악 재생 화면: 곡 추가 줄 · 곡 빼기 */
   body.my-mode .tabs button[data-tab="same"]{display:none;}
@@ -212,7 +212,7 @@
     body.playing-view .shelf-add i{font-size:17px;}
     .arrow{display:none;}
     .sites{gap:6px;margin-left:2px;}
-    .site{width:32px;height:32px;border-radius:8px;}
+    .site{width:30px;height:30px;}
     .mood{width:138px;height:52px;padding:6px 12px;}
     .mood b{left:12px;bottom:6px;font-size:14.5px;}
     .mood small{left:12px;top:6px;font-size:10.5px;}
