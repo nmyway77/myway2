@@ -590,16 +590,26 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   function setMy(c){
     curCard = c; MYP = { n: cardTitle(c) || '내 음악', u: wwwUrl(c.url), i: cardThumb(c), c: [], _i: MY_IDX, card: c };
   }
+  /* 누른 카드를 하단 줄 가운데로 좌우 자동 이동 → 양옆 다음 카드가 보임 */
+  function shelfCenter(){
+    requestAnimationFrame(function(){
+      var row = $('shelfRow'), on = row.querySelector('.sc.on'); if (!on) return;
+      var r = row.getBoundingClientRect(), o = on.getBoundingClientRect();
+      var left = row.scrollLeft + (o.left - r.left) - (r.width - o.width) / 2;
+      left = Math.max(0, Math.min(left, row.scrollWidth - row.clientWidth));
+      try { row.scrollTo({ left: left, behavior: 'smooth' }); } catch(e){ row.scrollLeft = left; }
+    });
+  }
   function playCard(i){
     var c = cards[i]; if (!c) return;
-    if (isList(c)){ setMy(c); play(MY_IDX); renderShelf(); return; }
+    if (isList(c)){ setMy(c); play(MY_IDX); renderShelf(); shelfCenter(); return; }
     if (!cardItems(c).length){ openEdit(i); return; }
     setMy(c); man = { card: c, cur: 0, err: 0 }; curIdx = MY_IDX; pendingDone = false; trackIds = [];
     document.body.classList.add('my-mode'); tracksTab();
     $('glow').style.setProperty('--g1', COL.all[0]); $('glow').style.setProperty('--g2', COL.all[1]);
     $('metaCv').outerHTML = '<div class="cv" id="metaCv" ' + cardCover(c) + '</div>';
     $('metaName').textContent = MYP.n; $('metaSub').textContent = '내 음악 · ' + cardSub(c);
-    openNow(); renderShelf(); manPlay(0, true);
+    openNow(); renderShelf(); shelfCenter(); manPlay(0, true);
   }
   function tracksTab(){ sideTab = 'tracks'; Array.prototype.forEach.call(document.querySelectorAll('.tabs button'), function(b){ b.classList.toggle('on', b.dataset.tab === 'tracks'); }); }
   function manPlay(n, rerender){
