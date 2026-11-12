@@ -1287,6 +1287,77 @@
     bundle = defaultGroupsBundle();
   }
   }
+  /* ===== 파일 갱신분 보충 =====
+     이 브라우저에 저장된 목록이 있으면 그것이 우선이라, 파일을 새로 올려도 예전 목록만 보이던 문제 해결.
+     파일의 기본 목록이 바뀌었을 때(시그니처 변경) 딱 한 번, "파일에 새로 추가된 항목"만 저장된 목록에 보충한다.
+     · 저장된 항목은 지우거나 바꾸지 않음   · 직접 지운 항목은 다시 살아나지 않음(이전에 본 항목은 건너뜀) */
+  var SEEN_KEY = STORE_KEY + '__fileSeen';
+  function _sigHash(s){ var h = 5381; for (var i=0;i<s.length;i++){ h = ((h<<5)+h + s.charCodeAt(i)) | 0; } return s.length + ':' + (h>>>0).toString(36); }
+  function _itemKey(v){
+    if (v && v.url) return 'u:' + v.url;
+    var t0 = (v && v.tracks && v.tracks[0] && v.tracks[0].url) || '';
+    return 't:' + ((v && v.name) || '') + '|' + t0 + '|' + ((v && v.img) || '');
+  }
+  function supplementFromFile(b){
+    try {
+      if (VIEWER_MODE || DIST_MODE || EMBED_NS) return b;
+      var def = defaultGroupsBundle();
+      var curSig = _sigHash(DIST_SIG);
+      var seen = null;
+      try { seen = JSON.parse(localStorage.getItem(SEEN_KEY) || 'null'); } catch(e){ seen = null; }
+      if (seen && seen.sig === curSig) return b;
+      var hasStored = false;
+      try { hasStored = !!localStorage.getItem(STORE_KEY); } catch(e){}
+      var S1 = '\u0001', S2 = '\u0002';
+      var seenSet = {}; if (seen && Array.isArray(seen.keys)) seen.keys.forEach(function(k){ seenSet[k] = 1; });
+      var allKeys = [], changed = false;
+      def.order.forEach(function(g){
+        var gk = 'g:' + g; allKeys.push(gk);
+        var dItems = def.data[g] || [];
+        dItems.forEach(function(d){
+          var k = g + S1 + _itemKey(d); allKeys.push(k);
+          (d.tracks || []).forEach(function(tr){ allKeys.push(k + S2 + tr.url); });
+        });
+        if (!hasStored) return;
+        if (b.order.indexOf(g) < 0){
+          if (seenSet[gk]) return;                       // 예전에 있던 디렉토리를 직접 지운 경우 → 되살리지 않음
+          b.order.push(g);
+          b.data[g] = dItems.map(function(d){ return JSON.parse(JSON.stringify(d)); });
+          if (!b.modes) b.modes = {}; if (!b.nsids) b.nsids = {}; if (!b.builders) b.builders = {};
+          b.modes[g] = (def.modes && def.modes[g]) || 'video';
+          b.nsids[g] = (def.nsids && def.nsids[g]) || '';
+          b.builders[g] = (def.builders && def.builders[g]) ? JSON.parse(JSON.stringify(def.builders[g])) : [];
+          changed = true; return;
+        }
+        var arr = b.data[g] || (b.data[g] = []);
+        var pos = {}; arr.forEach(function(v, i){ var ik = _itemKey(v); if (!(ik in pos)) pos[ik] = i; });
+        var anchor = -1;                                  // 파일에서의 앞 항목이 저장 목록에 놓인 자리 → 그 바로 뒤에 끼워 순서 유지
+        dItems.forEach(function(d){
+          var ik = _itemKey(d), k = g + S1 + ik;
+          if (ik in pos){
+            var cur = arr[pos[ik]]; anchor = pos[ik];
+            (d.tracks || []).forEach(function(tr){         // 같은 카드에 새로 추가된 곡만 보충
+              if (seenSet[k + S2 + tr.url]) return;
+              var has = (cur.tracks || []).some(function(x){ return x.url === tr.url; });
+              if (!has){ if (!Array.isArray(cur.tracks)) cur.tracks = []; cur.tracks.push({name:tr.name||'', url:tr.url}); changed = true; }
+            });
+            return;
+          }
+          if (seenSet[k]) return;                          // 예전 파일에도 있던 항목인데 저장 목록에 없음 = 직접 지운 것
+          var at = anchor + 1;
+          arr.splice(at, 0, JSON.parse(JSON.stringify(d)));
+          pos = {}; arr.forEach(function(v, i){ var ik2 = _itemKey(v); if (!(ik2 in pos)) pos[ik2] = i; });
+          anchor = at; changed = true;
+        });
+      });
+      if (changed){
+        try { localStorage.setItem(STORE_KEY, JSON.stringify({order:b.order, data:b.data, modes:b.modes||{}, nsids:b.nsids||{}, builders:b.builders||{}})); } catch(e){}
+      }
+      try { localStorage.setItem(SEEN_KEY, JSON.stringify({sig:curSig, keys:allKeys})); } catch(e){}
+    } catch(e){}
+    return b;
+  }
+  bundle = supplementFromFile(bundle);
   groupKeys = bundle.order.slice();
   var groupsData = bundle.data;
   var groupModes = bundle.modes || {};
