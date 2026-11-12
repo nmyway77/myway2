@@ -2331,8 +2331,8 @@
         const wrap = document.createElement('section'); wrap.className = 'section photo-section';
         const m = document.createElement('div'); m.className = 'masonry photo-tab';
         const items = tab.sections[0].items;
-        /* 드라마VOD: 방송사별 네비(MBC·KBS·채널A·SBS)로 나눠 보기 — 편집 중에는 전부 표시 */
-        const BC_LIST = ['MBC', 'KBS', '채널A', 'SBS'];
+        /* 드라마VOD: 방송사별 네비(KBS·MBC·채널A·SBS)로 나눠 보기 — 편집 중에는 전부 표시 */
+        const BC_LIST = ['KBS', 'MBC', '채널A', 'SBS'];
         const useBc = tabId === 'dramavod' && !editMode;
         let bcSel = '', bcShown = 0;
         if (useBc) { try { bcSel = sessionStorage.getItem('mywayDramaVodBc') || ''; } catch (_) {} if (BC_LIST.indexOf(bcSel) < 0) bcSel = 'KBS'; }   /* 처음 화면은 KBS */
