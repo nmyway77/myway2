@@ -3330,12 +3330,26 @@
   }
   function showSafariFallback(u){
     var old = document.getElementById('mbcSafariFallback'); if (old) old.remove();
-    var t = document.createElement('button'); t.type = 'button'; t.id = 'mbcSafariFallback';
-    t.textContent = '크롬 앱이 없나요? 여기를 누르면 이 브라우저로 열어요';
-    t.style.cssText = 'position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:99999;max-width:92vw;padding:12px 16px;border:none;border-radius:999px;background:rgba(25,27,45,.94);color:#fff;font-size:13.5px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.3);-webkit-tap-highlight-color:transparent;';
-    t.addEventListener('click', function(ev){ ev.preventDefault(); ev.stopPropagation(); t.remove(); _open(u, '_blank', 'noopener,noreferrer'); });
-    document.body.appendChild(t);
-    setTimeout(function(){ if (t.parentNode) t.remove(); }, 9000);
+    var box = document.createElement('div'); box.id = 'mbcSafariFallback';
+    box.style.cssText = 'position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:99999;width:min(92vw,360px);box-sizing:border-box;padding:13px 14px;border-radius:16px;background:rgba(25,27,45,.95);color:#fff;font-size:13.5px;box-shadow:0 8px 24px rgba(0,0,0,.3);text-align:center;';
+    var msg = document.createElement('div'); msg.textContent = '크롬 앱이 없나요? 다른 방법으로 열 수 있어요';
+    msg.style.cssText = 'font-weight:600;margin-bottom:10px;';
+    var row = document.createElement('div'); row.style.cssText = 'display:flex;gap:8px;';
+    function mk(label, bg, fn){
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = label;
+      b.style.cssText = 'flex:1 1 0;min-height:42px;border:none;border-radius:11px;color:#fff;font-size:13.5px;font-weight:700;-webkit-tap-highlight-color:transparent;background:' + bg + ';';
+      b.addEventListener('click', function(ev){ ev.preventDefault(); ev.stopPropagation(); box.remove(); fn(); });
+      return b;
+    }
+    /* 네이버 앱: 아이폰에서 MBC가 정상 재생되는 것을 확인함 */
+    row.appendChild(mk('네이버 앱으로 열기', '#03c75a', function(){
+      var n = 'naversearchapp://inappbrowser?url=' + encodeURIComponent(u) + '&target=new&version=6';
+      try { (window.top || window).location.href = n; } catch(_) { location.href = n; }
+    }));
+    row.appendChild(mk('그냥 열기', 'rgba(255,255,255,.2)', function(){ _open(u, '_blank', 'noopener,noreferrer'); }));
+    box.appendChild(msg); box.appendChild(row);
+    document.body.appendChild(box);
+    setTimeout(function(){ if (box.parentNode) box.remove(); }, 12000);
   }
   var _open = window.open.bind(window);
   window.open = function(url, name, feat){
