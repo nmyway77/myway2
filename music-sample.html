@@ -356,10 +356,10 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
       return '<button type="button" class="chip'+(c[0]===curCat?' on':'')+'" data-c="'+c[0]+'">'+esc(c[1])+'<span class="n">'+n+'</span></button>';
     }).join('');
   }
-  var SITES = [{"n":"VEVO","u":"https://www.youtube.com/@VEVO","i":"https://play-lh.googleusercontent.com/S3Wc8RcjrGvFwn6y8Q6xQRVGxO2FJr9HIaN7pxO-uG9i6D8ijNXAtoEwkBk0JLc69w"},{"n":"SoundCloud","u":"https://soundcloud.com/SOundCloud","i":"https://cdn.iconsumer.or.kr/news/photo/202103/15608_20188_542.jpg"},{"n":"멜론","u":"https://www.melon.com/","i":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXV_WBvi-G9LwPKbyh8x5qBPDEhYyzis24fiy9qNtEzlkUCPYduyZ6PyYMQuzBcjgjBVg&usqp=CAU"},{"n":"벅스","u":"https://music.bugs.co.kr/","i":"https://lh3.ggpht.com/M6UXPC-jncjtUd020iWikIdSaQ80Q1je3-uyTy-NkdOHme0X518DuYGsG3ftxTi5-w"},{"n":"지니뮤직","u":"https://www.genie.co.kr/","i":"https://www.google.com/s2/favicons?domain=genie.co.kr&sz=128"},{"n":"FLO","u":"https://www.music-flo.com/","i":"https://www.google.com/s2/favicons?domain=music-flo.com&sz=128"},{"n":"Spotify","u":"https://open.spotify.com/","i":"https://www.google.com/s2/favicons?domain=open.spotify.com&sz=128"},{"n":"YouTube Music","u":"https://music.youtube.com/","i":"https://www.google.com/s2/favicons?domain=music.youtube.com&sz=128"},{"n":"Apple Music","u":"https://music.apple.com/kr/","i":"https://www.google.com/s2/favicons?domain=music.apple.com&sz=128"}];
+  var SITES = [{"n":"YouTube Music","u":"https://music.youtube.com/","i":"https://www.google.com/s2/favicons?domain=music.youtube.com&sz=128"}];
   function renderSites(){
     $('sites').innerHTML = SITES.map(function(p){
-      return '<a class="site" href="'+esc(p.u)+'" target="_blank" rel="noopener" title="'+esc(p.n)+'" aria-label="'+esc(p.n)+'">'+esc(p.n.slice(0,2))+'</a>';
+      return '<a class="site" href="'+esc(p.u)+'" target="_blank" rel="noopener" title="'+esc(p.n)+'" aria-label="'+esc(p.n)+'">'+'♪</a>';
     }).join('');
     Array.prototype.forEach.call($('sites').children, function(a, i){   /* 아이콘이 뜨면 글자 대신 아이콘 */
       var im = new Image(); im.referrerPolicy = 'no-referrer'; im.alt = ''; im.onload = function(){ a.textContent = ''; a.appendChild(im); }; im.src = SITES[i].i;
