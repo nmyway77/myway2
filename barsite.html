@@ -3327,9 +3327,8 @@
     if(!a) return;
     var href = a.getAttribute('href') || '';
     if(!href || href.charAt(0) === '#' || /^javascript:/i.test(href)) return;
+    if (a.getAttribute('data-mw-pass')) return;   /* 아래 goSameTabNoRef가 만든 링크는 막지 않고 그대로 통과 */
     e.preventDefault();
-    /* MBC 엠빅라이브: 같은 창으로 넘어가면 핸드폰에서 재생이 안 되고, 새 창으로 띄우면 재생됨 → 새 창 */
-    if (a.getAttribute('data-mw-pass')) return;   /* 아래 goSameTabNoRef가 만든 링크는 그대로 통과 */
     /* 아이폰 사파리(홈 화면 아이콘 포함)에서는 MBC 엠빅라이브가 검게 나와서 크롬 앱으로 넘김 */
     if (isChromeHandoffUrl(a.href)) { e.stopPropagation(); goChrome(a.href); return; }
     /* 아이폰 크롬: MBC를 같은 탭에서 열어 뒤로 가기로 myway.kr에 돌아오게 함 */
