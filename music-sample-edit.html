@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>MYWAY Music 디자인 샘플</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root{
+    --bg:#0c0d14; --bg2:#14151f; --bg3:#1c1e2b; --line:#272a3a; --ink:#f3f2f8; --sub:#a3a6ba; --dim:#6f7388;
+    --a1:#7ed6fb; --a2:#7d6fe8; --a3:#b176f3; --bar:93px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Pretendard,-apple-system,"Malgun Gothic",sans-serif;
+       -webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none;overflow:hidden;}
+  input{user-select:text;-webkit-user-select:text;}
+  button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0;-webkit-tap-highlight-color:transparent;}
+  button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--a1);outline-offset:2px;}
+  .app{height:100%;display:flex;flex-direction:column;}
+  /* 배경: 지금 재생 중인 가수의 색으로 은은하게 물듦 */
+  .glow{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;transition:background .6s;
+        background:radial-gradient(900px 480px at 22% -8%, var(--g1,#2b2f6b) 0%, transparent 70%),radial-gradient(700px 420px at 92% 0%, var(--g2,#3a2456) 0%, transparent 70%);}
+
+  /* ── 상단 ── */
+  .top{position:relative;z-index:3;flex:none;display:flex;align-items:center;gap:18px;padding:12px 22px;border-bottom:1px solid var(--line);background:rgba(12,13,20,.72);backdrop-filter:blur(14px);}
+  .find{flex:1 1 0;min-width:0;max-width:520px;display:flex;align-items:center;gap:10px;height:42px;padding:0 15px;border-radius:12px;background:var(--bg3);border:1px solid var(--line);}
+  .find svg{width:17px;height:17px;stroke:var(--sub);fill:none;stroke-width:2;stroke-linecap:round;flex:none;}
+  .find input{flex:1;min-width:0;width:100%;background:none;border:0;outline:0;color:var(--ink);font:inherit;font-size:14.5px;}
+  .find input::placeholder{color:var(--dim);}
+  .top .sp{flex:1;}
+  .tag{font-size:11.5px;color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:4px 10px;white-space:nowrap;}
+
+  /* ── 본문 ── */
+  .main{position:relative;z-index:1;flex:1;min-height:0;overflow-y:auto;padding:0 0 calc(var(--bar) + 28px);scrollbar-width:thin;scrollbar-color:#3a3d52 transparent;}
+  .wrap{max-width:1320px;margin:0 auto;padding:0 28px;}
+  .chips{position:relative;display:flex;gap:8px;overflow-x:auto;padding:18px 0 4px;scrollbar-width:none;}
+  .chips::-webkit-scrollbar{display:none;}
+  .chip{flex:none;height:36px;padding:0 15px;border-radius:10px;background:var(--bg3);border:1px solid var(--line);font-size:13.5px;font-weight:600;color:var(--sub);transition:.15s;}
+  .chip:hover{color:var(--ink);border-color:#3a3e55;}
+  .chip.on{background:var(--ink);color:#11121a;border-color:var(--ink);}
+  .chip .n{margin-left:6px;font-weight:500;opacity:.6;font-size:12px;}
+  .sec{margin-top:30px;}
+  .sec-h{display:flex;align-items:flex-end;gap:12px;margin-bottom:14px;}
+  .sec-h .eyebrow{display:block;font-size:11.5px;letter-spacing:.14em;color:var(--dim);font-weight:700;margin-bottom:3px;}
+  .sec-h h2{margin:0;font-family:Fraunces,Pretendard,serif;font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1.1;}
+  .sec-h .sp{flex:1;}
+  .ghost{height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--sub);display:inline-flex;align-items:center;gap:7px;}
+  .ghost:hover{color:var(--ink);border-color:#444861;}
+  .ghost svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+  /* 커버(이미지 없으면 장르색 + 첫 글자) */
+  .cv{position:relative;flex:none;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(140deg,var(--c1),var(--c2));font-family:Fraunces,Pretendard,serif;font-weight:800;color:rgba(255,255,255,.92);}
+  .cv img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+
+  /* 내 음악: 하단 카드 줄 (직접 고른 영상·재생목록·곡 목록) */
+  .shelf{position:fixed;left:0;right:0;bottom:0;z-index:5;height:var(--bar);display:flex;align-items:stretch;gap:12px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));
+         background:rgba(18,19,28,.95);border-top:1px solid var(--line);backdrop-filter:blur(16px);}
+  body.playing-view{--bar:76px;}
+  body.playing-view .shelf{padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));}
+  body.playing-view .sc,body.playing-view .sc .cv{width:106px;}
+  body.playing-view .sc .cv{height:60px;}
+  /* 하단 맨 왼쪽 [가수] — 어느 화면에서든 누르면 가수 목록으로 (뒤로가기가 안 되는 아이폰용) */
+  .singer-tile{flex:none;width:128px;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:7px;color:#fff;
+               background:radial-gradient(120% 140% at 25% 0%,#5a2a96 0%,#2a1450 55%,#120a26 100%);border:1px solid #6d4bb8;box-shadow:0 0 0 0 rgba(177,118,243,0);transition:box-shadow .18s, transform .15s;}
+  .singer-tile:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(177,118,243,.35);}
+  .singer-tile i{font-style:normal;font-size:22px;line-height:1;}
+  .singer-tile b{font-family:Fraunces,Pretendard,serif;font-size:19px;font-weight:800;background:linear-gradient(95deg,#ff9bd6,#b9a4ff);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  body.playing-view .singer-tile{width:106px;border-color:var(--a1);box-shadow:0 0 0 2px rgba(126,214,251,.25);}
+  .shelf-add{flex:none;width:64px;border-radius:12px;border:1px dashed #4a4e68;color:var(--sub);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12px;font-weight:700;}
+  .shelf-add:hover{color:var(--ink);border-color:var(--a2);background:rgba(125,111,232,.12);}
+  .shelf-add i{font-style:normal;font-size:20px;line-height:1.2;font-weight:400;}
+  .shelf-row{flex:1;min-width:0;display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;cursor:grab;}
+  .shelf-row::-webkit-scrollbar{display:none;}
+  .sc{position:relative;flex:none;width:128px;}
+  .sc .go{display:block;width:100%;text-align:left;}
+  .sc .cv{width:128px;height:72px;border-radius:10px;font-size:24px;transition:transform .15s;}
+  .sc .go:hover .cv{transform:translateY(-2px);}
+  .sc.on .cv{outline:2px solid var(--a1);outline-offset:1px;}
+  .sc .badge{position:absolute;left:6px;top:6px;z-index:1;padding:2px 6px;border-radius:6px;background:rgba(0,0,0,.72);font-family:Pretendard,sans-serif;font-size:10.5px;font-weight:700;color:#fff;}
+  .sc .ed{position:absolute;right:5px;top:5px;z-index:2;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.72);color:#fff;font-size:13px;line-height:1;opacity:0;transition:opacity .15s;}
+  .sc:hover .ed,.sc .ed:focus-visible{opacity:1;}
+  @media (hover:none){ .sc .ed{opacity:1;} }
+  .dragging{cursor:grabbing !important;scroll-behavior:auto !important;}
+  .dragging *{pointer-events:none;}
+  .mini{margin-left:10px;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:var(--bg3);font-size:13px;line-height:1;vertical-align:middle;position:relative;top:-3px;opacity:.8;transition:.15s;}
+  .mini:hover{opacity:1;border-color:var(--a2);transform:translateY(-1px);}
+  /* 음악 사이트 바로가기 — 좁은 화면에서는 좌우로 밀어서 봄 */
+  .sites{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 6px;scrollbar-width:none;cursor:grab;}
+  .sites::-webkit-scrollbar{display:none;}
+  .site{flex:none;width:72px;text-align:center;text-decoration:none;color:var(--sub);}
+  .site .ic{width:60px;height:60px;margin:0 auto;border-radius:16px;overflow:hidden;background:var(--bg3);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+            font-size:15px;font-weight:800;color:var(--ink);box-shadow:0 8px 20px rgba(0,0,0,.35);transition:transform .18s, box-shadow .18s, border-color .18s;}
+  .site .ic img{width:100%;height:100%;object-fit:cover;display:block;}
+  .site:hover .ic{transform:translateY(-3px);border-color:#4a4e68;box-shadow:0 14px 28px rgba(0,0,0,.5);}
+  .site span{display:block;margin-top:7px;font-size:11.5px;font-weight:600;line-height:1.25;word-break:keep-all;}
+  .site:hover span{color:var(--ink);}
+  .arrow{width:36px;padding:0;justify-content:center;font-size:18px;}
+  /* 내 음악 재생 화면: 곡 추가 줄 · 곡 빼기 */
+  body.my-mode .tabs button[data-tab="same"]{display:none;}
+  .qadd{display:flex;gap:8px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.05);}
+  .qadd input,.mbox input,.mbox textarea{flex:1;min-width:0;width:100%;padding:0 13px;border-radius:10px;background:var(--bg3);border:1px solid var(--line);color:var(--ink);font:inherit;font-size:14px;outline:0;}
+  .qadd input{height:40px;}
+  .qadd input:focus,.mbox input:focus,.mbox textarea:focus{border-color:var(--a2);}
+  .qadd input::placeholder,.mbox input::placeholder,.mbox textarea::placeholder{color:var(--dim);}
+  .btn-a{flex:none;height:40px;padding:0 18px;border-radius:10px;background:linear-gradient(135deg,var(--a2),var(--a3));color:#fff;font-size:14px;font-weight:700;}
+  div.q{cursor:pointer;}
+  .q .mdel{flex:none;width:34px;height:34px;border-radius:50%;color:var(--dim);font-size:19px;line-height:1;}
+  .q .mdel:hover{color:#ff9a9a;background:rgba(255,255,255,.08);}
+  /* 내 음악 추가·수정 창 */
+  .modal{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(5,6,10,.72);backdrop-filter:blur(4px);}
+  .modal[hidden]{display:none;}
+  .mbox{width:100%;max-width:480px;max-height:100%;overflow-y:auto;padding:20px;border-radius:16px;background:var(--bg2);border:1px solid var(--line);box-shadow:0 30px 70px rgba(0,0,0,.6);}
+  .mbox h3{margin:0 0 14px;font-size:18px;font-weight:800;}
+  .mbox label{display:block;margin-bottom:12px;font-size:12.5px;font-weight:600;color:var(--sub);}
+  .mbox input{display:block;height:42px;margin-top:6px;}
+  .mbox input[type=file]{display:none;}
+  .mbox textarea{display:block;margin-top:6px;padding:10px 13px;line-height:1.5;resize:vertical;min-height:92px;user-select:text;-webkit-user-select:text;}
+  .mmsg{min-height:18px;margin-bottom:10px;font-size:12.5px;color:#ff9a9a;}
+  .mbtns{display:flex;align-items:center;gap:8px;}
+  .mbtns .sp{flex:1;}
+  .mbtns .ghost{height:40px;border-radius:10px;}
+  .mbtns .danger{color:#ff9a9a;}
+  .svrow{display:flex;align-items:center;gap:12px;margin-bottom:10px;font-size:12.5px;line-height:1.5;color:var(--sub);}
+  .svrow button{flex:none;width:150px;height:40px;border-radius:10px;justify-content:center;}
+  html:not(.edit) .shelf-add,html.edit .mini,html:not(.edit) .sc .ed,html:not(.edit) .qadd,html:not(.edit) .q .mdel{display:none !important;}
+  .mfoot{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:12.5px;color:var(--dim);}
+  .mfoot .ghost{height:32px;font-size:12.5px;}
+
+  /* 장르 카드 줄 */
+  .moods{display:flex;gap:14px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;scroll-behavior:smooth;cursor:grab;}
+  .moods::-webkit-scrollbar{display:none;}
+  .mood{flex:none;width:188px;height:64px;border-radius:12px;padding:8px 14px;text-align:left;position:relative;overflow:hidden;
+        background:linear-gradient(150deg,var(--c1),var(--c2));transition:transform .18s;}
+  .mood:hover{transform:translateY(-3px);}
+  .mood::after{content:"";position:absolute;right:-22px;bottom:-40px;width:92px;height:92px;border-radius:50%;background:rgba(255,255,255,.16);}
+  .mood b{position:absolute;left:14px;bottom:8px;font-size:16.5px;font-weight:800;line-height:1.2;text-shadow:0 1px 10px rgba(0,0,0,.35);}
+  .mood small{position:absolute;left:14px;top:9px;line-height:1.2;font-size:11px;font-weight:700;letter-spacing:.06em;opacity:.85;}
+
+  /* 가수 그리드 */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:20px 16px;}
+  .card{text-align:left;min-width:0;}
+  .card .cv{width:100%;aspect-ratio:1;border-radius:12px;font-size:46px;transition:transform .18s, box-shadow .18s;}
+  .card:hover .cv{transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.45);}
+  .card .play{position:absolute;right:10px;bottom:10px;width:40px;height:40px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(6px);transition:.18s;}
+  .card .play svg{width:16px;height:16px;fill:#11121a;margin-left:2px;}
+  .card:hover .play{opacity:1;transform:none;}
+  .card b{display:block;margin-top:10px;font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .card span{display:block;margin-top:2px;font-size:12.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .empty{padding:50px 0;text-align:center;color:var(--dim);font-size:14px;}
+  .foot{margin:44px 0 0;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--dim);text-align:center;}
+  .foot a{color:var(--a1);text-decoration:none;}
+
+  /* ── 재생 화면: 위에 영상(고정), 아래에 곡 목록(목록만 스크롤) ── */
+  .now{display:none;}
+  body.playing-view .home,body.playing-view .foot{display:none;}
+  body.playing-view .main{overflow:hidden;padding-bottom:calc(var(--bar) + env(safe-area-inset-bottom,0px));}
+  body.playing-view .wrap{height:100%;}
+  body.playing-view .now{display:flex;flex-direction:column;height:100%;}
+  .now-grid{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;width:100%;max-width:1040px;margin:0 auto;padding:14px 0;}
+  .side-head{flex:none;display:flex;align-items:center;gap:14px;min-width:0;min-height:52px;padding:0 8px 0 12px;border-bottom:1px solid var(--line);}
+  .back{flex:none;height:34px;padding:0 13px 0 9px;}
+  .stage{position:relative;flex:none;width:min(100%, calc(42vh * 16 / 9));margin:0 auto;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 20px 50px rgba(0,0,0,.5);}
+  .stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+  .meta{flex:1;min-width:0;display:flex;align-items:center;gap:11px;}
+  .meta .cv{width:34px;height:34px;border-radius:8px;font-size:15px;}
+  .meta>div:last-child{min-width:0;}
+  .meta h1{margin:0;font-family:Fraunces,Pretendard,serif;font-weight:800;font-size:18px;letter-spacing:-.02em;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .meta p{margin:1px 0 0;font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .side{flex:1;min-height:0;display:flex;flex-direction:column;background:rgba(20,21,31,.72);border:1px solid var(--line);border-radius:16px;overflow:hidden;backdrop-filter:blur(10px);}
+  .tabs{flex:none;display:flex;}
+  .tabs button{flex:1;height:52px;padding:0 14px;white-space:nowrap;font-size:12.5px;font-weight:700;letter-spacing:.08em;color:var(--dim);border-bottom:2px solid transparent;}
+  .tabs button.on{color:var(--ink);border-bottom-color:var(--ink);}
+  .queue{position:relative;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#3a3d52 transparent;}
+  .q{display:flex;align-items:center;gap:13px;width:100%;padding:8px 16px;text-align:left;border-bottom:1px solid rgba(255,255,255,.05);}
+  .q:hover{background:rgba(255,255,255,.05);}
+  .q.on{background:rgba(125,111,232,.2);}
+  .q .cv{width:44px;height:44px;border-radius:7px;font-size:17px;}
+  .q .t{flex:1;min-width:0;}
+  .q b{display:block;font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .q span{display:block;margin-top:2px;font-size:12.5px;color:var(--sub);}
+  .q .no{flex:none;width:22px;text-align:center;font-size:12.5px;color:var(--dim);font-variant-numeric:tabular-nums;}
+  .q.on .no{display:none;}
+  .q .cv.th{width:64px;height:36px;border-radius:6px;background:#1c1e2b;}
+  .q b.wait{color:var(--dim);font-weight:500;}
+  .q[data-t] .eq{width:22px;padding:0 3px;}
+  .qnote{padding:26px 18px;font-size:13.5px;line-height:1.7;color:var(--sub);text-align:center;}
+  .qhead{padding:11px 16px;font-size:12.5px;color:var(--dim);border-bottom:1px solid rgba(255,255,255,.05);}
+  .q .eq{flex:none;width:16px;height:14px;display:none;align-items:flex-end;gap:2px;}
+  .q.on .eq{display:flex;}
+  .q .eq i{flex:1;background:var(--a1);border-radius:1px;height:40%;}
+  body.is-playing .q.on .eq i{animation:eq 0.9s ease-in-out infinite;}
+  .q .eq i:nth-child(2){animation-delay:.2s !important;height:90%;}
+  .q .eq i:nth-child(3){animation-delay:.4s !important;height:60%;}
+  @keyframes eq{0%,100%{height:25%}50%{height:100%}}
+
+  .homebtn{position:fixed;right:18px;bottom:calc(var(--bar) + 16px);z-index:6;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+           background:linear-gradient(135deg,var(--a2),var(--a3));box-shadow:0 8px 22px rgba(0,0,0,.45);text-decoration:none;}
+  .homebtn svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+  @media (max-width:640px){
+    .top{gap:10px;padding:10px 14px;}
+    .tag,.top .sp{display:none;}
+    .wrap{padding:0 14px;}
+    .sec{margin-top:24px;}
+    .sec-h h2{font-size:24px;}
+    :root{--bar:82px;}
+    .shelf{gap:9px;padding:9px 10px calc(9px + env(safe-area-inset-bottom,0px));}
+    .shelf-add{width:50px;}
+    .singer-tile{width:84px;gap:4px;}
+    .singer-tile i{font-size:18px;}
+    .singer-tile b{font-size:16px;}
+    body.playing-view .singer-tile{width:70px;}
+    body.playing-view .singer-tile i{font-size:15px;}
+    body.playing-view .singer-tile b{font-size:14px;}
+    .sc{width:112px;}
+    .sc .cv{width:112px;height:63px;}
+    body.playing-view{--bar:58px;}
+    body.playing-view .shelf{padding-top:6px;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px));}
+    body.playing-view .sc,body.playing-view .sc .cv{width:82px;}
+    body.playing-view .sc .cv{height:46px;border-radius:8px;font-size:17px;}
+    body.playing-view .sc .badge{left:4px;top:4px;padding:1px 5px;font-size:9.5px;}
+    body.playing-view .shelf-add{font-size:10.5px;}
+    body.playing-view .shelf-add i{font-size:17px;}
+    .arrow{display:none;}
+    .sites{gap:12px;}
+    .site{width:56px;}
+    .site .ic{width:50px;height:50px;border-radius:13px;}
+    .site span{font-size:10.5px;}
+    .mood{width:138px;height:52px;padding:6px 12px;}
+    .mood b{left:12px;bottom:6px;font-size:14.5px;}
+    .mood small{left:12px;top:6px;font-size:10.5px;}
+    .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 10px;}
+    .card .cv{font-size:32px;}
+    .card .play{display:none;}
+    .now-grid{gap:10px;padding:10px 0;}
+    .stage{border-radius:12px;}
+    .side-head{gap:0 10px;min-height:48px;padding:0 10px;}
+    .meta h1{font-size:16px;}
+    .meta p{display:none;}
+    .tabs{flex:1 0 100%;margin-left:-10px;}
+    .tabs button{height:40px;padding:0;}
+  }
+  @media (max-height:760px){ body.playing-view .top{display:none;} }
+  .embedded .homebtn,.embedded .tag,.embedded .foot{display:none;}
+  @media (prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important;} }
+</style>
+</head>
+<body>
+<div class="glow" id="glow"></div>
+<div class="app">
+  <header class="top">
+    <label class="find"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+      <input id="find" type="search" placeholder="가수 찾기" autocomplete="off" aria-label="가수 찾기"></label>
+    <span class="sp"></span><span class="tag">디자인 샘플</span>
+  </header>
+
+  <main class="main" id="main">
+    <div class="wrap">
+      <!-- 홈 -->
+      <div class="home">
+        <div class="chips" id="chips"></div>
+        <section class="sec" id="secMoods">
+          <div class="sec-h"><div><span class="eyebrow">바로가기</span><h2>음악 사이트<button type="button" class="mini" id="miniExport" title="내보내기 — 지금 화면 그대로의 편집용 파일(music-sample-edit.html) 받기" aria-label="편집용 파일 내보내기">📤</button></h2></div></div>
+          <nav class="sites" id="sites" aria-label="음악 사이트"></nav>
+        </section>
+        <section class="sec">
+          <div class="sec-h"><div><span class="eyebrow" id="gridEyebrow">전체</span><h2>가수 <span id="gridCount" style="font-size:.55em;color:var(--dim);font-family:Pretendard,sans-serif;font-weight:600;"></span></h2></div></div>
+          <div class="grid" id="grid"></div>
+        </section>
+      </div>
+
+      <!-- 재생 화면 -->
+      <div class="now" id="now">
+        <div class="now-grid">
+          <div class="stage" id="stage"></div>
+          <aside class="side">
+            <div class="side-head">
+              <button class="ghost back" id="backBtn" type="button"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>가수 목록</button>
+              <div class="meta"><div class="cv" id="metaCv"></div><div><h1 id="metaName"></h1><p id="metaSub"></p></div></div>
+            </div>
+            <div class="queue" id="queue"></div>
+          </aside>
+        </div>
+      </div>
+
+      <footer class="foot"><a href="https://myway.kr">myway.kr</a> · MYWAY Music 디자인 샘플</footer>
+    </div>
+  </main>
+</div>
+
+<div class="shelf" id="shelf">
+  <button type="button" class="singer-tile" id="singerTile" title="가수 목록으로" aria-label="가수 목록으로 돌아가기"><i>🎤</i><b>가수</b></button>
+  <button type="button" class="shelf-add" id="cardAddBtn" title="유튜브 주소로 내 음악 추가"><i>＋</i>추가</button>
+  <button type="button" class="shelf-add" id="importOpenBtn" title="음악2에서 내보낸 카드 파일(JSON) 가져오기"><i>📥</i>가져오기</button>
+  <button type="button" class="shelf-add" id="saveOpenBtn" title="HTML 파일로 저장"><i>💾</i>저장</button>
+  <div class="shelf-row" id="shelfRow"></div>
+</div>
+<div class="modal" id="cardModal" hidden>
+  <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
+    <h3 id="cmTitle">내 음악 추가</h3>
+    <label>유튜브 주소
+      <textarea id="cmUrls" rows="4" placeholder="유튜브 주소를 붙여 넣으세요 (영상·재생목록 모두 가능)&#10;여러 곡이면 한 줄에 하나씩 — 곡 목록 카드가 됩니다"></textarea></label>
+    <label>제목 (비워 두면 유튜브 제목)<input id="cmName" type="text" autocomplete="off"></label>
+    <label>이미지 주소 (비워 두면 유튜브 썸네일)<input id="cmImg" type="text" inputmode="url" autocomplete="off"></label>
+    <div class="mmsg" id="cmMsg" role="status"></div>
+    <div class="mbtns">
+      <button type="button" class="ghost danger" id="cmDel">삭제</button>
+      <button type="button" class="ghost" id="cmLeft" title="카드를 앞으로">◀</button>
+      <button type="button" class="ghost" id="cmRight" title="카드를 뒤로">▶</button>
+      <span class="sp"></span>
+      <button type="button" class="ghost" id="cmCancel">취소</button>
+      <button type="button" class="btn-a" id="cmSave">저장</button>
+    </div>
+  </div>
+</div>
+<div class="modal" id="saveModal" hidden>
+  <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="svTitle">
+    <h3 id="svTitle">저장</h3>
+    <div class="svrow"><button type="button" class="btn-a" id="svDist">배포용 HTML 저장</button><span>music-sample.html — 이 파일을 저장소에 올리면 음악2에 반영됩니다</span></div>
+    <div class="svrow"><button type="button" class="ghost" id="svEdit">편집용 HTML 저장</button><span>music-sample-edit.html — 지금 카드가 들어 있는 편집 파일 (보관·다른 PC용)</span></div>
+    <div class="mfoot">카드 파일(JSON)
+      <button type="button" class="ghost" id="myImportBtn" title="카드 파일 또는 music-sample.html 에서 카드 불러오기 (기존 카드는 그대로, 없는 카드만 추가 · 기존 음악의 내보내기 파일도 가능)">가져오기</button>
+      <button type="button" class="ghost" id="myExportBtn" title="카드 목록만 JSON 파일로 저장">내보내기</button>
+      <input type="file" id="myFile" accept=".json,.html,application/json,text/html" hidden>
+    </div>
+    <div class="mmsg" id="svMsg" role="status" style="margin:12px 0 0;color:var(--sub)"></div>
+    <div class="mbtns" style="margin-top:8px"><span class="sp"></span><button type="button" class="ghost" id="svClose">닫기</button></div>
+  </div>
+</div>
+<a class="homebtn" href="https://myway.kr" title="myway.kr 홈" aria-label="myway.kr 홈"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></a>
+
+<script>
+/* 편집용 파일(music-sample-edit.html)에서만 true — [HTML 저장]으로 배포용(music-sample.html)을 만들어 올림 */
+var M2_EDIT = /*@EDIT_S*/true/*@EDIT_E*/;
+var M2_SRC = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;   /* 저장용 원본(화면을 그리기 전 상태) */
+if (M2_EDIT) document.documentElement.classList.add('edit');
+var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtITB6sfBRaKJVhaNlFGnQ9OKG3-","i":"","c":["indie"]},{"n":"김동률","u":"https://www.youtube.com/playlist?list=PLbkMU5EGf_89j3ikb1D4CNdvjbFUOeSFS","i":"https://pimg.mk.co.kr/meet/neds/2011/11/image_readtop_2011_736156_1321232205512452.jpg","c":["ballad","y90"]},{"n":"조째즈","u":"https://www.youtube.com/playlist?list=PL5O1BvicEtrVL3_LPOC_BumQI_wxe3cvX","i":"https://flexible.img.hani.co.kr/flexible/normal/600/814/imgdb/original/2025/0303/20250303501438.jpg","c":["ballad"]},{"n":"이하이","u":"https://www.youtube.com/playlist?list=PL4brMRtrvP4FqZIG73TsGSKZQZZ9m25S6","i":"https://img.hankyung.com/photo/201912/PCM20190602000043005_P2.jpg","c":["ballad","hiphop"]},{"n":"박정현","u":"https://www.youtube.com/playlist?list=PLo8d3OAe7GUIBwxjMAA44sOuoAHykh5YP","i":"https://img9.yna.co.kr/etc/inner/KR/2024/07/24/AKR20240724151800005_06_i_P4.jpg","c":["ballad"]},{"n":"전람회","u":"https://www.youtube.com/playlist?list=PLtmqyhKIXIRjX1rXDKQzvj5O1k3YSlnua","i":"https://i.namu.wiki/i/8PC6sroonFXOkhd-bWOM0KvWuEjYt9eWr5PUYOzmbKWQ5Su339bGcbhjVEkKZWkJNLsTxuxxRJZbgehYC1M5Aw.webp","c":["y90","ballad"]},{"n":"김현식","u":"https://www.youtube.com/playlist?list=PL0S3DU02DI2RuBSr2BFOaLztAl95J1HTh","i":"https://img.khan.co.kr/news/2007/10/11/7j11k08a.jpg","c":["old","ballad"]},{"n":"들국화","u":"https://www.youtube.com/playlist?list=PLG5Gr6srSBjAzO5P8gaDlBXWfJFEPNRn2","i":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS691HmQnMioY8bm-8atkaENVsWEvCDfXrBNQ&s","c":["old","rock"]},{"n":"들국화 라이브","u":"https://www.youtube.com/watch?v=Ccpx0pRrzAs&list=PLAeW92KkLNuJl-nR4smaq2JubVN_z6TkM&index=3&ab_channel=IPIN","i":"https://img3.yna.co.kr/photo/yna/YH/2017/04/18/PYH2017041832300001300_P4.jpg","c":["old","rock"]},{"n":"토이","u":"https://www.youtube.com/playlist?list=PLwDxowgnnj5bIVCQtfU5dtZK3wlQQ0y_t","i":"https://img.etoday.co.kr/pto_db/2022/06/600/20220617155057_1765604_647_970.jpg","c":["y90","ballad","indie"]},{"n":"sg워너비","u":"https://www.youtube.com/playlist?list=PLiiuvsICNvq7yzEYf-hlHcQpJ0s06o9sn","i":"https://image.yes24.com/momo/TopCate52/MidCate05/5148490.jpg","c":["ballad"]},{"n":"이적","u":"https://www.youtube.com/watch?v=m8ILCZk6FLU&list=PLV2M-6ANYqSwU7yiIN2hOoBsRazx84zT7&ab_channel=%EA%B0%90%EC%84%B1%EB%84%A4%EB%B9%84","i":"https://cdnweb01.wikitree.co.kr/webdata/editor/202408/26/img_20240826134816_3f10e0d5.webp","c":["ballad"]},{"n":"김필","u":"https://www.youtube.com/playlist?list=PLFK46hVxqO8QzmI5Q9ivti51ZTOd2goXj","i":"https://talkimg.imbc.com/TVianUpload/tvian/TViews/image/2019/12/13/cHSISW3DxtP3637118505394636347.jpg","c":["ballad"]},{"n":"김태우","u":"https://www.youtube.com/playlist?list=PLa7zwyyhtzy2RHV1dGxRSocNJMjUrjeJV","i":"https://newsimg.sedaily.com/2017/07/03/1OIBY96Z4P_1.jpg","c":["ballad","idol"]},{"n":"허각","u":"https://www.youtube.com/playlist?list=PLQtNSxz6xAnfL-L2CfVFfvd70yOYbBUR6","i":"https://img.sbs.co.kr/newsnet/etv/upload/2013/11/04/30000330433_500.jpg","c":["ballad"]},{"n":"문명진","u":"https://www.youtube.com/playlist?list=PLdWUaOpEgjMcxOvPv8UW1BWSxBHPu9aab","i":"https://dimg.donga.com/wps/NEWS/IMAGE/2013/04/08/54259502.11.jpg","c":["ballad"]},{"n":"박효신","u":"https://www.youtube.com/playlist?list=PLEnOQakRpNIvQtvuXYIjt5SAwYTz3RdHt","i":"https://pbs.twimg.com/media/D_mr4MQVAAA0V4z?format=jpg&name=4096x4096","c":["ballad"]},{"n":"조장혁","u":"https://www.youtube.com/playlist?list=PLiMjNwnGAMYf-W_Pk715ZH3s1v-lKiS_8","i":"https://dimg.donga.com/wps/NEWS/IMAGE/2012/10/26/50405551.4.jpg","c":["ballad","y90"]},{"n":"박상민","u":"https://www.youtube.com/playlist?list=PL5oBoDTqn6qkKsv2V02E38Upy6H6DvJ6c","i":"https://ojsfile.ohmynews.com/STD_IMG_FILE/2012/0117/IE001390962_STD.jpg","c":["y90","ballad"]},{"n":"여행스케치","u":"https://www.youtube.com/playlist?list=PLtufRbF-Oi1A6eH51lYSbJzfOXlP1RMp4","i":"https://images.khan.co.kr/article/2011/05/31/20110601.02500119060056.01L.jpg","c":["old"]},{"n":"서태지와 아이들","u":"https://www.youtube.com/playlist?list=PL-vFw1NbMoOv9_Tny3qgoj2X7GG01sXxx","i":"https://www.seotaiji-archive.com/xe/files/attach/images/43635/542/160/9caebdba006965ee9a35e7c3ee25f6e4.jpg","c":["y90","idol"]},{"n":"신승훈","u":"https://www.youtube.com/playlist?list=PLmL-hzKuNFnoYBRV_HlgN7pRtJs1B1Pve","i":"https://cdn.stardailynews.co.kr/news/photo/201711/172168_204239_3425.jpg","c":["ballad","y90"]},{"n":"김건모","u":"https://www.youtube.com/playlist?list=PL0P1-9eIBC_2wjff52tgeh-v0_vWUnkF7","i":"https://cdn.todaykorea.co.kr/news/photo/200907/75182_60140_1917.jpg","c":["y90","ballad"]},{"n":"조성모","u":"https://www.youtube.com/playlist?list=PLZcMGAm1Qo46vXp1CbNtRfSgSVcJcl_-j","i":"https://img.hankyung.com/photo/201703/01.13602750.1.jpg","c":["ballad","y90"]},{"n":"성시경","u":"https://www.youtube.com/playlist?list=PLxeMs_0z0DAO0cKePebuayMUmGYtrf4Ev","i":"https://ticketimage.interpark.com/PlayDictionary/DATA/PlayDic/PlayDicUpload/040004/07/01/0400040701_1039_01.505.jpg","c":["ballad"]},{"n":"김광석","u":"https://www.youtube.com/playlist?list=PL3BgTLEpwhXwvmaiiEGrQL3vCg548_uQ4","i":"https://img.sbs.co.kr/newsnet/etv/upload/2017/09/20/30000580828_500.jpg","c":["old","ballad"]},{"n":"김정호 하얀나비","u":"https://www.youtube.com/playlist?list=PLtlG9_W_BthZKgY0sFMcmJlBf8Soz7XYg","i":"https://i.namu.wiki/i/SmknbOcUyU8dten1_NFBL2MZg8WrcnMZzLpvyGUHdXGM4vs1VV6gwG1-Gn10RDbpjFtZkVL9oqqcqkQxqP3Pow.webp","c":["old"]},{"n":"송창식","u":"https://www.youtube.com/watch?v=D47SFEgqlBM&list=RDD47SFEgqlBM&start_radio=1&ab_channel=jamescho","i":"https://i.namu.wiki/i/OHs3TheNGPogoE3mv_xHb44BWH9PEOTSuhjKgDuDCH3qTwSaLAnq8JJNnLGp1kupedR5ib6JKjKLeRvhx0mrsQ.webp","c":["old"]},{"n":"김범수","u":"https://www.youtube.com/playlist?list=PL6jBGR4jPgSy_bGEAsS4dS5GdTVGNrYNS","i":"https://cdn.emetro.co.kr/data2/content/image/2015/02/24/0540/20150224000185.jpg","c":["ballad"]},{"n":"김연우","u":"https://www.youtube.com/playlist?list=PLb86fgrhn076vylc-d6UPIAFaT0tOypb2","i":"https://i.namu.wiki/i/77BJgfK7PrJCYa3tt3gS_wHENUIfwgtI4CDn0ySgUlE4qSd03NkvvMn96JGjFCsPLXw5nm-WoCA1pLA3qB_-0A.webp","c":["ballad"]},{"n":"유재하","u":"https://www.youtube.com/playlist?list=PLXmABVtw_j6eAXFIqSEEtTrKi5DB-r1Bv","i":"https://i.namu.wiki/i/bcUmsG95AGbAYa18wtWbzaFDGxGgrNJWxhWECHrQ3S9jvmT0t50_dCxWK6pN2Sg-IFFmFCeBzVMx76R_B8csDw.webp","c":["old","ballad"]},{"n":"이소라","u":"https://www.youtube.com/playlist?list=PLnYs_HEJD3Y-kBXwGSVJ-7NYibKA_BD4j","i":"https://dimg.donga.com/wps/NEWS/IMAGE/2011/03/31/36044389.3.jpg","c":["ballad"]},{"n":"송창식·정훈희","u":"https://www.youtube.com/watch?v=LXAmpAMzMsc&list=RDLXAmpAMzMsc&start_radio=1&ab_channel=SBSEntertainment","i":"https://cdn.ksilbo.co.kr/news/photo/200810/P200706230116011M.jpg","c":["old"]},{"n":"아이유","u":"https://www.youtube.com/playlist?list=PLxhgfZjTcCPRhvppzNLwRUlOyMBLF9n7M","i":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGnZ-BXL4PWsJyIyFM7AhxrcNm_WQjZ7Rp2w4jBF5w_4OiIqJMt-h5aQgxSFZkS2n94Bg&usqp=CAU","c":["ballad","idol"]},{"n":"양희은","u":"https://www.youtube.com/playlist?list=PLxxZ5wLnWZgnX5zwRw4tWz-aU5wiau2Wr","i":"https://image.yes24.com/images/chyes/music/musicspecial/20110720/03.jpg","c":["old"]},{"n":"소찬휘","u":"https://www.youtube.com/playlist?list=PLF_ZWpoTsbk5Oeawwh-u2ZBWMOiO4CGP9","i":"https://file2.nocutnews.co.kr/newsroom/image/2015/01/10/20150110173012341999.jpg","c":["y90"]},{"n":"린애","u":"https://www.youtube.com/playlist?list=PLTgcHuWUZp0_mTWI9gRFQTzbQ7EySvDwR","i":"https://d3tvwjfge35btc.cloudfront.net/Assets/13/448/L_p1002744813.jpg","c":["y90"]},{"n":"임재범","u":"https://www.youtube.com/playlist?list=PLUCpTAjW3-kz3XtrmsJGeeHhKmcWYA56f","i":"https://img.seoul.co.kr/img/upload/2022/06/16/SSI_2022061616305101_O2.jpg","c":["ballad","rock"]},{"n":"부활","u":"https://www.youtube.com/playlist?list=PLfeltSU8KVeR327TsbLPye2Ci9D59NRop","i":"https://i.namu.wiki/i/6ykw3GOcToixeXVaB4-FFHHicOJItMl7J30ScCqGpVUl9O7hsN1ZRu3guK1_hMnMJMJa-OEgm8R-jimiefATxw.webp","c":["rock","old"]},{"n":"이승철","u":"https://www.youtube.com/playlist?list=PLXoyEFPlwYS0Z_np_pNP0Q2Xj8kdyLfUK","i":"https://pimg.mk.co.kr/meet/neds/2010/05/image_readtop_2010_237755_1273438744271284.jpg","c":["ballad","rock"]},{"n":"신해철","u":"https://www.youtube.com/playlist?list=PL066-ALa462C766IPRMfR9-WKLZs_Tcyx","i":"https://i.namu.wiki/i/0D49dSHeRpc4xYsyhzUOpd73wgnIiowpfaUMw8SRgY8nzuPzBxXIeZrcpez_EPiSlIyMGu_NqxnLlf8DyzZW3A.webp","c":["rock","y90"]},{"n":"싸이","u":"https://www.youtube.com/playlist?list=UULFrDkAvwZum-UTjHmzDI2iIw","i":"https://i.namu.wiki/i/efChuAmzQ4wRRKTv5edXs35NUTr_tDd2fKeR3r2Kj5Itl8gRy4SxRIdpNX1grSFiXLw__A0R94M_2qS9AzK4vg.webp","c":["hiphop","y90"]},{"n":"타샤니","u":"https://www.youtube.com/playlist?list=PLpvk7hdDZ0uIe0uSOChzQuaW2zuBPFq00","i":"https://image.bugsm.co.kr/album/images/500/53/5376.jpg","c":["hiphop","y90"]},{"n":"자자 버스안에서","u":"https://www.youtube.com/playlist?list=PL2t4VpGwUV5Spg-85LLdUXnoq9y1VPweA","i":"https://flexible.img.hani.co.kr/flexible/normal/640/640/imgdb/original/2020/0607/20200607501716.jpg","c":["y90"]},{"n":"양파","u":"https://www.youtube.com/playlist?list=PLJRBfcxwAAApKllO-z1wFVfim2qhd-IIM","i":"https://daily.hankooki.com/news/photo/201501/20150113_1_bodyFimg_143405.jpg","c":["y90","ballad"]},{"n":"dj doc","u":"https://www.youtube.com/playlist?list=PLvt67BVFIoUXOBIeAfnCqe-NYmSzKCxfI","i":"https://image.genie.co.kr/Y/IMAGE/IMG_ALBUM/015/035/475/15035475_1312529055225_1_600x600.JPG","c":["hiphop","y90"]},{"n":"조관우","u":"https://www.youtube.com/playlist?list=PLlm4kRY2fzBuqHMNVGS27lpsH7f3uNoZH","i":"https://i.namu.wiki/i/l-Ufh_ILKSSdunh0snsG9JBbt74nwvk7OW-hRVM4sgdI7pManGqGY7DVhllVAW8NYVyffGl5vcuUXn13lWDdrA.webp","c":["ballad","y90"]},{"n":"강수지","u":"https://www.youtube.com/playlist?list=PLKMIG3mtUeiVywDXuDwBCmXHvTNG_WXuF","i":"https://dimg.donga.com/wps/NEWS/IMAGE/2009/01/05/7104972.1.jpg","c":["y90"]},{"n":"거미","u":"https://www.youtube.com/playlist?list=PL1h-Fef6ZjVJtjSFwGoGHRrQrETAZdu56","i":"https://newsimg.sedaily.com/2017/06/05/1OH2Y7I0OK_1.jpg","c":["ballad"]},{"n":"터보","u":"https://www.youtube.com/playlist?list=PLKQf19ELQ877oKc7gRWheIUJlHi98m2Lj","i":"https://i.namu.wiki/i/T5BuKEIrRgPHcI7jIQ7AsRwLsdos4nMaJxe3hSGzkWFfarK_-U1dLNjAIWGKyMY1FUUmb9VJpxJBjesyQc5z8Q.webp","c":["y90"]},{"n":"변진섭","u":"https://www.youtube.com/playlist?list=PLQtNSxz6xAncWzmrNknNygdDjA37w9l2Z","i":"https://m.sportsworldi.com/content/image/2012/11/07/20121107020519_0.jpg","c":["ballad","old"]},{"n":"조덕배","u":"https://www.youtube.com/playlist?list=PLiTTLzl90u1MRULbk4HL-P1MDJR79uSIr","i":"https://mblogthumb-phinf.pstatic.net/20151018_67/yessok104_1445150119801bLG3k_PNG/%B4%D9%BF%EE%B7%CE%B5%E5.png?type=w420","c":["old"]},{"n":"이문세","u":"https://www.youtube.com/playlist?list=PL1IItlHLTRt5iVkgntgJZXDaUjCQpF2gC","i":"https://i.namu.wiki/i/1brAEa-jZI2CzeYT5kA9q_F9Os4UR7STVcD2u1wjYiWybiEquFUkSGhwJlW8PW_KU-vvq-dp6FrXrmpqY4bZEg.webp","c":["old","ballad"]},{"n":"더원","u":"https://www.youtube.com/playlist?list=PLxhgfZjTcCPSMIeYn5Bht7bKBkNTnPYo-","i":"https://i.namu.wiki/i/5ZmBPyMZ-dydAPCkaWB_r286OtxDsNnXynol5uHVsrTPAWuEqW7a3_F0CzjVTDL3Z6HNN7DE5UcrGaiRCWlHQA.webp","c":["ballad"]},{"n":"김현정","u":"https://www.youtube.com/playlist?list=PLjjs98tQfEOqeOBNJZP0rT5xajSbqm4ev","i":"https://cdn.incheonilbo.com/news/photo/202007/1047519_321960_5859.jpg","c":["y90"]},{"n":"오현란","u":"https://www.youtube.com/playlist?list=PLRkypwzwSp4NvF1GK1Ida7CETtoaTBY6U","i":"https://is1-ssl.mzstatic.com/image/thumb/Music/0e/47/74/mzi.ldpeizab.jpg/486x486bb.png","c":["y90"]},{"n":"민해경","u":"https://www.youtube.com/playlist?list=PLVvqqIyrFiWGBZikm3TkCNXgHAExEuiuW","i":"https://i.namu.wiki/i/GvJcoVxwZG9PwzLeBXnnJP6VECFVAYbOb9nGHXTpO43FwxTdfkeXU8JSLf3T37oT3h7crJTQieKmhZHeG8KdiA.webp","c":["old"]},{"n":"나얼","u":"https://www.youtube.com/playlist?list=PL4brMRtrvP4He-balmA6gn4CySs97mVjj","i":"https://i.namu.wiki/i/oXd8AbVY9zA2Ymzbs4uKRQebT73NeX6j2138vjU1EOZi4tSktjORXjcn7wGMteGH7B3akbG2maemmpWHc-ZPBQ.webp","c":["ballad","hiphop"]},{"n":"JFla","u":"https://www.youtube.com/playlist?list=PL7xPyl-czJa3lmQ0fLDsdyEp_iipDUOXB","i":"https://wimg.heraldcorp.com/content/default/2023/07/13/20230713000417_0.jpg","c":["indie"]},{"n":"솔라 (마마무)","u":"https://www.youtube.com/playlist?list=PLonBkja8TxG5A5weBKXyV0GFR-J8G5Esi","i":"https://yt3.googleusercontent.com/zzwpqO-L9MCphvNQ63TdGFaQ4jUQA-p_N1sTY59ZJFEQ_1rCFNbqx0U53Fu2rLu-F15yQy-z=s900-c-k-c0x00ffffff-no-rj","c":["idol"]},{"n":"aespa","u":"https://www.youtube.com/playlist?list=PLaTwSrG83q2MGvc6WqB4iGi-m2aLBFfG_","i":"https://img9.yna.co.kr/etc/inner/KR/2025/05/23/AKR20250523069300005_01_i_P4.jpg","c":["idol"]},{"n":"아이유 IU","u":"https://www.youtube.com/playlist?list=PLfM6HfDyhXPRKYSOTk9cNb59yr7CCoSes","i":"https://yt3.googleusercontent.com/Ud8Q_DK5ghWgVm_Vq-A7ZukY8aVQv9k_oEmUdShNaBa6GmfUMUS2Igmw02E7qGEk3MSbYS-Q=s900-c-k-c0x00ffffff-no-rj","c":["idol","ballad"]},{"n":"이수현","u":"https://www.youtube.com/playlist?list=PLSOnWWiD3hlrJTT_QEtAVBOYxQ0pl0QCp","i":"https://i.namu.wiki/i/FlGiu8Go0nQRBWbgPMNnvdWoq43itFi21voo8m40Pb-3sixTw_DTH0tw2AbrnAqEIsZoUZnB78ki5BqFiqQ9uw.webp","c":["indie"]},{"n":"김종국","u":"https://www.youtube.com/playlist?list=PLcZHJBZRQ7BVutijB43gQ3z0-F4BFaIgL","i":"https://yt3.googleusercontent.com/dQpGedX7jQIIQ-BJcj3dGroHLb_cY5Mx8bDvmyD-oJO5_NQkR6W5OlsCuqmNrWh3cGq3KvyxmYA=s900-c-k-c0x00ffffff-no-rj","c":["y90","ballad"]},{"n":"BABYMONSTER","u":"https://www.youtube.com/playlist?list=PLLsua0MU5Y8Ldt2oDHF4ODzaMZtJeP2TS","i":"https://file2.nocutnews.co.kr/newsroom/image/2024/04/01/202404011407257278_0.jpg","c":["idol","new"]},{"n":"성시경","u":"https://www.youtube.com/playlist?list=PLxhgfZjTcCPRytqC78WE28gAGeE12Lp8P","i":"https://i.namu.wiki/i/6KSrtQ4NViTFQ9FzEWFAEsZMlshA9mDck2cDK3Or-XU_nbgncPE0Ydx_ujECrMmz6yRyKMCnZ7p9JzPVysfuqw.webp","c":["ballad"]},{"n":"백지영","u":"https://www.youtube.com/playlist?list=PLdO8b61BKh9MwLq_9TM8mg8X-Xur65JWX","i":"","c":["ballad"]},{"n":"폴킴","u":"https://www.youtube.com/playlist?list=PLi-Q5RtITB6u37B9t4FsXIzQ6WNdc0VuT","i":"","c":["ballad"]},{"n":"임창정","u":"https://www.youtube.com/playlist?list=PLK5KTh6Nahka1W1emnVf7FQooYe5Cv16c","i":"","c":["ballad"]},{"n":"윤종신","u":"https://www.youtube.com/playlist?list=PL_ZessjM__hy4XsKCq_73qSitAPlAwcy5","i":"","c":["ballad"]},{"n":"케이윌","u":"https://www.youtube.com/playlist?list=PLXoyEFPlwYS1V22sXvodkmhDiXCiGUxX2","i":"","c":["ballad"]},{"n":"정승환","u":"https://www.youtube.com/playlist?list=PLLzg-cBw4tOjaXfkcp4MfE_Np4dsP8zbU","i":"","c":["ballad"]},{"n":"린","u":"https://www.youtube.com/playlist?list=PLxhgfZjTcCPRPGcMaHx2MgCRcMe85ffW_","i":"","c":["ballad"]},{"n":"휘성","u":"https://www.youtube.com/playlist?list=PLxuHttPWIvIuCoqw-7DOisKpsIztshE18","i":"","c":["ballad"]},{"n":"태연","u":"https://www.youtube.com/playlist?list=PL4brMRtrvP4EBFxiCAEQIZushnymUyClD","i":"","c":["ballad"]},{"n":"에일리","u":"https://www.youtube.com/playlist?list=PLXoyEFPlwYS01ZZ0QarAtrl5RpjaQNt8T","i":"","c":["ballad"]},{"n":"멜로망스","u":"https://www.youtube.com/playlist?list=PL7m7voI01B7czYIxS3WIjjdfo1oatFjtf","i":"","c":["ballad","indie"]},{"n":"이선희","u":"https://www.youtube.com/playlist?list=PLkaL4YF8-eS-otQhGdElIx9cgbb_Q_mAk","i":"","c":["ballad"]},{"n":"김나영","u":"https://www.youtube.com/playlist?list=PLhE_J-ZZyDRBLj3nsE-OL-q2K4JWbvQJ2","i":"","c":["ballad"]},{"n":"신용재","u":"https://www.youtube.com/playlist?list=PL4brMRtrvP4EvwXunFWfApZUmOJjfrB-8","i":"","c":["ballad"]},{"n":"노을","u":"https://www.youtube.com/playlist?list=PL4brMRtrvP4HHS9vusoAO_B5RrAD3bKJk","i":"","c":["ballad"]},{"n":"하동균","u":"https://www.youtube.com/playlist?list=PL4brMRtrvP4Hhl39kxRkcTbFB4laYjI8f","i":"","c":["ballad"]},{"n":"이승기","u":"https://www.youtube.com/playlist?list=PL6Y3cgcTo8d4qQM5Rd0kY5Ox_TcGN65zP","i":"","c":["ballad"]},{"n":"방탄소년단","u":"https://www.youtube.com/playlist?list=PLp-GQGb3w6VOyA2UrHS0R_QnaPimvSz9P","i":"","c":["idol"]},{"n":"블랙핑크","u":"https://www.youtube.com/playlist?list=PLLAMwRZRuf96wOzSSR6enHNPJW0-IdJ-K","i":"","c":["idol"]},{"n":"뉴진스","u":"https://www.youtube.com/playlist?list=PLUg_UBJDlBjgRJhOib1PrtPSCGTcUswV1","i":"","c":["idol"]},{"n":"아이브","u":"https://www.youtube.com/playlist?list=PLA98OzH9glllcXKlZ8AGjw5S5psBqZRHL","i":"","c":["idol"]},{"n":"르세라핌","u":"https://www.youtube.com/playlist?list=PLqcWeP72XvrcscU95nIerWTqwmMlJQAas","i":"","c":["idol"]},{"n":"세븐틴","u":"https://www.youtube.com/playlist?list=PLBPXhG0Xe9UXUVa0ajN6miJHFWJi3Hi7J","i":"","c":["idol"]},{"n":"트와이스","u":"https://www.youtube.com/playlist?list=PLzm9sEXjZ90feWaeV0XuOuRaQqLTHVKDv","i":"","c":["idol"]},{"n":"레드벨벳","u":"https://www.youtube.com/playlist?list=PLXoyEFPlwYS0CDTkL_2ECmETQnC02F1rD","i":"","c":["idol"]},{"n":"엑소","u":"https://www.youtube.com/playlist?list=PLAYt-U8fsM5bkQi_V0HORGdw8AktbZlbX","i":"","c":["idol"]},{"n":"빅뱅","u":"https://www.youtube.com/playlist?list=PLc6ct-CE54TWqbY-C5lGMHk9NqYJHoQC3","i":"","c":["idol"]},{"n":"소녀시대","u":"https://www.youtube.com/playlist?list=PL-B3spg_AEpOQR-PTpFFWH7jnMjPrF7DB","i":"","c":["idol"]},{"n":"샤이니","u":"https://www.youtube.com/playlist?list=PLMKEAJJepsNS0fkH5jWJ4pY6AP7sNJOeO","i":"","c":["idol"]},{"n":"스트레이 키즈","u":"https://www.youtube.com/playlist?list=PLnDTop88StTNA-umTcvMmsF-DS2oP5JTI","i":"","c":["idol"]},{"n":"아이들","u":"https://www.youtube.com/playlist?list=PL4brMRtrvP4GLxsLr78pdFt0Jfx7R0RFZ","i":"","c":["idol"]},{"n":"있지","u":"https://www.youtube.com/playlist?list=PL9SfVCbwcAPXH6FGWvvZ9qUmwm40ZqDOb","i":"","c":["idol"]},{"n":"NCT 127","u":"https://www.youtube.com/playlist?list=PLvj2msn5Z7K5vLiWlQWCsI5pm-Yf3W892","i":"","c":["idol"]},{"n":"투모로우바이투게더","u":"https://www.youtube.com/playlist?list=PL0eW9Qiyxx8Yph3Jg_mmHpfL2qiXFc4uW","i":"","c":["idol"]},{"n":"엔하이픈","u":"https://www.youtube.com/playlist?list=PLapC2u0lytysTtq3X4izmzAKp8w1-FulH","i":"","c":["idol"]},{"n":"마마무","u":"https://www.youtube.com/playlist?list=PL3YTK9teI7Pep4kcai8yl7xglOUGibFXW","i":"","c":["idol"]},{"n":"원더걸스","u":"https://www.youtube.com/playlist?list=PLmhfZsnVwJ5yCSsj72bjzEfUHJW3EQXcz","i":"","c":["idol","y90"]},{"n":"동방신기","u":"https://www.youtube.com/playlist?list=PLBpJ7KIIQBrnNsjgtyBQTjuIz09NPaYUS","i":"","c":["idol","y90"]},{"n":"2NE1","u":"https://www.youtube.com/playlist?list=PLANgXIaQPqHJ1O5ZyfY_YdvczQUyD8yhl","i":"","c":["idol"]},{"n":"god","u":"https://www.youtube.com/playlist?list=PLitPkMJ97G7XBJtNa7lraeUOj9QK3yXlm","i":"","c":["idol","y90"]},{"n":"H.O.T.","u":"https://www.youtube.com/playlist?list=PLt-RQHGUhzaUxNhNVF0tX7PX6WnQLNjwn","i":"","c":["idol","y90"]},{"n":"젝스키스","u":"https://www.youtube.com/playlist?list=PLH91px8kyGpb0I_m7hLyWS04EV8EcsIBe","i":"","c":["idol","y90"]},{"n":"신화","u":"https://www.youtube.com/playlist?list=PLqHxfAPPDCq5QMUeJxeQ_F46KHkliSNNF","i":"","c":["idol","y90"]},{"n":"핑클","u":"https://www.youtube.com/playlist?list=PLXATxMEkl5bCh1A8MWSKj6frGXmEFoKjA","i":"","c":["idol","y90"]},{"n":"S.E.S.","u":"https://www.youtube.com/playlist?list=PLsjXQyGZyZ-TZlAJ8nPatlDlm_di18B4K","i":"","c":["idol","y90"]},{"n":"오마이걸","u":"https://www.youtube.com/playlist?list=PL38Oiky7RlcwNBmXj1MZNMpI14x4Mlm3Y","i":"","c":["idol"]},{"n":"에이티즈","u":"https://www.youtube.com/playlist?list=PLSQ_XcXuAbc0","i":"","c":["idol"]},{"n":"임영웅","u":"https://www.youtube.com/playlist?list=PLZrO3OV_W9_c4_zKLNpEGYGI-7i2FHcsB","i":"","c":["trot"]},{"n":"이찬원","u":"https://www.youtube.com/playlist?list=PLQXJceYtow13GFoT9e0NTj8oYC_bFnUw4","i":"","c":["trot"]},{"n":"영탁","u":"https://www.youtube.com/playlist?list=PLkaL4YF8-eS8-d8ahgU8OIw8rUsKYxYwQ","i":"","c":["trot"]},{"n":"송가인","u":"https://www.youtube.com/playlist?list=PLx1z4TcfVxH9NLYFuKmKWaaZrtM4lvBJl","i":"","c":["trot"]},{"n":"장윤정","u":"https://www.youtube.com/playlist?list=PLkYiDjUTyZt4arcDjzndsnvFh4A4Mr45I","i":"","c":["trot"]},{"n":"홍진영","u":"https://www.youtube.com/playlist?list=PLja1NiLoa1T8efFMV1Vz0N2INY7YjPJNQ","i":"","c":["trot"]},{"n":"나훈아","u":"https://www.youtube.com/playlist?list=PLwTMibl081eb8GW4-2bi5u0Sl_6lHlaOE","i":"","c":["trot"]},{"n":"남진","u":"https://www.youtube.com/playlist?list=PLHXikaeWitzxaG7nKAyV1wG0xM5R3F71l","i":"","c":["trot"]},{"n":"주현미","u":"https://www.youtube.com/playlist?list=PL1poNkmTTQdKquySKEmRCNW3XAU00ENv3","i":"","c":["trot"]},{"n":"태진아","u":"https://www.youtube.com/playlist?list=PLkYiDjUTyZt65kUJhyP5G9By6_lTM3qfM","i":"","c":["trot"]},{"n":"설운도","u":"https://www.youtube.com/playlist?list=PL1poNkmTTQdIt_sMV_-ARPmWIchfq_VyI","i":"","c":["trot"]},{"n":"김연자","u":"https://www.youtube.com/playlist?list=PL1poNkmTTQdJ2dG7OZXQmKch9R4wX5mBk","i":"","c":["trot"]},{"n":"정동원","u":"https://www.youtube.com/playlist?list=PLGI0QADSoguh43HdodwZSftyE1scp9SBX","i":"","c":["trot"]},{"n":"박서진","u":"https://www.youtube.com/playlist?list=PLO6l6XWJxZx5jrAFA1rNfyaFQJaDYgb1E","i":"","c":["trot"]},{"n":"진성","u":"https://www.youtube.com/playlist?list=PLwTMibl081eY0OMQ_Ah2iM-31-Swq6qz3","i":"","c":["trot"]},{"n":"장민호","u":"https://www.youtube.com/playlist?list=PLQn5mnr0GWWrTMYHnXddgmHN33mNO5INL","i":"","c":["trot"]},{"n":"양지은","u":"https://www.youtube.com/playlist?list=PLljU2osywQP5UKDhs87RDR5U9ou74XJgo","i":"","c":["trot"]},{"n":"전유진","u":"https://www.youtube.com/playlist?list=PLFrD_VcfNNUixOHyLPS5AuxdvQLSWFek9","i":"","c":["trot"]},{"n":"YB","u":"https://www.youtube.com/playlist?list=PLb86fgrhn075GfYwE-yvsiEiJ0DrGIbps","i":"","c":["rock"]},{"n":"넬","u":"https://www.youtube.com/playlist?list=PLbhs2rsSaCg9d3JYbY00K1sCS9qAvotRg","i":"","c":["rock"]},{"n":"자우림","u":"https://www.youtube.com/playlist?list=PL1zzZmWVgScw-C_sXNMz_S1N9gKrFWBNm","i":"","c":["rock"]},{"n":"국카스텐","u":"https://www.youtube.com/playlist?list=PLadEROEEVbtyiw5vYeZk8rWAM4eW5u1sd","i":"","c":["rock"]},{"n":"데이식스","u":"https://www.youtube.com/playlist?list=PLi-Q5RtITB6swknJ3adjP52XD_h8hoLUm","i":"","c":["rock","idol"]},{"n":"잔나비","u":"https://www.youtube.com/playlist?list=PLa1SEdoLFyOnVBZFSuIuYJ4P6YeA6vxXh","i":"","c":["rock"]},{"n":"혁오","u":"https://www.youtube.com/playlist?list=PLi-Q5RtITB6uApaXXQub4jBvwRI2xs7ep","i":"","c":["rock"]},{"n":"버즈","u":"https://www.youtube.com/playlist?list=PLXoyEFPlwYS3YA3Jt3Y_W9ZIR3sw687ih","i":"","c":["rock","ballad"]},{"n":"노브레인","u":"https://www.youtube.com/playlist?list=PLGhr2nditiatqobzlPwspgKCkuDKdHUgx","i":"","c":["rock"]},{"n":"크라잉넛","u":"https://www.youtube.com/playlist?list=PLgzosU-aX20vyzK3ctwLxZFHmRtpZRlh7","i":"","c":["rock"]},{"n":"체리필터","u":"https://www.youtube.com/playlist?list=PLQGgoV4fMNwTefAhQte_36iaebihSTGNr","i":"","c":["rock"]},{"n":"실리카겔","u":"https://www.youtube.com/playlist?list=PLxhUIuf8EmfyYHDdb3GMSlieNCcGGBLUG","i":"","c":["rock"]},{"n":"엔플라잉","u":"https://www.youtube.com/playlist?list=PLi-Q5RtITB6sC1yUQWFwq2-PNvA35YCwl","i":"","c":["rock"]},{"n":"쏜애플","u":"https://www.youtube.com/playlist?list=PLUF9zIk0AX3JDhOpE6okTTDb9KTs5EL5-","i":"","c":["rock"]},{"n":"루시","u":"https://www.youtube.com/playlist?list=PLxhUIuf8EmfzkHae7E_y2MX9TfL_WUiH-","i":"","c":["rock"]},{"n":"QWER","u":"https://www.youtube.com/playlist?list=PL3a1XmWQVx9Yr9v_oYIFnEtSTsZfkoog-","i":"","c":["rock","new"]},{"n":"에픽하이","u":"https://www.youtube.com/playlist?list=PLQtNSxz6xAnd4aOQ-qNLaLi6lDj_c6wPh","i":"","c":["hiphop"]},{"n":"다이나믹 듀오","u":"https://www.youtube.com/playlist?list=PL6d3LcsO8JAL2u2cQHeC4Aos3s4KnpZNM","i":"","c":["hiphop"]},{"n":"지코","u":"https://www.youtube.com/playlist?list=PL4brMRtrvP4EpIwvqSzI_KALySExVqSyb","i":"","c":["hiphop"]},{"n":"빈지노","u":"https://www.youtube.com/playlist?list=PLBXSejdJOzbQd8yQhBGUci3LKnX1ifZqF","i":"","c":["hiphop"]},{"n":"자이언티","u":"https://www.youtube.com/playlist?list=PLooeWILrVByJJTErCVS-3gu4IXMo8HvDk","i":"","c":["hiphop"]},{"n":"크러쉬","u":"https://www.youtube.com/playlist?list=PL4brMRtrvP4EyrV9-CDJatI14pCkT4ICr","i":"","c":["hiphop"]},{"n":"딘","u":"https://www.youtube.com/playlist?list=PLkfs1N4Z20FE3Ttrd9cmq6Ucn6bLVmMSA","i":"","c":["hiphop"]},{"n":"박재범","u":"https://www.youtube.com/playlist?list=PL4brMRtrvP4H3kazafIRbtWkB8GcGFeLu","i":"","c":["hiphop"]},{"n":"로꼬","u":"https://www.youtube.com/playlist?list=PL4brMRtrvP4Hzgr5jwTWkrmK7Dpwvxim6","i":"","c":["hiphop"]},{"n":"이영지","u":"https://www.youtube.com/playlist?list=PLgDDnNUUToNkPmt8KgoLPX88F2H1GFIq6","i":"","c":["hiphop"]},{"n":"비와이","u":"https://www.youtube.com/playlist?list=PL4brMRtrvP4EXcuL8X3-k9lPFnjtD5Azx","i":"","c":["hiphop"]},{"n":"리쌍","u":"https://www.youtube.com/playlist?list=PLg0cvKsTyJU9eMyyYWa4uMquMWWsrfv0X","i":"","c":["hiphop"]},{"n":"드렁큰타이거","u":"https://www.youtube.com/playlist?list=PLEdEa0D0f015wls_TCyg4piUMQtKRbvuI","i":"","c":["hiphop"]},{"n":"윤미래","u":"https://www.youtube.com/playlist?list=PLStJsoHn8AAzqeYUvyP46s7fOayGtcxW8","i":"","c":["hiphop"]},{"n":"브라운아이드소울","u":"https://www.youtube.com/playlist?list=PLxOIyYDZTHwIOOHNj7Twkwe6E4DYkkGOt","i":"","c":["hiphop","ballad"]},{"n":"솔리드","u":"https://www.youtube.com/playlist?list=PLA8aTcUF0PAOVslGrTRiZT-cKTfo1THjE","i":"","c":["hiphop"]},{"n":"헤이즈","u":"https://www.youtube.com/playlist?list=PLAxSzereO7SJnDsF6wqfmyXsmmXrai5A7","i":"","c":["hiphop"]},{"n":"조용필","u":"https://www.youtube.com/playlist?list=PLUU_gqaExmAjF9-15Db3xhdLV9OOM9gbk","i":"","c":["old"]},{"n":"이장희","u":"https://www.youtube.com/playlist?list=PLtufRbF-Oi1AfE-D0f8z5zoZpjeMaUYQS","i":"","c":["old"]},{"n":"산울림","u":"https://www.youtube.com/playlist?list=PL0iWa0kAZdk0foJlnPWiiz6SxT7PwZA4z","i":"","c":["old"]},{"n":"해바라기","u":"https://www.youtube.com/playlist?list=PLtlG9_W_BthbbKNQYnNHghXOClVPJ3-Pv","i":"","c":["old"]},{"n":"이은미","u":"https://www.youtube.com/playlist?list=PLWdgl9XqYNY1DWEpUYug0JLKBx69qUZFm","i":"","c":["old"]},{"n":"한영애","u":"https://www.youtube.com/playlist?list=PLVvqqIyrFiWHDLMBoxqcqffYzaG54570D","i":"","c":["old"]},{"n":"동물원","u":"https://www.youtube.com/playlist?list=PLwDxowgnnj5ZPn8JBmecl9LIf0HXAxELx","i":"","c":["old"]},{"n":"015B","u":"https://www.youtube.com/playlist?list=PLbgKY5Gmp4XLjfJD6C-hmmzE46szQCr3P","i":"","c":["old","y90"]},{"n":"혜은이","u":"https://www.youtube.com/playlist?list=PLjuDlTa33vsGFBngbdvq13espcvbXzZB9","i":"","c":["old"]},{"n":"김수철","u":"https://www.youtube.com/playlist?list=PLVvqqIyrFiWGRVdVPp1Q_SJlRHyb8ZU4u","i":"","c":["old"]},{"n":"윤시내","u":"https://www.youtube.com/playlist?list=PLVvqqIyrFiWEiC2UQ7c4lsn9Y51qrHhPh","i":"","c":["old"]},{"n":"최백호","u":"https://www.youtube.com/playlist?list=PLs5hDGPZuwmcIbCi7Ye9DDR208n3wqAKr","i":"","c":["old"]},{"n":"정태춘","u":"https://www.youtube.com/playlist?list=PLzk98T0qqrKyzsvrdY7zH8a65Hsu3rvoU","i":"","c":["old"]},{"n":"김창완","u":"https://www.youtube.com/playlist?list=PLb86fgrhn074Jd0dwLg3o30NLtJCutlUh","i":"","c":["old"]},{"n":"쿨","u":"https://www.youtube.com/playlist?list=PLff3fwazu3QwjY5xWpibkyclDWIoUnH3W","i":"","c":["y90"]},{"n":"룰라","u":"https://www.youtube.com/playlist?list=PLfkV_K4MlCiHPFyNH47gIyNL_cGyZOyzj","i":"","c":["y90"]},{"n":"클론","u":"https://www.youtube.com/playlist?list=PLxwFlqXwZ4ISZXjLcYGX05OK7hhsCTsLV","i":"","c":["y90"]},{"n":"엄정화","u":"https://www.youtube.com/playlist?list=PLhIi0V5uWe53UyV9jBZum2heW930NXaZA","i":"","c":["y90"]},{"n":"이정현","u":"https://www.youtube.com/playlist?list=PLG51A1G1hWk3QS2kAOjV2Y021VBBX43KG","i":"","c":["y90"]},{"n":"박진영","u":"https://www.youtube.com/playlist?list=PLBCJqBUsCx9oKW0jWvIqhEJ6gcrqwLG43","i":"","c":["y90","hiphop"]},{"n":"김종서","u":"https://www.youtube.com/playlist?list=PLOXfyWMAeck7XNdQ6M4_PWDfMgndyK1Yr","i":"","c":["y90"]},{"n":"코요태","u":"https://www.youtube.com/playlist?list=PLfkV_K4MlCiEKbksw2TGl6sozhgVqduWh","i":"","c":["y90"]},{"n":"김종환","u":"https://www.youtube.com/playlist?list=PLkYiDjUTyZt7CLcQOEVScMvnBKPR_m2tH","i":"","c":["y90"]},{"n":"박미경","u":"https://www.youtube.com/playlist?list=PLJRBfcxwAAAoACQmbPh7Ir9u9vLBUicIj","i":"","c":["y90"]},{"n":"지누션","u":"https://www.youtube.com/playlist?list=PLWMyUVDeu6xIEkP5zvKvO6JLssYEMKfQL","i":"","c":["y90"]},{"n":"컨츄리꼬꼬","u":"https://www.youtube.com/playlist?list=PLfkV_K4MlCiG5FuCRuJLjzVdb9O-AI6A_","i":"","c":["y90"]},{"n":"영턱스클럽","u":"https://www.youtube.com/playlist?list=PLtIh8OJBoaYD0VwfjvorIxmyeptgtbsGc","i":"","c":["y90"]},{"n":"디바","u":"https://www.youtube.com/playlist?list=PLCLK8xAKMaOc","i":"","c":["y90"]},{"n":"샵","u":"https://www.youtube.com/playlist?list=PLfkV_K4MlCiFXE90eOz1MJtL6wVb2RNvE","i":"","c":["y90"]},{"n":"김경호","u":"https://www.youtube.com/playlist?list=PLitPkMJ97G7UV7M2y9BMgNUvdWRPu0T3w","i":"","c":["y90","rock"]},{"n":"노이즈","u":"https://www.youtube.com/playlist?list=PLtMz_qNleB-_-RU9kLoIeigyTeuHI7uwm","i":"","c":["y90"]},{"n":"박화요비","u":"https://www.youtube.com/playlist?list=PLDteL2ekDqtW6Ldrtxr3vkejyfAwIPEKN","i":"","c":["y90"]},{"n":"10cm","u":"https://www.youtube.com/playlist?list=PL4brMRtrvP4GtpAIqhz9zGFWTNijWNaMa","i":"","c":["indie","ballad"]},{"n":"장범준","u":"https://www.youtube.com/playlist?list=PL-SSeMpcQYjISqFPTExSqOj0h9nf6P8Ah","i":"","c":["indie","ballad"]},{"n":"볼빨간사춘기","u":"https://www.youtube.com/playlist?list=PLCyJfaNcHj0hmY2vNXGmv-Q7ojhEutIbQ","i":"","c":["indie"]},{"n":"악뮤","u":"https://www.youtube.com/playlist?list=PLL1Ef0p7u6RcvKn2NT3lEWwwmlaiN7Ajd","i":"","c":["indie"]},{"n":"검정치마","u":"https://www.youtube.com/playlist?list=PLi-Q5RtITB6uq-D507oHA3PdJkbg1iiUM","i":"","c":["indie"]},{"n":"백예린","u":"https://www.youtube.com/playlist?list=PLiEh2XgX_vLKEhg3FkSvOCiym74QTxgFy","i":"","c":["indie"]},{"n":"새소년","u":"https://www.youtube.com/playlist?list=PLCtSCvos0uh9vJ9032z9VETcsvlexp7OK","i":"","c":["indie"]},{"n":"정준일","u":"https://www.youtube.com/playlist?list=PLl4XCPwXwq8hwQ6M8xOE8cElUGYoawDo8","i":"","c":["indie"]},{"n":"적재","u":"https://www.youtube.com/playlist?list=PLSLCSFmgSfZw","i":"","c":["indie"]},{"n":"선우정아","u":"https://www.youtube.com/playlist?list=PLXlo0d0EQYXzGCiL_kACPysJ3QCv9h1EO","i":"","c":["indie"]},{"n":"짙은","u":"https://www.youtube.com/playlist?list=PLNHozKdX62EtJTJ5XUdsOcGQFEP4jo6R1","i":"","c":["indie"]},{"n":"스텔라장","u":"https://www.youtube.com/playlist?list=PLxNKhMXYYGsBNW9_DUIT6Fz-m1uw5VAbj","i":"","c":["indie"]},{"n":"최유리","u":"https://www.youtube.com/playlist?list=PLonY3ub8yNSjOAp1A581YyHonkD0EqwOJ","i":"","c":["indie"]},{"n":"이무진","u":"https://www.youtube.com/playlist?list=PL4brMRtrvP4GUDFHH65ry4G2di2-JROKX","i":"","c":["indie"]},{"n":"카더가든","u":"https://www.youtube.com/playlist?list=PLf3xi5QDnXo4bWa-_Le1ehM44OBvyOpNX","i":"","c":["indie"]},{"n":"우효","u":"https://www.youtube.com/playlist?list=PLBNnfKYLAQBHkC6G4P3tyR2s7hH3r76X2","i":"","c":["indie"]},{"n":"코르티스","u":"https://www.youtube.com/playlist?list=PLEMk2t9U4YFQls_ZHa9sPEYXsRc44Nyye","i":"","c":["new"]},{"n":"킥플립","u":"https://www.youtube.com/playlist?list=PLQdcm_6uvoy3MTQHXC9SaQOXz0Zkjc89t","i":"","c":["new"]},{"n":"아이딧","u":"https://www.youtube.com/playlist?list=PLmPtFHYaRW7B8P0cUDL0Sy96b_i2ZQdUu","i":"","c":["new"]},{"n":"알파드라이브원","u":"https://www.youtube.com/playlist?list=PLlVkOwIHelzsnQFhBY73l6BrLE6AJMLFA","i":"","c":["new"]},{"n":"롱샷","u":"https://www.youtube.com/playlist?list=PLmsP5y_RonlhjVDDynugswi-l3GZqzZHT","i":"","c":["new"]},{"n":"하츠투하츠","u":"https://www.youtube.com/playlist?list=PLsr1nI3JAdupQeVoFHwO39JCtDTMb59n8","i":"","c":["new"]},{"n":"키키","u":"https://www.youtube.com/playlist?list=PL60ABvYosY5uG93daq8ZHxr-bO-JpRDvE","i":"","c":["new"]},{"n":"투어스","u":"https://www.youtube.com/playlist?list=PLd2nL6Ts3gMzQtNliuCslwt4JuTlC5H0Y","i":"","c":["new"]},{"n":"1theK (원더케이)","u":"https://www.youtube.com/playlist?list=UULFweOkPb1wVVH0Q0Tlj4a5Pw","i":"https://yt3.googleusercontent.com/N9zJYmTpFKxrDlxmKv09gsjvrSrcVYWcK8lxWTyvTbXd5VMChyKzkf1cVpOT902d1-ZQIQQWeg=s240-c-k-c0x00ffffff-no-rj","c":["ch"]},{"n":"Mnet K-POP","u":"https://www.youtube.com/playlist?list=UULFbD8EppRX3ZwJSou-TVo90A","i":"https://yt3.googleusercontent.com/xPBuFrafbL_6Opr8UVDVKinGSQRqv1432LMo-7tRojZpdOd7N3hLeCegoQPX45iKEvQnnIrx=s240-c-k-c0x00ffffff-no-rj","c":["ch"]},{"n":"M2","u":"https://www.youtube.com/playlist?list=UULFTQVIXvcHrR9jYoJ6qaBAow","i":"https://yt3.googleusercontent.com/-CMwNSrdUuj-abbE1fB1ml62omQHViexCOp4IrDmans8QgqKC153dCgPk9wtBLJfXEP1gNGa=s240-c-k-c0x00ffffff-no-rj","c":["ch"]},{"n":"KBS Kpop","u":"https://www.youtube.com/playlist?list=UULFeLPm9yH_a_QH8n6445G-Ow","i":"https://yt3.googleusercontent.com/bfuCyrlo74z5K_0A1voFD7leSSlafqfb953tFQ4Oe5X9CFDN23X_vm07yV8f_YCY63dxBjiB=s240-c-k-c0x00ffffff-no-rj","c":["ch"]},{"n":"MBCkpop","u":"https://www.youtube.com/playlist?list=UULFe52oeb7Xv_KaJsEzcKXJJg","i":"https://yt3.googleusercontent.com/lMLCpSdIgJNZ11RW-0hyfU3Xb4f-molFbQFPn_302s1BAjJUFL8298P4Sbz_W76YEWtwscXi-48=s240-c-k-c0x00ffffff-no-rj","c":["ch"]},{"n":"SBS KPOP","u":"https://www.youtube.com/playlist?list=UULFS_hnpJLQTvBkqALgapi_4g","i":"https://yt3.googleusercontent.com/GqzNZfMlBCgXYpAA74wuCs9HTEJ7ePtImt6QpXwk2qt6LJEIrZ8hEdPHeLPusnCCqoEGJb1pEQ=s240-c-k-c0x00ffffff-no-rj","c":["ch"]},{"n":"STONE MUSIC","u":"https://www.youtube.com/playlist?list=UULF_pwIXKXNm5KGhdEVzmY60A","i":"https://yt3.googleusercontent.com/zSffq8rm458GQ4M59e82ORKqtLaYSgJJO3srCDJkkY7y3QCR8U_F2dszJpY-VQlA9-CXDsgzaA=s240-c-k-c0x00ffffff-no-rj","c":["ch"]},{"n":"딩고 뮤직","u":"https://www.youtube.com/playlist?list=UULFtCiO5t2voB14CmZKTkIzPQ","i":"https://yt3.googleusercontent.com/wKlU4fLFFmnuaZYlLmBkubI5YlE07IA5BodqEcOyyXctw4YUAdeN9sZsScX1lQC3hy1zFXSofg=s240-c-k-c0x00ffffff-no-rj","c":["ch"]},{"n":"it's Live","u":"https://www.youtube.com/playlist?list=UULFB9e3pof1o83aa0kkaoeJGA","i":"https://yt3.googleusercontent.com/HqU1K6v5LSfl1ZRjK9XA7VGAR9rrhSo5VQHcr5WbGyLCTNG0o5Km-_B2ShLEo33_c8sPDeZt_l8=s240-c-k-c0x00ffffff-no-rj","c":["ch"]},{"n":"KBS 레전드 케이팝","u":"https://www.youtube.com/playlist?list=UULFR5cyf8hncN_AaQPfmvmlgA","i":"https://yt3.googleusercontent.com/z2cEj5Sse_XApjOG0Qb4G2-1OpAMnZflkowtIVpst9j4c1SdTxu1a4EUjBSFJfhZr6sVMbCZWw=s240-c-k-c0x00ffffff-no-rj","c":["ch"]},{"n":"HYBE LABELS","u":"https://www.youtube.com/playlist?list=UULF3IZKseVpdzPSBaWxBxundA","i":"https://yt3.googleusercontent.com/ytc/AIdro_l8g0yRFG8xoe_qeqk8Ki9UFy36cB2IjZEWZWz0h7gl-t0=s240-c-k-c0x00ffffff-no-rj","c":["ch"]},{"n":"SMTOWN","u":"https://www.youtube.com/playlist?list=UULFEf_Bc-KVd7onSeifS3py9g","i":"https://yt3.googleusercontent.com/42gxi39XmaHVEYxeuzdXitmJ_ig7QGPHczWLt2oPLG0g7AzuIWnNhYzSBXxAaQmPiVSM7Fi6=s240-c-k-c0x00ffffff-no-rj","c":["ch"]},{"n":"JYP Entertainment","u":"https://www.youtube.com/playlist?list=UULFaO6TYtlC8U5ttz62hTrZgg","i":"https://yt3.googleusercontent.com/2gb_g-qmLOeU6ZC3xyEPFN-fxDqkOkqr44TapTNi6iKQfLL13nOK6kuPWtYVTMPuiyT2tcb64A=s240-c-k-c0x00ffffff-no-rj","c":["ch"]},{"n":"YG ENTERTAINMENT","u":"https://www.youtube.com/playlist?list=UULFQi67q4kGdmnJaRzX81uK5g","i":"https://yt3.googleusercontent.com/ytc/AIdro_ncnsFrs9NNi0n9retd_cyfFkZO0ICOOQ_q1f7lG1wFSlo=s240-c-k-c0x00ffffff-no-rj","c":["ch"]},{"n":"STARSHIP","u":"https://www.youtube.com/playlist?list=UULFYDmx2Sfpnaxg488yBpZIGg","i":"https://yt3.googleusercontent.com/k6p06Jx1N1ItWTjYjdDhDPadzWvIRFPdbqqtM-81QuHF9bzqCj4yy_ZVc40AaFsRvtjwd7ex=s240-c-k-c0x00ffffff-no-rj","c":["ch"]},{"n":"카펜터스 Carpenters","u":"https://www.youtube.com/playlist?list=UULPocF7enWc-JXxVyZxDjvewA","i":"","c":["oldpop"]},{"n":"아바 ABBA","u":"https://www.youtube.com/playlist?list=UULPYPs4y5esNqx6ax1CxZws6Q","i":"","c":["oldpop"]},{"n":"비틀즈 The Beatles","u":"https://www.youtube.com/playlist?list=UULPc4K7bAqpdBP8jh1j9XZAww","i":"","c":["oldpop"]},{"n":"퀸 Queen","u":"https://www.youtube.com/playlist?list=UULPiMhD4jzUqG-IgPzUmmytRQ","i":"","c":["oldpop"]},{"n":"비지스 Bee Gees","u":"https://www.youtube.com/playlist?list=UULPD9sCcKXnFxMeuFoNayVxeQ","i":"","c":["oldpop"]},{"n":"마이클 잭슨 Michael Jackson","u":"https://www.youtube.com/playlist?list=UULP5OrDvL9DscpcAstz7JnQGA","i":"","c":["oldpop"]},{"n":"휘트니 휴스턴 Whitney Houston","u":"https://www.youtube.com/playlist?list=UULP7fzrpTArAqDHuB3Hbmd_CQ","i":"","c":["oldpop"]},{"n":"머라이어 캐리 Mariah Carey","u":"https://www.youtube.com/playlist?list=UULPurpiDXSkcUbgdMwHNZkrCg","i":"","c":["oldpop"]},{"n":"셀린 디온 Celine Dion","u":"https://www.youtube.com/playlist?list=UULP_yGU4qz9zAjEWLQxCg9NZQ","i":"","c":["oldpop"]},{"n":"웨스트라이프 Westlife","u":"https://www.youtube.com/playlist?list=UULPPH9tUyrdCyygc8xIHJenNQ","i":"","c":["oldpop"]},{"n":"백스트리트 보이즈 Backstreet Boys","u":"https://www.youtube.com/playlist?list=UULP1OR2YNQLZJYFdQjFrPWvVw","i":"","c":["oldpop"]},{"n":"본 조비 Bon Jovi","u":"https://www.youtube.com/playlist?list=UULPkBwnm7GOfYHsacwUjriC-w","i":"","c":["oldpop"]},{"n":"이글스 Eagles","u":"https://www.youtube.com/playlist?list=UULPPTypnDNlOZVnD7MY30_YBw","i":"","c":["oldpop"]},{"n":"사이먼 앤 가펑클 Simon & Garfunkel","u":"https://www.youtube.com/playlist?list=UULPvj9Q8jeaaXlj2OprcRraaw","i":"","c":["oldpop"]},{"n":"엘튼 존 Elton John","u":"https://www.youtube.com/playlist?list=UULPcd0tBtip8YzdTCUw3OVv_Q","i":"","c":["oldpop"]},{"n":"마돈나 Madonna","u":"https://www.youtube.com/playlist?list=UULP81VD6eeuLLSfyY_D-N8sVw","i":"","c":["oldpop"]},{"n":"조지 마이클 George Michael","u":"https://www.youtube.com/playlist?list=UULPR1LVH-teuA3-Kfy576TYSw","i":"","c":["oldpop"]},{"n":"왬! Wham!","u":"https://www.youtube.com/playlist?list=UULPT41vlFeZ_asAUCY7BOiJVQ","i":"","c":["oldpop"]},{"n":"리처드 막스 Richard Marx","u":"https://www.youtube.com/playlist?list=UULPSR0-cR2ipqwxWi5herawBA","i":"","c":["oldpop"]},{"n":"에어 서플라이 Air Supply","u":"https://www.youtube.com/playlist?list=UULPLIx3q_0KLVHAxgxsvh_vSQ","i":"","c":["oldpop"]},{"n":"라이오넬 리치 Lionel Richie","u":"https://www.youtube.com/playlist?list=UULPM3iG_kXUM_9HHVIDI7vEtg","i":"","c":["oldpop"]},{"n":"스티비 원더 Stevie Wonder","u":"https://www.youtube.com/playlist?list=UULPGD7CfG3JgZF52QpIRivV1Q","i":"","c":["oldpop"]},{"n":"보이즈 투 맨 Boyz II Men","u":"https://www.youtube.com/playlist?list=UULPIP_rqrDBiovNIbHLve7nNA","i":"","c":["oldpop"]},{"n":"에릭 클랩튼 Eric Clapton","u":"https://www.youtube.com/playlist?list=UULPtCOFqqGGGunX71nfZgPQOQ","i":"","c":["oldpop"]},{"n":"스콜피온스 Scorpions","u":"https://www.youtube.com/playlist?list=UULPcvnDgwSH5Dl2b3Bxfz4OCQ","i":"","c":["oldpop"]},{"n":"필 콜린스 Phil Collins","u":"https://www.youtube.com/playlist?list=UULP4JeRiQvPQ_nb1BZWjk9QoA","i":"","c":["oldpop"]},{"n":"신디 로퍼 Cyndi Lauper","u":"https://www.youtube.com/playlist?list=UULP8vzbjthwDMK8dAHEte6eMQ","i":"","c":["oldpop"]},{"n":"토토 Toto","u":"https://www.youtube.com/playlist?list=UULPo0VtmTVw5B1nMlzOX8KW1A","i":"","c":["oldpop"]},{"n":"엘비스 프레슬리 Elvis Presley","u":"https://www.youtube.com/playlist?list=UULPW6G95TBLCh5SdC-DHDSf5w","i":"","c":["oldpop"]},{"n":"올리비아 뉴튼존 Olivia Newton-John","u":"https://www.youtube.com/playlist?list=UULPcGD-1fuzoja3HRG3Re2yBQ","i":"","c":["oldpop"]},{"n":"폴리스 The Police","u":"https://www.youtube.com/playlist?list=UULPuCY8MR9LcAGIXetnKx5SnQ","i":"","c":["oldpop"]},{"n":"에이브릴 라빈 Avril Lavigne","u":"https://www.youtube.com/playlist?list=UULP_k8KFBzEf0uQ8LRFSAgSUA","i":"","c":["oldpop"]},{"n":"스파이스 걸스 Spice Girls","u":"https://www.youtube.com/playlist?list=UULPnGcCZ0hZT6WJxTUZJqtOMA","i":"","c":["oldpop"]},{"n":"브리트니 스피어스 Britney Spears","u":"https://www.youtube.com/playlist?list=UULPgffc95YDBlkGrBAJUHUmXQ","i":"","c":["oldpop"]},{"n":"크리스티나 아길레라 Christina Aguilera","u":"https://www.youtube.com/playlist?list=UULPgBN6eQyZPnsApiL1QW44Hg","i":"","c":["oldpop"]},{"n":"브라이언 아담스 Bryan Adams","u":"https://www.youtube.com/playlist?list=UULPxuYPUdTZHRZKVRZ1km1plw","i":"","c":["oldpop"]},{"n":"빌리 조엘 Billy Joel","u":"https://www.youtube.com/playlist?list=UULPyVomykHKyWCWo8lSKHHmzA","i":"","c":["oldpop"]},{"n":"시카고 Chicago","u":"https://www.youtube.com/playlist?list=UULPK0TuNeYqg9oYGSksX-jNkg","i":"","c":["oldpop"]},{"n":"저니 Journey","u":"https://www.youtube.com/playlist?list=UULPCcn1f6IDJyXVNYoiYIGZFw","i":"","c":["oldpop"]},{"n":"건즈 앤 로지스 Guns N' Roses","u":"https://www.youtube.com/playlist?list=UULPIak6JLVOjqhStxrL1Lcytw","i":"","c":["oldpop"]},{"n":"메탈리카 Metallica","u":"https://www.youtube.com/playlist?list=UULPbulh9WdLtEXiooRcYK7SWw","i":"","c":["oldpop"]},{"n":"너바나 Nirvana","u":"https://www.youtube.com/playlist?list=UULPFMZHIQMgBXTSxsr86Caazw","i":"","c":["oldpop"]},{"n":"오아시스 Oasis","u":"https://www.youtube.com/playlist?list=UULPUDVBtnOQi4c7E8jebpjc9Q","i":"","c":["oldpop"]},{"n":"라디오헤드 Radiohead","u":"https://www.youtube.com/playlist?list=UULPq19-LqvG35A-30oyAiPiqA","i":"","c":["oldpop"]},{"n":"그린데이 Green Day","u":"https://www.youtube.com/playlist?list=UULPqC_GY2ZiENFz2pwL0cSfAw","i":"","c":["oldpop"]},{"n":"린킨 파크 Linkin Park","u":"https://www.youtube.com/playlist?list=UULPZU9T1ceaOgwfLRq7OKFU4Q","i":"","c":["oldpop"]},{"n":"미스터 빅 Mr. Big","u":"https://www.youtube.com/playlist?list=UULP5_ysmYn5fLLmKa0z2kFOiQ","i":"","c":["oldpop"]},{"n":"게리 무어 Gary Moore","u":"https://www.youtube.com/playlist?list=UULPr-aRVjmQhYEn08AxRkmgBw","i":"","c":["oldpop"]},{"n":"보니 엠 Boney M.","u":"https://www.youtube.com/playlist?list=UULPJOXLX2b_uMEct1r5F4PMXQ","i":"","c":["oldpop"]},{"n":"모던 토킹 Modern Talking","u":"https://www.youtube.com/playlist?list=UULPmvtGezn6LpfUN1QW0aEaTg","i":"","c":["oldpop"]},{"n":"아하 a-ha","u":"https://www.youtube.com/playlist?list=UULPeEi1My3KTXHT0SG1JkR9gA","i":"","c":["oldpop"]},{"n":"록시트 Roxette","u":"https://www.youtube.com/playlist?list=UULPjVf2FirkZsEW8LN6nZcnog","i":"","c":["oldpop"]},{"n":"크랜베리스 The Cranberries","u":"https://www.youtube.com/playlist?list=UULPb0vzLwvr7xbJgdqMzejDhw","i":"","c":["oldpop"]},{"n":"마이클 볼튼 Michael Bolton","u":"https://www.youtube.com/playlist?list=UULPqXWNpFTfC62WKG3N_N7qKA","i":"","c":["oldpop"]},{"n":"티나 터너 Tina Turner","u":"https://www.youtube.com/playlist?list=UULPfBkblXPcSNt784AZz5J6AQ","i":"","c":["oldpop"]},{"n":"노라 존스 Norah Jones","u":"https://www.youtube.com/playlist?list=UULPBJtGODWGrM3fdQ0G5E9uAQ","i":"","c":["oldpop"]},{"n":"자넷 잭슨 Janet Jackson","u":"https://www.youtube.com/playlist?list=UULPz8ZHx5wFQpXWywaL2uqevw","i":"","c":["oldpop"]},{"n":"케니 지 Kenny G","u":"https://www.youtube.com/playlist?list=UULPIe0lawpFRWMFCTSsJmcwKQ","i":"","c":["oldpop"]},{"n":"커팅 크루 Cutting Crew","u":"https://www.youtube.com/playlist?list=UULP3pQprxYRAezQae-og8U0VA","i":"","c":["oldpop"]},{"n":"아델 Adele","u":"https://www.youtube.com/playlist?list=UULPsRM0YB_dabtEPGPTKo-gcw","i":"","c":["pop"]},{"n":"에드 시런 Ed Sheeran","u":"https://www.youtube.com/playlist?list=UULP0C-w0YjGpqDXGB8IHb662A","i":"","c":["pop"]},{"n":"테일러 스위프트 Taylor Swift","u":"https://www.youtube.com/playlist?list=UULPqECaJ8Gagnn7YCbPEzWH6g","i":"","c":["pop"]},{"n":"브루노 마스 Bruno Mars","u":"https://www.youtube.com/playlist?list=UULPoUM-UJ7rirJYP8CQ0EIaHA","i":"","c":["pop"]},{"n":"찰리 푸스 Charlie Puth","u":"https://www.youtube.com/playlist?list=UULPwppdrjsBPAZg5_cUwQjfMQ","i":"","c":["pop"]},{"n":"빌리 아일리시 Billie Eilish","u":"https://www.youtube.com/playlist?list=UULPiGm_E4ZwYSHV3bcW1pnSeQ","i":"","c":["pop"]},{"n":"아리아나 그란데 Ariana Grande","u":"https://www.youtube.com/playlist?list=UULP9CoOnJkIBMdeijd9qYoT_g","i":"","c":["pop"]},{"n":"콜드플레이 Coldplay","u":"https://www.youtube.com/playlist?list=UULPDPM_n1atn2ijUwHd0NNRQw","i":"","c":["pop"]},{"n":"마룬 5 Maroon 5","u":"https://www.youtube.com/playlist?list=UULPBVjMGOIkavEAhyqpxJ73Dw","i":"","c":["pop"]},{"n":"저스틴 비버 Justin Bieber","u":"https://www.youtube.com/playlist?list=UULPIwFjwMjI0y7PDBVEO9-bkQ","i":"","c":["pop"]},{"n":"샘 스미스 Sam Smith","u":"https://www.youtube.com/playlist?list=UULPvpDeGlR5wLP9Z3Tb6K0Xfg","i":"","c":["pop"]},{"n":"두아 리파 Dua Lipa","u":"https://www.youtube.com/playlist?list=UULP-J-KZfRV8c13fOCkhXdLiQ","i":"","c":["pop"]},{"n":"위켄드 The Weeknd","u":"https://www.youtube.com/playlist?list=UULP0WP5P-ufpRfjbNrmOWwLBQ","i":"","c":["pop"]},{"n":"라우브 Lauv","u":"https://www.youtube.com/playlist?list=UULPfLdIEPs1tYj4ieEdJnyNyw","i":"","c":["pop"]},{"n":"올리비아 로드리고 Olivia Rodrigo","u":"https://www.youtube.com/playlist?list=UULPy3zgWom-5AGypGX_FVTKpg","i":"","c":["pop"]},{"n":"해리 스타일스 Harry Styles","u":"https://www.youtube.com/playlist?list=UULPZFWPqqPkFlNwIxcpsLOwew","i":"","c":["pop"]},{"n":"이매진 드래곤스 Imagine Dragons","u":"https://www.youtube.com/playlist?list=UULPT9zcQNlyht7fRlcjmflRSA","i":"","c":["pop"]},{"n":"사브리나 카펜터 Sabrina Carpenter","u":"https://www.youtube.com/playlist?list=UULPPKWE1H6xhxwPlqUlKgHb_w","i":"","c":["pop"]},{"n":"레이디 가가 Lady Gaga","u":"https://www.youtube.com/playlist?list=UULPNL1ZadSjHpjm4q9j2sVtOA","i":"","c":["pop"]},{"n":"리한나 Rihanna","u":"https://www.youtube.com/playlist?list=UULPcgqSM4YEo5vVQpqwN-MaNw","i":"","c":["pop"]},{"n":"비욘세 Beyoncé","u":"https://www.youtube.com/playlist?list=UULPuHzBCaKmtaLcRAOoazhCPA","i":"","c":["pop"]},{"n":"숀 멘데스 Shawn Mendes","u":"https://www.youtube.com/playlist?list=UULPAvCL8hyXjSUHKEGuUPr1BA","i":"","c":["pop"]},{"n":"원리퍼블릭 OneRepublic","u":"https://www.youtube.com/playlist?list=UULPi4EDAgjULwwNBHOg1aaCig","i":"","c":["pop"]},{"n":"칼럼 스캇 Calum Scott","u":"https://www.youtube.com/playlist?list=UULPTY6fxtqkF_dtGanIhZHHVg","i":"","c":["pop"]},{"n":"루이스 카팔디 Lewis Capaldi","u":"https://www.youtube.com/playlist?list=UULPveFkLdSOUsGwMJEgedO9dQ","i":"","c":["pop"]},{"n":"존 레전드 John Legend","u":"https://www.youtube.com/playlist?list=UULPEa-JnNdYCIFn3HMhjGEWpQ","i":"","c":["pop"]},{"n":"제이슨 므라즈 Jason Mraz","u":"https://www.youtube.com/playlist?list=UULP8ey1FYCmgHPa9f5KxWb0mw","i":"","c":["pop"]},{"n":"시아 Sia","u":"https://www.youtube.com/playlist?list=UULPN9HPn2fq-NL8M5_kp4RWZQ","i":"","c":["pop"]},{"n":"케이티 페리 Katy Perry","u":"https://www.youtube.com/playlist?list=UULPYvmuw-JtVrTZQ-7Y4kd63Q","i":"","c":["pop"]},{"n":"포스트 말론 Post Malone","u":"https://www.youtube.com/playlist?list=UULPeLHszkByNZtPKcaVXOCOQQ","i":"","c":["pop"]},{"n":"셀레나 고메즈 Selena Gomez","u":"https://www.youtube.com/playlist?list=UULPPNxhDvTcytIdvwXWAm43cA","i":"","c":["pop"]},{"n":"카밀라 카베요 Camila Cabello","u":"https://www.youtube.com/playlist?list=UULPio_FVgKVgqcHrRiXDpnqbw","i":"","c":["pop"]},{"n":"도자 캣 Doja Cat","u":"https://www.youtube.com/playlist?list=UULPzpl23pGTHVYqvKsgY0A-_w","i":"","c":["pop"]},{"n":"시저 SZA","u":"https://www.youtube.com/playlist?list=UULPO5IQ70V7l-XpHW40HwaGsw","i":"","c":["pop"]},{"n":"벤슨 분 Benson Boone","u":"https://www.youtube.com/playlist?list=UULPvILah8hAWYhYOmAG3ZjvBA","i":"","c":["pop"]},{"n":"채플 론 Chappell Roan","u":"https://www.youtube.com/playlist?list=UULPTKTRVaWrythRIGNfZYBp2A","i":"","c":["pop"]},{"n":"테이트 맥레이 Tate McRae","u":"https://www.youtube.com/playlist?list=UULPQh6LB206jF3JxpCDD-fp5Q","i":"","c":["pop"]},{"n":"테디 스윔스 Teddy Swims","u":"https://www.youtube.com/playlist?list=UULPb-ikMqe9iS8GjG7WgGwCrQ","i":"","c":["pop"]},{"n":"앨리샤 키스 Alicia Keys","u":"https://www.youtube.com/playlist?list=UULPK5X3f0fxO4YnVKVZP8p6hg","i":"","c":["pop"]},{"n":"마이클 부블레 Michael Bublé","u":"https://www.youtube.com/playlist?list=UULPHqQruhGENdmWy_oeH1f8QA","i":"","c":["pop"]},{"n":"원디렉션 One Direction","u":"https://www.youtube.com/playlist?list=UULPb2HGwORFBo94DmRx4oLzow","i":"","c":["pop"]},{"n":"트로이 시반 Troye Sivan","u":"https://www.youtube.com/playlist?list=UULPWcrr8Q9INGNp-PTCLTzc8Q","i":"","c":["pop"]},{"n":"칼리드 Khalid","u":"https://www.youtube.com/playlist?list=UULPkntT5Je5DDopF70YUsnuEQ","i":"","c":["pop"]},{"n":"할시 Halsey","u":"https://www.youtube.com/playlist?list=UULPOCgB3xd-B-1qAm-hR9OLrA","i":"","c":["pop"]},{"n":"앤 마리 Anne-Marie","u":"https://www.youtube.com/playlist?list=UULPBL7ZxVX4GvW4CFiES_-0YA","i":"","c":["pop"]},{"n":"제레미 주커 Jeremy Zucker","u":"https://www.youtube.com/playlist?list=UULPNwwzAlMbHAJUNoJe0h3nBw","i":"","c":["pop"]},{"n":"라나 델 레이 Lana Del Rey","u":"https://www.youtube.com/playlist?list=UULPqk3CdGN_j8IR9z4uBbVPSg","i":"","c":["pop"]},{"n":"그레이시 에이브럼스 Gracie Abrams","u":"https://www.youtube.com/playlist?list=UULPwXDwwxNVRXPcPk7ABkakdA","i":"","c":["pop"]},{"n":"로제 Rosé","u":"https://www.youtube.com/playlist?list=UULPBo1hnzxV9rz3WVsv__Rn1g","i":"","c":["pop"]},{"n":"샘 피셔 Sam Fischer","u":"https://www.youtube.com/playlist?list=UULPy3EGWYYWVZh2CwIPOAYpdg","i":"","c":["pop"]}];
+(function(){
+  var CATS = [['all','전체'],['ballad','발라드'],['idol','아이돌'],['trot','트로트'],['rock','록·밴드'],['hiphop','힙합·R&B'],['indie','인디·싱어송라이터'],['old','7080'],['y90','90·2000년대'],['new','신인'],['oldpop','올드팝'],['pop','해외 팝'],['ch','음악채널']];
+  var CAT_NAME = {}; CATS.forEach(function(c){ CAT_NAME[c[0]] = c[1]; });
+  var COL = {ballad:['#3d6fd6','#1f2b6b'],idol:['#e0559c','#6a2bb0'],trot:['#f08a3c','#b02a4a'],rock:['#56617d','#1b2033'],hiphop:['#7a52e0','#231a45'],indie:['#2fa58a','#16506a'],
+             old:['#c9973e','#6b3f1c'],y90:['#2f9bc4','#263f9e'],'new':['#74c24a','#136b62'],oldpop:['#b5654a','#4a2334'],pop:['#d04a6a','#3b2a7a'],ch:['#6c7aa8','#262c47'],all:['#7d6fe8','#3a2456']};
+  var $ = function(id){ return document.getElementById(id); };
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function cat0(p){ return (p.c && p.c[0]) || 'ballad'; }
+  function col(p){ return COL[cat0(p)] || COL.ballad; }
+  function catLabel(p){ return (p.c || []).map(function(c){ return CAT_NAME[c] || c; }).join(' · ') || '가수'; }
+  function cover(p){
+    var c = col(p), ch = esc(Array.from(p.n || '♪')[0] || '♪');
+    return 'style="--c1:'+c[0]+';--c2:'+c[1]+'">' + ch + (p.i ? '<img loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="" src="'+esc(p.i)+'" onerror="this.remove()">' : '');
+  }
+  SG.forEach(function(p, i){ p._i = i; });
+
+  /* ── 상태 ── */
+  var curCat = 'all', query = '', curIdx = -1, sideTab = 'tracks';
+  var MY_IDX = -2, MYP = { n:'내 음악', u:'', i:'', c:[], _i:MY_IDX };
+  function curP(){ return curIdx === MY_IDX ? MYP : SG[curIdx]; }
+
+  function pool(){
+    var q = query.trim().toLowerCase();
+    return SG.filter(function(p){
+      if (curCat !== 'all' && (p.c || []).indexOf(curCat) < 0) return false;
+      return !q || (p.n || '').toLowerCase().indexOf(q) >= 0;
+    });
+  }
+  function renderChips(){
+    $('chips').innerHTML = CATS.map(function(c){
+      var n = c[0] === 'all' ? SG.length : SG.filter(function(p){ return (p.c || []).indexOf(c[0]) >= 0; }).length;
+      return '<button type="button" class="chip'+(c[0]===curCat?' on':'')+'" data-c="'+c[0]+'">'+esc(c[1])+'<span class="n">'+n+'</span></button>';
+    }).join('');
+  }
+  var SITES = [{"n":"VEVO","u":"https://www.youtube.com/@VEVO","i":"https://play-lh.googleusercontent.com/S3Wc8RcjrGvFwn6y8Q6xQRVGxO2FJr9HIaN7pxO-uG9i6D8ijNXAtoEwkBk0JLc69w"},{"n":"SoundCloud","u":"https://soundcloud.com/SOundCloud","i":"https://cdn.iconsumer.or.kr/news/photo/202103/15608_20188_542.jpg"},{"n":"멜론","u":"https://www.melon.com/","i":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXV_WBvi-G9LwPKbyh8x5qBPDEhYyzis24fiy9qNtEzlkUCPYduyZ6PyYMQuzBcjgjBVg&usqp=CAU"},{"n":"벅스","u":"https://music.bugs.co.kr/","i":"https://lh3.ggpht.com/M6UXPC-jncjtUd020iWikIdSaQ80Q1je3-uyTy-NkdOHme0X518DuYGsG3ftxTi5-w"},{"n":"지니뮤직","u":"https://www.genie.co.kr/","i":"https://www.google.com/s2/favicons?domain=genie.co.kr&sz=128"},{"n":"FLO","u":"https://www.music-flo.com/","i":"https://www.google.com/s2/favicons?domain=music-flo.com&sz=128"},{"n":"Spotify","u":"https://open.spotify.com/","i":"https://www.google.com/s2/favicons?domain=open.spotify.com&sz=128"},{"n":"YouTube Music","u":"https://music.youtube.com/","i":"https://www.google.com/s2/favicons?domain=music.youtube.com&sz=128"},{"n":"Apple Music","u":"https://music.apple.com/kr/","i":"https://www.google.com/s2/favicons?domain=music.apple.com&sz=128","b":"#f4f6fb"}];
+  function renderSites(){
+    $('sites').innerHTML = SITES.map(function(p){
+      return '<a class="site" href="'+esc(p.u)+'" target="_blank" rel="noopener" title="'+esc(p.n)+'"><div class="ic"'+(p.b ? ' style="background:'+esc(p.b)+';color:#1f2740"' : '')+'>'+esc(p.n.slice(0,2))+'</div><span>'+esc(p.n)+'</span></a>';
+    }).join('');
+    Array.prototype.forEach.call($('sites').querySelectorAll('.ic'), function(ic, i){   /* 아이콘이 뜨면 글자 대신 아이콘 */
+      var im = new Image(); im.referrerPolicy = 'no-referrer'; im.alt = ''; im.onload = function(){ ic.textContent = ''; ic.appendChild(im); }; im.src = SITES[i].i;
+    });
+  }
+  function renderHome(){
+    var list = pool(), searching = !!query.trim();
+    $('secMoods').style.display = (searching || curCat !== 'all') ? 'none' : '';   /* 음악 사이트 줄: 전체 화면에서만 */
+    $('gridEyebrow').textContent = searching ? '"' + query.trim() + '" 검색 결과' : (curCat === 'all' ? '전체' : CAT_NAME[curCat]);
+    $('gridCount').textContent = list.length + '명';
+    $('grid').innerHTML = list.length ? list.map(function(p){
+      return '<button type="button" class="card" data-i="'+p._i+'"><div class="cv" '+cover(p)+'<div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><b>'+esc(p.n)+'</b><span>'+esc(catLabel(p))+'</span></button>';
+    }).join('') : '<div class="empty" style="grid-column:1/-1">찾는 가수가 없어요. 다른 이름으로 찾아 보세요.</div>';
+  }
+  function renderQueue(){
+    var p = curP(); if (!p) return;
+    if (sideTab === 'tracks'){ renderTracks(); return; }
+    if (io){ io.disconnect(); io = null; }
+    if (sideTab === 'mine'){
+      $('queue').innerHTML = cards.length ? cards.map(function(c, i){
+        return '<button type="button" class="q'+(curIdx === MY_IDX && curCard === c ? ' on' : '')+'" data-card="'+i+'"><div class="cv th" '+cardCover(c)+'</div><div class="t"><b>'+esc(cardTitle(c) || '제목 없음')+'</b><span>'+esc(cardSub(c))+'</span></div><div class="eq"><i></i><i></i><i></i></div></button>';
+      }).join('') : '<div class="qnote">아직 내 음악 카드가 없어요.<br>가수 목록 화면 아래의 [＋ 추가]로 넣을 수 있습니다.</div>';
+      var onc = $('queue').querySelector('.q.on'); if (onc) $('queue').scrollTop = Math.max(0, onc.offsetTop - 120);
+      return;
+    }
+    var list = sideTab === 'all' ? SG : SG.filter(function(x){ return (x.c || []).some(function(c){ return (p.c || []).indexOf(c) >= 0; }); });
+    $('queue').innerHTML = list.map(function(x){
+      return '<button type="button" class="q'+(x._i===curIdx?' on':'')+'" data-i="'+x._i+'"><div class="cv" '+cover(x)+'</div><div class="t"><b>'+esc(x.n)+'</b><span>'+esc(catLabel(x))+'</span></div><div class="eq"><i></i><i></i><i></i></div></button>';
+    }).join('');
+    var on = $('queue').querySelector('.q.on'); if (on) $('queue').scrollTop = Math.max(0, on.offsetTop - 120);
+  }
+
+  /* ── 곡 목록: 재생목록의 곡들을 유튜브 플레이어에서 받아 표시 (제목은 화면에 보이는 줄만 그때그때 받아 옴) ── */
+  var trackIds = [], trackOwner = -1, titles = {}, asked = {}, io = null;
+  function renderTracks(){
+    var p = curP(); if (!p) return;
+    if (io){ io.disconnect(); io = null; }
+    if (man){ renderMan(); return; }
+    if (trackOwner !== curIdx || !trackIds.length){
+      $('queue').innerHTML = '<div class="qnote">' + (apiFailed ? '곡 목록을 불러오지 못했어요.<br>재생은 위 화면에서 그대로 됩니다.' : '곡 목록을 불러오는 중…<br>재생이 시작되면 여기에 나옵니다.') + '</div>';
+      return;
+    }
+    var cur = -1; try { cur = player.getPlaylistIndex(); } catch(e){}
+    if (trackIds.length === 1) cur = 0;
+    $('queue').innerHTML = '<div class="qhead">' + esc(p.n) + ' · ' + trackIds.length + '곡' + (trackIds.length >= 200 ? ' (앞의 200곡까지 표시)' : '') + '</div>' +
+      trackIds.map(function(id, n){
+        var tt = titles[id];
+        return '<button type="button" class="q'+(n===cur?' on':'')+'" data-t="'+n+'" data-v="'+esc(id)+'"><span class="no">'+(n+1)+'</span><div class="eq"><i></i><i></i><i></i></div>'+
+               '<div class="cv th" style="--c1:#1c1e2b;--c2:#1c1e2b"><img loading="lazy" decoding="async" alt="" src="https://i.ytimg.com/vi/'+encodeURIComponent(id)+'/mqdefault.jpg" onerror="this.remove()"></div>'+
+               '<div class="t"><b'+(tt?'':' class="wait"')+'>'+esc(tt || ('곡 ' + (n+1)))+'</b></div></button>';
+      }).join('');
+    var on = $('queue').querySelector('.q.on'); if (on) $('queue').scrollTop = Math.max(0, on.offsetTop - 120);
+    if ('IntersectionObserver' in window){
+      io = new IntersectionObserver(function(ents){ ents.forEach(function(en){ if (en.isIntersecting){ io.unobserve(en.target); askTitle(en.target.dataset.v); } }); }, { root: $('queue'), rootMargin: '200px 0px' });
+      Array.prototype.forEach.call($('queue').querySelectorAll('.q[data-v]'), function(el){ if (!titles[el.dataset.v]) io.observe(el); });
+    }
+  }
+  function setTitle(id, title){
+    if (!id || !title) return; titles[id] = title;
+    Array.prototype.forEach.call($('queue').querySelectorAll('.q[data-v]'), function(el){
+      if (el.dataset.v === id){ var b = el.querySelector('b'); if (b){ b.textContent = title; b.classList.remove('wait'); } }
+    });
+  }
+  function askTitle(id){
+    if (!id || titles[id] || asked[id]) return; asked[id] = 1;
+    var w = encodeURIComponent('https://www.youtube.com/watch?v=' + id);
+    function get(u){ return fetch(u).then(function(r){ if (!r.ok) throw 0; return r.json(); }).then(function(j){ if (!j || !j.title) throw 0; return j.title; }); }
+    get('https://noembed.com/embed?url=' + w).catch(function(){ return get('https://www.youtube.com/oembed?format=json&url=' + w); })
+      .then(function(title){ setTitle(id, title); }).catch(function(){});
+  }
+  function syncTracks(){
+    if (man){ if (sideTab === 'tracks') manMark(); return; }
+    if (!ready || !curP()) return;
+    var ids = null; try { ids = player.getPlaylist(); } catch(e){}
+    if (!ids || !ids.length){ var k = parse(curP().u); try { var d = player.getVideoData(); ids = (d && d.video_id) ? [d.video_id] : (k.v ? [k.v] : []); } catch(e){ ids = k.v ? [k.v] : []; } if (k.list && ids.length <= 1 && !pendingDone) return; }
+    try { var vd = player.getVideoData(); if (vd && vd.video_id && vd.title) titles[vd.video_id] = vd.title; } catch(e){}
+    var changed = trackOwner !== curIdx || ids.join(',') !== trackIds.join(',');
+    trackIds = ids.slice(); trackOwner = curIdx;
+    if (sideTab !== 'tracks') return;
+    if (changed) renderTracks();
+    else {
+      var cur = -1; try { cur = player.getPlaylistIndex(); } catch(e){} if (trackIds.length === 1) cur = 0;
+      Array.prototype.forEach.call($('queue').querySelectorAll('.q[data-t]'), function(el){ el.classList.toggle('on', +el.dataset.t === cur); });
+      try { var v2 = player.getVideoData(); if (v2 && v2.video_id) setTitle(v2.video_id, v2.title); } catch(e){}
+    }
+  }
+
+  /* ── YouTube 재생 (플레이어 1개를 계속 재사용) ── */
+  var player = null, ready = false, apiAsked = false, apiFailed = false, pendingDone = false;
+  function parse(u){
+    var l = (u.match(/[?&]list=([^&#]+)/) || [])[1] || '', v = (u.match(/[?&]v=([^&#]+)/) || u.match(/youtu\.be\/([^?&#]+)/) || [])[1] || '';
+    return { list: l, v: v };
+  }
+  function embedUrl(u){
+    var k = parse(u), base = 'https://www.youtube.com/embed/' + (k.v || 'videoseries');
+    var q = ['autoplay=1','playsinline=1','rel=0','enablejsapi=1'];
+    if (k.list) q.push('list=' + encodeURIComponent(k.list));
+    if (/^https?:/.test(location.protocol)) q.push('origin=' + encodeURIComponent(location.origin));
+    return base + '?' + q.join('&');
+  }
+  function attachApi(){
+    if (apiAsked) return; apiAsked = true;
+    var prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function(){ if (prev) try { prev(); } catch(e){} bind(); };
+    var s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api';
+    s.onerror = function(){ apiFailed = true; if (sideTab === 'tracks') renderTracks(); };
+    document.head.appendChild(s);
+  }
+  function bind(){
+    if (player || !window.YT || !YT.Player || !$('ytFrame')) return;
+    player = new YT.Player('ytFrame', { events: {
+      onReady: function(){ ready = true; syncTracks(); },
+      onError: function(){ if (man && curIdx === MY_IDX){ var n = cardItems(man.card).length; if (++man.err < n) manPlay(man.cur + 1); } },
+      onStateChange: function(e){
+        var playing = e.data === 1;
+        document.body.classList.toggle('is-playing', playing);
+        if (e.data === 1){ pendingDone = true; if (man) man.err = 0; }
+        if (e.data === 0 && man && curIdx === MY_IDX){ manPlay(man.cur + 1); return; }   /* 곡 목록 카드: 끝나면 다음 곡, 마지막 다음엔 처음으로 */
+        syncTracks();
+      }
+    }});
+  }
+  /* 재생 화면 열기/닫기 — 브라우저·핸드폰의 뒤로가기로도 가수 목록으로 돌아옴 */
+  /* 뒤로가기 기록은 맨 바깥 창(myway.kr 포털)에 남김 — 포털 안(이중 iframe)에서 남긴 기록은
+     핸드폰(특히 아이폰)에서 뒤로가기에 안 잡히는 경우가 있어서. 바깥 창을 못 쓰면 이 창에 남김 */
+  var pushed = false, HW = window;
+  try { if (window.top !== window && window.top.location.origin === location.origin && window.top.history) HW = window.top; } catch(e){ HW = window; }
+  function openNow(){
+    document.body.classList.add('playing-view'); $('main').scrollTop = 0;
+    if (!pushed){ try { HW.history.pushState({ mv2:1 }, ''); pushed = true; } catch(e){ try { HW = window; history.pushState({ mv2:1 }, ''); pushed = true; } catch(e2){} } }
+  }
+  /* 영상 바꿔 틀기: 유튜브 플레이어가 첫 요청을 놓쳐 이전 영상이 그대로 남는 경우가 있어,
+     이전 영상을 먼저 멈추고 → 바뀌었는지 확인 → 안 바뀌었으면 다시 요청 (한 번 더 누른 것과 같은 효과) */
+  var loadSeq = 0;
+  function vidNow(){ try { return (player.getVideoData() || {}).video_id || ''; } catch(e){ return ''; } }
+  function listNow(){ try { var a = player.getPlaylistId && player.getPlaylistId(); if (a) return a; return ((player.getVideoUrl() || '').match(/[?&]list=([^&#]+)/) || [])[1] || ''; } catch(e){ return ''; } }
+  function loadVid(id){
+    var seq = ++loadSeq, tries = 0;
+    function go(){ try { player.loadVideoById(id); } catch(e){} }
+    function check(){ if (seq !== loadSeq || vidNow() === id) return; if (++tries <= 2){ go(); setTimeout(check, 1500); } }
+    if (vidNow() !== id){ try { player.stopVideo(); } catch(e){} }
+    go(); setTimeout(check, 1200);
+  }
+  function loadList(list, v){
+    var seq = ++loadSeq, prev = vidNow(), tries = 0;
+    function go(){ try { player.loadPlaylist({ list: list, listType: 'playlist', index: 0 }); } catch(e){} }
+    function check(){
+      if (seq !== loadSeq) return;
+      var now = vidNow(); if (listNow() === list || (now && now !== prev)) return;
+      if (++tries <= 1){ go(); setTimeout(check, 2000); }
+      else if (v){ try { player.loadVideoById(v); } catch(e){} }   /* 목록이 끝내 안 열리면 그 주소의 영상이라도 재생 */
+    }
+    try { player.stopVideo(); } catch(e){}
+    go(); setTimeout(check, 1500);
+  }
+  function stopPlay(){   /* 재생 화면을 떠나면 소리가 계속 나지 않게 정지 */
+    loadSeq++;
+    if (ready && player){ try { player.pauseVideo(); return; } catch(e){} }
+    if (player){ try { player.destroy(); } catch(e){} } player = null; ready = false; $('stage').innerHTML = '';
+  }
+  function closeNow(){
+    document.body.classList.remove('playing-view'); stopPlay();
+    if (pushed){ pushed = false; try { HW.history.back(); } catch(e){} }
+  }
+  function onPop(){ if (pushed){ pushed = false; document.body.classList.remove('playing-view'); stopPlay(); } }
+  window.addEventListener('popstate', onPop);
+  if (HW !== window){
+    try { HW.addEventListener('popstate', onPop); } catch(e){}
+    window.addEventListener('pagehide', function(){ try { HW.removeEventListener('popstate', onPop); } catch(e){} });   /* 다른 탭으로 넘어가면 바깥 창에 건 것 정리 */
+  }
+  window.addEventListener('pagehide', function(){ try { if (ready && player) player.pauseVideo(); } catch(e){} });
+
+  /* ── 내 음악: 하단 카드 줄 — 기존 음악(디렉토리) 하단 카드와 같은 방식. 유튜브 주소만 붙여 넣으면 카드가 됨 ──
+     카드 1장 = 영상 1개 / 재생목록 1개 / 여러 곡(곡 목록). 이 기기 브라우저에 보관, 파일 저장·불러오기는 직접 버튼으로 */
+  var MY_KEY = 'mywayMusic2CardsV1', EDIT_KEY = 'mywayMusic2CardsEditV1', META_KEY = 'mywayMusic2MetaV1', OLD_MUSIC_KEY = 'mywayMusicGroupsV1';
+  var MYSIG = /*@SIG_S*/"base1"/*@SIG_E*/;
+  var MYDEF = /*@MYDEF_S*/[{"url":"https://www.youtube.com/watch?v=nx4ARtrzyXo&list=RDnx4ARtrzyXo&start_radio=1","img":"","name":""},{"url":"https://music.youtube.com/playlist?list=RDCLAK5uy_mJClAlCbXlLcYV4azSdd7gAcp1I-sVtUo","img":"https://yt3.googleusercontent.com/Kw-yIx4nI0tpwlEInN84t5GoITp6FI2xHHQiptMora9cpAbGabFNuoeaGo20wNrADrvpzQ0ouJQI_Ps=w544-h544-l90-rj","name":""},{"url":"","img":"","name":"","tracks":[{"name":"","url":"https://www.youtube.com/watch?v=s2W0nh1dQfQ&si=Z4Ip_XD_qF3vIVUG"},{"name":"","url":"https://www.youtube.com/watch?v=kRy4gzlb6bY&si=5wUyD0vHdn8yW78j"},{"name":"","url":"https://www.youtube.com/watch?v=c-6niK32uBw&si=sBEPWcovx39Fxh7m"},{"name":"","url":"https://www.youtube.com/watch?v=RJUePJwz3zA&si=3vCA9b0bVpR44xpV"},{"name":"","url":"https://www.youtube.com/watch?v=CgCVZdcKcqY&list=RDCgCVZdcKcqY&start_radio=1"},{"name":"","url":"https://www.youtube.com/watch?v=VYgT8itd9bg&list=RDVYgT8itd9bg&start_radio=1"}]},{"url":"https://www.youtube.com/watch?v=kMRLzSQorK0&ab_channel=1theK%28%EC%9B%90%EB%8D%94%EC%BC%80%EC%9D%B4%29","img":"","name":"김동률"},{"url":"https://www.youtube.com/watch?v=0dKRWz3EDug&list=PLAeW92KkLNuK353JrtkYN74ehcGOl1KN-&index=6","img":"","name":""},{"url":"https://www.youtube.com/watch?v=C59vTl-5pnA&list=RDC59vTl-5pnA&start_radio=1","img":"","name":""},{"url":"https://www.youtube.com/watch?v=3RyhqXFgMCk","img":"","name":""},{"url":"","img":"https://i.ytimg.com/vi/TaSP-AinD9U/sddefault.jpg?sqp=-oaymwEmCIAFEOAD8quKqQMa8AEB-AHUBoAC4AOKAgwIABABGHIgSChKMA8=&rs=AOn4CLBXVrrFliPICdDPg6e01JLkX8OC6g","name":"","tracks":[{"name":"","url":"https://www.youtube.com/watch?v=cuUEnho33so&t=3s"},{"name":"","url":"https://www.youtube.com/watch?v=Xc8nr_GQoZw&list=RDXc8nr_GQoZw&start_radio=1"},{"name":"","url":"https://www.youtube.com/watch?v=GLlP-CNlY9I&list=RDGLlP-CNlY9I&start_radio=1"},{"name":"","url":"https://www.youtube.com/watch?v=1AI7UP1iRAU&list=RD1AI7UP1iRAU&start_radio=1"},{"name":"","url":"https://www.youtube.com/watch?v=rI81whzvI6A&list=RDrI81whzvI6A&start_radio=1"},{"name":"","url":"https://www.youtube.com/watch?v=GwP06M5bFaw&list=PLe4d6gIefCik&index=2"}]},{"url":"https://www.youtube.com/watch?v=a1D3SJYIyRs&list=PL0P1-9eIBC_2wjff52tgeh-v0_vWUnkF7&index=2","img":"","name":""},{"url":"https://www.youtube.com/watch?v=YyBMu0vvXtA&list=RDYyBMu0vvXtA&start_radio=1","img":"","name":""},{"url":"https://www.youtube.com/watch?v=QpiHu6s5S-c&list=RDQpiHu6s5S-c&start_radio=1","img":"","name":""},{"url":"https://www.youtube.com/watch?v=ciBisqVQ6xc&list=RDciBisqVQ6xc&start_radio=1","img":"","name":""},{"url":"https://www.youtube.com/watch?v=l5ePjWVLesU&list=RDdewjRgOPj5E&index=2","img":"","name":""},{"url":"","img":"","name":"난너를 버리지 않아","tracks":[{"name":"","url":"https://www.youtube.com/shorts/a_SSyyTNV3E"},{"name":"","url":"https://www.youtube.com/watch?v=ciBisqVQ6xc&time_continue=0&source_ve_path=NzY3NTg&embeds_widget_referrer=https%3A%2F%2Fmyway.kr%2Fbarsite.html&embeds_referring_euri=https%3A%2F%2Fmyway.kr%2F&embeds_referring_origin=https%3A%2F%2Fmyway.kr"}]},{"url":"https://music.youtube.com/playlist?list=RDCLAK5uy_n8bBzXEwnWtfpCFL6fiqyV0bLzGASpjhM","img":"https://yt3.googleusercontent.com/xCSAFezFi91o_rC1LO9VT8EqrOOoVUIxQVDxw2639im7vdwnToXn93P6a1VwzuurGYqidAxLqNBv8w=w544-h544-l90-rj","name":""},{"url":"https://music.youtube.com/playlist?list=RDCLAK5uy_nHSqCJjDrW9HBhCNdF6tWPdnOMngOv0wA","img":"https://yt3.googleusercontent.com/rAUuEbLF7CYEYBXU3yAY4npMCzTgPxMhlD-ygH9iv_SuDXGDuDvO0Z4MTh33xAI6o3UnpWFe26MS_hBZ=w544-h544-l90-rj","name":""},{"url":"https://music.youtube.com/playlist?list=OLAK5uy_m0HlUviImx500K9IAbdX3fIoVRk9UT-Fg","img":"https://yt3.googleusercontent.com/_NKrsYeRSCZxjS_Q-YoXMim_2taR7-5bouaxVbKM8isCHdO1yYvCvg5-KyxpIKu3z8g9dSQj9E9070o=w544-h544-l90-rj","name":""}]/*@MYDEF_E*/;
+  var cards = [], meta = {}, man = null, curCard = null, editIdx = -1;
+  function vid(u){ var m = /(?:youtu\.be\/|[?&]v=|\/(?:shorts|embed|live|v)\/)([\w-]{11})(?![\w-])/.exec(u || ''); return m ? m[1] : ''; }
+  function lst(u){ return ((u || '').match(/[?&]list=([^&#\s]+)/) || [])[1] || ''; }
+  function normCard(v){
+    if (!v || typeof v !== 'object') return null;
+    var o = { url:String(v.url || ''), img:String(v.img || v.icon || v.thumb || ''), name:String(v.name || v.title || '') };
+    if (Array.isArray(v.tracks)){ var t = v.tracks.map(function(x){ return { name:String((x && x.name) || ''), url:String((x && x.url) || '') }; }).filter(function(x){ return vid(x.url); }); if (t.length) o.tracks = t; }
+    return (o.url || o.tracks || o.name) ? o : null;
+  }
+  function flat(j){   /* 내 음악 파일, 또는 기존 음악(디렉토리) 형식 모두 받음 */
+    var arr = [];
+    if (Array.isArray(j)) arr = j;
+    else if (j && Array.isArray(j.cards)) arr = j.cards;
+    else if (j && j.data && typeof j.data === 'object') (Array.isArray(j.order) ? j.order : Object.keys(j.data)).forEach(function(k){ if (Array.isArray(j.data[k])) arr = arr.concat(j.data[k]); });
+    return arr.map(normCard).filter(Boolean);
+  }
+  function cardKey(c){ return c.tracks ? 't:' + c.tracks.map(function(t){ return vid(t.url); }).join(',') : (lst(c.url) && !vid(c.url) ? 'l:' + lst(c.url) : 'v:' + vid(c.url) + ':' + lst(c.url)) + (c.url ? '' : ':' + c.name); }
+  (function(){
+    try { meta = JSON.parse(localStorage.getItem(META_KEY) || '{}') || {}; } catch(e){ meta = {}; }
+    /* 배포용: 파일에 들어 있는 카드만 보여 줌(올린 파일 = 모두가 보는 내용).
+       편집용: 이 브라우저에 보관해 둔 편집 내용 → 없으면 (처음 한 번) 음악2·기존 음악에 넣어 둔 카드 → 파일 카드 */
+    var got = null;
+    if (M2_EDIT){
+      try { var st = JSON.parse(localStorage.getItem(EDIT_KEY) || 'null'); if (st && st.sig === MYSIG) got = flat(st.cards); } catch(e){}
+      if (!got && MYSIG === 'base1'){
+        [MY_KEY, OLD_MUSIC_KEY].forEach(function(k){ if (got) return; try { var raw = localStorage.getItem(k); if (raw){ var f = flat(JSON.parse(raw)); if (f.length) got = f; } } catch(e){} });
+      }
+    }
+    cards = got || flat(MYDEF);
+  })();
+  function mySave(){ if (!M2_EDIT) return true; try { localStorage.setItem(EDIT_KEY, JSON.stringify({ sig: MYSIG, cards: cards })); return true; } catch(e){ return false; } }
+  function isList(c){ return !c.tracks && !!lst(c.url); }
+  function cardItems(c){   /* 곡 목록 카드/영상 1개 카드의 곡들 */
+    if (c.tracks) return c.tracks.map(function(t){ return { id: vid(t.url), name: t.name }; }).filter(function(x){ return x.id; });
+    var v = vid(c.url); return v ? [{ id: v, name: '' }] : [];
+  }
+  function firstVid(c){ return c.tracks ? vid(c.tracks[0].url) : vid(c.url); }
+  function cardTitle(c){ var m = meta[cardKey(c)] || {}; return c.name || m.t || ((c.tracks && c.tracks[0].name) || '') || titles[firstVid(c)] || ''; }
+  function cardThumb(c){ var v = firstVid(c), m = meta[cardKey(c)] || {}; return c.img || (v ? 'https://i.ytimg.com/vi/' + v + '/mqdefault.jpg' : (m.th || '')); }
+  function wwwUrl(u){ return String(u || '').replace(/\/\/music\.youtube\.com\//, '//www.youtube.com/'); }
+  function oembed(url){
+    var w = encodeURIComponent(url);
+    function get(u){ return fetch(u).then(function(r){ if (!r.ok) throw 0; return r.json(); }).then(function(j){ if (!j || !j.title) throw 0; return j; }); }
+    return get('https://noembed.com/embed?url=' + w).catch(function(){ return get('https://www.youtube.com/oembed?format=json&url=' + w); });
+  }
+  var metaAsked = {};
+  function cardMeta(c){   /* 제목·썸네일이 비어 있는 카드만 유튜브에서 받아 옴 */
+    var k = cardKey(c), v = firstVid(c);
+    if (metaAsked[k] || (cardTitle(c) && cardThumb(c)) || (!v && !lst(c.url))) return; metaAsked[k] = 1;
+    oembed(v ? 'https://www.youtube.com/watch?v=' + v : 'https://www.youtube.com/playlist?list=' + lst(c.url)).then(function(j){
+      meta[k] = { t: j.title || '', th: j.thumbnail_url || '' }; if (v && j.title) titles[v] = j.title;
+      try { localStorage.setItem(META_KEY, JSON.stringify(meta)); } catch(e){}
+      renderShelf(); if (curIdx === MY_IDX && curCard === c && !c.name) $('metaName').textContent = cardTitle(c) || '내 음악';
+    }).catch(function(){});
+  }
+  function cardCover(c){
+    var th = cardThumb(c), t = cardTitle(c);
+    return 'style="--c1:'+COL.all[0]+';--c2:'+COL.all[1]+'">' + esc(Array.from(t || '♪')[0]) + (th ? '<img loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="" src="'+esc(th)+'" onerror="this.remove()">' : '');
+  }
+  function cardSub(c){ return isList(c) ? '재생목록' : (c.tracks && c.tracks.length > 1 ? c.tracks.length + '곡' : (cardItems(c).length ? '영상' : '곡 없음')); }
+  function renderShelf(){
+    $('shelfRow').innerHTML = cards.map(function(c, i){
+      var n = c.tracks && c.tracks.length > 1 ? '<span class="badge">' + c.tracks.length + '곡</span>' : (isList(c) ? '<span class="badge">목록</span>' : '');
+      return '<div class="sc'+(curIdx === MY_IDX && curCard === c ? ' on' : '')+'"><button type="button" class="go" data-card="'+i+'" title="'+esc(cardTitle(c))+'">'+n+'<div class="cv" '+cardCover(c)+'</div></button>'+
+             '<button type="button" class="ed" data-edit="'+i+'" title="수정" aria-label="카드 수정">✎</button></div>';
+    }).join('');
+    cards.forEach(cardMeta);
+  }
+  /* 카드 재생 */
+  function setMy(c){
+    curCard = c; MYP = { n: cardTitle(c) || '내 음악', u: wwwUrl(c.url), i: cardThumb(c), c: [], _i: MY_IDX, card: c };
+  }
+  /* 누른 카드를 하단 줄 가운데로 좌우 자동 이동 → 양옆 다음 카드가 보임 */
+  function shelfCenter(){
+    requestAnimationFrame(function(){
+      var row = $('shelfRow'), on = row.querySelector('.sc.on'); if (!on) return;
+      var r = row.getBoundingClientRect(), o = on.getBoundingClientRect();
+      var left = row.scrollLeft + (o.left - r.left) - (r.width - o.width) / 2;
+      left = Math.max(0, Math.min(left, row.scrollWidth - row.clientWidth));
+      try { row.scrollTo({ left: left, behavior: 'smooth' }); } catch(e){ row.scrollLeft = left; }
+    });
+  }
+  function playCard(i){
+    var c = cards[i]; if (!c) return;
+    if (isList(c)){ setMy(c); play(MY_IDX); renderShelf(); shelfCenter(); return; }
+    if (!cardItems(c).length){ openEdit(i); return; }
+    setMy(c); man = { card: c, cur: 0, err: 0 }; curIdx = MY_IDX; pendingDone = false; trackIds = [];
+    document.body.classList.add('my-mode'); tracksTab();
+    $('glow').style.setProperty('--g1', COL.all[0]); $('glow').style.setProperty('--g2', COL.all[1]);
+    $('metaCv').outerHTML = '<div class="cv" id="metaCv" ' + cardCover(c) + '</div>';
+    $('metaName').textContent = MYP.n; $('metaSub').textContent = '내 음악 · ' + cardSub(c);
+    openNow(); renderShelf(); shelfCenter(); manPlay(0, true);
+  }
+  function tracksTab(){ sideTab = 'tracks'; Array.prototype.forEach.call(document.querySelectorAll('.tabs button'), function(b){ b.classList.toggle('on', b.dataset.tab === 'tracks'); }); }
+  function manPlay(n, rerender){
+    if (!man) return; var items = cardItems(man.card); if (!items.length) return;
+    man.cur = ((n % items.length) + items.length) % items.length;
+    var id = items[man.cur].id;
+    if (rerender) renderQueue(); else manMark();
+    if (ready && player){ loadVid(id); return; }
+    var src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&playsinline=1&rel=0&enablejsapi=1' + (/^https?:/.test(location.protocol) ? '&origin=' + encodeURIComponent(location.origin) : '');
+    if (player){ try { player.destroy(); } catch(e){} player = null; ready = false; }
+    $('stage').innerHTML = '<iframe id="ytFrame" title="재생 화면" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen src="' + esc(src) + '"></iframe>';
+    attachApi(); if (window.YT && YT.Player) bind();
+  }
+  function manMark(){ Array.prototype.forEach.call($('queue').querySelectorAll('.q[data-m]'), function(el){ el.classList.toggle('on', +el.dataset.m === man.cur); }); }
+  function renderMan(keepScroll){
+    var c = man.card, items = cardItems(c), q = $('queue'), top = q.scrollTop;
+    q.innerHTML = '<div class="qadd"><input id="manUrl" type="text" inputmode="url" autocomplete="off" placeholder="유튜브 주소를 붙여 넣어 이 목록에 곡 추가" aria-label="추가할 유튜브 주소"><button type="button" class="btn-a" id="manAddBtn">추가</button></div>' +
+      '<div class="qhead" id="manHead">' + esc(cardTitle(c) || '내 음악') + ' · ' + items.length + '곡</div>' +
+      items.map(function(t, n){
+        var tt = t.name || titles[t.id];
+        return '<div class="q'+(n===man.cur?' on':'')+'" data-m="'+n+'" data-v="'+esc(t.id)+'" role="button" tabindex="0"><span class="no">'+(n+1)+'</span><div class="eq"><i></i><i></i><i></i></div>'+
+               '<div class="cv th" style="--c1:#1c1e2b;--c2:#1c1e2b"><img loading="lazy" decoding="async" alt="" src="https://i.ytimg.com/vi/'+encodeURIComponent(t.id)+'/mqdefault.jpg" onerror="this.remove()"></div>'+
+               '<div class="t"><b'+(tt?'':' class="wait"')+'>'+esc(tt || ('곡 ' + (n+1)))+'</b></div><button type="button" class="mdel" data-mdel="'+n+'" title="이 곡 빼기" aria-label="이 곡 빼기">×</button></div>';
+      }).join('');
+    if (keepScroll === 'end') q.scrollTop = q.scrollHeight; else if (keepScroll) q.scrollTop = top;
+    else { var on = q.querySelector('.q.on'); if (on) q.scrollTop = Math.max(0, on.offsetTop - 160); }
+    if ('IntersectionObserver' in window){
+      io = new IntersectionObserver(function(ents){ ents.forEach(function(en){ if (en.isIntersecting){ io.unobserve(en.target); askTitle(en.target.dataset.v); } }); }, { root: q, rootMargin: '200px 0px' });
+      Array.prototype.forEach.call(q.querySelectorAll('.q[data-v]'), function(el){ if (!el.querySelector('b.wait')) return; io.observe(el); });
+    }
+  }
+  function ensureTracks(c){ if (!c.tracks){ c.tracks = vid(c.url) ? [{ name:'', url:c.url }] : []; c.url = ''; } }
+  function allVids(text){ var out = [], re = /(?:youtu\.be\/|[?&]v=|\/(?:shorts|embed|live|v)\/)([\w-]{11})(?![\w-])/g, m; while ((m = re.exec(text))) if (out.indexOf(m[1]) < 0) out.push(m[1]); return out; }
+  function manAdd(){
+    if (!man || !M2_EDIT) return; var inp = $('manUrl'), text = inp.value, ids = allVids(text), c = man.card;
+    function say(t){ $('manHead').textContent = t; }
+    if (!text.trim()){ say('유튜브 주소를 먼저 붙여 넣어 주세요.'); inp.focus(); return; }
+    if (!ids.length){ say(lst(text) ? '재생목록 주소는 여기에 넣을 수 없어요. 곡(영상) 주소를 넣어 주세요.' : '유튜브 영상 주소가 아니에요.'); return; }
+    var have = cardItems(c).map(function(x){ return x.id; }), fresh = ids.filter(function(id){ return have.indexOf(id) < 0; });
+    if (!fresh.length){ say('이미 이 목록에 있는 곡이에요.'); return; }
+    var oldKey = cardKey(c); ensureTracks(c);
+    fresh.forEach(function(id){ c.tracks.push({ name:'', url:'https://www.youtube.com/watch?v=' + id }); });
+    if (meta[oldKey]) meta[cardKey(c)] = meta[oldKey];
+    var ok = mySave(); renderMan('end'); renderShelf(); $('metaSub').textContent = '내 음악 · ' + cardSub(c);
+    say(ok ? fresh.length + '곡을 추가했어요. (모두 ' + c.tracks.length + '곡)' : '추가는 됐지만 이 브라우저에 보관하지 못했어요.');
+  }
+  function manDel(n){
+    if (!man || !M2_EDIT) return; var c = man.card, items = cardItems(c), t = items[n]; if (!t) return;
+    if (!window.confirm('"' + (t.name || titles[t.id] || '이 곡') + '"\n이 목록에서 뺄까요?')) return;
+    var oldKey = cardKey(c); ensureTracks(c);
+    var k = -1, seen = -1; c.tracks.forEach(function(x, j){ if (vid(x.url)){ seen++; if (seen === n) k = j; } }); if (k < 0) return;
+    c.tracks.splice(k, 1); if (meta[oldKey] && c.tracks.length) meta[cardKey(c)] = meta[oldKey];
+    if (!c.tracks.length){ delete c.tracks; if (!c.name) c.name = (meta[oldKey] && meta[oldKey].t) || '빈 카드'; mySave(); man = null; closeNow(); try { player.stopVideo(); } catch(e){} renderShelf(); return; }
+    mySave(); $('metaSub').textContent = '내 음악 · ' + cardSub(c);
+    if (n === man.cur){ manPlay(Math.min(n, c.tracks.length - 1), true); }
+    else { if (n < man.cur) man.cur--; renderMan(true); }
+    renderShelf();
+  }
+  /* 카드 추가·수정 창 */
+  function openEdit(i){
+    if (!M2_EDIT) return;
+    editIdx = i; var c = cards[i];
+    $('cmTitle').textContent = c ? '내 음악 수정' : '내 음악 추가';
+    $('cmUrls').value = c ? (c.tracks ? c.tracks.map(function(t){ return t.url; }).join('\n') : c.url) : '';
+    $('cmName').value = c ? c.name : ''; $('cmImg').value = c ? c.img : ''; $('cmMsg').textContent = '';
+    ['cmDel','cmLeft','cmRight'].forEach(function(id){ $(id).style.display = c ? '' : 'none'; });
+    $('cardModal').hidden = false; setTimeout(function(){ try { $('cmUrls').focus(); } catch(e){} }, 30);
+  }
+  function closeEdit(){ $('cardModal').hidden = true; editIdx = -1; }
+  function saveEdit(){
+    var lines = $('cmUrls').value.split(/[\s]+/).filter(Boolean), name = $('cmName').value.trim(), img = $('cmImg').value.trim(), old = cards[editIdx];
+    var good = lines.filter(function(u){ return vid(u) || lst(u); });
+    if (lines.length && !good.length){ $('cmMsg').textContent = '유튜브 주소가 아니에요. 주소를 다시 확인해 주세요.'; return; }
+    if (!good.length && !name){ $('cmMsg').textContent = '유튜브 주소를 붙여 넣어 주세요.'; return; }
+    var c = { url:'', img:img, name:name };
+    if (good.length === 1) c.url = good[0];
+    else if (good.length > 1){
+      var vids = good.filter(vid);
+      if (!vids.length){ $('cmMsg').textContent = '재생목록 주소는 한 카드에 하나만 넣을 수 있어요.'; return; }
+      var names = {}; if (old && old.tracks) old.tracks.forEach(function(t){ names[vid(t.url)] = t.name; });
+      var seen = {}; c.tracks = vids.filter(function(u){ var v = vid(u); if (seen[v]) return false; seen[v] = 1; return true; }).map(function(u){ return { name: names[vid(u)] || '', url: u }; });
+    }
+    if (old){ var playing = curIdx === MY_IDX && curCard === old; cards[editIdx] = c; if (playing){ curCard = c; if (man){ man.card = c; man.cur = Math.min(man.cur, Math.max(0, cardItems(c).length - 1)); } } }
+    else cards.unshift(c);
+    var ok = mySave(); closeEdit(); renderShelf(); if (!old) $('shelfRow').scrollLeft = 0;
+    if (curIdx === MY_IDX && curCard === c && document.body.classList.contains('playing-view')) renderQueue();
+    if (!ok) window.alert('이 브라우저에 보관하지 못했어요 (저장 공간 차단). 창을 닫으면 사라집니다.');
+  }
+  function delEdit(){
+    var c = cards[editIdx]; if (!c) return;
+    if (!window.confirm('"' + (cardTitle(c) || '이 카드') + '"\n내 음악에서 지울까요?')) return;
+    cards.splice(editIdx, 1); mySave(); closeEdit(); renderShelf();
+  }
+  function moveEdit(d){
+    var j = editIdx + d; if (editIdx < 0 || j < 0 || j >= cards.length) return;
+    var t = cards[editIdx]; cards[editIdx] = cards[j]; cards[j] = t; editIdx = j; mySave(); renderShelf();
+    var el = $('shelfRow').children[j]; if (el) $('shelfRow').scrollLeft = el.offsetLeft - 60;
+  }
+  function myExport(){
+    var blob = new Blob([JSON.stringify({ kind:'myway-music2-cards-v1', cards: cards }, null, 1)], { type:'application/json' });
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'music2-cards.json';
+    document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    $('svMsg').textContent = '카드 ' + cards.length + '장을 파일로 저장했어요.';
+  }
+  function myImport(file){
+    function say(t){ $('svMsg').textContent = t; if ($('saveModal').hidden) window.alert(t); }
+    var fr = new FileReader();
+    fr.onload = function(){
+      try {
+        var txt = String(fr.result), A = '/*@MYDEF' + '_S*/', B = '/*@MYDEF' + '_E*/', i0 = txt.indexOf(A), i1 = txt.indexOf(B, i0);
+        if (i0 >= 0 && i1 > i0) txt = txt.slice(i0 + A.length, i1);   /* music-sample.html / music-sample-edit.html 파일이면 그 안의 카드만 꺼냄 */
+        var arr = flat(JSON.parse(txt)), have = {}, n = 0; if (!arr.length) throw 0;
+        if (window.confirm('카드 ' + arr.length + '장이 들어 있는 파일이에요.\n\n[확인] 지금 카드를 지우고 이 파일 내용으로 바꾸기\n[취소] 지금 카드는 그대로 두고 없는 카드만 추가')){
+          cards = arr; mySave(); renderShelf(); say('파일 내용으로 바꿨어요. (카드 ' + cards.length + '장)'); return;
+        }
+        cards.forEach(function(c){ have[cardKey(c)] = 1; });
+        arr.forEach(function(c){ var k = cardKey(c); if (have[k]) return; have[k] = 1; cards.push(c); n++; });
+        mySave(); renderShelf(); say(n ? n + '장을 불러와 추가했어요. (기존 카드는 그대로)' : '새로 추가할 카드가 없어요. 이미 모두 들어 있습니다.');
+      } catch(e){ say('카드 파일이 아니에요.'); }
+    };
+    fr.readAsText(file);
+  }
+  /* HTML 저장: 이 파일 자체에 지금 카드를 넣어 새 파일로 내려받음 (edit=true 편집용, false 배포용) */
+  function buildHtml(edit){
+    var src = M2_SRC;
+    function put(a, val){
+      var A = '/*@' + a + '_S*/', B = '/*@' + a + '_E*/', i = src.indexOf(A), j = src.indexOf(B, i);
+      if (i < 0 || j < 0) throw new Error('marker'); src = src.slice(0, i + A.length) + val + src.slice(j);
+    }
+    put('EDIT', edit ? 'true' : 'false');
+    put('SIG', JSON.stringify('s' + Date.now()));
+    put('MYDEF', JSON.stringify(cards).replace(/</g, '\\u003c').replace(/\u2028|\u2029/g, ''));
+    return src;
+  }
+  function saveHtml(edit){
+    try {
+      var blob = new Blob([buildHtml(edit)], { type:'text/html;charset=utf-8' }), name = edit ? 'music-sample-edit.html' : 'music-sample.html';
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+      document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+      $('svMsg').textContent = name + ' 을(를) 저장했어요. (카드 ' + cards.length + '장)';
+    } catch(e){ $('svMsg').textContent = '저장하지 못했어요.'; }
+  }
+
+  /* 가로 줄: 마우스로 끌어서 좌우 이동 (터치는 원래대로), wheel=true면 휠로도 좌우 이동 */
+  function hscroll(el, wheel){
+    var sx = 0, sl = 0, down = false, moved = false;
+    el.addEventListener('pointerdown', function(e){ if (e.pointerType !== 'mouse' || e.button !== 0) return; down = true; moved = false; sx = e.clientX; sl = el.scrollLeft; });
+    window.addEventListener('pointermove', function(e){
+      if (!down) return; var dx = e.clientX - sx;
+      if (!moved && Math.abs(dx) > 6){ moved = true; el.classList.add('dragging'); }
+      if (moved) el.scrollLeft = sl - dx;
+    });
+    window.addEventListener('pointerup', function(){ if (!down) return; down = false; if (moved) setTimeout(function(){ el.classList.remove('dragging'); moved = false; }, 0); });
+    el.addEventListener('click', function(e){ if (moved){ e.preventDefault(); e.stopPropagation(); } }, true);
+    if (wheel) el.addEventListener('wheel', function(e){ if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && el.scrollWidth > el.clientWidth){ el.scrollLeft += e.deltaY; e.preventDefault(); } }, { passive:false });
+  }
+
+  function play(i){
+    var p = i === MY_IDX ? MYP : SG[i]; if (!p || !p.u) return;
+    /* 지금 재생 중인 가수를 다시 누르면 처음부터 다시 틀지 않고 재생 화면만 다시 엶 */
+    if (i !== MY_IDX && i === curIdx && $('ytFrame')){ openNow(); renderQueue(); try { if (ready) player.playVideo(); } catch(e){} return; }
+    var hadCard = !!curCard; man = null; if (i !== MY_IDX) curCard = null;
+    curIdx = i; pendingDone = false; if (trackOwner !== i || i === MY_IDX){ trackIds = []; }
+    document.body.classList.toggle('my-mode', i === MY_IDX); if (i === MY_IDX) tracksTab(); else if (hadCard) renderShelf();
+    var c = col(p);
+    $('glow').style.setProperty('--g1', c[0]); $('glow').style.setProperty('--g2', c[1]);
+    $('metaCv').outerHTML = '<div class="cv" id="metaCv" ' + cover(p) + '</div>';
+    $('metaName').textContent = p.n; $('metaSub').textContent = (p.card ? '내 음악' : catLabel(p)) + ' · 유튜브 재생목록';
+    openNow();
+    renderQueue();
+    var k = parse(p.u);
+    if (ready && player){
+      try {
+        if (k.list) loadList(k.list, k.v); else loadVid(k.v);
+        return;
+      } catch(e){}
+    }
+    if (player){ try { player.destroy(); } catch(e){} player = null; ready = false; }
+    $('stage').innerHTML = '<iframe id="ytFrame" title="재생 화면" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen src="' + esc(embedUrl(p.u)) + '"></iframe>';
+    attachApi(); if (window.YT && YT.Player) bind();
+  }
+
+  /* ── 이벤트 ── */
+  document.addEventListener('click', function(e){
+    var tr = e.target.closest('.q[data-t]');
+    if (tr){ if (ready) try { if (trackIds.length > 1) player.playVideoAt(+tr.dataset.t); else player.playVideo(); } catch(err){} return; }
+    if (e.target.id === 'cardModal'){ closeEdit(); return; }
+    if (e.target.id === 'saveModal'){ e.target.hidden = true; return; }
+    var x1 = e.target.closest('[data-mdel]'); if (x1){ manDel(+x1.dataset.mdel); return; }
+    if (e.target.closest('#manAddBtn')){ manAdd(); return; }
+    var x2 = e.target.closest('.q[data-m]'); if (x2){ if (!e.target.closest('input')) manPlay(+x2.dataset.m); return; }
+    var x3 = e.target.closest('[data-edit]'); if (x3){ openEdit(+x3.dataset.edit); return; }
+    var x4 = e.target.closest('[data-card]'); if (x4){ playCard(+x4.dataset.card); return; }
+    var t = e.target.closest('[data-i]'); if (t){ play(+t.dataset.i); return; }
+    var c = e.target.closest('.chip,.mood');
+    if (c){ curCat = c.dataset.c; renderChips(); renderHome(); $('main').scrollTop = 0;
+      var on = $('chips').querySelector('.chip.on'); if (on) $('chips').scrollLeft = on.offsetLeft - 40; return; }
+    var tb = e.target.closest('.tabs button');
+    if (tb){ sideTab = tb.dataset.tab; Array.prototype.forEach.call(tb.parentNode.children, function(b){ b.classList.toggle('on', b === tb); }); renderQueue(); }
+  });
+  $('find').addEventListener('input', function(){ query = this.value; closeNow(); renderHome(); });
+  $('backBtn').addEventListener('click', function(){ closeNow(); });
+  /* [가수]: 재생 화면이면 가수 목록으로 돌아가고, 가수 목록에서는 맨 위(전체)로 */
+  $('singerTile').addEventListener('click', function(){
+    if (document.body.classList.contains('playing-view')){ closeNow(); return; }
+    if (curCat !== 'all' || query){ curCat = 'all'; query = ''; $('find').value = ''; renderChips(); renderHome(); }
+    try { $('main').scrollTo({ top: 0, behavior: 'smooth' }); } catch(e){ $('main').scrollTop = 0; }
+  });
+  $('cardAddBtn').addEventListener('click', function(){ openEdit(-1); });
+  $('saveOpenBtn').addEventListener('click', function(){ $('svMsg').textContent = ''; $('saveModal').hidden = false; });
+  $('importOpenBtn').addEventListener('click', function(){ $('myFile').click(); });
+  $('miniExport').addEventListener('click', function(){ saveHtml(true); });   /* 음악2: 지금 이 파일 전체(모양 + 하단 카드)를 편집용 파일로 내보내기 → 항상 최신 편집기 */
+  $('svClose').addEventListener('click', function(){ $('saveModal').hidden = true; });
+  $('svDist').addEventListener('click', function(){ saveHtml(false); });
+  $('svEdit').addEventListener('click', function(){ saveHtml(true); });
+  if (M2_EDIT){ document.title = 'MYWAY Music 편집용'; var tg = document.querySelector('.tag'); if (tg) tg.textContent = '편집용'; }
+  $('cmSave').addEventListener('click', saveEdit);
+  $('cmCancel').addEventListener('click', closeEdit);
+  $('cmDel').addEventListener('click', delEdit);
+  $('cmLeft').addEventListener('click', function(){ moveEdit(-1); });
+  $('cmRight').addEventListener('click', function(){ moveEdit(1); });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && !$('cardModal').hidden){ closeEdit(); return; }
+    if (e.key === 'Escape' && !$('saveModal').hidden){ $('saveModal').hidden = true; return; }
+    if (e.key === 'Enter' && e.target && e.target.id === 'manUrl'){ e.preventDefault(); manAdd(); return; }
+    if (e.key === 'Enter' && e.target && (e.target.id === 'cmName' || e.target.id === 'cmImg')){ e.preventDefault(); saveEdit(); return; }
+    if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.matches && e.target.matches('.q[data-m]')){ e.preventDefault(); manPlay(+e.target.dataset.m); }
+  });
+  hscroll($('chips')); hscroll($('sites')); hscroll($('shelfRow'), true);
+  $('myExportBtn').addEventListener('click', myExport);
+  $('myImportBtn').addEventListener('click', function(){ $('myFile').click(); });
+  $('myFile').addEventListener('change', function(){ if (this.files && this.files[0]) myImport(this.files[0]); this.value = ''; });
+
+  /* 포털 안(iframe)에서 열리면 홈 버튼·샘플 표시는 숨김 — 포털에 이미 있음 */
+  try { if (window.top !== window.self) document.documentElement.classList.add('embedded'); } catch(e){ document.documentElement.classList.add('embedded'); }
+  renderChips(); renderSites(); renderHome(); renderShelf();
+})();
+
+/* 복사 방지 */
+(function(){
+  ['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){
+    document.addEventListener(ev, function(e){ var t = e.target; if (t && t.closest && t.closest('input,textarea')) return; e.preventDefault(); }, true);
+  });
+  document.addEventListener('keydown', function(e){
+    var k = (e.key || '').toLowerCase(), c = e.ctrlKey || e.metaKey, inField = e.target && e.target.closest && e.target.closest('input,textarea');
+    if (e.key === 'F12' || (c && ['u','s'].indexOf(k) > -1) || (c && !inField && ['c','x','a'].indexOf(k) > -1) || (c && e.shiftKey && ['i','j','c'].indexOf(k) > -1)){ e.preventDefault(); e.stopPropagation(); }
+  }, true);
+})();
+</script>
+</body>
+</html>
