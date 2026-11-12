@@ -3624,9 +3624,9 @@
       });
       var sep = document.createElement('span'); sep.className = 'tvr-sep'; frag.appendChild(sep);
       nav.insertBefore(frag, nav.firstChild);
-      /* 드라마VOD 탭은 만화 탭 바로 앞에 배치 (기기에 저장된 예전 탭 순서와 무관하게) */
-      var dv = nav.querySelector('.tab-btn[data-tab="dramavod"]'), cf = nav.querySelector('.tab-btn[data-tab="cafe"]');
-      if (dv && cf) nav.insertBefore(dv, cf);
+      /* 드라마VOD 탭은 앞쪽 🎬 영화 바로 다음에 배치 (기기에 저장된 예전 탭 순서와 무관하게) */
+      var dv = nav.querySelector('.tab-btn[data-tab="dramavod"]'), mv = nav.querySelector('.tvr-tab[data-tab="onair_movie"]');
+      if (dv && mv) nav.insertBefore(dv, mv.nextSibling);
       if (onair) Array.prototype.forEach.call(nav.querySelectorAll('.tab-btn:not(.tvr-tab)'), function(b){ b.classList.toggle('is-active', !!TAB_PAGES[onair] && b.getAttribute('data-tab') === onair); });
     }
     /* 모바일: 누른 탭 버튼을 탭바 가운데로 가로 스크롤 → 양옆 다음 탭이 보이게 */
