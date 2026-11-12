@@ -117,6 +117,13 @@
   .q .t{flex:1;min-width:0;}
   .q b{display:block;font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .q span{display:block;margin-top:2px;font-size:12.5px;color:var(--sub);}
+  .q .no{flex:none;width:22px;text-align:center;font-size:12.5px;color:var(--dim);font-variant-numeric:tabular-nums;}
+  .q.on .no{display:none;}
+  .q .cv.th{width:64px;height:36px;border-radius:6px;background:#1c1e2b;}
+  .q b.wait{color:var(--dim);font-weight:500;}
+  .q[data-t] .eq{width:22px;padding:0 3px;}
+  .qnote{padding:26px 18px;font-size:13.5px;line-height:1.7;color:var(--sub);text-align:center;}
+  .qhead{padding:11px 16px;font-size:12.5px;color:var(--dim);border-bottom:1px solid rgba(255,255,255,.05);}
   .q .eq{flex:none;width:16px;height:14px;display:none;align-items:flex-end;gap:2px;}
   .q.on .eq{display:flex;}
   .q .eq i{flex:1;background:var(--a1);border-radius:1px;height:40%;}
@@ -220,7 +227,7 @@
             <div class="meta"><div class="cv" id="metaCv"></div><div><h1 id="metaName"></h1><p id="metaSub"></p></div></div>
           </div>
           <aside class="side">
-            <div class="tabs"><button type="button" class="on" data-tab="same">같은 장르</button><button type="button" data-tab="all">전체 가수</button></div>
+            <div class="tabs"><button type="button" class="on" data-tab="tracks">곡 목록</button><button type="button" data-tab="same">같은 장르</button><button type="button" data-tab="all">전체 가수</button></div>
             <div class="queue" id="queue"></div>
           </aside>
         </div>
@@ -264,7 +271,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   SG.forEach(function(p, i){ p._i = i; });
 
   /* ── 상태 ── */
-  var curCat = 'all', query = '', pickSeed = 0, curIdx = -1, sideTab = 'same';
+  var curCat = 'all', query = '', pickSeed = 0, curIdx = -1, sideTab = 'tracks';
 
   function pool(){
     var q = query.trim().toLowerCase();
@@ -305,6 +312,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   }
   function renderQueue(){
     var p = SG[curIdx]; if (!p) return;
+    if (sideTab === 'tracks'){ renderTracks(); return; }
     var list = sideTab === 'all' ? SG : SG.filter(function(x){ return (x.c || []).some(function(c){ return (p.c || []).indexOf(c) >= 0; }); });
     $('queue').innerHTML = list.map(function(x){
       return '<button type="button" class="q'+(x._i===curIdx?' on':'')+'" data-i="'+x._i+'"><div class="cv" '+cover(x)+'</div><div class="t"><b>'+esc(x.n)+'</b><span>'+esc(catLabel(x))+'</span></div><div class="eq"><i></i><i></i><i></i></div></button>';
@@ -312,8 +320,61 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     var on = $('queue').querySelector('.q.on'); if (on) $('queue').scrollTop = Math.max(0, on.offsetTop - 120);
   }
 
+  /* ── 곡 목록: 재생목록의 곡들을 유튜브 플레이어에서 받아 표시 (제목은 화면에 보이는 줄만 그때그때 받아 옴) ── */
+  var trackIds = [], trackOwner = -1, titles = {}, asked = {}, io = null;
+  function renderTracks(){
+    var p = SG[curIdx]; if (!p) return;
+    if (io){ io.disconnect(); io = null; }
+    if (trackOwner !== curIdx || !trackIds.length){
+      $('queue').innerHTML = '<div class="qnote">' + (apiFailed ? '곡 목록을 불러오지 못했어요.<br>재생은 왼쪽 화면에서 그대로 됩니다.' : '곡 목록을 불러오는 중…<br>재생이 시작되면 여기에 나옵니다.') + '</div>';
+      return;
+    }
+    var cur = -1; try { cur = player.getPlaylistIndex(); } catch(e){}
+    if (trackIds.length === 1) cur = 0;
+    $('queue').innerHTML = '<div class="qhead">' + esc(p.n) + ' · ' + trackIds.length + '곡' + (trackIds.length >= 200 ? ' (앞의 200곡까지 표시)' : '') + '</div>' +
+      trackIds.map(function(id, n){
+        var tt = titles[id];
+        return '<button type="button" class="q'+(n===cur?' on':'')+'" data-t="'+n+'" data-v="'+esc(id)+'"><span class="no">'+(n+1)+'</span><div class="eq"><i></i><i></i><i></i></div>'+
+               '<div class="cv th" style="--c1:#1c1e2b;--c2:#1c1e2b"><img loading="lazy" decoding="async" alt="" src="https://i.ytimg.com/vi/'+encodeURIComponent(id)+'/mqdefault.jpg" onerror="this.remove()"></div>'+
+               '<div class="t"><b'+(tt?'':' class="wait"')+'>'+esc(tt || ('곡 ' + (n+1)))+'</b></div></button>';
+      }).join('');
+    var on = $('queue').querySelector('.q.on'); if (on) $('queue').scrollTop = Math.max(0, on.offsetTop - 120);
+    if ('IntersectionObserver' in window){
+      io = new IntersectionObserver(function(ents){ ents.forEach(function(en){ if (en.isIntersecting){ io.unobserve(en.target); askTitle(en.target.dataset.v); } }); }, { root: $('queue'), rootMargin: '200px 0px' });
+      Array.prototype.forEach.call($('queue').querySelectorAll('.q[data-v]'), function(el){ if (!titles[el.dataset.v]) io.observe(el); });
+    }
+  }
+  function setTitle(id, title){
+    if (!id || !title) return; titles[id] = title;
+    Array.prototype.forEach.call($('queue').querySelectorAll('.q[data-v]'), function(el){
+      if (el.dataset.v === id){ var b = el.querySelector('b'); if (b){ b.textContent = title; b.classList.remove('wait'); } }
+    });
+  }
+  function askTitle(id){
+    if (!id || titles[id] || asked[id]) return; asked[id] = 1;
+    var w = encodeURIComponent('https://www.youtube.com/watch?v=' + id);
+    function get(u){ return fetch(u).then(function(r){ if (!r.ok) throw 0; return r.json(); }).then(function(j){ if (!j || !j.title) throw 0; return j.title; }); }
+    get('https://noembed.com/embed?url=' + w).catch(function(){ return get('https://www.youtube.com/oembed?format=json&url=' + w); })
+      .then(function(title){ setTitle(id, title); }).catch(function(){});
+  }
+  function syncTracks(){
+    if (!ready || curIdx < 0) return;
+    var ids = null; try { ids = player.getPlaylist(); } catch(e){}
+    if (!ids || !ids.length){ var k = parse(SG[curIdx].u); try { var d = player.getVideoData(); ids = (d && d.video_id) ? [d.video_id] : (k.v ? [k.v] : []); } catch(e){ ids = k.v ? [k.v] : []; } if (k.list && ids.length <= 1 && !pendingDone) return; }
+    try { var vd = player.getVideoData(); if (vd && vd.video_id && vd.title) titles[vd.video_id] = vd.title; } catch(e){}
+    var changed = trackOwner !== curIdx || ids.join(',') !== trackIds.join(',');
+    trackIds = ids.slice(); trackOwner = curIdx;
+    if (sideTab !== 'tracks') return;
+    if (changed) renderTracks();
+    else {
+      var cur = -1; try { cur = player.getPlaylistIndex(); } catch(e){} if (trackIds.length === 1) cur = 0;
+      Array.prototype.forEach.call($('queue').querySelectorAll('.q[data-t]'), function(el){ el.classList.toggle('on', +el.dataset.t === cur); });
+      try { var v2 = player.getVideoData(); if (v2 && v2.video_id) setTitle(v2.video_id, v2.title); } catch(e){}
+    }
+  }
+
   /* ── YouTube 재생 (플레이어 1개를 계속 재사용) ── */
-  var player = null, ready = false, apiAsked = false, tick = null, shuffle = false, loop = false;
+  var player = null, ready = false, apiAsked = false, apiFailed = false, pendingDone = false, tick = null, shuffle = false, loop = false;
   function parse(u){
     var l = (u.match(/[?&]list=([^&#]+)/) || [])[1] || '', v = (u.match(/[?&]v=([^&#]+)/) || u.match(/youtu\.be\/([^?&#]+)/) || [])[1] || '';
     return { list: l, v: v };
@@ -329,19 +390,22 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     if (apiAsked) return; apiAsked = true;
     var prev = window.onYouTubeIframeAPIReady;
     window.onYouTubeIframeAPIReady = function(){ if (prev) try { prev(); } catch(e){} bind(); };
-    var s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(s);
+    var s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api';
+    s.onerror = function(){ apiFailed = true; if (sideTab === 'tracks') renderTracks(); };
+    document.head.appendChild(s);
   }
   function bind(){
     if (player || !window.YT || !YT.Player || !$('ytFrame')) return;
     player = new YT.Player('ytFrame', { events: {
-      onReady: function(){ ready = true; setCtl(true); },
+      onReady: function(){ ready = true; setCtl(true); syncTracks(); },
       onStateChange: function(e){
         var playing = e.data === 1;
         document.body.classList.toggle('is-playing', playing);
         $('ppIcon').innerHTML = playing ? '<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>' : '<path d="M8 5v14l11-7z"/>';
         if (e.data === 1 || e.data === 5 || e.data === -1) showTitle();
         clearInterval(tick); if (playing) tick = setInterval(progress, 1000);
-        progress();
+        if (e.data === 1) pendingDone = true;
+        progress(); syncTracks();
       }
     }});
   }
@@ -358,7 +422,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   }
   function play(i){
     var p = SG[i]; if (!p || !p.u) return;
-    curIdx = i;
+    curIdx = i; pendingDone = false; if (trackOwner !== i){ trackIds = []; }
     var c = col(p);
     $('glow').style.setProperty('--g1', c[0]); $('glow').style.setProperty('--g2', c[1]);
     $('metaCv').outerHTML = '<div class="cv" id="metaCv" ' + cover(p) + '</div>';
@@ -385,6 +449,8 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
 
   /* ── 이벤트 ── */
   document.addEventListener('click', function(e){
+    var tr = e.target.closest('.q[data-t]');
+    if (tr){ if (ready) try { if (trackIds.length > 1) player.playVideoAt(+tr.dataset.t); else player.playVideo(); } catch(err){} return; }
     var t = e.target.closest('[data-i]'); if (t){ play(+t.dataset.i); return; }
     var c = e.target.closest('.chip,.mood');
     if (c){ curCat = c.dataset.c; pickSeed = 0; renderChips(); renderHome(); $('main').scrollTop = 0;
@@ -399,7 +465,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   $('ppBtn').addEventListener('click', function(){ if (!ready) return; try { player.getPlayerState() === 1 ? player.pauseVideo() : player.playVideo(); } catch(e){} });
   $('prevBtn').addEventListener('click', function(){ if (ready) try { player.previousVideo(); } catch(e){} });
   $('nextBtn').addEventListener('click', function(){ if (ready) try { player.nextVideo(); } catch(e){} });
-  $('shufTg').addEventListener('click', function(){ if (!ready) return; shuffle = !shuffle; this.classList.toggle('on', shuffle); try { player.setShuffle(shuffle); } catch(e){} });
+  $('shufTg').addEventListener('click', function(){ if (!ready) return; shuffle = !shuffle; this.classList.toggle('on', shuffle); try { player.setShuffle(shuffle); } catch(e){} setTimeout(syncTracks, 600); });
   $('loopTg').addEventListener('click', function(){ if (!ready) return; loop = !loop; this.classList.toggle('on', loop); try { player.setLoop(loop); } catch(e){} });
 
   renderChips(); renderMoods(); renderHome();
