@@ -3437,6 +3437,7 @@
     webdrama: { label: "🎭 웹드라마", url: "https://nmyway77.github.io/livetv7/?wd=1" },
     podcast: { label: "🎙 팟캐스트", url: "https://myway.kr/podcast.html" },
     music: { label: "🎵 음악", url: "https://myway.kr/MUSIC-YTUBE-SINGER.html" },
+    music2: { label: "🎵 음악2", url: "https://myway.kr/music-sample.html" },   /* 새 디자인 시험용 — 며칠 써 보고 결정 */
     cctv:  { label: "📹 CCTV", url: "https://myway.kr/00makingyoutubefull2.html" },
     newsnow: { label: "📰 최신뉴스", url: "https://myway.kr/NEWS-NOW.html" }
   };
@@ -3513,9 +3514,9 @@
       /* 예전 [📺 TV](채널바) 탭은 제거 — TV2(livetv7)를 [📺 TV]로 표시 */
       /* 순서: TV → 음악 → 라디오 → 나머지(영화·유튜버·웹드라마·팟캐스트·CCTV) */
       pk.filter(function(k){ return k === 'tv2'; }).map(pg)
-        .concat(pk.filter(function(k){ return k === 'music'; }).map(pg))
+        .concat(pk.filter(function(k){ return k === 'music' || k === 'music2'; }).map(pg))
         .concat([['radio','📻 라디오']])
-        .concat(pk.filter(function(k){ return k !== 'tv2' && k !== 'music'; }).map(pg)).forEach(function(d){
+        .concat(pk.filter(function(k){ return k !== 'tv2' && k !== 'music' && k !== 'music2'; }).map(pg)).forEach(function(d){
         var b = document.createElement('button'); b.type = 'button';
         b.className = 'tab-btn tvr-tab' + (onair === d[0] ? ' is-active' : '');
         b.dataset.tab = 'onair_' + d[0]; b.textContent = d[1];
