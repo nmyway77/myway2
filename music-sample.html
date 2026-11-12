@@ -65,6 +65,13 @@
   body.playing-view .shelf{padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));}
   body.playing-view .sc,body.playing-view .sc .cv{width:106px;}
   body.playing-view .sc .cv{height:60px;}
+  /* 하단 맨 왼쪽 [가수] — 어느 화면에서든 누르면 가수 목록으로 (뒤로가기가 안 되는 아이폰용) */
+  .singer-tile{flex:none;width:128px;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:7px;color:#fff;
+               background:radial-gradient(120% 140% at 25% 0%,#5a2a96 0%,#2a1450 55%,#120a26 100%);border:1px solid #6d4bb8;box-shadow:0 0 0 0 rgba(177,118,243,0);transition:box-shadow .18s, transform .15s;}
+  .singer-tile:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(177,118,243,.35);}
+  .singer-tile i{font-style:normal;font-size:22px;line-height:1;}
+  .singer-tile b{font-family:Fraunces,Pretendard,serif;font-size:19px;font-weight:800;background:linear-gradient(95deg,#ff9bd6,#b9a4ff);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  body.playing-view .singer-tile{width:106px;border-color:var(--a1);box-shadow:0 0 0 2px rgba(126,214,251,.25);}
   .shelf-add{flex:none;width:64px;border-radius:12px;border:1px dashed #4a4e68;color:var(--sub);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12px;font-weight:700;}
   .shelf-add:hover{color:var(--ink);border-color:var(--a2);background:rgba(125,111,232,.12);}
   .shelf-add i{font-style:normal;font-size:20px;line-height:1.2;font-weight:400;}
@@ -205,6 +212,12 @@
     :root{--bar:82px;}
     .shelf{gap:9px;padding:9px 10px calc(9px + env(safe-area-inset-bottom,0px));}
     .shelf-add{width:50px;}
+    .singer-tile{width:84px;gap:4px;}
+    .singer-tile i{font-size:18px;}
+    .singer-tile b{font-size:16px;}
+    body.playing-view .singer-tile{width:70px;}
+    body.playing-view .singer-tile i{font-size:15px;}
+    body.playing-view .singer-tile b{font-size:14px;}
     .sc{width:112px;}
     .sc .cv{width:112px;height:63px;}
     body.playing-view{--bar:58px;}
@@ -282,6 +295,7 @@
 </div>
 
 <div class="shelf" id="shelf">
+  <button type="button" class="singer-tile" id="singerTile" title="가수 목록으로" aria-label="가수 목록으로 돌아가기"><i>🎤</i><b>가수</b></button>
   <button type="button" class="shelf-add" id="cardAddBtn" title="유튜브 주소로 내 음악 추가"><i>＋</i>추가</button>
   <button type="button" class="shelf-add" id="importOpenBtn" title="음악2에서 내보낸 카드 파일(JSON) 가져오기"><i>📥</i>가져오기</button>
   <button type="button" class="shelf-add" id="saveOpenBtn" title="HTML 파일로 저장"><i>💾</i>저장</button>
@@ -828,6 +842,12 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   });
   $('find').addEventListener('input', function(){ query = this.value; closeNow(); renderHome(); });
   $('backBtn').addEventListener('click', function(){ closeNow(); });
+  /* [가수]: 재생 화면이면 가수 목록으로 돌아가고, 가수 목록에서는 맨 위(전체)로 */
+  $('singerTile').addEventListener('click', function(){
+    if (document.body.classList.contains('playing-view')){ closeNow(); return; }
+    if (curCat !== 'all' || query){ curCat = 'all'; query = ''; $('find').value = ''; renderChips(); renderHome(); }
+    try { $('main').scrollTo({ top: 0, behavior: 'smooth' }); } catch(e){ $('main').scrollTop = 0; }
+  });
   $('cardAddBtn').addEventListener('click', function(){ openEdit(-1); });
   $('saveOpenBtn').addEventListener('click', function(){ $('svMsg').textContent = ''; $('saveModal').hidden = false; });
   $('importOpenBtn').addEventListener('click', function(){ $('myFile').click(); });
