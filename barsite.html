@@ -3482,7 +3482,7 @@
         '<span class="tvr-tap-arw">👇</span><span class="tvr-tap-ttl">' + esc(c[0]) + '</span>' +
         '<span class="tvr-tap-btn">▶ 눌러서 ' + (kind === 'radio' ? '듣기' : '보기') + ' ↗</span><span class="tvr-tap-sub">방송사 공식 플레이어(새 창)로 열려요</span></a>';
     } else
-    if ((kind === 'tv' || kind === 'radio') && IS_MOBILE && /kbs\.co\.kr/i.test(c[1])) {
+    if ((kind === 'tv' || kind === 'radio') && (/iPhone|iPod/i.test(navigator.userAgent) || (/Android/i.test(navigator.userAgent) && /Mobile/i.test(navigator.userAgent))) && /kbs\.co\.kr/i.test(c[1])) {   /* 핸드폰만 — 태블릿·아이패드는 KBS도 화면 안 재생 */
       /* 핸드폰에서 KBS(TV·라디오)는 화면 안(iframe)에서 안 나옴 → 화살표로 클릭 유도, 누르면 KBS 공식 플레이어 새 창 */
       $('tvrScreen').innerHTML = '<a class="tvr-tap" href="' + String(c[1]).replace(/"/g, '%22') + '" target="_blank" rel="noopener">' +
         '<span class="tvr-tap-arw">👇</span><span class="tvr-tap-ttl">' + esc(c[0]) + '</span>' +
