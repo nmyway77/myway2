@@ -649,8 +649,8 @@
     .install-guide p{margin:0 0 14px;font-size:.9rem;line-height:1.65;}
     .install-guide button{width:100%;min-height:44px;border:none;border-radius:11px;background:linear-gradient(135deg,#7d6fe8 0%,#b176f3 100%);color:#fff;font-size:.92rem;font-weight:700;cursor:pointer;}
     @media (max-width:700px){ .install-fab{margin-left:6px;} }
-    /* 수정(연필) 버튼은 핸드폰에서만 숨김 · 홈 화면 추가 버튼은 모든 기기에서 보임 */
-    @media (max-width:700px){ .edit-fab{display:none !important;} }
+    /* 수정(연필) 버튼은 모든 기기에서 숨김 · 홈 화면 추가 버튼만 보임 */
+    .edit-fab{display:none !important;}
     @media (max-width:380px){ .install-fab{width:32px;height:32px;margin-left:5px;} .install-fab svg{width:17px;height:17px;} }
     body.dist-mode #codeToolBtn{display:none !important;}
     body.dist-mode #resetToolBtn{display:none !important;}
