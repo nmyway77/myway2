@@ -4160,7 +4160,16 @@
   '#sgPanel .sg-top.show{opacity:1;pointer-events:auto;}'+
   '@media (max-width:760px){#sgPanel .sg-cats{justify-content:flex-start;}}'+
   '@media (max-width:760px){#sgTile{flex:0 0 124px;width:124px;margin-left:12px;}}'+
-  '@media (max-width:480px){#sgTile{flex:0 0 112px;width:112px;}}';
+  '@media (max-width:480px){#sgTile{flex:0 0 112px;width:112px;}}'+
+  '#sgPanel .sg-masonry{column-count:auto !important;display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:20px 16px;}'+
+  '#sgPanel .sg-card{margin:0 !important;background:none;overflow:visible;border-radius:0;min-width:0;}'+
+  '#sgPanel .sg-card .sg-face{position:relative;aspect-ratio:1/1;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:linear-gradient(140deg,var(--c1,#3d6fd6),var(--c2,#1f2b6b));font-weight:800;font-size:46px;color:rgba(255,255,255,.92);transition:transform .18s,box-shadow .18s;}'+
+  '#sgPanel .sg-card .sg-face img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:none !important;}'+
+  '#sgPanel .sg-card:hover .sg-face{transform:translateY(-3px);box-shadow:0 14px 30px rgba(31,39,64,.28);}'+
+  '#sgPanel .sg-card .sg-cap{position:static;padding:0;background:none;opacity:1 !important;text-shadow:none;pointer-events:auto;letter-spacing:0;}'+
+  '#sgPanel .sg-card .sg-cap b{display:block;margin-top:10px;font-size:14.5px;font-weight:700;color:#1f2740;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}'+
+  '#sgPanel .sg-card .sg-cap span{display:block;margin-top:2px;font-size:12.5px;font-weight:500;color:#8590ad;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}'+
+  '@media (max-width:640px){#sgPanel .sg-masonry{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 10px;}#sgPanel .sg-card .sg-face{font-size:32px;}}';
 
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   function canPlay(u){ try{ return parseToEmbed(u).type==='youtube'; }catch(e){ return false; } }
@@ -4196,14 +4205,18 @@
     }).join('');
     var SG_CATS = [['all','전체'],['ballad','발라드'],['idol','아이돌'],['trot','트로트'],['rock','록·밴드'],['hiphop','힙합·R&B'],['indie','인디·싱어송라이터'],['old','7080'],['y90','90·2000년대'],['new','신인'],['oldpop','올드팝'],['pop','해외 팝'],['ch','음악채널']];
     var SG_COL = {ballad:['#7ed6fb','#6f86f5'],idol:['#ff8fd0','#b176f3'],trot:['#ffb36b','#f0566e'],rock:['#5d6b86','#1f2740'],hiphop:['#3b3b4f','#8a63f0'],indie:['#8fd9a8','#3aa0b8'],old:['#e8c57a','#b0763c'],y90:['#7ad1e8','#3b6fe0'],new:['#c3f584','#2bb5a0'],ch:['#9aa6c7','#5d6b86']};
+    var SG_COL2 = {ballad:['#3d6fd6','#1f2b6b'],idol:['#e0559c','#6a2bb0'],trot:['#f08a3c','#b02a4a'],rock:['#56617d','#1b2033'],hiphop:['#7a52e0','#231a45'],indie:['#2fa58a','#16506a'],old:['#c9973e','#6b3f1c'],y90:['#2f9bc4','#263f9e'],'new':['#74c24a','#136b62'],oldpop:['#b5654a','#4a2334'],pop:['#d04a6a','#3b2a7a'],ch:['#6c7aa8','#262c47']};
     var SG_LABEL = {}; SG_CATS.forEach(function(c){ SG_LABEL[c[0]] = c[1]; });
     var NOTE = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>';
     var cardsHtml = SG_DATA.map(function(p, i){
       var c0 = (p.c && p.c[0]) || 'ballad', col = SG_COL[c0] || SG_COL.ballad;
-      var face = p.i ? '<img loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="'+esc(p.n)+'" src="'+esc(p.i)+'">'
-                     : '<div class="sg-name" style="--c1:'+col[0]+';--c2:'+col[1]+'">'+NOTE+'<b>'+esc(p.n)+'</b><i>'+esc(SG_LABEL[c0]||'')+'</i></div>';
-      return '<a class="sg-card'+(p.i?'':' has-name')+'" href="'+esc(p.u||'#')+'" target="_blank" rel="noopener" data-i="'+i+'" data-c="'+esc((p.c||[]).join(' '))+'" aria-label="'+esc(p.n)+'">'+
-        face+'<div class="sg-cap">'+esc(p.n)+'</div></a>';
+      /* 음악2 메인과 같은 모양: 정사각 이미지(없으면 장르색 + 첫 글자), 아래에 이름·장르 */
+      col = SG_COL2[c0] || SG_COL2.ballad;
+      var face = '<div class="sg-face" style="--c1:'+col[0]+';--c2:'+col[1]+'">'+esc(Array.from(p.n||'♪')[0]||'♪')+
+                 (p.i ? '<img loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="" src="'+esc(p.i)+'">' : '')+'</div>';
+      var lab = (p.c||[]).map(function(c){ return SG_LABEL[c]||c; }).join(' · ') || '가수';
+      return '<a class="sg-card" href="'+esc(p.u||'#')+'" target="_blank" rel="noopener" data-i="'+i+'" data-c="'+esc((p.c||[]).join(' '))+'" aria-label="'+esc(p.n)+'">'+
+        face+'<div class="sg-cap"><b>'+esc(p.n)+'</b><span>'+esc(lab)+'</span></div></a>';
     }).join('');
     var catsHtml = SG_CATS.map(function(c){
       var n = c[0]==='all' ? SG_DATA.length : SG_DATA.filter(function(p){ return (p.c||[]).indexOf(c[0])>=0; }).length;
@@ -4242,7 +4255,7 @@
     panel.addEventListener('scroll', function(){ topBtn.classList.toggle('show', panel.scrollTop > 600); }, { passive:true });
     topBtn.addEventListener('click', function(){ try{ panel.scrollTo({ top:0, behavior:'smooth' }); }catch(e){ panel.scrollTop = 0; } });
     panel.querySelectorAll('.sg-card img').forEach(function(im){
-      im.onerror = function(){ var d=document.createElement('div'); d.className='sg-noimg'; d.textContent=im.alt; im.replaceWith(d); };
+      im.onerror = function(){ im.remove(); };   /* 이미지가 안 뜨면 장르색 + 첫 글자가 보임 */
     });
 
     var box = document.getElementById('ytFrameBox');
