@@ -2331,7 +2331,14 @@
         const wrap = document.createElement('section'); wrap.className = 'section photo-section';
         const m = document.createElement('div'); m.className = 'masonry photo-tab';
         const items = tab.sections[0].items;
+        /* 드라마VOD: 방송사별 네비(MBC·KBS·채널A·SBS)로 나눠 보기 — 편집 중에는 전부 표시 */
+        const BC_LIST = ['MBC', 'KBS', '채널A', 'SBS'];
+        const useBc = tabId === 'dramavod' && !editMode;
+        let bcSel = '', bcShown = 0;
+        if (useBc) { try { bcSel = sessionStorage.getItem('mywayDramaVodBc') || ''; } catch (_) {} if (BC_LIST.indexOf(bcSel) < 0) bcSel = 'MBC'; }
         items.forEach((it, ii) => {
+          if (useBc && String(it.ticker || '').trim() !== bcSel) return;
+          bcShown++;
           const nm = it.name || it.ticker || '';
           const photos = photoListOf(it);
           const firstLink = (photos.find(p => p.link) || {}).link || '';
@@ -2372,6 +2379,17 @@
           m.appendChild(a);
         });
         if (SHOW_EDIT) { const add = document.createElement('button'); add.type = 'button'; add.className = 'gcard gadd'; add.textContent = '＋ 사진 추가'; add.onclick = () => openPhotoDlg(null); m.appendChild(add); }
+        if (useBc) {
+          const bnav = document.createElement('nav'); bnav.className = 'sub-nav';
+          BC_LIST.forEach(bc => {
+            const b = document.createElement('button'); b.type = 'button';
+            b.className = 'sub-btn' + (bc === bcSel ? ' on' : ''); b.textContent = bc;
+            b.onclick = () => { try { sessionStorage.setItem('mywayDramaVodBc', bc); } catch (_) {} renderTab(tabId); };
+            bnav.appendChild(b);
+          });
+          frag.appendChild(bnav);
+          if (!bcShown) { const none = document.createElement('p'); none.textContent = '아직 등록된 ' + bcSel + ' 드라마가 없어요.'; none.style.cssText = 'margin:40px 0;text-align:center;color:#7a829c;font-size:.92rem;'; wrap.appendChild(none); }
+        }
         wrap.appendChild(m); frag.appendChild(wrap);
         root.replaceChildren(frag);
         return;
