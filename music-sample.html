@@ -476,7 +476,32 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     document.body.classList.add('playing-view'); $('main').scrollTop = 0;
     if (!pushed){ try { history.pushState({ mv2:1 }, ''); pushed = true; } catch(e){} }
   }
+  /* 영상 바꿔 틀기: 유튜브 플레이어가 첫 요청을 놓쳐 이전 영상이 그대로 남는 경우가 있어,
+     이전 영상을 먼저 멈추고 → 바뀌었는지 확인 → 안 바뀌었으면 다시 요청 (한 번 더 누른 것과 같은 효과) */
+  var loadSeq = 0;
+  function vidNow(){ try { return (player.getVideoData() || {}).video_id || ''; } catch(e){ return ''; } }
+  function listNow(){ try { var a = player.getPlaylistId && player.getPlaylistId(); if (a) return a; return ((player.getVideoUrl() || '').match(/[?&]list=([^&#]+)/) || [])[1] || ''; } catch(e){ return ''; } }
+  function loadVid(id){
+    var seq = ++loadSeq, tries = 0;
+    function go(){ try { player.loadVideoById(id); } catch(e){} }
+    function check(){ if (seq !== loadSeq || vidNow() === id) return; if (++tries <= 2){ go(); setTimeout(check, 1500); } }
+    if (vidNow() !== id){ try { player.stopVideo(); } catch(e){} }
+    go(); setTimeout(check, 1200);
+  }
+  function loadList(list, v){
+    var seq = ++loadSeq, prev = vidNow(), tries = 0;
+    function go(){ try { player.loadPlaylist({ list: list, listType: 'playlist', index: 0 }); } catch(e){} }
+    function check(){
+      if (seq !== loadSeq) return;
+      var now = vidNow(); if (listNow() === list || (now && now !== prev)) return;
+      if (++tries <= 1){ go(); setTimeout(check, 2000); }
+      else if (v){ try { player.loadVideoById(v); } catch(e){} }   /* 목록이 끝내 안 열리면 그 주소의 영상이라도 재생 */
+    }
+    try { player.stopVideo(); } catch(e){}
+    go(); setTimeout(check, 1500);
+  }
   function stopPlay(){   /* 재생 화면을 떠나면 소리가 계속 나지 않게 정지 */
+    loadSeq++;
     if (ready && player){ try { player.pauseVideo(); return; } catch(e){} }
     if (player){ try { player.destroy(); } catch(e){} } player = null; ready = false; $('stage').innerHTML = '';
   }
@@ -581,7 +606,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     man.cur = ((n % items.length) + items.length) % items.length;
     var id = items[man.cur].id;
     if (rerender) renderQueue(); else manMark();
-    if (ready && player){ try { player.loadVideoById(id); return; } catch(e){} }
+    if (ready && player){ loadVid(id); return; }
     var src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&playsinline=1&rel=0&enablejsapi=1' + (/^https?:/.test(location.protocol) ? '&origin=' + encodeURIComponent(location.origin) : '');
     if (player){ try { player.destroy(); } catch(e){} player = null; ready = false; }
     $('stage').innerHTML = '<iframe id="ytFrame" title="재생 화면" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen src="' + esc(src) + '"></iframe>';
@@ -746,8 +771,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     var k = parse(p.u);
     if (ready && player){
       try {
-        if (k.list) player.loadPlaylist({ list: k.list, listType: 'playlist', index: 0 });
-        else player.loadVideoById(k.v);
+        if (k.list) loadList(k.list, k.v); else loadVid(k.v);
         return;
       } catch(e){}
     }
