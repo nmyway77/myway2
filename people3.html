@@ -328,6 +328,13 @@
   .big-x { position:absolute; top:10px; right:10px; z-index:2; border:0; color:#fff; background:rgba(0,0,0,.6); padding:7px 13px; border-radius:999px; font:inherit; font-size:13px; font-weight:800; cursor:pointer; }
   :fullscreen.bigable > :not(.big-x), .bigable.big-fill > :not(.big-x) { max-height:100%; width:100%; }
 </style>
+<style id="mwPhoneNoEdit">
+  /* 핸드폰에서는 상단 수정(편집 도구) 버튼을 숨김 — PC·태블릿에서는 그대로 */
+  html.mw-phone body:not(.editing) .edit-toolbar { display: none !important; }
+</style>
+<script>
+(function(){ var ua = navigator.userAgent || ''; if (/iPhone|iPod/i.test(ua) || (/Android/i.test(ua) && /Mobile/i.test(ua))) document.documentElement.classList.add('mw-phone'); })();
+</script>
 </head>
 <body>
 
