@@ -83,12 +83,16 @@
   .dragging *{pointer-events:none;}
   .mini{margin-left:10px;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:var(--bg3);font-size:13px;line-height:1;vertical-align:middle;position:relative;top:-3px;opacity:.8;transition:.15s;}
   .mini:hover{opacity:1;border-color:var(--a2);transform:translateY(-1px);}
-  /* 음악 사이트 바로가기 (장르 제목 줄) — 좁은 화면에서는 좌우로 밀어서 봄 */
-  .sites{flex:1;min-width:0;display:flex;align-items:center;gap:8px;margin-left:6px;padding:2px 0;overflow-x:auto;scrollbar-width:none;}
+  /* 음악 사이트 바로가기 — 좁은 화면에서는 좌우로 밀어서 봄 */
+  .sites{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 6px;scrollbar-width:none;cursor:grab;}
   .sites::-webkit-scrollbar{display:none;}
-  .site{flex:none;width:34px;height:34px;border-radius:50%;overflow:hidden;background:none;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:var(--sub);text-decoration:none;transition:transform .15s;}
-  .site:hover{transform:translateY(-2px);}
-  .site img{width:100%;height:100%;object-fit:contain;display:block;}
+  .site{flex:none;width:72px;text-align:center;text-decoration:none;color:var(--sub);}
+  .site .ic{width:60px;height:60px;margin:0 auto;border-radius:16px;overflow:hidden;background:var(--bg3);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;
+            font-size:15px;font-weight:800;color:var(--ink);box-shadow:0 8px 20px rgba(0,0,0,.35);transition:transform .18s, box-shadow .18s, border-color .18s;}
+  .site .ic img{width:100%;height:100%;object-fit:cover;display:block;}
+  .site:hover .ic{transform:translateY(-3px);border-color:#4a4e68;box-shadow:0 14px 28px rgba(0,0,0,.5);}
+  .site span{display:block;margin-top:7px;font-size:11.5px;font-weight:600;line-height:1.25;word-break:keep-all;}
+  .site:hover span{color:var(--ink);}
   .arrow{width:36px;padding:0;justify-content:center;font-size:18px;}
   /* 내 음악 재생 화면: 곡 추가 줄 · 곡 빼기 */
   body.my-mode .tabs button[data-tab="same"]{display:none;}
@@ -211,8 +215,10 @@
     body.playing-view .shelf-add{font-size:10.5px;}
     body.playing-view .shelf-add i{font-size:17px;}
     .arrow{display:none;}
-    .sites{gap:6px;margin-left:2px;}
-    .site{width:30px;height:30px;}
+    .sites{gap:12px;}
+    .site{width:56px;}
+    .site .ic{width:50px;height:50px;border-radius:13px;}
+    .site span{font-size:10.5px;}
     .mood{width:138px;height:52px;padding:6px 12px;}
     .mood b{left:12px;bottom:6px;font-size:14.5px;}
     .mood small{left:12px;top:6px;font-size:10.5px;}
@@ -247,9 +253,8 @@
       <div class="home">
         <div class="chips" id="chips"></div>
         <section class="sec" id="secMoods">
-          <div class="sec-h"><div><span class="eyebrow">분위기로 고르기</span><h2>장르<button type="button" class="mini" id="miniExport" title="내보내기 — 지금 화면 그대로의 편집용 파일(music-sample-edit.html) 받기" aria-label="편집용 파일 내보내기">📤</button></h2></div><nav class="sites" id="sites" aria-label="음악 사이트"></nav>
-            <button class="ghost arrow" id="moodPrev" type="button" title="왼쪽으로" aria-label="장르 왼쪽으로">‹</button><button class="ghost arrow" id="moodNext" type="button" title="오른쪽으로" aria-label="장르 오른쪽으로">›</button></div>
-          <div class="moods" id="moods"></div>
+          <div class="sec-h"><div><span class="eyebrow">바로가기</span><h2>음악 사이트<button type="button" class="mini" id="miniExport" title="내보내기 — 지금 화면 그대로의 편집용 파일(music-sample-edit.html) 받기" aria-label="편집용 파일 내보내기">📤</button></h2></div></div>
+          <nav class="sites" id="sites" aria-label="음악 사이트"></nav>
         </section>
         <section class="sec">
           <div class="sec-h"><div><span class="eyebrow" id="gridEyebrow">전체</span><h2>가수 <span id="gridCount" style="font-size:.55em;color:var(--dim);font-family:Pretendard,sans-serif;font-weight:600;"></span></h2></div></div>
@@ -356,24 +361,18 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
       return '<button type="button" class="chip'+(c[0]===curCat?' on':'')+'" data-c="'+c[0]+'">'+esc(c[1])+'<span class="n">'+n+'</span></button>';
     }).join('');
   }
-  var SITES = [{"n":"YouTube Music","u":"https://music.youtube.com/","i":"https://www.google.com/s2/favicons?domain=music.youtube.com&sz=128"}];
+  var SITES = [{"n":"VEVO","u":"https://www.youtube.com/@VEVO","i":"https://play-lh.googleusercontent.com/S3Wc8RcjrGvFwn6y8Q6xQRVGxO2FJr9HIaN7pxO-uG9i6D8ijNXAtoEwkBk0JLc69w"},{"n":"SoundCloud","u":"https://soundcloud.com/SOundCloud","i":"https://cdn.iconsumer.or.kr/news/photo/202103/15608_20188_542.jpg"},{"n":"멜론","u":"https://www.melon.com/","i":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXV_WBvi-G9LwPKbyh8x5qBPDEhYyzis24fiy9qNtEzlkUCPYduyZ6PyYMQuzBcjgjBVg&usqp=CAU"},{"n":"벅스","u":"https://music.bugs.co.kr/","i":"https://lh3.ggpht.com/M6UXPC-jncjtUd020iWikIdSaQ80Q1je3-uyTy-NkdOHme0X518DuYGsG3ftxTi5-w"},{"n":"지니뮤직","u":"https://www.genie.co.kr/","i":"https://www.google.com/s2/favicons?domain=genie.co.kr&sz=128"},{"n":"FLO","u":"https://www.music-flo.com/","i":"https://www.google.com/s2/favicons?domain=music-flo.com&sz=128"},{"n":"Spotify","u":"https://open.spotify.com/","i":"https://www.google.com/s2/favicons?domain=open.spotify.com&sz=128"},{"n":"YouTube Music","u":"https://music.youtube.com/","i":"https://www.google.com/s2/favicons?domain=music.youtube.com&sz=128"},{"n":"Apple Music","u":"https://music.apple.com/kr/","i":"https://www.google.com/s2/favicons?domain=music.apple.com&sz=128","b":"#f4f6fb"}];
   function renderSites(){
     $('sites').innerHTML = SITES.map(function(p){
-      return '<a class="site" href="'+esc(p.u)+'" target="_blank" rel="noopener" title="'+esc(p.n)+'" aria-label="'+esc(p.n)+'">'+'♪</a>';
+      return '<a class="site" href="'+esc(p.u)+'" target="_blank" rel="noopener" title="'+esc(p.n)+'"><div class="ic"'+(p.b ? ' style="background:'+esc(p.b)+';color:#1f2740"' : '')+'>'+esc(p.n.slice(0,2))+'</div><span>'+esc(p.n)+'</span></a>';
     }).join('');
-    Array.prototype.forEach.call($('sites').children, function(a, i){   /* 아이콘이 뜨면 글자 대신 아이콘 */
-      var im = new Image(); im.referrerPolicy = 'no-referrer'; im.alt = ''; im.onload = function(){ a.textContent = ''; a.appendChild(im); }; im.src = SITES[i].i;
+    Array.prototype.forEach.call($('sites').querySelectorAll('.ic'), function(ic, i){   /* 아이콘이 뜨면 글자 대신 아이콘 */
+      var im = new Image(); im.referrerPolicy = 'no-referrer'; im.alt = ''; im.onload = function(){ ic.textContent = ''; ic.appendChild(im); }; im.src = SITES[i].i;
     });
-  }
-  function renderMoods(){
-    $('moods').innerHTML = CATS.slice(1).map(function(c){
-      var k = COL[c[0]] || COL.all, n = SG.filter(function(p){ return (p.c || []).indexOf(c[0]) >= 0; }).length;
-      return '<button type="button" class="mood" data-c="'+c[0]+'" style="--c1:'+k[0]+';--c2:'+k[1]+'"><small>가수 '+n+'</small><b>'+esc(c[1])+'</b></button>';
-    }).join('');
   }
   function renderHome(){
     var list = pool(), searching = !!query.trim();
-    $('secMoods').style.display = (searching || curCat !== 'all') ? 'none' : '';
+    $('secMoods').style.display = (searching || curCat !== 'all') ? 'none' : '';   /* 음악 사이트 줄: 전체 화면에서만 */
     $('gridEyebrow').textContent = searching ? '"' + query.trim() + '" 검색 결과' : (curCat === 'all' ? '전체' : CAT_NAME[curCat]);
     $('gridCount').textContent = list.length + '명';
     $('grid').innerHTML = list.length ? list.map(function(p){
@@ -849,16 +848,14 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     if (e.key === 'Enter' && e.target && (e.target.id === 'cmName' || e.target.id === 'cmImg')){ e.preventDefault(); saveEdit(); return; }
     if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.matches && e.target.matches('.q[data-m]')){ e.preventDefault(); manPlay(+e.target.dataset.m); }
   });
-  $('moodPrev').addEventListener('click', function(){ $('moods').scrollBy({ left: -$('moods').clientWidth * .8, behavior:'smooth' }); });
-  $('moodNext').addEventListener('click', function(){ $('moods').scrollBy({ left: $('moods').clientWidth * .8, behavior:'smooth' }); });
-  hscroll($('moods')); hscroll($('chips')); hscroll($('sites')); hscroll($('shelfRow'), true);
+  hscroll($('chips')); hscroll($('sites')); hscroll($('shelfRow'), true);
   $('myExportBtn').addEventListener('click', myExport);
   $('myImportBtn').addEventListener('click', function(){ $('myFile').click(); });
   $('myFile').addEventListener('change', function(){ if (this.files && this.files[0]) myImport(this.files[0]); this.value = ''; });
 
   /* 포털 안(iframe)에서 열리면 홈 버튼·샘플 표시는 숨김 — 포털에 이미 있음 */
   try { if (window.top !== window.self) document.documentElement.classList.add('embedded'); } catch(e){ document.documentElement.classList.add('embedded'); }
-  renderChips(); renderSites(); renderMoods(); renderHome(); renderShelf();
+  renderChips(); renderSites(); renderHome(); renderShelf();
 })();
 
 /* 복사 방지 */
