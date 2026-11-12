@@ -3304,12 +3304,16 @@
     var href = a.getAttribute('href') || '';
     if(!href || href.charAt(0) === '#' || /^javascript:/i.test(href)) return;
     e.preventDefault();
+    /* MBC 엠빅라이브: 같은 창으로 넘어가면 핸드폰에서 재생이 안 되고, 새 창으로 띄우면 재생됨 → 새 창 */
+    if (isNewWinUrl(a.href)) { e.stopPropagation(); _open(a.href, '_blank', 'noopener'); return; }
     try { if (window.__mywayMarkLeave) window.__mywayMarkLeave(); } catch(_) {}
     try { (window.top || window).location.href = a.href; }
     catch(_) { window.open(a.href, '_blank'); }
   }, true);
+  function isNewWinUrl(u){ return /^https?:\/\/onair\.imbc\.com\/MbicPlay/i.test(String(u || '')); }
   var _open = window.open.bind(window);
   window.open = function(url, name, feat){
+    if(url && isNewWinUrl(url)) return _open(url, '_blank', 'noopener');
     if(url){ try { if (window.__mywayMarkLeave) window.__mywayMarkLeave(); } catch(_) {} try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
     return _open(url, name, feat);
   };
