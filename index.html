@@ -645,6 +645,12 @@
     .install-guide h3{margin:0 0 10px;font-size:1.02rem;}
     .install-guide ol{margin:0 0 14px;padding-left:20px;font-size:.9rem;line-height:1.75;}
     .install-guide p{margin:0 0 14px;font-size:.9rem;line-height:1.65;}
+    .install-guide{max-height:86vh;overflow-y:auto;}
+    .install-guide li{margin-bottom:6px;}
+    .install-guide .ig-dev{display:inline-block;margin:0 0 10px;padding:3px 10px;border-radius:999px;background:#eef0ff;color:#5b4fd6;font-size:.78rem;font-weight:700;}
+    .install-guide .ig-ic{width:17px;height:17px;vertical-align:-3px;stroke:#5b4fd6;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+    .install-guide .ig-done{padding:9px 11px;border-radius:10px;background:#f4f6ff;}
+    .install-guide .ig-tip{color:#6b7390;font-size:.82rem;}
     .install-guide button{width:100%;min-height:44px;border:none;border-radius:11px;background:linear-gradient(135deg,#7d6fe8 0%,#b176f3 100%);color:#fff;font-size:.92rem;font-weight:700;cursor:pointer;}
     @media (max-width:700px){ .install-fab{margin-left:6px;} }
     /* 수정(연필) 버튼은 모든 기기에서 숨김 · 홈 화면 추가 버튼만 보임 */
@@ -2919,14 +2925,56 @@ var DEFAULT_ENGINES = [
     bg.addEventListener('click', function(e){ if (e.target === bg) closeGuide(); });
 
     btn.addEventListener('click', function(){
+      var SHARE = '<svg class="ig-ic" viewBox="0 0 24 24"><path d="M12 15V3.5"/><path d="M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>';
+      var DONE = '<p class="ig-done">홈 화면에 <b>MYWAY</b> 아이콘이 생기면 끝이에요. 다음부터는 그 아이콘만 누르면 바로 myway.kr이 열립니다.</p>';
+      var isCriOS = /CriOS/i.test(ua), isSamsung = /SamsungBrowser/i.test(ua), isWhale = /Whale/i.test(ua), isKakao = /KAKAOTALK/i.test(ua);
+      var isMac = /Macintosh|Mac OS X/i.test(ua) && !isIOS;
       if (isInApp){
-        guide('<p>지금은 앱 안에서 열린 화면이라 추가할 수 없어요.<br><b>크롬</b>(아이폰은 <b>사파리</b>)에서 <b>myway.kr</b>을 연 뒤 이 버튼을 다시 눌러 주세요.</p>');
+        guide('<div class="ig-dev">' + (isKakao ? '카카오톡' : '앱') + ' 안에서 열린 화면이에요</div>' +
+          '<p>이 화면에서는 홈 화면에 추가할 수 없어서, 먼저 일반 브라우저로 열어야 해요.</p>' +
+          '<ol>' +
+          (isIOS
+            ? '<li>화면 <b>오른쪽 아래</b>의 공유 버튼 ' + SHARE + ' 을 누릅니다.</li><li><b>Safari로 열기</b>를 누릅니다.</li>'
+            : '<li>화면 <b>오른쪽 위</b>의 <b>⋮</b> 버튼을 누릅니다.</li><li><b>다른 브라우저로 열기</b>를 누릅니다.</li>') +
+          '<li>새로 열린 화면에서 이 버튼을 <b>한 번 더</b> 누르면 다음 순서를 알려 드려요.</li>' +
+          '</ol>' +
+          '<p class="ig-tip">버튼이 안 보이면 주소창에 <b>myway.kr</b>을 직접 입력해서 열어도 됩니다.</p>');
+      } else if (isIOS && isCriOS){
+        guide('<div class="ig-dev">아이폰 · 크롬</div>' +
+          '<ol>' +
+          '<li>화면 <b>맨 위 주소창 오른쪽 끝</b>의 공유 버튼 ' + SHARE + ' 을 누릅니다.</li>' +
+          '<li>올라온 목록을 <b>아래로 내려서</b> <b>홈 화면에 추가</b>를 누릅니다.</li>' +
+          '<li>이름(MYWAY)을 확인하고 <b>오른쪽 위 추가</b>를 누릅니다.</li>' +
+          '</ol>' + DONE +
+          '<p class="ig-tip">목록에 "홈 화면에 추가"가 없으면 사파리로 myway.kr을 열어 같은 순서로 해 주세요. "북마크"나 "읽기 목록"은 홈 화면에 아이콘이 생기지 않습니다.</p>');
       } else if (isIOS){
-        guide('<ol><li>화면 아래(또는 위)의 <b>공유 버튼</b>(네모에서 화살표가 올라가는 모양)을 누릅니다.</li><li>목록에서 <b>홈 화면에 추가</b>를 누릅니다.</li><li>오른쪽 위 <b>추가</b>를 누르면 끝!</li></ol>');
+        guide('<div class="ig-dev">아이폰 · 사파리</div>' +
+          '<ol>' +
+          '<li>화면 <b>맨 아래 가운데</b>의 공유 버튼 ' + SHARE + ' 을 누릅니다. (아이패드는 맨 위 오른쪽)</li>' +
+          '<li>올라온 목록을 <b>아래로 내려서</b> <b>홈 화면에 추가</b>를 누릅니다.</li>' +
+          '<li>이름(MYWAY)을 확인하고 <b>오른쪽 위 추가</b>를 누릅니다.</li>' +
+          '</ol>' + DONE +
+          '<p class="ig-tip">아래쪽 버튼 줄이 안 보이면 화면을 살짝 위로 밀어 올리면 나타납니다.</p>');
+      } else if (isMobile && isSamsung){
+        guide('<div class="ig-dev">안드로이드 · 삼성 인터넷</div>' +
+          '<ol>' +
+          '<li>화면 <b>오른쪽 아래</b>의 메뉴 버튼 <b>≡</b> 을 누릅니다.</li>' +
+          '<li><b>현재 페이지 추가</b>(+ 모양)를 누릅니다.</li>' +
+          '<li><b>홈 화면</b>을 고르고 <b>추가</b>를 누릅니다.</li>' +
+          '</ol>' + DONE);
       } else if (isMobile){
-        guide('<ol><li>브라우저 오른쪽 위(또는 아래)의 <b>메뉴(⋮ 또는 ≡)</b>를 누릅니다.</li><li><b>홈 화면에 추가</b>를 누릅니다.</li><li><b>추가</b>를 누르면 끝!</li></ol><p>이미 추가했다면 홈 화면의 MYWAY 아이콘을 눌러 주세요.</p>');
+        guide('<div class="ig-dev">안드로이드 · ' + (isWhale ? '웨일' : '크롬') + '</div>' +
+          '<ol>' +
+          '<li>화면 <b>오른쪽 위</b>의 메뉴 버튼 <b>⋮</b> 을 누릅니다.</li>' +
+          '<li>목록에서 <b>홈 화면에 추가</b>를 누릅니다.</li>' +
+          '<li>이름(MYWAY)을 확인하고 <b>추가</b>를 누릅니다. 한 번 더 물으면 다시 <b>추가</b>를 누릅니다.</li>' +
+          '</ol>' + DONE +
+          '<p class="ig-tip">앱을 설치하는 것이 아니라 홈 화면에 바로가기 아이콘만 만드는 것이라 용량을 차지하지 않습니다.</p>');
       } else {
-        guide('<p>PC에서는 <b>Ctrl + D</b>를 눌러 즐겨찾기에 추가해 주세요.<br>핸드폰에서는 이 버튼을 누르면 홈 화면에 MYWAY 바로가기를 만드는 방법을 알려 드려요.</p>');
+        guide('<div class="ig-dev">PC</div>' +
+          '<p><b>즐겨찾기에 넣기</b><br>키보드에서 <b>' + (isMac ? '⌘ + D' : 'Ctrl + D') + '</b>를 누르고 <b>완료</b>를 누릅니다.</p>' +
+          '<p><b>바탕화면에 바로가기 만들기</b><br>주소창 맨 왼쪽의 아이콘(자물쇠·조절 모양)을 마우스로 잡아 <b>바탕화면으로 끌어다 놓으면</b> MYWAY 바로가기가 생깁니다.</p>' +
+          '<p class="ig-tip">핸드폰에서 myway.kr을 열고 이 버튼을 누르면, 그 핸드폰에 맞는 홈 화면 추가 순서를 알려 드려요.</p>');
       }
     });
   })();
