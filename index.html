@@ -31,8 +31,6 @@
 <!-- 모바일 최적화 - viewport-fit=cover로 노치 디바이스 대응 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="format-detection" content="telephone=no">
 
 <meta name="naver-site-verification" content="4e88b51e170829dfb01ce587eaf5575804dd5a2">
@@ -2912,7 +2910,7 @@ var DEFAULT_ENGINES = [
     var standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
     if (standalone) document.body.classList.add('app-installed');
 
-    window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); deferred = e; });
+    window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); });   /* 앱 설치 창은 띄우지 않음 — 홈 화면 바로가기 안내만 */
     window.addEventListener('appinstalled', function(){ deferred = null; document.body.classList.add('app-installed'); });
 
     function guide(html){ body.innerHTML = html; bg.classList.add('show'); }
@@ -2921,19 +2919,14 @@ var DEFAULT_ENGINES = [
     bg.addEventListener('click', function(e){ if (e.target === bg) closeGuide(); });
 
     btn.addEventListener('click', function(){
-      if (deferred){
-        var p = deferred; deferred = null;
-        p.prompt();
-        return;
-      }
       if (isInApp){
         guide('<p>지금은 앱 안에서 열린 화면이라 추가할 수 없어요.<br><b>크롬</b>(아이폰은 <b>사파리</b>)에서 <b>myway.kr</b>을 연 뒤 이 버튼을 다시 눌러 주세요.</p>');
       } else if (isIOS){
         guide('<ol><li>화면 아래(또는 위)의 <b>공유 버튼</b>(네모에서 화살표가 올라가는 모양)을 누릅니다.</li><li>목록에서 <b>홈 화면에 추가</b>를 누릅니다.</li><li>오른쪽 위 <b>추가</b>를 누르면 끝!</li></ol>');
       } else if (isMobile){
-        guide('<ol><li>브라우저 오른쪽 위(또는 아래)의 <b>메뉴(⋮ 또는 ≡)</b>를 누릅니다.</li><li><b>홈 화면에 추가</b>(또는 <b>앱 설치</b>)를 누릅니다.</li><li><b>추가</b>를 누르면 끝!</li></ol><p>이미 추가했다면 홈 화면의 MYWAY 아이콘을 눌러 주세요.</p>');
+        guide('<ol><li>브라우저 오른쪽 위(또는 아래)의 <b>메뉴(⋮ 또는 ≡)</b>를 누릅니다.</li><li><b>홈 화면에 추가</b>를 누릅니다.</li><li><b>추가</b>를 누르면 끝!</li></ol><p>이미 추가했다면 홈 화면의 MYWAY 아이콘을 눌러 주세요.</p>');
       } else {
-        guide('<p>PC에서는 <b>Ctrl + D</b>로 즐겨찾기에 추가하거나, 크롬 주소창 오른쪽의 <b>설치</b> 아이콘을 눌러 주세요.<br>핸드폰에서 이 버튼을 누르면 홈 화면에 바로 추가할 수 있어요.</p>');
+        guide('<p>PC에서는 <b>Ctrl + D</b>를 눌러 즐겨찾기에 추가해 주세요.<br>핸드폰에서는 이 버튼을 누르면 홈 화면에 MYWAY 바로가기를 만드는 방법을 알려 드려요.</p>');
       }
     });
   })();
