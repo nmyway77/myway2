@@ -502,10 +502,13 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     }});
   }
   /* 재생 화면 열기/닫기 — 브라우저·핸드폰의 뒤로가기로도 가수 목록으로 돌아옴 */
-  var pushed = false;
+  /* 뒤로가기 기록은 맨 바깥 창(myway.kr 포털)에 남김 — 포털 안(이중 iframe)에서 남긴 기록은
+     핸드폰(특히 아이폰)에서 뒤로가기에 안 잡히는 경우가 있어서. 바깥 창을 못 쓰면 이 창에 남김 */
+  var pushed = false, HW = window;
+  try { if (window.top !== window && window.top.location.origin === location.origin && window.top.history) HW = window.top; } catch(e){ HW = window; }
   function openNow(){
     document.body.classList.add('playing-view'); $('main').scrollTop = 0;
-    if (!pushed){ try { history.pushState({ mv2:1 }, ''); pushed = true; } catch(e){} }
+    if (!pushed){ try { HW.history.pushState({ mv2:1 }, ''); pushed = true; } catch(e){ try { HW = window; history.pushState({ mv2:1 }, ''); pushed = true; } catch(e2){} } }
   }
   /* 영상 바꿔 틀기: 유튜브 플레이어가 첫 요청을 놓쳐 이전 영상이 그대로 남는 경우가 있어,
      이전 영상을 먼저 멈추고 → 바뀌었는지 확인 → 안 바뀌었으면 다시 요청 (한 번 더 누른 것과 같은 효과) */
@@ -538,9 +541,14 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   }
   function closeNow(){
     document.body.classList.remove('playing-view'); stopPlay();
-    if (pushed){ pushed = false; try { history.back(); } catch(e){} }
+    if (pushed){ pushed = false; try { HW.history.back(); } catch(e){} }
   }
-  window.addEventListener('popstate', function(){ if (pushed){ pushed = false; document.body.classList.remove('playing-view'); stopPlay(); } });
+  function onPop(){ if (pushed){ pushed = false; document.body.classList.remove('playing-view'); stopPlay(); } }
+  window.addEventListener('popstate', onPop);
+  if (HW !== window){
+    try { HW.addEventListener('popstate', onPop); } catch(e){}
+    window.addEventListener('pagehide', function(){ try { HW.removeEventListener('popstate', onPop); } catch(e){} });   /* 다른 탭으로 넘어가면 바깥 창에 건 것 정리 */
+  }
   window.addEventListener('pagehide', function(){ try { if (ready && player) player.pauseVideo(); } catch(e){} });
 
   /* ── 내 음악: 하단 카드 줄 — 기존 음악(디렉토리) 하단 카드와 같은 방식. 유튜브 주소만 붙여 넣으면 카드가 됨 ──
