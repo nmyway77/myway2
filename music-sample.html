@@ -83,6 +83,12 @@
   .dragging *{pointer-events:none;}
   .mini{margin-left:10px;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:var(--bg3);font-size:13px;line-height:1;vertical-align:middle;position:relative;top:-3px;opacity:.8;transition:.15s;}
   .mini:hover{opacity:1;border-color:var(--a2);transform:translateY(-1px);}
+  /* 음악 사이트 바로가기 (장르 제목 줄) — 좁은 화면에서는 좌우로 밀어서 봄 */
+  .sites{flex:1;min-width:0;display:flex;align-items:center;gap:8px;margin-left:6px;padding:2px 0;overflow-x:auto;scrollbar-width:none;}
+  .sites::-webkit-scrollbar{display:none;}
+  .site{flex:none;width:38px;height:38px;border-radius:10px;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;color:#2a2d3f;text-decoration:none;transition:transform .15s;}
+  .site:hover{transform:translateY(-2px);}
+  .site img{width:100%;height:100%;object-fit:cover;display:block;}
   .arrow{width:36px;padding:0;justify-content:center;font-size:18px;}
   /* 내 음악 재생 화면: 곡 추가 줄 · 곡 빼기 */
   body.my-mode .tabs button[data-tab="same"]{display:none;}
@@ -205,6 +211,8 @@
     body.playing-view .shelf-add{font-size:10.5px;}
     body.playing-view .shelf-add i{font-size:17px;}
     .arrow{display:none;}
+    .sites{gap:6px;margin-left:2px;}
+    .site{width:32px;height:32px;border-radius:8px;}
     .mood{width:138px;height:52px;padding:6px 12px;}
     .mood b{left:12px;bottom:6px;font-size:14.5px;}
     .mood small{left:12px;top:6px;font-size:10.5px;}
@@ -239,7 +247,7 @@
       <div class="home">
         <div class="chips" id="chips"></div>
         <section class="sec" id="secMoods">
-          <div class="sec-h"><div><span class="eyebrow">분위기로 고르기</span><h2>장르<button type="button" class="mini" id="miniExport" title="하단 음악 카드 내보내기 (JSON 파일)" aria-label="하단 음악 카드 내보내기">📤</button></h2></div><span class="sp"></span>
+          <div class="sec-h"><div><span class="eyebrow">분위기로 고르기</span><h2>장르<button type="button" class="mini" id="miniExport" title="하단 음악 카드 내보내기 (JSON 파일)" aria-label="하단 음악 카드 내보내기">📤</button></h2></div><nav class="sites" id="sites" aria-label="음악 사이트"></nav>
             <button class="ghost arrow" id="moodPrev" type="button" title="왼쪽으로" aria-label="장르 왼쪽으로">‹</button><button class="ghost arrow" id="moodNext" type="button" title="오른쪽으로" aria-label="장르 오른쪽으로">›</button></div>
           <div class="moods" id="moods"></div>
         </section>
@@ -347,6 +355,15 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
       var n = c[0] === 'all' ? SG.length : SG.filter(function(p){ return (p.c || []).indexOf(c[0]) >= 0; }).length;
       return '<button type="button" class="chip'+(c[0]===curCat?' on':'')+'" data-c="'+c[0]+'">'+esc(c[1])+'<span class="n">'+n+'</span></button>';
     }).join('');
+  }
+  var SITES = [{"n":"VEVO","u":"https://www.youtube.com/@VEVO","i":"https://play-lh.googleusercontent.com/S3Wc8RcjrGvFwn6y8Q6xQRVGxO2FJr9HIaN7pxO-uG9i6D8ijNXAtoEwkBk0JLc69w"},{"n":"SoundCloud","u":"https://soundcloud.com/SOundCloud","i":"https://cdn.iconsumer.or.kr/news/photo/202103/15608_20188_542.jpg"},{"n":"멜론","u":"https://www.melon.com/","i":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXV_WBvi-G9LwPKbyh8x5qBPDEhYyzis24fiy9qNtEzlkUCPYduyZ6PyYMQuzBcjgjBVg&usqp=CAU"},{"n":"벅스","u":"https://music.bugs.co.kr/","i":"https://lh3.ggpht.com/M6UXPC-jncjtUd020iWikIdSaQ80Q1je3-uyTy-NkdOHme0X518DuYGsG3ftxTi5-w"},{"n":"지니뮤직","u":"https://www.genie.co.kr/","i":"https://www.google.com/s2/favicons?domain=genie.co.kr&sz=128"},{"n":"FLO","u":"https://www.music-flo.com/","i":"https://www.google.com/s2/favicons?domain=music-flo.com&sz=128"},{"n":"Spotify","u":"https://open.spotify.com/","i":"https://www.google.com/s2/favicons?domain=open.spotify.com&sz=128"},{"n":"YouTube Music","u":"https://music.youtube.com/","i":"https://www.google.com/s2/favicons?domain=music.youtube.com&sz=128"},{"n":"Apple Music","u":"https://music.apple.com/kr/","i":"https://www.google.com/s2/favicons?domain=music.apple.com&sz=128"}];
+  function renderSites(){
+    $('sites').innerHTML = SITES.map(function(p){
+      return '<a class="site" href="'+esc(p.u)+'" target="_blank" rel="noopener" title="'+esc(p.n)+'" aria-label="'+esc(p.n)+'">'+esc(p.n.slice(0,2))+'</a>';
+    }).join('');
+    Array.prototype.forEach.call($('sites').children, function(a, i){   /* 아이콘이 뜨면 글자 대신 아이콘 */
+      var im = new Image(); im.referrerPolicy = 'no-referrer'; im.alt = ''; im.onload = function(){ a.textContent = ''; a.appendChild(im); }; im.src = SITES[i].i;
+    });
   }
   function renderMoods(){
     $('moods').innerHTML = CATS.slice(1).map(function(c){
@@ -834,14 +851,14 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   });
   $('moodPrev').addEventListener('click', function(){ $('moods').scrollBy({ left: -$('moods').clientWidth * .8, behavior:'smooth' }); });
   $('moodNext').addEventListener('click', function(){ $('moods').scrollBy({ left: $('moods').clientWidth * .8, behavior:'smooth' }); });
-  hscroll($('moods')); hscroll($('chips')); hscroll($('shelfRow'), true);
+  hscroll($('moods')); hscroll($('chips')); hscroll($('sites')); hscroll($('shelfRow'), true);
   $('myExportBtn').addEventListener('click', myExport);
   $('myImportBtn').addEventListener('click', function(){ $('myFile').click(); });
   $('myFile').addEventListener('change', function(){ if (this.files && this.files[0]) myImport(this.files[0]); this.value = ''; });
 
   /* 포털 안(iframe)에서 열리면 홈 버튼·샘플 표시는 숨김 — 포털에 이미 있음 */
   try { if (window.top !== window.self) document.documentElement.classList.add('embedded'); } catch(e){ document.documentElement.classList.add('embedded'); }
-  renderChips(); renderMoods(); renderHome(); renderShelf();
+  renderChips(); renderSites(); renderMoods(); renderHome(); renderShelf();
 })();
 
 /* 복사 방지 */
