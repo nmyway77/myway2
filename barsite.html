@@ -3312,14 +3312,20 @@
     if(!href || href.charAt(0) === '#' || /^javascript:/i.test(href)) return;
     e.preventDefault();
     /* MBC 엠빅라이브: 같은 창으로 넘어가면 핸드폰에서 재생이 안 되고, 새 창으로 띄우면 재생됨 → 새 창 */
+    /* 샘플: 아이폰 사파리에서는 MBC 재생이 검게 나와서, 내조의 여왕(183) 카드만 크롬 앱으로 넘겨 봄 */
+    if (isChromeHandoffUrl(a.href)) { e.stopPropagation(); goChrome(a.href); return; }
     if (isNewWinUrl(a.href)) { e.stopPropagation(); _open(a.href, '_blank', 'noopener,noreferrer'); return; }
     try { if (window.__mywayMarkLeave) window.__mywayMarkLeave(); } catch(_) {}
     try { (window.top || window).location.href = a.href; }
     catch(_) { window.open(a.href, '_blank'); }
   }, true);
   function isNewWinUrl(u){ return /^https?:\/\/onair\.imbc\.com\/MbicPlay/i.test(String(u || '')); }
+  var IOS_NOT_CHROME = /iPhone|iPod/i.test(navigator.userAgent) && !/CriOS|FxiOS|EdgiOS|KAKAOTALK|NAVER\(|Whale|DaumApps|Instagram|FBAN|FBAV|Line\//i.test(navigator.userAgent);
+  function isChromeHandoffUrl(u){ return IOS_NOT_CHROME && /^https:\/\/onair\.imbc\.com\/MbicPlay\?channelid=183(&|$)/i.test(String(u || '')); }
+  function goChrome(u){ var c = String(u).replace(/^https:\/\//i, 'googlechromes://'); try { (window.top || window).location.href = c; } catch(_) { location.href = c; } }
   var _open = window.open.bind(window);
   window.open = function(url, name, feat){
+    if(url && isChromeHandoffUrl(url)){ goChrome(url); return null; }
     if(url && isNewWinUrl(url)) return _open(url, '_blank', 'noopener,noreferrer');
     if(url){ try { if (window.__mywayMarkLeave) window.__mywayMarkLeave(); } catch(_) {} try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
     return _open(url, name, feat);
