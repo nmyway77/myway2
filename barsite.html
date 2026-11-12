@@ -3329,11 +3329,8 @@
     if(!href || href.charAt(0) === '#' || /^javascript:/i.test(href)) return;
     e.preventDefault();
     /* MBC 엠빅라이브: 같은 창으로 넘어가면 핸드폰에서 재생이 안 되고, 새 창으로 띄우면 재생됨 → 새 창 */
-    if (a.getAttribute('data-mw-pass')) return;   /* 아래 goSameTabNoRef가 만든 링크는 그대로 통과 */
     /* 아이폰 사파리(홈 화면 아이콘 포함)에서는 MBC 엠빅라이브가 검게 나와서 크롬 앱으로 넘김 */
     if (isChromeHandoffUrl(a.href)) { e.stopPropagation(); goChrome(a.href); return; }
-    /* 아이폰 크롬: MBC를 같은 탭에서 열어 뒤로 가기로 myway.kr에 돌아오게 함 */
-    if (IOS_CHROME && isNewWinUrl(a.href)) { e.stopPropagation(); try { if (window.__mywayMarkLeave) window.__mywayMarkLeave(); } catch(_) {} goSameTabNoRef(a.href); return; }
     if (isNewWinUrl(a.href)) { e.stopPropagation(); _open(a.href, '_blank', 'noopener,noreferrer'); return; }
     try { if (window.__mywayMarkLeave) window.__mywayMarkLeave(); } catch(_) {}
     try { (window.top || window).location.href = a.href; }
@@ -3342,17 +3339,8 @@
   function isNewWinUrl(u){ return /^https?:\/\/onair\.imbc\.com\/MbicPlay/i.test(String(u || '')); }
   var IOS_NOT_CHROME = /iPhone|iPod/i.test(navigator.userAgent) && !/CriOS|FxiOS|EdgiOS|KAKAOTALK|NAVER\(|Whale|DaumApps|Instagram|FBAN|FBAV|Line\//i.test(navigator.userAgent);
   function isChromeHandoffUrl(u){ return IOS_NOT_CHROME && /^https:\/\/onair\.imbc\.com\/MbicPlay/i.test(String(u || '')); }
-  var IOS_CHROME = /iPhone|iPod/i.test(navigator.userAgent) && /CriOS/i.test(navigator.userAgent);
-  /* 넘어온 곳 정보 없이 같은 탭에서 열기 (주소를 직접 입력한 것과 같은 조건) */
-  function goSameTabNoRef(u){
-    var l = document.createElement('a'); l.href = u; l.rel = 'noreferrer'; l.target = '_top'; l.setAttribute('data-mw-pass', '1'); l.style.display = 'none';
-    document.body.appendChild(l); l.click(); setTimeout(function(){ l.remove(); }, 0);
-  }
-  /* 크롬으로 넘길 때는 MBC 주소가 아니라 myway.kr의 이 탭 화면을 크롬에서 엶 → 거기서 카드를 누르면 뒤로 가기로 돌아올 수 있음 */
   function goChrome(u){
-    var m = String(u).match(/[?&]channelid=(\d+)/);
-    var t = document.body.getAttribute('data-active-tab'); if (!t || t === 'onair' || !/^[a-z0-9]+$/i.test(t)) t = 'dramavod';
-    var c = 'googlechromes://myway.kr/barsite.html?tab=' + t + (m ? '&mbc=' + m[1] : '');
+    var c = String(u).replace(/^https:\/\//i, 'googlechromes://');
     try { (window.top || window).location.href = c; } catch(_) { location.href = c; }
     /* 크롬 앱이 없는 폰: 잠시 뒤에도 이 화면이 그대로면 '사파리로 열기' 안내를 띄움 (자동으로 넘기지 않고, 눌러야 열림) */
     setTimeout(function(){ if (!document.hidden) showSafariFallback(u); }, 2500);
@@ -3383,7 +3371,6 @@
   var _open = window.open.bind(window);
   window.open = function(url, name, feat){
     if(url && isChromeHandoffUrl(url)){ goChrome(url); return null; }
-    if(url && IOS_CHROME && isNewWinUrl(url)){ try { if (window.__mywayMarkLeave) window.__mywayMarkLeave(); } catch(_) {} goSameTabNoRef(url); return null; }
     if(url && isNewWinUrl(url)) return _open(url, '_blank', 'noopener,noreferrer');
     if(url){ try { if (window.__mywayMarkLeave) window.__mywayMarkLeave(); } catch(_) {} try{ (window.top||window).location.href = url; }catch(_){ location.href = url; } return null; }
     return _open(url, name, feat);
@@ -3693,30 +3680,9 @@
       try { if (onair && onair !== 'tv2' && pageOf(onair) && !sessionStorage.getItem(RET_KEY)) markReturn(onair, null); } catch(e){}
     });
     var ret = takeReturn();
-    /* 주소에 ?tab=탭id(&mbc=채널번호)가 있으면 그 탭을 바로 열고 해당 MBC 카드를 표시 — 사파리에서 크롬으로 넘어왔을 때 사용 */
-    var qTab = '', qMbc = '';
-    try { var qp = new URLSearchParams(location.search); qTab = qp.get('tab') || ''; qMbc = qp.get('mbc') || ''; } catch(e){}
-    if (!/^[a-z0-9]+$/i.test(qTab) || !document.querySelector('#tabNav .tab-btn[data-tab="' + qTab + '"]')) qTab = '';
-    if (!/^\d+$/.test(qMbc)) qMbc = '';
-    function pointMbcCard(id){
-      var card = null;
-      Array.prototype.forEach.call(document.querySelectorAll('.masonry.photo-tab a.gcard'), function(c){ if (!card && new RegExp('[?&]channelid=' + id + '$').test(c.getAttribute('href') || '')) card = c; });
-      if (!card) return;
-      try { card.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch(e){}
-      card.style.outline = '3px solid #7d6fe8'; card.style.outlineOffset = '3px';
-      var note = document.createElement('div');
-      note.textContent = '크롬으로 열렸어요. 표시된 카드를 한 번 더 눌러 주세요.';
-      note.style.cssText = 'position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:99999;max-width:92vw;padding:11px 15px;border-radius:999px;background:rgba(25,27,45,.94);color:#fff;font-size:13.5px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.3);text-align:center;';
-      document.body.appendChild(note);
-      setTimeout(function(){ if (note.parentNode) note.remove(); card.style.outline = ''; card.style.outlineOffset = ''; }, 7000);
-    }
     if (ret && ret.tab && typeof selectTab === 'function') {
       selectTab(ret.tab);
       var y = +ret.y || 0; if (y) { [60, 400, 1000].forEach(function(ms){ setTimeout(function(){ try { window.scrollTo(0, y); } catch(e){} }, ms); }); }
-    }
-    else if (!ret && qTab && typeof selectTab === 'function') {
-      selectTab(qTab);
-      if (qMbc) setTimeout(function(){ pointMbcCard(qMbc); }, 500);
     }
     else if (ret && ret.k && ret.k !== 'tv') openOnair(ret.k, ret.i); else openOnair('tv2');
     list();
