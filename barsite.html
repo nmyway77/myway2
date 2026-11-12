@@ -3572,6 +3572,9 @@
       });
       var sep = document.createElement('span'); sep.className = 'tvr-sep'; frag.appendChild(sep);
       nav.insertBefore(frag, nav.firstChild);
+      /* 드라마VOD 탭은 🎭 웹드라마 바로 왼쪽에 배치 */
+      var dv = nav.querySelector('.tab-btn[data-tab="dramavod"]'), wd = nav.querySelector('.tvr-tab[data-tab="onair_webdrama"]');
+      if (dv && wd) nav.insertBefore(dv, wd);
       if (onair) Array.prototype.forEach.call(nav.querySelectorAll('.tab-btn:not(.tvr-tab)'), function(b){ b.classList.toggle('is-active', !!TAB_PAGES[onair] && b.getAttribute('data-tab') === onair); });
     }
     /* 모바일: 누른 탭 버튼을 탭바 가운데로 가로 스크롤 → 양옆 다음 탭이 보이게 */
