@@ -3347,12 +3347,9 @@
     var l = document.createElement('a'); l.href = u; l.rel = 'noreferrer'; l.target = '_top'; l.setAttribute('data-mw-pass', '1'); l.style.display = 'none';
     document.body.appendChild(l); l.click(); setTimeout(function(){ l.remove(); }, 0);
   }
-  window.__mywayGoNoRef = goSameTabNoRef;
-  /* 크롬으로 넘길 때는 MBC 주소가 아니라 myway.kr의 이 탭 화면을 크롬에서 열고, 그 화면이 바로 MBC로 이어서 넘어감 → 크롬의 뒤로 가기로 myway.kr에 돌아올 수 있음 */
+  /* 아이폰 사파리 → 크롬 앱으로 MBC 페이지를 바로 엶 (돌아올 때는 화면 왼쪽 위의 ◀ Safari 표시 사용) */
   function goChrome(u){
-    var m = String(u).match(/[?&]channelid=(\d+)/);
-    var t = document.body.getAttribute('data-active-tab'); if (!t || t === 'onair' || !/^[a-z0-9]+$/i.test(t)) t = 'dramavod';
-    var c = 'googlechromes://myway.kr/barsite.html?tab=' + t + (m ? '&go=' + m[1] : '');
+    var c = String(u).replace(/^https:\/\//i, 'googlechromes://');
     try { (window.top || window).location.href = c; } catch(_) { location.href = c; }
     /* 크롬 앱이 없는 폰: 잠시 뒤에도 이 화면이 그대로면 '사파리로 열기' 안내를 띄움 (자동으로 넘기지 않고, 눌러야 열림) */
     setTimeout(function(){ if (!document.hidden) showSafariFallback(u); }, 2500);
@@ -3693,26 +3690,16 @@
       try { if (onair && onair !== 'tv2' && pageOf(onair) && !sessionStorage.getItem(RET_KEY)) markReturn(onair, null); } catch(e){}
     });
     var ret = takeReturn();
-    /* 주소에 ?tab=탭id(&go=MBC채널번호)가 있으면 그 탭을 열고, go가 있으면 이어서 MBC로 넘어감 — 사파리에서 크롬으로 넘어왔을 때 사용.
-       넘어가기 전에 주소에서 go를 지워 두므로, 뒤로 가기로 돌아왔을 때 다시 넘어가지 않음 */
-    var qTab = '', qGo = '';
-    try { var qp = new URLSearchParams(location.search); qTab = qp.get('tab') || ''; qGo = qp.get('go') || ''; } catch(e){}
+    /* 주소에 ?tab=탭id가 있으면 그 탭을 바로 엶 */
+    var qTab = '';
+    try { qTab = new URLSearchParams(location.search).get('tab') || ''; } catch(e){}
     if (!/^[a-z0-9]+$/i.test(qTab) || !document.querySelector('#tabNav .tab-btn[data-tab="' + qTab + '"]')) qTab = '';
-    if (!/^\d{1,6}$/.test(qGo)) qGo = '';
     if (ret && ret.tab && typeof selectTab === 'function') {
       selectTab(ret.tab);
       var y = +ret.y || 0; if (y) { [60, 400, 1000].forEach(function(ms){ setTimeout(function(){ try { window.scrollTo(0, y); } catch(e){} }, ms); }); }
     }
     else if (!ret && qTab && typeof selectTab === 'function') {
       selectTab(qTab);
-      if (qGo) {
-        try { history.replaceState(null, '', location.pathname + '?tab=' + qTab); } catch(e){}
-        setTimeout(function(){
-          var u = 'https://onair.imbc.com/MbicPlay?channelid=' + qGo;
-          try { if (window.__mywayMarkLeave) window.__mywayMarkLeave(); } catch(e){}
-          if (typeof window.__mywayGoNoRef === 'function') window.__mywayGoNoRef(u); else location.href = u;
-        }, 250);
-      }
     }
     else if (ret && ret.k && ret.k !== 'tv') openOnair(ret.k, ret.i); else openOnair('tv2');
     list();
