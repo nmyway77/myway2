@@ -581,9 +581,10 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     $('queue').innerHTML = '<div class="qhead">' + esc(p.n) + ' · ' + trackIds.length + '곡' + (trackIds.length >= 200 ? ' (앞의 200곡까지 표시)' : '') + '</div>' +
       trackIds.map(function(id, n){
         var tt = titles[id];
-        return '<button type="button" class="q'+(n===cur?' on':'')+'" data-t="'+n+'" data-v="'+esc(id)+'"><span class="no">'+(n+1)+'</span><div class="eq"><i></i><i></i><i></i></div>'+
+        var got = mineHas(id);
+        return '<button type="button" class="q'+(n===cur?' on':'')+(got?' got':'')+'" data-t="'+n+'" data-v="'+esc(id)+'"><span class="no">'+(n+1)+'</span><div class="eq"><i></i><i></i><i></i></div>'+
                '<div class="cv th" style="--c1:#1c1e2b;--c2:#1c1e2b"><img loading="lazy" decoding="async" alt="" src="https://i.ytimg.com/vi/'+encodeURIComponent(id)+'/mqdefault.jpg" onerror="this.remove()"></div>'+
-               '<div class="t"><b'+(tt?'':' class="wait"')+'>'+esc(tt || ('곡 ' + (n+1)))+'</b></div></button>';
+               '<div class="t"><b'+(tt?'':' class="wait"')+'>'+esc(tt || ('곡 ' + (n+1)))+'</b></div><em class="padd" data-tadd="'+esc(id)+'" title="나만의 리스트에 담기 / 빼기">'+(got?'✓ 담김':'★ 담기')+'</em></button>';
       }).join('');
     var on = $('queue').querySelector('.q.on'); if (on) $('queue').scrollTop = Math.max(0, on.offsetTop - 120);
     if ('IntersectionObserver' in window){
@@ -1214,6 +1215,14 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
 
   /* ── 이벤트 ── */
   document.addEventListener('click', function(e){
+    var ta = e.target.closest('[data-tadd]');
+    if (ta){   /* 가수 곡 목록에서 바로 나만의 리스트에 담기 / 빼기 (재생은 바뀌지 않음) */
+      var tid = ta.dataset.tadd, row = ta.closest('.q');
+      if (mineHas(tid)){ var tn = -1; cardItems(myList).forEach(function(t, j){ if (t.id === tid) tn = j; }); if (tn >= 0) mineRemoveAt(tn); }
+      else mineAdd(tid, titles[tid] || '');
+      var g = mineHas(tid); if (row) row.classList.toggle('got', g); ta.textContent = g ? '✓ 담김' : '★ 담기';
+      return;
+    }
     var tr = e.target.closest('.q[data-t]');
     if (tr){ if (ready) try { if (trackIds.length > 1) player.playVideoAt(+tr.dataset.t); else player.playVideo(); } catch(err){} return; }
     if (e.target.id === 'cardModal'){ closeEdit(); return; }
