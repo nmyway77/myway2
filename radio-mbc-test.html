@@ -76,21 +76,25 @@ function play(i){
   var same = (i === cur); stopAll(); if (same) return;
   cur = i; var my = seq, c = CH[i];
   card(i).classList.add('on'); setSt(i, '주소 받는 중…');
-  log('── MBC ' + c[0] + ' ──\n① MBC 서버에 주소 요청');
-  fetch(API + c[1], { cache: 'no-store' }).then(function(r){
-    if (!r.ok) throw new Error('응답 ' + r.status);
-    return r.text();
-  }).then(function(t){
-    t = String(t || '').trim();
-    var m = t.match(/https?:\/\/[^\s"'<>]+/);
-    if (!m) { throw new Error('주소 없음: ' + t.slice(0, 60)); }
-    log('① 주소 받음');
-    startStream(i, m[0].replace(/^http:/, 'https:'), my);
-  }).catch(function(e){
-    if (my !== seq) return;
-    setSt(i, '✕ 주소를 못 받음', 'bad');
-    log('① 주소 요청 실패: ' + (e && (e.message || e.name)) + '\n   (MBC 서버가 마이웨이에서 온 요청을 막은 경우 이렇게 나와요)');
-  });
+  log('── MBC ' + c[0] + ' ──\n① MBC 서버에 주소 요청 (2차 방식)');
+  /* 2차 방식: 주소를 '스크립트 불러오기'(JSONP)로 받음 — 일반 요청이 막혀도 이 방식은 통하는 경우가 있음 */
+  var cb = '__mbc' + Date.now() + '_' + i, done = false;
+  var sc = document.createElement('script');
+  function clean(){ try { delete window[cb]; } catch(e){ window[cb] = undefined; } if (sc.parentNode) sc.parentNode.removeChild(sc); }
+  window[cb] = function(d){
+    done = true; clean(); if (my !== seq) return;
+    var u = '';
+    if (typeof d === 'string') u = d;
+    else if (d && typeof d === 'object') { u = d.AACLiveURL || d.aacLiveURL || d.url || d.URL || ''; if (!u) { try { u = (JSON.stringify(d).match(/https?:[^"\\s]+m3u8[^"\\s]*/) || [''])[0]; } catch(e){} } }
+    u = String(u || '').replace(/\\\//g, '/').trim();
+    if (!/^https?:\/\//.test(u)) { setSt(i, '✕ 주소를 못 받음', 'bad'); var keys = ''; try { keys = Object.keys(d || {}).join(','); } catch(e){} log('① 응답은 왔지만 주소가 없음 (항목: ' + keys + ')'); return; }
+    log('① 주소 받음 (2차 방식)');
+    startStream(i, u.replace(/^http:/, 'https:'), my);
+  };
+  sc.onerror = function(){ if (done) return; clean(); if (my !== seq) return; setSt(i, '✕ 주소를 못 받음', 'bad'); log('① 주소 요청 실패 (2차 방식도 막힘)'); };
+  sc.src = 'https://sminiplay.imbc.com/aacplay.ashx?channel=' + c[1] + '&protocol=M3U8&agent=webapp&callback=' + cb + '&_=' + Date.now();
+  document.head.appendChild(sc);
+  setTimeout(function(){ if (!done && my === seq && window[cb]) { clean(); setSt(i, '✕ 주소를 못 받음', 'bad'); log('① 10초 동안 응답 없음 (2차 방식)'); } }, 10000);
 }
 au.addEventListener('playing', function(){ if (cur >= 0){ setSt(cur, '♪ 재생 중 — 소리가 들리면 OK', 'ok'); log('③ 재생 중'); } });
 au.addEventListener('error', function(){ if (cur >= 0){ setSt(cur, '✕ 재생 실패', 'bad'); log('③ 재생 실패(오디오 오류 ' + ((au.error || {}).code || '?') + ')'); } });
