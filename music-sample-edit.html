@@ -273,6 +273,33 @@
   @media (max-height:760px){ body.playing-view .top{display:none;} }
   .embedded .homebtn,.embedded .tag,.embedded .foot{display:none;}
   @media (prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important;} }
+
+  /* 검색창을 더 잘 보이게 + 나만의 리스트 버튼 */
+  .find{height:44px;background:rgba(255,255,255,.11);border:1.5px solid rgba(255,255,255,.36);box-shadow:0 0 0 3px rgba(125,111,232,.14);}
+  .find:focus-within{border-color:var(--a1);background:rgba(255,255,255,.15);}
+  .find svg{stroke:var(--ink);}
+  .find input::placeholder{color:#bfc3da;}
+  .mine-btn{flex:none;height:44px;padding:0 16px;border-radius:12px;display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:700;color:#fff;white-space:nowrap;
+            background:linear-gradient(135deg,var(--a2),var(--a3));box-shadow:0 6px 18px rgba(125,111,232,.38);}
+  .mine-btn i{font-style:normal;color:#ffe27a;}
+  .mine-btn .n{font-weight:600;font-size:12.5px;opacity:.88;}
+  body.mine-mode .qadd{display:flex !important;}
+  body.mine-mode .q .mdel{display:inline-block !important;}
+  .pick{border-bottom:1px solid rgba(255,255,255,.08);background:rgba(125,111,232,.08);}
+  .pick:empty{display:none;}
+  .pick-h{display:flex;align-items:center;gap:8px;padding:9px 14px;font-size:12.5px;line-height:1.5;color:var(--sub);}
+  .pick-h b{color:var(--ink);font-size:13.5px;}
+  .pick-h .sp{flex:1;}
+  .pick-h button{flex:none;height:28px;padding:0 11px;border-radius:8px;border:1px solid var(--line);font-size:12px;color:var(--sub);}
+  .pick .sgs{padding:2px 6px 4px;}
+  .pick .sg{display:inline-flex;align-items:center;margin:0 0 8px 8px;height:34px;padding:0 13px;border-radius:999px;background:var(--bg3);border:1px solid var(--line);font-size:13.5px;font-weight:600;color:var(--ink);}
+  .pick .sg:hover{border-color:var(--a1);}
+  .pick-list{max-height:min(46vh,340px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#3a3d52 transparent;}
+  .q[data-add]{cursor:pointer;}
+  .q .padd{flex:none;display:inline-flex;align-items:center;justify-content:center;min-width:62px;height:30px;margin:0;padding:0 10px;border-radius:999px;font-style:normal;font-size:12.5px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--a2),var(--a3));}
+  .q.got .padd{background:none;border:1px solid var(--line);color:var(--a1);}
+  .stage-empty{display:flex;align-items:center;justify-content:center;width:100%;height:100%;min-height:170px;padding:20px;text-align:center;color:var(--sub);font-size:14px;line-height:1.7;}
+  @media (max-width:640px){ .find{height:42px;} .mine-btn{height:42px;padding:0 12px;font-size:13px;gap:5px;} }
 </style>
 </head>
 <body>
@@ -281,6 +308,7 @@
   <header class="top">
     <label class="find"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
       <input id="find" type="search" placeholder="가수 찾기 · 검색하면 더 나와요" autocomplete="off" aria-label="가수 찾기"></label>
+    <button type="button" class="mine-btn" id="mineBtn" title="내가 고른 곡만 모아 듣기"><i>★</i>나만의 리스트<span class="n" id="mineN"></span></button>
     <span class="sp"></span>
   </header>
 
@@ -414,14 +442,24 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   function pool(){
     var q = query.trim().toLowerCase();
     return SG.filter(function(p){
-      if (p.h && !q) return false;   /* h:1 = 검색할 때만 나오는 가수 (화면 목록에는 안 보임) */
+      if (p.h && !q && curCat === 'all') return false;   /* h:1 = 첫 화면(전체)에는 안 보이는 가수 — 검색하거나 장르를 누르면 나옴 */
       if (curCat !== 'all' && (p.c || []).indexOf(curCat) < 0) return false;
       return !q || (p.n || '').toLowerCase().indexOf(q) >= 0;
     });
   }
+  /* 누른 분류를 줄 가운데로 부드럽게 좌우 이동 → 양옆 분류가 보임 */
+  function chipCenter(){
+    requestAnimationFrame(function(){
+      var row = $('chips'), on = row.querySelector('.chip.on'); if (!on) return;
+      var r = row.getBoundingClientRect(), o = on.getBoundingClientRect();
+      var left = row.scrollLeft + (o.left - r.left) - (r.width - o.width) / 2;
+      left = Math.max(0, Math.min(left, row.scrollWidth - row.clientWidth));
+      try { row.scrollTo({ left: left, behavior: 'smooth' }); } catch(e){ row.scrollLeft = left; }
+    });
+  }
   function renderChips(){
     $('chips').innerHTML = CATS.map(function(c){
-      var n = c[0] === 'all' ? SG.filter(function(p){ return !p.h; }).length : SG.filter(function(p){ return !p.h && (p.c || []).indexOf(c[0]) >= 0; }).length;
+      var n = c[0] === 'all' ? SG.length : SG.filter(function(p){ return (p.c || []).indexOf(c[0]) >= 0; }).length;
       return '<button type="button" class="chip'+(c[0]===curCat?' on':'')+'" data-c="'+c[0]+'">'+esc(c[1])+'<span class="n">'+n+'</span></button>';
     }).join('');
   }
@@ -442,7 +480,8 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     var list = pool(), searching = !!query.trim();
     $('secMoods').style.display = (searching || curCat !== 'all') ? 'none' : '';   /* 음악 사이트 줄: 전체 화면에서만 */
     $('gridEyebrow').textContent = searching ? '"' + query.trim() + '" 검색 결과' : (curCat === 'all' ? '전체' : CAT_NAME[curCat]);
-    $('gridCount').textContent = list.length + '명';
+    var hidN = SG.filter(function(p){ return p.h; }).length;
+    $('gridCount').textContent = list.length + '명' + (!searching && curCat === 'all' && hidN ? ' · 검색하거나 장르를 누르면 ' + hidN + '명 더' : '');
     $('grid').innerHTML = list.length ? list.map(function(p){
       return '<button type="button" class="card" data-i="'+p._i+'"><div class="cv" '+cover(p)+'<div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><b>'+esc(p.n)+'</b><span>'+esc(catLabel(p))+'</span></button>';
     }).join('') : '<div class="empty" style="grid-column:1/-1">찾는 가수가 없어요. 다른 이름으로 찾아 보세요.</div>';
@@ -642,7 +681,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     if (c.tracks) return c.tracks.map(function(t){ return { id: vid(t.url), name: t.name }; }).filter(function(x){ return x.id; });
     var v = vid(c.url); return v ? [{ id: v, name: '' }] : [];
   }
-  function firstVid(c){ return c.tracks ? vid(c.tracks[0].url) : vid(c.url); }
+  function firstVid(c){ return c.tracks ? (c.tracks[0] ? vid(c.tracks[0].url) : '') : vid(c.url); }
   function cardTitle(c){ var m = meta[cardKey(c)] || {}; return c.name || m.t || ((c.tracks && c.tracks[0].name) || '') || titles[firstVid(c)] || ''; }
   function cardThumb(c){ var v = firstVid(c), m = meta[cardKey(c)] || {}; return c.img || (v ? 'https://i.ytimg.com/vi/' + v + '/mqdefault.jpg' : (m.th || '')); }
   function wwwUrl(u){ return String(u || '').replace(/\/\/music\.youtube\.com\//, '//www.youtube.com/'); }
@@ -690,6 +729,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   }
   function playCard(i){
     var c = cards[i]; if (!c) return;
+    document.body.classList.remove('mine-mode');
     if (isList(c)){ setMy(c); play(MY_IDX); renderShelf(); shelfCenter(); return; }
     if (!cardItems(c).length){ openEdit(i); return; }
     setMy(c); man = { card: c, cur: 0, err: 0 }; curIdx = MY_IDX; pendingDone = false; trackIds = [];
@@ -713,26 +753,39 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   }
   function manMark(){ Array.prototype.forEach.call($('queue').querySelectorAll('.q[data-m]'), function(el){ el.classList.toggle('on', +el.dataset.m === man.cur); }); }
   function renderMan(keepScroll){
-    var c = man.card, items = cardItems(c), q = $('queue'), top = q.scrollTop;
-    q.innerHTML = '<div class="qadd"><input id="manUrl" type="text" inputmode="url" autocomplete="off" placeholder="유튜브 주소를 붙여 넣어 이 목록에 곡 추가" aria-label="추가할 유튜브 주소"><button type="button" class="btn-a" id="manAddBtn">추가</button></div>' +
-      '<div class="qhead" id="manHead">' + esc(cardTitle(c) || '내 음악') + ' · ' + items.length + '곡</div>' +
+    var c = man.card, items = cardItems(c), q = $('queue'), top = q.scrollTop, mine = c === myList;
+    var keepPick = mine ? $('pickBox') : null, keepVal = (mine && $('manUrl')) ? $('manUrl').value : '';
+    q.innerHTML = (mine
+        ? '<div class="qadd"><input id="manUrl" type="text" autocomplete="off" placeholder="가수 이름으로 곡 찾기 (유튜브 주소도 가능)" aria-label="가수 이름 또는 유튜브 주소"><button type="button" class="btn-a" id="manAddBtn">찾기</button></div><div class="pick" id="pickBox"></div>'
+        : '<div class="qadd"><input id="manUrl" type="text" inputmode="url" autocomplete="off" placeholder="유튜브 주소를 붙여 넣어 이 목록에 곡 추가" aria-label="추가할 유튜브 주소"><button type="button" class="btn-a" id="manAddBtn">추가</button></div>') +
+      '<div class="qhead" id="manHead">' + esc(mine ? '나만의 리스트' : (cardTitle(c) || '내 음악')) + ' · ' + items.length + '곡</div>' +
+      (mine && !items.length ? '<div class="qnote">아직 담은 곡이 없어요.<br>위 칸에 가수 이름을 넣고 [찾기]를 누른 뒤, 나오는 곡을 눌러 담아 보세요.</div>' : '') +
       items.map(function(t, n){
         var tt = t.name || titles[t.id];
         return '<div class="q'+(n===man.cur?' on':'')+'" data-m="'+n+'" data-v="'+esc(t.id)+'" role="button" tabindex="0"><span class="no">'+(n+1)+'</span><div class="eq"><i></i><i></i><i></i></div>'+
                '<div class="cv th" style="--c1:#1c1e2b;--c2:#1c1e2b"><img loading="lazy" decoding="async" alt="" src="https://i.ytimg.com/vi/'+encodeURIComponent(t.id)+'/mqdefault.jpg" onerror="this.remove()"></div>'+
                '<div class="t"><b'+(tt?'':' class="wait"')+'>'+esc(tt || ('곡 ' + (n+1)))+'</b></div><button type="button" class="mdel" data-mdel="'+n+'" title="이 곡 빼기" aria-label="이 곡 빼기">×</button></div>';
       }).join('');
+    if (mine){ if (keepPick && $('pickBox')) $('pickBox').parentNode.replaceChild(keepPick, $('pickBox')); $('manUrl').value = keepVal; }
     if (keepScroll === 'end') q.scrollTop = q.scrollHeight; else if (keepScroll) q.scrollTop = top;
     else { var on = q.querySelector('.q.on'); if (on) q.scrollTop = Math.max(0, on.offsetTop - 160); }
     if ('IntersectionObserver' in window){
       io = new IntersectionObserver(function(ents){ ents.forEach(function(en){ if (en.isIntersecting){ io.unobserve(en.target); askTitle(en.target.dataset.v); } }); }, { root: q, rootMargin: '200px 0px' });
-      Array.prototype.forEach.call(q.querySelectorAll('.q[data-v]'), function(el){ if (!el.querySelector('b.wait')) return; io.observe(el); });
+      Array.prototype.forEach.call(q.querySelectorAll('.q[data-m][data-v]'), function(el){ if (!el.querySelector('b.wait')) return; io.observe(el); });
     }
   }
   function ensureTracks(c){ if (!c.tracks){ c.tracks = vid(c.url) ? [{ name:'', url:c.url }] : []; c.url = ''; } }
   function allVids(text){ var out = [], re = /(?:youtu\.be\/|[?&]v=|\/(?:shorts|embed|live|v)\/)([\w-]{11})(?![\w-])/g, m; while ((m = re.exec(text))) if (out.indexOf(m[1]) < 0) out.push(m[1]); return out; }
   function manAdd(){
-    if (!man || !M2_EDIT) return; var inp = $('manUrl'), text = inp.value, ids = allVids(text), c = man.card;
+    if (!man) return;
+    if (isMine()){   /* 나만의 리스트: 유튜브 주소면 바로 담고, 아니면 가수 이름으로 곡 찾기 */
+      var mi = $('manUrl'), mt = mi.value, mids = allVids(mt);
+      if (!mids.length){ pickSearch(mt, false); return; }
+      mi.value = ''; var added = 0; mids.forEach(function(id){ if (mineAdd(id, '')) added++; });
+      if ($('manHead')) $('manHead').textContent = added ? added + '곡을 담았어요. (모두 ' + myList.tracks.length + '곡)' : '이미 담긴 곡이에요.';
+      pickMark(); return;
+    }
+    if (!M2_EDIT) return; var inp = $('manUrl'), text = inp.value, ids = allVids(text), c = man.card;
     function say(t){ $('manHead').textContent = t; }
     if (!text.trim()){ say('유튜브 주소를 먼저 붙여 넣어 주세요.'); inp.focus(); return; }
     if (!ids.length){ say(lst(text) ? '재생목록 주소는 여기에 넣을 수 없어요. 곡(영상) 주소를 넣어 주세요.' : '유튜브 영상 주소가 아니에요.'); return; }
@@ -745,7 +798,9 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     say(ok ? fresh.length + '곡을 추가했어요. (모두 ' + c.tracks.length + '곡)' : '추가는 됐지만 이 브라우저에 보관하지 못했어요.');
   }
   function manDel(n){
-    if (!man || !M2_EDIT) return; var c = man.card, items = cardItems(c), t = items[n]; if (!t) return;
+    if (!man) return;
+    if (isMine()){ mineRemoveAt(n); return; }
+    if (!M2_EDIT) return; var c = man.card, items = cardItems(c), t = items[n]; if (!t) return;
     if (!window.confirm('"' + (t.name || titles[t.id] || '이 곡') + '"\n이 목록에서 뺄까요?')) return;
     var oldKey = cardKey(c); ensureTracks(c);
     var k = -1, seen = -1; c.tracks.forEach(function(x, j){ if (vid(x.url)){ seen++; if (seen === n) k = j; } }); if (k < 0) return;
@@ -755,6 +810,129 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     if (n === man.cur){ manPlay(Math.min(n, c.tracks.length - 1), true); }
     else { if (n < man.cur) man.cur--; renderMan(true); }
     renderShelf();
+  }
+
+  /* ── 나만의 리스트: 방문자 각자가 고른 곡 모음. 이 기기 브라우저에만 보관(파일·하단 카드와 별개) ──
+     가수 이름으로 찾기 → 그 가수 재생목록의 곡들이 나옴 → 곡을 한 번 누르면 담김 */
+  var MINE_KEY = 'mywayMusicMyListV1', myList = { url:'', img:'', name:'나만의 리스트', tracks:[] };
+  try { var ml0 = JSON.parse(localStorage.getItem(MINE_KEY) || 'null'); if (ml0 && Array.isArray(ml0.tracks)) myList.tracks = ml0.tracks.map(function(x){ return { name:String((x && x.name) || ''), url:String((x && x.url) || '') }; }).filter(function(x){ return vid(x.url); }); } catch(e){}
+  function isMine(){ return !!(man && man.card === myList); }
+  function mineSave(){ try { localStorage.setItem(MINE_KEY, JSON.stringify({ tracks: myList.tracks })); return true; } catch(e){ return false; } }
+  function mineCount(){ var n = myList.tracks.length, el = $('mineN'); if (el) el.textContent = n ? n + '곡' : ''; }
+  function mineHas(id){ return myList.tracks.some(function(t){ return vid(t.url) === id; }); }
+  function mineSub(){ $('metaSub').textContent = '내가 고른 곡 · ' + myList.tracks.length + '곡'; }
+  function mineEmptyStage(){
+    loadSeq++; if (player){ try { player.destroy(); } catch(e){} } player = null; ready = false;
+    document.body.classList.remove('is-playing');
+    $('stage').innerHTML = '<div class="stage-empty">아직 담은 곡이 없어요.<br>아래에서 가수를 찾아 곡을 누르면 여기에 담깁니다.</div>';
+  }
+  function openMine(){
+    document.body.classList.add('mine-mode');
+    setMy(myList); MYP.n = '나만의 리스트';
+    man = { card: myList, cur: 0, err: 0 }; curIdx = MY_IDX; pendingDone = false; trackIds = [];
+    document.body.classList.add('my-mode'); tracksTab();
+    $('glow').style.setProperty('--g1', COL.all[0]); $('glow').style.setProperty('--g2', COL.all[1]);
+    $('metaCv').outerHTML = '<div class="cv" id="metaCv" ' + cardCover(myList) + '</div>';
+    $('metaName').textContent = '나만의 리스트'; mineSub();
+    openNow(); renderShelf();
+    if (myList.tracks.length) manPlay(0, true); else { mineEmptyStage(); renderQueue(); }
+  }
+  function mineAdd(id, name){
+    if (!id || mineHas(id)) return false;
+    var was = myList.tracks.length;
+    myList.tracks.push({ name: name || titles[id] || '', url: 'https://www.youtube.com/watch?v=' + id });
+    mineSave(); mineCount();
+    if (isMine()){ mineSub(); if (!was) manPlay(0, true); else renderMan(true); }
+    return true;
+  }
+  function mineRemoveAt(n){
+    var items = cardItems(myList); if (!items[n]) return;
+    var k = -1, seen = -1; myList.tracks.forEach(function(x, j){ if (vid(x.url)){ seen++; if (seen === n) k = j; } }); if (k < 0) return;
+    myList.tracks.splice(k, 1); mineSave(); mineCount();
+    if (!isMine()) return;
+    mineSub();
+    if (!myList.tracks.length){ man.cur = 0; mineEmptyStage(); renderMan(true); }
+    else if (n === man.cur) manPlay(Math.min(n, myList.tracks.length - 1), true);
+    else { if (n < man.cur) man.cur--; renderMan(true); }
+    pickMark();
+  }
+  /* 곡 찾기 상자 */
+  var pio = null, pickSeq = 0;
+  function pickClose(){ var b = $('pickBox'); if (b) b.innerHTML = ''; pickSeq++; if (pio){ pio.disconnect(); pio = null; } }
+  function pickMark(){
+    var b = $('pickBox'); if (!b) return;
+    Array.prototype.forEach.call(b.querySelectorAll('.q[data-add]'), function(el){ var got = mineHas(el.dataset.add); el.classList.toggle('got', got); var m = el.querySelector('.padd'); if (m) m.textContent = got ? '✓ 담김' : '＋ 담기'; });
+  }
+  var CLOSE_BTN = '<span class="sp"></span><button type="button" data-pickclose>닫기</button>';
+  function pickSearch(text, live){
+    var b = $('pickBox'); if (!b) return; var q = String(text || '').trim().toLowerCase();
+    if (!q){ if (live) pickClose(); else b.innerHTML = '<div class="pick-h">가수 이름을 입력하면 그 가수의 곡을 골라 담을 수 있어요.' + CLOSE_BTN + '</div>'; return; }
+    pickSeq++;
+    var list = SG.filter(function(p){ return p.u && parse(p.u).list && (p.c || []).indexOf('ch') < 0 && (p.n || '').toLowerCase().indexOf(q) >= 0; }).slice(0, 24);
+    if (!list.length){ b.innerHTML = '<div class="pick-h">"' + esc(String(text).trim()) + '" 가수를 찾지 못했어요. 다른 이름으로 찾아 보세요.' + CLOSE_BTN + '</div>'; return; }
+    if (list.length === 1 && !live){ pickSinger(list[0]._i); return; }
+    b.innerHTML = '<div class="pick-h"><b>가수를 고르세요</b>' + CLOSE_BTN + '</div><div class="sgs">' + list.map(function(p){ return '<button type="button" class="sg" data-pick="' + p._i + '">' + esc(p.n) + '</button>'; }).join('') + '</div>';
+  }
+  function pickSinger(i){
+    var p = SG[i], b = $('pickBox'); if (!p || !b) return; var list = parse(p.u).list, seq = ++pickSeq;
+    b.innerHTML = '<div class="pick-h"><b>' + esc(p.n) + '</b> 곡을 불러오는 중…' + CLOSE_BTN + '</div>';
+    probeList(list, function(ids){
+      var box = $('pickBox'); if (seq !== pickSeq || !box) return;
+      if (!ids || !ids.length){ box.innerHTML = '<div class="pick-h"><b>' + esc(p.n) + '</b> 곡 목록을 불러오지 못했어요. 잠시 뒤 다시 눌러 보세요.' + CLOSE_BTN + '</div>'; return; }
+      box.innerHTML = '<div class="pick-h"><b>' + esc(p.n) + '</b> · ' + ids.length + '곡 — 곡을 누르면 바로 담겨요' + CLOSE_BTN + '</div><div class="pick-list" id="pickList">' +
+        ids.map(function(id){
+          var tt = titles[id], got = mineHas(id);
+          return '<div class="q' + (got ? ' got' : '') + '" data-add="' + esc(id) + '" data-v="' + esc(id) + '" role="button" tabindex="0">' +
+                 '<div class="cv th" style="--c1:#1c1e2b;--c2:#1c1e2b"><img loading="lazy" decoding="async" alt="" src="https://i.ytimg.com/vi/' + encodeURIComponent(id) + '/mqdefault.jpg" onerror="this.remove()"></div>' +
+                 '<div class="t"><b' + (tt ? '' : ' class="wait"') + '>' + esc(tt || '제목 불러오는 중…') + '</b></div><em class="padd">' + (got ? '✓ 담김' : '＋ 담기') + '</em></div>';
+        }).join('') + '</div>';
+      if ('IntersectionObserver' in window){
+        if (pio) pio.disconnect();
+        pio = new IntersectionObserver(function(ents){ ents.forEach(function(en){ if (en.isIntersecting){ pio.unobserve(en.target); askTitle(en.target.dataset.v); } }); }, { root: $('pickList'), rootMargin: '200px 0px' });
+        Array.prototype.forEach.call($('pickList').querySelectorAll('.q[data-v]'), function(el){ if (!titles[el.dataset.v]) pio.observe(el); });
+      }
+    });
+  }
+  function pickToggle(id){
+    if (mineHas(id)){ var n = -1; cardItems(myList).forEach(function(t, j){ if (t.id === id) n = j; }); if (n >= 0) mineRemoveAt(n); }
+    else mineAdd(id, titles[id] || '');
+    pickMark();
+  }
+  /* 가수 재생목록의 곡 id 받기: 화면 밖에 보조 플레이어를 잠깐 만들어 목록만 읽고 바로 없앰 (재생 중인 영상은 건드리지 않음).
+     보조 플레이어를 재사용해 목록만 바꾸면 이전 목록이 그대로 읽히는 문제가 있어 매번 새로 만듦 */
+  var probeHost = null, probeTok = 0, probeCache = {};
+  function probeList(list, cb){
+    if (probeCache[list]){ cb(probeCache[list]); return; }
+    var tok = ++probeTok;
+    if (!probeHost){
+      probeHost = document.createElement('div'); probeHost.setAttribute('aria-hidden', 'true');
+      probeHost.style.cssText = 'position:fixed;left:-9999px;top:0;width:320px;height:180px;opacity:0;pointer-events:none;';
+      document.body.appendChild(probeHost);
+    }
+    attachApi();
+    var tries = 0, pl = null, rdy = false, done = false;
+    function end(ids){
+      if (done) return; done = true;
+      try { if (pl) pl.destroy(); } catch(e){}
+      if (ids && ids.length) probeCache[list] = ids;
+      if (tok === probeTok) cb(ids || []);
+    }
+    (function wait(){
+      if (done) return;
+      if (tok !== probeTok){ end([]); return; }
+      if (!pl){
+        if (window.YT && YT.Player){
+          var d = document.createElement('div'); probeHost.appendChild(d);
+          try { pl = new YT.Player(d, { width: 320, height: 180, playerVars: { playsinline: 1, listType: 'playlist', list: list }, events: { onReady: function(){ rdy = true; } } }); }
+          catch(e){ end([]); return; }
+        } else if (apiFailed){ end([]); return; }
+      } else if (rdy){
+        var ids = null; try { ids = pl.getPlaylist(); } catch(e){}
+        if (ids && ids.length){ end(ids.slice()); return; }
+      }
+      if (++tries > 40){ end([]); return; }
+      setTimeout(wait, 300);
+    })();
   }
   /* 카드 추가·수정 창 */
   /* 곡 등록 줄: [▲▼] [유튜브 주소] [곡 제목(선택)] [✕] — 예전 음악의 추가 창과 같은 방식 */
@@ -884,6 +1062,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     var p = i === MY_IDX ? MYP : SG[i]; if (!p || !p.u) return;
     /* 지금 재생 중인 가수를 다시 누르면 처음부터 다시 틀지 않고 재생 화면만 다시 엶 */
     if (i !== MY_IDX && i === curIdx && $('ytFrame')){ openNow(); renderQueue(); try { if (ready) player.playVideo(); } catch(e){} return; }
+    document.body.classList.remove('mine-mode');
     var hadCard = !!curCard; man = null; if (i !== MY_IDX) curCard = null;
     curIdx = i; pendingDone = false; if (trackOwner !== i || i === MY_IDX){ trackIds = []; }
     document.body.classList.toggle('my-mode', i === MY_IDX); if (i === MY_IDX) tracksTab(); else if (hadCard) renderShelf();
@@ -912,18 +1091,22 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     if (e.target.id === 'cardModal'){ closeEdit(); return; }
     if (e.target.id === 'saveModal'){ e.target.hidden = true; return; }
     var x1 = e.target.closest('[data-mdel]'); if (x1){ manDel(+x1.dataset.mdel); return; }
+    if (e.target.closest('[data-pickclose]')){ pickClose(); return; }
+    var pk = e.target.closest('[data-pick]'); if (pk){ pickSinger(+pk.dataset.pick); return; }
+    var pa = e.target.closest('.q[data-add]'); if (pa){ pickToggle(pa.dataset.add); return; }
+    if (e.target.closest('#mineBtn')){ openMine(); return; }
     if (e.target.closest('#manAddBtn')){ manAdd(); return; }
     var x2 = e.target.closest('.q[data-m]'); if (x2){ if (!e.target.closest('input')) manPlay(+x2.dataset.m); return; }
     var x3 = e.target.closest('[data-edit]'); if (x3){ openEdit(+x3.dataset.edit); return; }
     var x4 = e.target.closest('[data-card]'); if (x4){ playCard(+x4.dataset.card); return; }
     var t = e.target.closest('[data-i]'); if (t){ play(+t.dataset.i); return; }
     var c = e.target.closest('.chip,.mood');
-    if (c){ curCat = c.dataset.c; renderChips(); renderHome(); $('main').scrollTop = 0;
-      var on = $('chips').querySelector('.chip.on'); if (on) $('chips').scrollLeft = on.offsetLeft - 40; return; }
+    if (c){ var cw = $('chips'), sl = cw.scrollLeft; curCat = c.dataset.c; renderChips(); cw.scrollLeft = sl; renderHome(); $('main').scrollTop = 0; chipCenter(); return; }
     var tb = e.target.closest('.tabs button');
     if (tb){ sideTab = tb.dataset.tab; Array.prototype.forEach.call(tb.parentNode.children, function(b){ b.classList.toggle('on', b === tb); }); renderQueue(); }
   });
   $('find').addEventListener('input', function(){ query = this.value; closeNow(); renderHome(); });
+  document.addEventListener('input', function(e){ if (e.target && e.target.id === 'manUrl' && isMine()){ var t = e.target.value; if (!allVids(t).length) pickSearch(t, true); } });
   $('backBtn').addEventListener('click', function(){ closeNow(); });
   /* [가수]: 재생 화면이면 가수 목록으로 돌아가고, 가수 목록에서는 맨 위(전체)로 */
   $('singerTile').addEventListener('click', function(){
@@ -963,6 +1146,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     if (e.key === 'Enter' && e.target && e.target.id === 'manUrl'){ e.preventDefault(); manAdd(); return; }
     if (e.key === 'Enter' && e.target && (e.target.id === 'cmName' || e.target.id === 'cmImg' || (e.target.closest && e.target.closest('#cmRows')))){ e.preventDefault(); saveEdit(); return; }
     if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.matches && e.target.matches('.q[data-m]')){ e.preventDefault(); manPlay(+e.target.dataset.m); }
+    if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.matches && e.target.matches('.q[data-add]')){ e.preventDefault(); pickToggle(e.target.dataset.add); }
   });
   hscroll($('chips')); hscroll($('sites')); hscroll($('shelfRow'), true);
   $('myExportBtn').addEventListener('click', myExport);
@@ -971,7 +1155,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
 
   /* 포털 안(iframe)에서 열리면 홈 버튼·샘플 표시는 숨김 — 포털에 이미 있음 */
   try { if (window.top !== window.self) document.documentElement.classList.add('embedded'); } catch(e){ document.documentElement.classList.add('embedded'); }
-  renderChips(); renderSites(); renderHome(); renderShelf();
+  renderChips(); renderSites(); renderHome(); renderShelf(); mineCount();
 })();
 
 /* 복사 방지 */
