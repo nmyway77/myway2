@@ -301,6 +301,21 @@
   .stage-empty{display:flex;align-items:center;justify-content:center;width:100%;height:100%;min-height:170px;padding:20px;text-align:center;color:var(--sub);font-size:14px;line-height:1.7;}
   @media (max-width:640px){ .find{height:42px;} .mine-btn{height:42px;padding:0 12px;font-size:13px;gap:5px;} }
 
+  /* 검색창 + 나만의 리스트 버튼을 화면 가운데로 (핸드폰은 좌우 꽉 차게) */
+  .top{justify-content:center;}
+  .top .sp{display:none;}
+  .top .find{flex:1 1 0;max-width:560px;}
+  /* 곡 찾기 예시 묶음 (히트곡 100 등) */
+  .presets{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;padding:10px 14px 4px;}
+  .presets .lb{flex:none;font-size:12.5px;font-weight:700;color:var(--sub);}
+  .presets button{flex:none;height:34px;padding:0 13px;border-radius:999px;background:var(--bg3);border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;}
+  .presets button:hover,.presets button.on{border-color:var(--a1);color:#fff;background:rgba(125,111,232,.22);}
+  body.mine-mode .qadd{max-width:760px;margin-left:auto;margin-right:auto;}
+  @media (max-width:640px){
+    .presets{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:9px 12px 3px;}
+    .presets::-webkit-scrollbar{display:none;}
+  }
+
   /* 나만의 리스트 화면: 위 = 영상(왼쪽) + 담은 곡(오른쪽), 아래 = 곡 찾기 */
   .stage-row{flex:none;display:flex;justify-content:center;gap:14px;min-width:0;}
   .mine-side{display:none;}
@@ -902,11 +917,28 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
       Array.prototype.forEach.call(ls.querySelectorAll('.q[data-v]'), function(el){ if (el.querySelector('b.wait')) mio.observe(el); });
     }
   }
-  var MINE_HINT = '가수 이름을 넣고 [찾기] → 나오는 곡을 누르면 위 오른쪽 "담은 곡"에 담겨요.';
+  var MINE_HINT = '가수 이름을 넣고 [찾기] 하거나 예시를 누르세요 → 나오는 곡을 누르면 "담은 곡"에 담겨요.';
+  /* 예시 묶음: [이름, 유튜브 재생목록 id] */
+  var PRESETS = [
+    ['요즘 인기곡 TOP 100','PL4fGSI1pDJn6jXS_Tv_N9B8Z0HTRVJE0m'],
+    ['팝 TOP 100','PLDIoUOhQQPlWc-Kd6TCjTRIl0Z6fSQV0X'],
+    ['2000년대 히트곡','PLBpj-UAp3OZu1hTWLV7HWVeVC-uGr6VM_'],
+    ['8090 발라드 100','PLi46zUToMqEBg51d6Nppp-mARb1MuluiO'],
+    ['8090 가요','PLau1LKgxQ-lCTqHsF3QyxHHvyvImGci7q'],
+    ['7080 추억의 가요','PL18RICGExF4tYWyKF-wqVcAYSRLa-EsUw'],
+    ['발라드 명곡','PLhz4Uf1eyo5hSdFjNdPfUAbYg8CPz6yHZ'],
+    ['댄스곡','PLxoeNwrKVQwUUg5WK9B8XKs8Rc-2NUmPL'],
+    ['트로트 인기곡','PLuUt-gc4791nz9JBMNpTDfylMOPlVYSkr'],
+    ['드라마 OST 100','PLE_Kb1ntX1fj-VS0SezoqeAF4bxtqjf4C'],
+    ['올드팝 100','PL8gJis-67-ik0GePQu_x_mlcbBj89_Urm']
+  ];
+  function presetMark(n){ var r = $('presetRow'); if (r) Array.prototype.forEach.call(r.querySelectorAll('button'), function(b, i){ b.classList.toggle('on', i === n); }); }
+  function pickPreset(n){ var p = PRESETS[n]; if (!p) return; presetMark(n); var i = $('manUrl'); if (i) i.value = ''; pickLoad(p[0], p[1]); }
   function renderMineUI(keep){
     if (!$('pickBox')){
       $('queue').innerHTML = '<div class="qadd"><input id="manUrl" type="text" autocomplete="off" placeholder="가수 이름으로 곡 찾기 (유튜브 주소도 가능)" aria-label="가수 이름 또는 유튜브 주소">' +
         '<button type="button" class="btn-a" id="manAddBtn">찾기</button><button type="button" class="ghost done" id="mineDone" title="곡 찾기를 마치고 닫기">완료</button></div>' +
+        '<div class="presets" id="presetRow"><span class="lb">예시</span>' + PRESETS.map(function(p, i){ return '<button type="button" data-preset="' + i + '">' + esc(p[0]) + '</button>'; }).join('') + '</div>' +
         '<div class="qhead" id="manHead">' + MINE_HINT + '</div><div class="pick" id="pickBox"></div>';
     }
     renderMineList(keep);
@@ -921,7 +953,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   }
   /* 곡 찾기 상자 */
   var pio = null, pickSeq = 0;
-  function pickClose(){ var b = $('pickBox'); if (b) b.innerHTML = ''; pickSeq++; if (pio){ pio.disconnect(); pio = null; } }
+  function pickClose(){ var b = $('pickBox'); if (b) b.innerHTML = ''; pickSeq++; presetMark(-1); if (pio){ pio.disconnect(); pio = null; } }
   function pickMark(){
     var b = $('pickBox'); if (!b) return;
     Array.prototype.forEach.call(b.querySelectorAll('.q[data-add]'), function(el){ var got = mineHas(el.dataset.add); el.classList.toggle('got', got); var m = el.querySelector('.padd'); if (m) m.textContent = got ? '✓ 담김' : '＋ 담기'; });
@@ -936,8 +968,9 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     if (list.length === 1 && !live){ pickSinger(list[0]._i); return; }
     b.innerHTML = '<div class="pick-h"><b>가수를 고르세요</b>' + CLOSE_BTN + '</div><div class="sgs">' + list.map(function(p){ return '<button type="button" class="sg" data-pick="' + p._i + '">' + esc(p.n) + '</button>'; }).join('') + '</div>';
   }
-  function pickSinger(i){
-    var p = SG[i], b = $('pickBox'); if (!p || !b) return; var list = parse(p.u).list, seq = ++pickSeq;
+  function pickSinger(i){ var p = SG[i]; if (!p) return; presetMark(-1); pickLoad(p.n, parse(p.u).list); }
+  function pickLoad(name, list){
+    var p = { n: name }, b = $('pickBox'); if (!list || !b) return; var seq = ++pickSeq;
     b.innerHTML = '<div class="pick-h"><b>' + esc(p.n) + '</b> 곡을 불러오는 중…' + CLOSE_BTN + '</div>';
     probeList(list, function(ids){
       var box = $('pickBox'); if (seq !== pickSeq || !box) return;
@@ -1159,6 +1192,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     if (e.target.closest('#mineDone')){ mineDone(); return; }
     if (e.target.closest('[data-pickclose]')){ pickClose(); return; }
     var pk = e.target.closest('[data-pick]'); if (pk){ pickSinger(+pk.dataset.pick); return; }
+    var pz = e.target.closest('[data-preset]'); if (pz){ pickPreset(+pz.dataset.preset); return; }
     var pa = e.target.closest('.q[data-add]'); if (pa){ pickToggle(pa.dataset.add); return; }
     if (e.target.closest('#mineBtn')){ openMine(); return; }
     if (e.target.closest('#manAddBtn')){ manAdd(); return; }
