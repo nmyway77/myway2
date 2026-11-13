@@ -340,6 +340,18 @@
   .mine-list .q .mdel{width:28px;height:28px;font-size:17px;}
   .qadd .done{flex:none;height:40px;border-radius:10px;padding:0 15px;color:var(--ink);border-color:rgba(255,255,255,.3);}
   .pick-list{max-height:none;overflow:visible;}
+  /* 나만의 리스트: 화면 전체를 아래로 스크롤 → 찾은 곡 목록이 끝까지 다 보임 (찾기 칸·예시 줄은 위에 붙어 따라옴) */
+  body.mine-mode.playing-view .main{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+  body.mine-mode.playing-view .wrap,body.mine-mode.playing-view .now{height:auto;min-height:100%;}
+  body.mine-mode .now-grid{flex:none;}
+  body.mine-mode .side{flex:none;overflow:visible;-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(20,21,31,.92);}
+  body.mine-mode .queue{flex:none;overflow:visible;min-height:46vh;}
+  body.mine-mode .mine-head{border-radius:0;}
+  /* 담기 전에 들어보기 */
+  .q .ptry{flex:none;display:inline-flex;align-items:center;justify-content:center;height:30px;margin:0;padding:0 11px;border-radius:999px;border:1px solid rgba(255,255,255,.28);font-size:12.5px;font-weight:700;color:var(--ink);background:rgba(255,255,255,.06);white-space:nowrap;}
+  .q .ptry:hover{border-color:var(--a1);}
+  .q.trying{background:rgba(125,111,232,.16);}
+  .q.trying .ptry{border-color:var(--a1);color:var(--a1);}
   @media (max-width:900px){
     .stage-row{flex-direction:column;align-items:center;gap:10px;}
     body.mine-mode .stage{width:min(100%, calc(34vh * 16 / 9));}
@@ -947,7 +959,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     renderMineList(keep);
   }
   function mineSay(t){ var h = $('manHead'); if (h) h.textContent = t; }
-  function mineDone(){ pickClose(); var i = $('manUrl'); if (i) i.value = ''; mineSay('담기를 마쳤어요. (모두 ' + myList.tracks.length + '곡) 더 담으려면 가수 이름을 넣고 [찾기]를 누르세요.'); $('queue').scrollTop = 0; }
+  function mineDone(){ pickClose(); var i = $('manUrl'); if (i) i.value = ''; mineSay('담기를 마쳤어요. (모두 ' + myList.tracks.length + '곡) 더 담으려면 가수 이름을 넣고 [찾기]를 누르세요.'); $('queue').scrollTop = 0; try { $('main').scrollTop = 0; } catch(e){} }
   function mineMove(n, d){
     var m = n + d, t = myList.tracks; if (m < 0 || m >= t.length || !t[n]) return;
     var x = t[n]; t[n] = t[m]; t[m] = x;
@@ -978,19 +990,32 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     probeList(list, function(ids){
       var box = $('pickBox'); if (seq !== pickSeq || !box) return;
       if (!ids || !ids.length){ box.innerHTML = '<div class="pick-h"><b>' + esc(p.n) + '</b> 곡 목록을 불러오지 못했어요. 잠시 뒤 다시 눌러 보세요.' + CLOSE_BTN + '</div>'; return; }
-      box.innerHTML = '<div class="pick-h"><b>' + esc(p.n) + '</b> · ' + ids.length + '곡 — 곡을 누르면 바로 담겨요' + CLOSE_BTN + '</div><div class="pick-list" id="pickList">' +
+      box.innerHTML = '<div class="pick-h"><b>' + esc(p.n) + '</b> · ' + ids.length + '곡 — [▶ 듣기]로 들어보고, 곡을 누르면 담겨요' + CLOSE_BTN + '</div><div class="pick-list" id="pickList">' +
         ids.map(function(id){
           var tt = titles[id], got = mineHas(id);
           return '<div class="q' + (got ? ' got' : '') + '" data-add="' + esc(id) + '" data-v="' + esc(id) + '" role="button" tabindex="0">' +
                  '<div class="cv th" style="--c1:#1c1e2b;--c2:#1c1e2b"><img loading="lazy" decoding="async" alt="" src="https://i.ytimg.com/vi/' + encodeURIComponent(id) + '/mqdefault.jpg" onerror="this.remove()"></div>' +
-                 '<div class="t"><b' + (tt ? '' : ' class="wait"') + '>' + esc(tt || '제목 불러오는 중…') + '</b></div><em class="padd">' + (got ? '✓ 담김' : '＋ 담기') + '</em></div>';
+                 '<div class="t"><b' + (tt ? '' : ' class="wait"') + '>' + esc(tt || '제목 불러오는 중…') + '</b></div>' +
+                 '<button type="button" class="ptry" data-try="' + esc(id) + '" title="담기 전에 들어보기">▶ 듣기</button><em class="padd">' + (got ? '✓ 담김' : '＋ 담기') + '</em></div>';
         }).join('') + '</div>';
       if ('IntersectionObserver' in window){
         if (pio) pio.disconnect();
-        pio = new IntersectionObserver(function(ents){ ents.forEach(function(en){ if (en.isIntersecting){ pio.unobserve(en.target); askTitle(en.target.dataset.v); } }); }, { root: $('queue'), rootMargin: '200px 0px' });
+        pio = new IntersectionObserver(function(ents){ ents.forEach(function(en){ if (en.isIntersecting){ pio.unobserve(en.target); askTitle(en.target.dataset.v); } }); }, { root: null, rootMargin: '200px 0px' });   /* 화면 전체가 스크롤되므로 화면 기준 */
         Array.prototype.forEach.call($('pickList').querySelectorAll('.q[data-v]'), function(el){ if (!titles[el.dataset.v]) pio.observe(el); });
       }
     });
+  }
+  /* 담기 전에 들어보기: 위쪽 영상 자리에서 그 곡만 재생 (리스트에는 담지 않음) */
+  function tryPlay(id){
+    if (!id) return;
+    var b = $('pickBox'); if (b) Array.prototype.forEach.call(b.querySelectorAll('.q[data-add]'), function(el){ el.classList.toggle('trying', el.dataset.add === id); });
+    Array.prototype.forEach.call(document.querySelectorAll('.q[data-m]'), function(el){ el.classList.remove('on'); });
+    mineSay('들어보는 중이에요 — 마음에 들면 그 곡의 [＋ 담기]를 누르세요. (영상은 맨 위에 있어요)');
+    if (ready && player){ loadVid(id); return; }
+    var src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&playsinline=1&rel=0&enablejsapi=1' + (/^https?:/.test(location.protocol) ? '&origin=' + encodeURIComponent(location.origin) : '');
+    if (player){ try { player.destroy(); } catch(e){} player = null; ready = false; }
+    $('stage').innerHTML = '<iframe id="ytFrame" title="재생 화면" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen src="' + esc(src) + '"></iframe>';
+    attachApi(); if (window.YT && YT.Player) bind();
   }
   function pickToggle(id){
     if (mineHas(id)){ var n = -1; cardItems(myList).forEach(function(t, j){ if (t.id === id) n = j; }); if (n >= 0) mineRemoveAt(n); }
@@ -1196,6 +1221,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     if (e.target.closest('[data-pickclose]')){ pickClose(); return; }
     var pk = e.target.closest('[data-pick]'); if (pk){ pickSinger(+pk.dataset.pick); return; }
     var pz = e.target.closest('[data-preset]'); if (pz){ pickPreset(+pz.dataset.preset); return; }
+    var tr = e.target.closest('[data-try]'); if (tr){ tryPlay(tr.dataset.try); return; }
     var pa = e.target.closest('.q[data-add]'); if (pa){ pickToggle(pa.dataset.add); return; }
     if (e.target.closest('#mineBtn')){ openMine(); return; }
     if (e.target.closest('#manAddBtn')){ manAdd(); return; }
