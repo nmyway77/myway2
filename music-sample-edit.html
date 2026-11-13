@@ -353,6 +353,12 @@
   body.mine-mode .side{flex:none;overflow:visible;-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(20,21,31,.92);}
   body.mine-mode .queue{flex:none;overflow:visible;min-height:46vh;}
   body.mine-mode .mine-head{border-radius:0;}
+  /* 가수를 고른 재생 화면도 나만의 리스트처럼 화면 전체를 아래로 스크롤 → 곡 목록이 끝까지 다 보임 */
+  body.playing-view .main{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+  body.playing-view .wrap,body.playing-view .now{height:auto;min-height:100%;}
+  body.playing-view .now-grid{flex:none;}
+  body.playing-view .side{flex:none;overflow:visible;-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(20,21,31,.92);}
+  body.playing-view .queue{flex:none;overflow:visible;}
   /* 나만의 리스트 여러 개: 담은 곡 위의 리스트 줄 (누르면 바꿈 · ＋ 새 리스트 · ✎ 이름 · 🗑 지우기) */
   .mine-h{align-items:center;gap:4px;padding:8px 6px 8px 10px;}
   .mine-tabs{flex:1 1 0;min-width:0;display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
