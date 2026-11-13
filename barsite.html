@@ -3593,8 +3593,8 @@
   /* @PAGES_START */
   var TVR_PAGES = {
     tv2:   { label: "📺 TV", url: "https://nmyway77.github.io/livetv7/" },
-    movie: { label: "🎬 영화", url: "https://myway.kr/MOVIE-YTUBE.html" },
     youtuber: { label: "▶ 유튜버", url: "https://myway.kr/people3.html", cat: "all" },
+    movie: { label: "🎬 영화", url: "https://myway.kr/MOVIE-YTUBE.html" },
     webdrama: { label: "🎭 웹드라마", url: "https://nmyway77.github.io/livetv7/?wd=1" },
     podcast: { label: "🎙 팟캐스트", url: "https://myway.kr/podcast.html" },
     music: { label: "🎵 음악", url: "https://myway.kr/music-sample.html" },   /* 새 디자인(구 음악2)을 음악으로 채택 — 예전 음악은 MUSIC-YTUBE-SINGER.html */
@@ -3696,8 +3696,8 @@
       var sep = document.createElement('span'); sep.className = 'tvr-sep'; frag.appendChild(sep);
       nav.insertBefore(frag, nav.firstChild);
       /* 드라마VOD 탭은 앞쪽 🎬 영화 바로 다음에 배치 (기기에 저장된 예전 탭 순서와 무관하게) */
-      var dv = nav.querySelector('.tab-btn[data-tab="dramavod"]'), mv = nav.querySelector('.tvr-tab[data-tab="onair_movie"]');
-      if (dv && mv) nav.insertBefore(dv, mv.nextSibling);
+      var dv = nav.querySelector('.tab-btn[data-tab="dramavod"]'), yt = nav.querySelector('.tvr-tab[data-tab="onair_youtuber"]');
+      if (dv && yt) nav.insertBefore(dv, yt);   /* 순서: … 라디오 → 드라마VOD → 유튜버 → 영화 → 웹드라마 … */
       if (onair) Array.prototype.forEach.call(nav.querySelectorAll('.tab-btn:not(.tvr-tab)'), function(b){ var po = pageOf(onair), at = (po && po.tab) ? po.tab : (TAB_PAGES[onair] ? onair : null); b.classList.toggle('is-active', !!at && b.getAttribute('data-tab') === at); });
     }
     /* 모바일: 누른 탭 버튼을 탭바 가운데로 가로 스크롤 → 양옆 다음 탭이 보이게 */
