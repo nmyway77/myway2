@@ -3683,7 +3683,7 @@
     topH(); window.addEventListener('resize', topH); setTimeout(topH, 600);
 
     /* ── 탭바 맨 앞에 [📺 TV] [📻 라디오] 버튼 추가 (탭 편집 데이터와는 별도) ── */
-    var onair = 'tv2'; /* 'tv' | 'tv2' | 'radio' | 'music' | 'cctv' | null(일반 탭 보는 중) — 처음 열 때 TV2 탭 */
+    var onair = 'radio'; /* 'tv' | 'tv2' | 'radio' | 'music' | 'cctv' | null(일반 탭 보는 중) — 처음 열 때 라디오 탭 */
     function addNavBtns(){
       var nav = $('tabNav'); if (!nav || nav.querySelector('.tvr-tab')) return;
       var frag = document.createDocumentFragment();
@@ -3818,7 +3818,7 @@
       selectTab(qTab);
     }
     else if (ret && ret.k === 'kbsvod' && typeof selectTab === 'function') selectTab('dramavod');   /* 회차 화면은 어느 드라마였는지 기억하지 않으므로 드라마VOD 목록으로 */
-    else if (ret && ret.k && ret.k !== 'tv') openOnair(ret.k, ret.i); else openOnair('tv2');
+    else if (ret && ret.k && ret.k !== 'tv') openOnair(ret.k, ret.i); else openOnair('radio');   /* myway.kr 첫 화면 = 라디오 */
     list();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
