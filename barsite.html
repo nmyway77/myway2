@@ -2402,7 +2402,9 @@
         if (useBc) { try { bcSel = sessionStorage.getItem('mywayDramaVodBc') || ''; } catch (_) {} if (BC_LIST.indexOf(bcSel) < 0) bcSel = 'KBS'; }   /* 처음 화면은 KBS */
         /* 핸드폰에서는 KBS의 작은 사진(390x219) 카드가 3분만 재생됨 → 그중 정상 재생되는 진검승부(T2022-0237)만 남기고 숨김. 큰 사진 카드는 그대로. PC·태블릿은 전부 표시 */
         const DV_PHONE = /iPhone|iPod/i.test(navigator.userAgent) || (/Android/i.test(navigator.userAgent) && /Mobile/i.test(navigator.userAgent));
-        const dvHideOnPhone = it => DV_PHONE && String(it.ticker || '').trim() === 'KBS' && /\/390x219\//.test(it.img || '') && !/[?&]program_code=T2022-0237(&|$)/.test(it.url || '');
+        /* 큰 사진 카드 중에도 핸드폰에서 안 나오는 드라마는 핸드폰에서만 숨김: 바람피면 죽는다·가슴이 뛴다·법대로 사랑하라·24시 헬스클럽·대박부동산·to. Jenny·구미호 레시피 */
+        const DV_PHONE_HIDE = /[?&]program_code=(T2020-0348|T2022-0915|T2022-0095|T2024-0562|T2020-1639|T2018-0210|T2020-1595)(&|$)/;
+        const dvHideOnPhone = it => DV_PHONE && String(it.ticker || '').trim() === 'KBS' && ((/\/390x219\//.test(it.img || '') && !/[?&]program_code=T2022-0237(&|$)/.test(it.url || '')) || DV_PHONE_HIDE.test(it.url || ''));
         items.forEach((it, ii) => {
           if (useBc && String(it.ticker || '').trim() !== bcSel) return;
           if (useBc && dvHideOnPhone(it)) return;
