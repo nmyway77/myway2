@@ -133,7 +133,7 @@
     svg.setAttribute('width', '0'); svg.setAttribute('height', '0'); svg.setAttribute('aria-hidden', 'true');
     svg.style.position = 'absolute';
     svg.innerHTML = ASSETS.map(function(a, k){
-      var c = a.rgb, t = function(v){ return v + ' ' + v + ' ' + v + ' 1'; };
+      var c = a.rgb, t = function(v){ return [v, v, v, v, v, 1, 1].join(' '); };   /* 어두운 선 → 종목 색, 밝은 격자선·바탕 → 흰색 */
       return '<filter id="tint' + k + '" color-interpolation-filters="sRGB">'
         + '<feColorMatrix type="matrix" values="0.3 0.59 0.11 0 0  0.3 0.59 0.11 0 0  0.3 0.59 0.11 0 0  0 0 0 1 0"/>'
         + '<feComponentTransfer><feFuncR type="table" tableValues="' + t(c[0]) + '"/><feFuncG type="table" tableValues="' + t(c[1]) + '"/><feFuncB type="table" tableValues="' + t(c[2]) + '"/></feComponentTransfer></filter>';
