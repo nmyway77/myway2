@@ -898,50 +898,41 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     else mineAdd(id, titles[id] || '');
     pickMark();
   }
-  /* 가수 재생목록의 곡 id 받기: 화면 밖의 보조 플레이어 1개를 계속 재사용 (재생 중인 영상은 건드리지 않음) */
-  var probe = null, probeReady = false, probePending = null, probeTok = 0, probeCache = {};
-  function probeEnsure(cb){
-    if (!$('ytProbe') && !probe){
-      var host = document.createElement('div'); host.setAttribute('aria-hidden', 'true');
-      host.style.cssText = 'position:fixed;left:-9999px;top:0;width:320px;height:180px;opacity:0;pointer-events:none;';
-      var d = document.createElement('div'); d.id = 'ytProbe'; host.appendChild(d); document.body.appendChild(host);
-    }
-    attachApi();
-    var tries = 0;
-    (function wait(){
-      if (probe && probeReady){ cb(false); return; }
-      if (!probe && window.YT && YT.Player){
-        try { probe = new YT.Player('ytProbe', { width: 320, height: 180, playerVars: { playsinline: 1, rel: 0 }, events: {
-          onReady: function(){ probeReady = true; },
-          onStateChange: function(e){ if (e.data === 5 && probePending) probePending(); }
-        }}); } catch(e){ cb(true); return; }
-      }
-      if (apiFailed || ++tries > 60){ cb(true); return; }
-      setTimeout(wait, 250);
-    })();
-  }
+  /* 가수 재생목록의 곡 id 받기: 화면 밖에 보조 플레이어를 잠깐 만들어 목록만 읽고 바로 없앰 (재생 중인 영상은 건드리지 않음).
+     보조 플레이어를 재사용해 목록만 바꾸면 이전 목록이 그대로 읽히는 문제가 있어 매번 새로 만듦 */
+  var probeHost = null, probeTok = 0, probeCache = {};
   function probeList(list, cb){
     if (probeCache[list]){ cb(probeCache[list]); return; }
     var tok = ++probeTok;
-    probeEnsure(function(fail){
-      if (tok !== probeTok) return;
-      if (fail){ cb([]); return; }
-      var done = false, prev = ''; try { prev = (probe.getPlaylist() || []).join(','); } catch(e){}
-      function read(){ var ids = null; try { ids = probe.getPlaylist(); } catch(e){} return ids || []; }
-      function fin(){
-        if (done) return; if (tok !== probeTok){ done = true; return; }
-        var ids = read(); if (!ids.length || ids.join(',') === prev) return;
-        done = true; probePending = null; probeCache[list] = ids.slice(); cb(probeCache[list]);
+    if (!probeHost){
+      probeHost = document.createElement('div'); probeHost.setAttribute('aria-hidden', 'true');
+      probeHost.style.cssText = 'position:fixed;left:-9999px;top:0;width:320px;height:180px;opacity:0;pointer-events:none;';
+      document.body.appendChild(probeHost);
+    }
+    attachApi();
+    var tries = 0, pl = null, rdy = false, done = false;
+    function end(ids){
+      if (done) return; done = true;
+      try { if (pl) pl.destroy(); } catch(e){}
+      if (ids && ids.length) probeCache[list] = ids;
+      if (tok === probeTok) cb(ids || []);
+    }
+    (function wait(){
+      if (done) return;
+      if (tok !== probeTok){ end([]); return; }
+      if (!pl){
+        if (window.YT && YT.Player){
+          var d = document.createElement('div'); probeHost.appendChild(d);
+          try { pl = new YT.Player(d, { width: 320, height: 180, playerVars: { playsinline: 1, listType: 'playlist', list: list }, events: { onReady: function(){ rdy = true; } } }); }
+          catch(e){ end([]); return; }
+        } else if (apiFailed){ end([]); return; }
+      } else if (rdy){
+        var ids = null; try { ids = pl.getPlaylist(); } catch(e){}
+        if (ids && ids.length){ end(ids.slice()); return; }
       }
-      probePending = function(){ setTimeout(fin, 200); };
-      try { probe.cuePlaylist({ list: list, listType: 'playlist', index: 0 }); } catch(e){ cb([]); return; }
-      var n = 0;
-      (function poll(){
-        if (done || tok !== probeTok) return;
-        if (++n > 30){ done = true; probePending = null; cb([]); return; }
-        fin(); if (!done) setTimeout(poll, 400);
-      })();
-    });
+      if (++tries > 40){ end([]); return; }
+      setTimeout(wait, 300);
+    })();
   }
   /* 카드 추가·수정 창 */
   /* 곡 등록 줄: [▲▼] [유튜브 주소] [곡 제목(선택)] [✕] — 예전 음악의 추가 창과 같은 방식 */
