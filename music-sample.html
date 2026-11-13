@@ -305,6 +305,9 @@
   .top{justify-content:center;}
   .top .sp{display:none;}
   .top .find{flex:1 1 0;max-width:560px;}
+  /* 찾기 칸 + 예시 줄은 곡 목록을 내려도 항상 위에 고정 */
+  .mine-head{position:sticky;top:0;z-index:4;background:#12131c;border-bottom:1px solid rgba(255,255,255,.1);box-shadow:0 8px 16px rgba(0,0,0,.35);padding-bottom:6px;}
+  .mine-head .qadd{border-bottom:0;}
   /* 곡 찾기 예시 묶음 (히트곡 100 등) */
   .presets{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;padding:10px 14px 4px;}
   .presets .lb{flex:none;font-size:12.5px;font-weight:700;color:var(--sub);}
@@ -936,9 +939,9 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   function pickPreset(n){ var p = PRESETS[n]; if (!p) return; presetMark(n); var i = $('manUrl'); if (i) i.value = ''; pickLoad(p[0], p[1]); }
   function renderMineUI(keep){
     if (!$('pickBox')){
-      $('queue').innerHTML = '<div class="qadd"><input id="manUrl" type="text" autocomplete="off" placeholder="가수 이름으로 곡 찾기 (유튜브 주소도 가능)" aria-label="가수 이름 또는 유튜브 주소">' +
+      $('queue').innerHTML = '<div class="mine-head"><div class="qadd"><input id="manUrl" type="text" autocomplete="off" placeholder="가수 이름으로 곡 찾기 (유튜브 주소도 가능)" aria-label="가수 이름 또는 유튜브 주소">' +
         '<button type="button" class="btn-a" id="manAddBtn">찾기</button><button type="button" class="ghost done" id="mineDone" title="곡 찾기를 마치고 닫기">완료</button></div>' +
-        '<div class="presets" id="presetRow"><span class="lb">예시</span>' + PRESETS.map(function(p, i){ return '<button type="button" data-preset="' + i + '">' + esc(p[0]) + '</button>'; }).join('') + '</div>' +
+        '<div class="presets" id="presetRow"><span class="lb">예시</span>' + PRESETS.map(function(p, i){ return '<button type="button" data-preset="' + i + '">' + esc(p[0]) + '</button>'; }).join('') + '</div></div>' +
         '<div class="qhead" id="manHead">' + MINE_HINT + '</div><div class="pick" id="pickBox"></div>';
     }
     renderMineList(keep);
