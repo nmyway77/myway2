@@ -1194,12 +1194,45 @@
     /* 탭바의 TV · 라디오 버튼 */
     .tab-btn.tvr-tab { font-weight: 800; }
     /* 영화는 위쪽 [🎬 영화] 버튼으로 이동 → 예전 일반 [영화] 탭 버튼은 숨김 */
-    #tabNav .tab-btn[data-tab="movie"], #tabNav .tab-btn[data-tab="youtuber"], #tabNav .tab-btn[data-tab="onair_newsnow"] { display: none; }
+    #tabNav .tab-btn[data-tab="movie"], #tabNav .tab-btn[data-tab="youtuber"], #tabNav .tab-btn[data-tab="onair_newsnow"], #tabNav .tab-btn[data-tab="onair_newsbar"] { display: none; }
     .section-newslink.newsnow-link { margin-left: 8px; }
     .tab-btn.tvr-tab.is-active[data-tab="onair_tv"],
     .tab-btn.tvr-tab.is-active[data-tab="onair_tv2"] { background: linear-gradient(110deg, #5b8def 0%, #7d6fe8 55%, #b176f3 100%); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(125,111,232,.35); }
     .tab-btn.tvr-tab.is-active[data-tab="onair_radio"] { background: linear-gradient(110deg, #f08aa8 0%, #c57af0 60%, #8f7cf2 100%); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(197,122,240,.35); }
     .tab-nav .tvr-sep { flex: none; width: 1px; align-self: stretch; margin: 6px 2px; background: rgba(0,0,0,.1); }
+    /* ===== 상단 네비 = 뉴스바(newsitesbar3)와 같은 디자인: 밝은 바탕 + 볼록한 흰 알약 버튼, 색은 절제 ===== */
+    .topbar, body[data-active-tab="daily"] .topbar {
+      background: linear-gradient(180deg, #f7f8fc 0%, #eceef7 100%);
+      -webkit-backdrop-filter: none; backdrop-filter: none;
+      border-bottom: 1px solid #dcdfee;
+      box-shadow: inset 0 1px 0 #fff, 0 4px 14px rgba(90,100,180,.16);
+      padding-top: 9px; padding-bottom: 12px;
+    }
+    .topbar .tab-nav { gap: 7px; padding: 2px 0 3px; }
+    .topbar .tab-nav .tab-btn {
+      border: 1px solid rgba(255,255,255,.85);
+      padding: 6px 13px;
+      font-size: .78rem; font-weight: 700; color: #5d6388;
+      background: linear-gradient(135deg, #ffffff 0%, #f4f5fc 50%, #eceafa 100%);
+      box-shadow: 0 5px 12px rgba(90,100,180,.2), 0 1px 3px rgba(75,45,189,.12), inset 0 2px 5px rgba(255,255,255,.95), inset 0 -3px 6px rgba(75,45,189,.09);
+      transition: color .18s, box-shadow .18s, transform .12s;
+    }
+    .topbar .tab-nav .tab-btn:hover {
+      color: #4b4f9a; border-color: rgba(255,255,255,.85);
+      background: linear-gradient(135deg, #ffffff 0%, #f4f5fc 50%, #eceafa 100%);
+      box-shadow: 0 7px 16px rgba(90,100,180,.26), 0 1px 3px rgba(75,45,189,.14), inset 0 2px 5px rgba(255,255,255,.95), inset 0 -3px 6px rgba(75,45,189,.11);
+    }
+    .topbar .tab-nav .tab-btn:active { transform: translateY(1px); }
+    .topbar .tab-nav .tab-btn.is-active,
+    .topbar .tab-nav .tab-btn.tvr-tab.is-active[data-tab] {
+      color: #fff; border-color: rgba(255,255,255,.4); text-shadow: 0 1px 2px rgba(0,0,0,.15);
+      background: linear-gradient(135deg, #6fb3d8 0%, #8a80dc 50%, #a98be3 100%);
+      box-shadow: 0 6px 14px rgba(90,100,180,.34), 0 2px 5px rgba(75,45,189,.2), inset 0 2px 6px rgba(255,255,255,.45), inset 0 -3px 6px rgba(75,45,189,.22);
+    }
+    .topbar .tab-nav .tvr-sep { margin: 6px 3px; background: rgba(90,100,180,.22); }
+    .topbar .hcs-switch { background: #f2f3fa; box-shadow: -16px 0 0 #f2f3fa; border-right-color: rgba(90,100,180,.2); }
+    .topbar .hcs-switch a { color: #7d84ad; }
+    .topbar .hcs-switch a.active { color: #5b4bdb; background: rgba(108,92,231,.14); }
     .tvr-head { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 0 auto 12px; max-width: 1040px; padding: 0 14px; }
     .tvr-head::before, .tvr-head::after { content: ""; flex: 1; height: 1px; max-width: 280px; background: linear-gradient(90deg, transparent, #d9ddf0); }
     .tvr-head::after { background: linear-gradient(90deg, #d9ddf0, transparent); }
@@ -3545,13 +3578,13 @@
     podcast: { label: "🎙 팟캐스트", url: "https://myway.kr/podcast.html" },
     music: { label: "🎵 음악", url: "https://myway.kr/music-sample.html" },   /* 새 디자인(구 음악2)을 음악으로 채택 — 예전 음악은 MUSIC-YTUBE-SINGER.html */
     cctv:  { label: "📹 CCTV", url: "https://myway.kr/00makingyoutubefull2.html" },
-    newsnow: { label: "📰 최신뉴스", url: "https://myway.kr/NEWS-NOW.html" }
+    newsnow: { label: "📰 최신뉴스", url: "https://myway.kr/NEWS-NOW.html", tab: "news" },
+    newsbar: { label: "📰 뉴스 바로보기", url: "https://myway.kr/newsitesbar3.html", tab: "news" }   /* 뉴스 전체목록 위 [뉴스-바로보기] → 화면 안에서 열림 (탭바에는 버튼 없음, [뉴스] 탭이 켜진 채로) */
   };
   /* @PAGES_END */
   /* 기존 일반 탭을 다른 페이지로 화면 전체 표시 (탭 위치·이름은 그대로) — cat: people2.html 처음 분류 */
-  var TAB_PAGES = {
-    news: { label: "📰 뉴스", url: "https://myway.kr/newsitesbar3.html" }   /* 상단 [뉴스] 탭 → 뉴스 바로보기 화면을 바로 표시 */
-  };
+  /* 상단 [뉴스] 탭 → 전체목록 화면(위쪽에 [뉴스-바로보기]·[📰 최신뉴스])이 나옴 — 뉴스 바로보기(newsitesbar3)는 그 화면의 링크로 엶 */
+  var TAB_PAGES = {};
   function pageOf(k){ return TVR_PAGES[k] || TAB_PAGES[k] || null; }
   var kind = 'tv', cur = null; /* cur = {k, i} */
   /* 핸드폰·태블릿 판별 (PC는 KBS도 화면 안에서 그대로 재생) */
@@ -3635,7 +3668,7 @@
       /* 드라마VOD 탭은 앞쪽 🎬 영화 바로 다음에 배치 (기기에 저장된 예전 탭 순서와 무관하게) */
       var dv = nav.querySelector('.tab-btn[data-tab="dramavod"]'), mv = nav.querySelector('.tvr-tab[data-tab="onair_movie"]');
       if (dv && mv) nav.insertBefore(dv, mv.nextSibling);
-      if (onair) Array.prototype.forEach.call(nav.querySelectorAll('.tab-btn:not(.tvr-tab)'), function(b){ b.classList.toggle('is-active', !!TAB_PAGES[onair] && b.getAttribute('data-tab') === onair); });
+      if (onair) Array.prototype.forEach.call(nav.querySelectorAll('.tab-btn:not(.tvr-tab)'), function(b){ var po = pageOf(onair), at = (po && po.tab) ? po.tab : (TAB_PAGES[onair] ? onair : null); b.classList.toggle('is-active', !!at && b.getAttribute('data-tab') === at); });
     }
     /* 모바일: 누른 탭 버튼을 탭바 가운데로 가로 스크롤 → 양옆 다음 탭이 보이게 */
     function navCenter(sel){
@@ -3650,6 +3683,13 @@
       });
     }
     window.__openPage = function(k){ openOnair(k); };
+    /* 뉴스 전체목록의 [뉴스-바로보기]·'뉴스 바로보기' 카드 → 새 창 대신 화면 안에서 열기 */
+    document.addEventListener('click', function(e){
+      if (document.body.classList.contains('editing')) return;
+      var a = e.target && e.target.closest ? e.target.closest('#main a[href]') : null; if (!a) return;
+      if (!/^https?:\/\/(www\.)?myway\.kr\/newsitesbar3\.html([?#].*)?$/i.test(a.href)) return;
+      e.preventDefault(); e.stopPropagation(); openOnair('newsbar');
+    }, true);
     function openOnair(k, startI){
       var changed = (onair !== k);
       onair = k;
@@ -3657,7 +3697,8 @@
       kind = k;
       document.body.setAttribute('data-active-tab', 'onair');
       var nav = $('tabNav');
-      var btnTab = TAB_PAGES[k] ? k : 'onair_' + k;
+      var pg0 = pageOf(k);
+      var btnTab = (pg0 && pg0.tab) ? pg0.tab : (TAB_PAGES[k] ? k : 'onair_' + k);
       if (nav) Array.prototype.forEach.call(nav.querySelectorAll('.tab-btn'), function(b){ b.classList.toggle('is-active', b.getAttribute('data-tab') === btnTab); });
       var pg = pageOf(k);
       if (pg) { /* 음악·CCTV·유튜버: 채널바 없이 해당 페이지를 화면 전체로 */
