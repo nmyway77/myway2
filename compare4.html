@@ -23,6 +23,13 @@
   .card h2 span{font-size:11.5px;font-weight:600;color:#8a8f99}
   .card h2 i{font-style:normal;width:10px;height:10px;border-radius:50%;flex:none;align-self:center}
   .ch{height:100%;width:100%}
+  /* 흐름 겹쳐보기: 종목마다 차트를 따로 띄워 겹치고, 층마다 한 가지 색으로 물들임 (흰 바탕은 그대로) */
+  .ovl{position:relative;width:100%;height:100%;background:#fff}
+  .ovl .ly{position:absolute;inset:0;mix-blend-mode:multiply;pointer-events:none;clip-path:inset(0 78px 34px 0)}
+  .ovl .ly.base{clip-path:inset(0 78px 0 0)}
+  .lgd{position:absolute;z-index:3;left:12px;top:10px;display:flex;flex-wrap:wrap;gap:6px 14px;padding:6px 10px;border-radius:10px;background:rgba(255,255,255,.88);font-size:12.5px;font-weight:700;pointer-events:none}
+  .lgd b{display:inline-flex;align-items:center;gap:6px}
+  .lgd b i{width:18px;height:4px;border-radius:2px}
   .card h2 em{margin-left:auto;display:flex;gap:5px;font-style:normal;align-self:center}
   .mode button{font:inherit;font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;border:1px solid #dcdfee;background:#fff;color:#4b4f9a;cursor:pointer;white-space:nowrap}
   .mode button.on{background:#4b4f9a;border-color:#4b4f9a;color:#fff}
@@ -75,10 +82,10 @@
 (function(){
   /* 종목: TradingView 위젯에서 나오는 것만 (KRX:005930·NASDAQ:IXIC는 위젯에서 막혀 있어 대체) */
   var ASSETS = [
-    { sym:'OANDA:NAS100USD', name:'나스닥 100', sub:'미국 기술주 지수 · 24시간', color:'#2962ff' },
-    { sym:'TVC:GOLD',        name:'금',         sub:'국제 금 가격 · 달러',        color:'#d4a017' },
-    { sym:'FWB:SSU',         name:'삼성전자',   sub:'프랑크푸르트 GDR · 유로',    color:'#1428a0' },
-    { sym:'BITSTAMP:BTCUSD', name:'비트코인',   sub:'달러 시세',                  color:'#f7931a' }
+    { sym:'OANDA:NAS100USD', name:'나스닥 100', sub:'미국 기술주 지수 · 24시간', color:'#2962ff', rgb:[0.16,0.38,1] },
+    { sym:'TVC:GOLD',        name:'금',         sub:'국제 금 가격 · 달러',        color:'#d99a05', rgb:[0.85,0.6,0.02] },
+    { sym:'FWB:SSU',         name:'삼성전자',   sub:'프랑크푸르트 GDR · 유로',    color:'#0d9e40', rgb:[0.05,0.62,0.25] },
+    { sym:'BITSTAMP:BTCUSD', name:'비트코인',   sub:'달러 시세',                  color:'#e61f40', rgb:[0.9,0.12,0.25] }
   ];
   /* 기간 → TradingView range 값과 봉 간격 */
   var RANGES = [
@@ -88,7 +95,7 @@
   var cur = '12M';
   /* 큰 차트 보기 방식: 흐름(종목마다 자기 눈금 → 가격대와 상관없이 기울기만 비교) / 나란히(칸을 나눠 위아래로) / 등락률(%) */
   var MODES = [
-    ['flow', '흐름 겹쳐보기', '종목마다 자기 눈금 · 가격대와 상관없이 기울기 흐름만 비교', 'NewPriceScale'],
+    ['flow', '흐름 겹쳐보기', '종목마다 자기 눈금 · 가격대와 상관없이 기울기 흐름만 비교 (확대·이동은 아래 개별 차트에서)', ''],
     ['pane', '흐름 나란히',   '종목별 칸을 위아래로 · 같은 시간축에서 흐름 비교',       'NewPane'],
     ['pct',  '등락률(%)',     '기간 시작일 대비 등락률 · 같은 눈금',                     'SameScale']
   ];
@@ -120,9 +127,32 @@
     grid.appendChild(card);
   });
 
+  /* 층마다 물들일 색 필터 (밝기 기준: 흰색은 흰색 그대로, 나머지는 그 종목 색) */
+  (function(){
+    var ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('width', '0'); svg.setAttribute('height', '0'); svg.setAttribute('aria-hidden', 'true');
+    svg.style.position = 'absolute';
+    svg.innerHTML = ASSETS.map(function(a, k){
+      var c = a.rgb, t = function(v){ return v + ' ' + v + ' ' + v + ' 1'; };
+      return '<filter id="tint' + k + '" color-interpolation-filters="sRGB">'
+        + '<feColorMatrix type="matrix" values="0.3 0.59 0.11 0 0  0.3 0.59 0.11 0 0  0.3 0.59 0.11 0 0  0 0 0 1 0"/>'
+        + '<feComponentTransfer><feFuncR type="table" tableValues="' + t(c[0]) + '"/><feFuncG type="table" tableValues="' + t(c[1]) + '"/><feFuncB type="table" tableValues="' + t(c[2]) + '"/></feComponentTransfer></filter>';
+    }).join('');
+    document.body.appendChild(svg);
+  })();
+  function renderFlow(host){
+    host.innerHTML = '<div class="ovl"><div class="lgd">' + ASSETS.map(function(a){ return '<b><i style="background:' + a.color + '"></i>' + a.name + '</b>'; }).join('') + '</div></div>';
+    var ovl = host.firstChild;
+    ASSETS.forEach(function(a, k){
+      var ly = document.createElement('div'); ly.className = 'ly' + (k ? '' : ' base'); ly.style.filter = 'url(#tint' + k + ')';
+      ovl.appendChild(ly);
+      widget(ly, a.sym, { style:'2', hide_top_toolbar:true, hide_legend:true, hide_volume:true });
+    });
+  }
   function renderCmp(){
     var m = MODES.filter(function(x){ return x[0] === mode; })[0], pos = m[3];
     document.getElementById('modeSub').textContent = m[2];
+    if (mode === 'flow') { renderFlow(document.getElementById('cmp')); return; }
     widget(document.getElementById('cmp'), ASSETS[0].sym, {
       style:'2', hide_volume:true,
       compareSymbols: ASSETS.slice(1).map(function(a){ return { symbol:a.sym, position:pos }; })
