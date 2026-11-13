@@ -807,6 +807,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     man.cur = ((n % items.length) + items.length) % items.length;
     var id = items[man.cur].id;
     if (rerender) renderQueue(); else manMark();
+    if (typeof tryReset === 'function') tryReset();
     if (ready && player){ loadVid(id); return; }
     var src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&playsinline=1&rel=0&enablejsapi=1' + (/^https?:/.test(location.protocol) ? '&origin=' + encodeURIComponent(location.origin) : '');
     if (player){ try { player.destroy(); } catch(e){} player = null; ready = false; }
@@ -1011,9 +1012,23 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     });
   }
   /* 담기 전에 들어보기: 위쪽 영상 자리에서 그 곡만 재생 (리스트에는 담지 않음) */
+  var tryId = '';
+  function tryBtn(id, playing){   /* 듣는 곡의 버튼만 [■ 중지], 나머지는 [▶ 듣기] */
+    var b = $('pickBox'); if (!b) return;
+    Array.prototype.forEach.call(b.querySelectorAll('.q[data-add]'), function(el){
+      var me = !!id && el.dataset.add === id; el.classList.toggle('trying', me && playing);
+      var bt = el.querySelector('.ptry'); if (bt) bt.textContent = me && playing ? '■ 중지' : '▶ 듣기';
+    });
+  }
+  function tryReset(){ if (tryId){ tryId = ''; tryBtn('', false); } }
   function tryPlay(id){
     if (!id) return;
-    var b = $('pickBox'); if (b) Array.prototype.forEach.call(b.querySelectorAll('.q[data-add]'), function(el){ el.classList.toggle('trying', el.dataset.add === id); });
+    if (id === tryId && player && ready){   /* 같은 곡을 한 번 더 누르면 중지, 또 누르면 이어서 재생 */
+      var st = -1; try { st = player.getPlayerState(); } catch(e){}
+      if (st === 1 || st === 3){ try { player.pauseVideo(); } catch(e){} tryBtn(id, false); mineSay('멈췄어요. 다시 [▶ 듣기]를 누르면 이어서 나와요.'); return; }
+      if (st === 2){ try { player.playVideo(); } catch(e){} tryBtn(id, true); return; }
+    }
+    tryId = id; tryBtn(id, true);
     Array.prototype.forEach.call(document.querySelectorAll('.q[data-m]'), function(el){ el.classList.remove('on'); });
     mineSay('들어보는 중이에요 — 마음에 들면 그 곡의 [＋ 담기]를 누르세요. (영상은 맨 위에 있어요)');
     if (ready && player){ loadVid(id); return; }
