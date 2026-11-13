@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>흐름 비교 — 코스피·삼성전자·나스닥·금·비트코인 | MYWAY.KR</title>
+<meta name="description" content="코스피, 삼성전자, 나스닥, 금, 비트코인의 흐름(기울기)을 같은 기간, 같은 높이로 겹쳐 비교하는 차트.">
+<link rel="canonical" href="https://myway.kr/flow.html">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{display:flex;flex-direction:column;background:#f7f3eb;color:#1f2740;font-family:"Pretendard",-apple-system,sans-serif;font-size:13px;user-select:none;-webkit-user-select:none}
+  .top{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 14px 8px;border-bottom:1px solid #e6e1d4}
+  .top h1{margin:0 6px 0 0;font-size:16px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
+  .grp{display:flex;flex-wrap:wrap;gap:6px}
+  .grp button{font:inherit;font-size:12.5px;font-weight:700;padding:7px 12px;border-radius:999px;border:1px solid #dcdfee;background:#fff;color:#4b4f9a;cursor:pointer;white-space:nowrap}
+  .grp button.on{background:linear-gradient(135deg,#6fb3d8,#8a80dc 50%,#a98be3);border-color:transparent;color:#fff}
+  .fit{font:inherit;font-size:12.5px;font-weight:700;padding:7px 12px;border-radius:999px;border:1px dashed #8a80dc;background:#fff;color:#6a5fd0;cursor:pointer;white-space:nowrap}
+  .chips{flex:none;display:flex;flex-wrap:wrap;gap:6px;padding:8px 14px}
+  .chip{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:13px;font-weight:700;padding:6px 12px;border-radius:999px;border:1.5px solid var(--c);background:#fff;color:#1f2740;cursor:pointer}
+  .chip i{width:16px;height:4px;border-radius:2px;background:var(--c)}
+  .chip.off{border-color:#d8d8de;color:#a0a4ae}
+  .chip.off i{background:#d8d8de}
+  .chip small{font-size:11px;font-weight:600;color:#8a8f99}
+  .stage{flex:1;min-height:300px;position:relative;margin:0 10px;background:#fff;border:1px solid #e6e1d4;border-radius:14px;overflow:hidden}
+  #chart{position:absolute;inset:0}
+  .lgd{position:absolute;z-index:3;left:10px;top:8px;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,.9);box-shadow:0 2px 10px rgba(30,30,60,.08);font-size:12.5px;line-height:1.65;pointer-events:none}
+  .lgd .dt{font-weight:800;margin-bottom:2px}
+  .lgd .r{display:flex;align-items:center;gap:7px;white-space:nowrap}
+  .lgd .r i{width:12px;height:3px;border-radius:2px}
+  .lgd .r b{font-weight:700}
+  .lgd .r span{color:#7a7f8c}
+  .msg{position:absolute;inset:0;z-index:4;display:none;align-items:center;justify-content:center;padding:20px;text-align:center;line-height:1.8;color:#5b6170;background:rgba(255,255,255,.92)}
+  .msg.show{display:flex}
+  .help{flex:none;padding:7px 14px 4px;color:#7a7f8c;font-size:12px;line-height:1.6}
+  .help b{color:#4b4f9a}
+  .foot{flex:none;text-align:center;padding:4px 0 calc(8px + env(safe-area-inset-bottom,0px));font-size:12px}
+  .foot a{color:#6a5fd0;font-weight:700;text-decoration:none}
+  .homebtn{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#6fb3d8,#8a80dc 50%,#a98be3);box-shadow:0 6px 18px rgba(80,70,170,.35)}
+  .homebtn svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  @media (max-width:700px){
+    .top{padding:8px 8px 6px}
+    .top h1{font-size:15px;width:100%}
+    .grp button,.fit{padding:6px 10px;font-size:12px}
+    .chips{padding:6px 8px}
+    .chip{padding:5px 10px;font-size:12.5px}
+    .chip small{display:none}
+    .stage{margin:0 6px}
+    .help{padding:6px 8px 2px;font-size:11.5px}
+    .lgd{left:6px;top:6px;padding:5px 8px;font-size:11px;line-height:1.5;background:rgba(255,255,255,.82)}
+    .lgd .note{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>흐름 비교</h1>
+  <div class="grp" id="per"></div>
+  <button type="button" class="fit" id="fit" title="지금 화면에 보이는 구간을 기준으로 높이를 다시 맞춰요">⇕ 지금 화면 기준으로 맞추기</button>
+</div>
+<div class="chips" id="chips"></div>
+<div class="stage">
+  <div id="chart"></div>
+  <div class="lgd" id="lgd"></div>
+  <div class="msg" id="msg"></div>
+</div>
+<div class="help">
+  · 종목마다 <b>기준 기간 안의 가장 낮은 값 = 아래, 가장 높은 값 = 위</b>로 맞춰 그려서, 가격대와 상관없이 <b>기울기 흐름</b>만 비교돼요.<br>
+  · 옆으로 끌거나 확대해도 <b>높이를 다시 맞추지 않아서 모양이 그대로</b>예요. 다른 구간을 기준으로 보고 싶으면 [지금 화면 기준으로 맞추기]를 누르세요.
+</div>
+<div class="foot"><a href="https://myway.kr" target="_top">MYWAY.KR</a></div>
+<a class="homebtn" href="https://myway.kr" target="_top" title="MYWAY.KR 홈"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a>
+
+<script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+<script>
+(function(){
+  /* 시세 다리(Cloudflare Worker) 주소 — 만들고 나서 여기에 넣음 */
+  var DATA_URL = '';
+
+  var ASSETS = [
+    { k:'KOSPI',   name:'코스피',     sub:'한국 지수',     color:'#7c3aed', unit:'' },
+    { k:'SAMSUNG', name:'삼성전자',   sub:'원화',          color:'#0d9e40', unit:'원' },
+    { k:'IXIC',    name:'나스닥',     sub:'종합지수',      color:'#2962ff', unit:'' },
+    { k:'GOLD',    name:'금',         sub:'달러',          color:'#d99a05', unit:'$' },
+    { k:'BTC',     name:'비트코인',   sub:'달러',          color:'#e61f40', unit:'$' }
+  ];
+  var PERIODS = [['3개월',3],['6개월',6],['1년',12],['3년',36],['5년',60],['10년',120]];
+  var curMonths = 12;
+
+  var $ = function(id){ return document.getElementById(id); };
+  var msg = function(t){ $('msg').innerHTML = t || ''; $('msg').classList.toggle('show', !!t); };
+
+  /* 날짜 도우미 ('YYYY-MM-DD' 문자열로 통일) */
+  function ds(t){
+    if (typeof t === 'string') return t;
+    if (t && t.year) return t.year + '-' + String(t.month).padStart(2,'0') + '-' + String(t.day).padStart(2,'0');
+    if (typeof t === 'number') return new Date(t * 1000).toISOString().slice(0,10);
+    return '';
+  }
+  function monthsBefore(d, m){ var x = new Date(d + 'T00:00:00Z'); x.setUTCMonth(x.getUTCMonth() - m); return x.toISOString().slice(0,10); }
+  /* 그 날짜 또는 그 이전의 마지막 값 */
+  function at(arr, d){
+    var lo = 0, hi = arr.length - 1, r = -1;
+    while (lo <= hi){ var m = (lo + hi) >> 1; if (arr[m][0] <= d){ r = m; lo = m + 1; } else hi = m - 1; }
+    return r < 0 ? null : arr[r];
+  }
+  function fmt(v, a){
+    var n = v >= 1000 ? Math.round(v).toLocaleString('ko-KR') : v.toLocaleString('ko-KR', { maximumFractionDigits: 2 });
+    return a.unit === '원' ? n + '원' : a.unit === '$' ? '$' + n : n;
+  }
+
+  /* 차트 */
+  var chart = LightweightCharts.createChart($('chart'), {
+    autoSize: true,
+    layout: { background: { type:'solid', color:'#ffffff' }, textColor:'#5b6170', fontFamily:'Pretendard, sans-serif' },
+    grid: { vertLines: { color:'rgba(0,0,0,.05)' }, horzLines: { color:'rgba(0,0,0,.04)' } },
+    rightPriceScale: { visible:false },
+    leftPriceScale: { visible:false },
+    timeScale: { borderVisible:false, rightOffset:4, fixLeftEdge:true, fixRightEdge:true },
+    crosshair: { mode: 0, horzLine: { visible:false, labelVisible:false } },
+    localization: { locale:'ko-KR', dateFormat:'yyyy-MM-dd' },
+    handleScale: { axisPressedMouseMove: { time:true, price:false } }
+  });
+  /* 세로 눈금은 언제나 고정 (옆으로 옮겨도 다시 맞추지 않음) */
+  var FIXED = function(){ return { priceRange: { minValue: -4, maxValue: 104 } }; };
+  ASSETS.forEach(function(a){
+    a.on = true; a.data = [];
+    a.series = chart.addLineSeries({ color:a.color, lineWidth:2, priceLineVisible:false, lastValueVisible:false, crosshairMarkerRadius:4, autoscaleInfoProvider: FIXED });
+  });
+
+  var win = null;   // 지금 기준 구간 [시작, 끝]
+  var failNote = '';
+  var lastDay = '';
+
+  /* 기준 구간으로 종목마다 0~100 맞춤 */
+  function normalize(from, to, keepView){
+    var view = keepView ? chart.timeScale().getVisibleRange() : null;
+    win = [from, to];
+    ASSETS.forEach(function(a){
+      a.base = null; a.min = a.max = null;
+      if (!a.data.length){ a.series.setData([]); return; }
+      var mn = Infinity, mx = -Infinity;
+      a.data.forEach(function(p){ if (p[0] >= from && p[0] <= to){ if (p[1] < mn) mn = p[1]; if (p[1] > mx) mx = p[1]; } });
+      if (!isFinite(mn)) a.data.forEach(function(p){ if (p[1] < mn) mn = p[1]; if (p[1] > mx) mx = p[1]; });
+      var span = (mx - mn) || 1;
+      a.min = mn; a.max = mx;
+      var b = at(a.data, from) || a.data[0]; a.base = b ? b[1] : null;
+      a.series.setData(a.data.map(function(p){ return { time:p[0], value:(p[1] - mn) / span * 100 }; }));
+      a.series.applyOptions({ visible: a.on });
+    });
+    if (view) chart.timeScale().setVisibleRange(view);
+    legend(null);
+  }
+
+  function setPeriod(m){
+    curMonths = m;
+    Array.prototype.forEach.call($('per').querySelectorAll('button'), function(b){ b.classList.toggle('on', +b.dataset.m === m); });
+    if (!lastDay) return;
+    var from = monthsBefore(lastDay, m);
+    normalize(from, lastDay, false);
+    chart.timeScale().setVisibleRange({ from: from, to: lastDay });
+  }
+
+  /* 왼쪽 위 값 표시: 마우스(손가락)를 올린 날짜, 없으면 마지막 날 */
+  function legend(d){
+    d = d || lastDay;
+    if (!d){ $('lgd').innerHTML = ''; return; }
+    var h = '<div class="dt">' + d + '</div>';
+    ASSETS.forEach(function(a){
+      if (!a.on || !a.data.length) return;
+      var p = at(a.data, d); if (!p) return;
+      var ch = a.base ? ((p[1] / a.base - 1) * 100) : null;
+      h += '<div class="r"><i style="background:' + a.color + '"></i><b>' + a.name + '</b> ' + fmt(p[1], a)
+        + (ch == null ? '' : ' <span>(' + (ch >= 0 ? '+' : '') + ch.toFixed(1) + '%)</span>') + '</div>';
+    });
+    if (failNote) h += '<div class="r"><span style="color:#e61f40">' + failNote + '</span></div>';
+    $('lgd').innerHTML = h + (win ? '<div class="r note"><span>괄호: 기준 시작일(' + win[0] + ') 대비</span></div>' : '');
+  }
+  chart.subscribeCrosshairMove(function(p){ legend(p && p.time ? ds(p.time) : null); });
+
+  /* 버튼들 */
+  $('per').innerHTML = PERIODS.map(function(p){ return '<button type="button" data-m="' + p[1] + '"' + (p[1] === curMonths ? ' class="on"' : '') + '>' + p[0] + '</button>'; }).join('');
+  $('per').addEventListener('click', function(e){ var b = e.target.closest('button[data-m]'); if (b) setPeriod(+b.dataset.m); });
+  $('fit').addEventListener('click', function(){
+    var r = chart.timeScale().getVisibleRange(); if (!r) return;
+    Array.prototype.forEach.call($('per').querySelectorAll('button'), function(b){ b.classList.remove('on'); });
+    normalize(ds(r.from), ds(r.to), true);
+  });
+  $('chips').innerHTML = ASSETS.map(function(a, i){ return '<button type="button" class="chip" data-i="' + i + '" style="--c:' + a.color + '"><i></i>' + a.name + ' <small>' + a.sub + '</small></button>'; }).join('');
+  $('chips').addEventListener('click', function(e){
+    var b = e.target.closest('.chip'); if (!b) return;
+    var a = ASSETS[+b.dataset.i]; a.on = !a.on;
+    b.classList.toggle('off', !a.on);
+    a.series.applyOptions({ visible: a.on });
+    legend(null);
+  });
+
+  /* 시세 받아 오기 */
+  function load(){
+    if (!DATA_URL){ msg('시세 연결을 준비 중이에요.<br>(시세 다리 주소를 넣으면 바로 나와요)'); return; }
+    msg('시세를 불러오는 중…');
+    var fails = [];
+    Promise.all(ASSETS.map(function(a){
+      return fetch(DATA_URL + '?s=' + a.k + '&r=10y').then(function(r){ if (!r.ok) throw 0; return r.json(); })
+        .then(function(j){ a.data = (j && j.d) || []; })
+        .catch(function(){ a.data = []; fails.push(a.name); });
+    })).then(function(){
+      ASSETS.forEach(function(a){ if (a.data.length && a.data[a.data.length - 1][0] > lastDay) lastDay = a.data[a.data.length - 1][0]; });
+      if (!lastDay){ msg('시세를 불러오지 못했어요. 잠시 뒤 새로고침해 주세요.'); return; }
+      msg('');
+      failNote = fails.length ? '불러오지 못함: ' + fails.join(', ') : '';
+      setPeriod(curMonths);
+    });
+  }
+  window.__flowTest = function(data){ ASSETS.forEach(function(a){ a.data = data[a.k] || []; }); lastDay = ''; ASSETS.forEach(function(a){ if (a.data.length && a.data[a.data.length-1][0] > lastDay) lastDay = a.data[a.data.length-1][0]; }); msg(''); setPeriod(curMonths); };
+  load();
+})();
+
+/* 복사 방지 */
+['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){
+  document.addEventListener(ev, function(e){ var t = e.target; if (t && t.closest && t.closest('input,textarea')) return; e.preventDefault(); }, true);
+});
+document.addEventListener('keydown', function(e){
+  var k = (e.key || '').toLowerCase(), c = e.ctrlKey || e.metaKey;
+  if (e.key === 'F12' || (c && ['u','s','c','x','a'].indexOf(k) > -1) || (c && e.shiftKey && ['i','j','c'].indexOf(k) > -1)) { e.preventDefault(); e.stopPropagation(); }
+}, true);
+</script>
+</body>
+</html>
