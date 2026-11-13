@@ -353,6 +353,20 @@
   body.mine-mode .side{flex:none;overflow:visible;-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(20,21,31,.92);}
   body.mine-mode .queue{flex:none;overflow:visible;min-height:46vh;}
   body.mine-mode .mine-head{border-radius:0;}
+  /* 나만의 리스트 여러 개: 담은 곡 위의 리스트 줄 (누르면 바꿈 · ＋ 새 리스트 · ✎ 이름 · 🗑 지우기) */
+  .mine-h{align-items:center;gap:4px;padding:8px 6px 8px 10px;}
+  .mine-tabs{flex:1 1 0;min-width:0;display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .mine-tabs::-webkit-scrollbar{display:none;}
+  .ml{flex:none;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--bg3);font-size:13px;font-weight:700;color:var(--sub);white-space:nowrap;}
+  .mine-h .ml span{font-size:11.5px;font-weight:600;color:inherit;opacity:.8;}
+  .ml:hover{border-color:var(--a1);color:var(--ink);}
+  .ml.on{color:#fff;border-color:transparent;background:linear-gradient(135deg,var(--a2),var(--a3));}
+  .ml.add{border-style:dashed;background:none;color:var(--ink);}
+  .mh-b{flex:none;width:30px;height:30px;border-radius:8px;font-size:14px;line-height:1;color:var(--sub);}
+  .mh-b:hover{color:var(--ink);background:rgba(255,255,255,.1);}
+  .mine-h input{flex:1 1 0;min-width:0;height:34px;padding:0 11px;border-radius:9px;border:1.5px solid var(--a1);background:rgba(255,255,255,.08);color:var(--ink);font:inherit;font-size:16px;outline:0;}
+  .mine-h .btn-a{height:34px;padding:0 13px;font-size:13px;}
+  .mine-h .ghost{flex:none;height:34px;padding:0 11px;border-radius:10px;font-size:13px;}
   /* 담기 전에 들어보기 */
   .q .ptry{flex:none;display:inline-flex;align-items:center;justify-content:center;height:30px;margin:0;padding:0 11px;border-radius:999px;border:1px solid rgba(255,255,255,.28);font-size:12.5px;font-weight:700;color:var(--ink);background:rgba(255,255,255,.06);white-space:nowrap;}
   .q .ptry:hover{border-color:var(--a1);}
@@ -371,7 +385,7 @@
   <header class="top">
     <label class="find"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
       <input id="find" type="search" placeholder="가수 찾기 · 검색하면 더 나와요" autocomplete="off" aria-label="가수 찾기"></label>
-    <button type="button" class="mine-btn" id="mineBtn" title="내가 고른 곡만 모아 듣기"><i>★</i>나만의 리스트<span class="n" id="mineN"></span></button>
+    <button type="button" class="mine-btn" id="mineBtn" title="내가 고른 곡만 모아 듣기 — 리스트를 여러 개 만들 수 있어요"><i>★</i>나만의 리스트<span class="n" id="mineN"></span></button>
     <span class="sp"></span>
     <div class="top-acts" id="topActs"><button type="button" data-act="add" title="추가 — 유튜브 주소로 카드 추가" aria-label="추가">＋</button><button type="button" data-act="save" title="저장 — 카드 파일 가져오기 / 내보내기" aria-label="저장">💾</button></div>
   </header>
@@ -873,13 +887,57 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
 
   /* ── 나만의 리스트: 방문자 각자가 고른 곡 모음. 이 기기 브라우저에만 보관(파일·하단 카드와 별개) ──
      가수 이름으로 찾기 → 그 가수 재생목록의 곡들이 나옴 → 곡을 한 번 누르면 담김 */
-  var MINE_KEY = 'mywayMusicMyListV1', myList = { url:'', img:'', name:'나만의 리스트', tracks:[] };
-  try { var ml0 = JSON.parse(localStorage.getItem(MINE_KEY) || 'null'); if (ml0 && Array.isArray(ml0.tracks)) myList.tracks = ml0.tracks.map(function(x){ return { name:String((x && x.name) || ''), url:String((x && x.url) || '') }; }).filter(function(x){ return vid(x.url); }); } catch(e){}
+  /* 리스트 여러 개: mineAll = [{name, tracks}], mineCur = 지금 고른 리스트. myList.tracks 는 늘 지금 리스트의 곡을 가리킴.
+     예전(리스트 1개) 보관분 mywayMusicMyListV1 은 처음 한 번 "리스트 1" 로 옮겨 오고, 그대로 남겨 둠 */
+  var MINE_KEY = 'mywayMusicMyListV1', MINES_KEY = 'mywayMusicMyListsV2', MINE_MAX = 20, myList = { url:'', img:'', name:'나만의 리스트', tracks:[] };
+  var mineAll = [], mineCur = 0, mineRen = false;
+  function mineClean(a){ return (Array.isArray(a) ? a : []).map(function(x){ return { name:String((x && x.name) || ''), url:String((x && x.url) || '') }; }).filter(function(x){ return vid(x.url); }); }
+  try {
+    var mv2 = JSON.parse(localStorage.getItem(MINES_KEY) || 'null');
+    if (mv2 && Array.isArray(mv2.lists) && mv2.lists.length){
+      mineAll = mv2.lists.slice(0, MINE_MAX).map(function(l){ return { name:String((l && l.name) || '').slice(0, 20), tracks: mineClean(l && l.tracks) }; });
+      mineCur = Math.min(Math.max(0, mv2.cur | 0), mineAll.length - 1);
+    } else { var ml0 = JSON.parse(localStorage.getItem(MINE_KEY) || 'null'); mineAll = [{ name:'리스트 1', tracks: mineClean(ml0 && ml0.tracks) }]; }
+  } catch(e){}
+  if (!mineAll.length){ mineAll = [{ name:'리스트 1', tracks:[] }]; mineCur = 0; }
+  myList.tracks = mineAll[mineCur].tracks;
+  function mineName(i){ if (i == null) i = mineCur; return (mineAll[i] && mineAll[i].name) || ('리스트 ' + (i + 1)); }
   function isMine(){ return !!(man && man.card === myList); }
-  function mineSave(){ try { localStorage.setItem(MINE_KEY, JSON.stringify({ tracks: myList.tracks })); return true; } catch(e){ return false; } }
+  function mineSave(){ try { localStorage.setItem(MINES_KEY, JSON.stringify({ cur: mineCur, lists: mineAll })); return true; } catch(e){ return false; } }
   function mineCount(){ var n = myList.tracks.length, el = $('mineN'); if (el) el.textContent = n ? n + '곡' : ''; }
   function mineHas(id){ return myList.tracks.some(function(t){ return vid(t.url) === id; }); }
-  function mineSub(){ $('metaSub').textContent = '내가 고른 곡 · ' + myList.tracks.length + '곡'; }
+  function mineSub(){ $('metaName').textContent = mineName(); $('metaSub').textContent = '나만의 리스트 · ' + myList.tracks.length + '곡'; }
+  /* 리스트 바꾸기 / 새로 만들기 / 이름 바꾸기 / 지우기 */
+  function mineSwitch(i, quiet){
+    if (!mineAll[i]) return;
+    mineCur = i; myList.tracks = mineAll[i].tracks; mineRen = false; mineSave(); mineCount();
+    if (!isMine()) return;
+    man.cur = 0; man.err = 0; mineSub();
+    if (myList.tracks.length) manPlay(0, true); else { if (typeof tryReset === 'function') tryReset(); mineEmptyStage(); renderMan(true); }
+    pickMark();
+    if (!quiet) mineSay('"' + mineName() + '" 리스트예요. 지금부터 담는 곡은 이 리스트에 들어가요.');
+  }
+  function mineNew(){
+    if (mineAll.length >= MINE_MAX){ mineSay('리스트는 ' + MINE_MAX + '개까지 만들 수 있어요.'); return; }
+    var n = mineAll.length, nm; do { n++; nm = '리스트 ' + n; } while (mineAll.some(function(l){ return l.name === nm; }));
+    mineAll.push({ name: nm, tracks: [] }); mineSwitch(mineAll.length - 1, true);
+    mineSay('새 리스트를 만들었어요. 이름을 정하고 [확인]을 누른 뒤 곡을 담아 보세요.');
+    mineRenOpen();
+  }
+  function mineRenOpen(){ mineRen = true; renderMineList(true); var i = $('mineNameIn'); if (i){ try { i.focus(); i.select(); } catch(e){} } }
+  function mineRenSave(){
+    var i = $('mineNameIn'), v = i ? String(i.value || '').replace(/\s+/g, ' ').trim().slice(0, 20) : '';
+    if (v){ mineAll[mineCur].name = v; mineSave(); }
+    mineRen = false; renderMineList(true); if (isMine()) mineSub();
+  }
+  function mineRenCancel(){ mineRen = false; renderMineList(true); }
+  function mineDelList(){
+    var n = myList.tracks.length, one = mineAll.length === 1;
+    if (!window.confirm('"' + mineName() + '" 리스트를 지울까요?' + (n ? '\n담은 곡 ' + n + '곡도 함께 지워져요.' : ''))) return;
+    if (one) mineAll = [{ name:'리스트 1', tracks:[] }]; else mineAll.splice(mineCur, 1);
+    mineSwitch(Math.min(mineCur, mineAll.length - 1), true);
+    mineSay('리스트를 지웠어요. 지금은 "' + mineName() + '" 리스트예요.');
+  }
   function mineEmptyStage(){
     loadSeq++; if (player){ try { player.destroy(); } catch(e){} } player = null; ready = false;
     document.body.classList.remove('is-playing');
@@ -901,7 +959,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     var was = myList.tracks.length;
     myList.tracks.push({ name: name || titles[id] || '', url: 'https://www.youtube.com/watch?v=' + id });
     mineSave(); mineCount();
-    if (isMine()){ mineSub(); if (!was) manPlay(0, true); else renderMineList('end'); mineSay('담았어요 — 모두 ' + myList.tracks.length + '곡. 다 담았으면 [완료]를 누르세요.'); }
+    if (isMine()){ mineSub(); if (!was) manPlay(0, true); else renderMineList('end'); mineSay('"' + mineName() + '"에 담았어요 — 모두 ' + myList.tracks.length + '곡. 다 담았으면 [완료]를 누르세요.'); }
     return true;
   }
   function mineRemoveAt(n){
@@ -921,7 +979,13 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   function renderMineList(keep){
     var box = $('mineSide'), items = cardItems(myList), old = $('mineList'), top = old ? old.scrollTop : 0;
     if (mio){ mio.disconnect(); mio = null; }
-    box.innerHTML = '<div class="mine-in"><div class="mine-h"><b>담은 곡</b><span>' + items.length + '곡 · 누르면 재생, ▲▼ 순서, × 빼기</span></div><div class="mine-list" id="mineList">' +
+    var oldTabs = $('mineTabs'), tabLeft = oldTabs ? oldTabs.scrollLeft : 0;
+    var head = mineRen
+      ? '<div class="mine-h"><input id="mineNameIn" type="text" maxlength="20" autocomplete="off" aria-label="리스트 이름" placeholder="리스트 이름 (예: 출근길, 운동할 때)" value="' + esc(mineName()) + '"><button type="button" class="btn-a" id="mineNameOk">확인</button><button type="button" class="ghost" data-mlcancel>취소</button></div>'
+      : '<div class="mine-h"><div class="mine-tabs" id="mineTabs">' + mineAll.map(function(l, i){ return '<button type="button" class="ml' + (i === mineCur ? ' on' : '') + '" data-ml="' + i + '" title="' + esc(mineName(i)) + ' 리스트 열기">' + esc(mineName(i)) + '<span>' + l.tracks.length + '</span></button>'; }).join('') +
+        '<button type="button" class="ml add" data-mlnew title="새 리스트 만들기">＋ 새 리스트</button></div>' +
+        '<button type="button" class="mh-b" data-mlren title="이 리스트 이름 바꾸기" aria-label="이 리스트 이름 바꾸기">✎</button><button type="button" class="mh-b" data-mldel title="이 리스트 지우기" aria-label="이 리스트 지우기">🗑</button></div>';
+    box.innerHTML = '<div class="mine-in">' + head + '<div class="mine-list" id="mineList">' +
       (items.length ? items.map(function(t, n){
         var tt = t.name || titles[t.id];
         return '<div class="q' + (n === man.cur ? ' on' : '') + '" data-m="' + n + '" data-v="' + esc(t.id) + '" role="button" tabindex="0"><span class="no">' + (n + 1) + '</span><div class="eq"><i></i><i></i><i></i></div>' +
@@ -930,6 +994,8 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
                '<em class="mv2"><button type="button" data-mup="' + n + '" title="위로" aria-label="위로"' + (n === 0 ? ' disabled' : '') + '>▲</button><button type="button" data-mdn="' + n + '" title="아래로" aria-label="아래로"' + (n === items.length - 1 ? ' disabled' : '') + '>▼</button></em>' +
                '<button type="button" class="mdel" data-mdel="' + n + '" title="이 곡 빼기" aria-label="이 곡 빼기">×</button></div>';
       }).join('') : '<div class="qnote">아직 담은 곡이 없어요.<br>아래에서 가수를 찾아 곡을 누르면 여기에 담깁니다.</div>') + '</div></div>';
+    var tabs = $('mineTabs');
+    if (tabs){ tabs.scrollLeft = tabLeft; var onT = tabs.querySelector('.ml.on'); if (onT && (onT.offsetLeft < tabs.scrollLeft || onT.offsetLeft + onT.offsetWidth > tabs.scrollLeft + tabs.clientWidth)) tabs.scrollLeft = Math.max(0, onT.offsetLeft - (tabs.clientWidth - onT.offsetWidth) / 2); }
     var ls = $('mineList');
     if (keep === 'end') ls.scrollTop = ls.scrollHeight; else if (keep) ls.scrollTop = top;
     else { var on = ls.querySelector('.q.on'); if (on) ls.scrollTop = Math.max(0, on.offsetTop - 80); }
@@ -1245,6 +1311,12 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     var x1 = e.target.closest('[data-mdel]'); if (x1){ manDel(+x1.dataset.mdel); return; }
     var mu = e.target.closest('[data-mup]'); if (mu){ mineMove(+mu.dataset.mup, -1); return; }
     var md = e.target.closest('[data-mdn]'); if (md){ mineMove(+md.dataset.mdn, 1); return; }
+    var mlb = e.target.closest('[data-ml]'); if (mlb){ if (+mlb.dataset.ml !== mineCur) mineSwitch(+mlb.dataset.ml); return; }
+    if (e.target.closest('[data-mlnew]')){ mineNew(); return; }
+    if (e.target.closest('[data-mlren]')){ mineRenOpen(); return; }
+    if (e.target.closest('[data-mldel]')){ mineDelList(); return; }
+    if (e.target.closest('#mineNameOk')){ mineRenSave(); return; }
+    if (e.target.closest('[data-mlcancel]')){ mineRenCancel(); return; }
     if (e.target.closest('#mineDone')){ mineDone(); return; }
     if (e.target.closest('[data-pickclose]')){ pickClose(); return; }
     var pk = e.target.closest('[data-pick]'); if (pk){ pickSinger(+pk.dataset.pick); return; }
@@ -1300,6 +1372,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape' && !$('cardModal').hidden){ closeEdit(); return; }
     if (e.key === 'Escape' && !$('saveModal').hidden){ $('saveModal').hidden = true; return; }
+    if (e.target && e.target.id === 'mineNameIn' && (e.key === 'Enter' || e.key === 'Escape')){ e.preventDefault(); if (e.key === 'Enter') mineRenSave(); else mineRenCancel(); return; }
     if (e.key === 'Enter' && e.target && e.target.id === 'manUrl'){ e.preventDefault(); manAdd(); return; }
     if (e.key === 'Enter' && e.target && (e.target.id === 'cmName' || e.target.id === 'cmImg' || (e.target.closest && e.target.closest('#cmRows')))){ e.preventDefault(); saveEdit(); return; }
     if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.matches && e.target.matches('.q[data-m]')){ e.preventDefault(); manPlay(+e.target.dataset.m); }
