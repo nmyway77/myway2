@@ -12,6 +12,10 @@
 <style>
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0;min-height:100%}
+  /* 세로 스크롤바가 생겼다 없어졌다 하면 화면 폭이 바뀌어 좌우로 흔들림 → 스크롤바를 폭 없이 숨김(스크롤은 그대로 됨) */
+  html{overflow-y:scroll;scrollbar-width:none;-ms-overflow-style:none}
+  html::-webkit-scrollbar{width:0;height:0;display:none}
+  body{overflow-x:hidden}
   body{background:#f7f3eb;color:#1f2740;font-family:"Pretendard",-apple-system,sans-serif;font-size:12.5px;-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
   .wr-main{max-width:760px;margin:0 auto;padding:16px 14px 90px}
   /* 위 화면: 보이는 라디오면 영상, 아니면 방송 이름 안내 */
