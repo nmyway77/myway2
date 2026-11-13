@@ -378,9 +378,31 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
   function cat0(p){ return (p.c && p.c[0]) || 'ballad'; }
   function col(p){ return COL[cat0(p)] || COL.ballad; }
   function catLabel(p){ return (p.c || []).map(function(c){ return CAT_NAME[c] || c; }).join(' · ') || '가수'; }
+  /* 사진이 비어 있는 가수: 연결된 유튜브 재생목록의 대표 화면을 화면에 보일 때 받아 와서 표시 (파일에는 저장하지 않음, 이 창을 닫으면 지워짐) */
+  var SGTH_KEY = 'mywayMusicSgThumbV1', sgTh = {}, gio = null;
+  try { sgTh = JSON.parse(sessionStorage.getItem(SGTH_KEY) || '{}') || {}; } catch(e){ sgTh = {}; }
+  Object.keys(sgTh).forEach(function(k){ if (!sgTh[k]) delete sgTh[k]; });   /* 받다 만 표시는 버림 */
+  function sgImg(p){ return p.i || (p.u && sgTh[p.u]) || ''; }
   function cover(p){
-    var c = col(p), ch = esc(Array.from(p.n || '♪')[0] || '♪');
-    return 'style="--c1:'+c[0]+';--c2:'+c[1]+'">' + ch + (p.i ? '<img loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="" src="'+esc(p.i)+'" onerror="this.remove()">' : '');
+    var c = col(p), ch = esc(Array.from(p.n || '♪')[0] || '♪'), im = sgImg(p);
+    return 'style="--c1:'+c[0]+';--c2:'+c[1]+'">' + ch + (im ? '<img loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="" src="'+esc(im)+'" onerror="this.remove()">' : '');
+  }
+  function lazyCovers(){
+    if (!('IntersectionObserver' in window)) return;
+    if (gio) gio.disconnect();
+    gio = new IntersectionObserver(function(ents){ ents.forEach(function(en){
+      if (!en.isIntersecting) return; gio.unobserve(en.target);
+      var p = SG[+en.target.dataset.i]; if (!p || !p.u || sgImg(p) || sgTh[p.u] === 0) return;
+      sgTh[p.u] = 0;   /* 받는 중 */
+      oembed(wwwUrl(p.u)).then(function(j){
+        var th = j.thumbnail_url || ''; if (!th){ delete sgTh[p.u]; return; }
+        sgTh[p.u] = th; try { sessionStorage.setItem(SGTH_KEY, JSON.stringify(sgTh)); } catch(e){}
+        var cv = en.target.querySelector('.cv'); if (!cv || cv.querySelector('img')) return;
+        var im = new Image(); im.alt = ''; im.decoding = 'async'; im.referrerPolicy = 'no-referrer'; im.onerror = function(){ im.remove(); };
+        im.src = th; cv.insertBefore(im, cv.querySelector('.play'));
+      }).catch(function(){ delete sgTh[p.u]; });
+    }); }, { rootMargin: '300px' });
+    Array.prototype.forEach.call($('grid').querySelectorAll('.card[data-i]'), function(c){ var p = SG[+c.dataset.i]; if (p && !sgImg(p)) gio.observe(c); });
   }
   SG.forEach(function(p, i){ p._i = i; });
 
@@ -424,6 +446,7 @@ var SG = [{"n":"한로로","u":"https://www.youtube.com/playlist?list=PLi-Q5RtIT
     $('grid').innerHTML = list.length ? list.map(function(p){
       return '<button type="button" class="card" data-i="'+p._i+'"><div class="cv" '+cover(p)+'<div class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><b>'+esc(p.n)+'</b><span>'+esc(catLabel(p))+'</span></button>';
     }).join('') : '<div class="empty" style="grid-column:1/-1">찾는 가수가 없어요. 다른 이름으로 찾아 보세요.</div>';
+    lazyCovers();
   }
   function renderQueue(){
     var p = curP(); if (!p) return;
