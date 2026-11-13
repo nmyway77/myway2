@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>MBC 라디오 직접 재생 테스트 | MYWAY.KR</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{background:#f7f3eb;color:#1f2740;font-family:"Pretendard",-apple-system,sans-serif;font-size:12.5px;-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
+  .wrap{max-width:760px;margin:0 auto;padding:22px 14px 110px}
+  h1{font-size:18px;font-weight:800;letter-spacing:-.3px;margin:0 0 6px}
+  .lead{color:#6b7190;margin:0 0 18px;line-height:1.6}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .card{display:block;width:100%;text-align:left;font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;background:#fff;border:1px solid #e6e2d8;border-radius:14px;padding:9px 9px 11px;box-shadow:0 4px 12px rgba(90,90,130,.08)}
+  .card.on{border-color:#8a80dc;box-shadow:0 0 0 2px rgba(138,128,220,.4)}
+  .art{position:relative;aspect-ratio:1/1;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:19px;font-weight:800;text-align:center;padding:0 8px}
+  .name{font-size:13.5px;font-weight:800;margin:9px 2px 2px}
+  .st{margin:5px 2px 0;font-weight:700;min-height:15px;color:#8a8f99;font-size:11.5px;line-height:1.4;word-break:break-all}
+  .st.ok{color:#5b4bdb} .st.bad{color:#d14848}
+  .log{margin-top:18px;background:#fff;border:1px solid #e6e2d8;border-radius:12px;padding:12px;color:#6b7190;line-height:1.6;white-space:pre-wrap;word-break:break-all;user-select:text;-webkit-user-select:text;min-height:60px}
+  .myway-footer{text-align:center;color:#8a8f99;padding:26px 0 0}
+  .myway-footer a{color:#6a5fd0;font-weight:700;text-decoration:none}
+  .home-fab{position:fixed;right:16px;bottom:16px;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,#6fb3d8,#8a80dc 50%,#a98be3);box-shadow:0 6px 16px rgba(90,100,180,.35);z-index:50}
+  .home-fab svg{width:21px;height:21px}
+  @media (max-width:520px){ .grid{grid-template-columns:repeat(2,1fr)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>MBC 라디오 직접 재생 테스트</h1>
+  <p class="lead">카드를 눌러 소리가 나오는지 확인해 주세요. 안 나오면 아래 <b>진행 기록</b>에 나온 글을 그대로 알려 주세요(화면 캡처도 좋아요).</p>
+  <div class="grid" id="list"></div>
+  <div class="log" id="log">진행 기록이 여기에 나와요.</div>
+  <footer class="myway-footer"><a href="https://myway.kr">MYWAY.KR</a></footer>
+</div>
+<audio id="au" preload="none"></audio>
+<a class="home-fab" href="https://myway.kr" aria-label="MYWAY.KR 홈" title="MYWAY.KR 홈">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
+</a>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
+<script>
+/* MBC 라디오는 방송 주소가 고정이 아니라, 들을 때마다 MBC 서버가 잠깐만 쓸 수 있는 주소를 내줌.
+   → 카드를 누르면 MBC 서버에 주소를 물어본 뒤 그 주소로 재생. (MBC 서버가 마이웨이의 요청을 받아 주는지가 관건) */
+var CH = [['표준FM', 'sfm', '#2c5fa8,#1b3566'], ['FM4U', 'mfm', '#d9483b,#8f2b3e'], ['올댓뮤직', 'chm', '#7a5bd0,#4a3a94']];
+var API = 'https://sminiplay.imbc.com/aacplay.ashx?agent=webapp&channel=';
+var au = document.getElementById('au'), hls = null, cur = -1, seq = 0;
+function log(t){ var el = document.getElementById('log'); el.textContent = (el.textContent.indexOf('진행 기록이') === 0 ? '' : el.textContent + '\n') + t; }
+/* 기록에는 주소의 앞부분만 남김(임시 열쇠 부분은 가림) */
+function safe(u){ return String(u).split('?')[0].slice(0, 90); }
+document.getElementById('list').innerHTML = CH.map(function(c, i){
+  return '<button type="button" class="card" data-i="' + i + '"><div class="art" style="background:linear-gradient(135deg,' + c[2] + ')">MBC ' + c[0] + '</div><div class="name">MBC ' + c[0] + '</div><div class="st"></div></button>';
+}).join('');
+function card(i){ return document.querySelector('.card[data-i="' + i + '"]'); }
+function setSt(i, t, cls){ var c = card(i); if (!c) return; var e = c.querySelector('.st'); e.textContent = t; e.className = 'st' + (cls ? ' ' + cls : ''); }
+function stopAll(){
+  seq++;
+  if (hls) { try { hls.destroy(); } catch(e){} hls = null; }
+  var was = cur; cur = -1;
+  try { au.pause(); au.removeAttribute('src'); au.load(); } catch(e){}
+  if (was >= 0) { card(was).classList.remove('on'); setSt(was, ''); }
+}
+function startStream(i, url, my){
+  if (my !== seq) return;
+  log('② 재생 시작: ' + safe(url));
+  if (!au.canPlayType('application/vnd.apple.mpegurl') && window.Hls && Hls.isSupported()) {
+    hls = new Hls();
+    hls.on(Hls.Events.ERROR, function(ev, d){ if (d && d.fatal && my === seq){ setSt(i, '✕ 재생 실패', 'bad'); log('③ 재생 실패: ' + d.type + ' / ' + d.details + (d.response ? ' / 응답 ' + d.response.code : '')); } });
+    hls.loadSource(url); hls.attachMedia(au);
+  } else { au.src = url; }
+  var p = au.play(); if (p && p.catch) p.catch(function(e){ if (my === seq){ log('③ 재생 거부: ' + (e && e.name)); } });
+}
+function play(i){
+  var same = (i === cur); stopAll(); if (same) return;
+  cur = i; var my = seq, c = CH[i];
+  card(i).classList.add('on'); setSt(i, '주소 받는 중…');
+  log('── MBC ' + c[0] + ' ──\n① MBC 서버에 주소 요청');
+  fetch(API + c[1], { cache: 'no-store' }).then(function(r){
+    if (!r.ok) throw new Error('응답 ' + r.status);
+    return r.text();
+  }).then(function(t){
+    t = String(t || '').trim();
+    var m = t.match(/https?:\/\/[^\s"'<>]+/);
+    if (!m) { throw new Error('주소 없음: ' + t.slice(0, 60)); }
+    log('① 주소 받음');
+    startStream(i, m[0].replace(/^http:/, 'https:'), my);
+  }).catch(function(e){
+    if (my !== seq) return;
+    setSt(i, '✕ 주소를 못 받음', 'bad');
+    log('① 주소 요청 실패: ' + (e && (e.message || e.name)) + '\n   (MBC 서버가 마이웨이에서 온 요청을 막은 경우 이렇게 나와요)');
+  });
+}
+au.addEventListener('playing', function(){ if (cur >= 0){ setSt(cur, '♪ 재생 중 — 소리가 들리면 OK', 'ok'); log('③ 재생 중'); } });
+au.addEventListener('error', function(){ if (cur >= 0){ setSt(cur, '✕ 재생 실패', 'bad'); log('③ 재생 실패(오디오 오류 ' + ((au.error || {}).code || '?') + ')'); } });
+document.getElementById('list').addEventListener('click', function(e){ var c = e.target.closest('.card'); if (c) play(+c.getAttribute('data-i')); });
+
+/* 복사 방지 (진행 기록은 복사 가능) */
+['contextmenu','dragstart'].forEach(function(ev){ document.addEventListener(ev, function(e){ if (!e.target.closest || !e.target.closest('#log')) e.preventDefault(); }); });
+['selectstart','copy','cut'].forEach(function(ev){ document.addEventListener(ev, function(e){ if (!e.target.closest || !(e.target.closest ? e.target.closest('#log') : null)) { var n = e.target.nodeType === 3 ? e.target.parentNode : e.target; if (!n.closest || !n.closest('#log')) e.preventDefault(); } }); });
+document.addEventListener('keydown', function(e){
+  var k = (e.key||'').toLowerCase();
+  if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && /^[ijc]$/.test(k)) || (e.ctrlKey && !e.shiftKey && /^[usxa]$/.test(k))) e.preventDefault();
+});
+</script>
+</body>
+</html>
