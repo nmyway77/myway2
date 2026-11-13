@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>KBS TV 바로 보기 테스트 | MYWAY.KR</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="KBS TV를 화면 안에서 바로 재생하는 테스트 화면.">
+<link rel="canonical" href="https://myway.kr/tv-kbs-test.html">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;min-height:100%}
+  /* 세로 스크롤바가 생겼다 없어졌다 하면 화면 폭이 바뀌어 좌우로 흔들림 → 스크롤바를 폭 없이 숨김(스크롤은 그대로 됨) */
+  html{overflow-y:scroll;scrollbar-width:none;-ms-overflow-style:none}
+  html::-webkit-scrollbar{width:0;height:0;display:none}
+  body{overflow-x:hidden}
+  body{background:#f7f3eb;color:#1f2740;font-family:"Pretendard",-apple-system,sans-serif;font-size:12.5px;-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
+  .wr-main{max-width:760px;margin:0 auto;padding:16px 14px 90px}
+  /* 위 화면: 보이는 라디오면 영상, 아니면 방송 이름 안내 */
+  .wr-screen{position:relative;width:100%;aspect-ratio:16/9;max-height:52vh;margin:0 auto 14px;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,#1c1e2b,#2a2d44);box-shadow:0 10px 26px rgba(40,40,80,.22);display:flex;align-items:center;justify-content:center;color:#c9cde0;font-weight:700;text-align:center;line-height:1.6;font-size:14px}
+  .wr-screen video{position:absolute;inset:0;width:100%;height:100%;background:#000;display:none}
+  .wr-screen.video video{display:block}
+  .wr-screen .big{display:block;font-size:22px;font-weight:800;color:#fff;letter-spacing:-.4px;margin-bottom:4px}
+  .wr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .wr-card{position:relative;display:block;width:100%;text-align:left;font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;background:#fff;border:1px solid #e6e2d8;border-radius:14px;padding:8px 8px 10px;box-shadow:0 4px 12px rgba(90,90,130,.08);transition:transform .15s,border-color .2s,box-shadow .2s}
+  .wr-card:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(90,100,180,.16)}
+  .wr-card.on{border-color:#8a80dc;box-shadow:0 0 0 2px rgba(138,128,220,.4),0 8px 18px rgba(90,100,180,.22)}
+  .wr-art{position:relative;aspect-ratio:1/1;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;line-height:1.25;text-align:center;padding:0 6px 12px;font-weight:800;letter-spacing:-.4px;text-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .wr-play{position:absolute;right:7px;bottom:7px;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;background:rgba(31,39,64,.78);box-shadow:0 3px 8px rgba(0,0,0,.25);font-size:12px;padding-left:2px;text-shadow:none}
+  .wr-card.on .wr-play{background:linear-gradient(135deg,#6fb3d8,#8a80dc 50%,#a98be3);padding-left:0}
+  .wr-name{font-size:13px;font-weight:800;letter-spacing:-.2px;margin:8px 2px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .wr-desc{color:#8a8f99;margin:0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .wr-st{margin:4px 2px 0;font-weight:700;min-height:15px;color:#8a8f99;font-size:11.5px}
+  .wr-st.ok{color:#5b4bdb} .wr-st.bad{color:#d14848}
+  .wr-st.off{color:#b0822a}
+  .wr-link{display:flex;justify-content:center;margin:16px 0 0}
+  .wr-link a{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:999px;border:1px solid #dcdfee;background:linear-gradient(135deg,#fff,#f4f5fc 50%,#eceafa);box-shadow:0 4px 10px rgba(90,100,180,.16),inset 0 2px 4px rgba(255,255,255,.95);color:#5d6388;font-weight:700;font-size:13px;text-decoration:none}
+  .wr-link a:hover{color:#4b4f9a}
+  .myway-footer{text-align:center;color:#8a8f99;padding:26px 0 0}
+  .myway-footer a{color:#6a5fd0;font-weight:700;text-decoration:none}
+  .home-fab{position:fixed;right:16px;bottom:16px;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,#6fb3d8,#8a80dc 50%,#a98be3);box-shadow:0 6px 16px rgba(90,100,180,.35);z-index:50}
+  .home-fab svg{width:21px;height:21px}
+  .embedded .home-fab{display:none}   /* 마이웨이 화면 안에 들어가 있을 때는 숨김(위쪽 탭바가 있음) */
+  @media (max-width:620px){ .wr-grid{grid-template-columns:repeat(3,1fr)} .wr-main{padding-top:12px} .wr-screen{border-radius:12px;font-size:13px} .wr-screen .big{font-size:19px} }
+</style>
+</head>
+<body>
+<main class="wr-main">
+  <div class="wr-screen" id="wrScreen"><span id="wrMsg"></span><video id="wrVideo" playsinline webkit-playsinline controls preload="none"></video></div>
+  <div id="wrLog" style="min-height:16px;margin:-6px 2px 10px;color:#8a8f99;font-size:11.5px;text-align:center"></div>
+  <div class="wr-grid" id="wrList"></div>
+  <div class="wr-link"><a href="https://onair.kbs.co.kr/index.html?sname=onair&stype=live&ch_code=11" target="_blank" rel="noopener">KBS 온에어 공식 화면 열기 ↗</a></div>
+  <footer class="myway-footer"><a href="https://myway.kr" target="_top">MYWAY.KR</a></footer>
+</main>
+<a class="home-fab" href="https://myway.kr" target="_top" aria-label="MYWAY.KR 홈" title="MYWAY.KR 홈">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
+</a>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
+<script>
+try { if (window.self !== window.top) document.documentElement.classList.add('embedded'); } catch(e){ document.documentElement.classList.add('embedded'); }
+
+/* === 방송 목록: [이름, 설명, 주소 받는 곳, 바탕색] ===
+   방송 주소는 고정이 아니라 들을 때마다 방송사 서버가 잠깐 쓸 주소를 내줌 → 카드를 누르면 주소를 받아 온 뒤 재생.
+   주소 받는 곳: kbs:채널번호 / sbs:채널번호(소리) / sbsv:채널번호(보이는 라디오 영상) / mbc:채널(소리) / mbcv:(보이는 라디오 영상) */
+var BRAND = "KBS";
+var STATIONS = [
+  ["1TV", "지상파", "kbs:11", "#2c5fa8,#1b3566"],
+  ["2TV", "지상파", "kbs:12", "#d9483b,#8f2b3e"],
+  ["뉴스24", "뉴스", "kbs:81", "#3b6fd9,#243f8f"],
+  ["STORY", "예능·교양", "kbs:N94", "#e8742c,#b3441e"],
+  ["LIFE", "예능·교양", "kbs:N93", "#2fa58a,#1c6b6e"],
+  ["KIDS", "키즈", "kbs:N96", "#e0a52a,#b3701e"],
+  ["WORLD", "해외", "kbs:14", "#7a5bd0,#4a3a94"],
+  ["독도", "라이브 캠", "kbs:cctv01", "#3aa0c9,#1f5f8a"]
+];
+var IDLE = '<span class="big">' + BRAND + ' TV 테스트</span>아래에서 채널을 고르세요<br>새 창 없이 여기에서 바로 나오는지 확인하는 화면이에요';
+function log(t){ var el = $('wrLog'); if (el) el.textContent = t || ''; }
+/* 아이폰은 '누른 순간'에 재생을 시작해야 소리를 허용함 → 주소를 받는 동안 아주 짧은 무음을 먼저 틀어 둠 */
+var SILENT = 'data:audio/wav;base64,UklGRrQBAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YZABAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA';
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function $(id){ return document.getElementById(id); }
+function isBora(i){ return /^(sbsv|mbcv):/.test(STATIONS[i][2]); }
+$('wrMsg').innerHTML = IDLE;
+$('wrList').innerHTML = STATIONS.map(function(s, i){
+  var label = esc(s[0]).replace(' 보이는 라디오', '<br>보이는 라디오').replace(' 해피FM', '');
+  return '<button type="button" class="wr-card" data-i="' + i + '" title="' + BRAND + ' ' + esc(s[0]) + '"><div class="wr-art" style="background:linear-gradient(135deg,' + s[3] + ')">' + (label.indexOf('보이는 라디오') === 0 ? '📺 ' : BRAND + '<br>') + label + '<span class="wr-play">▶</span></div>' +
+    '<div class="wr-name">' + esc(s[0]) + '</div><div class="wr-desc">' + esc(s[1]) + '</div><div class="wr-st"></div></button>';
+}).join('');
+
+var v = $('wrVideo'), scr = $('wrScreen'), hls = null, cur = -1, seq = 0, needTap = -1, onMediaError = null;
+function card(i){ return document.querySelector('.wr-card[data-i="' + i + '"]'); }
+function setSt(i, txt, cls){ var c = card(i); if (!c) return; var el = c.querySelector('.wr-st'); el.textContent = txt; el.className = 'wr-st' + (cls ? ' ' + cls : ''); }
+function isSilent(){ return String(v.currentSrc || v.getAttribute('src') || '').indexOf('data:') === 0; }
+function quiet(){ if (hls) { try { hls.destroy(); } catch(e){} hls = null; } try { v.pause(); v.removeAttribute('src'); v.load(); } catch(e){} }
+function audioScreen(i){ scr.classList.remove('video'); $('wrMsg').innerHTML = '<span class="big">♪ ' + BRAND + ' ' + esc(STATIONS[i][0]) + '</span>' + '영상 없이 소리만 오고 있어요'; }
+/* 보이는 라디오는 방송시간에만 나옴 → 방송시간이 아니면 그렇게 표시 */
+function offAir(i){ quiet(); scr.classList.remove('video'); setSt(i, '방송시간 아님', 'off'); $('wrMsg').innerHTML = '<span class="big">📺 ' + BRAND + ' ' + esc(STATIONS[i][0]) + '</span>지금은 보이는 라디오 방송시간이 아니에요<br>소리는 옆의 방송 카드를 눌러 들을 수 있어요'; }
+function failed(i){ quiet(); scr.classList.remove('video'); setSt(i, '안 나옴', 'bad'); $('wrMsg').innerHTML = '<span class="big">' + BRAND + ' ' + esc(STATIONS[i][0]) + '</span>이 채널은 바로 보기가 안 돼요'; }
+function stopAll(){
+  seq++; needTap = -1; onMediaError = null; quiet();
+  var was = cur; cur = -1;
+  scr.classList.remove('video'); $('wrMsg').innerHTML = IDLE;
+  if (was >= 0) { var c = card(was); c.classList.remove('on'); c.querySelector('.wr-play').textContent = '▶'; setSt(was, ''); }
+}
+function startStream(i, url, isVideo, my, backup){
+  if (my !== seq) return;
+  if (isVideo) scr.classList.add('video'); else audioScreen(i);
+  var swapped = false, started = false;
+  /* 영상 주소가 있어도 방송을 안 하면 안 나옴 → 소리 주소가 따로 있으면(KBS) 실패하거나 7초 안에 시작 안 될 때 소리로 바꿈 */
+  function fallback(){
+    if (swapped || started || my !== seq || !backup) return false;
+    swapped = true; quiet(); startStream(i, backup, false, my, ''); return true;
+  }
+  function giveUp(){ if (my !== seq || started) return; if (!fallback()) failed(i); }
+  function onPlaying(){
+    if (my !== seq || isSilent()) return;
+    v.removeEventListener('playing', onPlaying); started = true; setSt(i, '♪ 재생 중', 'ok');
+    /* 영상 주소인데 실제로는 소리만 오는 채널 → 검은 화면 대신 안내 글 */
+    if (isVideo) setTimeout(function(){ if (my === seq && !v.videoWidth) audioScreen(i); }, 1500);
+  }
+  v.addEventListener('playing', onPlaying);
+  if (backup) setTimeout(function(){ if (!started && needTap !== i) fallback(); }, 7000);
+  onMediaError = giveUp;
+  /* 크롬 자체 HLS 재생은 일부 방송 주소에서 실패함 → hls.js를 쓸 수 있으면 항상 hls.js, 안 되는 기기(아이폰)만 자체 재생 */
+  if (/\.m3u8/.test(url) && window.Hls && Hls.isSupported()) {
+    hls = new Hls();
+    hls.on(Hls.Events.ERROR, function(ev, d){ if (d && d.fatal && my === seq) giveUp(); });
+    hls.loadSource(url); hls.attachMedia(v);
+  } else { v.src = url; }
+  var p = v.play(); if (p && p.catch) p.catch(function(e){ if (my === seq && !swapped && !started && e && e.name === 'NotAllowedError'){ needTap = i; setSt(i, '▶ 한 번 더 눌러 주세요', 'bad'); } });
+}
+/* ── 방송사별 주소 받기: cb({ url, video, backup }) 또는 cb(null, 방송시간아님) ── */
+function findUrl(d){ try { var m = JSON.stringify(d).match(/https?:[^"\\\s]+m3u8[^"\\\s]*/); return m ? m[0].replace(/\\\//g, '/') : ''; } catch(e){ return ''; } }
+function https(u){ return String(u).replace(/^http:/, 'https:'); }
+function jsonp(url, cb){
+  var name = '__rd' + Date.now() + '_' + Math.floor(Math.random() * 1e6), done = false, sc = document.createElement('script');
+  function clean(){ try { delete window[name]; } catch(e){ window[name] = undefined; } if (sc.parentNode) sc.parentNode.removeChild(sc); }
+  window[name] = function(d){ if (done) return; done = true; clean(); cb(d); };
+  sc.onerror = function(){ if (done) return; done = true; clean(); cb(null); };
+  sc.src = url + (url.indexOf('?') < 0 ? '?' : '&') + 'callback=' + name + '&_=' + Date.now();
+  document.head.appendChild(sc);
+  setTimeout(function(){ if (!done) { done = true; clean(); cb(null); } }, 10000);
+}
+function getJson(url, cb){ fetch(url, { cache: 'no-store' }).then(function(r){ if (!r.ok) throw new Error('http'); return r.json(); }).then(function(d){ cb(d); }).catch(function(){ cb(null); }); }
+function resolve(src, cb){
+  var k = src.split(':')[0], id = src.slice(k.length + 1);
+  if (k === 'kbs') {
+    getJson('https://cfpwwwapi.kbs.co.kr/api/v1/landing/live/channel_code/' + id, function(d){
+      /* TV: 받은 주소 중 TV용(없으면 첫 번째) 영상 주소를 씀 */
+      var items = ((d && d.channel_item) || []).filter(function(it){ return it && it.service_url; }), pick = null;
+      items.forEach(function(it){ if (!pick && /tv/i.test(String(it.media_type || ''))) pick = it; });
+      if (!pick) items.forEach(function(it){ if (!pick && !/radio/i.test(String(it.media_type || ''))) pick = it; });
+      var u = pick ? String(pick.service_url) : findUrl(d);
+      log(!d ? '[' + id + '] 주소 받기 실패 (응답 없음)' : '[' + id + '] 받은 종류: ' + (items.map(function(it){ return it.media_type || '?'; }).join(', ') || '없음') + (u ? ' → 주소 받음' : ' → 주소 없음'));
+      if (!u) { cb(null); return; }
+      cb({ url: https(u), video: true, backup: '' });
+    });
+  } else if (k === 'sbs' || k === 'sbsv') {
+    getJson('https://apis.sbs.co.kr/play-api/1.0/onair/channel/' + id + '?v_type=2&platform=pcweb&protocol=hls&ssl=Y&jwt-token=&rnd=' + Math.floor(Math.random() * 1000), function(d){
+      var u = ''; try { u = d.onair.source.mediasource.mediaurl || ''; } catch(e){}
+      if (!u) { cb(null, !!d); return; }   /* 응답은 왔는데 주소가 없으면 = 방송시간 아님 */
+      cb({ url: https(u), video: k === 'sbsv', backup: '' });
+    });
+  } else if (k === 'mbc') {
+    jsonp('https://sminiplay.imbc.com/aacplay.ashx?channel=' + encodeURIComponent(id) + '&protocol=M3U8&agent=webapp', function(d){
+      var u = (d && typeof d === 'object') ? (d.AACLiveURL || findUrl(d)) : (typeof d === 'string' ? d : '');
+      if (!/^https?:/.test(String(u))) { cb(null); return; }
+      cb({ url: https(u), video: false, backup: '' });
+    });
+  } else if (k === 'mbcv') {
+    jsonp('https://sminiplay.imbc.com/boraplay.ashx?agent=webapp', function(d){
+      var u = (d && typeof d === 'object') ? (d.BoraURL || findUrl(d)) : '';
+      if (!/^https?:/.test(String(u))) { cb(null, true); return; }
+      cb({ url: https(u), video: true, backup: '' });
+    });
+  } else cb(null);
+}
+function play(i){
+  /* 브라우저가 자동 재생을 막아 멈춰 있는 카드를 다시 누르면 → 정지가 아니라 그대로 재생 */
+  if (i === cur && needTap === i) { needTap = -1; setSt(i, '연결 중…'); var pr = v.play(); if (pr && pr.catch) pr.catch(function(){ failed(i); }); return; }
+  var same = (i === cur); stopAll(); if (same || !STATIONS[i]) return;
+  cur = i; var my = seq, c = card(i);
+  c.classList.add('on'); c.querySelector('.wr-play').textContent = '■'; setSt(i, '연결 중…');
+  $('wrMsg').innerHTML = '<span class="big">' + BRAND + ' ' + esc(STATIONS[i][0]) + '</span>연결 중…';
+  try { v.src = SILENT; var p0 = v.play(); if (p0 && p0.catch) p0.catch(function(){}); } catch(e){}
+  resolve(STATIONS[i][2], function(r){
+    if (my !== seq) return;
+    if (!r) { failed(i); return; }
+    startStream(i, r.url, r.video, my, r.backup);
+  });
+}
+v.addEventListener('error', function(){ if (cur >= 0 && v.getAttribute('src') && !isSilent() && onMediaError) onMediaError(); });
+$('wrList').addEventListener('click', function(e){ var c = e.target.closest('.wr-card'); if (c) play(+c.getAttribute('data-i')); });
+
+/* 복사 방지 */
+['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){ document.addEventListener(ev, function(e){ e.preventDefault(); }); });
+document.addEventListener('keydown', function(e){
+  var k = (e.key||'').toLowerCase();
+  if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && /^[ijc]$/.test(k)) || (e.ctrlKey && !e.shiftKey && /^[uscxa]$/.test(k))) e.preventDefault();
+});
+</script>
+</body>
+</html>
