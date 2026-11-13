@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>MBC 라디오 · 표준FM FM4U | MYWAY.KR</title>
+<meta name="description" content="MBC 표준FM·FM4U·올댓뮤직을 한 화면에서. 방송을 골라 바로 들어 보세요.">
+<link rel="canonical" href="https://myway.kr/radio-mbc.html">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;min-height:100%}
+  body{background:#f7f3eb;color:#1f2740;font-family:"Pretendard",-apple-system,sans-serif;font-size:12.5px;-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
+  .wr-main{max-width:1040px;margin:0 auto;padding:20px 14px 90px}
+  .wr-flag{font-size:13.5px;font-weight:800;color:#5b4bdb;margin:24px 4px 10px}
+  .wr-flag:first-child{margin-top:0}
+  .wr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .wr-main{max-width:680px}
+  .wr-grid{grid-template-columns:repeat(3,1fr)}
+  .wr-card{position:relative;display:block;width:100%;text-align:left;font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;background:#fff;border:1px solid #e6e2d8;border-radius:14px;padding:9px 9px 11px;box-shadow:0 4px 12px rgba(90,90,130,.08);transition:transform .15s,border-color .2s,box-shadow .2s}
+  .wr-card:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(90,100,180,.16)}
+  .wr-card.on{border-color:#8a80dc;box-shadow:0 0 0 2px rgba(138,128,220,.4),0 8px 18px rgba(90,100,180,.22)}
+  /* 이미지 칸: 로고가 있으면 로고, 없거나 못 불러오면 색 바탕 + 방송 이름 머리글자 */
+  .wr-art{position:relative;aspect-ratio:1/1;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#fff;font-size:19px;line-height:1.2;text-align:center;padding:0 10px 14px;font-weight:800;letter-spacing:-.5px;text-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .wr-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#fff;-webkit-user-drag:none}
+  .wr-play{position:absolute;right:8px;bottom:8px;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;background:rgba(31,39,64,.78);box-shadow:0 3px 8px rgba(0,0,0,.25);font-size:13px;padding-left:2px;text-shadow:none}
+  .wr-card.on .wr-play{background:linear-gradient(135deg,#6fb3d8,#8a80dc 50%,#a98be3);padding-left:0}
+  .wr-name{font-size:13.5px;font-weight:800;letter-spacing:-.2px;margin:9px 2px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .wr-desc{color:#8a8f99;margin:0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .wr-st{margin:5px 2px 0;font-weight:700;min-height:15px;color:#8a8f99;font-size:11.5px}
+  .wr-st.ok{color:#5b4bdb} .wr-st.bad{color:#d14848}
+  .myway-footer{text-align:center;color:#8a8f99;padding:30px 0 0}
+  .myway-footer a{color:#6a5fd0;font-weight:700;text-decoration:none}
+  .home-fab{position:fixed;right:16px;bottom:16px;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,#6fb3d8,#8a80dc 50%,#a98be3);box-shadow:0 6px 16px rgba(90,100,180,.35);z-index:50}
+  .home-fab svg{width:21px;height:21px}
+  .embedded .home-fab{display:none}   /* 마이웨이 화면 안에 들어가 있을 때는 숨김(위쪽 탭바가 있음) */
+  @media (max-width:900px){ .wr-grid{grid-template-columns:repeat(3,1fr)} }
+  @media (max-width:520px){ .wr-grid{grid-template-columns:repeat(2,1fr);gap:10px} .wr-main{padding-top:14px} }
+</style>
+</head>
+<body>
+<main class="wr-main">
+  <div id="wrList"></div>
+  <footer class="myway-footer"><a href="https://myway.kr" target="_top">MYWAY.KR</a></footer>
+</main>
+<audio id="wrAudio" preload="none"></audio>
+<a class="home-fab" href="https://myway.kr" target="_top" aria-label="MYWAY.KR 홈" title="MYWAY.KR 홈">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
+</a>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
+<script>
+try { if (window.self !== window.top) document.documentElement.classList.add('embedded'); } catch(e){ document.documentElement.classList.add('embedded'); }
+
+/* === MBC 라디오 목록 (주소 칸의 mbc:채널 은 누를 때 MBC 서버에서 주소를 받아 옴): [국가, 이름, 설명, 스트림 주소, 이미지 주소(없으면 ''), 바탕색] ===
+   이미지가 없거나 불러오지 못하면 바탕색 + 이름 머리글자가 대신 나옴 */
+var STATIONS = [
+  ['📻 MBC 라디오', 'MBC 표준FM', '95.9MHz · 시사·교양·예능', 'mbc:sfm', '', '#2c5fa8,#1b3566'],
+  ['📻 MBC 라디오', 'MBC FM4U', '91.9MHz · 음악', 'mbc:mfm', '', '#d9483b,#8f2b3e'],
+  ['📻 MBC 라디오', '올댓뮤직', '24시간 음악 채널', 'mbc:chm', '', '#7a5bd0,#4a3a94']
+];
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function initials(n){ var t = n.replace(/[^A-Za-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim(); return /[가-힣]/.test(n) ? n : (t || n); }   /* 이름의 영문 부분 (예: 'WNYC 뉴욕' → 'WNYC') */
+(function(){
+  var html = '', last = '';
+  STATIONS.forEach(function(s, i){
+    if (s[0] !== last) { html += (last ? '</div>' : '') + '<div class="wr-flag">' + esc(s[0]) + '</div><div class="wr-grid">'; last = s[0]; }
+    html += '<button type="button" class="wr-card" data-i="' + i + '" title="' + esc(s[1]) + '">' +
+      '<div class="wr-art" style="background:linear-gradient(135deg,' + s[5] + ')">' + esc(initials(s[1])) +
+      (s[4] ? '<img alt="" loading="lazy" referrerpolicy="no-referrer" src="' + esc(s[4]) + '" onerror="this.remove()">' : '') +
+      '<span class="wr-play">▶</span></div>' +
+      '<div class="wr-name">' + esc(s[1]) + '</div><div class="wr-desc">' + esc(s[2]) + '</div><div class="wr-st"></div></button>';
+  });
+  document.getElementById('wrList').innerHTML = html + '</div>';
+})();
+
+/* 재생: 오디오는 1개만 → 다른 방송을 누르면 이전 방송은 멈춤. 재생 중인 카드를 다시 누르면 정지 */
+var au = document.getElementById('wrAudio'), hls = null, cur = -1;
+function card(i){ return document.querySelector('.wr-card[data-i="' + i + '"]'); }
+function setSt(i, txt, cls){ var c = card(i); if (!c) return; var el = c.querySelector('.wr-st'); el.textContent = txt; el.className = 'wr-st' + (cls ? ' ' + cls : ''); }
+function stopAll(){
+  if (hls) { try { hls.destroy(); } catch(e){} hls = null; }
+  var was = cur; cur = -1;
+  try { au.pause(); au.removeAttribute('src'); au.load(); } catch(e){}
+  if (was >= 0) { var c = card(was); if (c) { c.classList.remove('on'); c.querySelector('.wr-play').textContent = '▶'; } setSt(was, ''); }
+}
+function play(i){
+  /* 브라우저가 자동 재생을 막아 멈춰 있는 카드를 다시 누르면 → 정지가 아니라 그대로 재생 */
+  if (i === cur && needTap === i) { needTap = -1; setSt(i, '연결 중…'); var pr = au.play(); if (pr && pr.catch) pr.catch(function(){ setSt(i, '지금은 연결이 안 돼요', 'bad'); }); return; }
+  needTap = -1;
+  var same = (i === cur);
+  stopAll();
+  if (same || !STATIONS[i]) return;
+  cur = i;
+  var url = STATIONS[i][3], c = card(i);
+  c.classList.add('on'); c.querySelector('.wr-play').textContent = '■';
+  setSt(i, '연결 중…');
+  if (/^mbc:/.test(url)) {
+    /* 아이폰은 '누른 순간'에 재생을 시작해야 소리를 허용함 → 주소를 받는 동안 아주 짧은 무음을 먼저 틀어 둠 */
+    try { au.src = SILENT; var p0 = au.play(); if (p0 && p0.catch) p0.catch(function(){}); } catch(e){}
+    mbcAddr(url.slice(4), i, function(u){ startStream(i, u); });
+  } else startStream(i, url);
+}
+function startStream(i, url){
+  if (cur !== i) return;
+  if (/\.m3u8/.test(url) && !au.canPlayType('application/vnd.apple.mpegurl') && window.Hls && Hls.isSupported()) {
+    hls = new Hls();
+    hls.on(Hls.Events.ERROR, function(ev, d){ if (d && d.fatal && cur === i) setSt(i, '지금은 연결이 안 돼요', 'bad'); });
+    hls.loadSource(url); hls.attachMedia(au);
+  } else { au.src = url; }
+  var p = au.play(); if (p && p.catch) p.catch(function(){ if (cur === i) { needTap = i; setSt(i, '▶ 한 번 더 눌러 주세요', 'bad'); } });
+}
+/* MBC 라디오는 방송 주소가 고정이 아니라 들을 때마다 MBC 서버가 잠깐 쓸 주소를 내줌 → 누를 때마다 새로 받아 옴(스크립트 불러오기 방식) */
+var mbcSeq = 0, needTap = -1, SILENT = 'data:audio/wav;base64,UklGRrQBAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YZABAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA';
+function mbcAddr(ch, i, ok){
+  var my = ++mbcSeq, cb = '__mbc' + Date.now() + '_' + my, done = false, sc = document.createElement('script');
+  function clean(){ try { delete window[cb]; } catch(e){ window[cb] = undefined; } if (sc.parentNode) sc.parentNode.removeChild(sc); }
+  function fail(){ if (cur === i && my === mbcSeq) setSt(i, '지금은 연결이 안 돼요', 'bad'); }
+  window[cb] = function(d){
+    done = true; clean(); if (my !== mbcSeq || cur !== i) return;
+    var u = '';
+    if (typeof d === 'string') u = d;
+    else if (d && typeof d === 'object') { u = d.AACLiveURL || d.aacLiveURL || d.url || d.URL || ''; if (!u) { try { u = (JSON.stringify(d).match(/https?:[^"\\s]+m3u8[^"\\s]*/) || [''])[0]; } catch(e){} } }
+    u = String(u || '').replace(/\\\//g, '/').trim();
+    if (!/^https?:\/\//.test(u)) { fail(); return; }
+    ok(u.replace(/^http:/, 'https:'));
+  };
+  sc.onerror = function(){ if (done) return; done = true; clean(); fail(); };
+  sc.src = 'https://sminiplay.imbc.com/aacplay.ashx?channel=' + encodeURIComponent(ch) + '&protocol=M3U8&agent=webapp&callback=' + cb + '&_=' + Date.now();
+  document.head.appendChild(sc);
+  setTimeout(function(){ if (!done) { done = true; clean(); fail(); } }, 10000);
+}
+au.addEventListener('playing', function(){ if (cur >= 0 && String(au.currentSrc || au.src).indexOf('data:') !== 0) setSt(cur, '♪ 재생 중', 'ok'); });
+au.addEventListener('error', function(){ if (cur >= 0 && String(au.currentSrc || au.src).indexOf('data:') !== 0) setSt(cur, '지금은 연결이 안 돼요', 'bad'); });
+document.getElementById('wrList').addEventListener('click', function(e){ var c = e.target.closest('.wr-card'); if (c) play(+c.getAttribute('data-i')); });
+
+/* 복사 방지 */
+['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){ document.addEventListener(ev, function(e){ e.preventDefault(); }); });
+document.addEventListener('keydown', function(e){
+  var k = (e.key||'').toLowerCase();
+  if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && /^[ijc]$/.test(k)) || (e.ctrlKey && !e.shiftKey && /^[uscxa]$/.test(k))) e.preventDefault();
+});
+</script>
+</body>
+</html>
