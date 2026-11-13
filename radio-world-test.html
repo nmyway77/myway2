@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>해외 라디오 임베드 테스트 | MYWAY.KR</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{background:#f7f3eb;color:#1f2740;font-family:"Pretendard",-apple-system,sans-serif;font-size:12.5px;-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
+  input,textarea{user-select:text;-webkit-user-select:text}
+  .wrap{max-width:1040px;margin:0 auto;padding:26px 14px 90px}
+  h1{font-size:18px;font-weight:800;letter-spacing:-.3px;margin:0 0 6px}
+  .lead{color:#6b7190;margin:0 0 22px;line-height:1.6}
+  h2{font-size:13.5px;font-weight:800;color:#5b4bdb;margin:26px 4px 10px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .card{background:#fff;border:1px solid #e6e2d8;border-radius:12px;padding:12px 12px 10px;box-shadow:0 2px 6px rgba(90,90,130,.07)}
+  .card .t{font-size:14px;font-weight:800;letter-spacing:-.2px}
+  .card .d{color:#8a8f99;margin:3px 0 9px;line-height:1.45}
+  .card iframe{display:block;width:100%;height:100px;border:0;border-radius:8px;background:#f1f1f4}
+  .card a{display:inline-block;margin-top:8px;color:#6a5fd0;font-weight:700;text-decoration:none}
+  .card a:hover{text-decoration:underline}
+  .myway-footer{text-align:center;color:#8a8f99;padding:26px 0 0}
+  .myway-footer a{color:#6a5fd0;font-weight:700;text-decoration:none}
+  .home-fab{position:fixed;right:16px;bottom:16px;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,#6fb3d8,#8a80dc 50%,#a98be3);box-shadow:0 6px 16px rgba(90,100,180,.35);z-index:50}
+  .home-fab svg{width:21px;height:21px}
+  @media (max-width:720px){ .grid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>해외 라디오 임베드 테스트</h1>
+  <p class="lead">미국·영국·일본 각 2개. 각 카드의 ▶ 버튼을 눌러 소리가 나오는지 PC와 핸드폰에서 확인해 보세요.<br>플레이어는 TuneIn 공식 임베드입니다. 안 나오는 채널은 아래 "TuneIn에서 열기"로 채널 자체가 한국에서 막혔는지 확인할 수 있어요.</p>
+  <div id="list"></div>
+  <footer class="myway-footer"><a href="https://myway.kr">MYWAY.KR</a></footer>
+</div>
+<a class="home-fab" href="https://myway.kr" aria-label="MYWAY.KR 홈" title="MYWAY.KR 홈">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
+</a>
+<script>
+/* [국가, [[이름, 설명, TuneIn 번호], ...]] */
+var DATA = [
+  ['🇺🇸 미국', [
+    ['WNYC-FM 93.9 (뉴욕)', '미국 최대 공영 라디오 · NPR 뉴스/토크', 's21606'],
+    ['KEXP 90.3 (시애틀)', '인디·얼터너티브 음악 전문 공영 라디오', 's32537']
+  ]],
+  ['🇬🇧 영국', [
+    ['BBC World Service', 'BBC 국제 방송 · 24시간 영어 뉴스', 's24948'],
+    ['BBC Radio 4', '뉴스·토크·드라마 (채널 번호는 미확인 — 다른 방송이 나오면 알려 주세요)', 's25419']
+  ]],
+  ['🇯🇵 일본', [
+    ['NHK WORLD RADIO JAPAN', 'NHK 국제 방송 · 다국어 뉴스', 's7128'],
+    ['Shonan Beach FM 78.9', '가나가와 즈시의 FM · 재즈/팝 위주', 's8138']
+  ]]
+];
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+document.getElementById('list').innerHTML = DATA.map(function(g){
+  return '<h2>' + esc(g[0]) + '</h2><div class="grid">' + g[1].map(function(c){
+    return '<div class="card"><div class="t">' + esc(c[0]) + '</div><div class="d">' + esc(c[1]) + '</div>' +
+      '<iframe title="' + esc(c[0]) + '" src="https://tunein.com/embed/player/' + c[2] + '/" scrolling="no" allow="autoplay; encrypted-media"></iframe>' +
+      '<a href="https://tunein.com/radio/' + c[2] + '" target="_blank" rel="noopener">TuneIn에서 열기 ↗</a></div>';
+  }).join('') + '</div>';
+}).join('');
+/* 복사 방지 */
+['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){
+  document.addEventListener(ev, function(e){ if (!/^(INPUT|TEXTAREA)$/.test((e.target||{}).tagName||'')) e.preventDefault(); });
+});
+document.addEventListener('keydown', function(e){
+  var k = (e.key||'').toLowerCase();
+  if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && /^[ijc]$/.test(k)) || (e.ctrlKey && !e.shiftKey && /^[uscxa]$/.test(k) && !/^(INPUT|TEXTAREA)$/.test((e.target||{}).tagName||''))) e.preventDefault();
+});
+</script>
+</body>
+</html>
