@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>KBS 드라마 다시보기 · 회차 목록 | MYWAY.KR</title>
+<meta name="robots" content="noindex, follow">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;height:100%}
+  body{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:#14151f;color:#eceef7;font-family:"Pretendard",-apple-system,sans-serif;font-size:12.5px;-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
+  .kv-head{flex:none;display:flex;align-items:center;gap:10px;padding:8px 12px;background:#1c1e2b;border-bottom:1px solid rgba(255,255,255,.08)}
+  .kv-back{flex:none;height:32px;padding:0 13px 0 9px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#eceef7;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+  .kv-back:hover{background:rgba(255,255,255,.12)}
+  .embedded-none .kv-back{display:none}
+  .kv-title{flex:1;min-width:0;font-size:15px;font-weight:800;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .kv-title small{font-size:12px;font-weight:600;color:#9aa0b4;margin-left:8px}
+  .kv-open{flex:none;color:#b9b4f2;font-weight:700;text-decoration:none;font-size:12px;white-space:nowrap}
+  .kv-open:hover{text-decoration:underline}
+  .kv-body{flex:1;min-height:0;display:flex}
+  /* 왼쪽: KBS 공식 다시보기 화면 그대로 */
+  .kv-stage{position:relative;flex:1;min-width:0;background:#000}
+  .kv-stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+  .kv-stage .kv-msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.7;color:#9aa0b4;font-weight:700;padding:20px}
+  /* 오른쪽: 회차 목록 */
+  .kv-side{flex:none;width:340px;display:flex;flex-direction:column;background:#1a1b27;border-left:1px solid rgba(255,255,255,.08)}
+  .kv-side-h{flex:none;padding:10px 14px;font-weight:800;font-size:13.5px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .kv-side-h span{font-weight:600;color:#9aa0b4;font-size:12px;margin-left:6px}
+  .kv-list{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#3a3d52 transparent}
+  .kv-ep{display:flex;align-items:center;gap:10px;width:100%;padding:8px 12px;border:0;border-bottom:1px solid rgba(255,255,255,.05);background:none;color:inherit;font-family:inherit;font-size:inherit;text-align:left;cursor:pointer}
+  .kv-ep:hover{background:rgba(255,255,255,.05)}
+  .kv-ep.on{background:rgba(138,128,220,.22)}
+  .kv-ep .th{flex:none;width:96px;aspect-ratio:16/9;border-radius:7px;overflow:hidden;background:#2a2d44;display:flex;align-items:center;justify-content:center;color:#7d84ad;font-weight:800}
+  .kv-ep .th img{width:100%;height:100%;object-fit:cover;display:block;-webkit-user-drag:none}
+  .kv-ep .tx{flex:1;min-width:0}
+  .kv-ep b{display:block;font-size:13.5px;font-weight:800}
+  .kv-ep.on b{color:#c9c3ff}
+  .kv-ep em{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-style:normal;color:#b3b8cc;line-height:1.4;margin-top:2px}
+  .kv-ep i{display:block;font-style:normal;color:#7d84ad;font-size:11.5px;margin-top:2px}
+  .kv-note{padding:22px 16px;color:#9aa0b4;line-height:1.7;text-align:center}
+  .kv-foot{flex:none;text-align:center;padding:6px 0;font-size:11.5px;color:#7d84ad;border-top:1px solid rgba(255,255,255,.06)}
+  .kv-foot a{color:#b9b4f2;font-weight:700;text-decoration:none}
+  .home-fab{position:fixed;right:16px;bottom:16px;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,#6fb3d8,#8a80dc 50%,#a98be3);box-shadow:0 6px 16px rgba(0,0,0,.4);z-index:50}
+  .home-fab svg{width:21px;height:21px}
+  .embedded .home-fab{display:none}   /* 마이웨이 화면 안에 들어가 있을 때는 숨김(위쪽 탭바가 있음) */
+  @media (max-width:860px){
+    .kv-body{flex-direction:column}
+    .kv-stage{flex:none;height:56%}
+    .kv-side{flex:1;min-height:0;width:auto;border-left:0;border-top:1px solid rgba(255,255,255,.08)}
+    .kv-ep .th{width:84px}
+  }
+</style>
+</head>
+<body>
+<header class="kv-head">
+  <button type="button" class="kv-back" id="kvBack" title="드라마 목록으로">‹ 드라마 목록</button>
+  <div class="kv-title" id="kvTitle">KBS 드라마 다시보기</div>
+  <a class="kv-open" id="kvOpen" href="https://vod.kbs.co.kr/drama.html" target="_blank" rel="noopener">KBS에서 열기 ↗</a>
+</header>
+<div class="kv-body">
+  <div class="kv-stage" id="kvStage"><div class="kv-msg" id="kvMsg">회차 목록을 불러오는 중…</div></div>
+  <aside class="kv-side">
+    <div class="kv-side-h">회차 목록<span id="kvCount"></span></div>
+    <div class="kv-list" id="kvList"><div class="kv-note">불러오는 중…</div></div>
+    <div class="kv-foot">영상은 KBS 공식 다시보기 화면입니다 · <a href="https://myway.kr" target="_top">MYWAY.KR</a></div>
+  </aside>
+</div>
+<a class="home-fab" href="https://myway.kr" target="_top" aria-label="MYWAY.KR 홈" title="MYWAY.KR 홈">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
+</a>
+<script>
+/* KBS 드라마 한 편의 회차 목록을 오른쪽에, KBS 공식 다시보기 화면을 왼쪽에 보여 줌.
+   주소: kbs-vod.html?code=프로그램코드(예: T2016-0050)&pid=처음 틀 회차(선택)&t=제목(선택)
+   회차 목록은 KBS가 공개한 목록 주소에서 받아 오고, 영상은 KBS 화면을 그대로 넣음(직접 재생하지 않음) */
+var embedded = false; try { embedded = window.self !== window.top; } catch(e){ embedded = true; }
+document.documentElement.classList.add(embedded ? 'embedded' : 'embedded-none');
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+var Q = new URLSearchParams(location.search);
+var CODE = (Q.get('code') || '').trim(), PID0 = (Q.get('pid') || '').trim(), TITLE0 = (Q.get('t') || '').trim();
+if (!/^[A-Za-z0-9-]{4,24}$/.test(CODE)) CODE = '';
+var EPS = [], cur = -1;
+function epUrl(e){
+  return 'https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=' + encodeURIComponent(e.program_code || CODE) + '&program_id=' + encodeURIComponent(e.program_id) +
+    '&broadcast_complete_yn=' + encodeURIComponent(e.broadcast_complete_yn || 'Y') + '&local_station_code=' + encodeURIComponent(e.local_station_code || '00') + '&section_code=' + encodeURIComponent(e.section_code || '03');
+}
+function epNo(e, i){ var n = e.program_sequence_number; return (n != null && n !== '' && String(n) !== '0') ? n + '회' : (i + 1) + '번째'; }
+function epDate(e){ var d = String(e.program_planned_date || ''); return /^\d{8}$/.test(d) ? d.slice(0, 4) + '.' + d.slice(4, 6) + '.' + d.slice(6, 8) : ''; }
+function setTitle(t, sub){ $('kvTitle').innerHTML = esc(t || 'KBS 드라마 다시보기') + (sub ? '<small>' + esc(sub) + '</small>' : ''); }
+function renderList(){
+  $('kvCount').textContent = EPS.length ? ' ' + EPS.length + '편' : '';
+  $('kvList').innerHTML = EPS.map(function(e, i){
+    var img = e.image_w || (e.image_list && e.image_list[0]) || '';
+    return '<button type="button" class="kv-ep' + (i === cur ? ' on' : '') + '" data-i="' + i + '"><span class="th">' + (img ? '<img loading="lazy" decoding="async" referrerpolicy="no-referrer" alt="" src="' + esc(img) + '" onerror="this.remove()">' : '') + '</span>' +
+      '<span class="tx"><b>' + esc(epNo(e, i)) + '</b>' + (e.program_subtitle ? '<em>' + esc(e.program_subtitle) + '</em>' : '') + (epDate(e) ? '<i>' + epDate(e) + '</i>' : '') + '</span></button>';
+  }).join('');
+}
+function playEp(i, scroll){
+  var e = EPS[i]; if (!e) return;
+  cur = i;
+  var u = epUrl(e);
+  $('kvStage').innerHTML = '<iframe title="KBS 다시보기" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen src="' + esc(u) + '"></iframe>';
+  $('kvOpen').href = u;
+  setTitle(e.title || TITLE0, epNo(e, i));
+  Array.prototype.forEach.call(document.querySelectorAll('.kv-ep'), function(el){ el.classList.toggle('on', +el.dataset.i === i); });
+  if (scroll){ var on = document.querySelector('.kv-ep.on'); if (on) { try { on.scrollIntoView({ block: 'center' }); } catch(err){} } }
+}
+function fail(msg){ $('kvMsg').innerHTML = msg; $('kvList').innerHTML = '<div class="kv-note">' + msg + '</div>'; }
+/* 회차 목록 받기: 한 번에 최대 40편씩이라 여러 쪽을 이어 받음 (일일극처럼 긴 드라마 대비, 최대 12쪽) */
+function loadPage(page){
+  var u = 'https://static.api.kbs.co.kr/mediafactory/v1/contents?use_pc=Y&sort_option=' + encodeURIComponent('regular_yn|asc') + '&program_code=' + encodeURIComponent(CODE) + '&descriptive_video_service_yn=N&page=' + page + '&page_size=40';
+  return fetch(u).then(function(r){ if (!r.ok) throw new Error('http ' + r.status); return r.json(); });
+}
+function start(){
+  setTitle(TITLE0);
+  if (!CODE){ fail('드라마 정보가 없어요.<br>드라마VOD에서 드라마를 눌러 들어와 주세요.'); return; }
+  var all = [];
+  function next(page){
+    loadPage(page).then(function(d){
+      var rows = (d && d.data) || []; all = all.concat(rows);
+      var pages = +(d && d.page_count) || 1;
+      if (page < pages && page < 12 && rows.length) next(page + 1); else done();
+    }).catch(function(){ if (all.length) done(); else fail('회차 목록을 불러오지 못했어요.<br>위의 [KBS에서 열기]로 KBS 화면에서 볼 수 있어요.'); });
+  }
+  function done(){
+    EPS = all.filter(function(e){ return e && e.program_id; });
+    if (!EPS.length){ fail('이 드라마는 회차 목록이 없어요.<br>위의 [KBS에서 열기]로 KBS 화면에서 볼 수 있어요.'); return; }
+    /* 회차 번호 순서로 정렬 (번호가 없으면 방송일 순) */
+    EPS.sort(function(a, b){ var x = +a.program_sequence_number || 0, y = +b.program_sequence_number || 0; if (x !== y) return x - y; return String(a.program_planned_date || '').localeCompare(String(b.program_planned_date || '')); });
+    var first = 0; if (PID0) EPS.forEach(function(e, i){ if (e.program_id === PID0) first = i; });
+    renderList(); playEp(first, true);
+  }
+  next(1);
+}
+$('kvList').addEventListener('click', function(e){ var b = e.target.closest('.kv-ep'); if (b) playEp(+b.dataset.i); });
+/* ‹ 드라마 목록: 마이웨이 화면 안이면 바깥(드라마VOD 탭)에 돌아가 달라고 알림 */
+$('kvBack').addEventListener('click', function(){ try { window.parent.postMessage({ type: 'MYWAY_KBSVOD_BACK' }, location.origin); } catch(e){} });
+if (CODE) $('kvOpen').href = 'https://vod.kbs.co.kr/index.html?source=episode&sname=vod&stype=vod&program_code=' + encodeURIComponent(CODE) + (PID0 ? '&program_id=' + encodeURIComponent(PID0) : '') + '&broadcast_complete_yn=Y&local_station_code=00&section_code=03';
+start();
+
+/* 복사 방지 */
+['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){ document.addEventListener(ev, function(e){ e.preventDefault(); }); });
+document.addEventListener('keydown', function(e){
+  var k = (e.key||'').toLowerCase();
+  if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && /^[ijc]$/.test(k)) || (e.ctrlKey && !e.shiftKey && /^[uscxa]$/.test(k))) e.preventDefault();
+});
+</script>
+</body>
+</html>
