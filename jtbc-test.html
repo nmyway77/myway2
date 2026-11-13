@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>JTBC 화면 안 보기 테스트 | MYWAY.KR</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%}
+  body{display:flex;flex-direction:column;background:#f7f3eb;color:#1f2740;font-family:"Pretendard",-apple-system,sans-serif;font-size:13px;user-select:none;-webkit-user-select:none}
+  .bar{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid #e6e2d8;background:#fff}
+  .bar b{font-size:15px;margin-right:4px}
+  .bar button,.bar a{font:inherit;font-weight:700;padding:8px 13px;border-radius:999px;border:1px solid #dcdfee;background:#f4f5fc;color:#4b4f9a;cursor:pointer;text-decoration:none}
+  .bar button.on{background:linear-gradient(135deg,#6fb3d8,#8a80dc 50%,#a98be3);border-color:transparent;color:#fff}
+  .note{flex:none;padding:7px 12px;color:#8a8f99;font-size:12px}
+  .box{flex:1;min-height:0;position:relative;background:#000}
+  .box iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+  .idle{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#c9cde0;text-align:center;line-height:1.7}
+  .foot{flex:none;text-align:center;padding:8px;font-size:12px}
+  .foot a{color:#6a5fd0;font-weight:700;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="bar">
+  <b>JTBC 테스트</b>
+  <button type="button" data-m="1">① 화면 안 (기본)</button>
+  <button type="button" data-m="2">② 화면 안 (앱 확인창 차단)</button>
+  <button type="button" data-m="3">③ 화면 안 (MBC 방식)</button>
+  <a href="https://onair.jtbc.co.kr/" target="_blank" rel="noopener">④ 새 창 ↗</a>
+</div>
+<div class="note" id="note">①②③을 차례로 눌러, 어느 것이 화면 안에서 방송이 나오는지 봐 주세요.</div>
+<div class="box" id="box"><div class="idle">위 버튼을 누르면 여기에 JTBC 온에어 화면이 나와요</div></div>
+<div class="foot"><a href="https://myway.kr" target="_top">MYWAY.KR</a></div>
+<script>
+var URL_ = 'https://onair.jtbc.co.kr/';
+var MODES = {
+  1: { t: '① 기본: 다른 방송사와 같은 방식', h: ' referrerpolicy="no-referrer" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen' },
+  2: { t: '② SBS·채널A 방식: 앱으로 넘기는 확인창을 막음', h: ' sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation" referrerpolicy="no-referrer" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen' },
+  3: { t: '③ MBC 방식: 전체화면 권한만 줌', h: ' referrerpolicy="no-referrer" allow="fullscreen" allowfullscreen' }
+};
+document.querySelector('.bar').addEventListener('click', function(e){
+  var b = e.target.closest('button[data-m]'); if (!b) return;
+  var m = MODES[b.getAttribute('data-m')];
+  Array.prototype.forEach.call(document.querySelectorAll('.bar button'), function(x){ x.classList.toggle('on', x === b); });
+  document.getElementById('note').textContent = m.t;
+  document.getElementById('box').innerHTML = '<iframe src="' + URL_ + '"' + m.h + '></iframe>';
+});
+['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){ document.addEventListener(ev, function(e){ e.preventDefault(); }); });
+document.addEventListener('keydown', function(e){
+  var k = (e.key||'').toLowerCase();
+  if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && /^[ijc]$/.test(k)) || (e.ctrlKey && !e.shiftKey && /^[uscxa]$/.test(k))) e.preventDefault();
+});
+</script>
+</body>
+</html>
