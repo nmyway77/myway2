@@ -1194,7 +1194,7 @@
     /* 탭바의 TV · 라디오 버튼 */
     .tab-btn.tvr-tab { font-weight: 800; }
     /* 영화는 위쪽 [🎬 영화] 버튼으로 이동 → 예전 일반 [영화] 탭 버튼은 숨김 */
-    #tabNav .tab-btn[data-tab="movie"], #tabNav .tab-btn[data-tab="youtuber"], #tabNav .tab-btn[data-tab="onair_newsnow"], #tabNav .tab-btn[data-tab="onair_newsbar"] { display: none; }
+    #tabNav .tab-btn[data-tab="movie"], #tabNav .tab-btn[data-tab="youtuber"], #tabNav .tab-btn[data-tab="onair_newsnow"], #tabNav .tab-btn[data-tab="onair_newsbar"], #tabNav .tab-btn[data-tab="onair_kbsvod"] { display: none; }
     .section-newslink.newsnow-link { margin-left: 8px; }
     .tab-btn.tvr-tab.is-active[data-tab="onair_tv"],
     .tab-btn.tvr-tab.is-active[data-tab="onair_tv2"] { background: linear-gradient(110deg, #5b8def 0%, #7d6fe8 55%, #b176f3 100%); border-color: transparent; color: #fff; box-shadow: 0 4px 14px rgba(125,111,232,.35); }
@@ -2428,6 +2428,11 @@
           a.addEventListener('click', e => {
             if (editMode) { e.preventDefault(); return; }
             e.preventDefault();
+            /* 드라마VOD의 KBS 드라마(PC·태블릿): 새 창 대신 화면 안에서 — 왼쪽 KBS 화면, 오른쪽 회차 목록. 핸드폰은 예전처럼 KBS 화면을 바로 엶 */
+            if (tabId === 'dramavod' && !DV_PHONE && window.__openKbsVod) {
+              const km = /^https?:\/\/vod\.kbs\.co\.kr\/.*[?&]program_code=([^&#]+)/.exec(pageUrl);
+              if (km) { const pm = /[?&]program_id=([^&#]+)/.exec(pageUrl); let kc = km[1], kp = pm ? pm[1] : ''; try { kc = decodeURIComponent(kc); kp = decodeURIComponent(kp); } catch (_) {} if (window.__openKbsVod(kc, kp, nm)) return; }
+            }
             const rect = a.getBoundingClientRect(); const x = e.clientX - rect.left;
             if (pageUrl && x > rect.width / 2) window.open(pageUrl, '_blank', 'noopener');
             else if (photos.length || it.content) openLightbox(photos, nm, it.content || '');
@@ -3600,6 +3605,7 @@
     music: { label: "🎵 음악", url: "https://myway.kr/music-sample.html" },   /* 새 디자인(구 음악2)을 음악으로 채택 — 예전 음악은 MUSIC-YTUBE-SINGER.html */
     cctv:  { label: "📹 CCTV", url: "https://myway.kr/00makingyoutubefull2.html" },
     newsnow: { label: "📰 최신뉴스", url: "https://myway.kr/NEWS-NOW.html", tab: "news" },
+    kbsvod: { label: "KBS 다시보기", url: "https://myway.kr/kbs-vod.html", tab: "dramavod" },   /* 드라마VOD의 KBS 카드 → 왼쪽 KBS 화면 + 오른쪽 회차 목록 (탭바에는 버튼 없음, 주소는 카드를 누를 때 정해짐) */
     newsbar: { label: "📰 뉴스 바로보기", url: "https://myway.kr/newsitesbar3.html", tab: "news" }   /* 뉴스 전체목록 위 [뉴스-바로보기] → 화면 안에서 열림 (탭바에는 버튼 없음, [뉴스] 탭이 켜진 채로) */
   };
   /* @PAGES_END */
@@ -3713,6 +3719,17 @@
       });
     }
     window.__openPage = function(k){ openOnair(k); };
+    /* 드라마VOD의 KBS 드라마 카드 → 화면 안에서 회차 목록과 함께 보기 (kbs-vod.html) */
+    window.__openKbsVod = function(code, pid, title){
+      if (!/^[A-Za-z0-9-]{4,24}$/.test(String(code || ''))) return false;
+      TVR_PAGES.kbsvod.url = 'https://myway.kr/kbs-vod.html?code=' + encodeURIComponent(code) + (pid ? '&pid=' + encodeURIComponent(pid) : '') + (title ? '&t=' + encodeURIComponent(title) : '');
+      openOnair('kbsvod'); return true;
+    };
+    /* 회차 화면의 [‹ 드라마 목록] → 드라마VOD 카드 화면으로 */
+    window.addEventListener('message', function(e){
+      if (e.origin !== location.origin || !e.data || e.data.type !== 'MYWAY_KBSVOD_BACK') return;
+      if (typeof selectTab === 'function') selectTab('dramavod');
+    });
     function openOnair(k, startI){
       var changed = (onair !== k);
       onair = k;
@@ -3798,6 +3815,7 @@
     else if (!ret && qTab && typeof selectTab === 'function') {
       selectTab(qTab);
     }
+    else if (ret && ret.k === 'kbsvod' && typeof selectTab === 'function') selectTab('dramavod');   /* 회차 화면은 어느 드라마였는지 기억하지 않으므로 드라마VOD 목록으로 */
     else if (ret && ret.k && ret.k !== 'tv') openOnair(ret.k, ret.i); else openOnair('tv2');
     list();
   }
