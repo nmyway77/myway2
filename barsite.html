@@ -3614,6 +3614,15 @@
   var kind = 'tv', cur = null; /* cur = {k, i} */
   /* 핸드폰·태블릿 판별 (PC는 KBS도 화면 안에서 그대로 재생) */
   var IS_MOBILE = /Android|iPhone|iPad|iPod|Mobile|SamsungBrowser/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  /* 핸드폰에서만 라디오 순서: SBS → MBC → KBS1·2·3 → COOL FM → 나머지 그대로 (MBC는 핸드폰에서도 화면 안에서 바로 재생되므로 앞으로) */
+  (function(){
+    var phone = /iPhone|iPod/i.test(navigator.userAgent) || (/Android/i.test(navigator.userAgent) && /Mobile/i.test(navigator.userAgent));
+    if (!phone || !TVR.radio) return;
+    var r = TVR.radio, mi = -1, ki = -1;
+    r.forEach(function(c, i){ if (c[0] === 'MBC') mi = i; if (ki < 0 && /^KBS/.test(c[0])) ki = i; });
+    if (mi < 0 || ki < 0 || mi < ki) return;
+    var m = r.splice(mi, 1)[0]; r.splice(ki, 0, m);
+  })();
   function $(id){ return document.getElementById(id); }
   function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function ytId(u){ var m = String(u||'').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/); return m ? m[1] : null; }
