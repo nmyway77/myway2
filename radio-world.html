@@ -70,10 +70,10 @@ try { if (window.self !== window.top) document.documentElement.classList.add('em
 
 /* === 해외 라디오 목록: [국가, 이름, 설명, TuneIn 채널 번호] === */
 var STATIONS = [
-  ['🇺🇸 미국', 'WNYC 뉴욕', '미국 최대 공영 라디오 · NPR 뉴스/토크', 's21606'],
-  ['🇺🇸 미국', 'KEXP 시애틀', '인디·얼터너티브 음악 전문 공영 라디오', 's32537'],
+  ['🇺🇸 미국', 'KCRW News', '로스앤젤레스 공영 라디오 · NPR 뉴스/토크', 's44525'],
+  ['🇺🇸 미국', 'Jazz24', '시애틀 공영 라디오의 24시간 재즈 채널', 's34682'],
   ['🇬🇧 영국', 'BBC World Service', 'BBC 국제 방송 · 24시간 영어 뉴스', 's24948'],
-  ['🇬🇧 영국', 'BBC Radio 4', '뉴스·토크·드라마', 's25419'],
+  ['🇬🇧 영국', 'Classic FM', '영국 최대 민영 라디오 · 클래식 음악', 's8439'],
   ['🇯🇵 일본', 'NHK WORLD-JAPAN', 'NHK 국제 방송 · 일본·아시아 뉴스', 's310605'],
   ['🇯🇵 일본', 'Shonan Beach FM', '가나가와 즈시의 FM · 재즈/올드팝', 's8138']
 ];
@@ -105,7 +105,7 @@ function pick(i){
   var b = $('wrTrack').querySelector('.wr-btn.on'); if (b) { try { b.scrollIntoView({ block: 'nearest', inline: 'center' }); } catch(e){} }
 }
 $('wrTrack').addEventListener('click', function(e){ var b = e.target.closest('.wr-btn'); if (b) pick(+b.getAttribute('data-i')); });
-pick(0);
+pick(2);   /* 처음 화면: BBC World Service */
 
 /* 복사 방지 */
 ['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){
