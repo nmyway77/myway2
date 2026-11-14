@@ -102,6 +102,18 @@
   .fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--grad);color:#fff;box-shadow:0 8px 20px rgba(125,111,232,.4);z-index:50}
   .fab svg{width:21px;height:21px;fill:currentColor}
 
+  /* ── 항목을 누르면 열리는 화면 (화면 전체) ── */
+  .viewer{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;background:var(--paper)}
+  .viewer.open{display:flex}
+  .viewer iframe{flex:1 1 auto;width:100%;min-height:0;border:0;background:#fff}
+  .vbar{flex:none;display:none;align-items:center;gap:12px;height:50px;padding:0 14px;background:linear-gradient(180deg,#f7f8fc 0%,#eceef7 100%);border-bottom:1px solid #dcdfee;box-shadow:inset 0 1px 0 #fff,0 4px 14px rgba(90,100,180,.16);position:relative;z-index:1}
+  .viewer.has-bar .vbar{display:flex}
+  .vbar button{display:inline-flex;align-items:center;gap:5px;padding:7px 14px 7px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.85);background:linear-gradient(135deg,#fff 0%,#f4f5fc 50%,#eceafa 100%);box-shadow:0 5px 12px rgba(90,100,180,.2),inset 0 2px 5px rgba(255,255,255,.95);color:#5b4bdb;font:inherit;font-size:13.5px;font-weight:800;cursor:pointer}
+  .vbar button svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+  .vbar b{font-size:15px;font-weight:800;letter-spacing:-.02em}
+  body.viewing{overflow:hidden}
+  body.viewing .fab{display:none}
+
   @media (max-width:900px){
     .shelf{grid-template-columns:1fr 1fr}
     .tv{grid-column:1 / -1}
@@ -146,7 +158,7 @@
   <h1>오늘은 뭘 볼까요?</h1>
 
   <section class="shelf" aria-label="방송과 음악">
-    <a class="big tv" href="https://nmyway77.github.io/livetv7/">
+    <a class="big tv" href="https://nmyway77.github.io/livetv7/" data-open="https://nmyway77.github.io/livetv7/?nav=1">
       <div class="screen" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <span class="live"><b></b>생방송</span>
       <h2>TV</h2>
@@ -157,7 +169,7 @@
         <li>자주 보는 채널은 별표로 즐겨찾기에 모아 둡니다</li>
       </ul>
     </a>
-    <a class="big radio" href="barsite.html">
+    <a class="big radio" href="barsite.html" data-open="barsite.html?home=1&tab=onair_radio">
       <div class="dial" aria-hidden="true">
         <div class="ticks"></div>
         <div class="nums"><b>88</b><b>92</b><b>96</b><b>100</b><b>104</b><b>108</b></div>
@@ -171,7 +183,7 @@
         <li>미국, 영국, 일본 방송과 AFN 이글FM도 들을 수 있습니다</li>
       </ul>
     </a>
-    <a class="big music" href="music-sample.html">
+    <a class="big music" href="music-sample.html" data-open="music-sample.html?nav=1">
       <div class="vinyl" aria-hidden="true"></div>
       <h2>음악</h2>
       <p>가수를 고르면 노래가 이어서 나옵니다</p>
@@ -184,32 +196,91 @@
   </section>
 
   <section class="row" aria-label="영상">
-    <a class="sm" href="barsite.html?tab=dramavod"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="13" rx="2.5"/><path d="M10 9.2v4.6l4-2.3z"/><path d="M8 21h8"/></svg></span><strong>드라마VOD</strong><small>KBS, MBC, 채널A, SBS 드라마를 방송사별로 골라 봅니다. PC에서는 KBS 드라마의 회차 목록이 화면 옆에 나와 이어 보기 편합니다.</small></a>
-    <a class="sm" href="people3.html"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.4 7-5.4s6.2 1.8 7 5.4"/></svg></span><strong>유튜버</strong><small>유튜버, 가수, 연예인, 배우 채널을 분야별로 모았습니다. 새 영상 버튼을 누르면 최근에 올라온 영상만 볼 수 있습니다.</small></a>
-    <a class="sm" href="MOVIE-YTUBE.html"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 10h16v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19z"/><path d="M4 10 5.2 6l14 -2.6L20 7z"/><path d="M9 5.3l1.6 3.6M14 4.4l1.6 3.5"/></svg></span><strong>영화</strong><small>영화 리뷰 채널과 해외 영화 채널을 누르면 최신 영상부터 재생됩니다. 영화관, 영화 정보, OTT 바로가기도 함께 있습니다.</small></a>
-    <a class="sm" href="https://nmyway77.github.io/livetv7/?wd=1"><span class="ic"><svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 9.5v5l3.6-2.5z"/></svg></span><strong>웹드라마</strong><small>작품을 고르면 최신 회차가 재생되고 옆에 회차 목록이 나옵니다. 어디까지 봤는지 표시해 둘 수 있습니다.</small></a>
-    <a class="sm" href="podcast.html"><span class="ic"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3M9 21h6"/></svg></span><strong>팟캐스트</strong><small>경제, 시사, 교양, 예능·토크 방송을 모았습니다. 라이브와 최신 회차를 버튼 하나로 바꿔 듣습니다.</small></a>
-    <a class="sm" href="00makingyoutubefull2.html"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 8.5 15.5 5l1.6 5.6L4.6 14z"/><path d="M17 8.6l3.5-.9.8 2.8-3.5 1"/><path d="M8 13v5H4"/></svg></span><strong>CCTV</strong><small>유튜브 영상과 라이브 화면을 사진 카드로 모아, 누르면 한 화면에서 바로 봅니다.</small></a>
+    <a class="sm" href="barsite.html?tab=dramavod" data-open="barsite.html?home=1&tab=dramavod"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="13" rx="2.5"/><path d="M10 9.2v4.6l4-2.3z"/><path d="M8 21h8"/></svg></span><strong>드라마VOD</strong><small>KBS, MBC, 채널A, SBS 드라마를 방송사별로 골라 봅니다. PC에서는 KBS 드라마의 회차 목록이 화면 옆에 나와 이어 보기 편합니다.</small></a>
+    <a class="sm" href="people3.html" data-open="people3.html?nav=1" data-cat="all"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.4 7-5.4s6.2 1.8 7 5.4"/></svg></span><strong>유튜버</strong><small>유튜버, 가수, 연예인, 배우 채널을 분야별로 모았습니다. 새 영상 버튼을 누르면 최근에 올라온 영상만 볼 수 있습니다.</small></a>
+    <a class="sm" href="MOVIE-YTUBE.html" data-open="MOVIE-YTUBE.html" data-bar="영화"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 10h16v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19z"/><path d="M4 10 5.2 6l14 -2.6L20 7z"/><path d="M9 5.3l1.6 3.6M14 4.4l1.6 3.5"/></svg></span><strong>영화</strong><small>영화 리뷰 채널과 해외 영화 채널을 누르면 최신 영상부터 재생됩니다. 영화관, 영화 정보, OTT 바로가기도 함께 있습니다.</small></a>
+    <a class="sm" href="https://nmyway77.github.io/livetv7/?wd=1" data-open="https://nmyway77.github.io/livetv7/?wd=1" data-bar="웹드라마"><span class="ic"><svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 9.5v5l3.6-2.5z"/></svg></span><strong>웹드라마</strong><small>작품을 고르면 최신 회차가 재생되고 옆에 회차 목록이 나옵니다. 어디까지 봤는지 표시해 둘 수 있습니다.</small></a>
+    <a class="sm" href="podcast.html" data-open="podcast.html?nav=1"><span class="ic"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3M9 21h6"/></svg></span><strong>팟캐스트</strong><small>경제, 시사, 교양, 예능·토크 방송을 모았습니다. 라이브와 최신 회차를 버튼 하나로 바꿔 듣습니다.</small></a>
+    <a class="sm" href="00makingyoutubefull2.html" data-open="00makingyoutubefull2.html" data-bar="CCTV"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 8.5 15.5 5l1.6 5.6L4.6 14z"/><path d="M17 8.6l3.5-.9.8 2.8-3.5 1"/><path d="M8 13v5H4"/></svg></span><strong>CCTV</strong><small>유튜브 영상과 라이브 화면을 사진 카드로 모아, 누르면 한 화면에서 바로 봅니다.</small></a>
   </section>
 
   <h3>읽을거리와 도구</h3>
   <nav class="list" aria-label="읽을거리와 도구">
-    <a href="newsitesbar3.html"><strong>뉴스</strong><span>연합, YTN, 다음 등 언론사를 버튼 하나로 바꿔 가며 읽습니다. 종합지, 경제지, 지방지 전체 목록도 있습니다.</span></a>
-    <a href="barsite.html?tab=daily"><strong>포털</strong><span>자주 가는 사이트와 함께 대화형, 검색, 이미지, 영상 AI를 종류별로 모았습니다.</span></a>
-    <a href="barsite.html?tab=portal"><strong>시사·경제지</strong><span>포브스, 시사저널, 주간동아, 월간조선 같은 시사·경제 잡지로 바로 갑니다.</span></a>
-    <a href="barsite.html?tab=bbs"><strong>BBS</strong><span>더쿠, 클리앙, 에펨코리아, 루리웹 등 커뮤니티 게시판을 모았습니다.</span></a>
-    <a href="barsite.html?tab=magazine"><strong>여성지</strong><span>보그, 엘르, 마리끌레르, 우먼센스 등 잡지 사이트로 바로 갑니다.</span></a>
-    <a href="barsite.html?tab=cafe"><strong>만화</strong><span>만화와 웹툰 사이트 바로가기입니다.</span></a>
-    <a href="00000stockmain7.html"><strong>주식·코인</strong><span>코인, 미국주식, 한국주식, 지수선물, 공포탐욕지수 차트를 한 페이지에서 봅니다.</span></a>
-    <a href="barsite.html?tab=tools"><strong>도구</strong><span>PDF 도구, 환율·단위 계산기, 맞춤법 검사, QR코드 만들기, 세계 시간 같은 생활 도구입니다.</span></a>
+    <a href="newsitesbar3.html" data-open="newsitesbar3.html?nav=1"><strong>뉴스</strong><span>연합, YTN, 다음 등 언론사를 버튼 하나로 바꿔 가며 읽습니다. 종합지, 경제지, 지방지 전체 목록도 있습니다.</span></a>
+    <a href="barsite.html?tab=daily" data-open="barsite.html?home=1&tab=daily" data-bar="포털"><strong>포털</strong><span>자주 가는 사이트와 함께 대화형, 검색, 이미지, 영상 AI를 종류별로 모았습니다.</span></a>
+    <a href="barsite.html?tab=portal" data-open="barsite.html?home=1&tab=portal" data-bar="시사·경제지"><strong>시사·경제지</strong><span>포브스, 시사저널, 주간동아, 월간조선 같은 시사·경제 잡지로 바로 갑니다.</span></a>
+    <a href="barsite.html?tab=bbs" data-open="barsite.html?home=1&tab=bbs" data-bar="BBS"><strong>BBS</strong><span>더쿠, 클리앙, 에펨코리아, 루리웹 등 커뮤니티 게시판을 모았습니다.</span></a>
+    <a href="barsite.html?tab=magazine" data-open="barsite.html?home=1&tab=magazine" data-bar="여성지"><strong>여성지</strong><span>보그, 엘르, 마리끌레르, 우먼센스 등 잡지 사이트로 바로 갑니다.</span></a>
+    <a href="barsite.html?tab=cafe" data-open="barsite.html?home=1&tab=cafe" data-bar="만화"><strong>만화</strong><span>만화와 웹툰 사이트 바로가기입니다.</span></a>
+    <a href="00000stockmain7.html" data-open="00000stockmain7.html" data-bar="주식·코인"><strong>주식·코인</strong><span>코인, 미국주식, 한국주식, 지수선물, 공포탐욕지수 차트를 한 페이지에서 봅니다.</span></a>
+    <a href="barsite.html?tab=tools" data-open="barsite.html?home=1&tab=tools" data-bar="도구"><strong>도구</strong><span>PDF 도구, 환율·단위 계산기, 맞춤법 검사, QR코드 만들기, 세계 시간 같은 생활 도구입니다.</span></a>
   </nav>
 
-  <p class="note">디자인을 보기 위한 샘플입니다. 타일을 누르면 지금 운영 중인 화면이 그대로 열리고, 뒤로가기로 이 화면에 돌아옵니다.</p>
+  <p class="note">메인 홈 샘플입니다. 항목을 누르면 그 화면이 이 자리에서 열리고, 맨 위 왼쪽의 [← 메뉴] 또는 [← 홈]을 누르면 이 화면으로 돌아옵니다.</p>
 
   <footer><a href="https://myway.kr">myway.kr</a></footer>
 </div>
 
 <a class="fab" href="https://myway.kr" aria-label="MYWAY.KR 홈" title="MYWAY.KR 홈"><svg viewBox="0 0 24 24"><path d="M12 3.2 2.5 11.4l1.3 1.5L5 11.85V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-8.15l1.2 1.05 1.3-1.5z"/></svg></a>
+
+<div class="viewer" id="viewer" aria-hidden="true">
+  <div class="vbar"><button type="button" id="vBack" title="메인 홈으로 돌아가기"><svg viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg>홈</button><b id="vTitle"></b></div>
+</div>
+
+<script>
+/* ── 항목을 누르면 그 화면을 이 자리(화면 전체)에서 열고, [← 메뉴]·[← 홈]으로 돌아옴 ── */
+(function(){
+  var viewer = document.getElementById('viewer'), frame = null, TV = 'https://nmyway77.github.io';
+  function close(){
+    if (frame) { frame.remove(); frame = null; }   /* 화면을 없애면 재생도 멈춤 */
+    viewer.classList.remove('open', 'has-bar'); viewer.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('viewing');
+  }
+  function open(url, bar, cat){
+    close();
+    if (cat) { try { sessionStorage.setItem('mywayCat_people3', cat); sessionStorage.setItem('mywayCat_people2', cat); } catch(e) {} }
+    frame = document.createElement('iframe');
+    frame.title = bar || '선택한 화면';
+    frame.setAttribute('allow', 'autoplay; encrypted-media; fullscreen; picture-in-picture');
+    frame.setAttribute('allowfullscreen', '');
+    frame.src = url;
+    viewer.appendChild(frame);
+    document.getElementById('vTitle').textContent = bar || '';
+    viewer.classList.toggle('has-bar', !!bar);
+    viewer.classList.add('open'); viewer.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('viewing');
+    try { history.pushState({ mwView: 1 }, ''); } catch(e) {}   /* 핸드폰 뒤로가기 → 홈으로 */
+  }
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('a[data-open]') : null;
+    if (!a) return;
+    e.preventDefault();
+    open(a.getAttribute('data-open'), a.getAttribute('data-bar') || '', a.getAttribute('data-cat') || '');
+  });
+  document.getElementById('vBack').addEventListener('click', close);
+  window.addEventListener('popstate', function(){ if (frame) close(); });
+  window.addEventListener('message', function(e){
+    var d = e.data || {};
+    if (!frame || e.source !== frame.contentWindow) return;
+    if (e.origin !== location.origin && e.origin !== TV) return;
+    /* 각 화면의 [← 메뉴] → 홈으로 */
+    if (d.type === 'MYWAY_NAVSWAP_BACK' || d.type === 'MYWAY_NEWSBAR_BACK' || d.type === 'MYWAY_HOME') { close(); return; }
+    /* TV 즐겨찾기·웹드라마 '여기까지 봄' 표시를 myway.kr 쪽에 보관 (지금 화면과 같은 저장 위치) */
+    if (e.origin !== TV) return;
+    if (d.type === 'LIVETV_FAVS_GET') {
+      var v = null; try { v = JSON.parse(localStorage.getItem('mywayLiveTvFavsV1') || 'null'); } catch(_) {}
+      try { e.source.postMessage({ type: 'LIVETV_FAVS', favs: Array.isArray(v) ? v : null }, TV); } catch(_) {}
+    } else if (d.type === 'LIVETV_FAVS_SET' && Array.isArray(d.favs)) {
+      try { localStorage.setItem('mywayLiveTvFavsV1', JSON.stringify(d.favs.filter(function(x){ return typeof x === 'string'; }).slice(0, 500))); } catch(_) {}
+    } else if (d.type === 'LIVETV_MARKS_GET') {
+      var mk = null; try { mk = JSON.parse(localStorage.getItem('mywayLiveTvMarksV1') || 'null'); } catch(_) {}
+      try { e.source.postMessage({ type: 'LIVETV_MARKS', marks: (mk && typeof mk === 'object') ? mk : null }, TV); } catch(_) {}
+    } else if (d.type === 'LIVETV_MARKS_SET' && d.marks && typeof d.marks === 'object') {
+      try { var s2 = JSON.stringify(d.marks); if (s2.length < 100000) localStorage.setItem('mywayLiveTvMarksV1', s2); } catch(_) {}
+    }
+  });
+})();
+</script>
 
 <script>
 /* 검색: 네이버 검색 결과로 이동 */
