@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>메인 홈 샘플 | MYWAY.KR</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500;1,9..144,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --paper:#f7f3eb; --card:#fffdf8; --ink:#1f2740; --sub:#6c7391; --line:#e4dccb;
+    --sky:#5b8def; --violet:#7d6fe8; --orchid:#b176f3;
+    --grad:linear-gradient(110deg,var(--sky) 0%,var(--violet) 55%,var(--orchid) 100%);
+    --serif:"Fraunces",Georgia,serif; --sans:"Pretendard",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0}
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;word-break:keep-all;user-select:none;-webkit-user-select:none}
+  input{user-select:text;-webkit-user-select:text}
+  a{color:inherit;text-decoration:none}
+  a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--violet);outline-offset:3px}
+  .page{max-width:1080px;margin:0 auto;padding:26px 20px 40px}
+
+  /* ── 머리: 워드마크 + 검색 ── */
+  .head{display:flex;align-items:center;gap:18px;margin-bottom:30px}
+  .mark{font-family:var(--serif);font-style:italic;font-weight:700;font-size:30px;letter-spacing:-.02em;line-height:1}
+  .mark span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .search{margin-left:auto;display:flex;align-items:center;width:min(420px,100%);height:44px;padding:0 6px 0 18px;border-radius:999px;background:var(--grad);box-shadow:0 8px 22px rgba(125,111,232,.32),inset 0 2px 5px rgba(255,255,255,.35)}
+  .search input{flex:1;min-width:0;border:0;background:transparent;outline:none;color:#fff;font:inherit;font-size:16px}
+  .search input::placeholder{color:rgba(255,255,255,.8)}
+  .search button{flex:none;width:34px;height:34px;border:0;border-radius:50%;background:rgba(255,255,255,.2);color:#fff;cursor:pointer;display:grid;place-items:center}
+  .search svg{width:17px;height:17px}
+  h1{margin:0 0 22px;font-size:34px;font-weight:800;letter-spacing:-.035em;line-height:1.15}
+
+  /* ── 큰 타일 3개: TV · 라디오 · 음악 ── */
+  .shelf{display:grid;grid-template-columns:1.55fr 1fr 1fr;gap:14px}
+  .big{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:290px;padding:20px;border-radius:26px;overflow:hidden;transition:transform .18s}
+  .big:hover{transform:translateY(-3px)}
+  .big h2{margin:0;font-size:26px;font-weight:800;letter-spacing:-.03em}
+  .big p{margin:5px 0 0;font-size:13.5px;line-height:1.45}
+
+  /* TV: 시험방송 화면 */
+  .tv{background:var(--ink);color:#fff;box-shadow:0 14px 30px rgba(31,39,64,.28)}
+  .tv p{color:#b9bfdc}
+  .tv .screen{position:absolute;left:20px;right:20px;top:20px;bottom:98px;border-radius:14px;overflow:hidden;display:flex;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+  .tv .screen i{flex:1}
+  .tv .screen i:nth-child(1){background:#f3efe6}.tv .screen i:nth-child(2){background:#f0c96a}.tv .screen i:nth-child(3){background:#6fb3d8}
+  .tv .screen i:nth-child(4){background:#7fc79a}.tv .screen i:nth-child(5){background:#b176f3}.tv .screen i:nth-child(6){background:#ee7b8f}.tv .screen i:nth-child(7){background:#5b8def}
+  .tv .screen::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.09) 0 1px,transparent 1px 4px),linear-gradient(180deg,rgba(255,255,255,.14),transparent 45%)}
+  .live{position:absolute;left:32px;top:32px;z-index:1;display:inline-flex;align-items:center;gap:7px;padding:5px 11px 5px 9px;border-radius:999px;background:rgba(20,24,40,.82);font-size:12px;font-weight:800}
+  .live b{width:8px;height:8px;border-radius:50%;background:#ff3b5c;animation:pulse 1.6s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,59,92,.6)}70%{box-shadow:0 0 0 8px rgba(255,59,92,0)}100%{box-shadow:0 0 0 0 rgba(255,59,92,0)}}
+
+  /* 라디오: 주파수 눈금 */
+  .radio{background:var(--card);border:1px solid var(--line);box-shadow:0 10px 24px rgba(120,100,60,.1)}
+  .radio p{color:var(--sub)}
+  .dial{position:absolute;left:20px;right:20px;top:26px;height:118px;border-radius:14px;background:#f1ead9;box-shadow:inset 0 2px 6px rgba(120,100,60,.16)}
+  .dial .ticks{position:absolute;left:14px;right:14px;top:16px;height:40px;background:repeating-linear-gradient(90deg,var(--ink) 0 1.5px,transparent 1.5px 10%),repeating-linear-gradient(90deg,rgba(31,39,64,.35) 0 1px,transparent 1px 2%);background-size:100% 100%,100% 45%;background-repeat:no-repeat;background-position:0 0,0 0}
+  .dial .nums{position:absolute;left:8px;right:8px;top:64px;display:flex;justify-content:space-between;font-family:var(--serif);font-weight:500;font-size:14px;color:var(--ink)}
+  .dial .needle{position:absolute;top:8px;bottom:8px;left:62%;width:3px;border-radius:3px;background:var(--grad);box-shadow:0 0 0 4px rgba(125,111,232,.16);transition:left .5s cubic-bezier(.3,1.4,.5,1)}
+  .radio:hover .needle{left:34%}
+
+  /* 음악: 레코드판 */
+  .music{background:var(--grad);color:#fff;box-shadow:0 14px 30px rgba(125,111,232,.34)}
+  .music p{color:rgba(255,255,255,.88)}
+  .vinyl{position:absolute;right:-46px;top:-40px;width:230px;height:230px;border-radius:50%;
+    background:radial-gradient(circle,#f7f3eb 0 5%,#ee7b8f 5.5% 19%,#191d30 19.5% 100%);box-shadow:0 12px 26px rgba(20,20,50,.35)}
+  .vinyl::before{content:"";position:absolute;inset:0;border-radius:50%;background:repeating-radial-gradient(circle,transparent 0 5px,rgba(255,255,255,.07) 5px 6px);-webkit-mask:radial-gradient(circle,transparent 0 20%,#000 21%);mask:radial-gradient(circle,transparent 0 20%,#000 21%)}
+  .vinyl::after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 20deg,transparent 0 12%,rgba(255,255,255,.2) 18%,transparent 26% 62%,rgba(255,255,255,.16) 68%,transparent 76%);-webkit-mask:radial-gradient(circle,transparent 0 20%,#000 21%);mask:radial-gradient(circle,transparent 0 20%,#000 21%)}
+  .music:hover .vinyl{animation:spin 2.4s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ── 작은 타일 6개 ── */
+  .row{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:14px}
+  .sm{display:flex;flex-direction:column;gap:10px;padding:16px 16px 15px;border-radius:20px;background:var(--card);border:1px solid var(--line);transition:transform .18s,border-color .18s,box-shadow .18s}
+  .sm:hover{transform:translateY(-3px);border-color:#c9bff5;box-shadow:0 10px 22px rgba(125,111,232,.16)}
+  .sm .ic{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:#efeafc;color:#5b4bdb}
+  .sm .ic svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .sm strong{font-size:16px;font-weight:800;letter-spacing:-.02em}
+  .sm small{font-size:12.5px;color:var(--sub);line-height:1.4;margin-top:-6px}
+
+  /* ── 읽을거리 · 도구: 조용한 목록 ── */
+  h3{margin:38px 0 4px;font-size:19px;font-weight:800;letter-spacing:-.02em}
+  .list{display:grid;grid-template-columns:1fr 1fr;column-gap:36px}
+  .list a{display:flex;align-items:baseline;gap:14px;padding:15px 4px;border-bottom:1px solid var(--line);transition:padding .15s,color .15s}
+  .list a:hover{padding-left:12px;color:#5b4bdb}
+  .list strong{flex:none;min-width:92px;font-size:16.5px;font-weight:800;letter-spacing:-.02em}
+  .list span{font-size:13.5px;color:var(--sub)}
+
+  .note{margin:34px 0 0;padding:12px 16px;border-radius:14px;background:#efeafc;color:#4a3fb0;font-size:13px;line-height:1.55}
+  footer{margin-top:26px;text-align:center;font-size:12.5px;color:var(--sub)}
+  footer a{font-family:var(--serif);font-style:italic;font-weight:700;color:var(--ink)}
+  .fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--grad);color:#fff;box-shadow:0 8px 20px rgba(125,111,232,.4);z-index:50}
+  .fab svg{width:21px;height:21px;fill:currentColor}
+
+  @media (max-width:900px){
+    .shelf{grid-template-columns:1fr 1fr}
+    .tv{grid-column:1 / -1}
+    .row{grid-template-columns:repeat(3,1fr)}
+  }
+  @media (max-width:600px){
+    .page{padding:18px 14px 34px}
+    .head{flex-wrap:wrap;gap:12px;margin-bottom:22px}
+    .search{width:100%;margin-left:0}
+    h1{font-size:27px;margin-bottom:16px}
+    .shelf,.row{gap:10px}
+    .big{min-height:230px;padding:16px;border-radius:22px}
+    .tv{min-height:250px}
+    .tv .screen{left:16px;right:16px;top:16px;bottom:88px}
+    .live{left:26px;top:26px}
+    .big h2{font-size:22px}
+    .big p{font-size:12.5px}
+    .dial{left:14px;right:14px;top:18px;height:96px}
+    .dial .ticks{top:12px;height:32px}
+    .dial .nums{top:52px;font-size:11.5px}
+    .dial .nums b:nth-child(even){display:none}
+    .vinyl{width:170px;height:170px;right:-44px;top:-36px}
+    .row{grid-template-columns:repeat(2,1fr);margin-top:10px}
+    .list{grid-template-columns:1fr}
+    .list strong{min-width:84px}
+  }
+  @media (prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important} }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="head">
+    <a class="mark" href="https://myway.kr" aria-label="MYWAY.KR 홈"><span>myway</span>.kr</a>
+    <form class="search" id="searchForm" role="search">
+      <input id="q" type="text" placeholder="네이버에서 검색" autocomplete="off" aria-label="검색어">
+      <button type="submit" aria-label="검색"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg></button>
+    </form>
+  </header>
+
+  <h1>오늘은 뭘 볼까요?</h1>
+
+  <section class="shelf" aria-label="방송과 음악">
+    <a class="big tv" href="https://nmyway77.github.io/livetv7/">
+      <div class="screen" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <span class="live"><b></b>생방송</span>
+      <h2>TV</h2>
+      <p>뉴스와 지상파, 해외 채널까지 실시간으로 봅니다</p>
+    </a>
+    <a class="big radio" href="barsite.html">
+      <div class="dial" aria-hidden="true">
+        <div class="ticks"></div>
+        <div class="nums"><b>88</b><b>92</b><b>96</b><b>100</b><b>104</b><b>108</b></div>
+        <div class="needle"></div>
+      </div>
+      <h2>라디오</h2>
+      <p>SBS, KBS, MBC와 해외 방송을 바로 듣습니다</p>
+    </a>
+    <a class="big music" href="music-sample.html">
+      <div class="vinyl" aria-hidden="true"></div>
+      <h2>음악</h2>
+      <p>가수별 노래와 나만의 리스트</p>
+    </a>
+  </section>
+
+  <section class="row" aria-label="영상">
+    <a class="sm" href="barsite.html?tab=dramavod"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="13" rx="2.5"/><path d="M10 9.2v4.6l4-2.3z"/><path d="M8 21h8"/></svg></span><strong>드라마VOD</strong><small>KBS, MBC 드라마 다시보기</small></a>
+    <a class="sm" href="people3.html"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.4 7-5.4s6.2 1.8 7 5.4"/></svg></span><strong>유튜버</strong><small>분야별 추천 채널</small></a>
+    <a class="sm" href="MOVIE-YTUBE.html"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 10h16v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19z"/><path d="M4 10 5.2 6l14 -2.6L20 7z"/><path d="M9 5.3l1.6 3.6M14 4.4l1.6 3.5"/></svg></span><strong>영화</strong><small>영화 모아 보기</small></a>
+    <a class="sm" href="https://nmyway77.github.io/livetv7/?wd=1"><span class="ic"><svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 9.5v5l3.6-2.5z"/></svg></span><strong>웹드라마</strong><small>최신 회차부터 바로 재생</small></a>
+    <a class="sm" href="podcast.html"><span class="ic"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3M9 21h6"/></svg></span><strong>팟캐스트</strong><small>경제, 시사, 교양 방송</small></a>
+    <a class="sm" href="00makingyoutubefull2.html"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 8.5 15.5 5l1.6 5.6L4.6 14z"/><path d="M17 8.6l3.5-.9.8 2.8-3.5 1"/><path d="M8 13v5H4"/></svg></span><strong>CCTV</strong><small>실시간 카메라 영상</small></a>
+  </section>
+
+  <h3>읽을거리와 도구</h3>
+  <nav class="list" aria-label="읽을거리와 도구">
+    <a href="newsitesbar3.html"><strong>뉴스</strong><span>연합, YTN, 다음 등 언론사를 한 화면에서</span></a>
+    <a href="barsite.html?tab=daily"><strong>포털</strong><span>자주 가는 사이트와 AI 바로가기</span></a>
+    <a href="barsite.html?tab=portal"><strong>시사·경제지</strong><span>주간지와 경제 매체</span></a>
+    <a href="barsite.html?tab=bbs"><strong>BBS</strong><span>커뮤니티 게시판 모음</span></a>
+    <a href="barsite.html?tab=magazine"><strong>여성지</strong><span>잡지 바로 읽기</span></a>
+    <a href="barsite.html?tab=cafe"><strong>만화</strong><span>웹툰과 만화 사이트</span></a>
+    <a href="00000stockmain7.html"><strong>주식·코인</strong><span>시세와 차트 화면</span></a>
+    <a href="barsite.html?tab=tools"><strong>도구</strong><span>PDF, 달력, 필기 도구</span></a>
+  </nav>
+
+  <p class="note">디자인을 보기 위한 샘플입니다. 타일을 누르면 지금 운영 중인 화면이 그대로 열리고, 뒤로가기로 이 화면에 돌아옵니다.</p>
+
+  <footer><a href="https://myway.kr">myway.kr</a></footer>
+</div>
+
+<a class="fab" href="https://myway.kr" aria-label="MYWAY.KR 홈" title="MYWAY.KR 홈"><svg viewBox="0 0 24 24"><path d="M12 3.2 2.5 11.4l1.3 1.5L5 11.85V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-8.15l1.2 1.05 1.3-1.5z"/></svg></a>
+
+<script>
+/* 검색: 네이버 검색 결과로 이동 */
+document.getElementById('searchForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  var v = document.getElementById('q').value.trim();
+  if (!v) return;
+  document.getElementById('q').blur();
+  location.href = 'https://search.naver.com/search.naver?query=' + encodeURIComponent(v);
+});
+/* 복사 방지 */
+(function(){
+  var isField = function(el){ return el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT'); };
+  ['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){
+    document.addEventListener(ev, function(e){ if (isField(e.target)) return; e.preventDefault(); });
+  });
+  document.addEventListener('keydown', function(e){
+    var k = (e.key || '').toLowerCase();
+    if (e.key === 'F12') { e.preventDefault(); return; }
+    if (e.ctrlKey && e.shiftKey && ['i','j','c'].indexOf(k) >= 0) { e.preventDefault(); return; }
+    if (e.ctrlKey && ['u','s','c','x','a'].indexOf(k) >= 0) { if (isField(e.target) && ['c','x','a'].indexOf(k) >= 0) return; e.preventDefault(); }
+  });
+})();
+</script>
+</body>
+</html>
