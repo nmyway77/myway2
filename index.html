@@ -578,6 +578,11 @@
       .searchbar-btn svg { width: 16px; height: 16px; }
       .screen-links { font-size: 0.78rem; gap: 4px; }
     }
+    /* 핸드폰·태블릿(터치): 아이폰은 글자 16px 미만 입력창을 누르면 화면을 자동 확대함 → 검색 후 돌아오면 확대된 채로 남음.
+       입력창 글자를 16px로 해서 자동 확대 자체가 안 일어나게 */
+    @media (pointer: coarse) {
+      .searchbar-input, .searchbar-input::placeholder { font-size: 16px !important; }
+    }
 
     /* ================= EDITER: 새 검색바 (엔진 버튼 · 멀티검색 · 검색어 콤보) ================= */
     .engine-btn{
@@ -2885,7 +2890,7 @@ var DEFAULT_ENGINES = [
   /* 3) 검색 등 window.open('_blank') → 현재 탭 이동 (뒤로가기로 MYWAY 복귀) */
   var _open = window.open.bind(window);
   window.open = function(url, name, feat){
-    if(url){ location.href = url; return null; }
+    if(url){ try { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } catch(_){} location.href = url; return null; }
     return _open(url, name, feat);
   };
 })();
