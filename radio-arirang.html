@@ -14,9 +14,9 @@
   html::-webkit-scrollbar{width:0;height:0;display:none}
   body{overflow-x:clip;background:#f7f3eb;color:#1f2740;font-family:"Pretendard",-apple-system,sans-serif;font-size:12.5px;-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
   .wr-main{max-width:900px;margin:0 auto;padding:16px 14px 90px}
-  /* 방송 화면: 아리랑 라디오 유튜브 실시간 방송 */
+  /* 방송 화면: 아리랑 라디오 실시간 방송 (방송 주소를 바로 재생 — 유튜브·광고 없음) */
   .wr-screen{position:relative;width:100%;aspect-ratio:16/9;max-height:calc(100vh - 150px);margin:0 auto 14px;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,#1c1e2b,#2a2d44);box-shadow:0 10px 26px rgba(40,40,80,.22)}
-  .wr-screen iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+  .wr-screen video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
   .wr-title{margin:0 2px 4px;font-size:17px;font-weight:800;letter-spacing:-.3px}
   .wr-note{margin:0 2px;color:#6c7391;font-size:13px;line-height:1.55}
   .wr-link{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px 0 0}
@@ -32,9 +32,9 @@
 </head>
 <body>
 <main class="wr-main">
-  <div class="wr-screen" id="wrScreen"></div>
+  <div class="wr-screen" id="wrScreen"><video id="wrVideo" controls playsinline webkit-playsinline></video></div>
   <h1 class="wr-title">아리랑 라디오</h1>
-  <p class="wr-note">아리랑국제방송의 영어 라디오 실시간 방송입니다. 소리가 나오지 않으면 화면의 재생 버튼이나 스피커 버튼을 눌러 주세요.</p>
+  <p class="wr-note" id="wrNote">아리랑국제방송의 영어 라디오 실시간 방송입니다. 소리가 나오지 않으면 화면의 재생 버튼이나 스피커 버튼을 눌러 주세요.</p>
   <div class="wr-link">
     <a href="https://www.youtube.com/watch?v=P1fX2GGdVS0" target="_blank" rel="noopener">유튜브에서 열기 ↗</a>
   </div>
@@ -43,15 +43,31 @@
 <a class="home-fab" href="https://myway.kr" target="_top" aria-label="MYWAY.KR 홈" title="MYWAY.KR 홈">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/></svg>
 </a>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
 <script>
 try { if (window.self !== window.top) document.documentElement.classList.add('embedded'); } catch(e){ document.documentElement.classList.add('embedded'); }
-/* 방송 주소를 바꾸려면 아래 영상 ID만 고치면 됨 (유튜브 주소의 v= 뒤 글자) */
-var VIDEO_ID = "P1fX2GGdVS0";
+/* 방송 주소를 바꾸려면 아래 주소만 고치면 됨 */
+var STREAM = "https://amdlive-ch01-ctnd-com.akamaized.net/arirang_3ch/smil:arirang_3ch.smil/playlist.m3u8";
 (function(){
-  /* 아이폰·아이패드는 소리 켠 자동재생을 브라우저가 막아 영상이 멈추므로 음소거로 시작 — 그 밖에는 소리 켠 채 재생 */
-  var ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  var src = 'https://www.youtube.com/embed/' + VIDEO_ID + '?autoplay=1&mute=' + (ios ? 1 : 0) + '&playsinline=1';
-  document.getElementById('wrScreen').innerHTML = '<iframe title="아리랑 라디오" src="' + src + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+  var v = document.getElementById('wrVideo'), note = document.getElementById('wrNote'), hls = null, triedNative = false, started = false;
+  function fail(){ if (!started && note) note.textContent = '지금은 방송을 불러오지 못했습니다. 잠시 뒤 다시 눌러 보거나 아래 유튜브 버튼으로 들어 주세요.'; }
+  /* 소리 켠 채로 재생 시도 → 브라우저가 막으면 음소거로 재생 → 그것도 막으면 재생 버튼을 누르면 됨 */
+  function go(){ v.muted = false; var p = v.play(); if (p && p.catch) p.catch(function(){ v.muted = true; var p2 = v.play(); if (p2 && p2.catch) p2.catch(function(){}); }); }
+  function native(){ triedNative = true; if (hls) { try { hls.destroy(); } catch(e) {} hls = null; } v.src = STREAM; go(); }
+  v.addEventListener('playing', function(){ started = true; });
+  v.addEventListener('error', function(){ if (triedNative || !(window.Hls && Hls.isSupported())) fail(); });
+  if (window.Hls && Hls.isSupported()) {
+    hls = new Hls();
+    hls.on(Hls.Events.ERROR, function(ev, e){
+      if (!e || !e.fatal) return;
+      if (!started) { if (!triedNative && v.canPlayType('application/vnd.apple.mpegurl')) native(); else fail(); }
+      else if (e.type === Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
+      else if (e.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+    });
+    hls.loadSource(STREAM); hls.attachMedia(v);
+    hls.on(Hls.Events.MANIFEST_PARSED, go);
+  } else if (v.canPlayType('application/vnd.apple.mpegurl')) { native(); }
+  else fail();
 })();
 /* 복사 방지 */
 (function(){
