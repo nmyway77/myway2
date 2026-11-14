@@ -3957,7 +3957,7 @@
     window.__mywayMarkLeave = function(){
       if (onair) { if (cur) markReturn(cur.k, cur.i); else markReturn(onair, null); return; }
       var t = document.body.getAttribute('data-active-tab');
-      if (t && t !== 'onair') { try { sessionStorage.setItem(RET_KEY, JSON.stringify({ tab: t, y: window.scrollY || 0, t: Date.now() })); } catch(e){} }
+      if (t && t !== 'onair') { try { var sub = (window.__subSel || {})[t]; sessionStorage.setItem(RET_KEY, JSON.stringify({ tab: t, sub: (typeof sub === 'number' ? sub : null), y: window.scrollY || 0, t: Date.now() })); } catch(e){} }
     };
     /* 음악·CCTV 화면 안의 링크로 나가는 경우(그 페이지가 직접 이동) → 떠날 때 기억 */
     window.addEventListener('pagehide', function(){
@@ -3969,6 +3969,7 @@
     try { qTab = new URLSearchParams(location.search).get('tab') || ''; } catch(e){}
     if (!/^[a-z0-9_]+$/i.test(qTab) || !document.querySelector('#tabNav .tab-btn[data-tab="' + qTab + '"]')) qTab = '';
     if (ret && ret.tab && typeof selectTab === 'function') {
+      if (typeof ret.sub === 'number') { window.__subSel = window.__subSel || {}; window.__subSel[ret.tab] = ret.sub; }   /* 포털·시사·경제지 안의 작은 분류도 그대로 */
       selectTab(ret.tab);
       var y = +ret.y || 0; if (y) { [60, 400, 1000].forEach(function(ms){ setTimeout(function(){ try { window.scrollTo(0, y); } catch(e){} }, ms); }); }
     }

@@ -284,9 +284,21 @@
   var viewer = document.getElementById('viewer'), frame = null, TV = 'https://nmyway77.github.io';
   var lenAtOpen = 0;
   var KEY = 'mywayHomeViewV1';   /* 지금 보는 화면 기억 — 링크로 나갔다 돌아오거나 새로고침해도 같은 화면 */
+  var LEAVE = 'mywayHomeLeaveV1';   /* 바깥 사이트로 떠나는 그 순간에 보고 있던 화면 (백버튼 복귀용 — 나중에 바뀌지 않음) */
+  var RET = 'mywayOnairReturnV1';   /* barsite가 기억하는 '그 화면 안의 위치'(여성지/시사·경제지, 스크롤) */
+  var curView = null;
   function remember(v){ try { sessionStorage.setItem(KEY, JSON.stringify(v)); } catch(e) {} }
+  /* 이 화면이 내려갈 때(바깥 사이트로 이동·새로고침 등) 지금 화면을 그대로 적어 둠 → 백버튼으로 돌아오면 바로 전 화면으로 */
+  window.addEventListener('pagehide', function(){
+    try {
+      var v = frame && curView ? { url: curView.url, bar: curView.bar, cat: curView.cat } : { home: 1 };
+      v.t = Date.now();
+      sessionStorage.setItem(LEAVE, JSON.stringify(v));
+      if (frame && !sessionStorage.getItem(RET)) { var w = frame.contentWindow; if (w && w.__mywayMarkLeave) w.__mywayMarkLeave(); }
+    } catch(e) {}
+  });
   function close(){
-    remember({ home: 1 });
+    remember({ home: 1 }); curView = null;
     if (frame) { frame.remove(); frame = null; }   /* 화면을 없애면 재생도 멈춤 */
     viewer.classList.remove('open', 'has-bar'); viewer.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('viewing');
@@ -333,7 +345,7 @@
   }
   function open(url, bar, cat, noPush){
     close();
-    remember({ url: url, bar: bar || '', cat: cat || '' });
+    remember({ url: url, bar: bar || '', cat: cat || '' }); curView = { url: url, bar: bar || '', cat: cat || '' };
     if (cat) { try { sessionStorage.setItem('mywayCat_people3', cat); sessionStorage.setItem('mywayCat_people2', cat); } catch(e) {} }
     frame = document.createElement('iframe');
     frame.title = bar || '선택한 화면';
@@ -376,7 +388,15 @@
     /* 보던 화면으로 되돌리는 것은 '뒤로가기로 돌아왔을 때'만 (방송사 링크로 나갔다 돌아온 경우). 주소로 새로 들어오거나 새로고침하면 항상 라디오부터 */
     var back = false;
     try { var nav = (window.top.performance.getEntriesByType('navigation') || [])[0]; back = !!nav && nav.type === 'back_forward'; } catch(e) {}
-    var v = null; if (back) { try { v = JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch(e) {} }
+    /* 아이폰·아이패드 사파리는 백버튼으로 돌아올 때 페이지를 '저장해 둔 그대로' 되살리는 경우가 많음 → 그때는 index.html이 표시(mywayBfBackV1)를 남김 */
+    try { var bf = +sessionStorage.getItem('mywayBfBackV1') || 0; sessionStorage.removeItem('mywayBfBackV1'); if (bf && Date.now() - bf < 20000) back = true; } catch(e) {}
+    var v = null;
+    if (back) {
+      try { v = JSON.parse(sessionStorage.getItem(LEAVE) || 'null'); } catch(e) {}
+      if (!v || !(Date.now() - (+v.t || 0) < 3 * 3600 * 1000)) { v = null; try { v = JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch(e) {} }
+    } else {
+      try { sessionStorage.removeItem(RET); } catch(e) {}   /* 새로 들어오거나 새로고침: 예전 위치 기억은 버리고 라디오부터 */
+    }
     if (v && v.home) return;
     var a = null;
     if (v && v.url) Array.prototype.forEach.call(document.querySelectorAll('a[data-open]'), function(x){ if (x.getAttribute('data-open') === v.url) a = x; });

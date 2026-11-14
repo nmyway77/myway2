@@ -2160,6 +2160,7 @@
       if(!e.persisted) return;
       var f = document.getElementById('main-frame');
       if(!f) return;
+      try { sessionStorage.setItem('mywayBfBackV1', String(Date.now())); } catch(_) {}   /* 홈(home.html)에게 '백버튼으로 돌아옴'을 알림 → 바로 전 화면 복원 */
       try { f.contentWindow.location.reload(); }
       catch(_) { f.src = f.src; }
     });
