@@ -216,6 +216,16 @@
 </div>
 
 <script>
+/* 핸드폰에서는 드라마VOD를 맨 뒤(도구 다음)로 — 핸드폰은 드라마가 새 창으로 열려 뒤로가기가 어긋나기 쉬워서. PC·태블릿은 그대로 */
+(function(){
+  var ua = navigator.userAgent || '';
+  if (!(/iPhone|iPod/i.test(ua) || (/Android/i.test(ua) && /Mobile/i.test(ua)))) return;
+  var dv = document.querySelector('a.sm[data-open*="tab=dramavod"]'), last = document.querySelector('.row.four');
+  if (dv && last) last.appendChild(dv);
+})();
+</script>
+
+<script>
 /* ── 항목을 누르면 그 화면을 이 자리(화면 전체)에서 열고, [← 메뉴]·[← 홈]으로 돌아옴 ── */
 (function(){
   var viewer = document.getElementById('viewer'), frame = null, TV = 'https://nmyway77.github.io';
