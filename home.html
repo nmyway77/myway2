@@ -335,10 +335,13 @@
     open(a.getAttribute('data-open'), a.getAttribute('data-bar') || '', a.getAttribute('data-cat') || '');
   });
   document.getElementById('vBack').addEventListener('click', goHome);
-  /* myway.kr을 처음 열면 라디오부터 — [← 메뉴]를 누르면 이 홈 화면. 보던 화면이 기억돼 있으면 그 화면으로 */
+  /* myway.kr을 열면 항상 라디오부터 — [← 메뉴]를 누르면 이 홈 화면 */
   (function(){
     if (!document.documentElement.classList.contains('embedded')) return;   /* 이 파일만 따로 열었을 때는 홈 그대로 */
-    var v = null; try { v = JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch(e) {}
+    /* 보던 화면으로 되돌리는 것은 '뒤로가기로 돌아왔을 때'만 (방송사 링크로 나갔다 돌아온 경우). 주소로 새로 들어오거나 새로고침하면 항상 라디오부터 */
+    var back = false;
+    try { var nav = (window.top.performance.getEntriesByType('navigation') || [])[0]; back = !!nav && nav.type === 'back_forward'; } catch(e) {}
+    var v = null; if (back) { try { v = JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch(e) {} }
     if (v && v.home) return;
     var a = null;
     if (v && v.url) Array.prototype.forEach.call(document.querySelectorAll('a[data-open]'), function(x){ if (x.getAttribute('data-open') === v.url) a = x; });
