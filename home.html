@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>메인 홈 샘플 | MYWAY.KR</title>
+<title>홈 | MYWAY.KR</title>
 <meta name="robots" content="noindex">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -206,8 +206,6 @@
     <a class="sm" href="barsite.html?tab=tools" data-open="barsite.html?home=1&tab=tools" data-bar="도구"><span class="ic"><svg viewBox="0 0 24 24"><path d="M14.5 6.5a4 4 0 0 0 5 5l-9.2 9.2a2.1 2.1 0 0 1-3-3z"/><path d="M14.5 6.5 17 4l3 3-2.5 2.5"/></svg></span><strong>도구</strong><small>PDF 도구, 환율·단위 계산기, 맞춤법 검사, QR코드 만들기, 세계 시간 같은 생활 도구입니다.</small></a>
   </section>
 
-  <p class="note">메인 홈 샘플입니다. 항목을 누르면 그 화면이 이 자리에서 열리고, 맨 위 왼쪽의 [← 메뉴] 또는 [← 홈]을 누르면 이 화면으로 돌아옵니다.</p>
-
   <footer><a href="https://myway.kr">myway.kr</a></footer>
 </div>
 
@@ -221,14 +219,18 @@
 /* ── 항목을 누르면 그 화면을 이 자리(화면 전체)에서 열고, [← 메뉴]·[← 홈]으로 돌아옴 ── */
 (function(){
   var viewer = document.getElementById('viewer'), frame = null, TV = 'https://nmyway77.github.io';
+  var KEY = 'mywayHomeViewV1';   /* 지금 보는 화면 기억 — 링크로 나갔다 돌아오거나 새로고침해도 같은 화면 */
+  function remember(v){ try { sessionStorage.setItem(KEY, JSON.stringify(v)); } catch(e) {} }
   function close(){
+    remember({ home: 1 });
     if (frame) { frame.remove(); frame = null; }   /* 화면을 없애면 재생도 멈춤 */
     viewer.classList.remove('open', 'has-bar'); viewer.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('viewing');
     try { if (parent !== window) parent.postMessage({ type: 'MYWAY_BIG', on: false }, '*'); } catch(_) {}
   }
-  function open(url, bar, cat){
+  function open(url, bar, cat, noPush){
     close();
+    remember({ url: url, bar: bar || '', cat: cat || '' });
     if (cat) { try { sessionStorage.setItem('mywayCat_people3', cat); sessionStorage.setItem('mywayCat_people2', cat); } catch(e) {} }
     frame = document.createElement('iframe');
     frame.title = bar || '선택한 화면';
@@ -240,7 +242,7 @@
     viewer.classList.toggle('has-bar', !!bar);
     viewer.classList.add('open'); viewer.setAttribute('aria-hidden', 'false');
     document.body.classList.add('viewing');
-    try { history.pushState({ mwView: 1 }, ''); } catch(e) {}   /* 핸드폰 뒤로가기 → 홈으로 */
+    if (!noPush) { try { history.pushState({ mwView: 1 }, ''); } catch(e) {} }   /* 핸드폰 뒤로가기 → 홈으로 */
   }
   document.addEventListener('click', function(e){
     var a = e.target.closest ? e.target.closest('a[data-open]') : null;
@@ -249,6 +251,16 @@
     open(a.getAttribute('data-open'), a.getAttribute('data-bar') || '', a.getAttribute('data-cat') || '');
   });
   document.getElementById('vBack').addEventListener('click', close);
+  /* myway.kr을 처음 열면 라디오부터 — [← 메뉴]를 누르면 이 홈 화면. 보던 화면이 기억돼 있으면 그 화면으로 */
+  (function(){
+    if (!document.documentElement.classList.contains('embedded')) return;   /* 이 파일만 따로 열었을 때는 홈 그대로 */
+    var v = null; try { v = JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch(e) {}
+    if (v && v.home) return;
+    var a = null;
+    if (v && v.url) Array.prototype.forEach.call(document.querySelectorAll('a[data-open]'), function(x){ if (x.getAttribute('data-open') === v.url) a = x; });
+    if (!a) a = document.querySelector('a.big.radio[data-open]');
+    if (a) open(a.getAttribute('data-open'), a.getAttribute('data-bar') || '', a.getAttribute('data-cat') || '', true);
+  })();
   window.addEventListener('popstate', function(){ if (frame) close(); });
   window.addEventListener('message', function(e){
     var d = e.data || {};

@@ -1310,7 +1310,7 @@
     @media (max-width:720px){ .sub-nav { gap:6px; margin-bottom:20px; } .sub-btn { font-size:.8rem; padding:6px 12px; } }
   </style>
 <style id="mwHomeMode">
-  /* 메인 홈 샘플(home-sample.html) 안에서 열렸을 때(?home=1): 탭바 없이 그 화면만 — [← 메뉴]는 메인 홈으로 돌아감 */
+  /* 메인 홈(home.html) 안에서 열렸을 때(?home=1): 탭바 없이 그 화면만 — [← 메뉴]는 메인 홈으로 돌아감 */
   html.mw-home .topbar, html.mw-home .edit-toolbar { display: none !important; }
   html.mw-home .tvr-bar { top: 0; }
   html.mw-home .tvr-bar .nav-back { display: inline-flex; }
@@ -1324,7 +1324,10 @@
 </style>
 <script>
 (function(){ var emb = true; try { emb = window.self !== window.top; } catch(e) {}
-  if (emb && /[?&]home=1(&|$)/.test(location.search)) { document.documentElement.classList.add('mw-home'); try { sessionStorage.removeItem('mywayOnairReturnV1'); } catch(e) {} }
+  if (emb && /[?&]home=1(&|$)/.test(location.search)) { document.documentElement.classList.add('mw-home');
+    /* 링크로 나갔다 돌아온 기억(채널·스크롤 위치)은 지금 여는 화면과 같은 화면일 때만 쓰고, 다르면 버림 */
+    try { var q = new URLSearchParams(location.search).get('tab') || '', r = JSON.parse(sessionStorage.getItem('mywayOnairReturnV1') || 'null');
+      if (r && !((r.tab && r.tab === q) || (r.k && 'onair_' + r.k === q) || (r.k === 'kbsvod' && q === 'dramavod'))) sessionStorage.removeItem('mywayOnairReturnV1'); } catch(e) {} }
   window.__mwGoHome = function(){ if (!document.documentElement.classList.contains('mw-home')) return false; try { parent.postMessage({ type: 'MYWAY_HOME' }, location.origin); } catch(e) {} return true; };
 })();
 </script>
