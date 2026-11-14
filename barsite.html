@@ -1309,6 +1309,21 @@
     .sub-btn.on { background:#1f2740; color:#fff; border-color:#1f2740; }
     @media (max-width:720px){ .sub-nav { gap:6px; margin-bottom:20px; } .sub-btn { font-size:.8rem; padding:6px 12px; } }
   </style>
+<style id="mwNavDesign">
+    /* ===== 네비바 공통 디자인(뉴스바와 같은 모양): 밝은 바탕 + 볼록한 흰 알약 버튼, 고른 것은 보라-파랑 ===== */
+    .tvr-bar{background:linear-gradient(180deg,#f7f8fc 0%,#eceef7 100%);border-bottom:1px solid #dcdfee;box-shadow:inset 0 1px 0 #fff,0 4px 14px rgba(90,100,180,.16);border-top:0;-webkit-backdrop-filter:none;backdrop-filter:none;padding:10px 14px 12px}
+    .tvr-ch{border:1px solid rgba(255,255,255,.85);color:#5d6388;font-weight:700;background:linear-gradient(135deg,#ffffff 0%,#f4f5fc 50%,#eceafa 100%);box-shadow:0 5px 12px rgba(90,100,180,.2),0 1px 3px rgba(75,45,189,.12),inset 0 2px 5px rgba(255,255,255,.95),inset 0 -3px 6px rgba(75,45,189,.09);transition:color .18s,box-shadow .18s,transform .12s;padding:7px 15px;font-size:13.5px;letter-spacing:-.2px}
+    .tvr-ch:hover{border-color:rgba(255,255,255,.85);color:#4b4f9a;background:linear-gradient(135deg,#ffffff 0%,#f4f5fc 50%,#eceafa 100%);box-shadow:0 7px 16px rgba(90,100,180,.26),0 1px 3px rgba(75,45,189,.14),inset 0 2px 5px rgba(255,255,255,.95),inset 0 -3px 6px rgba(75,45,189,.11)}
+    .tvr-ch:active{transform:translateY(1px)}
+    .tvr-ch.on, .tvr-ch.on:hover{color:#fff;border-color:rgba(255,255,255,.4);text-shadow:0 1px 2px rgba(0,0,0,.15);background:linear-gradient(135deg,#6fb3d8 0%,#8a80dc 50%,#a98be3 100%);box-shadow:0 6px 14px rgba(90,100,180,.34),0 2px 5px rgba(75,45,189,.2),inset 0 2px 6px rgba(255,255,255,.45),inset 0 -3px 6px rgba(75,45,189,.22)}
+    .tvr-ch .nw{color:#9aa2c0}
+    .tvr-bar .nav-back{color:#5b4bdb;font-weight:800}
+    .sub-nav.dv-nav .sub-btn, .sub-nav.mag-nav .sub-btn{border:1px solid rgba(255,255,255,.85);color:#5d6388;font-weight:700;background:linear-gradient(135deg,#ffffff 0%,#f4f5fc 50%,#eceafa 100%);box-shadow:0 5px 12px rgba(90,100,180,.2),0 1px 3px rgba(75,45,189,.12),inset 0 2px 5px rgba(255,255,255,.95),inset 0 -3px 6px rgba(75,45,189,.09);transition:color .18s,box-shadow .18s,transform .12s;padding:7px 15px;font-size:13.5px;letter-spacing:-.2px}
+    .sub-nav.dv-nav .sub-btn:hover, .sub-nav.mag-nav .sub-btn:hover{border-color:rgba(255,255,255,.85);color:#4b4f9a;background:linear-gradient(135deg,#ffffff 0%,#f4f5fc 50%,#eceafa 100%);box-shadow:0 7px 16px rgba(90,100,180,.26),0 1px 3px rgba(75,45,189,.14),inset 0 2px 5px rgba(255,255,255,.95),inset 0 -3px 6px rgba(75,45,189,.11)}
+    .sub-nav.dv-nav .sub-btn.on, .sub-nav.mag-nav .sub-btn.on{color:#fff;border-color:rgba(255,255,255,.4);text-shadow:0 1px 2px rgba(0,0,0,.15);background:linear-gradient(135deg,#6fb3d8 0%,#8a80dc 50%,#a98be3 100%);box-shadow:0 6px 14px rgba(90,100,180,.34),0 2px 5px rgba(75,45,189,.2),inset 0 2px 6px rgba(255,255,255,.45),inset 0 -3px 6px rgba(75,45,189,.22)}
+    .sub-nav.dv-nav .sub-btn.nav-back, .sub-nav.mag-nav .sub-btn.nav-back{color:#5b4bdb;font-weight:800}
+    @media (max-width:720px){ .tvr-ch, .sub-nav.dv-nav .sub-btn, .sub-nav.mag-nav .sub-btn{padding:6px 13px;font-size:13px} }
+</style>
 <style id="mwHomeMode">
   /* 메인 홈(home.html) 안에서 열렸을 때(?home=1): 탭바 없이 그 화면만 — [← 메뉴]는 메인 홈으로 돌아감 */
   html.mw-home .topbar, html.mw-home .edit-toolbar { display: none !important; }
