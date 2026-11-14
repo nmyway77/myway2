@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>뉴스 채널 직접 재생 테스트 | MYWAY.KR</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:#f7f3eb;color:#1f2740;font-family:"Pretendard",-apple-system,"Malgun Gothic",sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;word-break:keep-all}
+  main{max-width:760px;margin:0 auto;padding:16px 14px 60px}
+  h1{margin:0 0 6px;font-size:20px;font-weight:800;letter-spacing:-.3px}
+  p{margin:0 0 12px;color:#6c7391;line-height:1.55}
+  .screen{position:sticky;top:10px;z-index:5;width:100%;aspect-ratio:16/9;max-height:46vh;border-radius:16px;overflow:hidden;background:#111;box-shadow:0 10px 26px rgba(40,40,80,.22),0 -20px 0 14px #f7f3eb;margin-bottom:14px}
+  .screen video{width:100%;height:100%;background:#000;display:block}
+  h2{margin:18px 2px 8px;font-size:15px;font-weight:800}
+  .card{display:flex;align-items:center;gap:12px;width:100%;margin-bottom:8px;padding:12px 14px;border-radius:14px;border:1px solid #e6e2d8;background:#fff;font:inherit;color:inherit;text-align:left;cursor:pointer}
+  .card.on{border-color:#8a80dc;box-shadow:0 0 0 2px rgba(138,128,220,.35)}
+  .no{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#6fb3d8,#8a80dc 50%,#a98be3);color:#fff;font-weight:800}
+  .tx{flex:1;min-width:0}
+  .tx b{display:block;font-size:14.5px}
+  .tx small{display:block;color:#8a8f99;font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .st{flex:none;font-weight:800;font-size:13px;color:#8a8f99}
+  .st.ok{color:#1f9d78} .st.bad{color:#d14848} .st.wait{color:#b0822a}
+  footer{margin-top:22px;text-align:center}
+  footer a{color:#8a8f99;font-size:12px;font-weight:700;text-decoration:none}
+</style>
+</head>
+<body>
+<main>
+  <h1>뉴스 채널 직접 재생 테스트</h1>
+  <p>유튜브(광고) 없이 방송 주소를 바로 틀 수 있는지 확인하는 화면입니다. <b>1번이 "됨"으로 나오면 채널A를 TV 화면 안에 바로 넣을 수 있습니다.</b></p>
+  <div class="screen"><video id="v" controls playsinline webkit-playsinline></video></div>
+  <h2>화면 안에서 바로 재생되는지</h2><div id="tv"></div>
+  <h2>새 창으로 열어서 확인</h2>
+  <p>아래 주소는 보안(https)이 아니어서 이 화면 안에서는 틀 수 없습니다. 누르면 새 창으로 열리니, 방송이 나오는지만 알려 주세요.</p>
+  <div id="radio"></div>
+  <footer><a href="https://myway.kr">MYWAY.KR</a></footer>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
+<script>
+var LIST = [
+  ['tv',    '1번', '채널A (보안 주소)', 'https://channelalive.ktcdn.co.kr/chalivepc/_definst_/atv2/playlist.m3u8'],
+  ['radio', '2번', '채널A (일반 주소)', 'http://channelalive.ktcdn.co.kr/chalivepc/_definst_/atv2/playlist.m3u8'],
+  ['radio', '3번', 'MTN 머니투데이방송', 'http://183.110.27.87/mtnlive/720/playlist.m3u8'],
+  ['radio', '4번', 'YTN (해외 중계 서버 ①)', 'http://202.60.106.14:8080/214/playlist.m3u8'],
+  ['radio', '5번', 'YTN (해외 중계 서버 ②)', 'http://202.60.106.14:21585/214/playlist.m3u8']
+];
+var v = document.getElementById('v'), hls = null, cur = -1, timer = 0;
+function setSt(i, cls, t){ var el = document.getElementById('st' + i); if (el) { el.className = 'st ' + cls; el.textContent = t; } }
+LIST.forEach(function(x, i){
+  var b = document.createElement('button'); b.type = 'button'; b.className = 'card'; b.id = 'c' + i;
+  b.innerHTML = '<span class="no">' + (i + 1) + '</span><span class="tx"><b></b><small></small></span><span class="st" id="st' + i + '">누르면 확인</span>';
+  b.querySelector('b').textContent = x[1] + ' · ' + x[2]; b.querySelector('small').textContent = x[3];
+  b.onclick = function(){ if (x[0] === 'radio') { setSt(i, 'wait', '새 창 확인'); window.open(x[3], '_blank'); } else play(i); };
+  if (x[0] === 'radio') b.querySelector('.st').textContent = '새 창으로 열기';
+  document.getElementById(x[0]).appendChild(b);
+});
+function stop(){ clearTimeout(timer); if (hls) { try { hls.destroy(); } catch(e) {} hls = null; } try { v.pause(); v.removeAttribute('src'); v.load(); } catch(e) {} }
+function play(i){
+  stop(); cur = i;
+  Array.prototype.forEach.call(document.querySelectorAll('.card'), function(c){ c.classList.remove('on'); });
+  document.getElementById('c' + i).classList.add('on');
+  setSt(i, 'wait', '확인 중…');
+  var url = LIST[i][3], done = false, triedNative = false;
+  function ok(){ if (done || cur !== i) return; done = true; clearTimeout(timer); setSt(i, 'ok', v.videoWidth > 0 ? '됨 (영상)' : '됨 (소리만)'); }
+  function bad(why){ if (done || cur !== i) return; done = true; clearTimeout(timer); setSt(i, 'bad', '안 됨' + (why ? ' · ' + why : '')); }
+  function native(){ triedNative = true; if (hls) { try { hls.destroy(); } catch(e) {} hls = null; } v.src = url; var p = v.play(); if (p && p.catch) p.catch(function(){}); }
+  v.onplaying = function(){ setTimeout(ok, 600); };
+  v.onerror = function(){ if (cur === i && (triedNative || !(window.Hls && Hls.isSupported()))) bad('재생 불가'); };
+  timer = setTimeout(function(){ bad('응답 없음'); }, 15000);
+  if (window.Hls && Hls.isSupported()) {
+    hls = new Hls();
+    hls.on(Hls.Events.ERROR, function(ev, e){
+      if (!e || !e.fatal || done || cur !== i) return;
+      /* hls.js로 못 읽으면(방송사 서버가 다른 사이트의 읽기를 막는 경우 등) 브라우저 자체 재생으로 한 번 더 */
+      if (!triedNative && v.canPlayType('application/vnd.apple.mpegurl')) native();
+      else bad(e.type === Hls.ErrorTypes.NETWORK_ERROR ? '주소를 못 읽음' : '재생 불가');
+    });
+    hls.loadSource(url); hls.attachMedia(v);
+    var p = v.play(); if (p && p.catch) p.catch(function(){});
+  } else if (v.canPlayType('application/vnd.apple.mpegurl')) { native(); }
+  else bad('이 브라우저는 지원 안 함');
+}
+</script>
+</body>
+</html>
