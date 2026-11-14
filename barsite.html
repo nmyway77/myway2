@@ -1276,6 +1276,14 @@
     html.myway-navswap #tvrScreen iframe { position: fixed; left: 0; top: 0; width: 100%; height: 100vh; height: 100dvh; z-index: 150; }
     html.myway-navswap, html.myway-navswap body { overflow: hidden; }
     html.myway-navswap .edit-toolbar { display: none !important; }
+    /* 라디오: 탭바 자리를 채널바가 대신 차지 */
+    .tvr-bar .nav-back { display: none; order: 0; align-items: center; gap: 5px; color: #5b4bdb; font-weight: 800; }
+    .tvr-bar .nav-back svg { width: 14px; height: 14px; display: block; }
+    html.mw-tvrswap body[data-active-tab="onair"] .topbar { display: none; }
+    html.mw-tvrswap body[data-active-tab="onair"] .tvr-bar { top: 0; }
+    html.mw-tvrswap body[data-active-tab="onair"] .tvr-bar .nav-back { display: inline-flex; }
+    html.mw-tvrswap body[data-active-tab="onair"] .tvr-screen { height: calc(100vh - 56px); }
+    html.mw-tvrswap body[data-active-tab="onair"] .edit-toolbar { display: none !important; }
     /* 드라마VOD: 탭바 자리를 방송사 네비(KBS·MBC·채널A·SBS)가 대신 차지 — 맨 앞 [← 메뉴]로 탭바 복귀 */
     .sub-nav .nav-back { display: none; }
     html.mw-dvswap body[data-active-tab="dramavod"] .topbar { display: none; }
@@ -1320,6 +1328,7 @@
   <!-- P 페이지 맨 위 · TV & 라디오 (상단 채널바 → 누르면 아래 풀화면 재생) -->
   <section class="tvr-section" id="tvrSection" aria-label="LIVE TV · 라디오">
     <div class="tvr-bar" id="tvrBar">
+      <button type="button" class="tvr-ch nav-back" id="tvrBack" title="마이웨이 메뉴로 돌아가기" onclick="document.documentElement.classList.remove('mw-tvrswap');try{window.scrollTo({top:0,behavior:'smooth'})}catch(e){}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg>메뉴</button>
       <div class="tvr-list" id="tvrList"></div>
     </div>
     <div class="tvr-hint">채널을 누르면 아래에 화면이 크게 열려요 · 같은 채널을 한 번 더 누르면 꺼져요</div>
@@ -3623,12 +3632,12 @@
   })();
   /* @PAGES_START */
   var TVR_PAGES = {
-    tv2:   { label: "📺 TV", url: "https://nmyway77.github.io/livetv7/" },
+    tv2:   { label: "📺 TV", url: "https://nmyway77.github.io/livetv7/?nav=1", navswap: true },   /* 탭바 자리를 TV 분류 탭으로 교체 */
     youtuber: { label: "▶ 유튜버", url: "https://myway.kr/people3.html?nav=1", cat: "all", navswap: true },   /* 탭바 자리를 유튜버 분류 네비로 교체 */
     movie: { label: "🎬 영화", url: "https://myway.kr/MOVIE-YTUBE.html" },
     webdrama: { label: "🎭 웹드라마", url: "https://nmyway77.github.io/livetv7/?wd=1" },
     podcast: { label: "🎙 팟캐스트", url: "https://myway.kr/podcast.html" },
-    music: { label: "🎵 음악", url: "https://myway.kr/music-sample.html" },   /* 새 디자인(구 음악2)을 음악으로 채택 — 예전 음악은 MUSIC-YTUBE-SINGER.html */
+    music: { label: "🎵 음악", url: "https://myway.kr/music-sample.html?nav=1", navswap: true },   /* 새 디자인(구 음악2)을 음악으로 채택 — 예전 음악은 MUSIC-YTUBE-SINGER.html */
     cctv:  { label: "📹 CCTV", url: "https://myway.kr/00makingyoutubefull2.html" },
     newsnow: { label: "📰 최신뉴스", url: "https://myway.kr/NEWS-NOW.html", tab: "news" },
     kbsvod: { label: "KBS 다시보기", url: "https://myway.kr/kbs-vod.html", tab: "dramavod" },   /* 드라마VOD의 KBS 카드 → 왼쪽 KBS 화면 + 오른쪽 회차 목록 (탭바에는 버튼 없음, 주소는 카드를 누를 때 정해짐) */
@@ -3759,10 +3768,11 @@
     var newsListOnce = false;
     /* 유튜버 등 화면의 [← 메뉴] → 탭바를 다시 보이게(화면은 그대로 아래에) */
     window.addEventListener('message', function(e){
-      if (e.origin !== location.origin || !e.data || e.data.type !== 'MYWAY_NAVSWAP_BACK') return;
-      var fr = document.querySelector('#tvrScreen iframe'); if (!fr || e.source !== fr.contentWindow) return;
+      if (!e.data || e.data.type !== 'MYWAY_NAVSWAP_BACK') return;
+      var fr = document.querySelector('#tvrScreen iframe'); if (!fr || e.source !== fr.contentWindow) return;   /* 지금 화면 안 페이지(TV는 github.io)에서 온 것만 */
+      if (e.origin !== location.origin && e.origin !== 'https://nmyway77.github.io') return;
       document.documentElement.classList.remove('myway-navswap');
-      try { fr.contentWindow.postMessage({ type: 'MYWAY_NAVSWAP_OFF' }, location.origin); } catch (_) {}
+      try { fr.contentWindow.postMessage({ type: 'MYWAY_NAVSWAP_OFF' }, e.origin); } catch (_) {}
     });
     /* 뉴스 바로보기 언론사 바의 [← 메뉴] → 탭바가 있는 뉴스 전체목록 화면으로 */
     window.addEventListener('message', function(e){
@@ -3787,12 +3797,14 @@
           if (pg.cat) { try { sessionStorage.setItem('mywayCat_people2', pg.cat); sessionStorage.setItem('mywayCat_people3', pg.cat); } catch(e){} }
           $('tvrScreen').innerHTML = '<iframe title="' + esc(pg.label) + '" allow="autoplay; encrypted-media; fullscreen" allowfullscreen src="' + String(pg.url).replace(/"/g, '%22') + '"></iframe>';
           $('tvrSection').classList.add('playing', 'page-mode');
-          document.documentElement.classList.toggle('myway-navswap', k === 'newsbar' || !!pg.navswap);   /* 뉴스 바로보기·유튜버: 탭바 자리를 그 화면의 네비로 교체 */
+          document.documentElement.classList.toggle('myway-navswap', k === 'newsbar' || !!pg.navswap);
+          document.documentElement.classList.remove('mw-tvrswap');   /* 뉴스 바로보기·유튜버: 탭바 자리를 그 화면의 네비로 교체 */
         }
         try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e){}
         navCenter('#tabNav .tab-btn[data-tab="' + btnTab + '"]');
         return;
       }
+      document.documentElement.classList.add('mw-tvrswap');   /* 라디오: 탭바 자리를 라디오 채널바로 교체 — 채널바 맨 앞 [← 메뉴]로 탭바 복귀 */
       list();
       if (!cur) {
         if (startI != null && (TVR[k] || [])[startI]) play(startI, true); /* 백버튼 복귀: 나갔던 채널 */
