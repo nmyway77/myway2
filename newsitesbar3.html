@@ -293,17 +293,8 @@ nav.insertBefore(openBtn, track);
   nav.addEventListener('wheel',e=>{ if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ nav.scrollLeft+=e.deltaY; e.preventDefault(); } },{passive:false});
 })();
 
-/* 초기화: 저장된 마지막 화면 복원(없으면 연합뉴스 메인) */
+/* 초기화: 처음 화면은 항상 연합뉴스 (전체목록·마지막 언론사 복원 안 함) */
 (function(){
-  var saved='';
-  try { saved = sessionStorage.getItem('mywayNews') || ''; } catch(_) {}
-  if(saved==='grid'){ showGrid(gridBtn); return; }
-  var ms = /^site:(\d+)$/.exec(saved);
-  if(ms){
-    var i=parseInt(ms[1],10);
-    var b=track.querySelector('button[data-site="'+i+'"]');
-    if(b){ loadSite(i,b); return; }
-  }
   var yi = SITES.findIndex(function(s){ return s[0]==='연합'; });
   if(yi<0) yi = DEFAULT_I;
   var yb = track.querySelector('button[data-site="'+yi+'"]');
