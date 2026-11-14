@@ -19,6 +19,11 @@
   .tabs button { flex:none; border:1px solid var(--line); background:var(--card); padding:7px 16px; border-radius:20px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text); white-space:nowrap; }
   .tabs button:hover { border-color:#b9bfcc; }
   .tabs button.on { background:var(--text); color:#fff; border-color:var(--text); }
+  /* myway.kr 탭바 자리에 들어갔을 때(?nav=1): 맨 앞 [← 메뉴] — 좌우로 밀어도 왼쪽에 고정 */
+  .tabs > .nav-back { display:none; }
+  body.navswap .tabs > .nav-back { display:inline-flex; align-items:center; gap:5px; margin-left:0; position:sticky; left:0; z-index:2; color:#5b4bdb; font-weight:800; box-shadow:-16px 0 0 var(--card); }
+  body.navswap .tabs > .nav-back svg { width:14px; height:14px; display:block; }
+  body.navswap .tabs > .nav-back + button { margin-left:auto; }
 
   /* 본문: 왼쪽 화면 + 오른쪽 채널 */
   .top { height:100%; }
@@ -75,6 +80,13 @@
 <body>
 <div class="top">
   <nav class="tabs" id="tabs"></nav>
+  <script>
+  (function(){
+    var emb = true; try { emb = window.self !== window.top; } catch(e) {}
+    if (emb && /[?&]nav=1(&|$)/.test(location.search)) document.body.classList.add("navswap");
+    window.addEventListener("message", function(e){ if (e.origin === location.origin && e.data && e.data.type === "MYWAY_NAVSWAP_OFF") document.body.classList.remove("navswap"); });
+  })();
+  </script>
   <div class="wrap" id="wrap">
     <section class="stage">
       <div class="player" id="player"><div class="empty">오른쪽에서 채널을 선택하세요</div></div>
@@ -138,7 +150,7 @@ function saveFavs(){ try { localStorage.setItem(FAV_KEY, JSON.stringify(favs)); 
 const inCat = c => currentCat === "전체" ? true : currentCat === "즐겨찾기" ? favs.includes(c.slug) : c.cat === currentCat;
 
 function renderTabs(){
-  $("tabs").innerHTML = CATS.map(c => `<button class="${c===currentCat?'on':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
+  $("tabs").innerHTML = '<button type="button" class="nav-back" data-back="1" title="마이웨이 메뉴로 돌아가기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg>메뉴</button>' + CATS.map(c => `<button class="${c===currentCat?'on':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
 }
 function renderGrid(){
   const list = CHANNELS.filter(inCat);
@@ -171,6 +183,7 @@ function play(slug, mode){
 }
 
 $("tabs").addEventListener("click", e => {
+  if (e.target.closest("button[data-back]")) { try { parent.postMessage({ type: "MYWAY_NAVSWAP_BACK" }, location.origin); } catch(err) {} return; }   // myway.kr 탭바 다시 보이기
   const b = e.target.closest("button[data-cat]"); if (!b) return;
   currentCat = b.dataset.cat; renderTabs();
   const first = CHANNELS.find(inCat);           // 탭을 누르면 그 탭의 첫 채널이 바로 나옴
