@@ -194,7 +194,7 @@ const DIRECTORY = [
 /* 마이웨이(P) 화면 안에 임베드된 경우 표시 */
 try{ if(window.self!==window.top) document.documentElement.classList.add('embedded'); }catch(_){ document.documentElement.classList.add('embedded'); }
 /* 마이웨이 탭바 자리에 들어간 경우(?nav=1): [← 메뉴]를 누르면 마이웨이 탭바 화면(뉴스 전체목록)으로 복귀 */
-const NAVSWAP = document.documentElement.classList.contains('embedded') && /[?&]nav=1(&|$)/.test(location.search);
+const NAVSWAP = document.documentElement.classList.contains('embedded') && (/[?&]nav=1(&|$)/.test(location.search) ? ((window.name = 'mwnav'), true) : window.name === 'mwnav');
 if(NAVSWAP) document.documentElement.classList.add('navswap');
 document.getElementById('navBack').addEventListener('click',function(){ try{ parent.postMessage({type:'MYWAY_NEWSBAR_BACK'}, location.origin); }catch(_){} });
 let viewer=document.getElementById('viewer');

@@ -221,7 +221,7 @@
 </style>
 </head>
 <body>
-  <script>(function(){var emb=true;try{emb=window.self!==window.top}catch(e){} if(emb&&/[?&]nav=1(&|$)/.test(location.search))document.documentElement.classList.add('navswap');})();</script>
+  <script>(function(){var emb=true;try{emb=window.self!==window.top}catch(e){} if(emb&&(/[?&]nav=1(&|$)/.test(location.search) ? ((window.name = 'mwnav'), true) : window.name === 'mwnav'))document.documentElement.classList.add('navswap');})();</script>
   <div class="screen-links-wrap" style="position:relative;">
     <button type="button" class="mw-back" id="mwMenuBack" title="마이웨이 메뉴로 돌아가기" onclick="try{parent.postMessage({type:'MYWAY_NAVSWAP_BACK'},location.origin)}catch(e){}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;display:block"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg>메뉴</button>
     <a href="#" class="expand-btn" onclick="expandCurrentFullPage(event)" title="전체화면 확대">＋</a>

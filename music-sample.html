@@ -397,7 +397,7 @@
 <script>
 (function(){
   var emb = true; try { emb = window.self !== window.top; } catch(e) {}
-  if (emb && /[?&]nav=1(&|$)/.test(location.search)) document.documentElement.classList.add('navswap');
+  if (emb && (/[?&]nav=1(&|$)/.test(location.search) ? ((window.name = 'mwnav'), true) : window.name === 'mwnav')) document.documentElement.classList.add('navswap');
   window.addEventListener('message', function(e){ if (e.origin === location.origin && e.data && e.data.type === 'MYWAY_NAVSWAP_OFF') document.documentElement.classList.remove('navswap'); });
   document.addEventListener('click', function(e){ if (e.target.closest && e.target.closest('#navBack')) { try { parent.postMessage({ type: 'MYWAY_NAVSWAP_BACK' }, location.origin); } catch(_) {} } });
 })();
