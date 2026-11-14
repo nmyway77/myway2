@@ -3740,10 +3740,11 @@
       if (e.origin !== location.origin || !e.data || e.data.type !== 'MYWAY_KBSVOD_BACK') return;
       if (typeof selectTab === 'function') selectTab('dramavod');
     });
+    var newsListOnce = false;
     /* 뉴스 바로보기 언론사 바의 [← 메뉴] → 탭바가 있는 뉴스 전체목록 화면으로 */
     window.addEventListener('message', function(e){
       if (e.origin !== location.origin || !e.data || e.data.type !== 'MYWAY_NEWSBAR_BACK') return;
-      if (typeof selectTab === 'function') selectTab('news');
+      if (typeof selectTab === 'function') { newsListOnce = true; try { selectTab('news'); } finally { newsListOnce = false; } }
     });
     function openOnair(k, startI){
       var changed = (onair !== k);
@@ -3783,6 +3784,8 @@
       if (typeof selectTab === 'function') {
         var _st = selectTab;
         selectTab = function(id){
+          /* 상단 [뉴스] 탭 → 전체목록 대신 뉴스 바로보기가 바로 열림 (탭바 자리에 언론사 바). [← 메뉴]로 돌아올 때만 전체목록 */
+          if (id === 'news' && !newsListOnce) { try { sessionStorage.setItem('mywayTab_barsite', 'news'); } catch(e){} openOnair('newsbar'); return; }
           if (TAB_PAGES[id]) { try { sessionStorage.setItem('mywayTab_barsite', id); } catch(e){} openOnair(id); return; }
           if (onair) { onair = null; stop(); } var r = _st.apply(this, arguments); navCenter('#tabNav .tab-btn[data-tab="' + id + '"]'); return r; };
       }
