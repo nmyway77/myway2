@@ -726,6 +726,22 @@
     .nav-row button.del:hover { border-color:#e0456b; color:#e0456b; }
 
   </style>
+<style id="ytLikeMain">
+/* 주식 유튜버 탭: 메인 유튜버(people3) 카드 모양 그대로 */
+#main[data-tab="tab"] .photo-section{max-width:1100px;margin-left:auto;margin-right:auto}
+#main[data-tab="tab"] .masonry.photo-tab{column-count:4;column-gap:12px}
+#main[data-tab="tab"] .masonry.photo-tab .gcard{overflow:hidden;margin:0 0 12px;border-radius:10px;background:#f4f6fb;box-shadow:none}
+#main[data-tab="tab"] .masonry.photo-tab .gcard:hover{box-shadow:none}
+#main[data-tab="tab"] .masonry.photo-tab .gcard::after{content:none}
+#main[data-tab="tab"] .masonry.photo-tab .gcard img{border-radius:0}
+#main[data-tab="tab"] .masonry.photo-tab .gcard:hover img{transform:scale(1.03)}
+#main[data-tab="tab"] .masonry.photo-tab .gcard .cap{border-radius:0;font-size:.82rem}
+#main[data-tab="tab"] .masonry.photo-tab .split-hint,#main[data-tab="tab"] .masonry.photo-tab .multi-badge{display:none}
+@media (hover:hover) and (pointer:fine){#main[data-tab="tab"] .masonry.photo-tab .gcard .cap{opacity:0}#main[data-tab="tab"] .masonry.photo-tab .gcard:hover .cap{opacity:1}}
+@media (max-width:900px){#main[data-tab="tab"] .masonry.photo-tab{column-count:3}}
+@media (max-width:600px){#main[data-tab="tab"] .masonry.photo-tab{column-count:2;column-gap:10px}#main[data-tab="tab"] .masonry.photo-tab .gcard{margin-bottom:10px}}
+body.editing #main[data-tab="tab"] .masonry.photo-tab .gcard{overflow:visible}
+</style>
 <style id="mwNavDesign">
   /* ===== 네비바 공통 디자인(뉴스바와 같은 모양): 밝은 바탕 + 볼록한 흰 알약 버튼, 고른 것은 보라-파랑 ===== */
   .topbar{background:linear-gradient(180deg,#f7f8fc 0%,#eceef7 100%);border-bottom:1px solid #dcdfee;box-shadow:inset 0 1px 0 #fff,0 4px 14px rgba(90,100,180,.16);-webkit-backdrop-filter:none;backdrop-filter:none;padding-top:10px;padding-bottom:12px;gap:8px}
@@ -2494,4 +2510,19 @@
 </script>
 
 
+<script id="ytLikeMainJs">
+/* 주식 유튜버 탭: 카드를 누르면 메인 유튜버 화면처럼 화면 안에서 재생(오른쪽 영상 목록) — 백버튼으로 이 탭에 복귀 */
+(function(){
+  var CH={"@%ec%96%b4%ec%8a%b4%ec%83%88%eb%b2%bd": "UCBBIMeRtymAgKwMjlMsu3pA", "@%ec%84%b1%ec%a0%95%ea%b8%b8": "UCPsRj5tjL48pFVow7HyLhOQ", "@time_leverage_": "UC8dHEtYqXI2AVDK4UW8qabQ", "@wisdom_of_bitcoin": "UCzGUaygjUeV-Zm_DRuFS0pA", "@cryptominati-1": "UC9bmW16zKQP1SHnlssVUlnQ", "@money-blahblah": "UCglRHAqxLq0KF0ffkQXF-TA", "@jadoodoo": "UCIOHzEDwgUuLBZwPKEUt1AQ", "@wedombtc": "UC9stxmmO1eaSTh9F9WETURg", "@chul9hyung": "UCUY0FVprY69TQu5pbho2PNw", "@ch%ec%8b%a0%ec%82%ac%ec%9e%84%eb%8b%b9": "UCaJdckl6MBdDPDf75Ec_bJA", "@%ec%b0%a8%ed%8a%b8%ec%b2%9c%ec%9e%ac%ea%b9%80%ec%84%a0%ec%9e%ac": "UCsQfdWvaMBNdEkc4bX81wvg", "@50%ec%96%b5%ec%95%84%eb%b9%a0": "UCBqneQtg2Ng6pj-Qg2_ytxA", "@live-streamersatto": "UCnXe6v0-5vmMMRU2qx0XwUw", "@%eb%a7%81%ec%bb%a8%ed%8a%b8%eb%a0%88%ec%9d%b4%eb%94%a9": "UChjSKtt82IkmL8PsBR8oTTA", "@todaycoin": "UCDBniJtWmmDbGiJ68UbBrUw", "@web3world": "UC7H3LGAlRWd3_fm5yOS_piw", "@cryptotomato": "UCX2HXx2zvM5nOHzjB0wMDpw", "@4threvolutiontv": "UC74TUYOo2J3y1pb1LnE_ZGQ", "@discovercrypto_": "UCjemQfjaXAzA-95RKoy9n_g", "@lucky_tv": "UCvil4OAt-zShzkKHsg9EQAw", "@bitshua": "UCf64J3dPdVRT6OJf57m-uyw", "@zzap9": "UCAd9A4YzTb-g2BLnaZxhECA", "@%ec%83%88%eb%b2%bd%ec%97%90%ec%98%a8%ec%a3%bc%ed%98%b8": "UCMBA00NAUaXgvDbbv5URN3g", "@gowithone": "UCsAqFxeudIvQMQOUqibTfmg"};
+  function cidOf(url){ var m=String(url||'').match(/youtube\.com\/(@[^\/?#]+)/i); return m ? (CH[m[1].toLowerCase()]||'') : ''; }
+  window.addEventListener('click',function(e){
+    if(typeof editMode!=='undefined' && editMode) return;
+    var a=e.target.closest && e.target.closest('#main[data-tab="tab"] .gcard'); if(!a) return;
+    if(e.target.closest('.card-ctrl')) return;
+    var cid=cidOf(a.getAttribute('href')); if(!cid) return;
+    e.preventDefault(); e.stopPropagation();
+    location.href='people3.html?ch='+cid+'&n='+encodeURIComponent(a.getAttribute('aria-label')||'');
+  }, true);
+})();
+</script>
 </body></html>
