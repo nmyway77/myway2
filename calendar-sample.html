@@ -82,8 +82,8 @@
   .day .n{font-family:var(--serif);font-weight:700;font-size:17px;line-height:1;min-width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;margin:-2px 0 0 -2px}
   .day .lu{font-size:11px;color:var(--dim);font-weight:600;padding-top:3px;white-space:nowrap}
   .day .lu.first{color:#8a80dc;font-weight:800}
-  .day.sun .n,.day.hol .n{color:var(--red)}
   .day.sat .n{color:var(--blue)}
+  .day.sun .n,.day.hol .n{color:var(--red)}
   .day.hol{background:linear-gradient(180deg,#fff7f7,#fff 70%)}
   .day.out{background:#fcfbf8}
   .day.out>*{opacity:.38}
@@ -207,7 +207,7 @@
     .opts{margin-left:0;width:100%}
     .day{min-height:74px;padding:4px 3px}
     .day .n{font-size:14px;min-width:22px;height:22px}
-    .day .lu{font-size:9.5px;padding-top:1px}
+    .day .lu{font-size:8.5px;padding-top:1px;letter-spacing:-.05em}
     .tx{font-size:9.5px;letter-spacing:-.03em}
     .tx.m{display:none}
     .tx.more{display:none}
@@ -647,7 +647,7 @@
   function res(id,html){ var r=$(id); r.innerHTML=html; r.classList.add('on'); }
   function err(id,msg){ var e=$(id); if(!e) return; e.textContent=msg||''; e.style.display=msg?'block':'none'; }
   function it(label,val){ return '<div class="it"><small>'+label+'</small><b>'+val+'</b></div>'; }
-  function luTxt(dt){ var l=lunar(dt); return l?'음력 '+l.y+'.'+(l.leap?'윤':'')+l.m+'.'+l.d:''; }
+  function luTxt(dt){ var l=lunar(dt); return l?l.y+'.'+(l.leap?'윤':'')+l.m+'.'+l.d:''; }
   function viewBtn(dt){ return '<button type="button" class="linkbtn" data-goto="'+key(dt)+'">📅 달력에서 보기</button>'; }
   document.addEventListener('click',function(e){ var b=e.target.closest('[data-goto]'); if(!b) return; var p=b.dataset.goto.split('-'); S.sel=D(+p[0],+p[1],+p[2]); go(+p[0],+p[1]); showView('month'); window.scrollTo({top:0,behavior:'smooth'}); });
   function setIn(id,dt){ $(id).value=key(dt); }
@@ -687,8 +687,8 @@
   };
   $('c3Go').onclick=function(){
     var s=parseIn($('c3D').value); if(!s) return;
-    var rows=[], list=[100,200,300,365,500,700,1000,1500,2000,3000,5000,10000];
-    list.forEach(function(n){ rows.push([n===365?'1주년(365일)':n.toLocaleString()+'일',add(s,n-1)]); });
+    var rows=[], list=[100,200,300,500,700,1000,1500,2000,3000,5000,10000];
+    list.forEach(function(n){ rows.push([n.toLocaleString()+'일',add(s,n-1)]); });
     for (var yy=1;yy<=10;yy++) rows.push([yy+'주년',addMonths(s,yy*12)]);
     rows.sort(function(a,b){ return a[1]-b[1]; });
     var h='<div class="main">'+fmtS(s)+'부터 (그날을 1일로 셈)<b>오늘은 '+(diff(s,TODAY)+1).toLocaleString()+'일째<span>'+(diff(s,TODAY)>=0?'':'아직 시작 전')+'</span></b></div><table><tr><th>기념일</th><th>날짜</th><th>남은 날</th></tr>';
