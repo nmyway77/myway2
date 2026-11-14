@@ -1337,7 +1337,7 @@
     background: linear-gradient(180deg, #f7f8fc 0%, #eceef7 100%); border-bottom: 1px solid #dcdfee; box-shadow: inset 0 1px 0 #fff, 0 4px 14px rgba(90,100,180,.16); }
   html.mw-home .sub-nav.mag-nav::-webkit-scrollbar { display: none; }
   html.mw-home .sub-nav.mag-nav .sub-btn { flex: none; }
-  html.mw-home .sub-nav.mag-nav .nav-back { display: inline-flex; align-items: center; gap: 5px; color: #5b4bdb; font-weight: 800; }
+  html.mw-home .sub-nav.mag-nav .nav-back { display: inline-flex; align-items: center; gap: 5px; color: #5b4bdb; font-weight: 800; position: sticky; left: 0; z-index: 2; box-shadow: -14px 0 0 #f1f3fa, 6px 0 0 #f1f3fa, 0 5px 12px rgba(90,100,180,.2), inset 0 2px 5px rgba(255,255,255,.95); }
 </style>
 <script>
 (function(){ var emb = true; try { emb = window.self !== window.top; } catch(e) {}
@@ -1623,16 +1623,29 @@
           { ticker:"ElevenLabs", ko:"", url:"https://elevenlabs.io/", name:"ElevenLabs", img:"https://www.google.com/s2/favicons?sz=128&domain=elevenlabs.io" },
           { ticker:"타입캐스트", ko:"", url:"https://typecast.ai/", name:"타입캐스트", img:"https://www.google.com/s2/favicons?sz=128&domain=typecast.ai" },
         ] },
-        { label:"📄 번역·문서·업무 AI", sub:"번역·발표자료·도표·정리", items: [
-          { ticker:"DeepL", ko:"", url:"https://www.deepl.com/", name:"DeepL", img:"https://www.google.com/s2/favicons?sz=128&domain=www.deepl.com" },
-          { ticker:"파파고", ko:"", url:"https://papago.naver.com/", name:"파파고", img:"https://www.google.com/s2/favicons?sz=128&domain=papago.naver.com" },
-          { ticker:"Gamma", ko:"", url:"https://gamma.app/", name:"Gamma", img:"https://www.google.com/s2/favicons?sz=128&domain=gamma.app" },
-          { ticker:"Napkin", ko:"", url:"https://www.napkin.ai/", name:"Napkin", img:"https://www.google.com/s2/favicons?sz=128&domain=www.napkin.ai" },
-          { ticker:"Notion", ko:"", url:"https://www.notion.so/", name:"Notion", img:"https://www.google.com/s2/favicons?sz=128&domain=www.notion.so" },
-          { ticker:"Grammarly", ko:"", url:"https://www.grammarly.com/", name:"Grammarly", img:"https://www.google.com/s2/favicons?sz=128&domain=www.grammarly.com" },
-        ] },
-        { label:"📝 AI 프롬프트", sub:"영어 수업·공부·업무·글쓰기·생활 프롬프트 모음", items: [
-          { ticker:"프롬프트 모음", ko:"", url:"https://myway.kr/ai.html", name:"프롬프트 모음", img:"https://www.google.com/s2/favicons?sz=128&domain=chatgpt.com" },
+        { label:"📺 방송사", sub:"지상파·종편·보도·경제·해외", items: [
+          { ticker:"KBS", ko:"", url:"https://www.kbs.co.kr/", name:"KBS", img:"https://www.google.com/s2/favicons?sz=128&domain=kbs.co.kr" },
+          { ticker:"MBC", ko:"", url:"https://www.imbc.com/", name:"MBC", img:"https://www.google.com/s2/favicons?sz=128&domain=imbc.com" },
+          { ticker:"SBS", ko:"", url:"https://www.sbs.co.kr/", name:"SBS", img:"https://www.google.com/s2/favicons?sz=128&domain=sbs.co.kr" },
+          { ticker:"EBS", ko:"", url:"https://www.ebs.co.kr/", name:"EBS", img:"https://www.google.com/s2/favicons?sz=128&domain=ebs.co.kr" },
+          { ticker:"JTBC", ko:"", url:"https://jtbc.co.kr/", name:"JTBC", img:"https://www.google.com/s2/favicons?sz=128&domain=jtbc.co.kr" },
+          { ticker:"TV조선", ko:"", url:"https://www.tvchosun.com/", name:"TV조선", img:"https://www.google.com/s2/favicons?sz=128&domain=tvchosun.com" },
+          { ticker:"채널A", ko:"", url:"https://www.ichannela.com/", name:"채널A", img:"https://www.google.com/s2/favicons?sz=128&domain=ichannela.com" },
+          { ticker:"MBN", ko:"", url:"https://www.mbn.co.kr/", name:"MBN", img:"https://www.google.com/s2/favicons?sz=128&domain=mbn.co.kr" },
+          { ticker:"tvN", ko:"", url:"https://tvn.cjenm.com/ko/", name:"tvN", img:"https://www.google.com/s2/favicons?sz=128&domain=tvn.cjenm.com" },
+          { ticker:"YTN", ko:"", url:"https://www.ytn.co.kr/", name:"YTN", img:"https://www.google.com/s2/favicons?sz=128&domain=ytn.co.kr" },
+          { ticker:"연합뉴스TV", ko:"", url:"https://www.yonhapnewstv.co.kr/", name:"연합뉴스TV", img:"https://www.google.com/s2/favicons?sz=128&domain=yonhapnewstv.co.kr" },
+          { ticker:"OBS", ko:"", url:"https://www.obs.co.kr/", name:"OBS", img:"https://www.google.com/s2/favicons?sz=128&domain=obs.co.kr" },
+          { ticker:"CBS", ko:"", url:"https://www.cbs.co.kr/", name:"CBS", img:"https://www.google.com/s2/favicons?sz=128&domain=cbs.co.kr" },
+          { ticker:"TBS", ko:"", url:"https://tbs.seoul.kr/", name:"TBS", img:"https://www.google.com/s2/favicons?sz=128&domain=tbs.seoul.kr" },
+          { ticker:"KTV", ko:"", url:"https://www.ktv.go.kr/", name:"KTV", img:"https://www.google.com/s2/favicons?sz=128&domain=ktv.go.kr" },
+          { ticker:"국회방송", ko:"", url:"https://www.natv.go.kr/", name:"국회방송", img:"https://www.google.com/s2/favicons?sz=128&domain=natv.go.kr" },
+          { ticker:"아리랑TV", ko:"", url:"https://www.arirang.com/", name:"아리랑TV", img:"https://www.google.com/s2/favicons?sz=128&domain=arirang.com" },
+          { ticker:"한국경제TV", ko:"", url:"https://www.wowtv.co.kr/", name:"한국경제TV", img:"https://www.google.com/s2/favicons?sz=128&domain=wowtv.co.kr" },
+          { ticker:"SBS Biz", ko:"", url:"https://biz.sbs.co.kr/", name:"SBS Biz", img:"https://www.google.com/s2/favicons?sz=128&domain=biz.sbs.co.kr" },
+          { ticker:"BBC", ko:"", url:"https://www.bbc.com/", name:"BBC", img:"https://www.google.com/s2/favicons?sz=128&domain=bbc.com" },
+          { ticker:"CNN", ko:"", url:"https://edition.cnn.com/", name:"CNN", img:"https://www.google.com/s2/favicons?sz=128&domain=cnn.com" },
+          { ticker:"NHK", ko:"", url:"https://www3.nhk.or.jp/nhkworld/", name:"NHK", img:"https://www.google.com/s2/favicons?sz=128&domain=nhk.or.jp" },
         ] },
       ] },
       "tools": { sections: [
@@ -2383,6 +2396,19 @@
     }
     function saveTabs(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(tabs)); }catch(_){} }
     let tabs = loadTabs();
+    /* 포털 정리(기기마다 1회): '번역·문서·업무 AI'·'AI 프롬프트' 묶음 제거 + '방송사' 묶음 추가 — 저장된 나머지 내용은 그대로 */
+    (function(){
+      try{
+        var K = STORE_KEY + '_mig_portal_bc1', d = tabs.daily;
+        if (!d || !Array.isArray(d.sections) || localStorage.getItem(K)) return;
+        d.sections = d.sections.filter(function(x){ return !/번역·문서·업무 AI|AI 프롬프트/.test(x.label || ''); });
+        if (!d.sections.some(function(x){ return /방송사/.test(x.label || ''); })) {
+          var src = ((DEFAULT_TABS.daily || {}).sections || []).filter(function(x){ return /방송사/.test(x.label || ''); })[0];
+          if (src) d.sections.push(JSON.parse(JSON.stringify(src)));
+        }
+        saveTabs(); localStorage.setItem(K, '1');
+      }catch(_){}
+    })();
     let curTab = 'daily';
     let editMode = false, toolOpen = false;
     /* @TABSMETA_START */
@@ -2560,6 +2586,15 @@
       if (useSub) {
         if (!(window.__subSel[tabId] < tab.sections.length)) window.__subSel[tabId] = 0;
         const nav = document.createElement('nav'); nav.className = 'sub-nav';
+        const topNav = document.documentElement.classList.contains('mw-home');   /* 메인 홈에서 열렸을 때: 분류 네비를 맨 위 바로 올림 (맨 앞 [← 메뉴]) */
+        if (topNav) {
+          nav.className = 'sub-nav mag-nav';
+          const pb = document.createElement('button'); pb.type = 'button'; pb.className = 'sub-btn nav-back'; pb.title = '마이웨이 메뉴로 돌아가기';
+          pb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg>메뉴';
+          pb.onclick = () => { if (window.__mwGoHome) window.__mwGoHome(); };
+          nav.appendChild(pb);
+          requestAnimationFrame(() => { const on = nav.querySelector('.sub-btn.on'); if (on) nav.scrollLeft = Math.max(0, on.offsetLeft - (nav.clientWidth - on.offsetWidth) / 2); });   /* 고른 분류가 가운데 오게 */
+        }
         tab.sections.forEach((sec, si) => {
           const b = document.createElement('button'); b.type = 'button';
           b.className = 'sub-btn' + (si === window.__subSel[tabId] ? ' on' : '');
