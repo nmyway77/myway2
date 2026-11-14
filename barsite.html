@@ -1315,6 +1315,12 @@
   html.mw-home .tvr-bar { top: 0; }
   html.mw-home .tvr-bar .nav-back { display: inline-flex; }
   html.mw-home .tvr-screen { height: calc(100vh - 56px); }
+  /* 잡지(여성지 · 시사-경제지) 위쪽 네비 */
+  html.mw-home .sub-nav.mag-nav { position: sticky; top: 0; z-index: 25; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; justify-content: safe center; max-width: none; width: 100vw; margin: -44px calc(50% - 50vw) 22px; padding: 10px 14px 12px;
+    background: linear-gradient(180deg, #f7f8fc 0%, #eceef7 100%); border-bottom: 1px solid #dcdfee; box-shadow: inset 0 1px 0 #fff, 0 4px 14px rgba(90,100,180,.16); }
+  html.mw-home .sub-nav.mag-nav::-webkit-scrollbar { display: none; }
+  html.mw-home .sub-nav.mag-nav .sub-btn { flex: none; }
+  html.mw-home .sub-nav.mag-nav .nav-back { display: inline-flex; align-items: center; gap: 5px; color: #5b4bdb; font-weight: 800; }
 </style>
 <script>
 (function(){ var emb = true; try { emb = window.self !== window.top; } catch(e) {}
@@ -2507,6 +2513,21 @@
           });
           frag.appendChild(bnav);
           if (!bcShown) { const none = document.createElement('p'); none.textContent = '아직 등록된 ' + bcSel + ' 드라마가 없어요.'; none.style.cssText = 'margin:40px 0;text-align:center;color:#7a829c;font-size:.92rem;'; wrap.appendChild(none); }
+        }
+        /* 메인 홈(?home=1): 여성지·시사-경제지를 [잡지] 하나로 묶고 위쪽 네비로 오감 */
+        if ((tabId === 'magazine' || tabId === 'portal') && !editMode && document.documentElement.classList.contains('mw-home')) {
+          const mnav = document.createElement('nav'); mnav.className = 'sub-nav mag-nav';
+          const mback = document.createElement('button'); mback.type = 'button'; mback.className = 'sub-btn nav-back'; mback.title = '마이웨이 메뉴로 돌아가기';
+          mback.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg>메뉴';
+          mback.onclick = () => { if (window.__mwGoHome) window.__mwGoHome(); };
+          mnav.appendChild(mback);
+          [['magazine', '여성지'], ['portal', '시사·경제지']].forEach(d => {
+            const b = document.createElement('button'); b.type = 'button';
+            b.className = 'sub-btn' + (d[0] === tabId ? ' on' : ''); b.textContent = d[1];
+            b.onclick = () => { if (d[0] !== tabId) selectTab(d[0]); };
+            mnav.appendChild(b);
+          });
+          frag.appendChild(mnav);
         }
         wrap.appendChild(m); frag.appendChild(wrap);
         root.replaceChildren(frag);
