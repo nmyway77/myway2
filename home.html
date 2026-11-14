@@ -86,8 +86,8 @@
   .lf-weather{background:linear-gradient(135deg,#e4efff 0%,#f4f8ff 100%)}
   .lf-cal{background:linear-gradient(135deg,#fde8ec 0%,#fff6f7 100%)}
   .lf-fortune{background:linear-gradient(135deg,#ece8fd 0%,#f8f6ff 100%)}
-  .lf-cartoon{background:linear-gradient(135deg,#fdf0c9 0%,#fffaea 100%)}
-  .lf-travel{background:linear-gradient(135deg,#dbf3e8 0%,#f3fbf7 100%)}
+  .lf-news{background:linear-gradient(135deg,#fdf0c9 0%,#fffaea 100%)}
+  .lf-bbs{background:linear-gradient(135deg,#dbf3e8 0%,#f3fbf7 100%)}
   @media (max-width:1000px){
     .life{gap:8px}
     .lf{flex-direction:column;gap:6px;padding:12px 4px 10px;text-align:center;border-radius:16px}
@@ -107,6 +107,7 @@
 
   /* ── 읽을거리 · 도구: 누르는 카드 (화살표로 누를 수 있음을 표시) ── */
   .row.four{grid-template-columns:repeat(4,1fr);margin-top:0}
+  .row.four.top4{margin-top:14px}
   .sm{position:relative}
   .sm::after{content:"";position:absolute;right:15px;top:21px;width:8px;height:8px;border-right:2.2px solid #b9b0ee;border-top:2.2px solid #b9b0ee;transform:rotate(45deg);transition:transform .18s,border-color .18s}
   .sm:hover::after{border-color:#5b4bdb;transform:translateX(3px) rotate(45deg)}
@@ -221,7 +222,15 @@
       <svg class="art" viewBox="0 0 48 48" aria-hidden="true"><circle cx="19" cy="18" r="9" fill="#f7b731"/><g stroke="#f7b731" stroke-width="2.4" stroke-linecap="round"><path d="M19 3.5v3M4.5 18h3M8.7 7.7l2.1 2.1M29.3 7.7l-2.1 2.1"/></g><path d="M17 38.5h17.5a7.5 7.5 0 0 0 .9-14.95A10 10 0 0 0 16.2 26 6.3 6.3 0 0 0 17 38.5z" fill="#fff" stroke="#9db8e8" stroke-width="2" stroke-linejoin="round"/></svg>
       <span><strong>날씨</strong><small>기상청, Windy, 네이버 날씨</small></span>
     </a>
-    <a class="lf lf-cal" href="https://search.daum.net/search?w=tot&amp;q=%EB%8B%AC%EB%A0%A5" target="_blank" rel="noopener" data-ext="1">
+    <a class="lf lf-news" href="newsitesbar3.html" data-open="newsitesbar3.html?nav=1">
+      <svg class="art" viewBox="0 0 48 48" aria-hidden="true"><path d="M9 9h24a3 3 0 0 1 3 3v27H12a3 3 0 0 1-3-3z" fill="#fff" stroke="#8fb0ea" stroke-width="2" stroke-linejoin="round"/><path d="M36 18h3a3 3 0 0 1 3 3v15a3 3 0 0 1-6 0z" fill="#dbe7fb" stroke="#8fb0ea" stroke-width="2" stroke-linejoin="round"/><rect x="14" y="14" width="17" height="6" rx="1.500" fill="#5b8def"/><path d="M14 25h17M14 30h17M14 35h11" stroke="#9aa8c7" stroke-width="2.200" stroke-linecap="round"/></svg>
+      <span><strong>뉴스</strong><small>언론사 바로보기</small></span>
+    </a>
+    <a class="lf lf-bbs" href="bbssitesbar2.html" data-open="bbssitesbar2.html?nav=1">
+      <svg class="art" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 10h22a4 4 0 0 1 4 4v11a4 4 0 0 1-4 4H19l-7 6v-6H8a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4z" fill="#3fb58a"/><path d="M11 17h16M11 22h10" stroke="#fff" stroke-width="2.400" stroke-linecap="round"/><path d="M38 20h2a4 4 0 0 1 4 4v9a4 4 0 0 1-4 4h-1v5l-6-5h-8a4 4 0 0 1-3.800-2.700" fill="#fff" stroke="#8ed3b7" stroke-width="2" stroke-linejoin="round"/></svg>
+      <span><strong>BBS</strong><small>커뮤니티 게시판</small></span>
+    </a>
+    <a class="lf lf-cal" href="https://search.daum.net/search?w=tot&amp;q=%EB%8B%AC%EB%A0%A5" data-ext="1">
       <svg class="art" viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="8" width="36" height="34" rx="7" fill="#fff" stroke="#e7a3ae" stroke-width="2"/><path d="M6 15a7 7 0 0 1 7-7h22a7 7 0 0 1 7 7v4H6z" fill="#ee7b8f"/><path d="M16 5v6M32 5v6" stroke="#b9485d" stroke-width="2.6" stroke-linecap="round"/><text id="calDay" x="24" y="36" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-weight="700" font-size="17" fill="#1f2740"></text></svg>
       <span><strong>달력</strong><small id="calText">오늘 날짜와 달력</small></span>
     </a>
@@ -229,22 +238,12 @@
       <svg class="art" viewBox="0 0 48 48" aria-hidden="true"><path d="M30 8a16 16 0 1 0 10 27.5A14 14 0 0 1 30 8z" fill="#7d6fe8"/><path d="M36 9l1.4 3.3L41 13.6l-3.6 1.3L36 18.4l-1.4-3.5L31 13.6l3.6-1.3z" fill="#f7b731"/><circle cx="42" cy="24" r="1.8" fill="#f7b731"/><circle cx="12" cy="9" r="1.5" fill="#b9b0ee"/></svg>
       <span><strong>운세</strong><small>오늘의 운세 보기</small></span>
     </a>
-    <a class="lf lf-cartoon" href="00barmp.html" data-open="00barmp.html?nav=1">
-      <svg class="art" viewBox="0 0 48 48" aria-hidden="true"><path d="M7 9h30a4 4 0 0 1 4 4v17a4 4 0 0 1-4 4H22l-8 7v-7H7a4 4 0 0 1-4-4V13a4 4 0 0 1 4-4z" transform="translate(2 0)" fill="#fff" stroke="#e0b64a" stroke-width="2" stroke-linejoin="round"/><path d="M13 19c3-4 5 4 8 0s5 4 8 0 4 3 6 1" fill="none" stroke="#1f2740" stroke-width="2.2" stroke-linecap="round"/><path d="M13 26h14" stroke="#c9a23a" stroke-width="2.2" stroke-linecap="round"/></svg>
-      <span><strong>오늘의 만평</strong><small>신문 만평 모아 보기</small></span>
-    </a>
-    <a class="lf lf-travel" href="TRAVEL.html" data-open="TRAVEL.html?nav=1">
-      <svg class="art" viewBox="0 0 48 48" aria-hidden="true"><path d="M18 14v-3.5A3.5 3.5 0 0 1 21.500 7h5A3.5 3.500 0 0 1 30 10.500V14" fill="none" stroke="#2f8f6b" stroke-width="2.6"/><rect x="8" y="14" width="32" height="26" rx="6" fill="#3fb58a"/><path d="M8 24h32" stroke="#2f8f6b" stroke-width="2"/><rect x="20.500" y="21" width="7" height="6" rx="1.500" fill="#fff"/><circle cx="34" cy="33" r="3" fill="#f7b731"/></svg>
-      <span><strong>여행정보</strong><small>여행 사이트 모음</small></span>
-    </a>
   </section>
 
-  <section class="row" aria-label="자주 찾는 메뉴">
+  <section class="row four top4" aria-label="자주 찾는 메뉴">
     <a class="sm" style="--a:#ff7a8a;--b:#e8475f" href="people3.html" data-open="people3.html?nav=1" data-cat="all"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.4 7-5.4s6.2 1.8 7 5.4"/></svg></span><strong>유튜버</strong><small>유튜버, 가수, 연예인, 배우 채널을 분야별로 모았습니다. 새 영상 버튼을 누르면 최근에 올라온 영상만 볼 수 있습니다.</small></a>
     <a class="sm" style="--a:#f9c04a;--b:#ef8f22" href="00makingyoutubefull2.html" data-open="00makingyoutubefull2.html" data-bar="CCTV"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 8.5 15.5 5l1.6 5.6L4.6 14z"/><path d="M17 8.6l3.5-.9.8 2.8-3.5 1"/><path d="M8 13v5H4"/></svg></span><strong>CCTV</strong><small>유튜브 영상과 라이브 화면을 사진 카드로 모아, 누르면 한 화면에서 바로 봅니다.</small></a>
     <a class="sm" style="--a:#3fd0a2;--b:#1f9d78" href="00000stockmain7.html" data-open="00000stockmain7.html" data-bar="주식·코인"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3.5 17l5-5 4 3.5 8-8.5"/><path d="M15.5 7h5v5"/></svg></span><strong>주식·코인</strong><small>코인, 미국주식, 한국주식, 지수선물, 공포탐욕지수 차트를 한 페이지에서 봅니다.</small></a>
-    <a class="sm" style="--a:#6a9bf4;--b:#3f6fd8" href="newsitesbar3.html" data-open="newsitesbar3.html?nav=1"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h11v16H6.5A1.5 1.5 0 0 1 5 18.5z"/><path d="M16 9h3v9.5a1.5 1.5 0 0 1-3 0"/><path d="M8 8h5M8 12h5M8 16h3"/></svg></span><strong>뉴스</strong><small>연합, YTN, 다음 등 언론사를 버튼 하나로 바꿔 가며 읽습니다. 종합지, 경제지, 지방지 전체 목록도 있습니다.</small></a>
-    <a class="sm" style="--a:#9a8ff0;--b:#6a5fd0" href="bbssitesbar2.html" data-open="bbssitesbar2.html?nav=1"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H10l-5 4v-4H4z"/><path d="M8 9h8M8 12h5"/></svg></span><strong>BBS</strong><small>보배드림, 네이트판 등 커뮤니티를 버튼 하나로 바꿔 가며 봅니다. 전체목록에서 더 많은 게시판을 고를 수 있습니다.</small></a>
     <a class="sm" style="--a:#5ccaf0;--b:#2f9ccf" href="barsite.html?tab=daily" data-open="barsite.html?home=1&tab=daily"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c3 3 3 14 0 17M12 3.5c-3 3-3 14 0 17"/></svg></span><strong>포털</strong><small>자주 가는 사이트, 종류별 AI, 방송사 홈페이지를 위쪽 버튼으로 골라 봅니다.</small></a>
   </section>
 
@@ -257,6 +256,7 @@
     <a class="sm" style="--a:#f596b2;--b:#dd5f86" href="barsite.html?tab=magazine" data-open="barsite.html?home=1&tab=magazine"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 3.5h10a2 2 0 0 1 2 2v15l-7-3.5-7 3.5v-15a2 2 0 0 1 2-2z"/></svg></span><strong>잡지</strong><small>보그, 엘르 같은 여성지와 포브스, 시사저널 같은 시사·경제지를 위쪽 버튼으로 오가며 봅니다.</small></a>
     <a class="sm" style="--a:#fcca55;--b:#f39c1f" href="barsite.html?tab=cafe" data-open="barsite.html?home=1&tab=cafe" data-bar="만화"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 11h17M12 4v7M9 11v9"/></svg></span><strong>만화</strong><small>만화와 웹툰 사이트 바로가기입니다.</small></a>
     <a class="sm" style="--a:#8b98bd;--b:#5a6690" href="barsite.html?tab=tools" data-open="barsite.html?home=1&tab=tools" data-bar="도구"><span class="ic"><svg viewBox="0 0 24 24"><path d="M14.5 6.5a4 4 0 0 0 5 5l-9.2 9.2a2.1 2.1 0 0 1-3-3z"/><path d="M14.5 6.5 17 4l3 3-2.5 2.5"/></svg></span><strong>도구</strong><small>PDF 도구, 환율·단위 계산기, 맞춤법 검사, QR코드 만들기, 세계 시간 같은 생활 도구입니다.</small></a>
+    <a class="sm" style="--a:#5fd39a;--b:#2f9a63" href="TRAVEL.html" data-open="TRAVEL.html?nav=1"><span class="ic"><svg viewBox="0 0 24 24"><path d="M9 7V5.500A1.500 1.500 0 0 1 10.500 4h3A1.500 1.500 0 0 1 15 5.500V7"/><rect x="4" y="7" width="16" height="13" rx="2.500"/><path d="M4 12h16M12 11v2.500"/></svg></span><strong>여행정보</strong><small>대한민국 구석구석, 항공권, 여행사 사이트를 버튼 하나로 바꿔 가며 봅니다.</small></a>
   </section>
 
   <footer><a href="https://myway.kr">myway.kr</a></footer>
@@ -273,7 +273,7 @@
 (function(){
   var ua = navigator.userAgent || '';
   if (!(/iPhone|iPod/i.test(ua) || (/Android/i.test(ua) && /Mobile/i.test(ua)))) return;
-  var dv = document.querySelector('a.sm[data-open*="tab=dramavod"]'), last = document.querySelector('.row.four');
+  var dv = document.querySelector('a.sm[data-open*="tab=dramavod"]'), last = document.querySelector('.row.four:not(.top4)');
   if (dv && last) last.appendChild(dv);
 })();
 </script>
@@ -298,6 +298,29 @@
     if (frame && mine) { try { var f0 = frame; history.back(); setTimeout(function(){ if (frame && frame === f0) close(); }, 400); return; } catch(e) {} }   /* 뒤로가기로 안 닫히면 바로 닫음 */
     close();
   }
+  /* 열린 화면(myway.kr 안의 페이지)에서 바깥 사이트로 나갈 때: 새 탭 대신 같은 창으로 → 뒤로가기로 마이웨이에 돌아옴
+     (새 탭은 뒤로가기 버튼이 아예 안 눌림). '↗ 새 탭'·'＋' 버튼처럼 일부러 새 창을 여는 버튼은 그대로 */
+  function extSameTab(fr){
+    var w, d; try { w = fr.contentWindow; d = w.document; if (!d || w.__mwExt) return; w.__mwExt = 1; } catch(e) { return; }   /* 다른 사이트(TV 등)는 건드릴 수 없음 */
+    var isPortal = /\/barsite\.html$/i.test(w.location.pathname);
+    var go = function(u){ try { window.top.location.href = u; } catch(e) { w.location.href = u; } };
+    d.addEventListener('click', function(e){
+      var a = e.target.closest ? e.target.closest('a[href]') : null;
+      if (!a || e.defaultPrevented || a.hasAttribute('download')) return;
+      var t = (a.getAttribute('target') || '').toLowerCase();
+      if (t !== '_blank' || !/^https?:/i.test(a.href)) return;
+      e.preventDefault(); go(a.href);
+    }, false);
+    if (isPortal) return;   /* 포털 화면의 방송 새 창(MBC 등)은 그대로 */
+    var keepNew = false;
+    w.addEventListener('click', function(e){ keepNew = !!(e.target.closest && e.target.closest('.open-btn, .expand-btn')); setTimeout(function(){ keepNew = false; }, 0); }, true);
+    var orig = w.open;
+    w.open = function(u, n, f){
+      var abs = ''; try { abs = u ? new URL(u, w.location.href).href : ''; } catch(e) {}
+      if (!keepNew && /^https?:/i.test(abs)) { go(abs); return null; }
+      return orig.apply(w, arguments);
+    };
+  }
   function open(url, bar, cat, noPush){
     close();
     remember({ url: url, bar: bar || '', cat: cat || '' });
@@ -307,6 +330,7 @@
     frame.setAttribute('allow', 'autoplay; encrypted-media; fullscreen; picture-in-picture');
     frame.setAttribute('allowfullscreen', '');
     frame.src = url;
+    frame.addEventListener('load', function(){ extSameTab(frame); });
     viewer.appendChild(frame);
     document.getElementById('vTitle').textContent = bar || '';
     viewer.classList.toggle('has-bar', !!bar);
@@ -326,9 +350,9 @@
     if (tx) tx.textContent = (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + '일월화수목금토'.charAt(d.getDay()) + '요일';
   })();
   document.addEventListener('click', function(e){
-    /* 화면 안에 넣을 수 없는 바깥 사이트(달력): PC·태블릿은 새 탭, 핸드폰은 같은 창(뒤로가기로 복귀) */
+    /* 화면 안에 넣을 수 없는 바깥 사이트(달력): 같은 창에서 열고 뒤로가기로 복귀 (새 탭은 뒤로가기가 안 되므로) */
     var x = e.target.closest ? e.target.closest('a[data-ext]') : null;
-    if (x && /Mobi/i.test(navigator.userAgent)) { e.preventDefault(); try { (window.top || window).location.href = x.href; } catch(_) { location.href = x.href; } return; }
+    if (x) { e.preventDefault(); try { (window.top || window).location.href = x.href; } catch(_) { location.href = x.href; } return; }
     var a = e.target.closest ? e.target.closest('a[data-open]') : null;
     if (!a) return;
     e.preventDefault();
