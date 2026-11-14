@@ -130,6 +130,16 @@
   body.viewing{overflow:hidden}
   body.viewing .fab{display:none}
 
+  /* 카드마다 다른 색: 색 아이콘 배지 + 은은한 색 바탕 */
+  .sm{--a:#9a8ff0;--b:#6a5fd0;background:linear-gradient(135deg,color-mix(in srgb,var(--a) 13%,#fffdf8) 0%,#fffdf8 60%);border-color:color-mix(in srgb,var(--a) 26%,#e9e2d3);box-shadow:0 3px 10px color-mix(in srgb,var(--b) 7%,transparent)}
+  .sm:hover{border-color:var(--a);box-shadow:0 12px 24px color-mix(in srgb,var(--b) 20%,transparent)}
+  .sm .ic{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--a),var(--b));color:#fff;box-shadow:0 6px 14px color-mix(in srgb,var(--b) 34%,transparent),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -3px 6px rgba(0,0,0,.08)}
+  .sm .ic svg{width:22px;height:22px;stroke-width:2}
+  .sm{grid-template-columns:44px 1fr}
+  .sm strong{font-size:17px}
+  .sm::after{border-color:var(--a)}
+  .sm:hover::after{border-color:var(--b)}
+
   @media (max-width:900px){
     .shelf{grid-template-columns:1fr 1fr}
     .tv{grid-column:1 / -1}
@@ -207,7 +217,7 @@
   </section>
 
   <section class="life" aria-label="오늘의 생활 정보">
-    <a class="lf lf-weather" href="00mainweather.html" data-open="00mainweather.html" data-bar="날씨">
+    <a class="lf lf-weather" href="00mainweather.html" data-open="00mainweather.html?nav=1">
       <svg class="art" viewBox="0 0 48 48" aria-hidden="true"><circle cx="19" cy="18" r="9" fill="#f7b731"/><g stroke="#f7b731" stroke-width="2.4" stroke-linecap="round"><path d="M19 3.5v3M4.5 18h3M8.7 7.7l2.1 2.1M29.3 7.7l-2.1 2.1"/></g><path d="M17 38.5h17.5a7.5 7.5 0 0 0 .9-14.95A10 10 0 0 0 16.2 26 6.3 6.3 0 0 0 17 38.5z" fill="#fff" stroke="#9db8e8" stroke-width="2" stroke-linejoin="round"/></svg>
       <span><strong>날씨</strong><small>기상청, Windy, 네이버 날씨</small></span>
     </a>
@@ -215,38 +225,38 @@
       <svg class="art" viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="8" width="36" height="34" rx="7" fill="#fff" stroke="#e7a3ae" stroke-width="2"/><path d="M6 15a7 7 0 0 1 7-7h22a7 7 0 0 1 7 7v4H6z" fill="#ee7b8f"/><path d="M16 5v6M32 5v6" stroke="#b9485d" stroke-width="2.6" stroke-linecap="round"/><text id="calDay" x="24" y="36" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-weight="700" font-size="17" fill="#1f2740"></text></svg>
       <span><strong>달력</strong><small id="calText">오늘 날짜와 달력</small></span>
     </a>
-    <a class="lf lf-fortune" href="00mainfortune.html" data-open="00mainfortune.html" data-bar="운세">
+    <a class="lf lf-fortune" href="00mainfortune.html" data-open="00mainfortune.html?nav=1">
       <svg class="art" viewBox="0 0 48 48" aria-hidden="true"><path d="M30 8a16 16 0 1 0 10 27.5A14 14 0 0 1 30 8z" fill="#7d6fe8"/><path d="M36 9l1.4 3.3L41 13.6l-3.6 1.3L36 18.4l-1.4-3.5L31 13.6l3.6-1.3z" fill="#f7b731"/><circle cx="42" cy="24" r="1.8" fill="#f7b731"/><circle cx="12" cy="9" r="1.5" fill="#b9b0ee"/></svg>
       <span><strong>운세</strong><small>오늘의 운세 보기</small></span>
     </a>
-    <a class="lf lf-cartoon" href="00barmp.html" data-open="00barmp.html" data-bar="오늘의 만평">
+    <a class="lf lf-cartoon" href="00barmp.html" data-open="00barmp.html?nav=1">
       <svg class="art" viewBox="0 0 48 48" aria-hidden="true"><path d="M7 9h30a4 4 0 0 1 4 4v17a4 4 0 0 1-4 4H22l-8 7v-7H7a4 4 0 0 1-4-4V13a4 4 0 0 1 4-4z" transform="translate(2 0)" fill="#fff" stroke="#e0b64a" stroke-width="2" stroke-linejoin="round"/><path d="M13 19c3-4 5 4 8 0s5 4 8 0 4 3 6 1" fill="none" stroke="#1f2740" stroke-width="2.2" stroke-linecap="round"/><path d="M13 26h14" stroke="#c9a23a" stroke-width="2.2" stroke-linecap="round"/></svg>
       <span><strong>오늘의 만평</strong><small>신문 만평 모아 보기</small></span>
     </a>
-    <a class="lf lf-travel" href="TRAVEL.html" data-open="TRAVEL.html" data-bar="여행정보">
+    <a class="lf lf-travel" href="TRAVEL.html" data-open="TRAVEL.html?nav=1">
       <svg class="art" viewBox="0 0 48 48" aria-hidden="true"><path d="M18 14v-3.5A3.5 3.5 0 0 1 21.500 7h5A3.5 3.500 0 0 1 30 10.500V14" fill="none" stroke="#2f8f6b" stroke-width="2.6"/><rect x="8" y="14" width="32" height="26" rx="6" fill="#3fb58a"/><path d="M8 24h32" stroke="#2f8f6b" stroke-width="2"/><rect x="20.500" y="21" width="7" height="6" rx="1.500" fill="#fff"/><circle cx="34" cy="33" r="3" fill="#f7b731"/></svg>
       <span><strong>여행정보</strong><small>여행 사이트 모음</small></span>
     </a>
   </section>
 
   <section class="row" aria-label="자주 찾는 메뉴">
-    <a class="sm" href="people3.html" data-open="people3.html?nav=1" data-cat="all"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.4 7-5.4s6.2 1.8 7 5.4"/></svg></span><strong>유튜버</strong><small>유튜버, 가수, 연예인, 배우 채널을 분야별로 모았습니다. 새 영상 버튼을 누르면 최근에 올라온 영상만 볼 수 있습니다.</small></a>
-    <a class="sm" href="00makingyoutubefull2.html" data-open="00makingyoutubefull2.html" data-bar="CCTV"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 8.5 15.5 5l1.6 5.6L4.6 14z"/><path d="M17 8.6l3.5-.9.8 2.8-3.5 1"/><path d="M8 13v5H4"/></svg></span><strong>CCTV</strong><small>유튜브 영상과 라이브 화면을 사진 카드로 모아, 누르면 한 화면에서 바로 봅니다.</small></a>
-    <a class="sm" href="00000stockmain7.html" data-open="00000stockmain7.html" data-bar="주식·코인"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3.5 17l5-5 4 3.5 8-8.5"/><path d="M15.5 7h5v5"/></svg></span><strong>주식·코인</strong><small>코인, 미국주식, 한국주식, 지수선물, 공포탐욕지수 차트를 한 페이지에서 봅니다.</small></a>
-    <a class="sm" href="newsitesbar3.html" data-open="newsitesbar3.html?nav=1"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h11v16H6.5A1.5 1.5 0 0 1 5 18.5z"/><path d="M16 9h3v9.5a1.5 1.5 0 0 1-3 0"/><path d="M8 8h5M8 12h5M8 16h3"/></svg></span><strong>뉴스</strong><small>연합, YTN, 다음 등 언론사를 버튼 하나로 바꿔 가며 읽습니다. 종합지, 경제지, 지방지 전체 목록도 있습니다.</small></a>
-    <a class="sm" href="bbssitesbar2.html" data-open="bbssitesbar2.html?nav=1"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H10l-5 4v-4H4z"/><path d="M8 9h8M8 12h5"/></svg></span><strong>BBS</strong><small>보배드림, 네이트판 등 커뮤니티를 버튼 하나로 바꿔 가며 봅니다. 전체목록에서 더 많은 게시판을 고를 수 있습니다.</small></a>
-    <a class="sm" href="barsite.html?tab=daily" data-open="barsite.html?home=1&tab=daily"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c3 3 3 14 0 17M12 3.5c-3 3-3 14 0 17"/></svg></span><strong>포털</strong><small>자주 가는 사이트, 종류별 AI, 방송사 홈페이지를 위쪽 버튼으로 골라 봅니다.</small></a>
+    <a class="sm" style="--a:#ff7a8a;--b:#e8475f" href="people3.html" data-open="people3.html?nav=1" data-cat="all"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.4 7-5.4s6.2 1.8 7 5.4"/></svg></span><strong>유튜버</strong><small>유튜버, 가수, 연예인, 배우 채널을 분야별로 모았습니다. 새 영상 버튼을 누르면 최근에 올라온 영상만 볼 수 있습니다.</small></a>
+    <a class="sm" style="--a:#f9c04a;--b:#ef8f22" href="00makingyoutubefull2.html" data-open="00makingyoutubefull2.html" data-bar="CCTV"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 8.5 15.5 5l1.6 5.6L4.6 14z"/><path d="M17 8.6l3.5-.9.8 2.8-3.5 1"/><path d="M8 13v5H4"/></svg></span><strong>CCTV</strong><small>유튜브 영상과 라이브 화면을 사진 카드로 모아, 누르면 한 화면에서 바로 봅니다.</small></a>
+    <a class="sm" style="--a:#3fd0a2;--b:#1f9d78" href="00000stockmain7.html" data-open="00000stockmain7.html" data-bar="주식·코인"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3.5 17l5-5 4 3.5 8-8.5"/><path d="M15.5 7h5v5"/></svg></span><strong>주식·코인</strong><small>코인, 미국주식, 한국주식, 지수선물, 공포탐욕지수 차트를 한 페이지에서 봅니다.</small></a>
+    <a class="sm" style="--a:#6a9bf4;--b:#3f6fd8" href="newsitesbar3.html" data-open="newsitesbar3.html?nav=1"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h11v16H6.5A1.5 1.5 0 0 1 5 18.5z"/><path d="M16 9h3v9.5a1.5 1.5 0 0 1-3 0"/><path d="M8 8h5M8 12h5M8 16h3"/></svg></span><strong>뉴스</strong><small>연합, YTN, 다음 등 언론사를 버튼 하나로 바꿔 가며 읽습니다. 종합지, 경제지, 지방지 전체 목록도 있습니다.</small></a>
+    <a class="sm" style="--a:#9a8ff0;--b:#6a5fd0" href="bbssitesbar2.html" data-open="bbssitesbar2.html?nav=1"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H10l-5 4v-4H4z"/><path d="M8 9h8M8 12h5"/></svg></span><strong>BBS</strong><small>보배드림, 네이트판 등 커뮤니티를 버튼 하나로 바꿔 가며 봅니다. 전체목록에서 더 많은 게시판을 고를 수 있습니다.</small></a>
+    <a class="sm" style="--a:#5ccaf0;--b:#2f9ccf" href="barsite.html?tab=daily" data-open="barsite.html?home=1&tab=daily"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c3 3 3 14 0 17M12 3.5c-3 3-3 14 0 17"/></svg></span><strong>포털</strong><small>자주 가는 사이트, 종류별 AI, 방송사 홈페이지를 위쪽 버튼으로 골라 봅니다.</small></a>
   </section>
 
   <h3>더 보기</h3>
   <section class="row four" aria-label="더 보기">
-    <a class="sm" href="barsite.html?tab=dramavod" data-open="barsite.html?home=1&tab=dramavod"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="13" rx="2.5"/><path d="M10 9.2v4.6l4-2.3z"/><path d="M8 21h8"/></svg></span><strong>드라마VOD</strong><small>KBS, MBC, 채널A, SBS 드라마를 방송사별로 골라 봅니다. PC에서는 KBS 드라마의 회차 목록이 화면 옆에 나와 이어 보기 편합니다.</small></a>
-    <a class="sm" href="MOVIE-YTUBE.html" data-open="MOVIE-YTUBE.html" data-bar="영화"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 10h16v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19z"/><path d="M4 10 5.2 6l14 -2.6L20 7z"/><path d="M9 5.3l1.6 3.6M14 4.4l1.6 3.5"/></svg></span><strong>영화</strong><small>영화 리뷰 채널과 해외 영화 채널을 누르면 최신 영상부터 재생됩니다. 영화관, 영화 정보, OTT 바로가기도 함께 있습니다.</small></a>
-    <a class="sm" href="https://nmyway77.github.io/livetv7/?wd=1" data-open="https://nmyway77.github.io/livetv7/?wd=1" data-bar="웹드라마"><span class="ic"><svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 9.5v5l3.6-2.5z"/></svg></span><strong>웹드라마</strong><small>작품을 고르면 최신 회차가 재생되고 옆에 회차 목록이 나옵니다. 어디까지 봤는지 표시해 둘 수 있습니다.</small></a>
-    <a class="sm" href="podcast.html" data-open="podcast.html?nav=1"><span class="ic"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3M9 21h6"/></svg></span><strong>팟캐스트</strong><small>경제, 시사, 교양, 예능·토크 방송을 모았습니다. 라이브와 최신 회차를 버튼 하나로 바꿔 듣습니다.</small></a>
-    <a class="sm" href="barsite.html?tab=magazine" data-open="barsite.html?home=1&tab=magazine"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 3.5h10a2 2 0 0 1 2 2v15l-7-3.5-7 3.5v-15a2 2 0 0 1 2-2z"/></svg></span><strong>잡지</strong><small>보그, 엘르 같은 여성지와 포브스, 시사저널 같은 시사·경제지를 위쪽 버튼으로 오가며 봅니다.</small></a>
-    <a class="sm" href="barsite.html?tab=cafe" data-open="barsite.html?home=1&tab=cafe" data-bar="만화"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 11h17M12 4v7M9 11v9"/></svg></span><strong>만화</strong><small>만화와 웹툰 사이트 바로가기입니다.</small></a>
-    <a class="sm" href="barsite.html?tab=tools" data-open="barsite.html?home=1&tab=tools" data-bar="도구"><span class="ic"><svg viewBox="0 0 24 24"><path d="M14.5 6.5a4 4 0 0 0 5 5l-9.2 9.2a2.1 2.1 0 0 1-3-3z"/><path d="M14.5 6.5 17 4l3 3-2.5 2.5"/></svg></span><strong>도구</strong><small>PDF 도구, 환율·단위 계산기, 맞춤법 검사, QR코드 만들기, 세계 시간 같은 생활 도구입니다.</small></a>
+    <a class="sm" style="--a:#cf8af5;--b:#9a5be0" href="barsite.html?tab=dramavod" data-open="barsite.html?home=1&tab=dramavod"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="13" rx="2.5"/><path d="M10 9.2v4.6l4-2.3z"/><path d="M8 21h8"/></svg></span><strong>드라마VOD</strong><small>KBS, MBC, 채널A, SBS 드라마를 방송사별로 골라 봅니다. PC에서는 KBS 드라마의 회차 목록이 화면 옆에 나와 이어 보기 편합니다.</small></a>
+    <a class="sm" style="--a:#7a89f5;--b:#4b57d6" href="MOVIE-YTUBE.html" data-open="MOVIE-YTUBE.html" data-bar="영화"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 10h16v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19z"/><path d="M4 10 5.2 6l14 -2.6L20 7z"/><path d="M9 5.3l1.6 3.6M14 4.4l1.6 3.5"/></svg></span><strong>영화</strong><small>영화 리뷰 채널과 해외 영화 채널을 누르면 최신 영상부터 재생됩니다. 영화관, 영화 정보, OTT 바로가기도 함께 있습니다.</small></a>
+    <a class="sm" style="--a:#ff9a78;--b:#f0683f" href="https://nmyway77.github.io/livetv7/?wd=1" data-open="https://nmyway77.github.io/livetv7/?wd=1" data-bar="웹드라마"><span class="ic"><svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 9.5v5l3.6-2.5z"/></svg></span><strong>웹드라마</strong><small>작품을 고르면 최신 회차가 재생되고 옆에 회차 목록이 나옵니다. 어디까지 봤는지 표시해 둘 수 있습니다.</small></a>
+    <a class="sm" style="--a:#48d6d2;--b:#22a6a6" href="podcast.html" data-open="podcast.html?nav=1"><span class="ic"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3M9 21h6"/></svg></span><strong>팟캐스트</strong><small>경제, 시사, 교양, 예능·토크 방송을 모았습니다. 라이브와 최신 회차를 버튼 하나로 바꿔 듣습니다.</small></a>
+    <a class="sm" style="--a:#f596b2;--b:#dd5f86" href="barsite.html?tab=magazine" data-open="barsite.html?home=1&tab=magazine"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 3.5h10a2 2 0 0 1 2 2v15l-7-3.5-7 3.5v-15a2 2 0 0 1 2-2z"/></svg></span><strong>잡지</strong><small>보그, 엘르 같은 여성지와 포브스, 시사저널 같은 시사·경제지를 위쪽 버튼으로 오가며 봅니다.</small></a>
+    <a class="sm" style="--a:#fcca55;--b:#f39c1f" href="barsite.html?tab=cafe" data-open="barsite.html?home=1&tab=cafe" data-bar="만화"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 11h17M12 4v7M9 11v9"/></svg></span><strong>만화</strong><small>만화와 웹툰 사이트 바로가기입니다.</small></a>
+    <a class="sm" style="--a:#8b98bd;--b:#5a6690" href="barsite.html?tab=tools" data-open="barsite.html?home=1&tab=tools" data-bar="도구"><span class="ic"><svg viewBox="0 0 24 24"><path d="M14.5 6.5a4 4 0 0 0 5 5l-9.2 9.2a2.1 2.1 0 0 1-3-3z"/><path d="M14.5 6.5 17 4l3 3-2.5 2.5"/></svg></span><strong>도구</strong><small>PDF 도구, 환율·단위 계산기, 맞춤법 검사, QR코드 만들기, 세계 시간 같은 생활 도구입니다.</small></a>
   </section>
 
   <footer><a href="https://myway.kr">myway.kr</a></footer>
@@ -285,7 +295,7 @@
   /* [← 메뉴]·[← 홈]: 열 때 만든 뒤로가기 한 칸을 같이 되돌림 → 기록이 남지 않음. 그 화면 안에서 다른 페이지로 이동한 적이 있으면(기록이 늘었으면) 그냥 닫기만 */
   function goHome(){
     var mine = false; try { mine = !!(history.state && history.state.mwView) && history.length === lenAtOpen; } catch(e) {}
-    if (frame && mine) { try { history.back(); return; } catch(e) {} }
+    if (frame && mine) { try { var f0 = frame; history.back(); setTimeout(function(){ if (frame && frame === f0) close(); }, 400); return; } catch(e) {} }   /* 뒤로가기로 안 닫히면 바로 닫음 */
     close();
   }
   function open(url, bar, cat, noPush){
