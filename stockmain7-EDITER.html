@@ -456,9 +456,9 @@
     .fc-card .info-head{ align-items:baseline; }
     .fc-link{ margin-left:auto; font-size:.76rem; font-weight:700; color:#2563eb; text-decoration:none; background:#eef2ff; border-radius:6px; padding:3px 9px; white-space:nowrap; }
     .fc-frame{ display:block; width:100%; border:1px solid rgba(0,0,0,.09); border-radius:16px; background:#f7f3eb; }
-    .fc1 .fc-frame{ height:600px; }
-    .fc2 .fc-frame{ height:680px; }
-    @media (max-width:700px){ .fc1 .fc-frame{ height:520px; } .fc2 .fc-frame{ height:620px; } .fc-card .info-desc{ display:none; } }
+    .fc1 .fc-frame,.fc2 .fc-frame{ height:600px; }
+    .fc3 .fc-frame{ height:680px; }
+    @media (max-width:700px){ .fc1 .fc-frame,.fc2 .fc-frame{ height:520px; } .fc3 .fc-frame{ height:620px; } .fc-card .info-desc{ display:none; } }
     .mc-strip{ margin-top:6px; margin-bottom:32px; padding:18px 18px 14px; border:1px solid rgba(0,0,0,.09); border-radius:18px; background:rgba(255,255,255,.55); }
     /* 하단 고정 차트 (야간 선행 지표) */
     .mc-divider{ display:flex; align-items:center; gap:12px; margin:26px 0 14px; }
@@ -1644,10 +1644,11 @@
     function mcCloseModal(){ var m=document.getElementById('mcModal'); if(m) m.remove(); document.body.style.overflow=''; document.removeEventListener('keydown', mcEscClose); }
     function mcEscClose(e){ if(e.key==='Escape') mcCloseModal(); }
     function mcExpandBtn(getTitle, getSym){ var b=document.createElement('button'); b.type='button'; b.className='mc-expand'; b.title='확대'; b.textContent='\u26F6'; b.onclick=function(){ mcOpenModal(getTitle(), getSym()); }; return b; }
-    /* ===== 흐름 차트 2개 (compare4.html · flow.html) — 코인공포지수·종목 줄 바로 아래, 위아래로 ===== */
+    /* ===== 흐름 차트 3개 (compare4.html 겹쳐보기·나란히 · flow.html) — 코인공포지수·종목 줄 바로 아래, 위아래로 ===== */
     function buildFlowStrip(){
       var box=document.createElement('div'); box.className='fc-strip';
       [
+        ['🧵 흐름 겹쳐보기','나스닥 · 금 · 삼성전자 · 비트코인 · 한 칸에 겹쳐서 기울기 비교','https://myway.kr/compare4.html','mode=flow'],
         ['📈 같은 기간 비교','나스닥 · 금 · 삼성전자 · 비트코인 (TradingView)','https://myway.kr/compare4.html'],
         ['🌊 흐름 비교','코스피 · 삼성전자 · 나스닥 · 금 · 비트코인 · 옆으로 옮겨도 모양 그대로','https://myway.kr/flow.html']
       ].forEach(function(it, i){
@@ -1657,7 +1658,7 @@
         var ds=document.createElement('span'); ds.className='info-desc'; ds.textContent=it[1];
         var lk=document.createElement('a'); lk.className='fc-link'; lk.href=it[2]; lk.target='_blank'; lk.rel='noopener'; lk.textContent='크게 보기 ↗';
         head.appendChild(h2); head.appendChild(ds); head.appendChild(lk); card.appendChild(head);
-        var fr=document.createElement('iframe'); fr.className='fc-frame'; fr.src=it[2]+'?embed=1'; fr.loading='lazy'; fr.title=it[0];
+        var fr=document.createElement('iframe'); fr.className='fc-frame'; fr.src=it[2]+'?embed=1'+(it[3]?'&'+it[3]:''); fr.loading='lazy'; fr.title=it[0];
         fr.setAttribute('allowfullscreen','');
         card.appendChild(fr); box.appendChild(card);
       });
