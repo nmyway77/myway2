@@ -31,6 +31,12 @@
   .lgd b{display:inline-flex;align-items:center;gap:6px}
   .lgd b i{width:18px;height:4px;border-radius:2px}
   .card h2 em{margin-left:auto;display:flex;gap:5px;font-style:normal;align-self:center}
+  .pick{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:12.5px;font-weight:700;padding:6px 11px;border-radius:999px;border:1.5px solid var(--c);background:#fff;color:#1f2740;cursor:pointer;white-space:nowrap}
+  .chip i{width:14px;height:4px;border-radius:2px;background:var(--c)}
+  .chip.off{border-color:#d8d8de;color:#a0a4ae}
+  .chip.off i{background:#d8d8de}
+  .card.hide{display:none}
   .mode button{font:inherit;font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;border:1px solid #dcdfee;background:#fff;color:#4b4f9a;cursor:pointer;white-space:nowrap}
   .mode button.on{background:#4b4f9a;border-color:#4b4f9a;color:#fff}
   @media (max-width:820px){ .card.big h2{flex-wrap:wrap} .card.big h2 span{order:3;flex-basis:100%} }
@@ -62,6 +68,7 @@
 <script>if(/[?&]embed=1/.test(location.search))document.documentElement.classList.add('embed');</script>
 <div class="top">
   <h1>같은 기간 비교<small>나스닥 · 금 · 삼성전자 · 비트코인</small></h1>
+  <div class="pick" id="pick" title="보고 싶은 종목만 눌러서 켜고 끄기"></div>
   <div class="rng" id="rng"></div>
 </div>
 
@@ -99,6 +106,9 @@
     ['1년','12M','D'], ['5년','60M','W'], ['전체','ALL','M']
   ];
   var cur = '12M';
+  /* 종목 선택: 칩을 눌러 켜고 끔 (최소 1개는 켜져 있어야 함) */
+  ASSETS.forEach(function(a){ a.on = true; });
+  function shown(){ return ASSETS.filter(function(a){ return a.on; }); }
   /* 큰 차트 보기 방식: 흐름(종목마다 자기 눈금 → 가격대와 상관없이 기울기만 비교) / 나란히(칸을 나눠 위아래로) / 등락률(%) */
   var MODES = [
     ['flow', '흐름 겹쳐보기', '종목마다 자기 눈금 · 가격대와 상관없이 기울기 흐름만 비교 (확대·이동은 흐름 나란히·개별 차트에서)', ''],
@@ -131,7 +141,7 @@
   /* 아래 4칸 */
   var grid = document.getElementById('grid');
   ASSETS.forEach(function(a, k){
-    var card = document.createElement('div'); card.className = 'card';
+    var card = document.createElement('div'); card.className = 'card'; card.id = 'c' + k;
     card.innerHTML = '<h2><i style="background:' + a.color + '"></i>' + a.name + ' <span>' + a.sub + '</span></h2><div class="box" id="b' + k + '"></div>';
     grid.appendChild(card);
   });
@@ -150,10 +160,11 @@
     document.body.appendChild(svg);
   })();
   function renderFlow(host){
-    host.innerHTML = '<div class="ovl"><div class="lgd">' + ASSETS.map(function(a){ return '<b><i style="background:' + a.color + '"></i>' + a.name + '</b>'; }).join('') + '</div></div>';
+    host.innerHTML = '<div class="ovl"><div class="lgd">' + shown().map(function(a){ return '<b><i style="background:' + a.color + '"></i>' + a.name + '</b>'; }).join('') + '</div></div>';
     var ovl = host.firstChild;
-    ASSETS.forEach(function(a, k){
-      var ly = document.createElement('div'); ly.className = 'ly' + (k ? '' : ' base'); ly.style.filter = 'url(#tint' + k + ')';
+    shown().forEach(function(a, n){
+      var k = ASSETS.indexOf(a);
+      var ly = document.createElement('div'); ly.className = 'ly' + (n ? '' : ' base'); ly.style.filter = 'url(#tint' + k + ')';
       ovl.appendChild(ly);
       widget(ly, a.sym, { style:'2', hide_top_toolbar:true, hide_legend:true, hide_volume:true });
     });
@@ -162,9 +173,10 @@
     var m = MODES.filter(function(x){ return x[0] === mode; })[0], pos = m[3];
     document.getElementById('modeSub').textContent = m[2];
     if (mode === 'flow') { renderFlow(document.getElementById('cmp')); return; }
-    widget(document.getElementById('cmp'), ASSETS[0].sym, {
+    var sh = shown();
+    widget(document.getElementById('cmp'), sh[0].sym, {
       style:'2', hide_volume:true,
-      compareSymbols: ASSETS.slice(1).map(function(a){ return { symbol:a.sym, position:pos }; })
+      compareSymbols: sh.slice(1).map(function(a){ return { symbol:a.sym, position:pos }; })
     });
   }
   var modeEl = document.getElementById('mode');
@@ -180,6 +192,18 @@
     renderCmp();
     ASSETS.forEach(function(a, k){ widget(document.getElementById('b' + k), a.sym); });
   }
+
+  var pick = document.getElementById('pick');
+  pick.innerHTML = ASSETS.map(function(a, k){ return '<button type="button" class="chip" data-i="' + k + '" style="--c:' + a.color + '"><i></i>' + a.name + '</button>'; }).join('');
+  pick.addEventListener('click', function(e){
+    var b = e.target.closest('.chip'); if (!b) return;
+    var k = +b.dataset.i, a = ASSETS[k];
+    if (a.on && shown().length === 1) return;   /* 마지막 하나는 끌 수 없음 */
+    a.on = !a.on;
+    b.classList.toggle('off', !a.on);
+    document.getElementById('c' + k).classList.toggle('hide', !a.on);
+    renderCmp();
+  });
 
   var rng = document.getElementById('rng');
   rng.innerHTML = RANGES.map(function(r){ return '<button type="button" data-r="' + r[1] + '"' + (r[1] === cur ? ' class="on"' : '') + '>' + r[0] + '</button>'; }).join('');
