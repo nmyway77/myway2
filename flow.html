@@ -168,6 +168,11 @@
     var from = monthsBefore(lastDay, m);
     normalize(from, lastDay, false);
     chart.timeScale().setVisibleRange({ from: from, to: lastDay });
+    /* 실제로 화면에 보이는 구간(앞뒤 며칠 차이)에 높이를 딱 맞춤 */
+    requestAnimationFrame(function(){
+      var r = chart.timeScale().getVisibleRange();
+      if (r) normalize(ds(r.from), ds(r.to), true);
+    });
   }
 
   /* 왼쪽 위 값 표시: 마우스(손가락)를 올린 날짜, 없으면 마지막 날 */
