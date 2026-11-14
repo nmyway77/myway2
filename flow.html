@@ -39,6 +39,8 @@
   .foot a{color:#6a5fd0;font-weight:700;text-decoration:none}
   .homebtn{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#6fb3d8,#8a80dc 50%,#a98be3);box-shadow:0 6px 18px rgba(80,70,170,.35)}
   .homebtn svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  html.embed .homebtn,html.embed .foot,html.embed .help{display:none}
+  html.embed .stage{margin-bottom:8px}
   @media (max-width:700px){
     .top{padding:8px 8px 6px}
     .top h1{font-size:15px;width:100%}
@@ -72,6 +74,7 @@
 <div class="foot"><a href="https://myway.kr" target="_top">MYWAY.KR</a></div>
 <a class="homebtn" href="https://myway.kr" target="_top" title="MYWAY.KR 홈"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a>
 
+<script>if(/[?&]embed=1/.test(location.search))document.documentElement.classList.add('embed');</script>
 <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 <script>
 (function(){
@@ -122,8 +125,13 @@
     localization: { locale:'ko-KR', dateFormat:'yyyy-MM-dd' },
     handleScale: { axisPressedMouseMove: { time:true, price:false } }
   });
-  /* 세로 눈금은 언제나 고정 (옆으로 옮겨도 다시 맞추지 않음) */
-  var FIXED = function(){ return { priceRange: { minValue: -4, maxValue: 104 } }; };
+  /* 세로 눈금: 기준 구간 안에서는 0~100 고정(옆으로 옮겨도 모양 그대로).
+     기준 구간 밖으로 나가 선이 넘치면 모든 종목을 같은 비율로 넓혀서 전체가 다 보이게 (종목끼리 높이 비율은 그대로) */
+  var FIXED = function(orig){
+    var r = orig(), mn = -4, mx = 104;
+    if (r && r.priceRange){ mn = Math.min(mn, r.priceRange.minValue - 3); mx = Math.max(mx, r.priceRange.maxValue + 3); }
+    return { priceRange: { minValue: mn, maxValue: mx } };
+  };
   ASSETS.forEach(function(a){
     a.on = true; a.data = [];
     a.series = chart.addLineSeries({ color:a.color, lineWidth:2, priceLineVisible:false, lastValueVisible:false, crosshairMarkerRadius:4, autoscaleInfoProvider: FIXED });
