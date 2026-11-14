@@ -292,11 +292,21 @@
     document.body.classList.remove('viewing');
     try { if (parent !== window) parent.postMessage({ type: 'MYWAY_BIG', on: false }, '*'); } catch(_) {}
   }
-  /* [← 메뉴]·[← 홈]: 열 때 만든 뒤로가기 한 칸을 같이 되돌림 → 기록이 남지 않음. 그 화면 안에서 다른 페이지로 이동한 적이 있으면(기록이 늘었으면) 그냥 닫기만 */
+  /* [← 메뉴]·[← 홈]: 화면을 바로 닫고, 그 화면에서 쌓인 뒤로가기 기록(열 때 만든 한 칸 + 화면 안에서 이동한 칸들)을 홈 칸까지 되감음
+     → 홈으로 돌아온 뒤 뒤로가기가 헛돌지 않음 */
+  var unwinding = false;
   function goHome(){
-    var mine = false; try { mine = !!(history.state && history.state.mwView) && history.length === lenAtOpen; } catch(e) {}
-    if (frame && mine) { try { var f0 = frame; history.back(); setTimeout(function(){ if (frame && frame === f0) close(); }, 400); return; } catch(e) {} }   /* 뒤로가기로 안 닫히면 바로 닫음 */
+    if (!frame) return;
+    var pushed = false; try { pushed = !!(history.state && history.state.mwView); } catch(e) {}
     close();
+    if (!pushed || unwinding) return;   /* 처음 라디오 화면처럼 기록 없이 연 화면은 되감을 것이 없음 */
+    unwinding = true; var n = 0;
+    (function step(){
+      var still = false; try { still = !!(history.state && history.state.mwView); } catch(e) {}
+      if (!still || n++ >= 12) { unwinding = false; return; }
+      try { history.back(); } catch(e) { unwinding = false; return; }
+      setTimeout(step, 130);
+    })();
   }
   /* 열린 화면(myway.kr 안의 페이지)에서 바깥 사이트로 나갈 때: 새 탭 대신 같은 창으로 → 뒤로가기로 마이웨이에 돌아옴
      (새 탭은 뒤로가기 버튼이 아예 안 눌림). '↗ 새 탭'·'＋' 버튼처럼 일부러 새 창을 여는 버튼은 그대로 */
@@ -356,7 +366,8 @@
     var a = e.target.closest ? e.target.closest('a[data-open]') : null;
     if (!a) return;
     e.preventDefault();
-    open(a.getAttribute('data-open'), a.getAttribute('data-bar') || '', a.getAttribute('data-cat') || '');
+    var go = function(){ if (unwinding) { setTimeout(go, 80); return; } open(a.getAttribute('data-open'), a.getAttribute('data-bar') || '', a.getAttribute('data-cat') || ''); };   /* 기록 되감는 중이면 끝난 뒤 열기 */
+    go();
   });
   document.getElementById('vBack').addEventListener('click', goHome);
   /* myway.kr을 열면 항상 라디오부터 — [← 메뉴]를 누르면 이 홈 화면 */
