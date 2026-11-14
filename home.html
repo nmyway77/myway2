@@ -268,9 +268,19 @@
 
   <section class="adb" aria-label="광고 차단">
     <h3>광고 차단</h3>
-    <a href="https://getunicorn.app/ko/product/unicorn-https/windows" data-ext="1" title="유니콘 HTTPS — 광고 차단"><span class="ic"><img src="https://play-lh.googleusercontent.com/MBxbMGKKsNBbswAVWydz4Xy3ccEvDACHG8x_iun0nhUCe8H5NRdZgbw_A0kCHNBEuw" alt="unicorn"></span>유니콘</a>
+    <a id="adUni" href="https://getunicorn.app/ko/product/unicorn-https/windows" data-ext="1" title="유니콘 HTTPS — 광고 차단"><span class="ic"><img src="https://play-lh.googleusercontent.com/MBxbMGKKsNBbswAVWydz4Xy3ccEvDACHG8x_iun0nhUCe8H5NRdZgbw_A0kCHNBEuw" alt="unicorn"></span>유니콘</a>
     <a href="https://www.safevisit.org/" data-ext="1" title="SafeVisit — 광고 차단"><span class="ic"><img src="https://cdn6.aptoide.com/imgs/e/a/8/ea81ef0732f97269e9bd21a81ac68d31_icon.png" alt="safevisit"></span>세이프비짓</a>
   </section>
+  <script>
+  /* 유니콘: 기기에 맞는 페이지로 (아이폰·아이패드 → 앱스토어 광고차단 앱, 안드로이드 → 안드로이드 페이지, 그 외 PC → 윈도우 페이지) */
+  (function(){
+    var u = navigator.userAgent || '', el = document.getElementById('adUni');
+    if (!el) return;
+    var ios = /iPhone|iPad|iPod/.test(u) || (/Macintosh/.test(u) && navigator.maxTouchPoints > 1);
+    if (ios) el.href = 'https://apps.apple.com/kr/app/id1046714401';
+    else if (/Android/i.test(u)) el.href = 'https://getunicorn.app/ko/product/unicorn-pro/android';
+  })();
+  </script>
 
   <footer><a href="https://myway.kr">myway.kr</a></footer>
 </div>
