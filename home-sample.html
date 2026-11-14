@@ -29,11 +29,8 @@
   .head{display:flex;align-items:center;gap:18px;margin-bottom:30px}
   .mark{font-family:var(--serif);font-style:italic;font-weight:700;font-size:30px;letter-spacing:-.02em;line-height:1}
   .mark span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .search{margin-left:auto;display:flex;align-items:center;width:min(420px,100%);height:44px;padding:0 6px 0 18px;border-radius:999px;background:var(--grad);box-shadow:0 8px 22px rgba(125,111,232,.32),inset 0 2px 5px rgba(255,255,255,.35)}
-  .search input{flex:1;min-width:0;border:0;background:transparent;outline:none;color:#fff;font:inherit;font-size:16px}
-  .search input::placeholder{color:rgba(255,255,255,.8)}
-  .search button{flex:none;width:34px;height:34px;border:0;border-radius:50%;background:rgba(255,255,255,.2);color:#fff;cursor:pointer;display:grid;place-items:center}
-  .search svg{width:17px;height:17px}
+  .embedded .head, .embedded .fab, .embedded .note{display:none}
+  .embedded .page{padding-top:22px}
   h1{margin:0 0 22px;font-size:34px;font-weight:800;letter-spacing:-.035em;line-height:1.15}
 
   /* ── 큰 타일 3개: TV · 라디오 · 음악 ── */
@@ -88,13 +85,12 @@
   .sm strong{font-size:16.5px;font-weight:800;letter-spacing:-.02em;align-self:center;min-height:22px}
   .sm small{grid-column:2;font-size:13px;color:var(--sub);line-height:1.55}
 
-  /* ── 읽을거리 · 도구: 조용한 목록 ── */
-  h3{margin:38px 0 4px;font-size:19px;font-weight:800;letter-spacing:-.02em}
-  .list{display:grid;grid-template-columns:1fr 1fr;column-gap:36px}
-  .list a{display:flex;align-items:baseline;gap:14px;padding:15px 4px;border-bottom:1px solid var(--line);transition:padding .15s,color .15s}
-  .list a:hover{padding-left:12px;color:#5b4bdb}
-  .list strong{flex:none;min-width:92px;font-size:16.5px;font-weight:800;letter-spacing:-.02em}
-  .list span{font-size:13.5px;color:var(--sub);line-height:1.55}
+  /* ── 읽을거리 · 도구: 누르는 카드 (화살표로 누를 수 있음을 표시) ── */
+  .row.four{grid-template-columns:repeat(4,1fr);margin-top:0}
+  .sm{position:relative}
+  .sm::after{content:"";position:absolute;right:15px;top:21px;width:8px;height:8px;border-right:2.2px solid #b9b0ee;border-top:2.2px solid #b9b0ee;transform:rotate(45deg);transition:transform .18s,border-color .18s}
+  .sm:hover::after{border-color:#5b4bdb;transform:translateX(3px) rotate(45deg)}
+  h3{margin:38px 0 14px;font-size:19px;font-weight:800;letter-spacing:-.02em}
 
   .note{margin:34px 0 0;padding:12px 16px;border-radius:14px;background:#efeafc;color:#4a3fb0;font-size:13px;line-height:1.55}
   footer{margin-top:26px;text-align:center;font-size:12.5px;color:var(--sub)}
@@ -117,7 +113,7 @@
   @media (max-width:900px){
     .shelf{grid-template-columns:1fr 1fr}
     .tv{grid-column:1 / -1}
-    .row{grid-template-columns:repeat(2,1fr)}
+    .row,.row.four{grid-template-columns:repeat(2,1fr)}
     .big{min-height:0}
     .tv .screen{min-height:170px}
     .music{padding-top:150px}
@@ -125,7 +121,6 @@
   @media (max-width:600px){
     .page{padding:18px 14px 34px}
     .head{flex-wrap:wrap;gap:12px;margin-bottom:22px}
-    .search{width:100%;margin-left:0}
     h1{font-size:27px;margin-bottom:16px}
     .shelf,.row{gap:10px}
     .shelf{grid-template-columns:1fr}
@@ -137,22 +132,18 @@
     .big p{font-size:13.5px}
     .vinyl{width:200px;height:200px;right:-40px;top:-70px}
     .row{grid-template-columns:1fr;margin-top:10px}
-    .list{grid-template-columns:1fr}
-    .list a{flex-direction:column;gap:4px;padding:13px 4px}
-    .list strong{min-width:0}
+    .row.four{grid-template-columns:1fr;margin-top:0}
+
   }
   @media (prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important} }
 </style>
 </head>
 <body>
+<script>try{ if(window.self!==window.top) document.documentElement.classList.add('embedded'); }catch(e){ document.documentElement.classList.add('embedded'); }</script>
 <div class="page">
 
   <header class="head">
     <a class="mark" href="https://myway.kr" aria-label="MYWAY.KR 홈"><span>myway</span>.kr</a>
-    <form class="search" id="searchForm" role="search">
-      <input id="q" type="text" placeholder="네이버에서 검색" autocomplete="off" aria-label="검색어">
-      <button type="submit" aria-label="검색"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg></button>
-    </form>
   </header>
 
   <h1>오늘은 뭘 볼까요?</h1>
@@ -205,16 +196,16 @@
   </section>
 
   <h3>읽을거리와 도구</h3>
-  <nav class="list" aria-label="읽을거리와 도구">
-    <a href="newsitesbar3.html" data-open="newsitesbar3.html?nav=1"><strong>뉴스</strong><span>연합, YTN, 다음 등 언론사를 버튼 하나로 바꿔 가며 읽습니다. 종합지, 경제지, 지방지 전체 목록도 있습니다.</span></a>
-    <a href="barsite.html?tab=daily" data-open="barsite.html?home=1&tab=daily" data-bar="포털"><strong>포털</strong><span>자주 가는 사이트와 함께 대화형, 검색, 이미지, 영상 AI를 종류별로 모았습니다.</span></a>
-    <a href="barsite.html?tab=portal" data-open="barsite.html?home=1&tab=portal" data-bar="시사·경제지"><strong>시사·경제지</strong><span>포브스, 시사저널, 주간동아, 월간조선 같은 시사·경제 잡지로 바로 갑니다.</span></a>
-    <a href="barsite.html?tab=bbs" data-open="barsite.html?home=1&tab=bbs" data-bar="BBS"><strong>BBS</strong><span>더쿠, 클리앙, 에펨코리아, 루리웹 등 커뮤니티 게시판을 모았습니다.</span></a>
-    <a href="barsite.html?tab=magazine" data-open="barsite.html?home=1&tab=magazine" data-bar="여성지"><strong>여성지</strong><span>보그, 엘르, 마리끌레르, 우먼센스 등 잡지 사이트로 바로 갑니다.</span></a>
-    <a href="barsite.html?tab=cafe" data-open="barsite.html?home=1&tab=cafe" data-bar="만화"><strong>만화</strong><span>만화와 웹툰 사이트 바로가기입니다.</span></a>
-    <a href="00000stockmain7.html" data-open="00000stockmain7.html" data-bar="주식·코인"><strong>주식·코인</strong><span>코인, 미국주식, 한국주식, 지수선물, 공포탐욕지수 차트를 한 페이지에서 봅니다.</span></a>
-    <a href="barsite.html?tab=tools" data-open="barsite.html?home=1&tab=tools" data-bar="도구"><strong>도구</strong><span>PDF 도구, 환율·단위 계산기, 맞춤법 검사, QR코드 만들기, 세계 시간 같은 생활 도구입니다.</span></a>
-  </nav>
+  <section class="row four" aria-label="읽을거리와 도구">
+    <a class="sm" href="newsitesbar3.html" data-open="newsitesbar3.html?nav=1"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 4h11v16H6.5A1.5 1.5 0 0 1 5 18.5z"/><path d="M16 9h3v9.5a1.5 1.5 0 0 1-3 0"/><path d="M8 8h5M8 12h5M8 16h3"/></svg></span><strong>뉴스</strong><small>연합, YTN, 다음 등 언론사를 버튼 하나로 바꿔 가며 읽습니다. 종합지, 경제지, 지방지 전체 목록도 있습니다.</small></a>
+    <a class="sm" href="barsite.html?tab=daily" data-open="barsite.html?home=1&tab=daily" data-bar="포털"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c3 3 3 14 0 17M12 3.5c-3 3-3 14 0 17"/></svg></span><strong>포털</strong><small>자주 가는 사이트와 함께 대화형, 검색, 이미지, 영상 AI를 종류별로 모았습니다.</small></a>
+    <a class="sm" href="barsite.html?tab=portal" data-open="barsite.html?home=1&tab=portal" data-bar="시사·경제지"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 19V6M9 19V10M14 19V4M19 19v-7"/></svg></span><strong>시사·경제지</strong><small>포브스, 시사저널, 주간동아, 월간조선 같은 시사·경제 잡지로 바로 갑니다.</small></a>
+    <a class="sm" href="barsite.html?tab=bbs" data-open="barsite.html?home=1&tab=bbs" data-bar="BBS"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H10l-5 4v-4H4z"/><path d="M8 9h8M8 12h5"/></svg></span><strong>BBS</strong><small>더쿠, 클리앙, 에펨코리아, 루리웹 등 커뮤니티 게시판을 모았습니다.</small></a>
+    <a class="sm" href="barsite.html?tab=magazine" data-open="barsite.html?home=1&tab=magazine" data-bar="여성지"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 3.5h10a2 2 0 0 1 2 2v15l-7-3.5-7 3.5v-15a2 2 0 0 1 2-2z"/></svg></span><strong>여성지</strong><small>보그, 엘르, 마리끌레르, 우먼센스 등 잡지 사이트로 바로 갑니다.</small></a>
+    <a class="sm" href="barsite.html?tab=cafe" data-open="barsite.html?home=1&tab=cafe" data-bar="만화"><span class="ic"><svg viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 11h17M12 4v7M9 11v9"/></svg></span><strong>만화</strong><small>만화와 웹툰 사이트 바로가기입니다.</small></a>
+    <a class="sm" href="00000stockmain7.html" data-open="00000stockmain7.html" data-bar="주식·코인"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3.5 17l5-5 4 3.5 8-8.5"/><path d="M15.5 7h5v5"/></svg></span><strong>주식·코인</strong><small>코인, 미국주식, 한국주식, 지수선물, 공포탐욕지수 차트를 한 페이지에서 봅니다.</small></a>
+    <a class="sm" href="barsite.html?tab=tools" data-open="barsite.html?home=1&tab=tools" data-bar="도구"><span class="ic"><svg viewBox="0 0 24 24"><path d="M14.5 6.5a4 4 0 0 0 5 5l-9.2 9.2a2.1 2.1 0 0 1-3-3z"/><path d="M14.5 6.5 17 4l3 3-2.5 2.5"/></svg></span><strong>도구</strong><small>PDF 도구, 환율·단위 계산기, 맞춤법 검사, QR코드 만들기, 세계 시간 같은 생활 도구입니다.</small></a>
+  </section>
 
   <p class="note">메인 홈 샘플입니다. 항목을 누르면 그 화면이 이 자리에서 열리고, 맨 위 왼쪽의 [← 메뉴] 또는 [← 홈]을 누르면 이 화면으로 돌아옵니다.</p>
 
@@ -235,6 +226,7 @@
     if (frame) { frame.remove(); frame = null; }   /* 화면을 없애면 재생도 멈춤 */
     viewer.classList.remove('open', 'has-bar'); viewer.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('viewing');
+    try { if (parent !== window) parent.postMessage({ type: 'MYWAY_BIG', on: false }, '*'); } catch(_) {}
   }
   function open(url, bar, cat){
     close();
@@ -263,6 +255,7 @@
     var d = e.data || {};
     if (!frame || e.source !== frame.contentWindow) return;
     if (e.origin !== location.origin && e.origin !== TV) return;
+    if (d.type === 'MYWAY_BIG') { try { if (parent !== window) parent.postMessage({ type: 'MYWAY_BIG', on: !!d.on }, '*'); } catch(_) {} return; }   /* 아이폰 크게 보기 → 검색 헤더까지 덮기 */
     /* 각 화면의 [← 메뉴] → 홈으로 */
     if (d.type === 'MYWAY_NAVSWAP_BACK' || d.type === 'MYWAY_NEWSBAR_BACK' || d.type === 'MYWAY_HOME') { close(); return; }
     /* TV 즐겨찾기·웹드라마 '여기까지 봄' 표시를 myway.kr 쪽에 보관 (지금 화면과 같은 저장 위치) */
@@ -283,14 +276,6 @@
 </script>
 
 <script>
-/* 검색: 네이버 검색 결과로 이동 */
-document.getElementById('searchForm').addEventListener('submit', function(e){
-  e.preventDefault();
-  var v = document.getElementById('q').value.trim();
-  if (!v) return;
-  document.getElementById('q').blur();
-  location.href = 'https://search.naver.com/search.naver?query=' + encodeURIComponent(v);
-});
 /* 복사 방지 */
 (function(){
   var isField = function(el){ return el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT'); };
