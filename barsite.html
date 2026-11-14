@@ -1276,6 +1276,16 @@
     html.myway-navswap #tvrScreen iframe { position: fixed; left: 0; top: 0; width: 100%; height: 100vh; height: 100dvh; z-index: 150; }
     html.myway-navswap, html.myway-navswap body { overflow: hidden; }
     html.myway-navswap .edit-toolbar { display: none !important; }
+    /* 드라마VOD: 탭바 자리를 방송사 네비(KBS·MBC·채널A·SBS)가 대신 차지 — 맨 앞 [← 메뉴]로 탭바 복귀 */
+    .sub-nav .nav-back { display: none; }
+    html.mw-dvswap body[data-active-tab="dramavod"] .topbar { display: none; }
+    html.mw-dvswap body[data-active-tab="dramavod"] .sub-nav.dv-nav { position: sticky; top: 0; z-index: 25; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; justify-content: safe center; max-width: none; width: 100vw; margin: -44px calc(50% - 50vw) 22px; padding: 10px 14px 12px;
+      background: linear-gradient(180deg, #f7f8fc 0%, #eceef7 100%); border-bottom: 1px solid #dcdfee; box-shadow: inset 0 1px 0 #fff, 0 4px 14px rgba(90,100,180,.16); }
+    html.mw-dvswap body[data-active-tab="dramavod"] .sub-nav.dv-nav::-webkit-scrollbar { display: none; }
+    html.mw-dvswap body[data-active-tab="dramavod"] .sub-nav.dv-nav .sub-btn { flex: none; }
+    html.mw-dvswap body[data-active-tab="dramavod"] .sub-nav.dv-nav .nav-back { display: inline-flex; align-items: center; gap: 5px; color: #5b4bdb; font-weight: 800; position: sticky; left: 0; z-index: 2; box-shadow: -14px 0 0 #f1f3fa; }
+    .sub-nav .nav-back svg { width: 15px; height: 15px; display: block; }
+    html.mw-dvswap body[data-active-tab="dramavod"] .edit-toolbar { display: none !important; }
 
     @media (max-width: 700px) {
       .tvr-bar { padding: 8px 10px; }
@@ -2385,6 +2395,8 @@
       // body 속성 변경 → CSS 라이트/다크 톤 토글
       document.body.dataset.activeTab = tabId;
       curTab = tabId;
+      /* 드라마VOD(보기 모드): 탭바 자리를 방송사 네비로 교체 — [← 메뉴]로 돌아왔을 때(dvMenuShown)만 탭바 표시 */
+      document.documentElement.classList.toggle('mw-dvswap', tabId === 'dramavod' && !editMode && !window.__dvMenuShown);
 
       const root = document.getElementById('main');
       const frag = document.createDocumentFragment();
@@ -2460,7 +2472,11 @@
         if (SHOW_EDIT) { const add = document.createElement('button'); add.type = 'button'; add.className = 'gcard gadd'; add.textContent = '＋ 사진 추가'; add.onclick = () => openPhotoDlg(null); m.appendChild(add); }
         if (useBc) {
           m.dataset.bc = bcSel;   /* KBS는 사진을 자르지 않고 원래 크기·원래 배치(세로 줄)로 표시 — CSS에서 구분 */
-          const bnav = document.createElement('nav'); bnav.className = 'sub-nav';
+          const bnav = document.createElement('nav'); bnav.className = 'sub-nav dv-nav';
+          const back = document.createElement('button'); back.type = 'button'; back.className = 'sub-btn nav-back'; back.title = '마이웨이 메뉴로 돌아가기';
+          back.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg>메뉴';
+          back.onclick = () => { window.__dvMenuShown = true; document.documentElement.classList.remove('mw-dvswap'); try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (_) {} };
+          bnav.appendChild(back);
           BC_LIST.forEach(bc => {
             const b = document.createElement('button'); b.type = 'button';
             b.className = 'sub-btn' + (bc === bcSel ? ' on' : ''); b.textContent = bc;
@@ -3608,7 +3624,7 @@
   /* @PAGES_START */
   var TVR_PAGES = {
     tv2:   { label: "📺 TV", url: "https://nmyway77.github.io/livetv7/" },
-    youtuber: { label: "▶ 유튜버", url: "https://myway.kr/people3.html", cat: "all" },
+    youtuber: { label: "▶ 유튜버", url: "https://myway.kr/people3.html?nav=1", cat: "all", navswap: true },   /* 탭바 자리를 유튜버 분류 네비로 교체 */
     movie: { label: "🎬 영화", url: "https://myway.kr/MOVIE-YTUBE.html" },
     webdrama: { label: "🎭 웹드라마", url: "https://nmyway77.github.io/livetv7/?wd=1" },
     podcast: { label: "🎙 팟캐스트", url: "https://myway.kr/podcast.html" },
@@ -3741,6 +3757,13 @@
       if (typeof selectTab === 'function') selectTab('dramavod');
     });
     var newsListOnce = false;
+    /* 유튜버 등 화면의 [← 메뉴] → 탭바를 다시 보이게(화면은 그대로 아래에) */
+    window.addEventListener('message', function(e){
+      if (e.origin !== location.origin || !e.data || e.data.type !== 'MYWAY_NAVSWAP_BACK') return;
+      var fr = document.querySelector('#tvrScreen iframe'); if (!fr || e.source !== fr.contentWindow) return;
+      document.documentElement.classList.remove('myway-navswap');
+      try { fr.contentWindow.postMessage({ type: 'MYWAY_NAVSWAP_OFF' }, location.origin); } catch (_) {}
+    });
     /* 뉴스 바로보기 언론사 바의 [← 메뉴] → 탭바가 있는 뉴스 전체목록 화면으로 */
     window.addEventListener('message', function(e){
       if (e.origin !== location.origin || !e.data || e.data.type !== 'MYWAY_NEWSBAR_BACK') return;
@@ -3764,7 +3787,7 @@
           if (pg.cat) { try { sessionStorage.setItem('mywayCat_people2', pg.cat); sessionStorage.setItem('mywayCat_people3', pg.cat); } catch(e){} }
           $('tvrScreen').innerHTML = '<iframe title="' + esc(pg.label) + '" allow="autoplay; encrypted-media; fullscreen" allowfullscreen src="' + String(pg.url).replace(/"/g, '%22') + '"></iframe>';
           $('tvrSection').classList.add('playing', 'page-mode');
-          document.documentElement.classList.toggle('myway-navswap', k === 'newsbar');   /* 뉴스 바로보기: 탭바 자리를 언론사 바로 교체 */
+          document.documentElement.classList.toggle('myway-navswap', k === 'newsbar' || !!pg.navswap);   /* 뉴스 바로보기·유튜버: 탭바 자리를 그 화면의 네비로 교체 */
         }
         try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e){}
         navCenter('#tabNav .tab-btn[data-tab="' + btnTab + '"]');
@@ -3785,6 +3808,7 @@
         var _st = selectTab;
         selectTab = function(id){
           /* 상단 [뉴스] 탭 → 전체목록 대신 뉴스 바로보기가 바로 열림 (탭바 자리에 언론사 바). [← 메뉴]로 돌아올 때만 전체목록 */
+          if (id === 'dramavod') window.__dvMenuShown = false;   /* 드라마VOD 탭을 누를 때마다 다시 방송사 네비만 보이게 */
           if (id === 'news' && !newsListOnce) { try { sessionStorage.setItem('mywayTab_barsite', 'news'); } catch(e){} openOnair('newsbar'); return; }
           if (TAB_PAGES[id]) { try { sessionStorage.setItem('mywayTab_barsite', id); } catch(e){} openOnair(id); return; }
           if (onair) { onair = null; stop(); } var r = _st.apply(this, arguments); navCenter('#tabNav .tab-btn[data-tab="' + id + '"]'); return r; };
