@@ -76,6 +76,26 @@
   .music:hover .vinyl{animation:spin 2.4s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
 
+  /* ── 오늘의 생활 정보: 날씨 · 달력 · 운세 · 만평 · 여행 ── */
+  .life{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:14px}
+  .lf{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:20px;border:1px solid rgba(31,39,64,.07);transition:transform .18s,box-shadow .18s}
+  .lf:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(90,100,160,.16)}
+  .lf .art{flex:none;width:46px;height:46px;display:block}
+  .lf strong{display:block;font-size:15.5px;font-weight:800;letter-spacing:-.02em}
+  .lf small{display:block;margin-top:2px;font-size:12px;color:var(--sub);line-height:1.4}
+  .lf-weather{background:linear-gradient(135deg,#e4efff 0%,#f4f8ff 100%)}
+  .lf-cal{background:linear-gradient(135deg,#fde8ec 0%,#fff6f7 100%)}
+  .lf-fortune{background:linear-gradient(135deg,#ece8fd 0%,#f8f6ff 100%)}
+  .lf-cartoon{background:linear-gradient(135deg,#fdf0c9 0%,#fffaea 100%)}
+  .lf-travel{background:linear-gradient(135deg,#dbf3e8 0%,#f3fbf7 100%)}
+  @media (max-width:1000px){
+    .life{gap:8px}
+    .lf{flex-direction:column;gap:6px;padding:12px 4px 10px;text-align:center;border-radius:16px}
+    .lf .art{width:40px;height:40px}
+    .lf strong{font-size:12.5px}
+    .lf small{display:none}
+  }
+
   /* ── 작은 타일 6개 ── */
   .row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
   .sm{display:grid;grid-template-columns:40px 1fr;column-gap:14px;row-gap:5px;align-items:start;padding:17px 18px 17px 16px;border-radius:20px;background:var(--card);border:1px solid var(--line);transition:transform .18s,border-color .18s,box-shadow .18s}
@@ -186,6 +206,29 @@
     </a>
   </section>
 
+  <section class="life" aria-label="오늘의 생활 정보">
+    <a class="lf lf-weather" href="00mainweather.html" data-open="00mainweather.html" data-bar="날씨">
+      <svg class="art" viewBox="0 0 48 48" aria-hidden="true"><circle cx="19" cy="18" r="9" fill="#f7b731"/><g stroke="#f7b731" stroke-width="2.4" stroke-linecap="round"><path d="M19 3.5v3M4.5 18h3M8.7 7.7l2.1 2.1M29.3 7.7l-2.1 2.1"/></g><path d="M17 38.5h17.5a7.5 7.5 0 0 0 .9-14.95A10 10 0 0 0 16.2 26 6.3 6.3 0 0 0 17 38.5z" fill="#fff" stroke="#9db8e8" stroke-width="2" stroke-linejoin="round"/></svg>
+      <span><strong>날씨</strong><small>기상청, Windy, 네이버 날씨</small></span>
+    </a>
+    <a class="lf lf-cal" href="https://search.daum.net/search?w=tot&amp;q=%EB%8B%AC%EB%A0%A5" target="_blank" rel="noopener" data-ext="1">
+      <svg class="art" viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="8" width="36" height="34" rx="7" fill="#fff" stroke="#e7a3ae" stroke-width="2"/><path d="M6 15a7 7 0 0 1 7-7h22a7 7 0 0 1 7 7v4H6z" fill="#ee7b8f"/><path d="M16 5v6M32 5v6" stroke="#b9485d" stroke-width="2.6" stroke-linecap="round"/><text id="calDay" x="24" y="36" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-weight="700" font-size="17" fill="#1f2740"></text></svg>
+      <span><strong>달력</strong><small id="calText">오늘 날짜와 달력</small></span>
+    </a>
+    <a class="lf lf-fortune" href="00mainfortune.html" data-open="00mainfortune.html" data-bar="운세">
+      <svg class="art" viewBox="0 0 48 48" aria-hidden="true"><path d="M30 8a16 16 0 1 0 10 27.5A14 14 0 0 1 30 8z" fill="#7d6fe8"/><path d="M36 9l1.4 3.3L41 13.6l-3.6 1.3L36 18.4l-1.4-3.5L31 13.6l3.6-1.3z" fill="#f7b731"/><circle cx="42" cy="24" r="1.8" fill="#f7b731"/><circle cx="12" cy="9" r="1.5" fill="#b9b0ee"/></svg>
+      <span><strong>운세</strong><small>오늘의 운세 보기</small></span>
+    </a>
+    <a class="lf lf-cartoon" href="00barmp.html" data-open="00barmp.html" data-bar="오늘의 만평">
+      <svg class="art" viewBox="0 0 48 48" aria-hidden="true"><path d="M7 9h30a4 4 0 0 1 4 4v17a4 4 0 0 1-4 4H22l-8 7v-7H7a4 4 0 0 1-4-4V13a4 4 0 0 1 4-4z" transform="translate(2 0)" fill="#fff" stroke="#e0b64a" stroke-width="2" stroke-linejoin="round"/><path d="M13 19c3-4 5 4 8 0s5 4 8 0 4 3 6 1" fill="none" stroke="#1f2740" stroke-width="2.2" stroke-linecap="round"/><path d="M13 26h14" stroke="#c9a23a" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <span><strong>오늘의 만평</strong><small>신문 만평 모아 보기</small></span>
+    </a>
+    <a class="lf lf-travel" href="TRAVEL.html" data-open="TRAVEL.html" data-bar="여행정보">
+      <svg class="art" viewBox="0 0 48 48" aria-hidden="true"><path d="M18 14v-3.5A3.5 3.5 0 0 1 21.500 7h5A3.5 3.500 0 0 1 30 10.500V14" fill="none" stroke="#2f8f6b" stroke-width="2.6"/><rect x="8" y="14" width="32" height="26" rx="6" fill="#3fb58a"/><path d="M8 24h32" stroke="#2f8f6b" stroke-width="2"/><rect x="20.500" y="21" width="7" height="6" rx="1.500" fill="#fff"/><circle cx="34" cy="33" r="3" fill="#f7b731"/></svg>
+      <span><strong>여행정보</strong><small>여행 사이트 모음</small></span>
+    </a>
+  </section>
+
   <section class="row" aria-label="자주 찾는 메뉴">
     <a class="sm" href="people3.html" data-open="people3.html?nav=1" data-cat="all"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.4 7-5.4s6.2 1.8 7 5.4"/></svg></span><strong>유튜버</strong><small>유튜버, 가수, 연예인, 배우 채널을 분야별로 모았습니다. 새 영상 버튼을 누르면 최근에 올라온 영상만 볼 수 있습니다.</small></a>
     <a class="sm" href="00makingyoutubefull2.html" data-open="00makingyoutubefull2.html" data-bar="CCTV"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 8.5 15.5 5l1.6 5.6L4.6 14z"/><path d="M17 8.6l3.5-.9.8 2.8-3.5 1"/><path d="M8 13v5H4"/></svg></span><strong>CCTV</strong><small>유튜브 영상과 라이브 화면을 사진 카드로 모아, 누르면 한 화면에서 바로 봅니다.</small></a>
@@ -266,7 +309,16 @@
     } catch(e) {}
     lenAtOpen = history.length;
   }
+  /* 달력 카드: 오늘 날짜 표시 */
+  (function(){
+    var d = new Date(), el = document.getElementById('calDay'), tx = document.getElementById('calText');
+    if (el) el.textContent = d.getDate();
+    if (tx) tx.textContent = (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + '일월화수목금토'.charAt(d.getDay()) + '요일';
+  })();
   document.addEventListener('click', function(e){
+    /* 화면 안에 넣을 수 없는 바깥 사이트(달력): PC·태블릿은 새 탭, 핸드폰은 같은 창(뒤로가기로 복귀) */
+    var x = e.target.closest ? e.target.closest('a[data-ext]') : null;
+    if (x && /Mobi/i.test(navigator.userAgent)) { e.preventDefault(); try { (window.top || window).location.href = x.href; } catch(_) { location.href = x.href; } return; }
     var a = e.target.closest ? e.target.closest('a[data-open]') : null;
     if (!a) return;
     e.preventDefault();
