@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>환율 계산기 - 하나은행 매매기준율(네이버 환율 기준) | MYWAY.KR</title>
+<meta name="description" content="네이버 환율과 같은 하나은행 매매기준율로 계산하는 환율 계산기. 달러·엔·유로·위안 등 25개 통화.">
+<link rel="canonical" href="https://myway.kr/fx.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root{ --bg:#f7f3eb; --ink:#1f2740; --sub:#7a8199; --line:#e6e1d6; --card:#fff; --a1:#7ed6fb; --a2:#b176f3; --acc:#6b5cf0; --ok:#1f9d6b; --warn:#d9822b; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; background:var(--bg); color:var(--ink); font-family:Pretendard,-apple-system,sans-serif; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; }
+  input,select,textarea{ -webkit-user-select:text; user-select:text; }
+  .wrap{ max-width:560px; margin:0 auto; padding:22px 16px 90px; }
+  h1{ font-family:Fraunces,serif; font-size:24px; margin:0 0 6px; letter-spacing:-.3px; }
+  .src{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:#3d4a7a; background:#eef0fb; border:1px solid #dfe2f6; border-radius:999px; padding:5px 11px; }
+  .src .dot{ width:8px; height:8px; border-radius:50%; background:#bbb; }
+  .src.ok .dot{ background:var(--ok); } .src.warn .dot{ background:var(--warn); } .src.warn{ background:#fff4e6; border-color:#f6d9b5; color:#8a5410; }
+  .card{ margin-top:14px; background:var(--card); border:1px solid var(--line); border-radius:22px; padding:16px; box-shadow:0 10px 30px rgba(60,50,30,.08); }
+  .row{ display:flex; gap:8px; align-items:stretch; }
+  .sel{ flex:none; width:44%; position:relative; }
+  .sel select{ width:100%; height:58px; appearance:none; -webkit-appearance:none; border:1px solid var(--line); border-radius:14px; background:#faf8f3; padding:0 30px 0 12px; font:inherit; font-size:15px; font-weight:700; color:var(--ink); cursor:pointer; }
+  .sel::after{ content:'▾'; position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--sub); pointer-events:none; }
+  .amt{ flex:1; min-width:0; height:58px; border:1px solid var(--line); border-radius:14px; padding:0 14px; font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:700; text-align:right; color:var(--ink); background:#fff; outline:none; }
+  .amt:focus{ border-color:#b9a8f5; box-shadow:0 0 0 3px rgba(150,120,240,.15); }
+  .out{ flex:1; min-width:0; height:58px; border-radius:14px; padding:0 14px; display:flex; align-items:center; justify-content:flex-end; font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:700; background:linear-gradient(160deg,#f6f4ff,#eef7fd); border:1px solid #e3def8; overflow:hidden; white-space:nowrap; }
+  .swap{ display:flex; justify-content:center; margin:8px 0; }
+  .swap button{ width:40px; height:40px; border-radius:50%; border:0; color:#fff; font-size:18px; cursor:pointer; background:linear-gradient(135deg,var(--a1),var(--a2)); box-shadow:0 4px 10px rgba(110,90,220,.25); }
+  .kor{ text-align:right; font-size:12.5px; color:#5a5470; min-height:18px; margin-top:6px; }
+  .rateline{ margin-top:12px; padding-top:12px; border-top:1px dashed var(--line); font-size:13.5px; color:#3d4566; display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+  .rateline b{ font-family:'JetBrains Mono',monospace; }
+  .chips{ display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
+  .chip{ border:1px solid var(--line); background:#fff; border-radius:999px; padding:5px 11px; font:inherit; font-size:12.5px; font-weight:700; color:#4a5170; cursor:pointer; }
+  .chip:active{ transform:scale(.96); }
+  .bar{ display:flex; justify-content:space-between; align-items:center; margin:18px 4px 8px; }
+  .bar h2{ font-size:15px; margin:0; }
+  .bar .r{ display:flex; gap:8px; align-items:center; font-size:12px; color:var(--sub); }
+  .re{ border:1px solid var(--line); background:#fff; border-radius:999px; padding:5px 11px; font:inherit; font-size:12.5px; font-weight:700; color:var(--acc); cursor:pointer; }
+  table{ width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:18px; overflow:hidden; }
+  th,td{ padding:10px 12px; font-size:13.5px; border-bottom:1px solid #f0ece3; }
+  th{ font-size:12px; color:var(--sub); font-weight:700; text-align:left; background:#fbfaf6; }
+  td.v{ text-align:right; font-family:'JetBrains Mono',monospace; font-weight:700; }
+  th.v{ text-align:right; }
+  tr.it{ cursor:pointer; } tr.it:hover td{ background:#faf8f3; } tr.it.on td{ background:#f1edff; }
+  tr:last-child td{ border-bottom:0; }
+  .cname{ display:flex; align-items:center; gap:8px; } .cname .f{ font-size:18px; } .cname small{ color:var(--sub); font-size:11.5px; display:block; }
+  .note{ margin-top:14px; font-size:12px; color:var(--sub); line-height:1.7; background:#fffdf8; border:1px solid var(--line); border-radius:14px; padding:12px 14px; }
+  .note b{ color:#4a5170; }
+  footer{ text-align:center; font-size:12px; color:var(--sub); padding:20px 0; }
+  footer a{ color:var(--acc); text-decoration:none; font-weight:700; }
+  .float-home{ position:fixed; right:16px; bottom:16px; width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:22px; text-decoration:none; background:linear-gradient(135deg,var(--a1),var(--a2)); box-shadow:0 6px 16px rgba(100,80,200,.3); z-index:50; }
+  @media (max-width:420px){ .sel{ width:46%; } .sel select{ font-size:14px; } .amt,.out{ font-size:19px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>환율 계산기</h1>
+  <span class="src" id="src"><span class="dot"></span><span id="srcT">환율 불러오는 중…</span></span>
+
+  <div class="card">
+    <div class="row">
+      <div class="sel"><select id="from"></select></div>
+      <input class="amt" id="amt" inputmode="decimal" value="1" aria-label="금액">
+    </div>
+    <div class="swap"><button type="button" id="swap" title="바꾸기">⇅</button></div>
+    <div class="row">
+      <div class="sel"><select id="to"></select></div>
+      <div class="out" id="out">—</div>
+    </div>
+    <div class="kor" id="kor"></div>
+    <div class="chips" id="chips"></div>
+    <div class="rateline"><span id="r1"></span><span id="r2"></span></div>
+  </div>
+
+  <div class="bar">
+    <h2>주요 통화 매매기준율</h2>
+    <div class="r"><span id="when"></span><button class="re" id="reload" type="button">↻ 다시 불러오기</button></div>
+  </div>
+  <table>
+    <thead><tr><th>통화</th><th class="v">원화 (KRW)</th></tr></thead>
+    <tbody id="tb"></tbody>
+  </table>
+
+  <div class="note">
+    <b>어떤 환율인가요?</b> 네이버 환율 검색에 나오는 것과 같은 <b>하나은행 매매기준율</b>을 네이버 환율 계산기에서 그대로 받아 와요. (예전 계산기는 국제 시장 환율을 하루 한 번만 받아 와서 네이버와 숫자가 달랐어요.)<br>
+    <b>실제 환전·송금 금액은 달라요.</b> 은행에서 현찰을 살 때·팔 때, 송금할 때는 매매기준율에 은행 수수료(환전 스프레드)가 붙고, 은행·우대율마다 달라요.<br>
+    <b>엔·동·루피아</b>는 네이버처럼 100단위 값으로 보여 줘요. 다른 두 외화끼리는 원화 기준율로 나눠 계산해요.<br>
+    이 페이지는 열 때 한 번만 불러오고, 새 값이 필요하면 <b>↻ 다시 불러오기</b>를 눌러 주세요.
+  </div>
+  <footer><a href="https://myway.kr">myway.kr</a></footer>
+</div>
+<a href="https://myway.kr" class="float-home" title="홈으로" aria-label="홈으로">⌂</a>
+
+<script>
+var CUR = [
+  ['USD','미국 달러','🇺🇸',1],['JPY','일본 엔','🇯🇵',100],['EUR','유로','🇪🇺',1],['CNY','중국 위안','🇨🇳',1],
+  ['GBP','영국 파운드','🇬🇧',1],['HKD','홍콩 달러','🇭🇰',1],['TWD','대만 달러','🇹🇼',1],['VND','베트남 동','🇻🇳',100],
+  ['THB','태국 바트','🇹🇭',1],['PHP','필리핀 페소','🇵🇭',1],['SGD','싱가포르 달러','🇸🇬',1],['AUD','호주 달러','🇦🇺',1],
+  ['CAD','캐나다 달러','🇨🇦',1],['CHF','스위스 프랑','🇨🇭',1],['NZD','뉴질랜드 달러','🇳🇿',1],['MYR','말레이시아 링깃','🇲🇾',1],
+  ['IDR','인도네시아 루피아','🇮🇩',100],['INR','인도 루피','🇮🇳',1],['AED','UAE 디르함','🇦🇪',1],['MXN','멕시코 페소','🇲🇽',1],
+  ['TRY','튀르키예 리라','🇹🇷',1],['RUB','러시아 루블','🇷🇺',1],['SEK','스웨덴 크로나','🇸🇪',1],['MNT','몽골 투그릭','🇲🇳',1],['KZT','카자흐스탄 텡게','🇰🇿',1]
+];
+var META = { KRW:['대한민국 원','🇰🇷',1] }; CUR.forEach(function(c){ META[c[0]]=[c[1],c[2],c[3]]; });
+var RATE = { KRW:1 };   /* 1 단위당 원화 */
+var MODE = '';          /* 'naver' | 'fallback' */
+var $ = function(id){ return document.getElementById(id); };
+var Q = 1000000;        /* 네이버 계산기에 넣는 금액(소수 자릿수 확보용) */
+
+function naver(code){
+  var u='https://m.search.naver.com/p/csearch/content/qapirender.nhn?key=calculator&pkid=141&q=%ED%99%98%EC%9C%A8&where=m&u1=keb&u6=standardUnit&u7=0&u3='+code+'&u4=KRW&u8=down&u2='+Q;
+  return fetch(u,{cache:'no-store'}).then(function(r){ return r.json(); }).then(function(j){
+    var v = parseFloat(String(j.country[1].value).replace(/,/g,'')); if(!(v>0)) throw 0; return v/Q; });
+}
+function load(){
+  setSrc('', '환율 불러오는 중…'); $('when').textContent='';
+  var got={}, codes=CUR.map(function(c){ return c[0]; }), k=0;
+  function worker(){ if(k>=codes.length) return Promise.resolve(); var c=codes[k++];
+    return naver(c).then(function(v){ got[c]=v; }, function(){}).then(worker); }
+  Promise.all([worker(),worker(),worker(),worker(),worker(),worker()]).then(function(){
+    if(got.USD){ RATE={KRW:1}; Object.keys(got).forEach(function(c){ RATE[c]=got[c]; }); MODE='naver';
+      setSrc('ok','하나은행 매매기준율 · 네이버 환율과 같은 기준'); done(); }
+    else fallback();
+  });
+}
+function fallback(){
+  fetch('https://open.er-api.com/v6/latest/KRW',{cache:'no-store'}).then(function(r){ return r.json(); }).then(function(j){
+    RATE={KRW:1}; CUR.forEach(function(c){ var x=j.rates[c[0]]; if(x>0) RATE[c[0]]=1/x; }); MODE='fallback';
+    var d=new Date(j.time_last_update_unix*1000);
+    setSrc('warn','네이버 연결 실패 → 국제 시장 환율(하루 1회, '+(d.getMonth()+1)+'/'+d.getDate()+' 기준) · 네이버와 다를 수 있음'); done();
+  }).catch(function(){ setSrc('warn','환율을 불러오지 못했어요 · 다시 불러오기를 눌러 주세요'); });
+}
+function setSrc(cls, t){ $('src').className='src'+(cls?' '+cls:''); $('srcT').textContent=t; }
+function pad(n){ return (n<10?'0':'')+n; }
+function done(){ var d=new Date(); $('when').textContent=pad(d.getHours())+':'+pad(d.getMinutes())+' 불러옴'; fillSelects(); drawTable(); calc(); }
+
+function label(c){ var m=META[c]; return m[1]+' '+c+' · '+m[0]; }
+function fillSelects(){
+  var codes=['KRW'].concat(CUR.map(function(c){ return c[0]; }).filter(function(c){ return RATE[c]; }));
+  ['from','to'].forEach(function(id){ var s=$(id), keep=s.value; s.innerHTML=codes.map(function(c){ return '<option value="'+c+'">'+label(c)+'</option>'; }).join('');
+    s.value = keep && RATE[keep] ? keep : (id==='from'?'USD':'KRW'); });
+}
+function num(v, maxd){ return v.toLocaleString('ko-KR',{ maximumFractionDigits:maxd, minimumFractionDigits:0 }); }
+function money(v, code){ var d = code==='KRW' ? (Math.abs(v)>=100?0:2) : (Math.abs(v)>=1?2:Math.abs(v)>=0.01?4:6); return num(v, d); }
+function korean(v){ v=Math.round(v); if(v<10000) return ''; var u=['','만','억','조','경'], p=[], i=0; while(v>0&&i<u.length){ var c=v%10000; if(c) p.unshift(c.toLocaleString('ko-KR')+u[i]); v=Math.floor(v/10000); i++; } return p.join(' ')+' 원'; }
+function parseAmt(){ var v=parseFloat(String($('amt').value).replace(/[,\s]/g,'')); return isFinite(v)?v:0; }
+
+function calc(){
+  var f=$('from').value, t=$('to').value; if(!RATE[f]||!RATE[t]) return;
+  var a=parseAmt(), krw=a*RATE[f], res=krw/RATE[t];
+  $('out').textContent = money(res, t) + ' ' + t;
+  $('kor').textContent = t==='KRW' ? korean(res) : (f==='KRW' ? '' : '원화로 '+money(krw,'KRW')+'원');
+  var uf=META[f][2], ut=META[t][2];
+  $('r1').innerHTML = '<span>'+uf+' '+f+' = <b>'+money(uf*RATE[f]/RATE[t], t)+'</b> '+t+'</span>';
+  $('r2').innerHTML = '<span>'+ut+' '+t+' = <b>'+money(ut*RATE[t]/RATE[f], f)+'</b> '+f+'</span>';
+  var base=[1,10,100,1000,10000,100000,1000000];
+  $('chips').innerHTML = base.filter(function(b){ return f==='KRW' ? b>=1000 : b<=100000; }).map(function(b){ return '<button class="chip" data-v="'+b+'">'+num(b,0)+' '+f+'</button>'; }).join('');
+  document.querySelectorAll('#tb tr').forEach(function(tr){ tr.classList.toggle('on', tr.dataset.c===f || tr.dataset.c===t); });
+}
+function drawTable(){
+  $('tb').innerHTML = CUR.filter(function(c){ return RATE[c[0]]; }).map(function(c){
+    return '<tr class="it" data-c="'+c[0]+'"><td><div class="cname"><span class="f">'+c[2]+'</span><div>'+c[0]+(c[3]>1?' '+c[3]:'')+'<small>'+c[1]+'</small></div></div></td><td class="v">'+num(RATE[c[0]]*c[3],2)+'</td></tr>';
+  }).join('');
+}
+
+$('amt').addEventListener('input', function(){
+  var el=this, raw=el.value.replace(/[^\d.]/g,''); var p=raw.split('.'); if(p.length>2) raw=p[0]+'.'+p.slice(1).join('');
+  var ip=(raw.split('.')[0]||'').replace(/^0+(?=\d)/,''), fp=raw.indexOf('.')>=0 ? '.'+raw.split('.')[1] : '';
+  el.value = (ip?Number(ip).toLocaleString('ko-KR'):(fp?'0':'')) + fp; calc(); });
+$('amt').addEventListener('focus', function(){ var el=this; setTimeout(function(){ try{ el.select(); }catch(e){} },0); });
+$('from').onchange=calc; $('to').onchange=calc;
+$('swap').onclick=function(){ var f=$('from').value; $('from').value=$('to').value; $('to').value=f; calc(); };
+$('chips').addEventListener('click', function(e){ var b=e.target.closest('.chip'); if(!b) return; $('amt').value=Number(b.dataset.v).toLocaleString('ko-KR'); calc(); });
+$('tb').addEventListener('click', function(e){ var tr=e.target.closest('tr.it'); if(!tr) return; var c=tr.dataset.c, m=META[c][2];
+  $('from').value=c; $('to').value='KRW'; $('amt').value=String(m); calc(); window.scrollTo({top:0, behavior:'smooth'}); });
+$('reload').onclick=load;
+load();
+
+/* 복사 방지 (input/select/textarea 예외) */
+(function(){
+  var isField=function(e){ var t=e.target; return t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName); };
+  ['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){ document.addEventListener(ev,function(e){ if(!isField(e)) e.preventDefault(); }); });
+  document.addEventListener('keydown',function(e){ var k=(e.key||'').toLowerCase();
+    if(e.key==='F12'){ e.preventDefault(); return; }
+    if((e.ctrlKey||e.metaKey) && ['u','s','c','x','a'].indexOf(k)>=0 && !isField(e)) e.preventDefault();
+    if((e.ctrlKey||e.metaKey) && e.shiftKey && ['i','j','c'].indexOf(k)>=0) e.preventDefault(); });
+})();
+</script>
+</body>
+</html>

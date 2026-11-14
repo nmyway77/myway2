@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>계산기 - 정확한 온라인 계산기 | MYWAY.KR</title>
+<meta name="description" content="소수점 오차 없는 온라인 계산기. 곱셈·나눗셈 우선 계산, 퍼센트, 한글 금액 읽기, 계산 기록, 키보드 입력 지원.">
+<link rel="canonical" href="https://myway.kr/calc.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root{ --bg:#f7f3eb; --ink:#1f2740; --sub:#7a8199; --line:#e6e1d6; --card:#fff; --a1:#7ed6fb; --a2:#b176f3; --acc:#6b5cf0; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; background:var(--bg); color:var(--ink); font-family:Pretendard,-apple-system,sans-serif; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; }
+  input,textarea{ -webkit-user-select:text; user-select:text; }
+  .wrap{ max-width:440px; margin:0 auto; padding:22px 16px 90px; }
+  h1{ font-family:Fraunces,serif; font-size:24px; margin:0 0 4px; letter-spacing:-.3px; }
+  .lead{ margin:0 0 16px; font-size:13px; color:var(--sub); }
+  .calc{ background:var(--card); border:1px solid var(--line); border-radius:22px; padding:16px; box-shadow:0 10px 30px rgba(60,50,30,.08); }
+  .screen{ border-radius:16px; padding:14px 16px 12px; background:linear-gradient(160deg,#fbfaf7,#f3f1fb); border:1px solid #ece8f6; min-height:132px; display:flex; flex-direction:column; justify-content:flex-end; gap:4px; }
+  .expr{ font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--sub); text-align:right; word-break:break-all; min-height:20px; }
+  .val{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:40px; text-align:right; line-height:1.1; word-break:break-all; letter-spacing:-1px; }
+  .val.sm{ font-size:28px; } .val.xs{ font-size:20px; }
+  .kor{ text-align:right; font-size:13px; color:#5a5470; min-height:18px; }
+  .tools{ display:flex; justify-content:space-between; align-items:center; margin:10px 2px 8px; }
+  .tools .mem{ font-size:12px; color:var(--sub); font-family:'JetBrains Mono',monospace; }
+  .tbtn{ border:1px solid var(--line); background:#fff; border-radius:999px; padding:6px 12px; font:inherit; font-size:12.5px; font-weight:700; color:#4a5170; cursor:pointer; }
+  .tbtn:active{ transform:scale(.96); }
+  .keys{ display:grid; grid-template-columns:repeat(4,1fr); gap:9px; }
+  .k{ height:62px; border:0; border-radius:16px; font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:700; color:var(--ink); background:#f4f2ec; cursor:pointer; transition:transform .06s, background .15s; }
+  .k:hover{ background:#ece9e0; } .k:active{ transform:scale(.95); }
+  .k.fn{ background:#ebe8f7; color:#4b3fb8; font-size:18px; }
+  .k.op{ background:#e9e4ff; color:#5a3fd8; font-size:24px; }
+  .k.op.on{ background:#5a3fd8; color:#fff; }
+  .k.eq{ color:#fff; background:linear-gradient(120deg,var(--a1),var(--a2)); }
+  .k.ac{ color:#d23b5a; }
+  .hist{ margin-top:16px; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:12px 14px; }
+  .hist h2{ font-size:14px; margin:0 0 8px; display:flex; justify-content:space-between; align-items:center; }
+  .hist h2 button{ border:0; background:none; color:var(--sub); font:inherit; font-size:12px; cursor:pointer; }
+  .hl{ list-style:none; margin:0; padding:0; max-height:260px; overflow:auto; }
+  .hl li{ padding:8px 6px; border-bottom:1px dashed #eee8dc; cursor:pointer; text-align:right; border-radius:8px; }
+  .hl li:hover{ background:#faf8f3; }
+  .hl .e{ font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--sub); word-break:break-all; }
+  .hl .r{ font-family:'JetBrains Mono',monospace; font-size:16px; font-weight:700; }
+  .empty{ font-size:12.5px; color:var(--sub); text-align:center; padding:8px 0; }
+  .note{ margin-top:14px; font-size:12px; color:var(--sub); line-height:1.6; }
+  .toast{ position:fixed; left:50%; bottom:90px; transform:translateX(-50%); background:#1f2740; color:#fff; font-size:13px; padding:8px 14px; border-radius:999px; opacity:0; transition:opacity .2s; pointer-events:none; }
+  .toast.on{ opacity:1; }
+  footer{ text-align:center; font-size:12px; color:var(--sub); padding:20px 0; }
+  footer a{ color:var(--acc); text-decoration:none; font-weight:700; }
+  .float-home{ position:fixed; right:16px; bottom:16px; width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:22px; text-decoration:none; background:linear-gradient(135deg,var(--a1),var(--a2)); box-shadow:0 6px 16px rgba(100,80,200,.3); z-index:50; }
+  @media (max-width:380px){ .k{ height:56px; font-size:20px; } .val{ font-size:34px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>계산기</h1>
+  <p class="lead">소수점 오차 없이 정확하게 계산해요 · 곱셈·나눗셈 먼저 계산</p>
+
+  <div class="calc">
+    <div class="screen">
+      <div class="expr" id="expr"></div>
+      <div class="val" id="val">0</div>
+      <div class="kor" id="kor"></div>
+    </div>
+    <div class="tools">
+      <span class="mem" id="mem"></span>
+      <span>
+        <button class="tbtn" id="mPlus" title="결과를 메모리에 더하기">M+</button>
+        <button class="tbtn" id="mRecall" title="메모리 값 불러오기">MR</button>
+        <button class="tbtn" id="mClear" title="메모리 지우기">MC</button>
+        <button class="tbtn" id="copy">복사</button>
+      </span>
+    </div>
+    <div class="keys" id="keys">
+      <button class="k fn ac" data-k="AC">AC</button>
+      <button class="k fn" data-k="BS">⌫</button>
+      <button class="k fn" data-k="%">%</button>
+      <button class="k op" data-k="/">÷</button>
+      <button class="k" data-k="7">7</button><button class="k" data-k="8">8</button><button class="k" data-k="9">9</button>
+      <button class="k op" data-k="*">×</button>
+      <button class="k" data-k="4">4</button><button class="k" data-k="5">5</button><button class="k" data-k="6">6</button>
+      <button class="k op" data-k="-">−</button>
+      <button class="k" data-k="1">1</button><button class="k" data-k="2">2</button><button class="k" data-k="3">3</button>
+      <button class="k op" data-k="+">+</button>
+      <button class="k fn" data-k="NEG">±</button>
+      <button class="k" data-k="0">0</button>
+      <button class="k" data-k=".">.</button>
+      <button class="k eq" data-k="=">=</button>
+    </div>
+  </div>
+
+  <div class="hist">
+    <h2>계산 기록 <button id="hClear">지우기</button></h2>
+    <ul class="hl" id="hl"></ul>
+  </div>
+
+  <div class="note">
+    · 모든 계산은 자릿수를 그대로 다루는 정밀 계산이라 0.1 + 0.2 = 0.3처럼 정확히 나와요.<br>
+    · 퍼센트: 200 + 10% = 220 (200의 10%를 더함), 200 × 10% = 20.<br>
+    · 키보드로도 입력돼요: 숫자, + − * /, Enter(=), Backspace, Esc(AC).<br>
+    · 나누어떨어지지 않는 값은 소수 12자리에서 반올림해 보여 줘요. 기록은 이 창을 닫으면 사라져요.
+  </div>
+  <footer><a href="https://myway.kr">myway.kr</a></footer>
+</div>
+<div class="toast" id="toast"></div>
+<a href="https://myway.kr" class="float-home" title="홈으로" aria-label="홈으로">⌂</a>
+
+<script>
+/* ===== 정밀 십진수 (BigInt) ===== */
+var P = 30; /* 나눗셈 내부 자릿수 */
+function D(i, s){ this.i = i; this.s = s; }
+function dec(str){ str = String(str).replace(/,/g,''); var neg = str[0]==='-'; if(neg) str = str.slice(1);
+  var p = str.split('.'); var f = p[1]||''; var i = BigInt((p[0]||'0') + f || '0'); return norm(new D(neg?-i:i, f.length)); }
+function pow10(n){ return 10n ** BigInt(n); }
+function norm(d){ var i=d.i, s=d.s; while(s>0 && i % 10n === 0n){ i/=10n; s--; } return new D(i,s); }
+function align(a,b){ var s=Math.max(a.s,b.s); return [a.i*pow10(s-a.s), b.i*pow10(s-b.s), s]; }
+function add(a,b){ var x=align(a,b); return norm(new D(x[0]+x[1], x[2])); }
+function sub(a,b){ var x=align(a,b); return norm(new D(x[0]-x[1], x[2])); }
+function mul(a,b){ return norm(new D(a.i*b.i, a.s+b.s)); }
+function divd(a,b){ if(b.i===0n) throw new Error('div0');
+  var num = a.i * pow10(b.s + P + 1), den = b.i * pow10(a.s);
+  var q = num / den; /* P+1 자리 → 반올림해서 P 자리 */
+  var neg = q < 0n; if(neg) q = -q; q = (q + 5n) / 10n; if(neg) q = -q;
+  return norm(new D(q, P)); }
+function roundTo(d, n){ if(d.s<=n) return d; var k=pow10(d.s-n); var neg=d.i<0n; var x=neg?-d.i:d.i; var q=(x + k/2n)/k; return norm(new D(neg?-q:q, n)); }
+function isZero(d){ return d.i===0n; }
+function fmt(d, group){ d = roundTo(d, 12); var neg=d.i<0n; var s=(neg?-d.i:d.i).toString();
+  if(d.s>0){ while(s.length<=d.s) s='0'+s; } var ip = d.s>0 ? s.slice(0,s.length-d.s) : s, fp = d.s>0 ? s.slice(s.length-d.s) : '';
+  if(group!==false) ip = ip.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return (neg?'-':'') + ip + (fp?'.'+fp:''); }
+
+/* ===== 한글 금액 읽기 ===== */
+function korean(d){ d = roundTo(d,0); var neg=d.i<0n; var n=neg?-d.i:d.i; if(n<10000n) return '';
+  var units=['','만','억','조','경','해']; var parts=[]; var u=0;
+  while(n>0n && u<units.length){ var chunk=n%10000n; if(chunk>0n) parts.unshift(chunk.toLocaleString('ko-KR')+units[u]); n/=10000n; u++; }
+  if(n>0n) return ''; return (neg?'마이너스 ':'') + parts.join(' '); }
+
+/* ===== 입력 상태 ===== */
+var tokens = [];      /* [{v:'12.5', pct:false}, '+', ...] */
+var cur = '0';        /* 지금 입력 중인 숫자 (문자열) */
+var curPct = false;
+var fresh = true;     /* 결과 직후 */
+var lastResult = null, memory = null, calcHist = [];
+var $ = function(id){ return document.getElementById(id); };
+var OPS = { '+':'+', '-':'−', '*':'×', '/':'÷' };
+
+function exprText(withCur){
+  var t = tokens.map(function(x){ return typeof x==='string' ? ' '+OPS[x]+' ' : fmt(dec(x.v)) + (x.pct?'%':''); }).join('');
+  if(withCur) t += fmtInput(cur) + (curPct?'%':'');
+  return t.trim();
+}
+function fmtInput(s){ var neg=s[0]==='-'; if(neg) s=s.slice(1); var p=s.split('.'); var ip=p[0].replace(/\B(?=(\d{3})+(?!\d))/g, ','); return (neg?'-':'')+ip+(p.length>1?'.'+p[1]:''); }
+
+function evaluate(list){
+  /* % 처리 → 곱셈/나눗셈 먼저 → 덧셈/뺄셈 */
+  var nums=[], ops=[];
+  for(var i=0;i<list.length;i++){ if(typeof list[i]==='string') ops.push(list[i]); else nums.push(list[i]); }
+  var vals = nums.map(function(x){ return dec(x.v); });
+  /* 1) × ÷ 먼저 묶기 (퍼센트는 ×÷ 뒤면 /100) */
+  var terms=[vals[0]], tpct=[nums[0].pct], tops=[];
+  if(nums[0].pct) terms[0]=divd(terms[0], dec('100'));
+  for(var j=0;j<ops.length;j++){
+    var v=vals[j+1], pct=nums[j+1].pct;
+    if(ops[j]==='*' || ops[j]==='/'){ if(pct) v=divd(v,dec('100')); var L=terms.length-1; terms[L] = ops[j]==='*' ? mul(terms[L],v) : divd(terms[L],v); }
+    else { terms.push(v); tpct.push(pct); tops.push(ops[j]); }
+  }
+  /* 2) + − (퍼센트는 앞까지의 값의 n%) */
+  var acc=terms[0];
+  for(var k=0;k<tops.length;k++){ var t=terms[k+1]; if(tpct[k+1]) t=mul(acc, divd(t,dec('100'))); acc = tops[k]==='+' ? add(acc,t) : sub(acc,t); }
+  return acc;
+}
+function preview(){ if(!tokens.length && !curPct) return null; try{ return evaluate(tokens.concat([{v:cur,pct:curPct}])); }catch(e){ return null; } }
+
+function render(){
+  var showing = cur;
+  $('expr').textContent = fresh && lastResult ? $('expr').textContent : exprText(false);
+  var txt = fmtInput(showing) + (curPct?'%':'');
+  var v=$('val'); v.textContent = txt; v.className = 'val' + (txt.length>18?' xs':txt.length>12?' sm':'');
+  var p = preview(), kd = p || dec(cur);
+  var k = korean(kd); $('kor').textContent = (p && !fresh ? '= '+fmt(p)+'  ' : '') + (k ? k : '');
+  $('mem').textContent = memory ? 'M = '+fmt(memory) : '';
+  document.querySelectorAll('.k.op').forEach(function(b){ b.classList.remove('on'); });
+}
+function input(k){
+  if(/^[0-9]$/.test(k)){
+    if(fresh){ if(lastResult && !tokens.length){ $('expr').textContent=''; } cur='0'; curPct=false; fresh=false; }
+    if(curPct) return;
+    var digits = cur.replace(/[-.]/g,''); if(digits.length>=20) return;
+    cur = (cur==='0') ? k : (cur==='-0' ? '-'+k : cur+k);
+  } else if(k==='.'){
+    if(fresh){ cur='0'; curPct=false; fresh=false; }
+    if(curPct || cur.indexOf('.')>=0) return; cur += '.';
+  } else if(k==='NEG'){
+    if(fresh && lastResult){ fresh=false; }
+    cur = cur[0]==='-' ? cur.slice(1) : '-'+cur;
+  } else if(k==='%'){
+    if(cur==='0' && !tokens.length) return; curPct = !curPct; fresh=false;
+  } else if(OPS[k]){
+    if(fresh && !lastResult && tokens.length){ tokens[tokens.length-1]=k; render(); markOp(k); return; }
+    tokens.push({v:cur.replace(/\.$/,''), pct:curPct}); tokens.push(k);
+    cur='0'; curPct=false; fresh=true; lastResult=null; render(); markOp(k); return;
+  } else if(k==='='){
+    if(!tokens.length && !curPct) return;
+    var list = tokens.concat([{v:cur.replace(/\.$/,''), pct:curPct}]);
+    var e = exprText(true) + ' =';
+    try{ var r = evaluate(list); }catch(err){ $('expr').textContent=e; $('val').textContent='0으로 나눌 수 없어요'; $('val').className='val xs'; tokens=[]; cur='0'; curPct=false; fresh=true; lastResult=null; return; }
+    var rs = fmt(r, false);
+    calcHist.unshift({e:e, r:fmt(r), raw:rs}); drawHist();
+    tokens=[]; cur=rs; curPct=false; fresh=true; lastResult=r;
+    render(); $('expr').textContent = e; return;
+  } else if(k==='BS'){
+    if(fresh) return; if(curPct){ curPct=false; }
+    else { cur = cur.length>1 ? cur.slice(0,-1) : '0'; if(cur==='-') cur='0'; }
+  } else if(k==='AC'){
+    tokens=[]; cur='0'; curPct=false; fresh=true; lastResult=null; $('expr').textContent='';
+  }
+  render();
+}
+function markOp(k){ document.querySelectorAll('.k.op').forEach(function(b){ b.classList.toggle('on', b.dataset.k===k); }); }
+
+function drawHist(){
+  var ul=$('hl'); ul.innerHTML='';
+  if(!calcHist.length){ ul.innerHTML='<li class="empty" style="cursor:default">아직 계산 기록이 없어요</li>'; return; }
+  calcHist.slice(0,50).forEach(function(h){ var li=document.createElement('li');
+    li.innerHTML='<div class="e"></div><div class="r"></div>'; li.querySelector('.e').textContent=h.e; li.querySelector('.r').textContent=h.r;
+    li.title='누르면 이 값을 불러와요';
+    li.onclick=function(){ tokens=[]; cur=h.raw; curPct=false; fresh=true; lastResult=dec(h.raw); render(); $('expr').textContent=h.e; };
+    ul.appendChild(li); });
+}
+function toast(t){ var el=$('toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast._t); toast._t=setTimeout(function(){ el.classList.remove('on'); },1300); }
+
+document.getElementById('keys').addEventListener('click', function(e){ var b=e.target.closest('.k'); if(b) input(b.dataset.k); });
+$('copy').onclick=function(){ var t=fmt(dec(cur), false); if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){ toast('복사했어요: '+t); }, function(){ toast('복사 실패'); }); };
+$('mPlus').onclick=function(){ var v = preview() || dec(cur); memory = memory ? add(memory, v) : v; render(); toast('메모리 = '+fmt(memory)); };
+$('mRecall').onclick=function(){ if(!memory) return; cur=fmt(memory,false); curPct=false; fresh=false; render(); };
+$('mClear').onclick=function(){ memory=null; render(); };
+$('hClear').onclick=function(){ calcHist=[]; drawHist(); };
+document.addEventListener('keydown', function(e){
+  if(e.ctrlKey||e.metaKey||e.altKey) return;
+  var m = { 'Enter':'=', '=':'=', 'Backspace':'BS', 'Escape':'AC', 'Delete':'AC', 'x':'*', 'X':'*', ',':'.' }[e.key] || e.key;
+  if(/^[0-9.%+\-*\/=]$/.test(m) || m==='BS' || m==='AC'){ e.preventDefault(); input(m); }
+});
+render(); drawHist();
+
+/* 복사 방지 (input/select/textarea 예외) */
+(function(){
+  var isField=function(e){ var t=e.target; return t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName); };
+  ['contextmenu','selectstart','dragstart','copy','cut'].forEach(function(ev){ document.addEventListener(ev,function(e){ if(!isField(e)) e.preventDefault(); }); });
+  document.addEventListener('keydown',function(e){ var k=(e.key||'').toLowerCase();
+    if(e.key==='F12'){ e.preventDefault(); return; }
+    if((e.ctrlKey||e.metaKey) && ['u','s','c','x','a'].indexOf(k)>=0 && !isField(e)) e.preventDefault();
+    if((e.ctrlKey||e.metaKey) && e.shiftKey && ['i','j','c'].indexOf(k)>=0) e.preventDefault(); });
+})();
+</script>
+</body>
+</html>
