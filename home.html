@@ -229,6 +229,7 @@
 /* ── 항목을 누르면 그 화면을 이 자리(화면 전체)에서 열고, [← 메뉴]·[← 홈]으로 돌아옴 ── */
 (function(){
   var viewer = document.getElementById('viewer'), frame = null, TV = 'https://nmyway77.github.io';
+  var lenAtOpen = 0;
   var KEY = 'mywayHomeViewV1';   /* 지금 보는 화면 기억 — 링크로 나갔다 돌아오거나 새로고침해도 같은 화면 */
   function remember(v){ try { sessionStorage.setItem(KEY, JSON.stringify(v)); } catch(e) {} }
   function close(){
@@ -237,6 +238,12 @@
     viewer.classList.remove('open', 'has-bar'); viewer.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('viewing');
     try { if (parent !== window) parent.postMessage({ type: 'MYWAY_BIG', on: false }, '*'); } catch(_) {}
+  }
+  /* [← 메뉴]·[← 홈]: 열 때 만든 뒤로가기 한 칸을 같이 되돌림 → 기록이 남지 않음. 그 화면 안에서 다른 페이지로 이동한 적이 있으면(기록이 늘었으면) 그냥 닫기만 */
+  function goHome(){
+    var mine = false; try { mine = !!(history.state && history.state.mwView) && history.length === lenAtOpen; } catch(e) {}
+    if (frame && mine) { try { history.back(); return; } catch(e) {} }
+    close();
   }
   function open(url, bar, cat, noPush){
     close();
@@ -252,7 +259,12 @@
     viewer.classList.toggle('has-bar', !!bar);
     viewer.classList.add('open'); viewer.setAttribute('aria-hidden', 'false');
     document.body.classList.add('viewing');
-    if (!noPush) { try { history.pushState({ mwView: 1 }, ''); } catch(e) {} }   /* 핸드폰 뒤로가기 → 홈으로 */
+    /* 핸드폰 뒤로가기 → 홈으로. 뒤로가기 기록은 화면을 몇 번 열든 '홈 → 열린 화면' 한 칸만 유지 (쌓이면 뒤로가기가 헛돌거나 엉뚱한 곳으로 감) */
+    try {
+      if (history.state && history.state.mwView) history.replaceState({ mwView: 1 }, '');
+      else if (!noPush) history.pushState({ mwView: 1 }, '');
+    } catch(e) {}
+    lenAtOpen = history.length;
   }
   document.addEventListener('click', function(e){
     var a = e.target.closest ? e.target.closest('a[data-open]') : null;
@@ -260,7 +272,7 @@
     e.preventDefault();
     open(a.getAttribute('data-open'), a.getAttribute('data-bar') || '', a.getAttribute('data-cat') || '');
   });
-  document.getElementById('vBack').addEventListener('click', close);
+  document.getElementById('vBack').addEventListener('click', goHome);
   /* myway.kr을 처음 열면 라디오부터 — [← 메뉴]를 누르면 이 홈 화면. 보던 화면이 기억돼 있으면 그 화면으로 */
   (function(){
     if (!document.documentElement.classList.contains('embedded')) return;   /* 이 파일만 따로 열었을 때는 홈 그대로 */
@@ -271,14 +283,14 @@
     if (!a) a = document.querySelector('a.big.radio[data-open]');
     if (a) open(a.getAttribute('data-open'), a.getAttribute('data-bar') || '', a.getAttribute('data-cat') || '', true);
   })();
-  window.addEventListener('popstate', function(){ if (frame) close(); });
+  window.addEventListener('popstate', function(){ if (frame && !(history.state && history.state.mwView)) close(); });
   window.addEventListener('message', function(e){
     var d = e.data || {};
     if (!frame || e.source !== frame.contentWindow) return;
     if (e.origin !== location.origin && e.origin !== TV) return;
     if (d.type === 'MYWAY_BIG') { try { if (parent !== window) parent.postMessage({ type: 'MYWAY_BIG', on: !!d.on }, '*'); } catch(_) {} return; }   /* 아이폰 크게 보기 → 검색 헤더까지 덮기 */
     /* 각 화면의 [← 메뉴] → 홈으로 */
-    if (d.type === 'MYWAY_NAVSWAP_BACK' || d.type === 'MYWAY_NEWSBAR_BACK' || d.type === 'MYWAY_HOME') { close(); return; }
+    if (d.type === 'MYWAY_NAVSWAP_BACK' || d.type === 'MYWAY_NEWSBAR_BACK' || d.type === 'MYWAY_HOME') { goHome(); return; }
     /* TV 즐겨찾기·웹드라마 '여기까지 봄' 표시를 myway.kr 쪽에 보관 (지금 화면과 같은 저장 위치) */
     if (e.origin !== TV) return;
     if (d.type === 'LIVETV_FAVS_GET') {
